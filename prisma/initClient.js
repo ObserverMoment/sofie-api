@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client'
+const { PrismaClient } = require('@prisma/client')
 
 // https://github.com/prisma/specs/pull/381/files#logging
 const prisma = new PrismaClient({
@@ -7,4 +7,4 @@ const prisma = new PrismaClient({
   errorFormat: 'pretty'
 })
 
-export default prisma
+module.exports = prisma
