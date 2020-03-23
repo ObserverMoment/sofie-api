@@ -1,21 +1,18 @@
 const express = require('express')
-const { ApolloServer, gql } = require('apollo-server-express')
+const { ApolloServer } = require('apollo-server-express')
+const { resolvers } = require('./graphQL/resolvers')
+const { typeDefs } = require('./graphQL/typeDefs')
+const prisma = require('./prisma/initClient')
 
-// Construct a schema, using GraphQL schema language
-const typeDefs = gql`
-  type Query {
-    hello: String
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  context: ({ req, res }) => {
+    return {
+      prisma
+    }
   }
-`
-
-// Provide resolver functions for your schema fields
-const resolvers = {
-  Query: {
-    hello: () => 'Hello worldss!'
-  }
-}
-
-const server = new ApolloServer({ typeDefs, resolvers })
+})
 
 const app = express()
 server.applyMiddleware({ app })

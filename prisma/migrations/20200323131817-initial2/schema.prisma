@@ -1,0 +1,16 @@
+// https://github.com/prisma/prisma2
+// SDL first example: https://github.com/prisma/prisma-examples/tree/prisma2/javascript/graphql-sdl-first
+// Migrations: https://github.com/prisma/migrate
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url = "***"
+}
+
+model Move {
+    id   Int    @id @default(autoincrement())
+    name String
+}
