@@ -1,8 +1,8 @@
 # IF THERE'S A GIT CONFLICT IN THIS FILE, DON'T SOLVE IT MANUALLY!
-# INSTEAD EXECUTE `prisma2 migrate fix`
+# INSTEAD EXECUTE `prisma migrate fix`
 # Prisma Migrate lockfile v1
 # Read more about conflict resolution here: TODO
 
-20200323131002-initial
-20200323131817-initial2
-20200323132234-create-workouts
+20200402210131-init
+20200402211626-add-repsperround-workoutmove
+20200402213414-workout-move-prescribed-scaling-optional
