@@ -2,16 +2,23 @@ const express = require('express')
 const { ApolloServer } = require('apollo-server-express')
 const resolvers = require('./graphQL/resolvers')
 const typeDefs = require('./graphQL/typeDefs')
-const prisma = require('./prisma/initClient')
+const applyMiddleware = require('./graphQL/middleware/applyMiddleware')
+const helmet = require('./graphQL/middleware/helmet')
+const getSelectedFields = require('./graphQL/middleware/getSelectedFields')
+
+const middlewareMappings = [
+  {
+    type: 'all', // Either 'all', 'root' or 'field'
+    middlewares: [helmet, getSelectedFields]
+  }
+]
+
+applyMiddleware(resolvers, middlewareMappings)
 
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  context: ({ req, res }) => {
-    return {
-      prisma
-    }
-  }
+  context: ({ req, res }) => {}
 })
 
 const app = express()

@@ -1,0 +1,21 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "CreateEnum",
+      "enum": "WodCategory",
+      "values": [
+        "GIRLS",
+        "HEROES",
+        "NOTABLES"
+      ]
+    },
+    {
+      "tag": "CreateField",
+      "model": "Workout",
+      "field": "category",
+      "type": "WodCategory",
+      "arity": "Required"
+    }
+  ]
+}
