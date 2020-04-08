@@ -5,6 +5,10 @@ const typeDefs = require('./graphQL/typeDefs')
 const applyMiddleware = require('./graphQL/middleware/applyMiddleware')
 const helmet = require('./graphQL/middleware/helmet')
 const getSelectedFields = require('./graphQL/middleware/getSelectedFields')
+const {
+  createWorldRecordFromWorkoutIdLoader,
+  createWorkoutMovesFromWorkoutIdLoader
+} = require('./graphQL/dataloaders')
 
 const middlewareMappings = [
   {
@@ -18,7 +22,10 @@ applyMiddleware(resolvers, middlewareMappings)
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  context: ({ req, res }) => {}
+  context: ({ req, res }) => ({
+    worldRecordFromWorkoutIdLoader: createWorldRecordFromWorkoutIdLoader(),
+    workoutMovesFromWorkoutIdLoader: createWorkoutMovesFromWorkoutIdLoader()
+  })
 })
 
 const app = express()

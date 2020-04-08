@@ -34,13 +34,11 @@ const composeMiddleware = (middlewares, resolver) => {
     Example shape of middlewareMappings object
     const middlewareMappings = [
     {
-        type: 'field', // Either 'all', 'root' or 'field'
         keys: ['Query.hello'], // Use dot notation to specify subfields
         middlewares: [helmet, addName]
     },
     {
-        type: 'root', // Either 'all', 'root' or 'field'
-        keys: ['Query'], // Root query fields - will recursively wrap all sub fields
+        keys: ['Query'], // Root query fields - will all sub fields
         middlewares: [helmet]
     }
 ]
@@ -60,44 +58,44 @@ const applyMiddleware = (resolvers, middlewareMappings) => {
       )
     }
     if (type === 'all') {
-      // Wrap every field resolver
-      Object.keys(resolvers).forEach(rootKey => {
-        Object.keys(resolvers[rootKey]).forEach(field => {
-          const originalResolver = resolvers[rootKey][field]
-          resolvers[rootKey][field] = composeMiddleware(
+      // Wrap every field resolver.
+      for (const rootQueryKey of Object.keys(resolvers)) {
+        for (const field of Object.keys(resolvers[rootQueryKey])) {
+          const originalResolver = resolvers[rootQueryKey][field]
+          resolvers[rootQueryKey][field] = composeMiddleware(
             middlewares,
             originalResolver
           )
-        })
-      })
+        }
+      }
     } else if (type === 'root') {
       // Wrap all the direct children only of the specified root key.
-      keys.forEach(rootKey => {
-        Object.keys(resolvers[rootKey]).forEach(field => {
-          const originalResolver = resolvers[rootKey][field]
-          resolvers[rootKey][field] = composeMiddleware(
+      for (const rootQueryKey of keys) {
+        for (const field of Object.keys(resolvers[rootQueryKey])) {
+          const originalResolver = resolvers[rootQueryKey][field]
+          resolvers[rootQueryKey][field] = composeMiddleware(
             middlewares,
             originalResolver
           )
-        })
-      })
+        }
+      }
     } else if (type === 'field') {
-      // Just wrap these fields. Eg. 'Query.move'.
-      keys.forEach(field => {
-        const keys = field.split('.')
-        const depth = keys.length
-        keys.reduce((resolversSlice, key, index) => {
+      // Just wrap these fields. Eg. 'Query', or Query.move'.
+      for (const field of keys) {
+        const subFields = field.split('.')
+        const depth = subFields.length
+        subFields.reduce((resolversSlice, subField, index) => {
           if (index + 1 === depth) {
             // Correct depth for overwrite.
-            const originalResolver = resolversSlice[key]
-            resolversSlice[key] = composeMiddleware(
+            const originalResolver = resolversSlice[subField]
+            resolversSlice[subField] = composeMiddleware(
               middlewares,
               originalResolver
             )
           }
-          return resolvers[key]
+          return resolvers[subField]
         }, resolvers)
-      })
+      }
     } else {
       throw Error('applyMiddleWare Error: type must be either field or root.')
     }

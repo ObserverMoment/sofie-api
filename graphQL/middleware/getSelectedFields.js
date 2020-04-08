@@ -1,6 +1,7 @@
 const { extractSelectedFields } = require('../utils')
 
 // Adds an object onto context which reveals the fields that the client as requested.
+// Optionally removes model names to avoid nested reads (specifically caused by prisma nexted select functionality)
 /*
     selected {
         WorldRecord: { id: true, notes: true, recordType: true, recordValue: true },
