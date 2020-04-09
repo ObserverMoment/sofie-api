@@ -10,6 +10,9 @@ const resolvers = {
         select: selected.Move
       })
     },
+    users: async (r, a, { selected }, i) => {
+      return prisma.user.findMany({ selected })
+    },
     workouts: async (r, a, { selected }, i) => {
       // This avoids duplicating calls - caused by prisma's select functionality also being able to select relations.
       // These calls are made via the Workout subfields and handled by Dataloaders

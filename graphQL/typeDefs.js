@@ -5,6 +5,7 @@ const typeDefs = gql`
   type Query {
     hello(testMessage: String): String
     moves: [Move!]!
+    users: [User!]!
     workouts: [Workout!]!
   }
 
