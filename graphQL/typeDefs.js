@@ -57,6 +57,7 @@ const typeDefs = gql`
     weight: Int!
     city: String!
     country: String!
+    avatarUrl: String
   }
 `
 
