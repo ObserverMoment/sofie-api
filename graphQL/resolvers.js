@@ -11,7 +11,7 @@ const resolvers = {
       })
     },
     users: async (r, a, { selected }, i) => {
-      return prisma.user.findMany({ selected })
+      return prisma.user.findMany({ select: selected.User })
     },
     workouts: async (r, a, { selected }, i) => {
       // This avoids duplicating calls - caused by prisma's select functionality also being able to select relations.
