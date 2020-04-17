@@ -2,13 +2,19 @@ const prisma = require('../prisma/client')
 
 const resolvers = {
   Query: {
-    hello: (_, a) => {
-      return `${a.testMessage}`
-    },
     moves: async (r, a, { selected }, i) => {
       return prisma.move.findMany({
         select: selected.Move
       })
+    },
+    userByUid: async (r, { uid }, { selected }, i) => {
+      console.log('userByUid - uid', uid)
+      const user = await prisma.user.findOne({
+        where: { firebaseUid: uid },
+        select: selected.User
+      })
+      console.log('userByUid', user)
+      return user
     },
     users: async (r, a, { selected }, i) => {
       return prisma.user.findMany({ select: selected.User })
@@ -25,6 +31,20 @@ const resolvers = {
         {}
       )
       return prisma.workout.findMany({ select })
+    }
+  },
+  Mutation: {
+    createUser: async (r, { uid, displayName }, { selected }, i) => {
+      console.log('createUser - uid', uid)
+      const user = await prisma.user.create({
+        data: {
+          firebaseUid: uid,
+          displayName
+        },
+        select: selected.User
+      })
+      console.log('createUserFromUid', user)
+      return user
     }
   },
   Workout: {

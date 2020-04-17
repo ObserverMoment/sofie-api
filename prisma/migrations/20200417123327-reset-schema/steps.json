@@ -23,8 +23,17 @@
       "enum": "RecordType",
       "values": [
         "AMRAP",
-        "TIME",
-        "LOAD"
+        "FORTIME",
+        "FORLOAD"
+      ]
+    },
+    {
+      "tag": "CreateEnum",
+      "enum": "WodCategory",
+      "values": [
+        "GIRLS",
+        "HEROES",
+        "NOTABLES"
       ]
     },
     {
@@ -511,6 +520,24 @@
     {
       "tag": "CreateField",
       "model": "User",
+      "field": "firebaseUid",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "User",
+          "field": "firebaseUid"
+        },
+        "directive": "unique"
+      }
+    },
+    {
+      "tag": "CreateField",
+      "model": "User",
       "field": "createdAt",
       "type": "DateTime",
       "arity": "Required"
@@ -589,13 +616,6 @@
     {
       "tag": "CreateField",
       "model": "User",
-      "field": "passwordHash",
-      "type": "String",
-      "arity": "Required"
-    },
-    {
-      "tag": "CreateField",
-      "model": "User",
       "field": "bio",
       "type": "String",
       "arity": "Optional"
@@ -603,8 +623,8 @@
     {
       "tag": "CreateField",
       "model": "User",
-      "field": "age",
-      "type": "Int",
+      "field": "birthdate",
+      "type": "DateTime",
       "arity": "Required"
     },
     {
@@ -689,6 +709,13 @@
       "value": "[id]"
     },
     {
+      "tag": "CreateField",
+      "model": "User",
+      "field": "worldRecords",
+      "type": "WorldRecord",
+      "arity": "List"
+    },
+    {
       "tag": "CreateModel",
       "model": "Workout"
     },
@@ -756,6 +783,13 @@
     {
       "tag": "CreateField",
       "model": "Workout",
+      "field": "category",
+      "type": "WodCategory",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Workout",
       "field": "summary",
       "type": "String",
       "arity": "Required"
@@ -793,7 +827,7 @@
       "model": "Workout",
       "field": "worldRecord",
       "type": "WorldRecord",
-      "arity": "Optional"
+      "arity": "List"
     },
     {
       "tag": "CreateField",
@@ -868,7 +902,14 @@
       "model": "WorkoutMove",
       "field": "prescribedScaling",
       "type": "String",
-      "arity": "Required"
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "WorkoutMove",
+      "field": "repsPerRound",
+      "type": "Int",
+      "arity": "Optional"
     },
     {
       "tag": "CreateField",
@@ -1275,6 +1316,13 @@
     {
       "tag": "CreateField",
       "model": "WorldRecord",
+      "field": "notes",
+      "type": "String",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "WorldRecord",
       "field": "recordValue",
       "type": "Int",
       "arity": "Required"
@@ -1284,6 +1332,13 @@
       "model": "WorldRecord",
       "field": "recordType",
       "type": "RecordType",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "WorldRecord",
+      "field": "gender",
+      "type": "Gender",
       "arity": "Required"
     },
     {
@@ -1338,6 +1393,59 @@
       "field": "workoutId",
       "type": "String",
       "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "WorldRecord",
+      "field": "user",
+      "type": "User",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "WorldRecord",
+          "field": "user"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "WorldRecord",
+          "field": "user"
+        },
+        "directive": "relation"
+      },
+      "argument": "fields",
+      "value": "[userId]"
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "WorldRecord",
+          "field": "user"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[id]"
+    },
+    {
+      "tag": "CreateField",
+      "model": "WorldRecord",
+      "field": "userId",
+      "type": "String",
+      "arity": "Optional"
     }
   ]
 }

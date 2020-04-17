@@ -3,23 +3,6 @@
 # Prisma Migrate lockfile v1
 # Read more about conflict resolution here: TODO
 
-20200402210131-init
-20200402211626-add-repsperround-workoutmove
-20200402213414-workout-move-prescribed-scaling-optional
-20200403123609-sync-record-type-workout-type
-20200403125200-add-gender-world-record
-20200403125510-add-user-notes-world-record
-20200403131340-workout-hasmany-world-records
-20200403140130-add-wodcategory
-20200403140512-add-wodcategory
-20200403140652-add-wodcategory
-20200403140725-add-wodcategory
-20200403140932-add-wodcategory
-20200403141225-add-wodcategory
-20200403141837-add-wodcategory-optional-2
-20200403141949-add-wodcategory-optional-3
-20200403142041-add-wodcategory-required
-20200403142356-add-wodcategory-required
-20200403150603-update-user-fields
-20200407132215-move-workoutmove
-20200407132345-move-workoutmove-revert
+20200417123327-reset-schema
+20200417123550-reset-schema-2
+20200417140628-user-has-onboarded

@@ -3,10 +3,14 @@ const { gql } = require('apollo-server-express')
 
 const typeDefs = gql`
   type Query {
-    hello(testMessage: String): String
     moves: [Move!]!
+    userByUid(uid: String!): User
     users: [User!]!
     workouts: [Workout!]!
+  }
+
+  type Mutation {
+    createUser(uid: String!, displayName: String): User
   }
 
   type Move {
@@ -47,17 +51,18 @@ const typeDefs = gql`
 
   type User {
     id: ID!
-    displayName: String!
-    firstname: String!
-    lastname: String!
-    bio: String
-    birthdate: String!
-    gender: String!
-    height: Int!
-    weight: Int!
-    city: String!
-    country: String!
     avatarUrl: String
+    bio: String
+    birthdate: String
+    city: String
+    country: String
+    displayName: String
+    firstname: String
+    gender: String
+    hasOnboarded: Boolean!
+    height: Int
+    lastname: String
+    weight: Int
   }
 `
 

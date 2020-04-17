@@ -39,36 +39,39 @@ model Move {
   workoutMoves WorkoutMove[]
 }
 
+// Height in cms / weight in kgs
 model User {
-  id           String      @default(uuid()) @id
-  createdAt    DateTime    @default(now())
+  id           String        @default(uuid()) @id
+  firebaseUid  String        @unique
+  createdAt    DateTime      @default(now())
+  hasOnboarded Boolean       @default(false)
   avatarUrl    String?
-  displayName  String      @unique
-  firstname    String
-  lastname     String
-  email        String
-  passwordHash String
+  displayName  String?       @unique
+  firstname    String?
+  lastname     String?
   bio          String?
-  age          Int
-  gender       Gender
-  height       Int
-  weight       Int
+  birthdate    DateTime?
+  gender       Gender?
+  height       Int?
+  weight       Int?
   gymBox       String?
   townCity     String?
   country      String?
   benchmarks   Benchmark[]
-  leagues      League[]    @relation(references: [id])
+  leagues      League[]      @relation(references: [id])
+  worldRecords WorldRecord[]
 }
 
 model Workout {
   id            String         @default(uuid()) @id
   name          String         @unique
+  category      WodCategory
   summary       String
   description   String?
   workoutType   WorkoutType
   workoutMoves  WorkoutMove[]
   workoutVideos WorkoutVideo[]
-  worldRecord   WorldRecord?
+  worldRecord   WorldRecord[]
   benchmarks    Benchmark[]
 }
 
@@ -76,7 +79,7 @@ model WorkoutMove {
   id                  String  @default(uuid()) @id
   beginnerScaling     String?
   intermediateScaling String?
-  prescribedScaling   String
+  prescribedScaling   String?
   repsPerRound        Int?
   move                Move    @relation(fields: [moveId], references: [id])
   moveId              String
@@ -99,10 +102,14 @@ model WorldRecord {
   id          String     @default(uuid()) @id
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
+  notes       String?
   recordValue Int
   recordType  RecordType
+  gender      Gender
   workout     Workout    @relation(fields: [workoutId], references: [id])
   workoutId   String
+  user        User?      @relation(fields: [userId], references: [id])
+  userId      String?
 }
 
 enum Gender {
@@ -121,8 +128,15 @@ enum Level {
 // LOAD in lbs
 enum RecordType {
   AMRAP
-  TIME
-  LOAD
+  FORTIME
+  FORLOAD
+}
+
+// https://beyondthewhiteboard.com/gyms/2-main-site/leader_boards/414
+enum WodCategory {
+  GIRLS
+  HEROES
+  NOTABLES
 }
 
 enum WorkoutType {
