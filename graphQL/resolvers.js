@@ -1,25 +1,30 @@
-const prisma = require('../prisma/client')
-
 const resolvers = {
   Query: {
-    moves: async (r, a, { selected }, i) => {
+    checkUniqueDisplayName: async (r, { displayName }, { prisma }, i) => {
+      const user = await prisma.user.findOne({
+        where: { displayName }
+      })
+      return user == null
+    },
+    moves: async (r, a, { selected, prisma }, i) => {
       return prisma.move.findMany({
         select: selected.Move
       })
     },
-    userByUid: async (r, { uid }, { selected }, i) => {
-      console.log('userByUid - uid', uid)
+    userByUid: async (r, { uid }, { selected, prisma }, i) => {
       const user = await prisma.user.findOne({
         where: { firebaseUid: uid },
         select: selected.User
       })
-      console.log('userByUid', user)
+      console.log(user)
+      console.log(typeof user.birthdate)
+      console.log(user.birthdate.toString())
       return user
     },
-    users: async (r, a, { selected }, i) => {
+    users: async (r, a, { selected, prisma }, i) => {
       return prisma.user.findMany({ select: selected.User })
     },
-    workouts: async (r, a, { selected }, i) => {
+    workouts: async (r, a, { selected, prisma }, i) => {
       // This avoids duplicating calls - caused by prisma's select functionality also being able to select relations.
       // These calls are made via the Workout subfields and handled by Dataloaders
       const omitRelationsFromSelect = ['workoutMoves', 'worldRecord']
@@ -34,17 +39,23 @@ const resolvers = {
     }
   },
   Mutation: {
-    createUser: async (r, { uid, displayName }, { selected }, i) => {
-      console.log('createUser - uid', uid)
-      const user = await prisma.user.create({
+    createUser: async (r, { uid }, { selected, prisma }, i) => {
+      return prisma.user.create({
         data: {
-          firebaseUid: uid,
-          displayName
+          firebaseUid: uid
         },
         select: selected.User
       })
-      console.log('createUserFromUid', user)
-      return user
+    },
+    updateUser: async (r, { id, data }, { selected, prisma }, i) => {
+      // Handle datetime conversion.
+      const formattedData = data.birthdate
+        ? { ...data, birthdate: new Date(data.birthdate).toUTCString }
+        : data
+      return prisma.user.update({
+        where: { id },
+        data: formattedData
+      })
     }
   },
   Workout: {

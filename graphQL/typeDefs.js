@@ -3,6 +3,7 @@ const { gql } = require('apollo-server-express')
 
 const typeDefs = gql`
   type Query {
+    checkUniqueDisplayName(displayName: String!): Boolean
     moves: [Move!]!
     userByUid(uid: String!): User
     users: [User!]!
@@ -10,7 +11,8 @@ const typeDefs = gql`
   }
 
   type Mutation {
-    createUser(uid: String!, displayName: String): User
+    createUser(uid: String!): User!
+    updateUser(id: String!, data: UpdateUserInput!): User!
   }
 
   type Move {
@@ -59,7 +61,23 @@ const typeDefs = gql`
     displayName: String
     firstname: String
     gender: String
+    gymBox: String
     hasOnboarded: Boolean!
+    height: Int
+    lastname: String
+    weight: Int
+  }
+
+  input UpdateUserInput {
+    avatarUrl: String
+    bio: String
+    birthdate: String
+    city: String
+    country: String
+    displayName: String
+    firstname: String
+    gender: String
+    hasOnboarded: Boolean
     height: Int
     lastname: String
     weight: Int
