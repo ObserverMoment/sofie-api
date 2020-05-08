@@ -12,14 +12,10 @@ const resolvers = {
       })
     },
     userByUid: async (r, { uid }, { selected, prisma }, i) => {
-      const user = await prisma.user.findOne({
+      return prisma.user.findOne({
         where: { firebaseUid: uid },
         select: selected.User
       })
-      console.log(user)
-      console.log(typeof user.birthdate)
-      console.log(user.birthdate.toString())
-      return user
     },
     users: async (r, a, { selected, prisma }, i) => {
       return prisma.user.findMany({ select: selected.User })
@@ -50,7 +46,7 @@ const resolvers = {
     updateUser: async (r, { id, data }, { selected, prisma }, i) => {
       // Handle datetime conversion.
       const formattedData = data.birthdate
-        ? { ...data, birthdate: new Date(data.birthdate).toUTCString }
+        ? { ...data, birthdate: new Date(data.birthdate) }
         : data
       return prisma.user.update({
         where: { id },

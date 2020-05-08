@@ -57,15 +57,16 @@ const typeDefs = gql`
     bio: String
     birthdate: String
     city: String
-    country: String
+    countryCode: String
     displayName: String
     firstname: String
     gender: String
     gymBox: String
     hasOnboarded: Boolean!
-    height: Int
+    height: Float
     lastname: String
-    weight: Int
+    unitSystem: String
+    weight: Float
   }
 
   input UpdateUserInput {
@@ -73,14 +74,16 @@ const typeDefs = gql`
     bio: String
     birthdate: String
     city: String
-    country: String
+    countryCode: String
     displayName: String
     firstname: String
     gender: String
+    gymBox: String
     hasOnboarded: Boolean
-    height: Int
+    height: Float
     lastname: String
-    weight: Int
+    unitSystem: String
+    weight: Float
   }
 `
 
