@@ -12,20 +12,18 @@ datasource db {
 }
 
 model Benchmark {
-  id                 String            @default(uuid()) @id
-  createdAt          DateTime          @default(now())
-  completedOn        DateTime
-  level              Level
-  score              Int
-  note               String?
-  user               User              @relation(fields: [userId], references: [id])
-  userId             String
-  privateChallenge   PrivateChallenge? @relation(fields: [privateChallengeId], references: [id])
-  privateChallengeId String?
-  publicChallenge    PublicChallenge?  @relation(fields: [publicChallengeId], references: [id])
-  publicChallengeId  String?
-  benchmarkVideo     BenchmarkVideo?   @relation(fields: [benchmarkVideoId], references: [id])
-  benchmarkVideoId   String?
+  id               String          @default(uuid()) @id
+  createdAt        DateTime        @default(now())
+  completedOn      DateTime
+  level            Level
+  score            Int
+  note             String?
+  user             User            @relation(fields: [userId], references: [id])
+  userId           String
+  challenge        Challenge?      @relation(fields: [challengeId], references: [id])
+  challengeId      String?
+  benchmarkVideo   BenchmarkVideo? @relation(fields: [benchmarkVideoId], references: [id])
+  benchmarkVideoId String?
 }
 
 model BenchmarkVideo {
@@ -70,49 +68,38 @@ model BenchmarkVideoCommentReplies {
   benchmarkVideoCommentId String
 }
 
-model PrivateChallenge {
-  id          String      @default(uuid()) @id
-  createdAt   DateTime    @default(now())
-  name        String      @unique
+model Challenge {
+  id          String          @default(uuid()) @id
+  createdAt   DateTime        @default(now())
+  scope       AccessScopeType @default(PRIVATE)
+  name        String          @unique
   category    String?
   description String?
   imageUrl    String?
-  league      League      @relation(fields: [leagueId], references: [id])
-  leagueId    String
-  user        User        @relation(fields: [userId], references: [id])
+  group       Group           @relation(fields: [groupId], references: [id])
+  groupId     String
+  user        User            @relation(fields: [userId], references: [id])
   userId      String
-  workout     Workout     @relation(fields: [workoutId], references: [id])
-  workoutId   String
+  workout     Workout[]       @relation(references: [id])
   benchmarks  Benchmark[]
+  watchers    User[]          @relation("watchersToChallenges", references: [id])
 }
 
-model PublicChallenge {
-  id          String      @default(uuid()) @id
-  createdAt   DateTime    @default(now())
-  name        String      @unique
-  category    String?
+model Group {
+  id          String          @default(uuid()) @id
+  scope       AccessScopeType @default(PRIVATE)
+  logoUrl     String?
+  name        String          @unique
+  countryCode String?
   description String?
-  imageUrl    String?
-  User        User?       @relation(fields: [userId], references: [id])
-  userId      String?
-  workout     Workout     @relation(fields: [workoutId], references: [id])
-  workoutId   String
-  benchmarks  Benchmark[]
-}
-
-model League {
-  id                String             @default(uuid()) @id
-  logoUrl           String?
-  name              String             @unique
-  countryCode       String?
-  description       String?
-  users             User[]             @relation(references: [id])
-  privateChallenges PrivateChallenge[]
+  users       User[]          @relation(references: [id])
+  challenges  Challenge[]
 }
 
 model Move {
-  id           String        @default(uuid()) @id
-  name         String        @unique
+  id           String          @default(uuid()) @id
+  scope        AccessScopeType @default(PRIVATE)
+  name         String          @unique
   description  String?
   demoVideoUrl String?
   workoutMoves WorkoutMove[]
@@ -131,16 +118,16 @@ model WorkoutMove {
 }
 
 model Workout {
-  id                String             @default(uuid()) @id
-  name              String             @unique
-  category          WodCategory
-  summary           String
-  description       String?
-  workoutType       WorkoutType
-  workoutMoves      WorkoutMove[]
-  worldRecords      WorldRecord[]
-  privateChallenges PrivateChallenge[]
-  publicChallenges  PublicChallenge[]
+  id           String          @default(uuid()) @id
+  name         String          @unique
+  category     WodCategory
+  scope        AccessScopeType @default(PRIVATE)
+  summary      String?
+  description  String?
+  workoutType  WorkoutType
+  workoutMoves WorkoutMove[]
+  worldRecords WorldRecord[]
+  challenges   Challenge[]     @relation(references: [id])
 }
 
 model WorldRecord {
@@ -177,24 +164,45 @@ model User {
   countryCode                  String?
   unitSystem                   UnitSystem                     @default(METRIC)
   benchmarks                   Benchmark[]
-  leagues                      League[]
+  groups                       Group[]
   worldRecords                 WorldRecord[]
-  privateChallenges            PrivateChallenge[]
-  publicChallenges             PublicChallenge[]
+  challenges                   Challenge[]
   benchmarkVideoValidations    BenchmarkVideoValidation[]
   benchmarkVideoComments       BenchmarkVideoComment[]
   BenchmarkVideoCommentReplies BenchmarkVideoCommentReplies[]
+  watchedChallenges            Challenge[]                    @relation("watchersToChallenges", references: [id])
+  followers                    UserConnection[]               @relation("followee")
+  following                    UserConnection[]               @relation("follower")
+}
+
+// Need to check if the below names are the correct way around
+// What actually happens (what query is made) when you run User.followers with @relation("followee")?
+// Does it get all UserConnections where followeeId = user.id?
+// If so then this is probably the correct way around...
+// As it would be all the instances where the user is the followee.
+// https://github.com/prisma/prisma/issues/1483
+model UserConnection {
+  id         String   @default(uuid()) @id
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  follower   User     @relation("follower", fields: [followerId], references: [id])
+  followerId String
+  followee   User?    @relation("followee", fields: [followeeId], references: [id])
+  followeeId String?
 }
 
 // Enums
+enum AccessScopeType {
+  OFFICIAL
+  PUBLIC
+  GROUP
+  PRIVATE
+}
+
 enum Gender {
   MALE
   FEMALE
-}
-
-enum UnitSystem {
-  IMPERIAL
-  METRIC
+  UNSPECIFIED
 }
 
 enum Level {
@@ -225,8 +233,7 @@ enum WorkoutType {
   FORLOAD
 }
 
-// Used on table WorkoutToChallenge to allow polymorphic relation
-enum ChallengeType {
-  PRIVATE
-  PUBLIC
+enum UnitSystem {
+  IMPERIAL
+  METRIC
 }

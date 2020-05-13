@@ -1,7 +1,7 @@
 const DataLoader = require('dataloader')
 const prisma = require('../prisma/client')
 
-const createWorldRecordFromWorkoutIdLoader = () =>
+const createWorldRecordsFromWorkoutIdLoader = () =>
   new DataLoader(batchGetWorldRecordsByWorkoutId)
 
 async function batchGetWorldRecordsByWorkoutId (workoutIds) {
@@ -12,9 +12,9 @@ async function batchGetWorldRecordsByWorkoutId (workoutIds) {
   })
   return workoutIds.map(
     workoutId =>
-      results.find(r => r.workoutId === workoutId) ||
+      results.filter(r => r.workoutId === workoutId) ||
       new Error(
-        `batchGetWorldRecordsByWorkoutId: No world record found for ${workoutId}`
+        `batchGetWorldRecordsByWorkoutId: No world records found for ${workoutId}`
       )
   )
 }
@@ -42,6 +42,6 @@ async function batchGetWorkoutMovesByWorkoutId (workoutIds) {
 }
 
 module.exports = {
-  createWorldRecordFromWorkoutIdLoader,
+  createWorldRecordsFromWorkoutIdLoader,
   createWorkoutMovesFromWorkoutIdLoader
 }

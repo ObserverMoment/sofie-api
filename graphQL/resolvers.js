@@ -60,8 +60,8 @@ const resolvers = {
     workoutMoves: async ({ id }, a, { workoutMovesFromWorkoutIdLoader }, i) => {
       return workoutMovesFromWorkoutIdLoader.load(id)
     },
-    worldRecord: async ({ id }, a, { worldRecordFromWorkoutIdLoader }, i) => {
-      return worldRecordFromWorkoutIdLoader.load(id)
+    worldRecords: async ({ id }, a, { worldRecordsFromWorkoutIdLoader }, i) => {
+      return worldRecordsFromWorkoutIdLoader.load(id)
     }
   }
 }

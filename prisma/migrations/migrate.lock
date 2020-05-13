@@ -3,10 +3,4 @@
 # Prisma Migrate lockfile v1
 # Read more about conflict resolution here: TODO
 
-20200417123327-reset-schema
-20200417123550-reset-schema-2
-20200417140628-user-has-onboarded
-20200504161447-add-unit-system-to-user
-20200505120348-user-height-weight-to-float
-20200507163651-user-country-to-country-code
-20200508164953-challenges-comments-replies-and-more
+20200513182524-reset

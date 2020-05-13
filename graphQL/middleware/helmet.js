@@ -14,8 +14,6 @@ async function helmet (parent, args, context, info, next) {
     return new ApolloError(
       "Something happened which shouldn't have. The API may be broken..."
     )
-  } finally {
-    prisma.disconnect()
   }
 }
 

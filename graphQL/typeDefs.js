@@ -28,7 +28,7 @@ const typeDefs = gql`
     description: String
     workoutType: String!
     workoutMoves: [WorkoutMove!]!
-    worldRecord: WorldRecord
+    worldRecords: [WorldRecord!]
   }
 
   type WorkoutMove {
