@@ -1,0 +1,54 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "DeleteEnum",
+      "enum": "RecordType"
+    },
+    {
+      "tag": "UpdateEnum",
+      "enum": "WorkoutType",
+      "createdValues": [
+        "AMROUNDS",
+        "FORDISTANCE"
+      ]
+    },
+    {
+      "tag": "UpdateField",
+      "model": "WorldRecord",
+      "field": "recordType",
+      "type": "WorkoutType"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "WorldRecord",
+          "field": "recordType"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "WorldRecord",
+          "field": "recordType"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "AMRAP"
+    },
+    {
+      "tag": "UpdateField",
+      "model": "ScheduledWorkout",
+      "field": "notes",
+      "arity": "Optional"
+    }
+  ]
+}

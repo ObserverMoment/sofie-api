@@ -5,10 +5,10 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// url      = env("DATABASE_URL")
+// url = "***"
 datasource db {
   provider = "postgresql"
-  url      = "postgres://vksegplfohzkfb:4006286c49b2ccada42a32cc56f0405ae370152bd9e594d3f38b5d1f34cebadb@ec2-79-125-26-232.eu-west-1.compute.amazonaws.com:5432/dfj0e91erhbqs1"
+  url = "***"
 }
 
 model Benchmark {
@@ -101,9 +101,6 @@ model Group {
 
 model Move {
   id           String          @default(uuid()) @id
-  createdAt    DateTime        @default(now())
-  createdBy    User?           @relation(fields: [createdById], references: [id])
-  createdById  String?
   scope        AccessScopeType @default(PRIVATE)
   name         String          @unique
   description  String?
@@ -112,60 +109,41 @@ model Move {
 }
 
 model WorkoutMove {
-  id                  String   @default(uuid()) @id
-  createdAt           DateTime @default(now())
-  createdBy           User?    @relation(fields: [createdById], references: [id])
-  createdById         String?
+  id                  String  @default(uuid()) @id
   beginnerScaling     String?
   intermediateScaling String?
   prescribedScaling   String?
   repsPerRound        Int?
-  move                Move     @relation(fields: [moveId], references: [id])
+  move                Move    @relation(fields: [moveId], references: [id])
   moveId              String
-  workout             Workout  @relation(fields: [workoutId], references: [id])
+  workout             Workout @relation(fields: [workoutId], references: [id])
   workoutId           String
 }
 
 model Workout {
-  id                String             @default(uuid()) @id
-  createdAt         DateTime           @default(now())
-  createdBy         User?              @relation(fields: [createdById], references: [id])
-  createdById       String?
-  name              String             @unique
-  summary           String?
-  description       String?
-  scope             AccessScopeType    @default(PRIVATE)
-  crossfitCategory  WodCategory?
-  workoutType       WorkoutType
-  workoutMoves      WorkoutMove[]
-  worldRecords      WorldRecord[]
-  challenges        Challenge[]        @relation(references: [id])
-  scheduledWorkouts ScheduledWorkout[]
-}
-
-model ScheduledWorkout {
-  id          String   @default(uuid()) @id
-  createdAt   DateTime @default(now())
-  createdBy   User     @relation(fields: [createdById], references: [id])
-  createdById String
-  notes       String?
-  scheduledAt DateTime @default(now())
-  completed   Boolean  @default(false)
-  workout     Workout  @relation(fields: [workoutId], references: [id])
-  workoutId   String
+  id           String          @default(uuid()) @id
+  name         String          @unique
+  category     WodCategory
+  scope        AccessScopeType @default(PRIVATE)
+  summary      String?
+  description  String?
+  workoutType  WorkoutType
+  workoutMoves WorkoutMove[]
+  worldRecords WorldRecord[]
+  challenges   Challenge[]     @relation(references: [id])
 }
 
 model WorldRecord {
-  id          String      @default(uuid()) @id
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  id          String     @default(uuid()) @id
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
   notes       String?
   recordValue Int
-  recordType  WorkoutType @default(AMRAP)
+  recordType  RecordType
   gender      Gender
-  workout     Workout     @relation(fields: [workoutId], references: [id])
+  workout     Workout    @relation(fields: [workoutId], references: [id])
   workoutId   String
-  user        User?       @relation(fields: [userId], references: [id])
+  user        User?      @relation(fields: [userId], references: [id])
   userId      String?
 }
 
@@ -200,10 +178,6 @@ model User {
   groupsWhereAdmin             Group[]                        @relation("group_admin")
   groupsWhereMember            Group[]                        @relation("group_member")
   groupsWhereCreator           Group[]                        @relation("group_creator")
-  moves                        Move[]
-  workoutMoves                 WorkoutMove[]
-  workouts                     Workout[]
-  scheduledWorkouts            ScheduledWorkout[]
 }
 
 // Need to check if the below names are the correct way around
@@ -244,11 +218,9 @@ enum Level {
 
 // AMRAP in reps
 // TIME in seconds
-// LOAD in kgs
-enum WorkoutType {
+// LOAD in lbs
+enum RecordType {
   AMRAP
-  AMROUNDS
-  FORDISTANCE
   FORTIME
   FORLOAD
 }
@@ -258,6 +230,12 @@ enum WodCategory {
   GIRLS
   HEROES
   NOTABLES
+}
+
+enum WorkoutType {
+  AMRAP
+  FORTIME
+  FORLOAD
 }
 
 enum UnitSystem {

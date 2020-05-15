@@ -1,0 +1,65 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "CreateField",
+      "model": "Workout",
+      "field": "scheduledWorkouts",
+      "type": "ScheduledWorkout",
+      "arity": "List"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "Workout",
+      "field": "ScheduledWorkout"
+    },
+    {
+      "tag": "CreateField",
+      "model": "User",
+      "field": "moves",
+      "type": "Move",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateField",
+      "model": "User",
+      "field": "workoutMoves",
+      "type": "WorkoutMove",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateField",
+      "model": "User",
+      "field": "workouts",
+      "type": "Workout",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateField",
+      "model": "User",
+      "field": "scheduledWorkouts",
+      "type": "ScheduledWorkout",
+      "arity": "List"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "User",
+      "field": "Move"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "User",
+      "field": "WorkoutMove"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "User",
+      "field": "Workout"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "User",
+      "field": "ScheduledWorkout"
+    }
+  ]
+}
