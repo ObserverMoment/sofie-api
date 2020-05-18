@@ -3,15 +3,6 @@
 # Prisma Migrate lockfile v1
 # Read more about conflict resolution here: TODO
 
-20200513182524-reset
-20200514182104-user-to-group-relations
-20200515110545-create-scheduled-model
-20200515110734-create-scheduled-model-2
-20200515111104-create-scheduled-model-notes
-20200515173440-workout-types-enum-update
-20200515173550-workout-types-enum-update-2
-20200515173735-workout-types-enum-update-3
-20200515173830-workout-types-enum-update
-20200515173925-workout-types-enum-update-2
-20200515174003-workout-types-enum-update
-20200515174728-workout-crossfit-category-optional
+20200518154142-reset
+20200518170543-optional-challenge-to-scheduled-workout
+20200518170619-optional-challenge-to-scheduled-workout

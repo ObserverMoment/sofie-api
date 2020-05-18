@@ -20,7 +20,8 @@ const resolvers = {
     users: async (r, a, { selected, prisma }, i) => {
       return prisma.user.findMany({ select: selected.User })
     },
-    workouts: async (r, a, { selected, prisma }, i) => {
+    workouts: async (r, { scope }, { selected, prisma }, i) => {
+      console.log('scope', scope)
       // This avoids duplicating calls - caused by prisma's select functionality also being able to select relations.
       // These calls are made via the Workout subfields and handled by Dataloaders
       const omitRelationsFromSelect = ['workoutMoves', 'worldRecord']
@@ -31,7 +32,9 @@ const resolvers = {
         }),
         {}
       )
-      return prisma.workout.findMany({ select })
+      return scope === 'ALL'
+        ? prisma.workout.findMany({ select })
+        : prisma.workout.findMany({ where: { scope }, select })
     }
   },
   Mutation: {

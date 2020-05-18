@@ -7,7 +7,7 @@ const typeDefs = gql`
     moves: [Move!]!
     userByUid(uid: String!): User
     users: [User!]!
-    workouts: [Workout!]!
+    workouts(scope: String!): [Workout!]!
   }
 
   type Mutation {
@@ -15,27 +15,77 @@ const typeDefs = gql`
     updateUser(id: String!, data: UpdateUserInput!): User!
   }
 
+  type Benchmark {
+    id: ID!
+    completedOn: String
+    score: Int!
+    note: String
+    completedBy: User!
+    challenge: Challenge!
+  }
+
+  type Challenge {
+    id: ID!
+    scope: String!
+    name: String
+    category: String
+    description: String
+    imageUrl: String
+    group: Group
+    createdBy: User
+    workouts: [Workout!]
+    benchmarks: [Benchmark!]
+    watchers: [User!]
+  }
+
+  type Equipment {
+    id: ID!
+    name: String!
+    imageUrl: String
+    moves: [Move!]!
+  }
+
+  type Group {
+    id: ID!
+    scope: String!
+    logoUrl: String
+    name: String!
+    countryCode: String
+    description: String
+    createdBy: User
+    admins: [User!]
+    members: [User!]
+    challenges: [Challenge!]
+  }
+
   type Move {
     id: ID!
     name: String!
+    description: String
+    demoVideoUrl: String
+    scope: String!
+    equipment: Equipment
     workoutMoves: [WorkoutMove!]!
   }
 
   type Workout {
     id: ID!
     name: String!
-    summary: String!
+    summary: String
     description: String
-    workoutType: String!
-    workoutMoves: [WorkoutMove!]!
+    workoutScoreType: String!
+    difficultyLevel: String!
+    scope: String!
+    crossfitWodCategory: String
+    challenges: [Challenge!]
+    workoutMoves: [WorkoutMove!]
     worldRecords: [WorldRecord!]
   }
 
   type WorkoutMove {
     id: ID!
-    beginnerScaling: String
-    intermediateScaling: String
-    prescribedScaling: String
+    maleLoadAmountKgs: Float
+    femaleLoadAmountKgs: Float
     repsPerRound: Int
     move: Move!
     workout: Workout!
@@ -45,7 +95,7 @@ const typeDefs = gql`
     id: ID!
     notes: String
     recordValue: Int!
-    recordType: String!
+    workoutScoreType: String!
     gender: String!
     workout: Workout!
     user: User
@@ -84,6 +134,25 @@ const typeDefs = gql`
     lastname: String
     unitSystem: String
     weight: Float
+  }
+
+  input CreateWorkoutInput {
+    userId: String!
+    name: String!
+    summary: String
+    description: String
+    difficultyLevel: String
+    workoutScoreType: String!
+    scope: String
+    crossfitWodCategory: String
+    workoutMoves: [CreateWorkoutMoveInput!]!
+  }
+
+  input CreateWorkoutMoveInput {
+    maleLoadAmountKgs: Float!
+    femaleLoadAmountKgs: Float!
+    reps: Int!
+    moveId: String!
   }
 `
 

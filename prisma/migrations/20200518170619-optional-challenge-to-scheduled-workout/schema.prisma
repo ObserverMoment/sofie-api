@@ -15,11 +15,10 @@ model Benchmark {
   id               String          @default(uuid()) @id
   createdAt        DateTime        @default(now())
   completedOn      DateTime
-  level            Level
   score            Int
   note             String?
-  user             User            @relation(fields: [userId], references: [id])
-  userId           String
+  completedBy      User            @relation(fields: [completedById], references: [id])
+  completedById    String
   challenge        Challenge?      @relation(fields: [challengeId], references: [id])
   challengeId      String?
   benchmarkVideo   BenchmarkVideo? @relation(fields: [benchmarkVideoId], references: [id])
@@ -69,20 +68,21 @@ model BenchmarkVideoCommentReplies {
 }
 
 model Challenge {
-  id          String          @default(uuid()) @id
-  createdAt   DateTime        @default(now())
-  scope       AccessScopeType @default(PRIVATE)
-  name        String          @unique
-  category    String?
-  description String?
-  imageUrl    String?
-  group       Group           @relation(fields: [groupId], references: [id])
-  groupId     String
-  user        User            @relation(fields: [userId], references: [id])
-  userId      String
-  workout     Workout[]       @relation(references: [id])
-  benchmarks  Benchmark[]
-  watchers    User[]          @relation("watchersToChallenges", references: [id])
+  id               String             @default(uuid()) @id
+  createdAt        DateTime           @default(now())
+  scope            AccessScopeType    @default(PRIVATE)
+  name             String             @unique
+  category         String?
+  description      String?
+  imageUrl         String?
+  group            Group              @relation(fields: [groupId], references: [id])
+  groupId          String
+  createdBy        User               @relation(fields: [createdById], references: [id])
+  createdById      String
+  workouts         Workout[]          @relation(references: [id])
+  benchmarks       Benchmark[]
+  watchers         User[]             @relation("watchersToChallenges", references: [id])
+  scheduledWorkout ScheduledWorkout[]
 }
 
 model Group {
@@ -108,6 +108,8 @@ model Move {
   name         String          @unique
   description  String?
   demoVideoUrl String?
+  equipment    Equipment?      @relation(fields: [equipmentId], references: [id])
+  equipmentId  String?
   workoutMoves WorkoutMove[]
 }
 
@@ -116,57 +118,66 @@ model WorkoutMove {
   createdAt           DateTime @default(now())
   createdBy           User?    @relation(fields: [createdById], references: [id])
   createdById         String?
-  beginnerScaling     String?
-  intermediateScaling String?
-  prescribedScaling   String?
-  repsPerRound        Int?
+  reps                Int?
+  maleLoadAmountKgs   Float?
+  femaleLoadAmountKgs Float?
   move                Move     @relation(fields: [moveId], references: [id])
   moveId              String
   workout             Workout  @relation(fields: [workoutId], references: [id])
   workoutId           String
 }
 
+model Equipment {
+  id       String  @default(uuid()) @id
+  name     String
+  imageUrl String?
+  moves    Move[]
+}
+
 model Workout {
-  id                String             @default(uuid()) @id
-  createdAt         DateTime           @default(now())
-  createdBy         User?              @relation(fields: [createdById], references: [id])
-  createdById       String?
-  name              String             @unique
-  summary           String?
-  description       String?
-  scope             AccessScopeType    @default(PRIVATE)
-  crossfitCategory  WodCategory?
-  workoutType       WorkoutType
-  workoutMoves      WorkoutMove[]
-  worldRecords      WorldRecord[]
-  challenges        Challenge[]        @relation(references: [id])
-  scheduledWorkouts ScheduledWorkout[]
+  id                  String               @default(uuid()) @id
+  createdAt           DateTime             @default(now())
+  createdBy           User?                @relation(fields: [createdById], references: [id])
+  createdById         String?
+  name                String               @unique
+  summary             String?
+  description         String?
+  difficultyLevel     DifficultyLevel      @default(ONE)
+  scope               AccessScopeType      @default(PRIVATE)
+  crossfitWodCategory CrossfitWodCategory?
+  workoutScoreType    WorkoutScoreType     @default(AMREPS)
+  workoutMoves        WorkoutMove[]
+  worldRecords        WorldRecord[]
+  challenges          Challenge[]          @relation(references: [id])
+  scheduledWorkouts   ScheduledWorkout[]
 }
 
 model ScheduledWorkout {
-  id          String   @default(uuid()) @id
-  createdAt   DateTime @default(now())
-  createdBy   User     @relation(fields: [createdById], references: [id])
+  id          String     @default(uuid()) @id
+  createdAt   DateTime   @default(now())
+  createdBy   User       @relation(fields: [createdById], references: [id])
   createdById String
   notes       String?
-  scheduledAt DateTime @default(now())
-  completed   Boolean  @default(false)
-  workout     Workout  @relation(fields: [workoutId], references: [id])
+  scheduledAt DateTime   @default(now())
+  completed   Boolean    @default(false)
+  workout     Workout    @relation(fields: [workoutId], references: [id])
   workoutId   String
+  challenge   Challenge? @relation(fields: [challengeId], references: [id])
+  challengeId String?
 }
 
 model WorldRecord {
-  id          String      @default(uuid()) @id
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  notes       String?
-  recordValue Int
-  recordType  WorkoutType @default(AMRAP)
-  gender      Gender
-  workout     Workout     @relation(fields: [workoutId], references: [id])
-  workoutId   String
-  user        User?       @relation(fields: [userId], references: [id])
-  userId      String?
+  id               String           @default(uuid()) @id
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  notes            String?
+  recordValue      Int
+  workoutScoreType WorkoutScoreType @default(AMREPS)
+  gender           Gender
+  workout          Workout          @relation(fields: [workoutId], references: [id])
+  workoutId        String
+  user             User?            @relation(fields: [userId], references: [id])
+  userId           String?
 }
 
 // Height in cms / weight in kgs
@@ -188,6 +199,7 @@ model User {
   townCity                     String?
   countryCode                  String?
   unitSystem                   UnitSystem                     @default(METRIC)
+  subscriptionLevel            UserSubscriptionLevel          @default(FREE)
   benchmarks                   Benchmark[]
   worldRecords                 WorldRecord[]
   challenges                   Challenge[]
@@ -230,31 +242,41 @@ enum AccessScopeType {
   PRIVATE
 }
 
+enum UserSubscriptionLevel {
+  FREE
+  PAID
+}
+
 enum Gender {
   MALE
   FEMALE
   UNSPECIFIED
 }
 
-enum Level {
-  BEGINNER
-  INTERMEDIATE
-  ELITE
+enum DifficultyLevel {
+  ONE
+  TWO
+  THREE
+  FOUR
 }
 
-// AMRAP in reps
+// AMREPS in reps
+// AMROUNDS in rounds
 // TIME in seconds
 // LOAD in kgs
-enum WorkoutType {
-  AMRAP
+// EMON in rounds completed (if doing standard EMON then this unit value is minutes)
+// Also used for: Every 5 miniutes on the 5 minutes etc - free text in description?
+enum WorkoutScoreType {
+  AMREPS
   AMROUNDS
+  EMOM
   FORDISTANCE
   FORTIME
   FORLOAD
 }
 
 // https://beyondthewhiteboard.com/gyms/2-main-site/leader_boards/414
-enum WodCategory {
+enum CrossfitWodCategory {
   GIRLS
   HEROES
   NOTABLES

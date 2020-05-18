@@ -13,6 +13,14 @@
     },
     {
       "tag": "CreateEnum",
+      "enum": "UserSubscriptionLevel",
+      "values": [
+        "FREE",
+        "PAID"
+      ]
+    },
+    {
+      "tag": "CreateEnum",
       "enum": "Gender",
       "values": [
         "MALE",
@@ -22,38 +30,33 @@
     },
     {
       "tag": "CreateEnum",
-      "enum": "Level",
+      "enum": "DifficultyLevel",
       "values": [
-        "BEGINNER",
-        "INTERMEDIATE",
-        "ELITE"
+        "ONE",
+        "TWO",
+        "THREE",
+        "FOUR"
       ]
     },
     {
       "tag": "CreateEnum",
-      "enum": "RecordType",
+      "enum": "WorkoutScoreType",
       "values": [
-        "AMRAP",
+        "AMREPS",
+        "AMROUNDS",
+        "EMOM",
+        "FORDISTANCE",
         "FORTIME",
         "FORLOAD"
       ]
     },
     {
       "tag": "CreateEnum",
-      "enum": "WodCategory",
+      "enum": "CrossfitWodCategory",
       "values": [
         "GIRLS",
         "HEROES",
         "NOTABLES"
-      ]
-    },
-    {
-      "tag": "CreateEnum",
-      "enum": "WorkoutType",
-      "values": [
-        "AMRAP",
-        "FORTIME",
-        "FORLOAD"
       ]
     },
     {
@@ -84,7 +87,7 @@
         "source": "db"
       },
       "argument": "url",
-      "value": "\"postgres://vksegplfohzkfb:4006286c49b2ccada42a32cc56f0405ae370152bd9e594d3f38b5d1f34cebadb@ec2-79-125-26-232.eu-west-1.compute.amazonaws.com:5432/dfj0e91erhbqs1\""
+      "value": "env(\"DATABASE_URL\")"
     },
     {
       "tag": "CreateModel",
@@ -175,13 +178,6 @@
     {
       "tag": "CreateField",
       "model": "Benchmark",
-      "field": "level",
-      "type": "Level",
-      "arity": "Required"
-    },
-    {
-      "tag": "CreateField",
-      "model": "Benchmark",
       "field": "score",
       "type": "Int",
       "arity": "Required"
@@ -196,7 +192,7 @@
     {
       "tag": "CreateField",
       "model": "Benchmark",
-      "field": "user",
+      "field": "completedBy",
       "type": "User",
       "arity": "Required"
     },
@@ -206,7 +202,7 @@
         "path": {
           "tag": "Field",
           "model": "Benchmark",
-          "field": "user"
+          "field": "completedBy"
         },
         "directive": "relation"
       }
@@ -218,12 +214,12 @@
         "path": {
           "tag": "Field",
           "model": "Benchmark",
-          "field": "user"
+          "field": "completedBy"
         },
         "directive": "relation"
       },
       "argument": "fields",
-      "value": "[userId]"
+      "value": "[completedById]"
     },
     {
       "tag": "CreateArgument",
@@ -232,7 +228,7 @@
         "path": {
           "tag": "Field",
           "model": "Benchmark",
-          "field": "user"
+          "field": "completedBy"
         },
         "directive": "relation"
       },
@@ -242,7 +238,7 @@
     {
       "tag": "CreateField",
       "model": "Benchmark",
-      "field": "userId",
+      "field": "completedById",
       "type": "String",
       "arity": "Required"
     },
@@ -1262,7 +1258,7 @@
     {
       "tag": "CreateField",
       "model": "Challenge",
-      "field": "user",
+      "field": "createdBy",
       "type": "User",
       "arity": "Required"
     },
@@ -1272,7 +1268,7 @@
         "path": {
           "tag": "Field",
           "model": "Challenge",
-          "field": "user"
+          "field": "createdBy"
         },
         "directive": "relation"
       }
@@ -1284,12 +1280,12 @@
         "path": {
           "tag": "Field",
           "model": "Challenge",
-          "field": "user"
+          "field": "createdBy"
         },
         "directive": "relation"
       },
       "argument": "fields",
-      "value": "[userId]"
+      "value": "[createdById]"
     },
     {
       "tag": "CreateArgument",
@@ -1298,7 +1294,7 @@
         "path": {
           "tag": "Field",
           "model": "Challenge",
-          "field": "user"
+          "field": "createdBy"
         },
         "directive": "relation"
       },
@@ -1308,14 +1304,14 @@
     {
       "tag": "CreateField",
       "model": "Challenge",
-      "field": "userId",
+      "field": "createdById",
       "type": "String",
       "arity": "Required"
     },
     {
       "tag": "CreateField",
       "model": "Challenge",
-      "field": "workout",
+      "field": "workouts",
       "type": "Workout",
       "arity": "List"
     },
@@ -1325,7 +1321,7 @@
         "path": {
           "tag": "Field",
           "model": "Challenge",
-          "field": "workout"
+          "field": "workouts"
         },
         "directive": "relation"
       }
@@ -1337,7 +1333,7 @@
         "path": {
           "tag": "Field",
           "model": "Challenge",
-          "field": "workout"
+          "field": "workouts"
         },
         "directive": "relation"
       },
@@ -1518,9 +1514,9 @@
     {
       "tag": "CreateField",
       "model": "Group",
-      "field": "users",
+      "field": "createdBy",
       "type": "User",
-      "arity": "List"
+      "arity": "Required"
     },
     {
       "tag": "CreateDirective",
@@ -1528,7 +1524,7 @@
         "path": {
           "tag": "Field",
           "model": "Group",
-          "field": "users"
+          "field": "createdBy"
         },
         "directive": "relation"
       }
@@ -1540,7 +1536,134 @@
         "path": {
           "tag": "Field",
           "model": "Group",
-          "field": "users"
+          "field": "createdBy"
+        },
+        "directive": "relation"
+      },
+      "argument": "",
+      "value": "\"group_creator\""
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Group",
+          "field": "createdBy"
+        },
+        "directive": "relation"
+      },
+      "argument": "fields",
+      "value": "[createdById]"
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Group",
+          "field": "createdBy"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[id]"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Group",
+      "field": "createdById",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Group",
+      "field": "admins",
+      "type": "User",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Group",
+          "field": "admins"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Group",
+          "field": "admins"
+        },
+        "directive": "relation"
+      },
+      "argument": "",
+      "value": "\"group_admin\""
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Group",
+          "field": "admins"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[id]"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Group",
+      "field": "members",
+      "type": "User",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Group",
+          "field": "members"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Group",
+          "field": "members"
+        },
+        "directive": "relation"
+      },
+      "argument": "",
+      "value": "\"group_member\""
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Group",
+          "field": "members"
         },
         "directive": "relation"
       },
@@ -1600,6 +1723,91 @@
         },
         "directive": "id"
       }
+    },
+    {
+      "tag": "CreateField",
+      "model": "Move",
+      "field": "createdAt",
+      "type": "DateTime",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Move",
+          "field": "createdAt"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Move",
+          "field": "createdAt"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "now()"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Move",
+      "field": "createdBy",
+      "type": "User",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Move",
+          "field": "createdBy"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Move",
+          "field": "createdBy"
+        },
+        "directive": "relation"
+      },
+      "argument": "fields",
+      "value": "[createdById]"
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Move",
+          "field": "createdBy"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[id]"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Move",
+      "field": "createdById",
+      "type": "String",
+      "arity": "Optional"
     },
     {
       "tag": "CreateField",
@@ -1668,6 +1876,59 @@
     {
       "tag": "CreateField",
       "model": "Move",
+      "field": "equipment",
+      "type": "Equipment",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Move",
+          "field": "equipment"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Move",
+          "field": "equipment"
+        },
+        "directive": "relation"
+      },
+      "argument": "fields",
+      "value": "[equipmentId]"
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Move",
+          "field": "equipment"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[id]"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Move",
+      "field": "equipmentId",
+      "type": "String",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Move",
       "field": "workoutMoves",
       "type": "WorkoutMove",
       "arity": "List"
@@ -1722,29 +1983,107 @@
     {
       "tag": "CreateField",
       "model": "WorkoutMove",
-      "field": "beginnerScaling",
+      "field": "createdAt",
+      "type": "DateTime",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "WorkoutMove",
+          "field": "createdAt"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "WorkoutMove",
+          "field": "createdAt"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "now()"
+    },
+    {
+      "tag": "CreateField",
+      "model": "WorkoutMove",
+      "field": "createdBy",
+      "type": "User",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "WorkoutMove",
+          "field": "createdBy"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "WorkoutMove",
+          "field": "createdBy"
+        },
+        "directive": "relation"
+      },
+      "argument": "fields",
+      "value": "[createdById]"
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "WorkoutMove",
+          "field": "createdBy"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[id]"
+    },
+    {
+      "tag": "CreateField",
+      "model": "WorkoutMove",
+      "field": "createdById",
       "type": "String",
       "arity": "Optional"
     },
     {
       "tag": "CreateField",
       "model": "WorkoutMove",
-      "field": "intermediateScaling",
-      "type": "String",
-      "arity": "Optional"
-    },
-    {
-      "tag": "CreateField",
-      "model": "WorkoutMove",
-      "field": "prescribedScaling",
-      "type": "String",
-      "arity": "Optional"
-    },
-    {
-      "tag": "CreateField",
-      "model": "WorkoutMove",
-      "field": "repsPerRound",
+      "field": "reps",
       "type": "Int",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "WorkoutMove",
+      "field": "maleLoadAmountKgs",
+      "type": "Float",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "WorkoutMove",
+      "field": "femaleLoadAmountKgs",
+      "type": "Float",
       "arity": "Optional"
     },
     {
@@ -1855,6 +2194,74 @@
     },
     {
       "tag": "CreateModel",
+      "model": "Equipment"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Equipment",
+      "field": "id",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Equipment",
+          "field": "id"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Equipment",
+          "field": "id"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "uuid()"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Equipment",
+          "field": "id"
+        },
+        "directive": "id"
+      }
+    },
+    {
+      "tag": "CreateField",
+      "model": "Equipment",
+      "field": "name",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Equipment",
+      "field": "imageUrl",
+      "type": "String",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Equipment",
+      "field": "moves",
+      "type": "Move",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateModel",
       "model": "Workout"
     },
     {
@@ -1903,6 +2310,91 @@
     {
       "tag": "CreateField",
       "model": "Workout",
+      "field": "createdAt",
+      "type": "DateTime",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Workout",
+          "field": "createdAt"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Workout",
+          "field": "createdAt"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "now()"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Workout",
+      "field": "createdBy",
+      "type": "User",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Workout",
+          "field": "createdBy"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Workout",
+          "field": "createdBy"
+        },
+        "directive": "relation"
+      },
+      "argument": "fields",
+      "value": "[createdById]"
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Workout",
+          "field": "createdBy"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[id]"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Workout",
+      "field": "createdById",
+      "type": "String",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Workout",
       "field": "name",
       "type": "String",
       "arity": "Required"
@@ -1921,9 +2413,48 @@
     {
       "tag": "CreateField",
       "model": "Workout",
-      "field": "category",
-      "type": "WodCategory",
+      "field": "summary",
+      "type": "String",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Workout",
+      "field": "description",
+      "type": "String",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Workout",
+      "field": "difficultyLevel",
+      "type": "DifficultyLevel",
       "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Workout",
+          "field": "difficultyLevel"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Workout",
+          "field": "difficultyLevel"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "ONE"
     },
     {
       "tag": "CreateField",
@@ -1960,23 +2491,41 @@
     {
       "tag": "CreateField",
       "model": "Workout",
-      "field": "summary",
-      "type": "String",
+      "field": "crossfitWodCategory",
+      "type": "CrossfitWodCategory",
       "arity": "Optional"
     },
     {
       "tag": "CreateField",
       "model": "Workout",
-      "field": "description",
-      "type": "String",
-      "arity": "Optional"
-    },
-    {
-      "tag": "CreateField",
-      "model": "Workout",
-      "field": "workoutType",
-      "type": "WorkoutType",
+      "field": "workoutScoreType",
+      "type": "WorkoutScoreType",
       "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Workout",
+          "field": "workoutScoreType"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Workout",
+          "field": "workoutScoreType"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "AMREPS"
     },
     {
       "tag": "CreateField",
@@ -2023,6 +2572,269 @@
       },
       "argument": "references",
       "value": "[id]"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Workout",
+      "field": "scheduledWorkouts",
+      "type": "ScheduledWorkout",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateModel",
+      "model": "ScheduledWorkout"
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScheduledWorkout",
+      "field": "id",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "ScheduledWorkout",
+          "field": "id"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "ScheduledWorkout",
+          "field": "id"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "uuid()"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "ScheduledWorkout",
+          "field": "id"
+        },
+        "directive": "id"
+      }
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScheduledWorkout",
+      "field": "createdAt",
+      "type": "DateTime",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "ScheduledWorkout",
+          "field": "createdAt"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "ScheduledWorkout",
+          "field": "createdAt"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "now()"
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScheduledWorkout",
+      "field": "createdBy",
+      "type": "User",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "ScheduledWorkout",
+          "field": "createdBy"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "ScheduledWorkout",
+          "field": "createdBy"
+        },
+        "directive": "relation"
+      },
+      "argument": "fields",
+      "value": "[createdById]"
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "ScheduledWorkout",
+          "field": "createdBy"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[id]"
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScheduledWorkout",
+      "field": "createdById",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScheduledWorkout",
+      "field": "notes",
+      "type": "String",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScheduledWorkout",
+      "field": "scheduledAt",
+      "type": "DateTime",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "ScheduledWorkout",
+          "field": "scheduledAt"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "ScheduledWorkout",
+          "field": "scheduledAt"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "now()"
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScheduledWorkout",
+      "field": "completed",
+      "type": "Boolean",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "ScheduledWorkout",
+          "field": "completed"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "ScheduledWorkout",
+          "field": "completed"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "false"
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScheduledWorkout",
+      "field": "workout",
+      "type": "Workout",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "ScheduledWorkout",
+          "field": "workout"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "ScheduledWorkout",
+          "field": "workout"
+        },
+        "directive": "relation"
+      },
+      "argument": "fields",
+      "value": "[workoutId]"
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "ScheduledWorkout",
+          "field": "workout"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[id]"
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScheduledWorkout",
+      "field": "workoutId",
+      "type": "String",
+      "arity": "Required"
     },
     {
       "tag": "CreateModel",
@@ -2138,9 +2950,34 @@
     {
       "tag": "CreateField",
       "model": "WorldRecord",
-      "field": "recordType",
-      "type": "RecordType",
+      "field": "workoutScoreType",
+      "type": "WorkoutScoreType",
       "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "WorldRecord",
+          "field": "workoutScoreType"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "WorldRecord",
+          "field": "workoutScoreType"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "AMREPS"
     },
     {
       "tag": "CreateField",
@@ -2514,15 +3351,40 @@
     {
       "tag": "CreateField",
       "model": "User",
-      "field": "benchmarks",
-      "type": "Benchmark",
-      "arity": "List"
+      "field": "subscriptionLevel",
+      "type": "UserSubscriptionLevel",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "User",
+          "field": "subscriptionLevel"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "User",
+          "field": "subscriptionLevel"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "FREE"
     },
     {
       "tag": "CreateField",
       "model": "User",
-      "field": "groups",
-      "type": "Group",
+      "field": "benchmarks",
+      "type": "Benchmark",
       "arity": "List"
     },
     {
@@ -2669,6 +3531,130 @@
       },
       "argument": "",
       "value": "\"follower\""
+    },
+    {
+      "tag": "CreateField",
+      "model": "User",
+      "field": "groupsWhereAdmin",
+      "type": "Group",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "User",
+          "field": "groupsWhereAdmin"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "User",
+          "field": "groupsWhereAdmin"
+        },
+        "directive": "relation"
+      },
+      "argument": "",
+      "value": "\"group_admin\""
+    },
+    {
+      "tag": "CreateField",
+      "model": "User",
+      "field": "groupsWhereMember",
+      "type": "Group",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "User",
+          "field": "groupsWhereMember"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "User",
+          "field": "groupsWhereMember"
+        },
+        "directive": "relation"
+      },
+      "argument": "",
+      "value": "\"group_member\""
+    },
+    {
+      "tag": "CreateField",
+      "model": "User",
+      "field": "groupsWhereCreator",
+      "type": "Group",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "User",
+          "field": "groupsWhereCreator"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "User",
+          "field": "groupsWhereCreator"
+        },
+        "directive": "relation"
+      },
+      "argument": "",
+      "value": "\"group_creator\""
+    },
+    {
+      "tag": "CreateField",
+      "model": "User",
+      "field": "moves",
+      "type": "Move",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateField",
+      "model": "User",
+      "field": "workoutMoves",
+      "type": "WorkoutMove",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateField",
+      "model": "User",
+      "field": "workouts",
+      "type": "Workout",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateField",
+      "model": "User",
+      "field": "scheduledWorkouts",
+      "type": "ScheduledWorkout",
+      "arity": "List"
     },
     {
       "tag": "CreateModel",
