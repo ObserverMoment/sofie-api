@@ -13,6 +13,11 @@ const typeDefs = gql`
   type Mutation {
     createUser(uid: String!): User!
     updateUser(id: String!, data: UpdateUserInput!): User!
+    createWorkout(
+      userId: String!
+      workout: CreateWorkoutInput!
+      workoutMoves: [CreateWorkoutMoveInput!]!
+    ): Workout!
   }
 
   type Benchmark {
@@ -65,7 +70,6 @@ const typeDefs = gql`
     demoVideoUrl: String
     scope: String!
     equipment: Equipment
-    workoutMoves: [WorkoutMove!]!
   }
 
   type Workout {

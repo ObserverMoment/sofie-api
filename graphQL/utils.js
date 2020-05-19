@@ -29,8 +29,24 @@ function extractSelectedFields (info) {
   }, {})
 }
 
+// Pass in a field (refs a model from the graphql query) returned by extractSelectedFields function
+// plus an array of strings representing the models to which the selected model is related
+// These fields get removed from the eventual select arg which is passed to prisma
+// This avoids duplicating calls - caused by prisma's select functionality also being able to select relations.
+// These relational calls are made via the resolver schema subfields and are handled by Dataloaders
+function stripRelationsFromSelected (selectedObject = {}, excludedFields = []) {
+  return Object.keys(selectedObject).reduce(
+    (acum, nextKey) => ({
+      ...acum,
+      [nextKey]: !excludedFields.includes(nextKey) || false
+    }),
+    {}
+  )
+}
+
 module.exports = {
   parallel,
   pipe,
-  extractSelectedFields
+  extractSelectedFields,
+  stripRelationsFromSelected
 }

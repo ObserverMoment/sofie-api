@@ -1,3 +1,5 @@
+const { stripRelationsFromSelected } = require('./utils')
+
 const resolvers = {
   Query: {
     checkUniqueDisplayName: async (r, { displayName }, { prisma }, i) => {
@@ -7,9 +9,8 @@ const resolvers = {
       return user == null
     },
     moves: async (r, a, { selected, prisma }, i) => {
-      return prisma.move.findMany({
-        select: selected.Move
-      })
+      const select = stripRelationsFromSelected(selected.Move, ['Equipment'])
+      return prisma.move.findMany({ select })
     },
     userByUid: async (r, { uid }, { selected, prisma }, i) => {
       return prisma.user.findOne({
@@ -21,17 +22,12 @@ const resolvers = {
       return prisma.user.findMany({ select: selected.User })
     },
     workouts: async (r, { scope }, { selected, prisma }, i) => {
-      console.log('scope', scope)
       // This avoids duplicating calls - caused by prisma's select functionality also being able to select relations.
       // These calls are made via the Workout subfields and handled by Dataloaders
-      const omitRelationsFromSelect = ['workoutMoves', 'worldRecord']
-      const select = Object.keys(selected.Workout).reduce(
-        (acum, nextKey) => ({
-          ...acum,
-          [nextKey]: !omitRelationsFromSelect.includes(nextKey) || false
-        }),
-        {}
-      )
+      const select = stripRelationsFromSelected(selected.Workout, [
+        'workoutMoves',
+        'worldRecord'
+      ])
       return scope === 'ALL'
         ? prisma.workout.findMany({ select })
         : prisma.workout.findMany({ where: { scope }, select })
@@ -54,6 +50,37 @@ const resolvers = {
       return prisma.user.update({
         where: { id },
         data: formattedData
+      })
+    },
+    createWorkout: async (
+      r,
+      { userId, workout, workoutMovesAndMoveIds },
+      { selected, prisma },
+      i
+    ) => {
+      // Create a workout with side posted array of workoutmoves
+      // Workout must be connected to a user
+      // Each workoutMove must be connected to a move
+      const workoutMoves = workoutMovesAndMoveIds.map(wm => ({
+        ...wm,
+        move: {
+          connect: {
+            id: wm.moveId
+          }
+        }
+      }))
+      return prisma.workout.create({
+        data: {
+          ...workout,
+          createdBy: {
+            connect: {
+              id: userId
+            }
+          },
+          workoutMoves: {
+            create: workoutMoves
+          }
+        }
       })
     }
   },

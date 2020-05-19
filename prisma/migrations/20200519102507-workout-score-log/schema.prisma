@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 model Benchmark {
@@ -116,6 +116,8 @@ model Move {
 model WorkoutMove {
   id                  String   @default(uuid()) @id
   createdAt           DateTime @default(now())
+  createdBy           User?    @relation(fields: [createdById], references: [id])
+  createdById         String?
   reps                Int?
   maleLoadAmountKgs   Float?
   femaleLoadAmountKgs Float?
@@ -225,6 +227,7 @@ model User {
   groupsWhereMember            Group[]                        @relation("group_member")
   groupsWhereCreator           Group[]                        @relation("group_creator")
   moves                        Move[]
+  workoutMoves                 WorkoutMove[]
   workouts                     Workout[]
   scheduledWorkouts            ScheduledWorkout[]
 }

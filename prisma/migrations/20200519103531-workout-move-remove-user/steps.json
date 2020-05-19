@@ -1,0 +1,20 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "DeleteField",
+      "model": "WorkoutMove",
+      "field": "createdBy"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "WorkoutMove",
+      "field": "createdById"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "User",
+      "field": "workoutMoves"
+    }
+  ]
+}
