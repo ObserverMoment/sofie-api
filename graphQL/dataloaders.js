@@ -19,29 +19,34 @@ async function batchGetWorldRecordsByWorkoutId (workoutIds) {
   )
 }
 
-const createWorkoutMovesFromWorkoutIdLoader = () =>
-  new DataLoader(batchGetWorkoutMovesByWorkoutId)
+const createWorkoutSectionsAndMovesFromWorkoutIdLoader = () =>
+  new DataLoader(batchGetWorkoutSectionsAndMovesByWorkoutId)
 
 // Also get and returns the related move.
-async function batchGetWorkoutMovesByWorkoutId (workoutIds) {
-  const results = await prisma.workoutMove.findMany({
+async function batchGetWorkoutSectionsAndMovesByWorkoutId (workoutIds) {
+  // TODO....
+  const results = await prisma.workoutSection.findMany({
     where: {
       workout: { id: { in: workoutIds } }
     },
     include: {
-      move: true
+      workoutMoves: {
+        include: {
+          move: true
+        }
+      }
     }
   })
   return workoutIds.map(
     workoutId =>
       results.filter(r => r.workoutId === workoutId) ||
       new Error(
-        `batchGetWorkoutMovesByWorkoutId: No workout move found for ${workoutId}`
+        `batchGetWorkoutMovesByWorkoutId: No workout sections or moves found for ${workoutId}`
       )
   )
 }
 
 module.exports = {
   createWorldRecordsFromWorkoutIdLoader,
-  createWorkoutMovesFromWorkoutIdLoader
+  createWorkoutSectionsAndMovesFromWorkoutIdLoader
 }

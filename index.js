@@ -7,7 +7,7 @@ const helmet = require('./graphQL/middleware/helmet')
 const getSelectedFields = require('./graphQL/middleware/getSelectedFields')
 const {
   createWorldRecordsFromWorkoutIdLoader,
-  createWorkoutMovesFromWorkoutIdLoader
+  createWorkoutSectionsAndMovesFromWorkoutIdLoader
 } = require('./graphQL/dataloaders')
 
 const middlewareMappings = [
@@ -24,7 +24,7 @@ const server = new ApolloServer({
   resolvers,
   context: ({ req, res }) => ({
     worldRecordsFromWorkoutIdLoader: createWorldRecordsFromWorkoutIdLoader(),
-    workoutMovesFromWorkoutIdLoader: createWorkoutMovesFromWorkoutIdLoader()
+    workoutSectionsAndMovesFromWorkoutIdLoader: createWorkoutSectionsAndMovesFromWorkoutIdLoader()
   })
 })
 

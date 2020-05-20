@@ -1,0 +1,32 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "DeleteField",
+      "model": "WorkoutMove",
+      "field": "workoutId"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "WorkoutMove",
+      "field": "Workout"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Workout",
+      "field": "workoutSections",
+      "type": "WorkoutSection",
+      "arity": "List"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "Workout",
+      "field": "WorkoutSection"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "Workout",
+      "field": "WorkoutMove"
+    }
+  ]
+}

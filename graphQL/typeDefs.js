@@ -77,22 +77,33 @@ const typeDefs = gql`
     name: String!
     summary: String
     description: String
+    demoVideoUrl: String
     workoutScoreType: String!
     difficultyLevel: String!
     scope: String!
     crossfitWodCategory: String
     challenges: [Challenge!]
-    workoutMoves: [WorkoutMove!]
+    workoutSections: [WorkoutSection!]!
     worldRecords: [WorldRecord!]
+  }
+
+  type WorkoutSection {
+    id: ID!
+    name: String
+    workoutMoves: [WorkoutMove!]
+    workout: Workout!
   }
 
   type WorkoutMove {
     id: ID!
+    repType: String!
+    maleReps: Int
+    femaleReps: Int
     maleLoadAmountKgs: Float
     femaleLoadAmountKgs: Float
     repsPerRound: Int
     move: Move!
-    workout: Workout!
+    workoutSection: WorkoutSection!
   }
 
   type WorldRecord {

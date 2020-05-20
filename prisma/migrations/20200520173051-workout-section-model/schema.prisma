@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 model Benchmark {
@@ -133,6 +133,8 @@ model WorkoutMove {
   moveId              String
   workoutSection      WorkoutSection     @relation(fields: [workoutSectionId], references: [id])
   workoutSectionId    String
+  Workout             Workout?           @relation(fields: [workoutId], references: [id])
+  workoutId           String?
 }
 
 model WorkoutSection {
@@ -162,7 +164,8 @@ model Workout {
   worldRecords        WorldRecord[]
   challenges          Challenge[]          @relation(references: [id])
   scheduledWorkouts   ScheduledWorkout[]
-  workoutSections     WorkoutSection[]
+  WorkoutSection      WorkoutSection[]
+  WorkoutMove         WorkoutMove[]
 }
 
 model ScheduledWorkout {

@@ -25,6 +25,7 @@ const resolvers = {
       // This avoids duplicating calls - caused by prisma's select functionality also being able to select relations.
       // These calls are made via the Workout subfields and handled by Dataloaders
       const select = stripRelationsFromSelected(selected.Workout, [
+        'workoutSections',
         'workoutMoves',
         'worldRecord'
       ])
@@ -85,10 +86,15 @@ const resolvers = {
     }
   },
   Workout: {
-    // You always need to get the Move back along with the workout move.
+    // You always need to get the WorkoutMoves and the Moves back along with the workoutSection.
     // So do it in a single call rather than nesting WorkoutMove -> Move
-    workoutMoves: async ({ id }, a, { workoutMovesFromWorkoutIdLoader }, i) => {
-      return workoutMovesFromWorkoutIdLoader.load(id)
+    workoutSections: async (
+      { id },
+      a,
+      { workoutSectionsAndMovesFromWorkoutIdLoader },
+      i
+    ) => {
+      return workoutSectionsAndMovesFromWorkoutIdLoader.load(id)
     },
     worldRecords: async ({ id }, a, { worldRecordsFromWorkoutIdLoader }, i) => {
       return worldRecordsFromWorkoutIdLoader.load(id)
