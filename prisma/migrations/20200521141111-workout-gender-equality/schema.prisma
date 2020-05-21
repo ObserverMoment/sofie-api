@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 model Benchmark {
@@ -123,7 +123,7 @@ model Move {
 model WorkoutMove {
   id                  String             @default(uuid()) @id
   createdAt           DateTime           @default(now())
-  sortPosition        Int
+  sortPosition        Int?
   repType             WorkoutMoveRepType @default(REPS)
   maleReps            Int?
   femaleReps          Int?
@@ -138,7 +138,7 @@ model WorkoutMove {
 model WorkoutSection {
   id             String        @default(uuid()) @id
   createdAt      DateTime      @default(now())
-  sortPosition   Int
+  sortPosition   Int?
   name           String?
   timeCapSeconds Int?
   rounds         Int           @default(1)

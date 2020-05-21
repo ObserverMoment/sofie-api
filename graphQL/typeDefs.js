@@ -78,6 +78,7 @@ const typeDefs = gql`
     summary: String
     description: String
     demoVideoUrl: String
+    genderEquality: Boolean
     workoutScoreType: String!
     difficultyLevel: String!
     scope: String!
@@ -90,6 +91,7 @@ const typeDefs = gql`
   type WorkoutSection {
     id: ID!
     name: String
+    sortPosition: Int!
     workoutMoves: [WorkoutMove!]
     workout: Workout!
   }
@@ -97,6 +99,7 @@ const typeDefs = gql`
   type WorkoutMove {
     id: ID!
     repType: String!
+    sortPosition: Int!
     maleReps: Int
     femaleReps: Int
     maleLoadAmountKgs: Float
@@ -156,10 +159,19 @@ const typeDefs = gql`
     name: String!
     summary: String
     description: String
-    difficultyLevel: String
+    demoVideoUrl: String
+    genderEquality: Boolean
     workoutScoreType: String!
-    scope: String
+    difficultyLevel: String!
+    scope: String!
     crossfitWodCategory: String
+    workoutSections: [CreateWorkoutSectionInput!]!
+  }
+
+  input CreateWorkoutSectionInput {
+    name: String
+    timeCap: Int
+    rounds: Int
     workoutMoves: [CreateWorkoutMoveInput!]!
   }
 
