@@ -91,6 +91,7 @@ const typeDefs = gql`
   type WorkoutSection {
     id: ID!
     name: String
+    isPyramid: Boolean!
     sortPosition: Int!
     workoutMoves: [WorkoutMove!]
     workout: Workout!
@@ -171,6 +172,7 @@ const typeDefs = gql`
   input CreateWorkoutSectionInput {
     name: String
     timeCap: Int
+    isPyramid: Boolean
     rounds: Int
     workoutMoves: [CreateWorkoutMoveInput!]!
   }
