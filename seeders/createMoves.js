@@ -1,31 +1,34 @@
 const { PrismaClient } = require('@prisma/client')
+const fs = require('fs')
 
-function parallel (array, fn) {
-  return Promise.all(array.map(i => fn(i)))
-}
+// Prisma client to connect to PG DB
+const prisma = new PrismaClient({
+  debug: true,
+  log: ['info', 'query', 'warn'],
+  errorFormat: 'pretty'
+})
 
-// Update this array before running.
-const moves = [
-  { name: 'Clean-and-Jerk' },
-  { name: 'Thruster' },
-  { name: 'Pull-Up' },
-  { name: 'Push-Up' },
-  { name: 'Air Squat' },
-  { name: 'Handstand Push-Up' },
-  { name: 'Pistol' }
-]
-
-const createMoves = async () => {
-  // Prisma client to connect to PG DB
-  const prisma = new PrismaClient({
-    debug: true,
-    log: ['info', 'query', 'warn'],
-    errorFormat: 'pretty'
-  })
+const createMoves = async moves => {
+  console.log('creating moves')
   try {
-    await parallel(moves, async move => {
-      return prisma.move.create({ data: { ...move } })
-    })
+    for await (const move of moves) {
+      const { name, scope, equipments } = move
+      console.log('Creating move', name)
+      const connections = equipments.map(equipmentName => ({
+        name: equipmentName
+      }))
+      console.log('Creating connections', connections)
+      await prisma.move.create({
+        data: {
+          name,
+          scope,
+          availableEquipments: {
+            connect: connections
+          }
+        }
+      })
+    }
+    console.log('Finished creating')
   } catch (err) {
     console.log(err)
     process.exit(1)
@@ -35,14 +38,15 @@ const createMoves = async () => {
 }
 
 const seedData = async () => {
-  console.log('seeding...')
-  await createMoves()
-  console.log('created moves')
+  // Get data from json file.
+  const data = fs.readFileSync('./dataSets/wodwell_moves_mod_1.json')
+  await createMoves(JSON.parse(data))
   process.exit(0)
 }
 
 seedData()
 
 process.on('exit', function (code) {
+  prisma.disconnect()
   return console.log(`About to exit with code ${code}`)
 })

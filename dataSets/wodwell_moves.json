@@ -1,0 +1,695 @@
+[
+  {
+    "name": "Air Biking/Assault Biking",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Air Squat",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Back Extension/Hip Extension",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Back Scale",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Back Squat",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Back Tuck",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Backward Roll",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Ball Slam",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Bear Crawl",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Bench Press",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Bent Over Row",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Biking (Cycling)",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Box Jump",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Box Step-Up",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Broad Jump",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Burpee",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Clean",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Curl",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Deadlift",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Devil Press",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Dip/Ring Dip/Tricep Dip",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Double-Under",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Dumbbell Swing",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Farmer's Carry",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Fireman's Carry",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Floor Wiper",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Flutter Kick/Leg Raise",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Forward Roll",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Front Scale",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Front Squat",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "GHD Sit-Up",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Goblet Squat",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Good Mornings",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Grasshopper",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Ground-to-Overhead",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Hack Squat",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Handstand Hold",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Handstand Push-Up",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Handstand Walk",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Hang Hold",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Heel Clap",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Hollow Hold",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Hollow Rock",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Inchworm",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Inverted Burpee",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Jerk",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Jumping Jack",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Kettlebell Swing",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Kettlebell Tater",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "L-Sit",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Lateral Jump",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Lateral Raise",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Lower from Inverted Hang",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Lunge",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Man Maker",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Mountain Climber",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Muscle-Up",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Overhead Squat",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Paddleboard",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Parallette Pass-Through",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Pegboard Ascent",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Pistol",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Plank Hold",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Pull-Up",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Push Press",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Push-Up",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Ring Row",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Rope Climb",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Row (Rowing)",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Run/Running",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Russian Twist",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Shoulder-to-Overhead",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Single-Under",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Sit-Up",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Ski (Skiing on Ski Erg)",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Sled Pull",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Sled Push (Prowler Push)",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Snatch",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Snatch Balance",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Sots Press",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Strict Press (Shoulder Press)",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Sumo Deadlift High-Pull",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Superman Hold",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Swim/Swimming",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Thruster",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Tip Touch",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Tire Flip",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Toes-to-Bar/Knees-to-Elbows",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Triple-Under",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Tuck Jump",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Tuck Up",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Turkish Get-Up",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Up-Down",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "V-Up",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Wall Ball Shot",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Wall Climb/Wall Walk",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Wall Sit",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Weighted Walk/Run",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  },
+  {
+    "name": "Yoke Carry",
+    "scope": "OFFICIAL",
+    "equipments": [
+      "None (bodyweight)"
+    ]
+  }
+]

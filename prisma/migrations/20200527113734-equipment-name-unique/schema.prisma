@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 model Benchmark {
@@ -121,14 +121,16 @@ model Move {
 }
 
 model MoveVariation {
-  id          String   @default(uuid()) @id
-  createdAt   DateTime @default(now())
-  createdBy   User?    @relation(fields: [createdById], references: [id])
+  id          String      @default(uuid()) @id
+  createdAt   DateTime    @default(now())
+  createdBy   User?       @relation(fields: [createdById], references: [id])
   createdById String?
   name        String
   description String?
-  move        Move     @relation(fields: [moveId], references: [id])
+  move        Move        @relation(fields: [moveId], references: [id])
   moveId      String
+  equipments  Equipment[]
+
 }
 
 model WorkoutMove {

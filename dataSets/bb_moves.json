@@ -1,0 +1,92 @@
+[
+  {
+    "name": "Rickshaw Carry",
+    "muscleGroup": "Forearms",
+    "equipment": "Other",
+    "scope": "OFFICIAL"
+  },
+  {
+    "name": "Single-Leg Press",
+    "muscleGroup": "Quadriceps",
+    "equipment": "Machine",
+    "scope": "OFFICIAL"
+  },
+  {
+    "name": "Landmine twist",
+    "muscleGroup": "Abdominals",
+    "equipment": "Other",
+    "scope": "OFFICIAL"
+  },
+  {
+    "name": "Weighted pull-up",
+    "muscleGroup": "Lats",
+    "equipment": "Other",
+    "scope": "OFFICIAL"
+  },
+  {
+    "name": "T-Bar Row with Handle",
+    "muscleGroup": "Middle Back",
+    "equipment": "Other",
+    "scope": "OFFICIAL"
+  },
+  {
+    "name": "Palms-down wrist curl over bench",
+    "muscleGroup": "Forearms",
+    "equipment": "Barbell",
+    "scope": "OFFICIAL"
+  },
+  {
+    "name": "Atlas Stones",
+    "muscleGroup": "Lower Back",
+    "equipment": "Other",
+    "scope": "OFFICIAL"
+  },
+  {
+    "name": "Dumbbell front raise to lateral raise",
+    "muscleGroup": "Shoulders",
+    "equipment": "Dumbbell",
+    "scope": "OFFICIAL"
+  },
+  {
+    "name": "Clean from Blocks",
+    "muscleGroup": "Quadriceps",
+    "equipment": "Barbell",
+    "scope": "OFFICIAL"
+  },
+  {
+    "name": "Incline Hammer Curls",
+    "muscleGroup": "Biceps",
+    "equipment": "Dumbbell",
+    "scope": "OFFICIAL"
+  },
+  {
+    "name": "Straight-bar wrist roll-up",
+    "muscleGroup": "Forearms",
+    "equipment": "",
+    "scope": "OFFICIAL"
+  },
+  {
+    "name": "Barbell glute bridge",
+    "muscleGroup": "Glutes",
+    "equipment": "Barbell",
+    "scope": "OFFICIAL"
+  },
+  {
+    "name": "Clean and press",
+    "muscleGroup": "Shoulders",
+    "equipment": "Barbell",
+    "scope": "OFFICIAL"
+  },
+  {
+    "name": "Triceps dip",
+    "muscleGroup": "Triceps",
+    "equipment": "Body Only",
+    "scope": "OFFICIAL"
+  },
+  {
+    "name": "Dumbbell farmer's walk",
+    "muscleGroup": "Forearms",
+    "equipment": "Other",
+    "scope": "OFFICIAL"
+  }
+]

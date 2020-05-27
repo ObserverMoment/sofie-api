@@ -1,7 +1,4 @@
-# IF THERE'S A GIT CONFLICT IN THIS FILE, DON'T SOLVE IT MANUALLY!
-# INSTEAD EXECUTE `prisma migrate fix`
 # Prisma Migrate lockfile v1
-# Read more about conflict resolution here: TODO
 
 20200518154142-reset
 20200518170543-optional-challenge-to-scheduled-workout
@@ -14,3 +11,7 @@
 20200521141111-workout-gender-equality
 20200521143354-workout-section-move-sort-position-required
 20200522153740-workout-section-is-pyramid
+20200526163831-move-available-equipments
+20200527112432-create-move-variation
+20200527113734-equipment-name-unique
+20200527120423-remove-move-variation-equipments

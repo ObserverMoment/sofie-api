@@ -1,0 +1,788 @@
+[
+    {
+        "name": "Air Bike / Assault Bike",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Air Bike (Assault Bike)"
+        ]
+    },
+    {
+        "name": "Back Extension / Hip Extension",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "None (bodyweight)",
+            "GHD Machine"
+        ]
+    },
+    {
+        "name": "Back Squat",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Barbell",
+            "Sandbag(s)"
+        ]
+    },
+    {
+        "name": "Ball Slam",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Dead Ball (Slam Ball)"
+        ]
+    },
+    {
+        "name": "Battle Ropes",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Battle Ropes"
+        ]
+    },
+    {
+        "name": "Bench Press (Chest Press)",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Bench",
+            "Barbell",
+            "Double Dumbbells",
+            "Double Kettlebells"
+        ]
+    },
+    {
+        "name": "Bent Over Row",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Barbell",
+            "Single Dumbbell",
+            "Double Dumbbells",
+            "Single Kettlebell",
+            "Double Kettlebells"
+        ]
+    },
+    {
+        "name": "Bike (Cycling)",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Bike (or BikeErg)"
+        ]
+    },
+    {
+        "name": "Box Jump",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Box",
+            "Tire"
+        ]
+    },
+    {
+        "name": "Box Step-Up",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Box",
+            "Tire"
+        ]
+    },
+    {
+        "name": "Bulgarian Split Squat",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "None (bodyweight)",
+            "Weight Vest",
+            "Ruck",
+            "Barbell",
+            "Single Dumbbell",
+            "Double Dumbbells",
+            "Single Kettlebell",
+            "Double Kettlebells",
+            "Sandbag(s)"
+        ]
+    },
+    {
+        "name": "Burpee",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "None (bodyweight)",
+            "Weight Vest"
+        ]
+    },
+    {
+        "name": "Clean",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Barbell",
+            "Single Dumbbell",
+            "Double Dumbbells",
+            "Single Kettlebell",
+            "Double Kettlebells",
+            "Sandbag(s)"
+        ]
+    },
+    {
+        "name": "Curl",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Barbell",
+            "Single Dumbbell",
+            "Double Dumbbells",
+            "Single Kettlebell",
+            "Double Kettlebells"
+        ]
+    },
+    {
+        "name": "Deadlift",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Barbell",
+            "Single Dumbbell",
+            "Double Dumbbells",
+            "Single Kettlebell",
+            "Double Kettlebells"
+        ]
+    },
+    {
+        "name": "Devil Press",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Double Dumbbells",
+            "Double Kettlebells"
+        ]
+    },
+    {
+        "name": "Tricep Dip (Ring / Bar)",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Dip Bars",
+            "Gymnastic Rings"
+        ]
+    },
+    {
+        "name": "Double-Under",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Jump Rope"
+        ]
+    },
+    {
+        "name": "Dumbbell Swing",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Single Dumbbell"
+        ]
+    },
+    {
+        "name": "Farmer's Carry",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Double Dumbbells",
+            "Double Kettlebells",
+            "Sandbag(s)"
+        ]
+    },
+    {
+        "name": "Windscreen Wiper",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "None (bodyweight)",
+            "Dip Bars",
+            "Pull-Up Bar"
+        ]
+    },
+    {
+        "name": "Flutter Kick",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "None (bodyweight)"
+        ]
+    },
+    {
+        "name": "Front Squat",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Barbell",
+            "Single Dumbbell",
+            "Double Dumbbells",
+            "Single Kettlebell",
+            "Double Kettlebells",
+            "Medicine Ball (Wall Ball)",
+            "Sandbag(s)"
+        ]
+    },
+    {
+        "name": "GHD Sit-Up",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "GHD Machine"
+        ]
+    },
+    {
+        "name": "Goblet Squat",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Medicine Ball (Wall Ball)",
+            "Sandbag(s)",
+            "Single Dumbbell",
+            "Single Kettlebell",
+            "Weight Plate"
+        ]
+    },
+    {
+        "name": "Good Morning",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Barbell",
+            "Sandbag(s)",
+            "Single Dumbbell",
+            "Single Kettlebell"
+        ]
+    },
+    {
+        "name": "Ground-to-Overhead",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Barbell",
+            "Sandbag(s)",
+            "Single Dumbbell",
+            "Double Dumbbells",
+            "Single Kettlebell",
+            "Double Kettlebells"
+        ]
+    },
+    {
+        "name": "Handstand Hold",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Wall",
+            "Parallettes"
+        ]
+    },
+    {
+        "name": "Handstand Push-Up",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Wall",
+            "Parallettes"
+        ]
+    },
+    {
+        "name": "Handstand Walk",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "None (bodyweight)"
+        ]
+    },
+    {
+        "name": "Hang Hold",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Pull-Up Bar"
+        ]
+    },
+    {
+        "name": "Heel Clap",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Pull-Up Bar"
+        ]
+    },
+    {
+        "name": "Hollow Hold",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "None (bodyweight)",
+            "Single Dumbbell",
+            "Single Kettlebell",
+            "Weight Plate"
+        ]
+    },
+    {
+        "name": "Hollow Rock",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "None (bodyweight)",
+            "Single Dumbbell",
+            "Single Kettlebell",
+            "Weight Plate"
+        ]
+    },
+    {
+        "name": "Inchworm",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "None (bodyweight)"
+        ]
+    },
+    {
+        "name": "Push Jerk",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Barbell",
+            "Sandbag(s)",
+            "Single Dumbbell",
+            "Double Dumbbells",
+            "Single Kettlebell",
+            "Double Kettlebells"
+        ]
+    },
+    {
+        "name": "Jumping Jack",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "None (bodyweight)",
+            "Weight Vest"
+        ]
+    },
+    {
+        "name": "Kettlebell Swing",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Single Kettlebell"
+        ]
+    },
+    {
+        "name": "Kettlebell Tater",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Single Kettlebell"
+        ]
+    },
+    {
+        "name": "Leg Raise",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "None (bodyweight)"
+        ]
+    },
+    {
+        "name": "L-Sit",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "None (bodyweight)",
+            "Parallettes"
+        ]
+    },
+    {
+        "name": "Lateral Raise",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Single Dumbbell",
+            "Double Dumbbells",
+            "Single Kettlebell",
+            "Double Kettlebells"
+        ]
+    },
+    {
+        "name": "Forward Lunge",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "None (bodyweight)",
+            "Barbell",
+            "Single Dumbbell",
+            "Double Dumbbells",
+            "Single Kettlebell",
+            "Double Kettlebells",
+            "Sandbag(s)",
+            "Weight Plate"
+        ]
+    },
+    {
+        "name": "Reverse Lunge",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "None (bodyweight)",
+            "Barbell",
+            "Single Dumbbell",
+            "Double Dumbbells",
+            "Single Kettlebell",
+            "Double Kettlebells",
+            "Sandbag(s)",
+            "Weight Plate"
+        ]
+    },
+    {
+        "name": "Man Maker",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Double Dumbbells",
+            "Double Kettlebells"
+        ]
+    },
+    {
+        "name": "Mountain Climber",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "None (bodyweight)"
+        ]
+    },
+    {
+        "name": "Muscle-Up",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Pull-Up Bar",
+            "Gymnastic Rings"
+        ]
+    },
+    {
+        "name": "Overhead Squat",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Barbell",
+            "Single Dumbbell",
+            "Double Dumbbells",
+            "Single Kettlebell",
+            "Double Kettlebells",
+            "Sandbag(s)"
+        ]
+    },
+    {
+        "name": "Overhead Lunge",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Barbell",
+            "Single Dumbbell",
+            "Double Dumbbells",
+            "Single Kettlebell",
+            "Double Kettlebells",
+            "Sandbag(s)"
+        ]
+    },
+    {
+        "name": "Parallette Pass-Through",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Parallettes"
+        ]
+    },
+    {
+        "name": "Pistol",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "None (bodyweight)",
+            "Weight Vest",
+            "Ruck",
+            "Barbell",
+            "Single Dumbbell",
+            "Double Dumbbells",
+            "Single Kettlebell",
+            "Double Kettlebells"
+        ]
+    },
+    {
+        "name": "Plank Hold",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "None (bodyweight)",
+            "Weight Vest",
+            "Ruck"
+        ]
+    },
+    {
+        "name": "Pull-Up",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Pull-Up Bar",
+            "Weight Vest",
+            "Ruck"
+        ]
+    },
+    {
+        "name": "Push Press",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Barbell",
+            "Single Dumbbell",
+            "Double Dumbbells",
+            "Single Kettlebell",
+            "Double Kettlebells",
+            "Sandbag(s)"
+        ]
+    },
+    {
+        "name": "Push-Up",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "None (bodyweight)",
+            "Weight Vest",
+            "Ruck"
+        ]
+    },
+    {
+        "name": "Ring Row",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Resistance Bands",
+            "Suspension Straps (TRX)",
+            "Gymnastic Rings"
+        ]
+    },
+    {
+        "name": "Rope Climb",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Climbing Rope"
+        ]
+    },
+    {
+        "name": "Row (Rowing)",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Rower"
+        ]
+    },
+    {
+        "name": "Run (Running)",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Treadmill / Open Space",
+            "Weight Vest",
+            "Ruck"
+        ]
+    },
+    {
+        "name": "Shoulder-to-Overhead",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Barbell",
+            "Single Dumbbell",
+            "Double Dumbbells",
+            "Single Kettlebell",
+            "Double Kettlebells",
+            "Sandbag(s)"
+        ]
+    },
+    {
+        "name": "Single-Under",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Jump Rope"
+        ]
+    },
+    {
+        "name": "Sit-Up",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "None (bodyweight)",
+            "Single Dumbbell",
+            "Single Kettlebell",
+            "Sandbag(s)",
+            "Weight Plate"
+        ]
+    },
+    {
+        "name": "Ski (Ski Erg)",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "SkiErg"
+        ]
+    },
+    {
+        "name": "Sled Pull",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Sled (Prowler)"
+        ]
+    },
+    {
+        "name": "Sled Push (Prowler Push)",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Sled (Prowler)"
+        ]
+    },
+    {
+        "name": "Snatch",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Barbell",
+            "Single Dumbbell",
+            "Double Dumbbells",
+            "Single Kettlebell",
+            "Double Kettlebells",
+            "Sandbag(s)"
+        ]
+    },
+    {
+        "name": "Sots Press",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Barbell",
+            "Single Dumbbell",
+            "Double Dumbbells",
+            "Single Kettlebell",
+            "Double Kettlebells"
+        ]
+    },
+    {
+        "name": "Shoulder Press (Strict Press)",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Barbell",
+            "Single Dumbbell",
+            "Double Dumbbells",
+            "Single Kettlebell",
+            "Double Kettlebells",
+            "Sandbag(s)"
+        ]
+    },
+    {
+        "name": "Split Jumps",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "None (bodyweight)",
+            "Weight Vest",
+            "Double Dumbbells",
+            "Double Kettlebells",
+            "Sandbag(s)"
+        ]
+    },
+    {
+        "name": "Squat (Air / Weighted)",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "None (bodyweight)",
+            "Ruck",
+            "Weight Plate",
+            "Weight Vest"
+        ]
+    },
+    {
+        "name": "Squat Clean",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Barbell",
+            "Single Dumbbell",
+            "Double Dumbbells",
+            "Single Kettlebell",
+            "Double Kettlebells",
+            "Sandbag(s)"
+        ]
+    },
+    {
+        "name": "Squat Jump",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "None (bodyweight)",
+            "Weight Vest",
+            "Barbell",
+            "Single Dumbbell",
+            "Double Dumbbells",
+            "Single Kettlebell",
+            "Double Kettlebells",
+            "Sandbag(s)"
+        ]
+    },
+    {
+        "name": "Sumo Deadlift High-Pull",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Barbell",
+            "Single Dumbbell",
+            "Double Dumbbells",
+            "Single Kettlebell",
+            "Double Kettlebells"
+        ]
+    },
+    {
+        "name": "Superman Hold",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "None (bodyweight)"
+        ]
+    },
+    {
+        "name": "Swim/Swimming",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Pool / Open Water"
+        ]
+    },
+    {
+        "name": "Thruster",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Barbell",
+            "Single Dumbbell",
+            "Double Dumbbells",
+            "Single Kettlebell",
+            "Double Kettlebells",
+            "Sandbag(s)",
+            "Medicine Ball (Wall Ball)"
+        ]
+    },
+    {
+        "name": "Tire Flip",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Tire"
+        ]
+    },
+    {
+        "name": "Toes-to-Bar",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Pull-Up Bar"
+        ]
+    },
+    {
+        "name": "Knees-to-Elbows",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Pull-Up Bar"
+        ]
+    },
+    {
+        "name": "Triple-Under",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Jump Rope"
+        ]
+    },
+    {
+        "name": "Tuck Jump",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "None (bodyweight)",
+            "Weight Vest"
+        ]
+    },
+    {
+        "name": "Tuck Up",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "None (bodyweight)"
+        ]
+    },
+    {
+        "name": "Turkish Get-Up",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Single Kettlebell"
+        ]
+    },
+    {
+        "name": "V-Up (V-crunch)",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "None (bodyweight)"
+        ]
+    },
+    {
+        "name": "Wall Ball Shot",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Medicine Ball (Wall Ball)"
+        ]
+    },
+    {
+        "name": "Wall Sit",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "None (bodyweight)",
+            "Weight Plate"
+        ]
+    },
+    {
+        "name": "Yoke Carry",
+        "scope": "OFFICIAL",
+        "equipments": [
+            "Yoke"
+        ]
+    }
+]
