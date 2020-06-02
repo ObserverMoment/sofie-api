@@ -8,6 +8,38 @@ const resolvers = {
       })
       return user == null
     },
+    officialMoves: async (r, a, { selected, prisma }, i) => {
+      // For now - must always request selectable and required equipment together.
+      if (selected.Move && (selected.Move.requiredEquipmentIds || selected.Move.selectableEquipmentIds)) {
+        delete selected.Move.requiredEquipmentIds
+        delete selected.Move.selectableEquipmentIds
+        const moves = await prisma.move.findMany({
+          where: { scope: 'OFFICIAL' },
+          select: {
+            ...selected.Move,
+            requiredEquipments: {
+              select: { id: true }
+            },
+            selectableEquipments: {
+              select: { id: true }
+            }
+          }
+        })
+        return moves.map(m => ({
+          ...m,
+          requiredEquipmentIds: m.requiredEquipments && m.requiredEquipments.map(e => e.id),
+          selectableEquipmentIds: m.selectableEquipments && m.selectableEquipments.map(e => e.id)
+        }))
+      } else {
+        return prisma.move.findMany({
+          where: { scope: 'OFFICIAL' },
+          select: selected.Move
+        })
+      }
+    },
+    officialEquipments: async (r, a, { selected, prisma }, i) => {
+      return prisma.equipment.findMany({ select: selected.Equipment })
+    },
     moves: async (r, a, { selected, prisma }, i) => {
       const select = stripRelationsFromSelected(selected.Move, ['Equipment'])
       return prisma.move.findMany({ select })
@@ -55,34 +87,36 @@ const resolvers = {
     },
     createWorkout: async (
       r,
-      { userId, workout, workoutMovesAndMoveIds },
+      { userId, workoutData },
       { selected, prisma },
       i
     ) => {
-      // Create a workout with side posted array of workoutmoves
+      console.log(workoutData)
+      return null
+      // Create a workout with side posted array of workout sections, and workoutmoves
       // Workout must be connected to a user
-      // Each workoutMove must be connected to a move
-      const workoutMoves = workoutMovesAndMoveIds.map(wm => ({
-        ...wm,
-        move: {
-          connect: {
-            id: wm.moveId
-          }
-        }
-      }))
-      return prisma.workout.create({
-        data: {
-          ...workout,
-          createdBy: {
-            connect: {
-              id: userId
-            }
-          },
-          workoutMoves: {
-            create: workoutMoves
-          }
-        }
-      })
+      // Each workoutMove must be connected to a move and to an equipment via selectedEquipment
+      // const workoutMoves = workoutSectionsAndMoves.map(wm => ({
+      //   ...wm,
+      //   move: {
+      //     connect: {
+      //       id: wm.moveId
+      //     }
+      //   }
+      // }))
+      // return prisma.workout.create({
+      //   data: {
+      //     ...workout,
+      //     createdBy: {
+      //       connect: {
+      //         id: userId
+      //       }
+      //     },
+      //     workoutMoves: {
+      //       create: workoutMoves
+      //     }
+      //   }
+      // })
     }
   },
   Workout: {

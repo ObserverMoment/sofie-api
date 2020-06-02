@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 model Benchmark {
@@ -92,20 +92,20 @@ model Group {
   name        String          @unique
   countryCode String?
   description String?
-  createdBy   User            @relation("groupToCreator", fields: [createdById], references: [id])
+  createdBy   User            @relation("group_creator", fields: [createdById], references: [id])
   createdById String
-  admins      User[]          @relation("groupToAdmins", references: [id])
-  members     User[]          @relation("groupToMembers", references: [id])
+  admins      User[]          @relation("group_admin", references: [id])
+  members     User[]          @relation("group_member", references: [id])
   challenges  Challenge[]
 }
 
 model Equipment {
-  id                 String        @default(uuid()) @id
-  name               String        @unique
-  imageUrl           String?
-  requiredForMoves   Move[]        @relation("moveToRequiredEquipments", references: [id])
-  selectableForMoves Move[]        @relation("moveToSelectableEquipments", references: [id])
-  WorkoutMove        WorkoutMove[]
+  id               String        @default(uuid()) @id
+  name             String        @unique
+  imageUrl         String?
+  requiredForMoves Move[]        @relation("required_equipments", references: [id])
+  optionalForMoves Move[]        @relation("selectable_equipments", references: [id])
+  WorkoutMove      WorkoutMove[]
 }
 
 model Move {
@@ -117,8 +117,8 @@ model Move {
   name                 String          @unique
   description          String?
   demoVideoUrl         String?
-  requiredEquipments   Equipment[]     @relation("moveToRequiredEquipments", references: [id])
-  selectableEquipments Equipment[]     @relation("moveToSelectableEquipments", references: [id])
+  requiredEquipments   Equipment[]     @relation("required_equipments", references: [id])
+  selectableEquipments Equipment[]     @relation("selectable_equipments", references: [id])
   workoutMoves         WorkoutMove[]
   moveVariations       MoveVariation[]
 }
@@ -253,9 +253,9 @@ model User {
   watchedChallenges            Challenge[]                    @relation("watchersToChallenges", references: [id])
   followers                    UserConnection[]               @relation("followee")
   following                    UserConnection[]               @relation("follower")
-  groupsWhereAdmin             Group[]                        @relation("groupToAdmins")
-  groupsWhereMember            Group[]                        @relation("groupToMembers")
-  groupsWhereCreator           Group[]                        @relation("groupToCreator")
+  groupsWhereAdmin             Group[]                        @relation("group_admin")
+  groupsWhereMember            Group[]                        @relation("group_member")
+  groupsWhereCreator           Group[]                        @relation("group_creator")
   moves                        Move[]
   workouts                     Workout[]
   scheduledWorkouts            ScheduledWorkout[]

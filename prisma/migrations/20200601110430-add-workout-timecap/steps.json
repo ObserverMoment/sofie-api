@@ -1,0 +1,41 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "CreateField",
+      "model": "Move",
+      "field": "moveVariations",
+      "type": "MoveVariation",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Workout",
+      "field": "timecapSeconds",
+      "type": "Int",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "WorkoutSection",
+      "field": "timecapSeconds",
+      "type": "Int",
+      "arity": "Optional"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "WorkoutSection",
+      "field": "timeCapSeconds"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "MoveVariation",
+      "field": "createdBy"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "MoveVariation",
+      "field": "createdById"
+    }
+  ]
+}

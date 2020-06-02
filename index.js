@@ -10,8 +10,6 @@ const {
   createWorkoutSectionsAndMovesFromWorkoutIdLoader
 } = require('./graphQL/dataloaders')
 
-require('dotenv').config()
-
 const middlewareMappings = [
   {
     type: 'all', // Either 'all', 'root' or 'field'

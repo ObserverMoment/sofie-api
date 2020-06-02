@@ -30,10 +30,10 @@
     "name": "Dip Bars"
   },
   {
-    "name": "Single Dumbbell"
+    "name": "Dumbbell (Single)"
   },
   {
-    "name": "Double Dumbbells"
+    "name": "Dumbbells (Double)"
   },
   {
     "name": "GHD Machine"
@@ -45,10 +45,10 @@
     "name": "Jump Rope"
   },
   {
-    "name": "Single Kettlebell"
+    "name": "Kettlebell (Single)"
   },
   {
-    "name": "Double Kettlebells"
+    "name": "Kettlebells (Double)"
   },
   {
     "name": "Medicine Ball (Wall Ball)"
@@ -57,19 +57,13 @@
     "name": "Parallettes"
   },
   {
-    "name": "Resistance Bands"
-  },
-  {
-    "name": "Suspension Straps (TRX)"
-  },
-  {
-    "name": "Weight Plate"
-  },
-  {
     "name": "Pool / Open Water"
   },
   {
     "name": "Pull-Up Bar"
+  },
+  {
+    "name": "Resistance Bands"
   },
   {
     "name": "Rower"
@@ -87,6 +81,9 @@
     "name": "Sled (Prowler)"
   },
   {
+    "name": "Suspension Straps (TRX)"
+  },
+  {
     "name": "Tire"
   },
   {
@@ -94,6 +91,9 @@
   },
   {
     "name": "Wall"
+  },
+  {
+    "name": "Weight Plate"
   },
   {
     "name": "Weight Vest"

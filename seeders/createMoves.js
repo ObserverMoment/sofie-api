@@ -12,18 +12,28 @@ const createMoves = async moves => {
   console.log('creating moves')
   try {
     for await (const move of moves) {
-      const { name, scope, equipments } = move
+      const { name, scope, requiredEquipments, selectableEquipments } = move
+      if (!name || !scope || !requiredEquipments || !selectableEquipments) {
+        throw Error(`Move: ${name} is missing some data`)
+      }
       console.log('Creating move', name)
-      const connections = equipments.map(equipmentName => ({
+      console.log('Creating requiredEquipmentsConnections')
+      const requiredEquipmentsConnections = requiredEquipments.map(equipmentName => ({
         name: equipmentName
       }))
-      console.log('Creating connections', connections)
+      console.log('Creating selectableEquipmentsConnections')
+      const selectableEquipmentsConnections = selectableEquipments.map(equipmentName => ({
+        name: equipmentName
+      }))
       await prisma.move.create({
         data: {
           name,
           scope,
-          availableEquipments: {
-            connect: connections
+          requiredEquipments: {
+            connect: requiredEquipmentsConnections
+          },
+          selectableEquipments: {
+            connect: selectableEquipmentsConnections
           }
         }
       })
@@ -39,7 +49,7 @@ const createMoves = async moves => {
 
 const seedData = async () => {
   // Get data from json file.
-  const data = fs.readFileSync('./dataSets/wodwell_moves_mod_1.json')
+  const data = fs.readFileSync('./dataSets/wodwell_moves_mod_2.json')
   await createMoves(JSON.parse(data))
   process.exit(0)
 }

@@ -22,8 +22,6 @@
   "devDependencies": {
     "@prisma/cli": "^2.0.0-beta.6",
     "nodemon": "^2.0.4",
-    "standard": "^14.3.4",
-    "to": "^0.2.9",
-    "update": "^0.7.4"
+    "standard": "^14.3.4"
   }
 }

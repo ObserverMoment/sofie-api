@@ -4,6 +4,8 @@ const { gql } = require('apollo-server-express')
 const typeDefs = gql`
   type Query {
     checkUniqueDisplayName(displayName: String!): Boolean
+    officialMoves: [Move!]!
+    officialEquipments: [Equipment!]!
     moves: [Move!]!
     userByUid(uid: String!): User
     users: [User!]!
@@ -15,8 +17,7 @@ const typeDefs = gql`
     updateUser(id: String!, data: UpdateUserInput!): User!
     createWorkout(
       userId: String!
-      workout: CreateWorkoutInput!
-      workoutMoves: [CreateWorkoutMoveInput!]!
+      workoutData: CreateWorkoutInput!
     ): Workout!
   }
 
@@ -69,7 +70,10 @@ const typeDefs = gql`
     description: String
     demoVideoUrl: String
     scope: String!
-    equipment: Equipment
+    groupId: String
+    createdById: String
+    requiredEquipmentIds: [String!]!
+    selectableEquipmentIds: [String!]!
   }
 
   type Workout {
@@ -180,7 +184,11 @@ const typeDefs = gql`
   input CreateWorkoutMoveInput {
     maleLoadAmountKgs: Float!
     femaleLoadAmountKgs: Float!
+    maleReps: Float!
+    femaleReps: Float!
     reps: Int!
+    repType: String!
+    selectedEquipmentId: String
     moveId: String!
   }
 `

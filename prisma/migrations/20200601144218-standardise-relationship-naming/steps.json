@@ -1,0 +1,145 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "UpdateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Group",
+          "field": "createdBy"
+        },
+        "directive": "relation"
+      },
+      "argument": "",
+      "newValue": "\"groupToCreator\""
+    },
+    {
+      "tag": "UpdateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Group",
+          "field": "admins"
+        },
+        "directive": "relation"
+      },
+      "argument": "",
+      "newValue": "\"groupToAdmins\""
+    },
+    {
+      "tag": "UpdateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Group",
+          "field": "members"
+        },
+        "directive": "relation"
+      },
+      "argument": "",
+      "newValue": "\"groupToMembers\""
+    },
+    {
+      "tag": "UpdateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Move",
+          "field": "requiredEquipments"
+        },
+        "directive": "relation"
+      },
+      "argument": "",
+      "newValue": "\"moveToRequiredEquipments\""
+    },
+    {
+      "tag": "UpdateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Move",
+          "field": "selectableEquipments"
+        },
+        "directive": "relation"
+      },
+      "argument": "",
+      "newValue": "\"moveToSelectableEquipments\""
+    },
+    {
+      "tag": "UpdateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Equipment",
+          "field": "requiredForMoves"
+        },
+        "directive": "relation"
+      },
+      "argument": "",
+      "newValue": "\"moveToRequiredEquipments\""
+    },
+    {
+      "tag": "UpdateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Equipment",
+          "field": "selectableForMoves"
+        },
+        "directive": "relation"
+      },
+      "argument": "",
+      "newValue": "\"moveToSelectableEquipments\""
+    },
+    {
+      "tag": "UpdateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "User",
+          "field": "groupsWhereAdmin"
+        },
+        "directive": "relation"
+      },
+      "argument": "",
+      "newValue": "\"groupToAdmins\""
+    },
+    {
+      "tag": "UpdateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "User",
+          "field": "groupsWhereMember"
+        },
+        "directive": "relation"
+      },
+      "argument": "",
+      "newValue": "\"groupToMembers\""
+    },
+    {
+      "tag": "UpdateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "User",
+          "field": "groupsWhereCreator"
+        },
+        "directive": "relation"
+      },
+      "argument": "",
+      "newValue": "\"groupToCreator\""
+    }
+  ]
+}

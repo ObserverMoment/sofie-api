@@ -1,0 +1,21 @@
+[
+    {
+        "name": "Clean & Jerk",
+        "scope": "OFFICIAL",
+        "requiredEquipments": [],
+        "selectableEquipments": [
+            "Barbell",
+            "Dumbbell (Single)",
+            "Dumbbells (Double)",
+            "Kettlebell (Single)",
+            "Kettlebells (Double)",
+            "Sandbag(s)"
+        ]
+    },
+    {
+        "name": "Rest",
+        "scope": "OFFICIAL",
+        "requiredEquipments": [],
+        "selectableEquipments": []
+    }
+]

@@ -1,0 +1,199 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "CreateField",
+      "model": "Move",
+      "field": "requiredEquipments",
+      "type": "Equipment",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Move",
+          "field": "requiredEquipments"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Move",
+          "field": "requiredEquipments"
+        },
+        "directive": "relation"
+      },
+      "argument": "",
+      "value": "\"required_equipments\""
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Move",
+          "field": "requiredEquipments"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[id]"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Move",
+      "field": "selectableEquipments",
+      "type": "Equipment",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Move",
+          "field": "selectableEquipments"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Move",
+          "field": "selectableEquipments"
+        },
+        "directive": "relation"
+      },
+      "argument": "",
+      "value": "\"selectable_equipments\""
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Move",
+          "field": "selectableEquipments"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[id]"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "Move",
+      "field": "availableEquipments"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Equipment",
+      "field": "requiredForMoves",
+      "type": "Move",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Equipment",
+          "field": "requiredForMoves"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Equipment",
+          "field": "requiredForMoves"
+        },
+        "directive": "relation"
+      },
+      "argument": "",
+      "value": "\"required_equipments\""
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Equipment",
+          "field": "requiredForMoves"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[id]"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Equipment",
+      "field": "optionalForMoves",
+      "type": "Move",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Equipment",
+          "field": "optionalForMoves"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Equipment",
+          "field": "optionalForMoves"
+        },
+        "directive": "relation"
+      },
+      "argument": "",
+      "value": "\"selectable_equipments\""
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Equipment",
+          "field": "optionalForMoves"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[id]"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "Equipment",
+      "field": "moves"
+    }
+  ]
+}
