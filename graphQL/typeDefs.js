@@ -6,17 +6,19 @@ const typeDefs = gql`
     checkUniqueDisplayName(displayName: String!): Boolean
     officialMoves: [Move!]!
     officialEquipments: [Equipment!]!
+    officialWorkouts: [Workout!]!
     moves: [Move!]!
     userByUid(uid: String!): User
     users: [User!]!
-    workouts(scope: String!): [Workout!]!
+    allWorkouts(authedUserId: String!): [Workout!]!
+    workoutsByScope(authedUserId: String!, scopes: [String!]!): [Workout!]!
   }
 
   type Mutation {
     createUser(uid: String!): User!
     updateUser(id: String!, data: UpdateUserInput!): User!
     createWorkout(
-      userId: String!
+      authedUserId: String!
       workoutData: CreateWorkoutInput!
     ): Workout!
   }
@@ -160,11 +162,11 @@ const typeDefs = gql`
   }
 
   input CreateWorkoutInput {
-    userId: String!
     name: String!
     summary: String
     description: String
     demoVideoUrl: String
+    timecapSeconds: Int
     genderEquality: Boolean
     workoutScoreType: String!
     difficultyLevel: String!
@@ -175,7 +177,8 @@ const typeDefs = gql`
 
   input CreateWorkoutSectionInput {
     name: String
-    timeCap: Int
+    timecapSeconds: Int
+    sortPosition: Int
     isPyramid: Boolean
     rounds: Int
     workoutMoves: [CreateWorkoutMoveInput!]!
@@ -183,11 +186,11 @@ const typeDefs = gql`
 
   input CreateWorkoutMoveInput {
     maleLoadAmountKgs: Float!
-    femaleLoadAmountKgs: Float!
+    femaleLoadAmountKgs: Float
     maleReps: Float!
-    femaleReps: Float!
-    reps: Int!
+    femaleReps: Float
     repType: String!
+    sortPosition: Int
     selectedEquipmentId: String
     moveId: String!
   }

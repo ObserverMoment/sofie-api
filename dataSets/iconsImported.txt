@@ -1,0 +1,34 @@
+"None (bodyweight)" - 
+    "Air Bike (Assault Bike)" - 
+    "Barbell" - 
+    "Bench" - 
+    "Bike (or BikeErg)" - 
+    "Box" - 
+    "Battle Ropes" - 
+    "Climbing Rope" - 
+    "Dead Ball (Slam Ball)" - 
+    "Dip Bars" - 
+    "Dumbbell (Single)" - 
+    "Dumbbells (Double)" - 
+    "GHD Machine" - 
+    "Gymnastic Rings" - 
+    "Jump Rope" - 
+    "Kettlebell (Single)" - 
+    "Kettlebells (Double)" - 
+    "Medicine Ball (Wall Ball)" - 
+    "Parallettes" - 
+    "Pool / Open Water" - 
+    "Pull-Up Bar" - 
+    "Resistance Bands" - 
+    "Rower (Rowing Machine)"
+    "Ruck" - 
+    "Sandbag(s)" - 
+    "SkiErg" - 
+    "Sled (Prowler)" - 
+    "Suspension Straps (TRX)" - 
+    "Tire" - 
+    "Treadmill (Open Space)" - 
+    "Wall" - 
+    "Weight Plate" - 
+    "Weight Vest" - 
+    "Yoke" - 

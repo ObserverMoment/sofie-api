@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 model Benchmark {
@@ -133,8 +133,8 @@ model WorkoutMove {
   femaleLoadAmountKgs Float?
   move                Move               @relation(fields: [moveId], references: [id])
   moveId              String
-  selectedEquipment   Equipment?         @relation(fields: [selectedEquipmentId], references: [id])
-  selectedEquipmentId String?
+  selectedEquipment   Equipment          @relation(fields: [selectedEquipmentId], references: [id])
+  selectedEquipmentId String
   workoutSection      WorkoutSection     @relation(fields: [workoutSectionId], references: [id])
   workoutSectionId    String
 }
@@ -157,7 +157,7 @@ model Workout {
   createdAt           DateTime             @default(now())
   createdBy           User?                @relation(fields: [createdById], references: [id])
   createdById         String?
-  name                String
+  name                String               @unique
   summary             String?
   description         String?
   timecapSeconds      Int?
@@ -296,8 +296,8 @@ enum DifficultyLevel {
 enum WorkoutMoveRepType {
   REPS
   CALORIES
-  DISTANCE
-  TIME
+  METRES
+  SECONDS
 }
 
 // AMREPS in reps

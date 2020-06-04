@@ -22,3 +22,7 @@
 20200601143539-move-selectable-optional-equipments
 20200601143628-move-selectable-optional-equipments-2
 20200601144218-standardise-relationship-naming
+20200604165742-workout-section-workout-moves-rename
+20200604170355-workout-rep-type-enum-update
+20200604172948-workout-move-selected-equipment-optional
+20200604173720-workout-name-not-unique
