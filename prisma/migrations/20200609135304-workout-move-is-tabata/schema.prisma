@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 model Benchmark {
@@ -141,18 +141,17 @@ model WorkoutMove {
 }
 
 model WorkoutSection {
-  id               String        @default(uuid()) @id
-  createdAt        DateTime      @default(now())
-  sortPosition     Int
-  name             String?
-  isPyramid        Boolean       @default(false)
-  pyramidStructure String?
-  isTabata         Boolean       @default(false)
-  timecapSeconds   Int?
-  rounds           Int           @default(1)
-  workout          Workout       @relation(fields: [workoutId], references: [id])
-  workoutId        String
-  workoutMoves     WorkoutMove[]
+  id             String        @default(uuid()) @id
+  createdAt      DateTime      @default(now())
+  sortPosition   Int
+  name           String?
+  isPyramid      Boolean       @default(false)
+  isTabata       Boolean       @default(false)
+  timecapSeconds Int?
+  rounds         Int           @default(1)
+  workout        Workout       @relation(fields: [workoutId], references: [id])
+  workoutId      String
+  workoutMoves   WorkoutMove[]
 }
 
 model Workout {

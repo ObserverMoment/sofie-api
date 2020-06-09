@@ -24,7 +24,6 @@ const createWorkoutSectionsAndMovesFromWorkoutIdLoader = () =>
 
 // Also get and returns the related move.
 async function batchGetWorkoutSectionsAndMovesByWorkoutId (workoutIds) {
-  // TODO....
   const results = await prisma.workoutSection.findMany({
     where: {
       workout: { id: { in: workoutIds } }
@@ -32,6 +31,7 @@ async function batchGetWorkoutSectionsAndMovesByWorkoutId (workoutIds) {
     include: {
       workoutMoves: {
         include: {
+          selectedEquipment: true,
           move: true
         }
       }

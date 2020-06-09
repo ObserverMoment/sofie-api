@@ -10,6 +10,7 @@ const typeDefs = gql`
     moves: [Move!]!
     userByUid(uid: String!): User
     users: [User!]!
+    workoutById(id: String!): Workout
     allWorkouts(authedUserId: String!): [Workout!]!
     workoutsByScope(authedUserId: String!, scopes: [String!]!): [Workout!]!
   }
@@ -85,6 +86,7 @@ const typeDefs = gql`
     description: String
     demoVideoUrl: String
     genderEquality: Boolean
+    timecapSeconds: Int
     workoutScoreType: String!
     difficultyLevel: String!
     scope: String!
@@ -97,7 +99,9 @@ const typeDefs = gql`
   type WorkoutSection {
     id: ID!
     name: String
-    isPyramid: Boolean!
+    isPyramid: Boolean
+    pyramidStructure: String
+    isTabata: Boolean
     sortPosition: Int!
     workoutMoves: [WorkoutMove!]
     workout: Workout!
@@ -114,6 +118,7 @@ const typeDefs = gql`
     repsPerRound: Int
     move: Move!
     workoutSection: WorkoutSection!
+    selectedEquipment: Equipment
   }
 
   type WorldRecord {
@@ -180,6 +185,8 @@ const typeDefs = gql`
     timecapSeconds: Int
     sortPosition: Int
     isPyramid: Boolean
+    pyramidStructure: String
+    isTabata: Boolean
     rounds: Int
     workoutMoves: [CreateWorkoutMoveInput!]!
   }

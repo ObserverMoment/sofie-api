@@ -1,0 +1,21 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "DeleteEnum",
+      "enum": "CrossfitWodCategory"
+    },
+    {
+      "tag": "UpdateEnum",
+      "enum": "WorkoutScoreType",
+      "deletedValues": [
+        "AMROUNDS"
+      ]
+    },
+    {
+      "tag": "DeleteField",
+      "model": "Workout",
+      "field": "crossfitWodCategory"
+    }
+  ]
+}

@@ -1,5 +1,4 @@
 const { stripRelationsFromSelected } = require('./utils')
-const util = require('util')
 
 const resolvers = {
   Query: {
@@ -48,10 +47,18 @@ const resolvers = {
       return prisma.equipment.findMany({ select: selected.Equipment })
     },
     officialWorkouts: async (r, a, { selected, prisma }, i) => {
-      return prisma.workout.findMany({
-        select: selected.Workout,
+      // This avoids duplicating calls - caused by prisma's select functionality also being able to select relations.
+      // These calls are made via the Workout subfields and handled by Dataloaders
+      const select = stripRelationsFromSelected(selected.Workout, [
+        'workoutSections',
+        'worldRecords'
+      ])
+      const workouts = await prisma.workout.findMany({
+        select,
         where: { scope: 'OFFICIAL' }
       })
+      console.log(workouts)
+      return workouts
     },
     moves: async (r, a, { selected, prisma }, i) => {
       const select = stripRelationsFromSelected(selected.Move, ['Equipment'])
@@ -66,13 +73,27 @@ const resolvers = {
     users: async (r, a, { selected, prisma }, i) => {
       return prisma.user.findMany({ select: selected.User })
     },
+    workoutById: async (r, { id }, { selected, prisma }, i) => {
+      console.log(id)
+      // This avoids duplicating calls - caused by prisma's select functionality also being able to select relations.
+      // These calls are made via the Workout subfields and handled by Dataloaders
+      const select = stripRelationsFromSelected(selected.Workout, [
+        'workoutSections',
+        'worldRecords'
+      ])
+      return prisma.workout.findOne({
+        select,
+        where: {
+          id
+        }
+      })
+    },
     allWorkouts: async (r, { authedUserId }, { selected, prisma }, i) => {
       // This avoids duplicating calls - caused by prisma's select functionality also being able to select relations.
       // These calls are made via the Workout subfields and handled by Dataloaders
       const select = stripRelationsFromSelected(selected.Workout, [
         'workoutSections',
-        'workoutMoves',
-        'worldRecord'
+        'worldRecords'
       ])
       return prisma.workout.findMany({
         select,
@@ -174,7 +195,7 @@ const resolvers = {
   },
   Workout: {
     // You always need to get the WorkoutMoves and the Moves back along with the workoutSection.
-    // So do it in a single call rather than nesting WorkoutMove -> Move
+    // So do it in a single call rather than nesting WorkoutMove -> workoutSection -> Move
     workoutSections: async (
       { id },
       a,
@@ -184,7 +205,6 @@ const resolvers = {
       return workoutSectionsAndMovesFromWorkoutIdLoader.load(id)
     },
     worldRecords: async ({ id }, a, { worldRecordsFromWorkoutIdLoader }, i) => {
-      console.log('Workout.worldRecords')
       return worldRecordsFromWorkoutIdLoader.load(id)
     }
   }
