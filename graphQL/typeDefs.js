@@ -75,8 +75,8 @@ const typeDefs = gql`
     scope: String!
     groupId: String
     createdById: String
-    requiredEquipmentIds: [String!]!
-    selectableEquipmentIds: [String!]!
+    requiredEquipments: [Equipment!]!
+    selectableEquipments: [Equipment!]!
   }
 
   type Workout {
@@ -86,7 +86,7 @@ const typeDefs = gql`
     description: String
     demoVideoUrl: String
     genderEquality: Boolean
-    timecapSeconds: Int
+    timecap: Int
     workoutScoreType: String!
     difficultyLevel: String!
     scope: String!
@@ -100,6 +100,7 @@ const typeDefs = gql`
     id: ID!
     name: String
     isPyramid: Boolean
+    timecap: Int
     pyramidStructure: String
     isTabata: Boolean
     sortPosition: Int!
@@ -111,13 +112,12 @@ const typeDefs = gql`
     id: ID!
     repType: String!
     sortPosition: Int!
+    description: String
     maleReps: Int
     femaleReps: Int
     maleLoadAmountKgs: Float
     femaleLoadAmountKgs: Float
-    repsPerRound: Int
     move: Move!
-    workoutSection: WorkoutSection!
     selectedEquipment: Equipment
   }
 
@@ -144,9 +144,9 @@ const typeDefs = gql`
     gymBox: String
     hasOnboarded: Boolean!
     height: Float
+    weight: Float
     lastname: String
     unitSystem: String
-    weight: Float
   }
 
   input UpdateUserInput {
@@ -171,18 +171,27 @@ const typeDefs = gql`
     summary: String
     description: String
     demoVideoUrl: String
-    timecapSeconds: Int
+    timecap: Int
     genderEquality: Boolean
     workoutScoreType: String!
     difficultyLevel: String!
     scope: String!
     crossfitWodCategory: String
     workoutSections: [CreateWorkoutSectionInput!]!
+    worldRecords: [CreateWorkoutRecordInput!]
+  }
+
+  input CreateWorkoutRecordInput {
+    notes: String
+    recordValue: Int!
+    workoutScoreType: String!
+    gender: String
+    userId: String
   }
 
   input CreateWorkoutSectionInput {
     name: String
-    timecapSeconds: Int
+    timecap: Int
     sortPosition: Int
     isPyramid: Boolean
     pyramidStructure: String
@@ -194,6 +203,7 @@ const typeDefs = gql`
   input CreateWorkoutMoveInput {
     maleLoadAmountKgs: Float!
     femaleLoadAmountKgs: Float
+    description: String
     maleReps: Float!
     femaleReps: Float
     repType: String!

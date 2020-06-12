@@ -1,0 +1,29 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "CreateField",
+      "model": "Workout",
+      "field": "timecap",
+      "type": "Int",
+      "arity": "Optional"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "Workout",
+      "field": "timecapSeconds"
+    },
+    {
+      "tag": "CreateField",
+      "model": "WorkoutSection",
+      "field": "timecap",
+      "type": "Int",
+      "arity": "Optional"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "WorkoutSection",
+      "field": "timecapSeconds"
+    }
+  ]
+}

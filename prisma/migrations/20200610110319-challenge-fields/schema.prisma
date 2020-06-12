@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 model Benchmark {
@@ -155,7 +155,7 @@ model WorkoutSection {
   isPyramid        Boolean       @default(false)
   pyramidStructure String?
   isTabata         Boolean       @default(false)
-  timecap          Int?
+  timecapSeconds   Int?
   rounds           Int           @default(1)
   workout          Workout       @relation(fields: [workoutId], references: [id])
   workoutId        String
@@ -170,7 +170,7 @@ model Workout {
   name              String
   summary           String?
   description       String?
-  timecap           Int?
+  timecapSeconds    Int?
   genderEquality    Boolean            @default(true)
   difficultyLevel   DifficultyLevel    @default(ONE)
   scope             AccessScopeType    @default(PRIVATE)

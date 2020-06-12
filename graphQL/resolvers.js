@@ -9,39 +9,20 @@ const resolvers = {
       return user == null
     },
     officialMoves: async (r, a, { selected, prisma }, i) => {
-      // For now - must always request selectable and required equipment together.
-      if (
-        selected.Move &&
-        (selected.Move.requiredEquipmentIds ||
-          selected.Move.selectableEquipmentIds)
-      ) {
-        delete selected.Move.requiredEquipmentIds
-        delete selected.Move.selectableEquipmentIds
-        const moves = await prisma.move.findMany({
-          where: { scope: 'OFFICIAL' },
-          select: {
-            ...selected.Move,
-            requiredEquipments: {
-              select: { id: true }
-            },
-            selectableEquipments: {
-              select: { id: true }
-            }
+      // Assumed that you always want requiredEquipments and selectableEquipments.
+      // when getting official moves.
+      // You only need the ids so that on the FE you can find the right equipment from the repo by id.
+      return prisma.move.findMany({
+        select: {
+          ...selected.Move,
+          requiredEquipments: {
+            select: { id: true }
+          },
+          selectableEquipments: {
+            select: { id: true }
           }
-        })
-        return moves.map(m => ({
-          ...m,
-          requiredEquipmentIds:
-            m.requiredEquipments && m.requiredEquipments.map(e => e.id),
-          selectableEquipmentIds:
-            m.selectableEquipments && m.selectableEquipments.map(e => e.id)
-        }))
-      } else {
-        return prisma.move.findMany({
-          where: { scope: 'OFFICIAL' },
-          select: selected.Move
-        })
-      }
+        }
+      })
     },
     officialEquipments: async (r, a, { selected, prisma }, i) => {
       return prisma.equipment.findMany({ select: selected.Equipment })
@@ -57,7 +38,6 @@ const resolvers = {
         select,
         where: { scope: 'OFFICIAL' }
       })
-      console.log(workouts)
       return workouts
     },
     moves: async (r, a, { selected, prisma }, i) => {
@@ -74,7 +54,6 @@ const resolvers = {
       return prisma.user.findMany({ select: selected.User })
     },
     workoutById: async (r, { id }, { selected, prisma }, i) => {
-      console.log(id)
       // This avoids duplicating calls - caused by prisma's select functionality also being able to select relations.
       // These calls are made via the Workout subfields and handled by Dataloaders
       const select = stripRelationsFromSelected(selected.Workout, [
