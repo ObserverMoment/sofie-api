@@ -81,11 +81,11 @@ const typeDefs = gql`
 
   type Workout {
     id: ID!
+    createdAt: String!
     name: String!
     summary: String
     description: String
     demoVideoUrl: String
-    genderEquality: Boolean
     timecap: Int
     workoutScoreType: String!
     difficultyLevel: String!
@@ -101,6 +101,7 @@ const typeDefs = gql`
     name: String
     isPyramid: Boolean
     timecap: Int
+    rounds: Int!
     pyramidStructure: String
     isTabata: Boolean
     sortPosition: Int!
@@ -113,10 +114,9 @@ const typeDefs = gql`
     repType: String!
     sortPosition: Int!
     description: String
-    maleReps: Int
-    femaleReps: Int
-    maleLoadAmountKgs: Float
-    femaleLoadAmountKgs: Float
+    reps: Int
+    loadAmountKgs: Float
+    distanceUnit: String!
     move: Move!
     selectedEquipment: Equipment
   }
@@ -172,7 +172,6 @@ const typeDefs = gql`
     description: String
     demoVideoUrl: String
     timecap: Int
-    genderEquality: Boolean
     workoutScoreType: String!
     difficultyLevel: String!
     scope: String!
@@ -201,12 +200,11 @@ const typeDefs = gql`
   }
 
   input CreateWorkoutMoveInput {
-    maleLoadAmountKgs: Float!
-    femaleLoadAmountKgs: Float
+    loadAmountKgs: Float!
     description: String
-    maleReps: Float!
-    femaleReps: Float
+    reps: Float!
     repType: String!
+    distanceUnit: String!
     sortPosition: Int
     selectedEquipmentId: String
     moveId: String!

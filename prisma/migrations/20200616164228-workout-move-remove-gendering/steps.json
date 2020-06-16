@@ -1,0 +1,86 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "CreateEnum",
+      "enum": "DistanceUnit",
+      "values": [
+        "METRES",
+        "KILOMETRES",
+        "YARDS",
+        "MILES"
+      ]
+    },
+    {
+      "tag": "CreateField",
+      "model": "WorkoutMove",
+      "field": "reps",
+      "type": "Int",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "WorkoutMove",
+      "field": "loadAmountKgs",
+      "type": "Float",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "WorkoutMove",
+      "field": "distanceUnit",
+      "type": "DistanceUnit",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "WorkoutMove",
+          "field": "distanceUnit"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "WorkoutMove",
+          "field": "distanceUnit"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "METRES"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "WorkoutMove",
+      "field": "maleLoadAmountKgs"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "WorkoutMove",
+      "field": "femaleLoadAmountKgs"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "WorkoutMove",
+      "field": "maleReps"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "WorkoutMove",
+      "field": "femaleReps"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "Workout",
+      "field": "genderEquality"
+    }
+  ]
+}

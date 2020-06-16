@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 model Benchmark {
@@ -134,9 +134,10 @@ model WorkoutMove {
   createdAt           DateTime           @default(now())
   sortPosition        Int
   repType             WorkoutMoveRepType @default(REPS)
-  reps                Int?
-  loadAmountKgs       Float?
-  distanceUnit        DistanceUnit       @default(METRES)
+  maleReps            Int?
+  femaleReps          Int?
+  maleLoadAmountKgs   Float?
+  femaleLoadAmountKgs Float?
   description         String?
   move                Move               @relation(fields: [moveId], references: [id])
   moveId              String
@@ -170,6 +171,7 @@ model Workout {
   summary           String?
   description       String?
   timecap           Int?
+  genderEquality    Boolean            @default(true)
   difficultyLevel   DifficultyLevel    @default(ONE)
   scope             AccessScopeType    @default(PRIVATE)
   workoutScoreType  WorkoutScoreType   @default(AMREPS)
@@ -322,11 +324,4 @@ enum WorkoutScoreType {
 enum UnitSystem {
   IMPERIAL
   METRIC
-}
-
-enum DistanceUnit {
-  METRES
-  KILOMETRES
-  YARDS
-  MILES
 }
