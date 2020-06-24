@@ -141,6 +141,9 @@ const resolvers = {
           create: [
             ...workoutData.workoutSections.map(section => ({
               ...section,
+              pyramidStructure: {
+                set: section.pyramidStructure || []
+              },
               workoutMoves: {
                 create: [
                   ...section.workoutMoves.map(workoutMove => {

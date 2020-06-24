@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 model Benchmark {
@@ -116,17 +116,16 @@ model Equipment {
 }
 
 model Move {
-  id                   String               @default(uuid()) @id
-  createdAt            DateTime             @default(now())
-  createdBy            User?                @relation(fields: [createdById], references: [id])
+  id                   String          @default(uuid()) @id
+  createdAt            DateTime        @default(now())
+  createdBy            User?           @relation(fields: [createdById], references: [id])
   createdById          String?
-  scope                AccessScopeType      @default(PRIVATE)
-  name                 String               @unique
+  scope                AccessScopeType @default(PRIVATE)
+  name                 String          @unique
   description          String?
   demoVideoUrl         String?
-  validRepTypes        WorkoutMoveRepType[]
-  requiredEquipments   Equipment[]          @relation("moveToRequiredEquipments", references: [id])
-  selectableEquipments Equipment[]          @relation("moveToSelectableEquipments", references: [id])
+  requiredEquipments   Equipment[]     @relation("moveToRequiredEquipments", references: [id])
+  selectableEquipments Equipment[]     @relation("moveToSelectableEquipments", references: [id])
   workoutMoves         WorkoutMove[]
 }
 
@@ -153,7 +152,7 @@ model WorkoutSection {
   sortPosition     Int
   name             String?
   isPyramid        Boolean       @default(false)
-  pyramidStructure Int[]
+  pyramidStructure String?       @default("15,12,9")
   isTabata         Boolean       @default(false)
   timecap          Int?
   rounds           Int           @default(1)
@@ -312,7 +311,8 @@ enum WorkoutMoveRepType {
 // AMREPS in reps
 // TIME in seconds
 // LOAD in kgs
-// EMON in reps
+// EMON in rounds completed (if doing standard EMON then this unit value is minutes)
+// Also used for: Every 5 miniutes on the 5 minutes etc - free text in description?
 enum WorkoutScoreType {
   AMREPS
   EMOM

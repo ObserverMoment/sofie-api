@@ -74,6 +74,7 @@ const typeDefs = gql`
     demoVideoUrl: String
     scope: String!
     groupId: String
+    validRepTypes: [String!]!
     createdById: String
     requiredEquipments: [Equipment!]!
     selectableEquipments: [Equipment!]!
@@ -85,8 +86,8 @@ const typeDefs = gql`
     name: String!
     summary: String
     description: String
-    demoVideoUrl: String
     timecap: Int
+    demoVideoUrl: String
     workoutScoreType: String!
     difficultyLevel: String!
     scope: String!
@@ -102,7 +103,7 @@ const typeDefs = gql`
     isPyramid: Boolean
     timecap: Int
     rounds: Int!
-    pyramidStructure: String
+    pyramidStructure: [Int!]
     isTabata: Boolean
     sortPosition: Int!
     workoutMoves: [WorkoutMove!]
@@ -184,8 +185,7 @@ const typeDefs = gql`
     notes: String
     recordValue: Int!
     workoutScoreType: String!
-    gender: String
-    userId: String
+    gender: String!
   }
 
   input CreateWorkoutSectionInput {
@@ -193,7 +193,7 @@ const typeDefs = gql`
     timecap: Int
     sortPosition: Int
     isPyramid: Boolean
-    pyramidStructure: String
+    pyramidStructure: [Int!]
     isTabata: Boolean
     rounds: Int
     workoutMoves: [CreateWorkoutMoveInput!]!
