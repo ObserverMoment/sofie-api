@@ -1,24 +1,6 @@
 const DataLoader = require('dataloader')
 const prisma = require('../prisma/client')
 
-const createWorldRecordsFromWorkoutIdLoader = () =>
-  new DataLoader(batchGetWorldRecordsByWorkoutId)
-
-async function batchGetWorldRecordsByWorkoutId (workoutIds) {
-  const results = await prisma.worldRecord.findMany({
-    where: {
-      workout: { id: { in: workoutIds } }
-    }
-  })
-  return workoutIds.map(
-    workoutId =>
-      results.filter(r => r.workoutId === workoutId) ||
-      new Error(
-        `batchGetWorldRecordsByWorkoutId: No world records found for ${workoutId}`
-      )
-  )
-}
-
 const createWorkoutSectionsAndMovesFromWorkoutIdLoader = () =>
   new DataLoader(batchGetWorkoutSectionsAndMovesByWorkoutId)
 
@@ -47,6 +29,5 @@ async function batchGetWorkoutSectionsAndMovesByWorkoutId (workoutIds) {
 }
 
 module.exports = {
-  createWorldRecordsFromWorkoutIdLoader,
   createWorkoutSectionsAndMovesFromWorkoutIdLoader
 }

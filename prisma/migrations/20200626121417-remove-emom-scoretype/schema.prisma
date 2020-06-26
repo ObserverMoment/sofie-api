@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 model Benchmark {
@@ -175,6 +175,7 @@ model Workout {
   difficultyLevel   DifficultyLevel    @default(ONE)
   scope             AccessScopeType    @default(PRIVATE)
   workoutScoreType  WorkoutScoreType   @default(AMREPS)
+  worldRecords      WorldRecord[]
   challenges        Challenge[]        @relation(references: [id])
   scheduledWorkouts ScheduledWorkout[]
   workoutSections   WorkoutSection[]
@@ -208,6 +209,20 @@ model WorkoutScore {
   benchmark        Benchmark?
 }
 
+model WorldRecord {
+  id               String           @default(uuid()) @id
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  notes            String?
+  recordValue      Int
+  workoutScoreType WorkoutScoreType @default(AMREPS)
+  gender           Gender
+  workout          Workout          @relation(fields: [workoutId], references: [id])
+  workoutId        String
+  user             User?            @relation(fields: [userId], references: [id])
+  userId           String?
+}
+
 // Height in cms / weight in kgs
 model User {
   id                           String                         @default(uuid()) @id
@@ -229,6 +244,7 @@ model User {
   unitSystem                   UnitSystem                     @default(METRIC)
   subscriptionLevel            UserSubscriptionLevel          @default(FREE)
   benchmarks                   Benchmark[]
+  worldRecords                 WorldRecord[]
   challenges                   Challenge[]
   benchmarkVideoValidations    BenchmarkVideoValidation[]
   benchmarkVideoComments       BenchmarkVideoComment[]

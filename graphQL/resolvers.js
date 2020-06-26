@@ -31,8 +31,7 @@ const resolvers = {
       // This avoids duplicating calls - caused by prisma's select functionality also being able to select relations.
       // These calls are made via the Workout subfields and handled by Dataloaders
       const select = stripRelationsFromSelected(selected.Workout, [
-        'workoutSections',
-        'worldRecords'
+        'workoutSections'
       ])
       const workouts = await prisma.workout.findMany({
         select,
@@ -57,8 +56,7 @@ const resolvers = {
       // This avoids duplicating calls - caused by prisma's select functionality also being able to select relations.
       // These calls are made via the Workout subfields and handled by Dataloaders
       const select = stripRelationsFromSelected(selected.Workout, [
-        'workoutSections',
-        'worldRecords'
+        'workoutSections'
       ])
       return prisma.workout.findOne({
         select,
@@ -71,8 +69,7 @@ const resolvers = {
       // This avoids duplicating calls - caused by prisma's select functionality also being able to select relations.
       // These calls are made via the Workout subfields and handled by Dataloaders
       const select = stripRelationsFromSelected(selected.Workout, [
-        'workoutSections',
-        'worldRecords'
+        'workoutSections'
       ])
       return prisma.workout.findMany({
         select,
@@ -97,8 +94,7 @@ const resolvers = {
       // These calls are made via the Workout subfields and handled by Dataloaders
       const select = stripRelationsFromSelected(selected.Workout, [
         'workoutSections',
-        'workoutMoves',
-        'worldRecord'
+        'workoutMoves'
       ])
       // TODO: This resolver should never retrieve Official Workouts
       // This should happen in a separate resolver
@@ -173,7 +169,14 @@ const resolvers = {
         }
       }
       return prisma.workout.create({ data })
-    }
+    },
+    updateWorkout: async (r,
+      { authedUserId, workoutId, workoutData },
+      { selected, prisma },
+      i) => prisma.workout.update({
+      where: { id: workoutId },
+      data: workoutData
+    })
   },
   Workout: {
     // You always need to get the WorkoutMoves and the Moves back along with the workoutSection.
@@ -185,9 +188,6 @@ const resolvers = {
       i
     ) => {
       return workoutSectionsAndMovesFromWorkoutIdLoader.load(id)
-    },
-    worldRecords: async ({ id }, a, { worldRecordsFromWorkoutIdLoader }, i) => {
-      return worldRecordsFromWorkoutIdLoader.load(id)
     }
   }
 }

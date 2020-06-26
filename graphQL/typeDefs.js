@@ -22,6 +22,11 @@ const typeDefs = gql`
       authedUserId: String!
       workoutData: CreateWorkoutInput!
     ): Workout!
+    updateWorkout(
+      authedUserId: String!,
+      workoutId: String!,
+      workoutData: UpdateWorkoutInput!
+    ): Workout!
   }
 
   type Benchmark {
@@ -91,10 +96,32 @@ const typeDefs = gql`
     workoutScoreType: String!
     difficultyLevel: String!
     scope: String!
-    crossfitWodCategory: String
     challenges: [Challenge!]
     workoutSections: [WorkoutSection!]!
-    worldRecords: [WorldRecord!]
+  }
+
+  input CreateWorkoutInput {
+    name: String!
+    summary: String
+    description: String
+    demoVideoUrl: String
+    timecap: Int
+    workoutScoreType: String!
+    difficultyLevel: String!
+    scope: String!
+    workoutSections: [CreateWorkoutSectionInput!]
+  }
+
+  input UpdateWorkoutInput {
+    id: ID
+    name: String
+    summary: String
+    description: String
+    demoVideoUrl: String
+    timecap: Int
+    workoutScoreType: String
+    difficultyLevel: String
+    scope: String
   }
 
   type WorkoutSection {
@@ -120,16 +147,6 @@ const typeDefs = gql`
     distanceUnit: String!
     move: Move!
     selectedEquipment: Equipment
-  }
-
-  type WorldRecord {
-    id: ID!
-    notes: String
-    recordValue: Int!
-    workoutScoreType: String!
-    gender: String!
-    workout: Workout!
-    user: User
   }
 
   type User {
@@ -165,20 +182,6 @@ const typeDefs = gql`
     lastname: String
     unitSystem: String
     weight: Float
-  }
-
-  input CreateWorkoutInput {
-    name: String!
-    summary: String
-    description: String
-    demoVideoUrl: String
-    timecap: Int
-    workoutScoreType: String!
-    difficultyLevel: String!
-    scope: String!
-    crossfitWodCategory: String
-    workoutSections: [CreateWorkoutSectionInput!]!
-    worldRecords: [CreateWorkoutRecordInput!]
   }
 
   input CreateWorkoutRecordInput {
