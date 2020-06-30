@@ -1,0 +1,59 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "CreateEnum",
+      "enum": "ThemePreference",
+      "values": [
+        "DARK",
+        "LIGHT"
+      ]
+    },
+    {
+      "tag": "DeleteModel",
+      "model": "WorldRecord"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "Workout",
+      "field": "worldRecords"
+    },
+    {
+      "tag": "CreateField",
+      "model": "User",
+      "field": "themePreference",
+      "type": "ThemePreference",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "User",
+          "field": "themePreference"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "User",
+          "field": "themePreference"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "DARK"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "User",
+      "field": "worldRecords"
+    }
+  ]
+}

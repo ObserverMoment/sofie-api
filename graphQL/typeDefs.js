@@ -93,6 +93,7 @@ const typeDefs = gql`
     description: String
     timecap: Int
     demoVideoUrl: String
+    imageUrl: String
     workoutScoreType: String!
     difficultyLevel: String!
     scope: String!
@@ -105,6 +106,7 @@ const typeDefs = gql`
     summary: String
     description: String
     demoVideoUrl: String
+    imageUrl: String
     timecap: Int
     workoutScoreType: String!
     difficultyLevel: String!
@@ -158,12 +160,13 @@ const typeDefs = gql`
     countryCode: String
     displayName: String
     firstname: String
+    lastname: String
+    themePreference: String!
     gender: String
     gymBox: String
     hasOnboarded: Boolean!
     height: Float
     weight: Float
-    lastname: String
     unitSystem: String
   }
 
@@ -175,6 +178,7 @@ const typeDefs = gql`
     countryCode: String
     displayName: String
     firstname: String
+    themePreference: String
     gender: String
     gymBox: String
     hasOnboarded: Boolean
@@ -182,13 +186,6 @@ const typeDefs = gql`
     lastname: String
     unitSystem: String
     weight: Float
-  }
-
-  input CreateWorkoutRecordInput {
-    notes: String
-    recordValue: Int!
-    workoutScoreType: String!
-    gender: String!
   }
 
   input CreateWorkoutSectionInput {
