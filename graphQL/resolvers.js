@@ -170,13 +170,85 @@ const resolvers = {
       }
       return prisma.workout.create({ data })
     },
-    updateWorkout: async (r,
-      { authedUserId, workoutId, workoutData },
+    deepUpdateWorkout: async (
+      r,
+      { authedUserId, workoutData },
       { selected, prisma },
-      i) => prisma.workout.update({
-      where: { id: workoutId },
-      data: workoutData
-    })
+      i
+    ) => {
+      // Get all workoutSection children of the workout.
+      const workoutSections = await prisma.workoutSection.findMany({
+        where: {
+          workout: {
+            id: { equals: workoutData.id }
+          }
+        }
+      })
+
+      const sectionIds = [].concat(...workoutSections.map(ws => ws.id))
+
+      // Delete all moves from these workoutSections.
+      await prisma.workoutMove.deleteMany({
+        where: {
+          workoutSection: {
+            id: {
+              in: sectionIds
+            }
+          }
+        }
+      })
+
+      // Then delete all workoutSections.
+      await prisma.workoutSection.deleteMany({
+        where: {
+          id: {
+            in: sectionIds
+          }
+        }
+      })
+
+      // Then rebuild all children of the workout, and update the workout itself.
+      return prisma.workout.update({
+        where: { id: workoutData.id },
+        data: {
+          ...workoutData,
+          workoutSections: {
+            create: [
+              ...workoutData.workoutSections.map(section => ({
+                ...section,
+                pyramidStructure: {
+                  set: section.pyramidStructure || []
+                },
+                workoutMoves: {
+                  create: [
+                    ...section.workoutMoves.map(workoutMove => {
+                      const { selectedEquipmentId } = workoutMove
+                      const selectedEquipment = selectedEquipmentId
+                        ? {
+                          connect: {
+                            id: workoutMove.selectedEquipmentId || undefined
+                          }
+                        }
+                        : null
+                      const workoutMoveData = {
+                        ...workoutMove,
+                        selectedEquipment,
+                        move: {
+                          connect: { id: workoutMove.moveId }
+                        }
+                      }
+                      delete workoutMoveData.selectedEquipmentId
+                      delete workoutMoveData.moveId
+                      return workoutMoveData
+                    })
+                  ]
+                }
+              }))
+            ]
+          }
+        }
+      })
+    }
   },
   Workout: {
     // You always need to get the WorkoutMoves and the Moves back along with the workoutSection.

@@ -5,3 +5,7 @@
 20200626121417-remove-emom-scoretype
 20200629101805-user-theme-preference
 20200629221509-workout-image-url
+20200702112017-user-follows-cleanup-workout-demo-video-thumb-url
+20200702112753-revert--workout-demo-video-thumb-url
+20200709170757-workout-move-reps-to-float
+20200709170847-workout-move-reps-to-float-default-10

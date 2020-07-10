@@ -22,10 +22,13 @@ const typeDefs = gql`
       authedUserId: String!
       workoutData: CreateWorkoutInput!
     ): Workout!
-    updateWorkout(
+    deepUpdateWorkout(
       authedUserId: String!,
-      workoutId: String!,
-      workoutData: UpdateWorkoutInput!
+      workoutData: CreateWorkoutInput!
+    ): Workout!
+    shallowUpdateWorkout(
+      authedUserId: String!,
+      workoutData: ShallowUpdateWorkoutInput!
     ): Workout!
   }
 
@@ -102,6 +105,7 @@ const typeDefs = gql`
   }
 
   input CreateWorkoutInput {
+    id: ID
     name: String!
     summary: String
     description: String
@@ -114,12 +118,13 @@ const typeDefs = gql`
     workoutSections: [CreateWorkoutSectionInput!]
   }
 
-  input UpdateWorkoutInput {
-    id: ID
+  input ShallowUpdateWorkoutInput {
+    id: ID!
     name: String
     summary: String
     description: String
     demoVideoUrl: String
+    imageUrl: String
     timecap: Int
     workoutScoreType: String
     difficultyLevel: String
@@ -139,16 +144,41 @@ const typeDefs = gql`
     workout: Workout!
   }
 
+
+  input CreateWorkoutSectionInput {
+    id: ID
+    name: String
+    timecap: Int
+    sortPosition: Int
+    isPyramid: Boolean
+    pyramidStructure: [Int!]
+    isTabata: Boolean
+    rounds: Int
+    workoutMoves: [CreateWorkoutMoveInput!]!
+  }
+
   type WorkoutMove {
     id: ID!
     repType: String!
     sortPosition: Int!
     description: String
-    reps: Int
+    reps: Float!
     loadAmountKgs: Float
-    distanceUnit: String!
+    distanceUnit: String
     move: Move!
     selectedEquipment: Equipment
+  }
+
+  input CreateWorkoutMoveInput {
+    id: ID
+    loadAmountKgs: Float!
+    description: String
+    reps: Float!
+    repType: String!
+    distanceUnit: String
+    sortPosition: Int
+    selectedEquipmentId: String
+    moveId: String!
   }
 
   type User {
@@ -186,28 +216,6 @@ const typeDefs = gql`
     lastname: String
     unitSystem: String
     weight: Float
-  }
-
-  input CreateWorkoutSectionInput {
-    name: String
-    timecap: Int
-    sortPosition: Int
-    isPyramid: Boolean
-    pyramidStructure: [Int!]
-    isTabata: Boolean
-    rounds: Int
-    workoutMoves: [CreateWorkoutMoveInput!]!
-  }
-
-  input CreateWorkoutMoveInput {
-    loadAmountKgs: Float!
-    description: String
-    reps: Float!
-    repType: String!
-    distanceUnit: String!
-    sortPosition: Int
-    selectedEquipmentId: String
-    moveId: String!
   }
 `
 
