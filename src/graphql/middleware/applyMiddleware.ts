@@ -1,6 +1,10 @@
 // Middleware composer inspired by koa-compose (async onion).
+
+import { Context } from '../../types'
+import { GraphQLResolveInfo } from 'graphql'
+
 // https://github.com/koajs/compose/blob/master/index.js
-const composeMiddleware = (middlewares, resolver) => {
+const composeMiddleware = (middlewares: Function[], resolver: Function) => {
   if (!Array.isArray(middlewares)) {
     throw new TypeError('Middlewares must be an array!')
   }
@@ -9,11 +13,16 @@ const composeMiddleware = (middlewares, resolver) => {
       throw new TypeError('Middlewares array must be composed of functions!')
     }
   }
-  return async (root, args, context, info) => {
+  return async (
+    root: any,
+    args: any,
+    context: Context,
+    info: GraphQLResolveInfo,
+  ) => {
     // last called middleware #
     let index = -1
     // i: middleware function index
-    async function dispatch (i) {
+    async function dispatch(i: number) {
       if (i <= index) {
         throw Error('next() called multiple times in the same middleware')
       }
@@ -44,17 +53,26 @@ const composeMiddleware = (middlewares, resolver) => {
 ]
 */
 
-const applyMiddleware = (resolvers, middlewareMappings) => {
-  middlewareMappings.forEach(mapping => {
+interface MiddlewareMapping {
+  keys?: string[]
+  middlewares: Function[]
+  type?: string
+}
+
+const applyMiddleware = (
+  resolvers: any,
+  middlewareMappings: MiddlewareMapping[],
+) => {
+  middlewareMappings.forEach((mapping) => {
     const { type, keys, middlewares } = mapping
     if (!middlewares) {
       throw Error(
-        `applyMiddleWare Error: You did not provide middlewares for this mapping: type: ${type} -> ${keys}`
+        `applyMiddleWare Error: You did not provide middlewares for this mapping: type: ${type} -> ${keys}`,
       )
     }
     if (type !== 'all' && !keys) {
       throw Error(
-        `applyMiddleWare Error: You did not provide keys for this mapping: type: ${type} -> ${middlewares}`
+        `applyMiddleWare Error: You did not provide keys for this mapping: type: ${type} -> ${middlewares}`,
       )
     }
     if (type === 'all') {
@@ -64,24 +82,24 @@ const applyMiddleware = (resolvers, middlewareMappings) => {
           const originalResolver = resolvers[rootQueryKey][field]
           resolvers[rootQueryKey][field] = composeMiddleware(
             middlewares,
-            originalResolver
+            originalResolver,
           )
         }
       }
     } else if (type === 'root') {
       // Wrap all the direct children only of the specified root key.
-      for (const rootQueryKey of keys) {
+      for (const rootQueryKey of keys || []) {
         for (const field of Object.keys(resolvers[rootQueryKey])) {
           const originalResolver = resolvers[rootQueryKey][field]
           resolvers[rootQueryKey][field] = composeMiddleware(
             middlewares,
-            originalResolver
+            originalResolver,
           )
         }
       }
     } else if (type === 'field') {
       // Just wrap these fields. Eg. 'Query', or Query.move'.
-      for (const field of keys) {
+      for (const field of keys || []) {
         const subFields = field.split('.')
         const depth = subFields.length
         subFields.reduce((resolversSlice, subField, index) => {
@@ -90,7 +108,7 @@ const applyMiddleware = (resolvers, middlewareMappings) => {
             const originalResolver = resolversSlice[subField]
             resolversSlice[subField] = composeMiddleware(
               middlewares,
-              originalResolver
+              originalResolver,
             )
           }
           return resolvers[subField]
@@ -102,4 +120,4 @@ const applyMiddleware = (resolvers, middlewareMappings) => {
   })
 }
 
-module.exports = applyMiddleware
+export default applyMiddleware

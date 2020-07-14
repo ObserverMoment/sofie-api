@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "module": "CommonJS",
+    "outDir": "dist",
+    "sourceMap": true,
+    "strict": true,
+    "target": "ESNext",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+  },
+  "compileOnSave": true,
+  "include": ["src", "prisma"],  
+}

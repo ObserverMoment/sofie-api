@@ -1,9 +1,8 @@
-const { gql } = require('apollo-server-express')
-// Construct a schema, using GraphQL schema language
+import { gql } from 'apollo-server-express'
 
-const typeDefs = gql`
+export const schema = gql`
   type Query {
-    checkUniqueDisplayName(displayName: String!): Boolean
+    checkUniqueDisplayName(displayName: String!): Boolean!
     officialMoves: [Move!]!
     officialEquipments: [Equipment!]!
     officialWorkouts: [Workout!]!
@@ -11,8 +10,7 @@ const typeDefs = gql`
     userByUid(uid: String!): User
     users: [User!]!
     workoutById(id: String!): Workout
-    allWorkouts(authedUserId: String!): [Workout!]!
-    workoutsByScope(authedUserId: String!, scopes: [String!]!): [Workout!]!
+    workouts(authedUserId: String!): [Workout!]!
   }
 
   type Mutation {
@@ -23,36 +21,13 @@ const typeDefs = gql`
       workoutData: CreateWorkoutInput!
     ): Workout!
     deepUpdateWorkout(
-      authedUserId: String!,
+      authedUserId: String!
       workoutData: CreateWorkoutInput!
     ): Workout!
     shallowUpdateWorkout(
-      authedUserId: String!,
+      authedUserId: String!
       workoutData: ShallowUpdateWorkoutInput!
     ): Workout!
-  }
-
-  type Benchmark {
-    id: ID!
-    completedOn: String
-    score: Int!
-    note: String
-    completedBy: User!
-    challenge: Challenge!
-  }
-
-  type Challenge {
-    id: ID!
-    scope: String!
-    name: String
-    category: String
-    description: String
-    imageUrl: String
-    group: Group
-    createdBy: User
-    workouts: [Workout!]
-    benchmarks: [Benchmark!]
-    watchers: [User!]
   }
 
   type Equipment {
@@ -62,27 +37,14 @@ const typeDefs = gql`
     moves: [Move!]!
   }
 
-  type Group {
-    id: ID!
-    scope: String!
-    logoUrl: String
-    name: String!
-    countryCode: String
-    description: String
-    createdBy: User
-    admins: [User!]
-    members: [User!]
-    challenges: [Challenge!]
-  }
-
   type Move {
     id: ID!
     name: String!
     description: String
     demoVideoUrl: String
-    scope: String!
+    scope: AccessScopeType!
     groupId: String
-    validRepTypes: [String!]!
+    validRepTypes: [WorkoutMoveRepType!]!
     createdById: String
     requiredEquipments: [Equipment!]!
     selectableEquipments: [Equipment!]!
@@ -97,10 +59,9 @@ const typeDefs = gql`
     timecap: Int
     demoVideoUrl: String
     imageUrl: String
-    workoutScoreType: String!
-    difficultyLevel: String!
-    scope: String!
-    challenges: [Challenge!]
+    workoutScoreType: WorkoutScoreType!
+    difficultyLevel: DifficultyLevel!
+    scope: AccessScopeType!
     workoutSections: [WorkoutSection!]!
   }
 
@@ -112,23 +73,23 @@ const typeDefs = gql`
     demoVideoUrl: String
     imageUrl: String
     timecap: Int
-    workoutScoreType: String!
-    difficultyLevel: String!
-    scope: String!
-    workoutSections: [CreateWorkoutSectionInput!]
+    workoutScoreType: WorkoutScoreType!
+    difficultyLevel: DifficultyLevel!
+    scope: AccessScopeType!
+    workoutSections: [CreateWorkoutSectionInput!]!
   }
 
   input ShallowUpdateWorkoutInput {
-    id: ID!
-    name: String
+    id: ID
+    name: String!
     summary: String
     description: String
     demoVideoUrl: String
     imageUrl: String
     timecap: Int
-    workoutScoreType: String
-    difficultyLevel: String
-    scope: String
+    workoutScoreType: WorkoutScoreType!
+    difficultyLevel: DifficultyLevel!
+    scope: AccessScopeType!
   }
 
   type WorkoutSection {
@@ -143,7 +104,6 @@ const typeDefs = gql`
     workoutMoves: [WorkoutMove!]
     workout: Workout!
   }
-
 
   input CreateWorkoutSectionInput {
     id: ID
@@ -164,7 +124,7 @@ const typeDefs = gql`
     description: String
     reps: Float!
     loadAmountKgs: Float
-    distanceUnit: String
+    distanceUnit: DistanceUnit
     move: Move!
     selectedEquipment: Equipment
   }
@@ -174,8 +134,8 @@ const typeDefs = gql`
     loadAmountKgs: Float!
     description: String
     reps: Float!
-    repType: String!
-    distanceUnit: String
+    repType: WorkoutMoveRepType!
+    distanceUnit: DistanceUnit
     sortPosition: Int
     selectedEquipmentId: String
     moveId: String!
@@ -191,13 +151,13 @@ const typeDefs = gql`
     displayName: String
     firstname: String
     lastname: String
-    themePreference: String!
-    gender: String
+    themePreference: ThemePreference!
+    gender: Gender
     gymBox: String
     hasOnboarded: Boolean!
     height: Float
     weight: Float
-    unitSystem: String
+    unitSystem: UnitSystem
   }
 
   input UpdateUserInput {
@@ -208,15 +168,77 @@ const typeDefs = gql`
     countryCode: String
     displayName: String
     firstname: String
-    themePreference: String
-    gender: String
+    themePreference: ThemePreference
+    gender: Gender
     gymBox: String
     hasOnboarded: Boolean
     height: Float
     lastname: String
-    unitSystem: String
+    unitSystem: UnitSystem
     weight: Float
   }
-`
 
-module.exports = typeDefs
+  """
+  Enums
+  """
+  enum AccessScopeType {
+    OFFICIAL
+    PUBLIC
+    GROUP
+    PRIVATE
+  }
+
+  enum UserSubscriptionLevel {
+    FREE
+    PAID
+  }
+
+  enum Gender {
+    MALE
+    FEMALE
+    UNSPECIFIED
+  }
+
+  enum DifficultyLevel {
+    ONE
+    TWO
+    THREE
+    FOUR
+  }
+
+  enum WorkoutMoveRepType {
+    REPS
+    CALORIES
+    DISTANCE
+    TIME
+  }
+
+  """
+  AMREPS in reps
+  TIME in seconds
+  LOAD in kgs
+  EMON in reps
+  """
+  enum WorkoutScoreType {
+    AMREPS
+    FORTIME
+    FORLOAD
+  }
+
+  enum UnitSystem {
+    IMPERIAL
+    METRIC
+  }
+
+  enum DistanceUnit {
+    METRES
+    KILOMETRES
+    YARDS
+    MILES
+  }
+
+  enum ThemePreference {
+    DARK
+    LIGHT
+  }
+`

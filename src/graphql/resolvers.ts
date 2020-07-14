@@ -1,10 +1,22 @@
-const { stripRelationsFromSelected } = require('./utils')
+import { stripRelationsFromSelected } from './utils'
+import {
+  QueryResolvers,
+  WorkoutResolvers,
+  MutationResolvers,
+} from '../generated/graphql'
+import { WorkoutSection } from '@prisma/client'
 
-const resolvers = {
+interface Resolvers {
+  Query: QueryResolvers
+  Mutation: MutationResolvers
+  Workout: WorkoutResolvers
+}
+
+const resolvers: Resolvers = {
   Query: {
     checkUniqueDisplayName: async (r, { displayName }, { prisma }, i) => {
       const user = await prisma.user.findOne({
-        where: { displayName }
+        where: { displayName },
       })
       return user == null
     },
@@ -16,12 +28,12 @@ const resolvers = {
         select: {
           ...selected.Move,
           requiredEquipments: {
-            select: { id: true }
+            select: { id: true },
           },
           selectableEquipments: {
-            select: { id: true }
-          }
-        }
+            select: { id: true },
+          },
+        },
       })
     },
     officialEquipments: async (r, a, { selected, prisma }, i) => {
@@ -31,11 +43,11 @@ const resolvers = {
       // This avoids duplicating calls - caused by prisma's select functionality also being able to select relations.
       // These calls are made via the Workout subfields and handled by Dataloaders
       const select = stripRelationsFromSelected(selected.Workout, [
-        'workoutSections'
+        'workoutSections',
       ])
       const workouts = await prisma.workout.findMany({
         select,
-        where: { scope: 'OFFICIAL' }
+        where: { scope: 'OFFICIAL' },
       })
       return workouts
     },
@@ -46,7 +58,7 @@ const resolvers = {
     userByUid: async (r, { uid }, { selected, prisma }, i) => {
       return prisma.user.findOne({
         where: { firebaseUid: uid },
-        select: selected.User
+        select: selected.User,
       })
     },
     users: async (r, a, { selected, prisma }, i) => {
@@ -56,20 +68,20 @@ const resolvers = {
       // This avoids duplicating calls - caused by prisma's select functionality also being able to select relations.
       // These calls are made via the Workout subfields and handled by Dataloaders
       const select = stripRelationsFromSelected(selected.Workout, [
-        'workoutSections'
+        'workoutSections',
       ])
       return prisma.workout.findOne({
         select,
         where: {
-          id
-        }
+          id,
+        },
       })
     },
-    allWorkouts: async (r, { authedUserId }, { selected, prisma }, i) => {
+    workouts: async (r, { authedUserId }, { selected, prisma }, i) => {
       // This avoids duplicating calls - caused by prisma's select functionality also being able to select relations.
       // These calls are made via the Workout subfields and handled by Dataloaders
       const select = stripRelationsFromSelected(selected.Workout, [
-        'workoutSections'
+        'workoutSections',
       ])
       return prisma.workout.findMany({
         select,
@@ -77,41 +89,20 @@ const resolvers = {
           AND: [
             { createdBy: { id: authedUserId } },
             {
-              NOT: [{ scope: 'OFFICIAL' }]
-            }
-          ]
-        }
+              NOT: [{ scope: 'OFFICIAL' }],
+            },
+          ],
+        },
       })
     },
-    // TODO: Also allow passing an array of scopes.
-    workoutsByScope: async (
-      r,
-      { authedUserId, scopes },
-      { selected, prisma },
-      i
-    ) => {
-      // This avoids duplicating calls - caused by prisma's select functionality also being able to select relations.
-      // These calls are made via the Workout subfields and handled by Dataloaders
-      const select = stripRelationsFromSelected(selected.Workout, [
-        'workoutSections',
-        'workoutMoves'
-      ])
-      // TODO: This resolver should never retrieve Official Workouts
-      // This should happen in a separate resolver
-      // authedUser
-      return prisma.workout.findMany({
-        where: { scope: { in: scopes }, createdBy: { id: authedUserId } },
-        select
-      })
-    }
   },
   Mutation: {
     createUser: async (r, { uid }, { selected, prisma }, i) => {
       return prisma.user.create({
         data: {
-          firebaseUid: uid
+          firebaseUid: uid,
         },
-        select: selected.User
+        select: selected.User,
       })
     },
     updateUser: async (r, { id, data }, { selected, prisma }, i) => {
@@ -121,90 +112,94 @@ const resolvers = {
         : data
       return prisma.user.update({
         where: { id },
-        data: formattedData
+        data: formattedData,
       })
     },
     createWorkout: async (
       r,
       { authedUserId, workoutData },
       { selected, prisma },
-      i
+      i,
     ) => {
       const data = {
         ...workoutData,
         createdBy: { connect: { id: authedUserId } },
         workoutSections: {
           create: [
-            ...workoutData.workoutSections.map(section => ({
+            ...workoutData.workoutSections.map((section) => ({
               ...section,
               pyramidStructure: {
-                set: section.pyramidStructure || []
+                set: section.pyramidStructure || [],
               },
               workoutMoves: {
                 create: [
-                  ...section.workoutMoves.map(workoutMove => {
+                  ...section.workoutMoves.map((workoutMove) => {
                     const { selectedEquipmentId } = workoutMove
                     const selectedEquipment = selectedEquipmentId
                       ? {
-                        connect: {
-                          id: workoutMove.selectedEquipmentId || undefined
+                          connect: {
+                            id: workoutMove.selectedEquipmentId || undefined,
+                          },
                         }
-                      }
                       : null
                     const workoutMoveData = {
                       ...workoutMove,
                       selectedEquipment,
                       move: {
-                        connect: { id: workoutMove.moveId }
-                      }
+                        connect: { id: workoutMove.moveId },
+                      },
                     }
                     delete workoutMoveData.selectedEquipmentId
                     delete workoutMoveData.moveId
                     return workoutMoveData
-                  })
-                ]
-              }
-            }))
-          ]
-        }
+                  }),
+                ],
+              },
+            })),
+          ],
+        },
       }
       return prisma.workout.create({ data })
     },
     deepUpdateWorkout: async (
-      r,
+      _r,
       { authedUserId, workoutData },
       { selected, prisma },
-      i
+      i,
     ) => {
       // Get all workoutSection children of the workout.
-      const workoutSections = await prisma.workoutSection.findMany({
-        where: {
-          workout: {
-            id: { equals: workoutData.id }
-          }
-        }
-      })
+      const workoutSections: WorkoutSection[] = await prisma.workoutSection.findMany(
+        {
+          where: {
+            workout: {
+              id: { equals: workoutData.id },
+            },
+          },
+        },
+      )
 
-      const sectionIds = [].concat(...workoutSections.map(ws => ws.id))
+      const sectionIds = ([] as string[]).concat(
+        ...workoutSections.map((ws: WorkoutSection) => ws.id),
+      )
 
       // Delete all moves from these workoutSections.
       await prisma.workoutMove.deleteMany({
         where: {
           workoutSection: {
             id: {
-              in: sectionIds
-            }
-          }
-        }
+              in: sectionIds,
+            },
+          },
+        },
       })
 
       // Then delete all workoutSections.
       await prisma.workoutSection.deleteMany({
         where: {
           id: {
-            in: sectionIds
-          }
-        }
+            in: sectionIds,
+          },
+        },
       })
 
       // Then rebuild all children of the workout, and update the workout itself.
@@ -214,54 +209,61 @@ const resolvers = {
           ...workoutData,
           workoutSections: {
             create: [
-              ...workoutData.workoutSections.map(section => ({
+              ...workoutData.workoutSections.map((section) => ({
                 ...section,
                 pyramidStructure: {
-                  set: section.pyramidStructure || []
+                  set: section.pyramidStructure || [],
                 },
                 workoutMoves: {
                   create: [
-                    ...section.workoutMoves.map(workoutMove => {
+                    ...section.workoutMoves.map((workoutMove) => {
                       const { selectedEquipmentId } = workoutMove
                       const selectedEquipment = selectedEquipmentId
                         ? {
-                          connect: {
-                            id: workoutMove.selectedEquipmentId || undefined
+                            connect: {
+                              id: workoutMove.selectedEquipmentId || undefined,
+                            },
                           }
-                        }
                         : null
                       const workoutMoveData = {
                         ...workoutMove,
                         selectedEquipment,
                         move: {
-                          connect: { id: workoutMove.moveId }
-                        }
+                          connect: { id: workoutMove.moveId },
+                        },
                       }
                       delete workoutMoveData.selectedEquipmentId
                       delete workoutMoveData.moveId
                       return workoutMoveData
-                    })
-                  ]
-                }
-              }))
-            ]
-          }
-        }
+                    }),
+                  ],
+                },
+              })),
+            ],
+          },
+        },
       })
-    }
+    },
   },
   Workout: {
     // You always need to get the WorkoutMoves and the Moves back along with the workoutSection.
     // So do it in a single call rather than nesting WorkoutMove -> workoutSection -> Move
-    workoutSections: async (
-      { id },
-      a,
-      { workoutSectionsAndMovesFromWorkoutIdLoader },
-      i
-    ) => {
-      return workoutSectionsAndMovesFromWorkoutIdLoader.load(id)
-    }
-  }
+    workoutSections: async ({ id }, a, { prisma }, i) => {
+      return prisma.workoutSection.findMany({
+        where: {
+          workout: { id },
+        },
+        include: {
+          workoutMoves: {
+            include: {
+              selectedEquipment: true,
+              move: true,
+            },
+          },
+        },
+      })
+    },
+  },
 }
 
-module.exports = resolvers
+export default resolvers
