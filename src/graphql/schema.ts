@@ -58,6 +58,7 @@ export const schema = gql`
     description: String
     timecap: Int
     demoVideoUrl: String
+    youtubeVideoUrl: String
     imageUrl: String
     workoutScoreType: WorkoutScoreType!
     difficultyLevel: DifficultyLevel!
@@ -71,6 +72,7 @@ export const schema = gql`
     summary: String
     description: String
     demoVideoUrl: String
+    youtubeVideoUrl: String
     imageUrl: String
     timecap: Int
     workoutScoreType: WorkoutScoreType!
@@ -85,6 +87,7 @@ export const schema = gql`
     summary: String
     description: String
     demoVideoUrl: String
+    youtubeVideoUrl: String
     imageUrl: String
     timecap: Int
     workoutScoreType: WorkoutScoreType!
