@@ -1,5 +1,10 @@
 import { parseResolveInfo } from 'graphql-parse-resolve-info'
 import { GraphQLResolveInfo } from 'graphql'
+import { PrismaClient, WorkoutSection } from '@prisma/client'
+import {
+  CreateWorkoutInput,
+  DeepUpdateWorkoutInput,
+} from '../generated/graphql'
 
 // Creates an array of promise returning functions then returns when all are resolved.
 // Tasks: Array of things on which the function should act.
@@ -43,10 +48,111 @@ function stripRelationsFromSelected(
   return Object.keys(selectedObject).reduce(
     (acum, nextKey) => ({
       ...acum,
-      [nextKey]: !excludedFields.includes(nextKey) || false,
+      [nextKey]: !excludedFields.includes(nextKey),
     }),
     {},
   )
 }
 
-export { parallel, pipe, extractSelectedFields, stripRelationsFromSelected }
+async function deleteAllWorkoutDescendants(
+  prisma: PrismaClient,
+  workoutId: string,
+) {
+  // Get all workoutSection children of the workout.
+  const workoutSections: WorkoutSection[] = await prisma.workoutSection.findMany(
+    {
+      where: {
+        workout: {
+          id: workoutId,
+        },
+      },
+    },
+  )
+
+  const sectionIds = ([] as string[]).concat(
+    ...workoutSections.map((ws: WorkoutSection) => ws.id),
+  )
+
+  // Delete all moves from these workoutSections.
+  await prisma.workoutMove.deleteMany({
+    where: {
+      workoutSection: {
+        id: {
+          in: sectionIds,
+        },
+      },
+    },
+  })
+
+  // Then delete all workoutSections.
+  await prisma.workoutSection.deleteMany({
+    where: {
+      id: {
+        in: sectionIds,
+      },
+    },
+  })
+  return true
+}
+
+function buildCreateWorkoutData(
+  authedUserId: string,
+  workoutData: CreateWorkoutInput | DeepUpdateWorkoutInput,
+  isCreate: boolean,
+) {
+  const createdBy = isCreate
+    ? { createdBy: { connect: { id: authedUserId } } }
+    : {}
+  const workoutTypeId = workoutData.workoutTypeId
+  delete workoutData.workoutTypeId
+  return {
+    ...workoutData,
+    ...createdBy,
+    workoutType: {
+      connect: { id: workoutTypeId },
+    },
+    workoutSections: {
+      create: [
+        ...workoutData.workoutSections.map((section) => ({
+          ...section,
+          pyramidStructure: {
+            set: section.pyramidStructure || [],
+          },
+          workoutMoves: {
+            create: [
+              ...section.workoutMoves.map((workoutMove) => {
+                const { selectedEquipmentId } = workoutMove
+                const selectedEquipment = selectedEquipmentId
+                  ? {
+                      connect: {
+                        id: workoutMove.selectedEquipmentId || undefined,
+                      },
+                    }
+                  : null
+                const workoutMoveData = {
+                  ...workoutMove,
+                  selectedEquipment,
+                  move: {
+                    connect: { id: workoutMove.moveId },
+                  },
+                }
+                delete workoutMoveData.selectedEquipmentId
+                delete workoutMoveData.moveId
+                return workoutMoveData
+              }),
+            ],
+          },
+        })),
+      ],
+    },
+  }
+}
+
+export {
+  parallel,
+  pipe,
+  extractSelectedFields,
+  stripRelationsFromSelected,
+  deleteAllWorkoutDescendants,
+  buildCreateWorkoutData,
+}

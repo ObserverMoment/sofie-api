@@ -1,0 +1,1250 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "CreateEnum",
+      "enum": "MoveType",
+      "values": [
+        "STANDARD",
+        "COMPOUND"
+      ]
+    },
+    {
+      "tag": "CreateModel",
+      "model": "ScoreSubmission"
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScoreSubmission",
+      "field": "id",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmission",
+          "field": "id"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmission",
+          "field": "id"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "uuid()"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmission",
+          "field": "id"
+        },
+        "directive": "id"
+      }
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScoreSubmission",
+      "field": "createdAt",
+      "type": "DateTime",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmission",
+          "field": "createdAt"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmission",
+          "field": "createdAt"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "now()"
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScoreSubmission",
+      "field": "completedOn",
+      "type": "DateTime",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScoreSubmission",
+      "field": "note",
+      "type": "String",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScoreSubmission",
+      "field": "completedBy",
+      "type": "User",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmission",
+          "field": "completedBy"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmission",
+          "field": "completedBy"
+        },
+        "directive": "relation"
+      },
+      "argument": "fields",
+      "value": "[completedById]"
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmission",
+          "field": "completedBy"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[id]"
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScoreSubmission",
+      "field": "completedById",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScoreSubmission",
+      "field": "challenge",
+      "type": "Challenge",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmission",
+          "field": "challenge"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmission",
+          "field": "challenge"
+        },
+        "directive": "relation"
+      },
+      "argument": "fields",
+      "value": "[challengeId]"
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmission",
+          "field": "challenge"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[id]"
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScoreSubmission",
+      "field": "challengeId",
+      "type": "String",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScoreSubmission",
+      "field": "scoreSubmissionVideo",
+      "type": "ScoreSubmissionVideo",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmission",
+          "field": "scoreSubmissionVideo"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmission",
+          "field": "scoreSubmissionVideo"
+        },
+        "directive": "relation"
+      },
+      "argument": "fields",
+      "value": "[scoreSubmissionVideoId]"
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmission",
+          "field": "scoreSubmissionVideo"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[id]"
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScoreSubmission",
+      "field": "scoreSubmissionVideoId",
+      "type": "String",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScoreSubmission",
+      "field": "workoutScore",
+      "type": "WorkoutScore",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmission",
+          "field": "workoutScore"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmission",
+          "field": "workoutScore"
+        },
+        "directive": "relation"
+      },
+      "argument": "fields",
+      "value": "[workoutScoreId]"
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmission",
+          "field": "workoutScore"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[id]"
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScoreSubmission",
+      "field": "workoutScoreId",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateModel",
+      "model": "ScoreSubmissionVideo"
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScoreSubmissionVideo",
+      "field": "id",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmissionVideo",
+          "field": "id"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmissionVideo",
+          "field": "id"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "uuid()"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmissionVideo",
+          "field": "id"
+        },
+        "directive": "id"
+      }
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScoreSubmissionVideo",
+      "field": "createdAt",
+      "type": "DateTime",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmissionVideo",
+          "field": "createdAt"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmissionVideo",
+          "field": "createdAt"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "now()"
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScoreSubmissionVideo",
+      "field": "videoUrl",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScoreSubmissionVideo",
+      "field": "note",
+      "type": "String",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScoreSubmissionVideo",
+      "field": "scoreSubmission",
+      "type": "ScoreSubmission",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScoreSubmissionVideo",
+      "field": "scoreSubmissionId",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScoreSubmissionVideo",
+      "field": "scoreSubmissionVideoValidations",
+      "type": "ScoreSubmissionVideoValidation",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateModel",
+      "model": "ScoreSubmissionVideoValidation"
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScoreSubmissionVideoValidation",
+      "field": "id",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmissionVideoValidation",
+          "field": "id"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmissionVideoValidation",
+          "field": "id"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "uuid()"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmissionVideoValidation",
+          "field": "id"
+        },
+        "directive": "id"
+      }
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScoreSubmissionVideoValidation",
+      "field": "createdAt",
+      "type": "DateTime",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmissionVideoValidation",
+          "field": "createdAt"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmissionVideoValidation",
+          "field": "createdAt"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "now()"
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScoreSubmissionVideoValidation",
+      "field": "createdByUser",
+      "type": "User",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmissionVideoValidation",
+          "field": "createdByUser"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmissionVideoValidation",
+          "field": "createdByUser"
+        },
+        "directive": "relation"
+      },
+      "argument": "fields",
+      "value": "[createdByUserId]"
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmissionVideoValidation",
+          "field": "createdByUser"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[id]"
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScoreSubmissionVideoValidation",
+      "field": "createdByUserId",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScoreSubmissionVideoValidation",
+      "field": "isValid",
+      "type": "Boolean",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScoreSubmissionVideoValidation",
+      "field": "scoreSubmissionVideo",
+      "type": "ScoreSubmissionVideo",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmissionVideoValidation",
+          "field": "scoreSubmissionVideo"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmissionVideoValidation",
+          "field": "scoreSubmissionVideo"
+        },
+        "directive": "relation"
+      },
+      "argument": "fields",
+      "value": "[scoreSubmissionVideoId]"
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmissionVideoValidation",
+          "field": "scoreSubmissionVideo"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[id]"
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScoreSubmissionVideoValidation",
+      "field": "scoreSubmissionVideoId",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScoreSubmissionVideoValidation",
+      "field": "scoreSubmissionVideoComment",
+      "type": "ScoreSubmissionVideoComment",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateModel",
+      "model": "ScoreSubmissionVideoComment"
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScoreSubmissionVideoComment",
+      "field": "id",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmissionVideoComment",
+          "field": "id"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmissionVideoComment",
+          "field": "id"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "uuid()"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmissionVideoComment",
+          "field": "id"
+        },
+        "directive": "id"
+      }
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScoreSubmissionVideoComment",
+      "field": "createdAt",
+      "type": "DateTime",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmissionVideoComment",
+          "field": "createdAt"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmissionVideoComment",
+          "field": "createdAt"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "now()"
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScoreSubmissionVideoComment",
+      "field": "createdByUser",
+      "type": "User",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmissionVideoComment",
+          "field": "createdByUser"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmissionVideoComment",
+          "field": "createdByUser"
+        },
+        "directive": "relation"
+      },
+      "argument": "fields",
+      "value": "[createdByUserId]"
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmissionVideoComment",
+          "field": "createdByUser"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[id]"
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScoreSubmissionVideoComment",
+      "field": "createdByUserId",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScoreSubmissionVideoComment",
+      "field": "scoreSubmissionVideoValidation",
+      "type": "ScoreSubmissionVideoValidation",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmissionVideoComment",
+          "field": "scoreSubmissionVideoValidation"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmissionVideoComment",
+          "field": "scoreSubmissionVideoValidation"
+        },
+        "directive": "relation"
+      },
+      "argument": "fields",
+      "value": "[scoreSubmissionVideoValidationId]"
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmissionVideoComment",
+          "field": "scoreSubmissionVideoValidation"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[id]"
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScoreSubmissionVideoComment",
+      "field": "scoreSubmissionVideoValidationId",
+      "type": "String",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScoreSubmissionVideoComment",
+      "field": "comment",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScoreSubmissionVideoComment",
+      "field": "replies",
+      "type": "ScoreSubmissionVideoCommentReplies",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateModel",
+      "model": "ScoreSubmissionVideoCommentReplies"
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScoreSubmissionVideoCommentReplies",
+      "field": "id",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmissionVideoCommentReplies",
+          "field": "id"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmissionVideoCommentReplies",
+          "field": "id"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "uuid()"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmissionVideoCommentReplies",
+          "field": "id"
+        },
+        "directive": "id"
+      }
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScoreSubmissionVideoCommentReplies",
+      "field": "createdAt",
+      "type": "DateTime",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmissionVideoCommentReplies",
+          "field": "createdAt"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmissionVideoCommentReplies",
+          "field": "createdAt"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "now()"
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScoreSubmissionVideoCommentReplies",
+      "field": "createdByUser",
+      "type": "User",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmissionVideoCommentReplies",
+          "field": "createdByUser"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmissionVideoCommentReplies",
+          "field": "createdByUser"
+        },
+        "directive": "relation"
+      },
+      "argument": "fields",
+      "value": "[createdByUserId]"
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmissionVideoCommentReplies",
+          "field": "createdByUser"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[id]"
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScoreSubmissionVideoCommentReplies",
+      "field": "createdByUserId",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScoreSubmissionVideoCommentReplies",
+      "field": "comment",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScoreSubmissionVideoCommentReplies",
+      "field": "scoreSubmissionVideoComment",
+      "type": "ScoreSubmissionVideoComment",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmissionVideoCommentReplies",
+          "field": "scoreSubmissionVideoComment"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmissionVideoCommentReplies",
+          "field": "scoreSubmissionVideoComment"
+        },
+        "directive": "relation"
+      },
+      "argument": "fields",
+      "value": "[scoreSubmissionVideoCommentId]"
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmissionVideoCommentReplies",
+          "field": "scoreSubmissionVideoComment"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[id]"
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScoreSubmissionVideoCommentReplies",
+      "field": "scoreSubmissionVideoCommentId",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "DeleteModel",
+      "model": "Benchmark"
+    },
+    {
+      "tag": "DeleteModel",
+      "model": "BenchmarkVideo"
+    },
+    {
+      "tag": "DeleteModel",
+      "model": "BenchmarkVideoValidation"
+    },
+    {
+      "tag": "DeleteModel",
+      "model": "BenchmarkVideoComment"
+    },
+    {
+      "tag": "DeleteModel",
+      "model": "BenchmarkVideoCommentReplies"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Challenge",
+      "field": "scoreSubmissions",
+      "type": "ScoreSubmission",
+      "arity": "List"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "Challenge",
+      "field": "benchmarks"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Move",
+      "field": "moveType",
+      "type": "MoveType",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Move",
+          "field": "moveType"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Move",
+          "field": "moveType"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "STANDARD"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Move",
+      "field": "compoundMoveParents",
+      "type": "Move",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Move",
+          "field": "compoundMoveParents"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Move",
+          "field": "compoundMoveParents"
+        },
+        "directive": "relation"
+      },
+      "argument": "",
+      "value": "\"compoundMoves\""
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Move",
+          "field": "compoundMoveParents"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[id]"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Move",
+      "field": "compoundMoveChildren",
+      "type": "Move",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Move",
+          "field": "compoundMoveChildren"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Move",
+          "field": "compoundMoveChildren"
+        },
+        "directive": "relation"
+      },
+      "argument": "",
+      "value": "\"compoundMoves\""
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Move",
+          "field": "compoundMoveChildren"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[id]"
+    },
+    {
+      "tag": "CreateField",
+      "model": "WorkoutScore",
+      "field": "scoreSubmission",
+      "type": "ScoreSubmission",
+      "arity": "Optional"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "WorkoutScore",
+      "field": "benchmark"
+    },
+    {
+      "tag": "CreateField",
+      "model": "User",
+      "field": "scoreSubmissions",
+      "type": "ScoreSubmission",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateField",
+      "model": "User",
+      "field": "scoreSubmissionVideoValidations",
+      "type": "ScoreSubmissionVideoValidation",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateField",
+      "model": "User",
+      "field": "scoreSubmissionVideoComments",
+      "type": "ScoreSubmissionVideoComment",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateField",
+      "model": "User",
+      "field": "ScoreSubmissionVideoCommentReplies",
+      "type": "ScoreSubmissionVideoCommentReplies",
+      "arity": "List"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "User",
+      "field": "benchmarks"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "User",
+      "field": "benchmarkVideoValidations"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "User",
+      "field": "benchmarkVideoComments"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "User",
+      "field": "BenchmarkVideoCommentReplies"
+    },
+    {
+      "tag": "CreateField",
+      "model": "WorkoutType",
+      "field": "Workout",
+      "type": "Workout",
+      "arity": "List"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "WorkoutType",
+      "field": "workouts"
+    }
+  ]
+}

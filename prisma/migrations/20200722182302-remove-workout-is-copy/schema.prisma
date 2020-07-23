@@ -7,64 +7,64 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
-model ScoreSubmission {
-  id                     String                @default(uuid()) @id
-  createdAt              DateTime              @default(now())
-  completedOn            DateTime
-  note                   String?
-  completedBy            User                  @relation(fields: [completedById], references: [id])
-  completedById          String
-  challenge              Challenge?            @relation(fields: [challengeId], references: [id])
-  challengeId            String?
-  scoreSubmissionVideo   ScoreSubmissionVideo? @relation(fields: [scoreSubmissionVideoId], references: [id])
-  scoreSubmissionVideoId String?
-  workoutScore           WorkoutScore          @relation(fields: [workoutScoreId], references: [id])
-  workoutScoreId         String
+model Benchmark {
+  id               String          @default(uuid()) @id
+  createdAt        DateTime        @default(now())
+  completedOn      DateTime
+  note             String?
+  completedBy      User            @relation(fields: [completedById], references: [id])
+  completedById    String
+  challenge        Challenge?      @relation(fields: [challengeId], references: [id])
+  challengeId      String?
+  benchmarkVideo   BenchmarkVideo? @relation(fields: [benchmarkVideoId], references: [id])
+  benchmarkVideoId String?
+  workoutScore     WorkoutScore    @relation(fields: [workoutScoreId], references: [id])
+  workoutScoreId   String
 }
 
-model ScoreSubmissionVideo {
-  id                              String                           @default(uuid()) @id
-  createdAt                       DateTime                         @default(now())
-  videoUrl                        String
-  note                            String?
-  scoreSubmission                 ScoreSubmission
-  scoreSubmissionId               String
-  scoreSubmissionVideoValidations ScoreSubmissionVideoValidation[]
+model BenchmarkVideo {
+  id                        String                     @default(uuid()) @id
+  createdAt                 DateTime                   @default(now())
+  videoUrl                  String
+  note                      String?
+  benchmark                 Benchmark
+  benchmarkId               String
+  benchmarkVideoValidations BenchmarkVideoValidation[]
 }
 
-model ScoreSubmissionVideoValidation {
-  id                          String                      @default(uuid()) @id
-  createdAt                   DateTime                    @default(now())
-  createdByUser               User                        @relation(fields: [createdByUserId], references: [id])
-  createdByUserId             String
-  isValid                     Boolean
-  scoreSubmissionVideo        ScoreSubmissionVideo        @relation(fields: [scoreSubmissionVideoId], references: [id])
-  scoreSubmissionVideoId      String
-  scoreSubmissionVideoComment ScoreSubmissionVideoComment
+model BenchmarkVideoValidation {
+  id                    String                @default(uuid()) @id
+  createdAt             DateTime              @default(now())
+  createdByUser         User                  @relation(fields: [createdByUserId], references: [id])
+  createdByUserId       String
+  isValid               Boolean
+  benchmarkVideo        BenchmarkVideo        @relation(fields: [benchmarkVideoId], references: [id])
+  benchmarkVideoId      String
+  benchmarkVideoComment BenchmarkVideoComment
 }
 
-model ScoreSubmissionVideoComment {
-  id                               String                               @default(uuid()) @id
-  createdAt                        DateTime                             @default(now())
-  createdByUser                    User                                 @relation(fields: [createdByUserId], references: [id])
-  createdByUserId                  String
-  scoreSubmissionVideoValidation   ScoreSubmissionVideoValidation?      @relation(fields: [scoreSubmissionVideoValidationId], references: [id])
-  scoreSubmissionVideoValidationId String?
-  comment                          String
-  replies                          ScoreSubmissionVideoCommentReplies[]
+model BenchmarkVideoComment {
+  id                         String                         @default(uuid()) @id
+  createdAt                  DateTime                       @default(now())
+  createdByUser              User                           @relation(fields: [createdByUserId], references: [id])
+  createdByUserId            String
+  benchmarkVideoValidation   BenchmarkVideoValidation?      @relation(fields: [benchmarkVideoValidationId], references: [id])
+  benchmarkVideoValidationId String?
+  comment                    String
+  replies                    BenchmarkVideoCommentReplies[]
 }
 
-model ScoreSubmissionVideoCommentReplies {
-  id                            String                      @default(uuid()) @id
-  createdAt                     DateTime                    @default(now())
-  createdByUser                 User                        @relation(fields: [createdByUserId], references: [id])
-  createdByUserId               String
-  comment                       String
-  scoreSubmissionVideoComment   ScoreSubmissionVideoComment @relation(fields: [scoreSubmissionVideoCommentId], references: [id])
-  scoreSubmissionVideoCommentId String
+model BenchmarkVideoCommentReplies {
+  id                      String                @default(uuid()) @id
+  createdAt               DateTime              @default(now())
+  createdByUser           User                  @relation(fields: [createdByUserId], references: [id])
+  createdByUserId         String
+  comment                 String
+  benchmarkVideoComment   BenchmarkVideoComment @relation(fields: [benchmarkVideoCommentId], references: [id])
+  benchmarkVideoCommentId String
 }
 
 model Challenge {
@@ -87,7 +87,7 @@ model Challenge {
   createdBy        User               @relation(fields: [createdById], references: [id])
   createdById      String
   workouts         Workout[]          @relation(references: [id])
-  scoreSubmissions ScoreSubmission[]
+  benchmarks       Benchmark[]
   watchers         User[]             @relation("watchersToChallenges", references: [id])
   scheduledWorkout ScheduledWorkout[]
 }
@@ -124,9 +124,6 @@ model Move {
   name                 String               @unique
   description          String?
   demoVideoUrl         String?
-  moveType             MoveType             @default(STANDARD)
-  compoundMoveParents  Move[]               @relation("compoundMoves", references: [id])
-  compoundMoveChildren Move[]               @relation("compoundMoves", references: [id])
   validRepTypes        WorkoutMoveRepType[]
   requiredEquipments   Equipment[]          @relation("moveToRequiredEquipments", references: [id])
   selectableEquipments Equipment[]          @relation("moveToSelectableEquipments", references: [id])
@@ -181,19 +178,10 @@ model Workout {
   timecap           Int?
   difficultyLevel   DifficultyLevel    @default(ONE)
   scope             AccessScopeType    @default(PRIVATE)
-  workoutType       WorkoutType        @relation(fields: [workoutTypeId], references: [id])
-  workoutTypeId     String
+  workoutScoreType  WorkoutScoreType   @default(AMREPS)
   challenges        Challenge[]        @relation(references: [id])
   scheduledWorkouts ScheduledWorkout[]
   workoutSections   WorkoutSection[]
-}
-
-model WorkoutType {
-  id          String           @default(uuid()) @id
-  name        String
-  description String?
-  scoreType   WorkoutScoreType
-  Workout     Workout[]
 }
 
 model ScheduledWorkout {
@@ -221,44 +209,44 @@ model WorkoutScore {
   log              String?
   notes            String?
   scheduledWorkout ScheduledWorkout
-  scoreSubmission  ScoreSubmission?
+  benchmark        Benchmark?
 }
 
 // Height in cms / weight in kgs
 model User {
-  id                                 String                               @default(uuid()) @id
-  firebaseUid                        String                               @unique
-  createdAt                          DateTime                             @default(now())
-  hasOnboarded                       Boolean?                             @default(false)
-  avatarUrl                          String?
-  displayName                        String?                              @unique
-  firstname                          String?
-  lastname                           String?
-  themePreference                    ThemePreference?                     @default(DARK)
-  bio                                String?
-  birthdate                          DateTime?
-  gender                             Gender?
-  height                             Float?
-  weight                             Float?
-  gymBox                             String?
-  townCity                           String?
-  countryCode                        String?
-  unitSystem                         UnitSystem                           @default(METRIC)
-  subscriptionLevel                  UserSubscriptionLevel                @default(FREE)
-  scoreSubmissions                   ScoreSubmission[]
-  challenges                         Challenge[]
-  scoreSubmissionVideoValidations    ScoreSubmissionVideoValidation[]
-  scoreSubmissionVideoComments       ScoreSubmissionVideoComment[]
-  ScoreSubmissionVideoCommentReplies ScoreSubmissionVideoCommentReplies[]
-  watchedChallenges                  Challenge[]                          @relation("watchersToChallenges", references: [id])
-  followedBy                         User[]                               @relation("UserFollows", references: [id])
-  following                          User[]                               @relation("UserFollows", references: [id])
-  groupsWhereAdmin                   Group[]                              @relation("groupToAdmins")
-  groupsWhereMember                  Group[]                              @relation("groupToMembers")
-  groupsWhereCreator                 Group[]                              @relation("groupToCreator")
-  moves                              Move[]
-  workouts                           Workout[]
-  scheduledWorkouts                  ScheduledWorkout[]
+  id                           String                         @default(uuid()) @id
+  firebaseUid                  String                         @unique
+  createdAt                    DateTime                       @default(now())
+  hasOnboarded                 Boolean?                       @default(false)
+  avatarUrl                    String?
+  displayName                  String?                        @unique
+  firstname                    String?
+  lastname                     String?
+  themePreference              ThemePreference?               @default(DARK)
+  bio                          String?
+  birthdate                    DateTime?
+  gender                       Gender?
+  height                       Float?
+  weight                       Float?
+  gymBox                       String?
+  townCity                     String?
+  countryCode                  String?
+  unitSystem                   UnitSystem                     @default(METRIC)
+  subscriptionLevel            UserSubscriptionLevel          @default(FREE)
+  benchmarks                   Benchmark[]
+  challenges                   Challenge[]
+  benchmarkVideoValidations    BenchmarkVideoValidation[]
+  benchmarkVideoComments       BenchmarkVideoComment[]
+  BenchmarkVideoCommentReplies BenchmarkVideoCommentReplies[]
+  watchedChallenges            Challenge[]                    @relation("watchersToChallenges", references: [id])
+  followedBy                   User[]                         @relation("UserFollows", references: [id])
+  following                    User[]                         @relation("UserFollows", references: [id])
+  groupsWhereAdmin             Group[]                        @relation("groupToAdmins")
+  groupsWhereMember            Group[]                        @relation("groupToMembers")
+  groupsWhereCreator           Group[]                        @relation("groupToCreator")
+  moves                        Move[]
+  workouts                     Workout[]
+  scheduledWorkouts            ScheduledWorkout[]
 }
 
 // Enums
@@ -267,11 +255,6 @@ enum AccessScopeType {
   PUBLIC
   GROUP
   PRIVATE
-}
-
-enum MoveType {
-  STANDARD
-  COMPOUND
 }
 
 enum UserSubscriptionLevel {
@@ -302,6 +285,7 @@ enum WorkoutMoveRepType {
 // AMREPS in reps
 // TIME in seconds
 // LOAD in kgs
+// EMON in reps
 enum WorkoutScoreType {
   AMREPS
   FORTIME

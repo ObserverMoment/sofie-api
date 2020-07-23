@@ -1,10 +1,15 @@
-import { stripRelationsFromSelected } from './utils'
+import {
+  stripRelationsFromSelected,
+  deleteAllWorkoutDescendants,
+  buildCreateWorkoutData,
+} from './utils'
 import {
   QueryResolvers,
   WorkoutResolvers,
   MutationResolvers,
 } from '../generated/graphql'
-import { WorkoutSection } from '@prisma/client'
+import { deleteFiles } from '../uploadcare'
+import { Workout, PrismaClient, WorkoutScoreType } from '@prisma/client'
 
 interface Resolvers {
   Query: QueryResolvers
@@ -50,6 +55,12 @@ const resolvers: Resolvers = {
         where: { scope: 'OFFICIAL' },
       })
       return workouts
+    },
+    officialWorkoutTypes: async (r, a, { selected, prisma }, i) => {
+      const select = selected.WorkoutType || null
+      return prisma.workoutType.findMany({
+        select,
+      })
     },
     moves: async (r, a, { selected, prisma }, i) => {
       const select = stripRelationsFromSelected(selected.Move, ['Equipment'])
@@ -121,45 +132,30 @@ const resolvers: Resolvers = {
       { selected, prisma },
       i,
     ) => {
-      const data = {
-        ...workoutData,
-        createdBy: { connect: { id: authedUserId } },
-        workoutSections: {
-          create: [
-            ...workoutData.workoutSections.map((section) => ({
-              ...section,
-              pyramidStructure: {
-                set: section.pyramidStructure || [],
-              },
-              workoutMoves: {
-                create: [
-                  ...section.workoutMoves.map((workoutMove) => {
-                    const { selectedEquipmentId } = workoutMove
-                    const selectedEquipment = selectedEquipmentId
-                      ? {
-                          connect: {
-                            id: workoutMove.selectedEquipmentId || undefined,
-                          },
-                        }
-                      : null
-                    const workoutMoveData = {
-                      ...workoutMove,
-                      selectedEquipment,
-                      move: {
-                        connect: { id: workoutMove.moveId },
-                      },
-                    }
-                    delete workoutMoveData.selectedEquipmentId
-                    delete workoutMoveData.moveId
-                    return workoutMoveData
-                  }),
-                ],
-              },
-            })),
-          ],
+      console.log(selected)
+      const data = buildCreateWorkoutData(authedUserId, workoutData, true)
+      const workout = await prisma.workout.create({
+        data,
+        include: {
+          workoutType: true,
         },
-      }
-      return prisma.workout.create({ data })
+      })
+      console.log(workout)
+      return workout
+    },
+    shallowUpdateWorkout: async (
+      _r,
+      { authedUserId, workoutData },
+      { selected, prisma },
+      i,
+    ) => {
+      return prisma.workout.update({
+        where: { id: workoutData.id },
+        data: workoutData,
+        include: {
+          workoutType: true,
+        },
+      })
     },
     deepUpdateWorkout: async (
       _r,
@@ -167,82 +163,61 @@ const resolvers: Resolvers = {
       { selected, prisma },
       i,
     ) => {
-      // Get all workoutSection children of the workout.
-      const workoutSections: WorkoutSection[] = await prisma.workoutSection.findMany(
-        {
-          where: {
-            workout: {
-              id: { equals: workoutData.id },
-            },
-          },
-        },
-      )
+      // Delete all children of the workout before rebuilding with new data.
+      await deleteAllWorkoutDescendants(prisma, workoutData.id)
 
-      const sectionIds = ([] as string[]).concat(
-        ...workoutSections.map((ws: WorkoutSection) => ws.id),
-      )
-
-      // Delete all moves from these workoutSections.
-      await prisma.workoutMove.deleteMany({
-        where: {
-          workoutSection: {
-            id: {
-              in: sectionIds,
-            },
-          },
-        },
-      })
-
-      // Then delete all workoutSections.
-      await prisma.workoutSection.deleteMany({
-        where: {
-          id: {
-            in: sectionIds,
-          },
-        },
-      })
+      const data = buildCreateWorkoutData(authedUserId, workoutData, false)
 
       // Then rebuild all children of the workout, and update the workout itself.
       return prisma.workout.update({
         where: { id: workoutData.id },
-        data: {
-          ...workoutData,
-          workoutSections: {
-            create: [
-              ...workoutData.workoutSections.map((section) => ({
-                ...section,
-                pyramidStructure: {
-                  set: section.pyramidStructure || [],
-                },
-                workoutMoves: {
-                  create: [
-                    ...section.workoutMoves.map((workoutMove) => {
-                      const { selectedEquipmentId } = workoutMove
-                      const selectedEquipment = selectedEquipmentId
-                        ? {
-                            connect: {
-                              id: workoutMove.selectedEquipmentId || undefined,
-                            },
-                          }
-                        : null
-                      const workoutMoveData = {
-                        ...workoutMove,
-                        selectedEquipment,
-                        move: {
-                          connect: { id: workoutMove.moveId },
-                        },
-                      }
-                      delete workoutMoveData.selectedEquipmentId
-                      delete workoutMoveData.moveId
-                      return workoutMoveData
-                    }),
-                  ],
-                },
-              })),
-            ],
-          },
+        data,
+        include: {
+          workoutType: true,
         },
       })
+    },
+    deleteWorkout: async (
+      _r,
+      { authedUserId, workoutId },
+      { selected, prisma }: { selected: any; prisma: PrismaClient },
+      i,
+    ) => {
+      // Also deletes all sections and moves.
+      await deleteAllWorkoutDescendants(prisma, workoutId)
+
+      const deletedWorkout: Workout = await prisma.workout.delete({
+        where: { id: workoutId },
+      })
+
+      // Are the media files being used by other workouts that have been copied?
+      // if they are, then do not delete them.
+      const workoutsSharingImage: Workout[] = await prisma.workout.findMany({
+        where: {
+          imageUrl: deletedWorkout.imageUrl,
+        },
+      })
+
+      if (workoutsSharingImage.length == 0) {
+        // Then the media files are not shared so delete the file
+        await deleteFiles([deletedWorkout.imageUrl] as string[])
+      }
+
+      const workoutsSharingVideo: Workout[] = await prisma.workout.findMany({
+        where: {
+          demoVideoUrl: deletedWorkout.demoVideoUrl,
+        },
+      })
+
+      if (workoutsSharingVideo.length == 0) {
+        // Then the media files are not shared so delete the file
+        await deleteFiles([
+          deletedWorkout.demoVideoUrl,
+          deletedWorkout.demoVideoThumbUrl,
+        ] as string[])
+      }
+
+      return deletedWorkout.id
     },
   },
   Workout: {

@@ -6,28 +6,27 @@ export const schema = gql`
     officialMoves: [Move!]!
     officialEquipments: [Equipment!]!
     officialWorkouts: [Workout!]!
+    officialWorkoutTypes: [WorkoutType!]!
     moves: [Move!]!
-    userByUid(uid: String!): User
+    userByUid(uid: ID!): User
     users: [User!]!
-    workoutById(id: String!): Workout
-    workouts(authedUserId: String!): [Workout!]!
+    workoutById(id: ID!): Workout
+    workouts(authedUserId: ID!): [Workout!]!
   }
 
   type Mutation {
-    createUser(uid: String!): User!
-    updateUser(id: String!, data: UpdateUserInput!): User!
-    createWorkout(
-      authedUserId: String!
-      workoutData: CreateWorkoutInput!
-    ): Workout!
+    createUser(uid: ID!): User!
+    updateUser(id: ID!, data: UpdateUserInput!): User!
+    createWorkout(authedUserId: ID!, workoutData: CreateWorkoutInput!): Workout!
     deepUpdateWorkout(
-      authedUserId: String!
-      workoutData: CreateWorkoutInput!
+      authedUserId: ID!
+      workoutData: DeepUpdateWorkoutInput!
     ): Workout!
     shallowUpdateWorkout(
-      authedUserId: String!
+      authedUserId: ID!
       workoutData: ShallowUpdateWorkoutInput!
     ): Workout!
+    deleteWorkout(authedUserId: ID!, workoutId: ID!): ID!
   }
 
   type Equipment {
@@ -50,6 +49,14 @@ export const schema = gql`
     selectableEquipments: [Equipment!]!
   }
 
+  type WorkoutType {
+    id: ID!
+    name: String
+    description: String
+    scoreType: WorkoutScoreType
+    Workout: [Workout!]!
+  }
+
   type Workout {
     id: ID!
     createdAt: String!
@@ -57,42 +64,65 @@ export const schema = gql`
     summary: String
     description: String
     timecap: Int
+    isCopy: Boolean
     demoVideoUrl: String
+    demoVideoThumbUrl: String
     youtubeVideoUrl: String
+    spotifyAudio: String
     imageUrl: String
-    workoutScoreType: WorkoutScoreType!
+    workoutType: WorkoutType!
     difficultyLevel: DifficultyLevel!
     scope: AccessScopeType!
     workoutSections: [WorkoutSection!]!
   }
 
   input CreateWorkoutInput {
-    id: ID
     name: String!
     summary: String
     description: String
     demoVideoUrl: String
+    demoVideoThumbUrl: String
     youtubeVideoUrl: String
+    spotifyAudio: String
     imageUrl: String
     timecap: Int
-    workoutScoreType: WorkoutScoreType!
+    workoutTypeId: String!
     difficultyLevel: DifficultyLevel!
     scope: AccessScopeType!
     workoutSections: [CreateWorkoutSectionInput!]!
   }
 
-  input ShallowUpdateWorkoutInput {
-    id: ID
-    name: String!
+  input DeepUpdateWorkoutInput {
+    id: ID!
+    name: String
     summary: String
     description: String
     demoVideoUrl: String
+    demoVideoThumbUrl: String
     youtubeVideoUrl: String
+    spotifyAudio: String
     imageUrl: String
     timecap: Int
-    workoutScoreType: WorkoutScoreType!
-    difficultyLevel: DifficultyLevel!
-    scope: AccessScopeType!
+    workoutTypeId: String
+    difficultyLevel: DifficultyLevel
+    scope: AccessScopeType
+    workoutSections: [CreateWorkoutSectionInput!]!
+  }
+
+  input ShallowUpdateWorkoutInput {
+    id: ID!
+    name: String
+    summary: String
+    description: String
+    demoVideoUrl: String
+    demoVideoThumbUrl: String
+    youtubeVideoUrl: String
+    spotifyAudio: String
+    imageUrl: String
+    timecap: Int
+    workoutTypeId: String
+    difficultyLevel: DifficultyLevel
+    scope: AccessScopeType
   }
 
   type WorkoutSection {

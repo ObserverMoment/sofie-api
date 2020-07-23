@@ -8,6 +8,8 @@ import getSelectedFields from './graphql/middleware/getSelectedFields'
 import { PrismaClient } from '@prisma/client'
 import { Context } from './types'
 
+require('dotenv').config()
+
 const prisma = new PrismaClient({
   debug: true,
   log: ['info', 'query', 'warn'],
