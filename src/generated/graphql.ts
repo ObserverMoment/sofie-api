@@ -220,26 +220,27 @@ export type CreateWorkoutSectionInput = {
 export type WorkoutMove = {
   __typename?: 'WorkoutMove';
   id: Scalars['ID'];
-  repType: Scalars['String'];
-  sortPosition: Scalars['Int'];
   description?: Maybe<Scalars['String']>;
+  sortPosition: Scalars['Int'];
   reps: Scalars['Float'];
-  loadAmountKgs?: Maybe<Scalars['Float']>;
+  repType: Scalars['String'];
   distanceUnit?: Maybe<DistanceUnit>;
+  loadAmount?: Maybe<Scalars['Float']>;
+  loadUnit?: Maybe<LoadUnit>;
   move: Move;
   selectedEquipment?: Maybe<Equipment>;
 };
 
 export type CreateWorkoutMoveInput = {
-  id?: Maybe<Scalars['ID']>;
-  loadAmountKgs: Scalars['Float'];
   description?: Maybe<Scalars['String']>;
-  reps: Scalars['Float'];
+  sortPosition?: Maybe<Scalars['Int']>;
+  reps?: Maybe<Scalars['Float']>;
   repType: WorkoutMoveRepType;
   distanceUnit?: Maybe<DistanceUnit>;
-  sortPosition?: Maybe<Scalars['Int']>;
-  selectedEquipmentId?: Maybe<Scalars['String']>;
+  loadAmount?: Maybe<Scalars['Float']>;
+  loadUnit?: Maybe<LoadUnit>;
   moveId: Scalars['String'];
+  selectedEquipmentId?: Maybe<Scalars['String']>;
 };
 
 export type User = {
@@ -328,6 +329,12 @@ export enum WorkoutScoreType {
 export enum UnitSystem {
   Imperial = 'IMPERIAL',
   Metric = 'METRIC'
+}
+
+export enum LoadUnit {
+  Kg = 'KG',
+  Lb = 'LB',
+  Bodyweightpercent = 'BODYWEIGHTPERCENT'
 }
 
 export enum DistanceUnit {
@@ -447,6 +454,7 @@ export type ResolversTypes = {
   WorkoutMoveRepType: WorkoutMoveRepType;
   WorkoutScoreType: WorkoutScoreType;
   UnitSystem: UnitSystem;
+  LoadUnit: LoadUnit;
   DistanceUnit: DistanceUnit;
   ThemePreference: ThemePreference;
 };
@@ -564,12 +572,13 @@ export type WorkoutSectionResolvers<ContextType = any, ParentType extends Resolv
 
 export type WorkoutMoveResolvers<ContextType = any, ParentType extends ResolversParentTypes['WorkoutMove'] = ResolversParentTypes['WorkoutMove']> = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  repType?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  sortPosition?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  sortPosition?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   reps?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
-  loadAmountKgs?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  repType?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   distanceUnit?: Resolver<Maybe<ResolversTypes['DistanceUnit']>, ParentType, ContextType>;
+  loadAmount?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  loadUnit?: Resolver<Maybe<ResolversTypes['LoadUnit']>, ParentType, ContextType>;
   move?: Resolver<ResolversTypes['Move'], ParentType, ContextType>;
   selectedEquipment?: Resolver<Maybe<ResolversTypes['Equipment']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;

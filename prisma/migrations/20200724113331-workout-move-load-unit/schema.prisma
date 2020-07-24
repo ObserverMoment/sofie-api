@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 model ScoreSubmission {
@@ -139,9 +139,9 @@ model WorkoutMove {
   sortPosition        Int
   repType             WorkoutMoveRepType @default(REPS)
   reps                Float?             @default(10)
-  distanceUnit        DistanceUnit       @default(METRES)
-  loadAmount          Float?
+  loadAmountKgs       Float?
   loadUnit            LoadUnit           @default(KG)
+  distanceUnit        DistanceUnit       @default(METRES)
   description         String?
   move                Move               @relation(fields: [moveId], references: [id])
   moveId              String

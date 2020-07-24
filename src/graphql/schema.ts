@@ -152,26 +152,27 @@ export const schema = gql`
 
   type WorkoutMove {
     id: ID!
-    repType: String!
-    sortPosition: Int!
     description: String
+    sortPosition: Int!
     reps: Float!
-    loadAmountKgs: Float
+    repType: String!
     distanceUnit: DistanceUnit
+    loadAmount: Float
+    loadUnit: LoadUnit
     move: Move!
     selectedEquipment: Equipment
   }
 
   input CreateWorkoutMoveInput {
-    id: ID
-    loadAmountKgs: Float!
     description: String
-    reps: Float!
+    sortPosition: Int
+    reps: Float
     repType: WorkoutMoveRepType!
     distanceUnit: DistanceUnit
-    sortPosition: Int
-    selectedEquipmentId: String
+    loadAmount: Float
+    loadUnit: LoadUnit
     moveId: String!
+    selectedEquipmentId: String
   }
 
   type User {
@@ -261,6 +262,12 @@ export const schema = gql`
   enum UnitSystem {
     IMPERIAL
     METRIC
+  }
+
+  enum LoadUnit {
+    KG
+    LB
+    BODYWEIGHTPERCENT
   }
 
   enum DistanceUnit {
