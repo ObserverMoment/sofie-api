@@ -115,8 +115,11 @@ function buildCreateWorkoutData(
       create: [
         ...workoutData.workoutSections.map((section) => ({
           ...section,
-          pyramidStructure: {
-            set: section.pyramidStructure || [],
+          repPyramidStructure: {
+            set: section.repPyramidStructure || [],
+          },
+          weightPyramidStructure: {
+            set: section.weightPyramidStructure || [],
           },
           workoutMoves: {
             create: [
@@ -141,6 +144,9 @@ function buildCreateWorkoutData(
                 return workoutMoveData
               }),
             ],
+          },
+          roundAdjustRules: {
+            create: section.roundAdjustRules,
           },
         })),
       ],

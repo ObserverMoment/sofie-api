@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 model ScoreSubmission {
@@ -174,7 +174,7 @@ model RoundAdjustRule {
   id               String         @default(uuid()) @id
   action           RuleAction
   target           RuleTarget
-  amount           Float
+  amount           Int
   roundFrequency   Int            @default(1) // Every round
   WorkoutSection   WorkoutSection @relation(fields: [workoutSectionId], references: [id])
   workoutSectionId String

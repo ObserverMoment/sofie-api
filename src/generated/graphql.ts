@@ -194,27 +194,47 @@ export type ShallowUpdateWorkoutInput = {
 export type WorkoutSection = {
   __typename?: 'WorkoutSection';
   id: Scalars['ID'];
-  name?: Maybe<Scalars['String']>;
-  isPyramid?: Maybe<Scalars['Boolean']>;
+  notes?: Maybe<Scalars['String']>;
   timecap?: Maybe<Scalars['Int']>;
   rounds: Scalars['Int'];
-  pyramidStructure?: Maybe<Array<Scalars['Int']>>;
-  isTabata?: Maybe<Scalars['Boolean']>;
+  repPyramid?: Maybe<Scalars['Boolean']>;
+  repPyramidStructure?: Maybe<Array<Scalars['Int']>>;
+  weightPyramid?: Maybe<Scalars['Boolean']>;
+  weightPyramidStructure?: Maybe<Array<Scalars['Int']>>;
   sortPosition: Scalars['Int'];
   workoutMoves?: Maybe<Array<WorkoutMove>>;
   workout: Workout;
+  roundAdjustRules?: Maybe<Array<RoundAdjustRule>>;
 };
 
 export type CreateWorkoutSectionInput = {
   id?: Maybe<Scalars['ID']>;
-  name?: Maybe<Scalars['String']>;
+  notes?: Maybe<Scalars['String']>;
   timecap?: Maybe<Scalars['Int']>;
   sortPosition?: Maybe<Scalars['Int']>;
-  isPyramid?: Maybe<Scalars['Boolean']>;
-  pyramidStructure?: Maybe<Array<Scalars['Int']>>;
-  isTabata?: Maybe<Scalars['Boolean']>;
+  repPyramid?: Maybe<Scalars['Boolean']>;
+  repPyramidStructure?: Maybe<Array<Scalars['Int']>>;
+  weightPyramid?: Maybe<Scalars['Boolean']>;
+  weightPyramidStructure?: Maybe<Array<Scalars['Int']>>;
   rounds?: Maybe<Scalars['Int']>;
   workoutMoves: Array<CreateWorkoutMoveInput>;
+  roundAdjustRules?: Maybe<Array<CreateRoundAdjustRuleInput>>;
+};
+
+export type RoundAdjustRule = {
+  __typename?: 'RoundAdjustRule';
+  id: Scalars['ID'];
+  target?: Maybe<RuleTarget>;
+  action?: Maybe<RuleAction>;
+  amount?: Maybe<Scalars['Float']>;
+  roundFrequency?: Maybe<Scalars['Int']>;
+};
+
+export type CreateRoundAdjustRuleInput = {
+  target: RuleTarget;
+  action: RuleAction;
+  amount: Scalars['Float'];
+  roundFrequency: Scalars['Int'];
 };
 
 export type WorkoutMove = {
@@ -287,6 +307,19 @@ export enum AccessScopeType {
   Public = 'PUBLIC',
   Group = 'GROUP',
   Private = 'PRIVATE'
+}
+
+/** For generating rules which can adjust rep and load over the course of a workout */
+export enum RuleAction {
+  Increase = 'INCREASE',
+  Decrease = 'DECREASE',
+  Multiply = 'MULTIPLY'
+}
+
+/** For generating rules which can adjust rep and load over the course of a workout */
+export enum RuleTarget {
+  Rep = 'REP',
+  Load = 'LOAD'
 }
 
 export enum UserSubscriptionLevel {
@@ -442,12 +475,16 @@ export type ResolversTypes = {
   ShallowUpdateWorkoutInput: ShallowUpdateWorkoutInput;
   WorkoutSection: ResolverTypeWrapper<WorkoutSection>;
   CreateWorkoutSectionInput: CreateWorkoutSectionInput;
-  WorkoutMove: ResolverTypeWrapper<WorkoutMove>;
+  RoundAdjustRule: ResolverTypeWrapper<RoundAdjustRule>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
+  CreateRoundAdjustRuleInput: CreateRoundAdjustRuleInput;
+  WorkoutMove: ResolverTypeWrapper<WorkoutMove>;
   CreateWorkoutMoveInput: CreateWorkoutMoveInput;
   User: ResolverTypeWrapper<User>;
   UpdateUserInput: UpdateUserInput;
   AccessScopeType: AccessScopeType;
+  RuleAction: RuleAction;
+  RuleTarget: RuleTarget;
   UserSubscriptionLevel: UserSubscriptionLevel;
   Gender: Gender;
   DifficultyLevel: DifficultyLevel;
@@ -476,8 +513,10 @@ export type ResolversParentTypes = {
   ShallowUpdateWorkoutInput: ShallowUpdateWorkoutInput;
   WorkoutSection: WorkoutSection;
   CreateWorkoutSectionInput: CreateWorkoutSectionInput;
-  WorkoutMove: WorkoutMove;
+  RoundAdjustRule: RoundAdjustRule;
   Float: Scalars['Float'];
+  CreateRoundAdjustRuleInput: CreateRoundAdjustRuleInput;
+  WorkoutMove: WorkoutMove;
   CreateWorkoutMoveInput: CreateWorkoutMoveInput;
   User: User;
   UpdateUserInput: UpdateUserInput;
@@ -558,15 +597,26 @@ export type WorkoutResolvers<ContextType = any, ParentType extends ResolversPare
 
 export type WorkoutSectionResolvers<ContextType = any, ParentType extends ResolversParentTypes['WorkoutSection'] = ResolversParentTypes['WorkoutSection']> = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  isPyramid?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  notes?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   timecap?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   rounds?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  pyramidStructure?: Resolver<Maybe<Array<ResolversTypes['Int']>>, ParentType, ContextType>;
-  isTabata?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  repPyramid?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  repPyramidStructure?: Resolver<Maybe<Array<ResolversTypes['Int']>>, ParentType, ContextType>;
+  weightPyramid?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  weightPyramidStructure?: Resolver<Maybe<Array<ResolversTypes['Int']>>, ParentType, ContextType>;
   sortPosition?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   workoutMoves?: Resolver<Maybe<Array<ResolversTypes['WorkoutMove']>>, ParentType, ContextType>;
   workout?: Resolver<ResolversTypes['Workout'], ParentType, ContextType>;
+  roundAdjustRules?: Resolver<Maybe<Array<ResolversTypes['RoundAdjustRule']>>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
+};
+
+export type RoundAdjustRuleResolvers<ContextType = any, ParentType extends ResolversParentTypes['RoundAdjustRule'] = ResolversParentTypes['RoundAdjustRule']> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  target?: Resolver<Maybe<ResolversTypes['RuleTarget']>, ParentType, ContextType>;
+  action?: Resolver<Maybe<ResolversTypes['RuleAction']>, ParentType, ContextType>;
+  amount?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  roundFrequency?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 };
 
@@ -612,6 +662,7 @@ export type Resolvers<ContextType = any> = {
   WorkoutType?: WorkoutTypeResolvers<ContextType>;
   Workout?: WorkoutResolvers<ContextType>;
   WorkoutSection?: WorkoutSectionResolvers<ContextType>;
+  RoundAdjustRule?: RoundAdjustRuleResolvers<ContextType>;
   WorkoutMove?: WorkoutMoveResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
 };

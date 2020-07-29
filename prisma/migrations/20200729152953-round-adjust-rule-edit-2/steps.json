@@ -1,0 +1,27 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "DeleteField",
+      "model": "RoundAdjustRule",
+      "field": "name"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "RoundAdjustRule",
+      "field": "description"
+    },
+    {
+      "tag": "UpdateField",
+      "model": "RoundAdjustRule",
+      "field": "WorkoutSection",
+      "arity": "Required"
+    },
+    {
+      "tag": "UpdateField",
+      "model": "RoundAdjustRule",
+      "field": "workoutSectionId",
+      "arity": "Required"
+    }
+  ]
+}

@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 model ScoreSubmission {
@@ -152,43 +152,19 @@ model WorkoutMove {
 }
 
 model WorkoutSection {
-  id                     String            @default(uuid()) @id
-  createdAt              DateTime          @default(now())
+  id                     String        @default(uuid()) @id
+  createdAt              DateTime      @default(now())
   sortPosition           Int
   notes                  String?
-  repPyramid             Boolean           @default(false)
+  repPyramid             Boolean       @default(false)
   repPyramidStructure    Int[]
-  weightPyramid          Boolean           @default(false)
+  weightPyramid          Boolean       @default(false)
   weightPyramidStructure Int[]
   timecap                Int?
-  rounds                 Int               @default(1)
-  workout                Workout           @relation(fields: [workoutId], references: [id])
+  rounds                 Int           @default(1)
+  workout                Workout       @relation(fields: [workoutId], references: [id])
   workoutId              String
   workoutMoves           WorkoutMove[]
-  roundAdjustRules       RoundAdjustRule[]
-}
-
-// Every {roundFrequency} rounds {operator} reps by {amount}
-// Eg. Every 3 rounds INCREASE reps by 10 (for all workout moves within the section)
-model RoundAdjustRule {
-  id               String         @default(uuid()) @id
-  action           RuleAction
-  target           RuleTarget
-  amount           Float
-  roundFrequency   Int            @default(1) // Every round
-  WorkoutSection   WorkoutSection @relation(fields: [workoutSectionId], references: [id])
-  workoutSectionId String
-}
-
-enum RuleAction {
-  INCREASE
-  DECREASE
-  MULTIPLY
-}
-
-enum RuleTarget {
-  REP
-  LOAD
 }
 
 model Workout {

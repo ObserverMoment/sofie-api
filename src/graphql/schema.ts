@@ -127,27 +127,46 @@ export const schema = gql`
 
   type WorkoutSection {
     id: ID!
-    name: String
-    isPyramid: Boolean
+    notes: String
     timecap: Int
     rounds: Int!
-    pyramidStructure: [Int!]
-    isTabata: Boolean
+    repPyramid: Boolean
+    repPyramidStructure: [Int!]
+    weightPyramid: Boolean
+    weightPyramidStructure: [Int!]
     sortPosition: Int!
     workoutMoves: [WorkoutMove!]
     workout: Workout!
+    roundAdjustRules: [RoundAdjustRule!]
   }
 
   input CreateWorkoutSectionInput {
     id: ID
-    name: String
+    notes: String
     timecap: Int
     sortPosition: Int
-    isPyramid: Boolean
-    pyramidStructure: [Int!]
-    isTabata: Boolean
+    repPyramid: Boolean
+    repPyramidStructure: [Int!]
+    weightPyramid: Boolean
+    weightPyramidStructure: [Int!]
     rounds: Int
     workoutMoves: [CreateWorkoutMoveInput!]!
+    roundAdjustRules: [CreateRoundAdjustRuleInput!]
+  }
+
+  type RoundAdjustRule {
+    id: ID!
+    target: RuleTarget
+    action: RuleAction
+    amount: Float
+    roundFrequency: Int
+  }
+
+  input CreateRoundAdjustRuleInput {
+    target: RuleTarget!
+    action: RuleAction!
+    amount: Float!
+    roundFrequency: Int!
   }
 
   type WorkoutMove {
@@ -220,6 +239,22 @@ export const schema = gql`
     PUBLIC
     GROUP
     PRIVATE
+  }
+
+  """
+  For generating rules which can adjust rep and load over the course of a workout
+  """
+  enum RuleAction {
+    INCREASE
+    DECREASE
+    MULTIPLY
+  }
+  """
+  For generating rules which can adjust rep and load over the course of a workout
+  """
+  enum RuleTarget {
+    REP
+    LOAD
   }
 
   enum UserSubscriptionLevel {
