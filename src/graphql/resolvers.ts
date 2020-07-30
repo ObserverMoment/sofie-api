@@ -226,9 +226,10 @@ const resolvers: Resolvers = {
     workoutSections: async ({ id }, a, { prisma }, i) => {
       return prisma.workoutSection.findMany({
         where: {
-          workout: { id },
+          workoutId: id,
         },
         include: {
+          roundAdjustRules: true,
           workoutMoves: {
             include: {
               selectedEquipment: true,

@@ -62,9 +62,7 @@ async function deleteAllWorkoutDescendants(
   const workoutSections: WorkoutSection[] = await prisma.workoutSection.findMany(
     {
       where: {
-        workout: {
-          id: workoutId,
-        },
+        workoutId: workoutId,
       },
     },
   )
@@ -73,13 +71,20 @@ async function deleteAllWorkoutDescendants(
     ...workoutSections.map((ws: WorkoutSection) => ws.id),
   )
 
+  // Delete all roundAdjustRules from these workoutSections.
+  await prisma.roundAdjustRule.deleteMany({
+    where: {
+      workoutSectionId: {
+        in: sectionIds,
+      },
+    },
+  })
+
   // Delete all moves from these workoutSections.
   await prisma.workoutMove.deleteMany({
     where: {
-      workoutSection: {
-        id: {
-          in: sectionIds,
-        },
+      workoutSectionId: {
+        in: sectionIds,
       },
     },
   })

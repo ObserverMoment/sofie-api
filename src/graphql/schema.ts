@@ -253,7 +253,7 @@ export const schema = gql`
   For generating rules which can adjust rep and load over the course of a workout
   """
   enum RuleTarget {
-    REP
+    REPS
     LOAD
   }
 

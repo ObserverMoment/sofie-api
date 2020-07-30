@@ -318,7 +318,7 @@ export enum RuleAction {
 
 /** For generating rules which can adjust rep and load over the course of a workout */
 export enum RuleTarget {
-  Rep = 'REP',
+  Reps = 'REPS',
   Load = 'LOAD'
 }
 
