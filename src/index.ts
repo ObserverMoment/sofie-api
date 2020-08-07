@@ -1,7 +1,7 @@
 import express from 'express'
 import { ApolloServer } from 'apollo-server-express'
 import resolvers from './graphql/resolvers'
-import { schema } from './graphql/schema'
+import schema from './graphql/schema/schema'
 import applyMiddleware from './graphql/middleware/applyMiddleware'
 import helmet from './graphql/middleware/helmet'
 import getSelectedFields from './graphql/middleware/getSelectedFields'

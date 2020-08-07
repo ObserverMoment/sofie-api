@@ -1,0 +1,474 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "CreateModel",
+      "model": "LoggedWorkout"
+    },
+    {
+      "tag": "CreateField",
+      "model": "LoggedWorkout",
+      "field": "id",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "LoggedWorkout",
+          "field": "id"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "LoggedWorkout",
+          "field": "id"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "uuid()"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "LoggedWorkout",
+          "field": "id"
+        },
+        "directive": "id"
+      }
+    },
+    {
+      "tag": "CreateField",
+      "model": "LoggedWorkout",
+      "field": "createdAt",
+      "type": "DateTime",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "LoggedWorkout",
+          "field": "createdAt"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "LoggedWorkout",
+          "field": "createdAt"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "now()"
+    },
+    {
+      "tag": "CreateField",
+      "model": "LoggedWorkout",
+      "field": "completedOn",
+      "type": "DateTime",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "LoggedWorkout",
+          "field": "completedOn"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "LoggedWorkout",
+          "field": "completedOn"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "now()"
+    },
+    {
+      "tag": "CreateField",
+      "model": "LoggedWorkout",
+      "field": "completedBy",
+      "type": "User",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "LoggedWorkout",
+          "field": "completedBy"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "LoggedWorkout",
+          "field": "completedBy"
+        },
+        "directive": "relation"
+      },
+      "argument": "fields",
+      "value": "[completedById]"
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "LoggedWorkout",
+          "field": "completedBy"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[id]"
+    },
+    {
+      "tag": "CreateField",
+      "model": "LoggedWorkout",
+      "field": "completedById",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "LoggedWorkout",
+      "field": "notes",
+      "type": "String",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "LoggedWorkout",
+      "field": "workoutSections",
+      "type": "WorkoutSection",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateField",
+      "model": "LoggedWorkout",
+      "field": "workout",
+      "type": "Workout",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "LoggedWorkout",
+          "field": "workout"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "LoggedWorkout",
+          "field": "workout"
+        },
+        "directive": "relation"
+      },
+      "argument": "fields",
+      "value": "[workoutId]"
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "LoggedWorkout",
+          "field": "workout"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[id]"
+    },
+    {
+      "tag": "CreateField",
+      "model": "LoggedWorkout",
+      "field": "workoutId",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "LoggedWorkout",
+      "field": "scheduledWorkout",
+      "type": "ScheduledWorkout",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "LoggedWorkout",
+      "field": "scheduledWorkoutId",
+      "type": "String",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "LoggedWorkout",
+      "field": "scoreSubmissions",
+      "type": "ScoreSubmission",
+      "arity": "List"
+    },
+    {
+      "tag": "DeleteModel",
+      "model": "WorkoutScore"
+    },
+    {
+      "tag": "CreateField",
+      "model": "WorkoutSection",
+      "field": "LoggedWorkout",
+      "type": "LoggedWorkout",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "WorkoutSection",
+          "field": "LoggedWorkout"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "WorkoutSection",
+          "field": "LoggedWorkout"
+        },
+        "directive": "relation"
+      },
+      "argument": "fields",
+      "value": "[loggedWorkoutId]"
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "WorkoutSection",
+          "field": "LoggedWorkout"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[id]"
+    },
+    {
+      "tag": "CreateField",
+      "model": "WorkoutSection",
+      "field": "loggedWorkoutId",
+      "type": "String",
+      "arity": "Optional"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "WorkoutSection",
+      "field": "repPyramid"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "WorkoutSection",
+      "field": "repPyramidStructure"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "WorkoutSection",
+      "field": "weightPyramid"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "WorkoutSection",
+      "field": "weightPyramidStructure"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Workout",
+      "field": "LoggedWorkout",
+      "type": "LoggedWorkout",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScheduledWorkout",
+      "field": "loggedWorkout",
+      "type": "LoggedWorkout",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "ScheduledWorkout",
+          "field": "loggedWorkout"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "ScheduledWorkout",
+          "field": "loggedWorkout"
+        },
+        "directive": "relation"
+      },
+      "argument": "fields",
+      "value": "[loggedWorkoutId]"
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "ScheduledWorkout",
+          "field": "loggedWorkout"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[id]"
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScheduledWorkout",
+      "field": "loggedWorkoutId",
+      "type": "String",
+      "arity": "Optional"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "ScheduledWorkout",
+      "field": "workoutScore"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "ScheduledWorkout",
+      "field": "workoutScoreId"
+    },
+    {
+      "tag": "CreateField",
+      "model": "User",
+      "field": "loggedWorkouts",
+      "type": "LoggedWorkout",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScoreSubmission",
+      "field": "loggedWorkout",
+      "type": "LoggedWorkout",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmission",
+          "field": "loggedWorkout"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmission",
+          "field": "loggedWorkout"
+        },
+        "directive": "relation"
+      },
+      "argument": "fields",
+      "value": "[loggedWorkoutId]"
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "ScoreSubmission",
+          "field": "loggedWorkout"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[id]"
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScoreSubmission",
+      "field": "loggedWorkoutId",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "ScoreSubmission",
+      "field": "workoutScore"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "ScoreSubmission",
+      "field": "workoutScoreId"
+    }
+  ]
+}

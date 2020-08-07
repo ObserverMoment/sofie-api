@@ -132,7 +132,6 @@ const resolvers: Resolvers = {
       { selected, prisma },
       i,
     ) => {
-      console.log(selected)
       const data = buildCreateWorkoutData(authedUserId, workoutData, true)
       const workout = await prisma.workout.create({
         data,
@@ -140,7 +139,6 @@ const resolvers: Resolvers = {
           workoutType: true,
         },
       })
-      console.log(workout)
       return workout
     },
     shallowUpdateWorkout: async (

@@ -120,12 +120,6 @@ function buildCreateWorkoutData(
       create: [
         ...workoutData.workoutSections.map((section) => ({
           ...section,
-          repPyramidStructure: {
-            set: section.repPyramidStructure || [],
-          },
-          weightPyramidStructure: {
-            set: section.weightPyramidStructure || [],
-          },
           workoutMoves: {
             create: [
               ...section.workoutMoves.map((workoutMove) => {
@@ -136,7 +130,7 @@ function buildCreateWorkoutData(
                         id: workoutMove.selectedEquipmentId || undefined,
                       },
                     }
-                  : null
+                  : undefined
                 const workoutMoveData = {
                   ...workoutMove,
                   selectedEquipment,
