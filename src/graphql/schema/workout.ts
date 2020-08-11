@@ -72,23 +72,7 @@ export default gql`
     spotifyAudio: String
     imageUrl: String
     timecap: Int
-    workoutTypeId: String
     difficultyLevel: DifficultyLevel
     scope: AccessScopeType
-  }
-
-  type LoggedWorkout {
-    id: ID!
-    completedOn: String!
-    notes: String
-    workoutSections: [WorkoutSection!]
-    workout: Workout
-  }
-
-  input CreateLoggedWorkoutInput {
-    completedOn: String
-    notes: String
-    workoutSections: [CreateWorkoutSectionInput!]!
-    workout: CreateWorkoutInput!
   }
 `

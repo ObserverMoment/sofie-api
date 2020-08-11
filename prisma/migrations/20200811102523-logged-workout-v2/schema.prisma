@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 model ScoreSubmission {
@@ -161,9 +161,6 @@ model Workout {
   workoutLogs       LoggedWorkout[]
 }
 
-// Need to implement some more solid polymorphism here if we want to allow a workoutSection
-// to be on a workout or a loggedWorkout
-// Currently no validation makinhg sure the section is not parentless.
 model WorkoutSection {
   id               String            @default(uuid()) @id
   createdAt        DateTime          @default(now())
@@ -171,8 +168,8 @@ model WorkoutSection {
   notes            String?
   timecap          Int?
   rounds           Int
-  workout          Workout?          @relation(fields: [workoutId], references: [id])
-  workoutId        String?
+  workout          Workout           @relation(fields: [workoutId], references: [id])
+  workoutId        String
   workoutMoves     WorkoutMove[]
   roundAdjustRules RoundAdjustRule[]
   LoggedWorkout    LoggedWorkout?    @relation(fields: [loggedWorkoutId], references: [id])

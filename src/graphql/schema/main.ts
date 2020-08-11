@@ -12,6 +12,7 @@ export default gql`
     users: [User!]!
     workoutById(id: ID!): Workout
     workouts(authedUserId: ID!): [Workout!]!
+    loggedWorkouts(authedUserId: ID!): [LoggedWorkout!]!
   }
 
   type Mutation {
@@ -27,6 +28,18 @@ export default gql`
       workoutData: ShallowUpdateWorkoutInput!
     ): Workout!
     deleteWorkout(authedUserId: ID!, workoutId: ID!): ID!
+    createLoggedWorkout(
+      authedUserId: ID!
+      loggedWorkoutData: CreateLoggedWorkoutInput!
+    ): LoggedWorkout!
+    deepUpdateLoggedWorkout(
+      authedUserId: ID!
+      loggedWorkoutData: DeepUpdateLoggedWorkoutInput!
+    ): LoggedWorkout!
+    shallowUpdateLoggedWorkout(
+      authedUserId: ID!
+      loggedWorkoutData: ShallowUpdateLoggedWorkoutInput!
+    ): LoggedWorkout!
   }
 
   type Equipment {

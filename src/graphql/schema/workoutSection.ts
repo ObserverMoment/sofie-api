@@ -6,10 +6,6 @@ export default gql`
     notes: String
     timecap: Int
     rounds: Int!
-    repPyramid: Boolean
-    repPyramidStructure: [Int!]
-    weightPyramid: Boolean
-    weightPyramidStructure: [Int!]
     sortPosition: Int!
     workoutMoves: [WorkoutMove!]
     workout: Workout!
@@ -17,11 +13,10 @@ export default gql`
   }
 
   input CreateWorkoutSectionInput {
-    id: ID
     notes: String
     timecap: Int
-    sortPosition: Int
-    rounds: Int
+    sortPosition: Int!
+    rounds: Int!
     workoutMoves: [CreateWorkoutMoveInput!]!
     roundAdjustRules: [CreateRoundAdjustRuleInput!]
   }

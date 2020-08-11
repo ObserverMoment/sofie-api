@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 model ScoreSubmission {
@@ -130,53 +130,48 @@ model Move {
 }
 
 model WorkoutType {
-  id            String           @default(uuid()) @id
-  name          String
-  description   String?
-  scoreType     WorkoutScoreType
-  Workout       Workout[]
-  LoggedWorkout LoggedWorkout[]
+  id          String           @default(uuid()) @id
+  name        String
+  description String?
+  scoreType   WorkoutScoreType
+  Workout     Workout[]
 }
 
 model Workout {
-  id                String             @default(uuid()) @id
-  createdAt         DateTime           @default(now())
-  createdBy         User?              @relation(fields: [createdById], references: [id])
-  createdById       String?
-  name              String
-  summary           String?
-  description       String?
-  demoVideoUrl      String?
-  demoVideoThumbUrl String?
-  youtubeVideoUrl   String?
-  spotifyAudio      String?
-  imageUrl          String?
-  timecap           Int?
-  difficultyLevel   DifficultyLevel    @default(ONE)
-  scope             AccessScopeType    @default(PRIVATE)
-  workoutType       WorkoutType        @relation(fields: [workoutTypeId], references: [id])
-  workoutTypeId     String
-  workoutSections   WorkoutSection[]
-  scheduledWorkouts ScheduledWorkout[]
-  workoutLogs       LoggedWorkout[]
+  id                     String             @default(uuid()) @id
+  createdAt              DateTime           @default(now())
+  createdBy              User?              @relation(fields: [createdById], references: [id])
+  createdById            String?
+  name                   String
+  summary                String?
+  description            String?
+  demoVideoUrl           String?
+  demoVideoThumbUrl      String?
+  youtubeVideoUrl        String?
+  spotifyAudio           String?
+  imageUrl               String?
+  timecap                Int?
+  difficultyLevel        DifficultyLevel    @default(ONE)
+  scope                  AccessScopeType    @default(PRIVATE)
+  workoutType            WorkoutType        @relation(fields: [workoutTypeId], references: [id])
+  workoutTypeId          String
+  workoutSections        WorkoutSection[]
+  scheduledWorkouts      ScheduledWorkout[]
+  workoutDataForLogs     LoggedWorkout[]    @relation("workoutDataForLogs")
+  originalWorkoutForLogs LoggedWorkout[]
 }
 
-// Need to implement some more solid polymorphism here if we want to allow a workoutSection
-// to be on a workout or a loggedWorkout
-// Currently no validation makinhg sure the section is not parentless.
 model WorkoutSection {
   id               String            @default(uuid()) @id
   createdAt        DateTime          @default(now())
   sortPosition     Int
   notes            String?
   timecap          Int?
-  rounds           Int
-  workout          Workout?          @relation(fields: [workoutId], references: [id])
-  workoutId        String?
+  rounds           Int               @default(1)
+  workout          Workout           @relation(fields: [workoutId], references: [id])
+  workoutId        String
   workoutMoves     WorkoutMove[]
   roundAdjustRules RoundAdjustRule[]
-  LoggedWorkout    LoggedWorkout?    @relation(fields: [loggedWorkoutId], references: [id])
-  loggedWorkoutId  String?
 }
 
 // Every {roundFrequency} rounds {operator} reps by {amount}
@@ -237,22 +232,15 @@ model ScheduledWorkout {
 // Data from a completed workout. Also inlcudes relation to the 'original' workout
 model LoggedWorkout {
   id                 String            @default(uuid()) @id
-  name               String
-  summary            String?
-  description        String?
   createdAt          DateTime          @default(now())
   completedOn        DateTime
   completedBy        User              @relation(fields: [completedById], references: [id])
   completedById      String
   notes              String?
   videoUrl           String?
-  videoThumbUrl      String?
   imageUrl           String?
-  duration           Int?
-  difficultyLevel    DifficultyLevel   @default(ONE)
-  workoutType        WorkoutType       @relation(fields: [workoutTypeId], references: [id])
-  workoutTypeId      String
-  workoutSections    WorkoutSection[]
+  workoutData        Workout           @relation("workoutDataForLogs", fields: [workoutDataId], references: [id])
+  workoutDataId      String
   originalWorkout    Workout?          @relation(fields: [originalWorkoutId], references: [id])
   originalWorkoutId  String?
   scheduledWorkout   ScheduledWorkout?

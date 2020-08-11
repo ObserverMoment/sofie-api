@@ -1,0 +1,33 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "UpdateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Workout",
+          "field": "workoutDataForLogs"
+        },
+        "directive": "relation"
+      },
+      "argument": "",
+      "newValue": "\"workoutData\""
+    },
+    {
+      "tag": "UpdateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "LoggedWorkout",
+          "field": "workoutData"
+        },
+        "directive": "relation"
+      },
+      "argument": "",
+      "newValue": "\"workoutData\""
+    }
+  ]
+}

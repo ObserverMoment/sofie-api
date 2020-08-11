@@ -16,12 +16,12 @@ export default gql`
 
   input CreateWorkoutMoveInput {
     description: String
-    sortPosition: Int
+    sortPosition: Int!
     reps: Float
     repType: WorkoutMoveRepType!
-    distanceUnit: DistanceUnit
+    distanceUnit: DistanceUnit!
     loadAmount: Float
-    loadUnit: LoadUnit
+    loadUnit: LoadUnit!
     moveId: String!
     selectedEquipmentId: String
   }

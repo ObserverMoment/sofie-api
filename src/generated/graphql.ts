@@ -24,6 +24,7 @@ export type Query = {
   users: Array<User>;
   workoutById?: Maybe<Workout>;
   workouts: Array<Workout>;
+  loggedWorkouts: Array<LoggedWorkout>;
 };
 
 
@@ -46,6 +47,11 @@ export type QueryWorkoutsArgs = {
   authedUserId: Scalars['ID'];
 };
 
+
+export type QueryLoggedWorkoutsArgs = {
+  authedUserId: Scalars['ID'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   createUser: User;
@@ -54,6 +60,9 @@ export type Mutation = {
   deepUpdateWorkout: Workout;
   shallowUpdateWorkout: Workout;
   deleteWorkout: Scalars['ID'];
+  createLoggedWorkout: LoggedWorkout;
+  deepUpdateLoggedWorkout: LoggedWorkout;
+  shallowUpdateLoggedWorkout: LoggedWorkout;
 };
 
 
@@ -89,6 +98,24 @@ export type MutationShallowUpdateWorkoutArgs = {
 export type MutationDeleteWorkoutArgs = {
   authedUserId: Scalars['ID'];
   workoutId: Scalars['ID'];
+};
+
+
+export type MutationCreateLoggedWorkoutArgs = {
+  authedUserId: Scalars['ID'];
+  loggedWorkoutData: CreateLoggedWorkoutInput;
+};
+
+
+export type MutationDeepUpdateLoggedWorkoutArgs = {
+  authedUserId: Scalars['ID'];
+  loggedWorkoutData: DeepUpdateLoggedWorkoutInput;
+};
+
+
+export type MutationShallowUpdateLoggedWorkoutArgs = {
+  authedUserId: Scalars['ID'];
+  loggedWorkoutData: ShallowUpdateLoggedWorkoutInput;
 };
 
 export type Equipment = {
@@ -224,7 +251,6 @@ export type ShallowUpdateWorkoutInput = {
   spotifyAudio?: Maybe<Scalars['String']>;
   imageUrl?: Maybe<Scalars['String']>;
   timecap?: Maybe<Scalars['Int']>;
-  workoutTypeId?: Maybe<Scalars['String']>;
   difficultyLevel?: Maybe<DifficultyLevel>;
   scope?: Maybe<AccessScopeType>;
 };
@@ -232,17 +258,67 @@ export type ShallowUpdateWorkoutInput = {
 export type LoggedWorkout = {
   __typename?: 'LoggedWorkout';
   id: Scalars['ID'];
+  name: Scalars['String'];
+  summary?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
   completedOn: Scalars['String'];
   notes?: Maybe<Scalars['String']>;
-  workoutSections?: Maybe<Array<WorkoutSection>>;
-  workout?: Maybe<Workout>;
+  videoUrl?: Maybe<Scalars['String']>;
+  videoThumbUrl?: Maybe<Scalars['String']>;
+  imageUrl?: Maybe<Scalars['String']>;
+  duration?: Maybe<Scalars['Int']>;
+  workoutType: WorkoutType;
+  difficultyLevel: DifficultyLevel;
+  workoutSections: Array<WorkoutSection>;
+  originalWorkoutId?: Maybe<Scalars['String']>;
 };
 
 export type CreateLoggedWorkoutInput = {
+  name?: Maybe<Scalars['String']>;
+  summary?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  completedOn: Scalars['String'];
+  notes?: Maybe<Scalars['String']>;
+  videoUrl?: Maybe<Scalars['String']>;
+  videoThumbUrl?: Maybe<Scalars['String']>;
+  imageUrl?: Maybe<Scalars['String']>;
+  duration?: Maybe<Scalars['Int']>;
+  workoutTypeId: Scalars['String'];
+  difficultyLevel: DifficultyLevel;
+  workoutSections: Array<CreateWorkoutSectionInput>;
+  originalWorkoutId?: Maybe<Scalars['String']>;
+};
+
+export type DeepUpdateLoggedWorkoutInput = {
+  id: Scalars['ID'];
+  name?: Maybe<Scalars['String']>;
+  summary?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
   completedOn?: Maybe<Scalars['String']>;
   notes?: Maybe<Scalars['String']>;
+  videoUrl?: Maybe<Scalars['String']>;
+  videoThumbUrl?: Maybe<Scalars['String']>;
+  imageUrl?: Maybe<Scalars['String']>;
+  duration?: Maybe<Scalars['Int']>;
+  workoutTypeId?: Maybe<Scalars['String']>;
+  difficultyLevel?: Maybe<DifficultyLevel>;
   workoutSections: Array<CreateWorkoutSectionInput>;
-  workout: CreateWorkoutInput;
+  originalWorkoutId?: Maybe<Scalars['String']>;
+};
+
+export type ShallowUpdateLoggedWorkoutInput = {
+  id: Scalars['ID'];
+  name?: Maybe<Scalars['String']>;
+  summary?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  completedOn?: Maybe<Scalars['String']>;
+  notes?: Maybe<Scalars['String']>;
+  videoUrl?: Maybe<Scalars['String']>;
+  videoThumbUrl?: Maybe<Scalars['String']>;
+  imageUrl?: Maybe<Scalars['String']>;
+  duration?: Maybe<Scalars['Int']>;
+  difficultyLevel?: Maybe<DifficultyLevel>;
+  originalWorkoutId?: Maybe<Scalars['String']>;
 };
 
 export type WorkoutSection = {
@@ -251,10 +327,6 @@ export type WorkoutSection = {
   notes?: Maybe<Scalars['String']>;
   timecap?: Maybe<Scalars['Int']>;
   rounds: Scalars['Int'];
-  repPyramid?: Maybe<Scalars['Boolean']>;
-  repPyramidStructure?: Maybe<Array<Scalars['Int']>>;
-  weightPyramid?: Maybe<Scalars['Boolean']>;
-  weightPyramidStructure?: Maybe<Array<Scalars['Int']>>;
   sortPosition: Scalars['Int'];
   workoutMoves?: Maybe<Array<WorkoutMove>>;
   workout: Workout;
@@ -262,11 +334,10 @@ export type WorkoutSection = {
 };
 
 export type CreateWorkoutSectionInput = {
-  id?: Maybe<Scalars['ID']>;
   notes?: Maybe<Scalars['String']>;
   timecap?: Maybe<Scalars['Int']>;
-  sortPosition?: Maybe<Scalars['Int']>;
-  rounds?: Maybe<Scalars['Int']>;
+  sortPosition: Scalars['Int'];
+  rounds: Scalars['Int'];
   workoutMoves: Array<CreateWorkoutMoveInput>;
   roundAdjustRules?: Maybe<Array<CreateRoundAdjustRuleInput>>;
 };
@@ -303,12 +374,12 @@ export type WorkoutMove = {
 
 export type CreateWorkoutMoveInput = {
   description?: Maybe<Scalars['String']>;
-  sortPosition?: Maybe<Scalars['Int']>;
+  sortPosition: Scalars['Int'];
   reps?: Maybe<Scalars['Float']>;
   repType: WorkoutMoveRepType;
-  distanceUnit?: Maybe<DistanceUnit>;
+  distanceUnit: DistanceUnit;
   loadAmount?: Maybe<Scalars['Float']>;
-  loadUnit?: Maybe<LoadUnit>;
+  loadUnit: LoadUnit;
   moveId: Scalars['String'];
   selectedEquipmentId?: Maybe<Scalars['String']>;
 };
@@ -490,6 +561,8 @@ export type ResolversTypes = {
   ShallowUpdateWorkoutInput: ShallowUpdateWorkoutInput;
   LoggedWorkout: ResolverTypeWrapper<LoggedWorkout>;
   CreateLoggedWorkoutInput: CreateLoggedWorkoutInput;
+  DeepUpdateLoggedWorkoutInput: DeepUpdateLoggedWorkoutInput;
+  ShallowUpdateLoggedWorkoutInput: ShallowUpdateLoggedWorkoutInput;
   WorkoutSection: ResolverTypeWrapper<WorkoutSection>;
   CreateWorkoutSectionInput: CreateWorkoutSectionInput;
   RoundAdjustRule: ResolverTypeWrapper<RoundAdjustRule>;
@@ -530,6 +603,8 @@ export type ResolversParentTypes = {
   ShallowUpdateWorkoutInput: ShallowUpdateWorkoutInput;
   LoggedWorkout: LoggedWorkout;
   CreateLoggedWorkoutInput: CreateLoggedWorkoutInput;
+  DeepUpdateLoggedWorkoutInput: DeepUpdateLoggedWorkoutInput;
+  ShallowUpdateLoggedWorkoutInput: ShallowUpdateLoggedWorkoutInput;
   WorkoutSection: WorkoutSection;
   CreateWorkoutSectionInput: CreateWorkoutSectionInput;
   RoundAdjustRule: RoundAdjustRule;
@@ -549,6 +624,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   users?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType>;
   workoutById?: Resolver<Maybe<ResolversTypes['Workout']>, ParentType, ContextType, RequireFields<QueryWorkoutByIdArgs, 'id'>>;
   workouts?: Resolver<Array<ResolversTypes['Workout']>, ParentType, ContextType, RequireFields<QueryWorkoutsArgs, 'authedUserId'>>;
+  loggedWorkouts?: Resolver<Array<ResolversTypes['LoggedWorkout']>, ParentType, ContextType, RequireFields<QueryLoggedWorkoutsArgs, 'authedUserId'>>;
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
@@ -558,6 +634,9 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   deepUpdateWorkout?: Resolver<ResolversTypes['Workout'], ParentType, ContextType, RequireFields<MutationDeepUpdateWorkoutArgs, 'authedUserId' | 'workoutData'>>;
   shallowUpdateWorkout?: Resolver<ResolversTypes['Workout'], ParentType, ContextType, RequireFields<MutationShallowUpdateWorkoutArgs, 'authedUserId' | 'workoutData'>>;
   deleteWorkout?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteWorkoutArgs, 'authedUserId' | 'workoutId'>>;
+  createLoggedWorkout?: Resolver<ResolversTypes['LoggedWorkout'], ParentType, ContextType, RequireFields<MutationCreateLoggedWorkoutArgs, 'authedUserId' | 'loggedWorkoutData'>>;
+  deepUpdateLoggedWorkout?: Resolver<ResolversTypes['LoggedWorkout'], ParentType, ContextType, RequireFields<MutationDeepUpdateLoggedWorkoutArgs, 'authedUserId' | 'loggedWorkoutData'>>;
+  shallowUpdateLoggedWorkout?: Resolver<ResolversTypes['LoggedWorkout'], ParentType, ContextType, RequireFields<MutationShallowUpdateLoggedWorkoutArgs, 'authedUserId' | 'loggedWorkoutData'>>;
 };
 
 export type EquipmentResolvers<ContextType = any, ParentType extends ResolversParentTypes['Equipment'] = ResolversParentTypes['Equipment']> = {
@@ -633,10 +712,19 @@ export type WorkoutResolvers<ContextType = any, ParentType extends ResolversPare
 
 export type LoggedWorkoutResolvers<ContextType = any, ParentType extends ResolversParentTypes['LoggedWorkout'] = ResolversParentTypes['LoggedWorkout']> = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  summary?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   completedOn?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   notes?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  workoutSections?: Resolver<Maybe<Array<ResolversTypes['WorkoutSection']>>, ParentType, ContextType>;
-  workout?: Resolver<Maybe<ResolversTypes['Workout']>, ParentType, ContextType>;
+  videoUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  videoThumbUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  imageUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  duration?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  workoutType?: Resolver<ResolversTypes['WorkoutType'], ParentType, ContextType>;
+  difficultyLevel?: Resolver<ResolversTypes['DifficultyLevel'], ParentType, ContextType>;
+  workoutSections?: Resolver<Array<ResolversTypes['WorkoutSection']>, ParentType, ContextType>;
+  originalWorkoutId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 };
 
@@ -645,10 +733,6 @@ export type WorkoutSectionResolvers<ContextType = any, ParentType extends Resolv
   notes?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   timecap?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   rounds?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  repPyramid?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
-  repPyramidStructure?: Resolver<Maybe<Array<ResolversTypes['Int']>>, ParentType, ContextType>;
-  weightPyramid?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
-  weightPyramidStructure?: Resolver<Maybe<Array<ResolversTypes['Int']>>, ParentType, ContextType>;
   sortPosition?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   workoutMoves?: Resolver<Maybe<Array<ResolversTypes['WorkoutMove']>>, ParentType, ContextType>;
   workout?: Resolver<ResolversTypes['Workout'], ParentType, ContextType>;
