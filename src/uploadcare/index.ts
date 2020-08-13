@@ -1,5 +1,17 @@
 import fetch from 'node-fetch'
 import crypto from 'crypto'
+import {
+  Workout,
+  PrismaClient,
+  LoggedWorkout,
+  WorkoutArgs,
+} from '@prisma/client'
+import {
+  ShallowUpdateWorkoutInput,
+  DeepUpdateWorkoutInput,
+  ShallowUpdateLoggedWorkoutInput,
+  DeepUpdateLoggedWorkoutInput,
+} from '../generated/graphql'
 
 const uploadcareApiUBaseUrl = 'https://api.uploadcare.com'
 
@@ -36,7 +48,7 @@ function prepareHeaders(verb: string, path: string, requestBody: any = '') {
   }
 }
 
-export async function deleteFiles(fileIds: string[]) {
+export async function deleteFiles(fileIds: string[]): Promise<boolean> {
   require('dotenv').config()
   const requestBody = JSON.stringify(fileIds)
   const res = await fetch(`${uploadcareApiUBaseUrl}/files/storage/`, {
@@ -46,4 +58,144 @@ export async function deleteFiles(fileIds: string[]) {
   })
   const json = await res.json()
   return json.status == 'ok'
+}
+
+/** Checks if there are any media (hosted) files being changed in the workouData
+ * If there are then check if they can be removed (are they being shared with other workouts)
+ * Then remove them if you can.
+ */
+export async function checkWorkoutMediaForDeletion(
+  prisma: any,
+  workoutData: ShallowUpdateWorkoutInput | DeepUpdateWorkoutInput,
+) {
+  // Handle deleting of now unused media from the host.
+  if (workoutData.imageUrl || workoutData.demoVideoUrl) {
+    const oldWorkout: Workout = await prisma.workout.findOne({
+      where: {
+        id: workoutData.id,
+      },
+    })
+    if (workoutData.imageUrl) {
+      await checkThenDeleteWorkoutImageFile(prisma, oldWorkout.imageUrl)
+    }
+    if (workoutData.demoVideoUrl) {
+      await checkThenDeleteWorkoutVideoFiles(
+        prisma,
+        oldWorkout.demoVideoUrl,
+        oldWorkout.demoVideoThumbUrl,
+      )
+    }
+  }
+}
+
+export async function checkThenDeleteWorkoutImageFile(
+  prisma: PrismaClient,
+  imageId: string | null,
+) {
+  if (imageId) {
+    // Are the media files being used by other workouts that have been copied?
+    // if they are, then do not delete them.
+    const workoutsSharingImage: Workout[] = await prisma.workout.findMany({
+      where: {
+        imageUrl: imageId,
+      },
+    })
+
+    if (workoutsSharingImage.length == 0) {
+      // Then the image file is not shared so delete it from the server.
+      await deleteFiles([imageId] as string[])
+    }
+  }
+}
+
+export async function checkThenDeleteWorkoutVideoFiles(
+  prisma: PrismaClient,
+  videoId: string | null,
+  videoThumbId: string | null,
+) {
+  if (videoId) {
+    const workoutsSharingVideo: Workout[] = await prisma.workout.findMany({
+      where: {
+        demoVideoUrl: videoId,
+      },
+    })
+
+    if (workoutsSharingVideo.length == 0) {
+      // Then the video files are not shared so delete the files from the server.
+      await deleteFiles([videoId, videoThumbId] as string[])
+    }
+  }
+}
+
+/** Checks if there are any media (hosted) files being changed in the loggedWorkouData
+ * If there are then check if they can be removed (are they being shared with other workouts)
+ * Then remove them if you can.
+ */
+export async function checkLoggedWorkoutMediaForDeletion(
+  prisma: any,
+  loggedWorkoutData:
+    | ShallowUpdateLoggedWorkoutInput
+    | DeepUpdateLoggedWorkoutInput,
+) {
+  // Handle deleting of now unused media from the host.
+  if (loggedWorkoutData.imageUrl || loggedWorkoutData.videoUrl) {
+    const oldLoggedWorkout: LoggedWorkout = await prisma.loggedWorkout.findOne({
+      where: {
+        id: loggedWorkoutData.id,
+      },
+    })
+    if (oldLoggedWorkout.imageUrl) {
+      await checkThenDeleteWorkoutImageFile(prisma, oldLoggedWorkout.imageUrl)
+    }
+    if (oldLoggedWorkout.videoUrl) {
+      await checkThenDeleteWorkoutVideoFiles(
+        prisma,
+        oldLoggedWorkout.videoUrl,
+        oldLoggedWorkout.videoThumbUrl,
+      )
+    }
+  }
+}
+
+export async function checkThenDeleteLoggedWorkoutImageFile(
+  prisma: PrismaClient,
+  imageId: string | null,
+) {
+  if (imageId) {
+    // Are the media files being used by other workouts that have been copied?
+    // if they are, then do not delete them.
+    const loggedWorkoutsSharingImage: LoggedWorkout[] = await prisma.loggedWorkout.findMany(
+      {
+        where: {
+          imageUrl: imageId,
+        },
+      },
+    )
+
+    if (loggedWorkoutsSharingImage.length == 0) {
+      // Then the image file is not shared so delete it from the server.
+      await deleteFiles([imageId] as string[])
+    }
+  }
+}
+
+export async function checkThenDeleteLoggedWorkoutVideoFiles(
+  prisma: PrismaClient,
+  videoId: string | null,
+  videoThumbId: string | null,
+) {
+  if (videoId) {
+    const loggedWorkoutsSharingVideo: LoggedWorkout[] = await prisma.loggedWorkout.findMany(
+      {
+        where: {
+          videoUrl: videoId,
+        },
+      },
+    )
+
+    if (loggedWorkoutsSharingVideo.length == 0) {
+      // Then the video files are not shared so delete the files from the server.
+      await deleteFiles([videoId, videoThumbId] as string[])
+    }
+  }
 }

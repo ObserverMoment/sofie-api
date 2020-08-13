@@ -8,7 +8,13 @@ import {
 } from './workoutBuilders'
 
 import { QueryResolvers, MutationResolvers } from '../generated/graphql'
-import { deleteFiles } from '../uploadcare'
+import {
+  deleteFiles,
+  checkThenDeleteWorkoutImageFile,
+  checkThenDeleteWorkoutVideoFiles,
+  checkWorkoutMediaForDeletion,
+  checkLoggedWorkoutMediaForDeletion,
+} from '../uploadcare'
 import { Workout, PrismaClient } from '@prisma/client'
 import workout from './schema/workout'
 
@@ -151,6 +157,9 @@ const resolvers: Resolvers = {
       { selected, prisma },
       i,
     ) => {
+      // Handle deleting of now unused media from the host.
+      await checkWorkoutMediaForDeletion(prisma, workoutData)
+
       // Delete all children of the workout before rebuilding with new data.
       await deleteAllDescendents(
         prisma,
@@ -173,6 +182,9 @@ const resolvers: Resolvers = {
       { selected, prisma },
       i,
     ) => {
+      // Handle deleting of now unused media from the host.
+      await checkWorkoutMediaForDeletion(prisma, workoutData)
+
       return prisma.workout.update({
         where: { id: workoutData.id },
         data: workoutData,
@@ -192,32 +204,13 @@ const resolvers: Resolvers = {
         where: { id: workoutId },
       })
 
-      // Are the media files being used by other workouts that have been copied?
-      // if they are, then do not delete them.
-      const workoutsSharingImage: Workout[] = await prisma.workout.findMany({
-        where: {
-          imageUrl: deletedWorkout.imageUrl,
-        },
-      })
+      await checkThenDeleteWorkoutImageFile(prisma, deletedWorkout.imageUrl)
 
-      if (workoutsSharingImage.length == 0) {
-        // Then the image file is not shared so delete it from the server.
-        await deleteFiles([deletedWorkout.imageUrl] as string[])
-      }
-
-      const workoutsSharingVideo: Workout[] = await prisma.workout.findMany({
-        where: {
-          demoVideoUrl: deletedWorkout.demoVideoUrl,
-        },
-      })
-
-      if (workoutsSharingVideo.length == 0) {
-        // Then the video files are not shared so delete the files from the server.
-        await deleteFiles([
-          deletedWorkout.demoVideoUrl,
-          deletedWorkout.demoVideoThumbUrl,
-        ] as string[])
-      }
+      await checkThenDeleteWorkoutVideoFiles(
+        prisma,
+        deletedWorkout.demoVideoUrl,
+        deletedWorkout.demoVideoThumbUrl,
+      )
 
       return deletedWorkout.id
     },
@@ -241,6 +234,9 @@ const resolvers: Resolvers = {
       { selected, prisma },
       i,
     ) => {
+      // Handle deleting of now unused media from the host.
+      await checkLoggedWorkoutMediaForDeletion(prisma, loggedWorkoutData)
+
       // Delete all children of the logged workout before rebuilding with new data.
       await deleteAllDescendents(
         prisma,
@@ -263,6 +259,9 @@ const resolvers: Resolvers = {
       { selected, prisma },
       i,
     ) => {
+      // Handle deleting of now unused media from the host.
+      await checkLoggedWorkoutMediaForDeletion(prisma, loggedWorkoutData)
+
       return prisma.loggedWorkout.update({
         where: { id: loggedWorkoutData.id },
         data: loggedWorkoutData,

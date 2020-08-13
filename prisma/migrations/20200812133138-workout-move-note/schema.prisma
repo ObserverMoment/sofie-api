@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 model ScoreSubmission {
@@ -170,8 +170,6 @@ model WorkoutSection {
   sortPosition     Int
   notes            String?
   timecap          Int?
-  // For logging. Number of seconds it took to complete a single round of the section
-  duration         Int?
   rounds           Int
   workout          Workout?          @relation(fields: [workoutId], references: [id])
   workoutId        String?
@@ -213,8 +211,6 @@ model WorkoutMove {
   distanceUnit        DistanceUnit       @default(METRES)
   loadAmount          Float?
   loadUnit            LoadUnit           @default(KG)
-  // For logging. Number of seconds it took to complete the workoutMove
-  duration            Int?
   description         String?
   note                String?
   move                Move               @relation(fields: [moveId], references: [id])

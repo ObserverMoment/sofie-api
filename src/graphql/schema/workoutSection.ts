@@ -5,6 +5,10 @@ export default gql`
     id: ID!
     notes: String
     timecap: Int
+    """
+    duration is used when logging - it allows you to log how long the user took to complete one round of the section.
+    """
+    duration: Int
     rounds: Int!
     sortPosition: Int!
     workoutMoves: [WorkoutMove!]
@@ -15,6 +19,7 @@ export default gql`
   input CreateWorkoutSectionInput {
     notes: String
     timecap: Int
+    duration: Int
     sortPosition: Int!
     rounds: Int!
     workoutMoves: [CreateWorkoutMoveInput!]!

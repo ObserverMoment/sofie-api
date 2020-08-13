@@ -269,6 +269,7 @@ export type LoggedWorkout = {
   duration?: Maybe<Scalars['Int']>;
   workoutType: WorkoutType;
   difficultyLevel: DifficultyLevel;
+  /** In a loggedWorkout, when you are doing rounds of a section, each round gets entered as a separate section - with its own time log. */
   workoutSections: Array<WorkoutSection>;
   originalWorkoutId?: Maybe<Scalars['String']>;
 };
@@ -326,6 +327,8 @@ export type WorkoutSection = {
   id: Scalars['ID'];
   notes?: Maybe<Scalars['String']>;
   timecap?: Maybe<Scalars['Int']>;
+  /** duration is used when logging - it allows you to log how long the user took to complete one round of the section. */
+  duration?: Maybe<Scalars['Int']>;
   rounds: Scalars['Int'];
   sortPosition: Scalars['Int'];
   workoutMoves?: Maybe<Array<WorkoutMove>>;
@@ -336,6 +339,7 @@ export type WorkoutSection = {
 export type CreateWorkoutSectionInput = {
   notes?: Maybe<Scalars['String']>;
   timecap?: Maybe<Scalars['Int']>;
+  duration?: Maybe<Scalars['Int']>;
   sortPosition: Scalars['Int'];
   rounds: Scalars['Int'];
   workoutMoves: Array<CreateWorkoutMoveInput>;
@@ -362,24 +366,30 @@ export type WorkoutMove = {
   __typename?: 'WorkoutMove';
   id: Scalars['ID'];
   description?: Maybe<Scalars['String']>;
+  note?: Maybe<Scalars['String']>;
   sortPosition: Scalars['Int'];
   reps: Scalars['Float'];
   repType: Scalars['String'];
   distanceUnit?: Maybe<DistanceUnit>;
   loadAmount?: Maybe<Scalars['Float']>;
   loadUnit?: Maybe<LoadUnit>;
+  /** duration is used when logging workout moves - when rep type is not time it allows you to log how long the user took to complete one round of the section. */
+  duration?: Maybe<Scalars['Int']>;
   move: Move;
   selectedEquipment?: Maybe<Equipment>;
 };
 
 export type CreateWorkoutMoveInput = {
   description?: Maybe<Scalars['String']>;
+  note?: Maybe<Scalars['String']>;
   sortPosition: Scalars['Int'];
   reps?: Maybe<Scalars['Float']>;
   repType: WorkoutMoveRepType;
   distanceUnit: DistanceUnit;
   loadAmount?: Maybe<Scalars['Float']>;
   loadUnit: LoadUnit;
+  /** duration is used when logging workout moves - when rep type is not time it allows you to log how long the user took to complete one round of the section. */
+  duration?: Maybe<Scalars['Int']>;
   moveId: Scalars['String'];
   selectedEquipmentId?: Maybe<Scalars['String']>;
 };
@@ -732,6 +742,7 @@ export type WorkoutSectionResolvers<ContextType = any, ParentType extends Resolv
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   notes?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   timecap?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  duration?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   rounds?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   sortPosition?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   workoutMoves?: Resolver<Maybe<Array<ResolversTypes['WorkoutMove']>>, ParentType, ContextType>;
@@ -752,12 +763,14 @@ export type RoundAdjustRuleResolvers<ContextType = any, ParentType extends Resol
 export type WorkoutMoveResolvers<ContextType = any, ParentType extends ResolversParentTypes['WorkoutMove'] = ResolversParentTypes['WorkoutMove']> = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  note?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   sortPosition?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   reps?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   repType?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   distanceUnit?: Resolver<Maybe<ResolversTypes['DistanceUnit']>, ParentType, ContextType>;
   loadAmount?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   loadUnit?: Resolver<Maybe<ResolversTypes['LoadUnit']>, ParentType, ContextType>;
+  duration?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   move?: Resolver<ResolversTypes['Move'], ParentType, ContextType>;
   selectedEquipment?: Resolver<Maybe<ResolversTypes['Equipment']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;

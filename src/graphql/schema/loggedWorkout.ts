@@ -14,6 +14,9 @@ export default gql`
     duration: Int
     workoutType: WorkoutType!
     difficultyLevel: DifficultyLevel!
+    """
+    In a loggedWorkout, when you are doing rounds of a section, each round gets entered as a separate section - with its own time log.
+    """
     workoutSections: [WorkoutSection!]!
     originalWorkoutId: String
   }
