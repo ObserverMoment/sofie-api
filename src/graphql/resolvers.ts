@@ -14,8 +14,10 @@ import {
   checkThenDeleteWorkoutVideoFiles,
   checkWorkoutMediaForDeletion,
   checkLoggedWorkoutMediaForDeletion,
+  checkThenDeleteLoggedWorkoutImageFile,
+  checkThenDeleteLoggedWorkoutVideoFiles,
 } from '../uploadcare'
-import { Workout, PrismaClient } from '@prisma/client'
+import { Workout, PrismaClient, LoggedWorkout } from '@prisma/client'
 import workout from './schema/workout'
 
 interface Resolvers {
@@ -267,6 +269,38 @@ const resolvers: Resolvers = {
         data: loggedWorkoutData,
         include: fullWorkoutDataIncludes,
       })
+    },
+    deleteLoggedWorkout: async (
+      _r,
+      { authedUserId, loggedWorkoutId },
+      { selected, prisma }: { selected: any; prisma: PrismaClient },
+      i,
+    ) => {
+      // Also deletes all sections and moves.
+      await deleteAllDescendents(
+        prisma,
+        loggedWorkoutId,
+        WorkoutParentType.LOGGEDWORKOUT,
+      )
+
+      const deletedLoggedWorkout: LoggedWorkout = await prisma.loggedWorkout.delete(
+        {
+          where: { id: loggedWorkoutId },
+        },
+      )
+
+      await checkThenDeleteLoggedWorkoutImageFile(
+        prisma,
+        deletedLoggedWorkout.imageUrl,
+      )
+
+      await checkThenDeleteLoggedWorkoutVideoFiles(
+        prisma,
+        deletedLoggedWorkout.videoUrl,
+        deletedLoggedWorkout.videoThumbUrl,
+      )
+
+      return deletedLoggedWorkout.id
     },
   },
   // NOTE: Currently all top level resolvers are using Prisma includes to get nested relations

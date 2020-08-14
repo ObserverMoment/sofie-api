@@ -63,6 +63,7 @@ export type Mutation = {
   createLoggedWorkout: LoggedWorkout;
   deepUpdateLoggedWorkout: LoggedWorkout;
   shallowUpdateLoggedWorkout: LoggedWorkout;
+  deleteLoggedWorkout: Scalars['ID'];
 };
 
 
@@ -116,6 +117,12 @@ export type MutationDeepUpdateLoggedWorkoutArgs = {
 export type MutationShallowUpdateLoggedWorkoutArgs = {
   authedUserId: Scalars['ID'];
   loggedWorkoutData: ShallowUpdateLoggedWorkoutInput;
+};
+
+
+export type MutationDeleteLoggedWorkoutArgs = {
+  authedUserId: Scalars['ID'];
+  loggedWorkoutId: Scalars['ID'];
 };
 
 export type Equipment = {
@@ -647,6 +654,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createLoggedWorkout?: Resolver<ResolversTypes['LoggedWorkout'], ParentType, ContextType, RequireFields<MutationCreateLoggedWorkoutArgs, 'authedUserId' | 'loggedWorkoutData'>>;
   deepUpdateLoggedWorkout?: Resolver<ResolversTypes['LoggedWorkout'], ParentType, ContextType, RequireFields<MutationDeepUpdateLoggedWorkoutArgs, 'authedUserId' | 'loggedWorkoutData'>>;
   shallowUpdateLoggedWorkout?: Resolver<ResolversTypes['LoggedWorkout'], ParentType, ContextType, RequireFields<MutationShallowUpdateLoggedWorkoutArgs, 'authedUserId' | 'loggedWorkoutData'>>;
+  deleteLoggedWorkout?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteLoggedWorkoutArgs, 'authedUserId' | 'loggedWorkoutId'>>;
 };
 
 export type EquipmentResolvers<ContextType = any, ParentType extends ResolversParentTypes['Equipment'] = ResolversParentTypes['Equipment']> = {

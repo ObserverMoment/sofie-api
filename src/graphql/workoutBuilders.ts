@@ -19,16 +19,16 @@ enum WorkoutParentType {
 
 async function deleteAllDescendents(
   prisma: PrismaClient,
-  workoutId: string,
+  parentId: string,
   parent: WorkoutParentType,
 ) {
   const where =
     parent == WorkoutParentType.WORKOUT
       ? {
-          workoutId: workoutId,
+          workoutId: parentId,
         }
       : {
-          loggedWorkoutId: workoutId,
+          loggedWorkoutId: parentId,
         }
   // Get all workoutSection children of the workout.
   const workoutSections: WorkoutSection[] = await prisma.workoutSection.findMany(

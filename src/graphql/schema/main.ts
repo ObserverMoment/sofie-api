@@ -40,6 +40,7 @@ export default gql`
       authedUserId: ID!
       loggedWorkoutData: ShallowUpdateLoggedWorkoutInput!
     ): LoggedWorkout!
+    deleteLoggedWorkout(authedUserId: ID!, loggedWorkoutId: ID!): ID!
   }
 
   type Equipment {
