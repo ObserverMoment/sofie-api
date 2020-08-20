@@ -279,6 +279,7 @@ export type LoggedWorkout = {
   /** In a loggedWorkout, when you are doing rounds of a section, each round gets entered as a separate section - with its own time log. */
   workoutSections: Array<WorkoutSection>;
   originalWorkoutId?: Maybe<Scalars['String']>;
+  originalWorkoutScope: AccessScopeType;
 };
 
 export type CreateLoggedWorkoutInput = {
@@ -295,6 +296,7 @@ export type CreateLoggedWorkoutInput = {
   difficultyLevel: DifficultyLevel;
   workoutSections: Array<CreateWorkoutSectionInput>;
   originalWorkoutId?: Maybe<Scalars['String']>;
+  originalWorkoutScope: AccessScopeType;
 };
 
 export type DeepUpdateLoggedWorkoutInput = {
@@ -308,10 +310,8 @@ export type DeepUpdateLoggedWorkoutInput = {
   videoThumbUrl?: Maybe<Scalars['String']>;
   imageUrl?: Maybe<Scalars['String']>;
   duration?: Maybe<Scalars['Int']>;
-  workoutTypeId?: Maybe<Scalars['String']>;
   difficultyLevel?: Maybe<DifficultyLevel>;
   workoutSections: Array<CreateWorkoutSectionInput>;
-  originalWorkoutId?: Maybe<Scalars['String']>;
 };
 
 export type ShallowUpdateLoggedWorkoutInput = {
@@ -326,7 +326,6 @@ export type ShallowUpdateLoggedWorkoutInput = {
   imageUrl?: Maybe<Scalars['String']>;
   duration?: Maybe<Scalars['Int']>;
   difficultyLevel?: Maybe<DifficultyLevel>;
-  originalWorkoutId?: Maybe<Scalars['String']>;
 };
 
 export type WorkoutSection = {
@@ -403,10 +402,10 @@ export type CreateWorkoutMoveInput = {
 
 /** Enums */
 export enum AccessScopeType {
-  Official = 'OFFICIAL',
+  Private = 'PRIVATE',
   Public = 'PUBLIC',
-  Group = 'GROUP',
-  Private = 'PRIVATE'
+  Paid = 'PAID',
+  Official = 'OFFICIAL'
 }
 
 /** For generating rules which can adjust rep and load over the course of a workout */
@@ -420,11 +419,6 @@ export enum RuleAction {
 export enum RuleTarget {
   Reps = 'REPS',
   Load = 'LOAD'
-}
-
-export enum UserSubscriptionLevel {
-  Free = 'FREE',
-  Paid = 'PAID'
 }
 
 export enum Gender {
@@ -589,7 +583,6 @@ export type ResolversTypes = {
   AccessScopeType: AccessScopeType;
   RuleAction: RuleAction;
   RuleTarget: RuleTarget;
-  UserSubscriptionLevel: UserSubscriptionLevel;
   Gender: Gender;
   DifficultyLevel: DifficultyLevel;
   WorkoutMoveRepType: WorkoutMoveRepType;
@@ -743,6 +736,7 @@ export type LoggedWorkoutResolvers<ContextType = any, ParentType extends Resolve
   difficultyLevel?: Resolver<ResolversTypes['DifficultyLevel'], ParentType, ContextType>;
   workoutSections?: Resolver<Array<ResolversTypes['WorkoutSection']>, ParentType, ContextType>;
   originalWorkoutId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  originalWorkoutScope?: Resolver<ResolversTypes['AccessScopeType'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 };
 

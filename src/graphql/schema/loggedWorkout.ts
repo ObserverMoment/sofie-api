@@ -19,6 +19,7 @@ export default gql`
     """
     workoutSections: [WorkoutSection!]!
     originalWorkoutId: String
+    originalWorkoutScope: AccessScopeType!
   }
 
   input CreateLoggedWorkoutInput {
@@ -35,6 +36,7 @@ export default gql`
     difficultyLevel: DifficultyLevel!
     workoutSections: [CreateWorkoutSectionInput!]!
     originalWorkoutId: String
+    originalWorkoutScope: AccessScopeType!
   }
 
   input DeepUpdateLoggedWorkoutInput {
@@ -48,10 +50,8 @@ export default gql`
     videoThumbUrl: String
     imageUrl: String
     duration: Int
-    workoutTypeId: String
     difficultyLevel: DifficultyLevel
     workoutSections: [CreateWorkoutSectionInput!]!
-    originalWorkoutId: String
   }
 
   input ShallowUpdateLoggedWorkoutInput {
@@ -66,6 +66,5 @@ export default gql`
     imageUrl: String
     duration: Int
     difficultyLevel: DifficultyLevel
-    originalWorkoutId: String
   }
 `

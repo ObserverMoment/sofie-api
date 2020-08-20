@@ -5,10 +5,10 @@ export default gql`
   Enums
   """
   enum AccessScopeType {
-    OFFICIAL
-    PUBLIC
-    GROUP
     PRIVATE
+    PUBLIC
+    PAID
+    OFFICIAL
   }
 
   """
@@ -25,11 +25,6 @@ export default gql`
   enum RuleTarget {
     REPS
     LOAD
-  }
-
-  enum UserSubscriptionLevel {
-    FREE
-    PAID
   }
 
   enum Gender {
