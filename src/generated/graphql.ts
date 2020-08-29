@@ -372,7 +372,7 @@ export type WorkoutMove = {
   __typename?: 'WorkoutMove';
   id: Scalars['ID'];
   description?: Maybe<Scalars['String']>;
-  note?: Maybe<Scalars['String']>;
+  notes?: Maybe<Scalars['String']>;
   sortPosition: Scalars['Int'];
   reps: Scalars['Float'];
   repType: Scalars['String'];
@@ -387,7 +387,7 @@ export type WorkoutMove = {
 
 export type CreateWorkoutMoveInput = {
   description?: Maybe<Scalars['String']>;
-  note?: Maybe<Scalars['String']>;
+  notes?: Maybe<Scalars['String']>;
   sortPosition: Scalars['Int'];
   reps?: Maybe<Scalars['Float']>;
   repType: WorkoutMoveRepType;
@@ -765,7 +765,7 @@ export type RoundAdjustRuleResolvers<ContextType = any, ParentType extends Resol
 export type WorkoutMoveResolvers<ContextType = any, ParentType extends ResolversParentTypes['WorkoutMove'] = ResolversParentTypes['WorkoutMove']> = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  note?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  notes?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   sortPosition?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   reps?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   repType?: Resolver<ResolversTypes['String'], ParentType, ContextType>;

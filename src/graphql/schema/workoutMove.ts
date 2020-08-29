@@ -4,7 +4,7 @@ export default gql`
   type WorkoutMove {
     id: ID!
     description: String
-    note: String
+    notes: String
     sortPosition: Int!
     reps: Float!
     repType: String!
@@ -21,7 +21,7 @@ export default gql`
 
   input CreateWorkoutMoveInput {
     description: String
-    note: String
+    notes: String
     sortPosition: Int!
     reps: Float
     repType: WorkoutMoveRepType!

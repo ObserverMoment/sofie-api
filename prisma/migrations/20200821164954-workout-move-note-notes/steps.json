@@ -1,0 +1,41 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "CreateField",
+      "model": "ScoreSubmission",
+      "field": "notes",
+      "type": "String",
+      "arity": "Optional"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "ScoreSubmission",
+      "field": "note"
+    },
+    {
+      "tag": "CreateField",
+      "model": "ScoreSubmissionVideo",
+      "field": "notes",
+      "type": "String",
+      "arity": "Optional"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "ScoreSubmissionVideo",
+      "field": "note"
+    },
+    {
+      "tag": "CreateField",
+      "model": "WorkoutMove",
+      "field": "notes",
+      "type": "String",
+      "arity": "Optional"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "WorkoutMove",
+      "field": "note"
+    }
+  ]
+}
