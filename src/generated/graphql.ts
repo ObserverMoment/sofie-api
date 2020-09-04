@@ -1,4 +1,4 @@
-import { GraphQLResolveInfo } from 'graphql';
+import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
 import gql from 'graphql-tag';
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: any }> = { [K in keyof T]: T[K] };
@@ -10,7 +10,9 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  JSON: any;
 };
+
 
 export type Query = {
   __typename?: 'Query';
@@ -212,6 +214,7 @@ export type Workout = {
   difficultyLevel: DifficultyLevel;
   scope: AccessScopeType;
   workoutSections: Array<WorkoutSection>;
+  builderData?: Maybe<Scalars['JSON']>;
 };
 
 export type CreateWorkoutInput = {
@@ -228,6 +231,7 @@ export type CreateWorkoutInput = {
   difficultyLevel: DifficultyLevel;
   scope: AccessScopeType;
   workoutSections: Array<CreateWorkoutSectionInput>;
+  builderData?: Maybe<Scalars['JSON']>;
 };
 
 export type DeepUpdateWorkoutInput = {
@@ -245,6 +249,7 @@ export type DeepUpdateWorkoutInput = {
   difficultyLevel?: Maybe<DifficultyLevel>;
   scope?: Maybe<AccessScopeType>;
   workoutSections: Array<CreateWorkoutSectionInput>;
+  builderData?: Maybe<Scalars['JSON']>;
 };
 
 export type ShallowUpdateWorkoutInput = {
@@ -554,6 +559,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
+  JSON: ResolverTypeWrapper<Scalars['JSON']>;
   Query: ResolverTypeWrapper<{}>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   String: ResolverTypeWrapper<Scalars['String']>;
@@ -595,6 +601,7 @@ export type ResolversTypes = {
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
+  JSON: Scalars['JSON'];
   Query: {};
   Boolean: Scalars['Boolean'];
   String: Scalars['String'];
@@ -622,6 +629,10 @@ export type ResolversParentTypes = {
   WorkoutMove: WorkoutMove;
   CreateWorkoutMoveInput: CreateWorkoutMoveInput;
 };
+
+export interface JsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['JSON'], any> {
+  name: 'JSON';
+}
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   checkUniqueDisplayName?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryCheckUniqueDisplayNameArgs, 'displayName'>>;
@@ -718,6 +729,7 @@ export type WorkoutResolvers<ContextType = any, ParentType extends ResolversPare
   difficultyLevel?: Resolver<ResolversTypes['DifficultyLevel'], ParentType, ContextType>;
   scope?: Resolver<ResolversTypes['AccessScopeType'], ParentType, ContextType>;
   workoutSections?: Resolver<Array<ResolversTypes['WorkoutSection']>, ParentType, ContextType>;
+  builderData?: Resolver<Maybe<ResolversTypes['JSON']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 };
 
@@ -779,6 +791,7 @@ export type WorkoutMoveResolvers<ContextType = any, ParentType extends Resolvers
 };
 
 export type Resolvers<ContextType = any> = {
+  JSON?: GraphQLScalarType;
   Query?: QueryResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Equipment?: EquipmentResolvers<ContextType>;

@@ -36,6 +36,7 @@ function extractSelectedFields(info: GraphQLResolveInfo) {
 // These fields get removed from the eventual select arg which is passed to prisma
 // This avoids duplicating calls - caused by prisma's select functionality also being able to select relations.
 // These relational calls are made via the resolver schema subfields and are handled by Dataloaders
+// As of 03/09/20 = not currently in use.
 function stripRelationsFromSelected(
   selectedObject = {},
   excludedFields: String[] = [],

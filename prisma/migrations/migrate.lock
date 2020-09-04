@@ -1,8 +1,4 @@
 # Prisma Migrate lockfile v1
 
-20200818104957-logged-workout-original-workout-scope
-20200818105121-scope-enum-update
-20200818105255-remove-user-subscription-level
-20200818105533-workout-original-access-scope
-20200818105715-workout-original-access-scope-required
-20200821164954-workout-move-note-notes
+20200903140921-reset
+20200903141831-reset-2

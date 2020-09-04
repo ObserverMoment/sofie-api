@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 // model ScoreSubmission {
@@ -162,7 +162,7 @@ model Workout {
   imageUrl          String?
   timecap           Int?
   // structureData holds config info for certain workout types. E.g. Circuits and Tabatas.
-  builderData       Json?
+  structureData     Json?
   difficultyLevel   DifficultyLevel    @default(ONE)
   scope             AccessScopeType    @default(PRIVATE)
   workoutType       WorkoutType        @relation(fields: [workoutTypeId], references: [id])

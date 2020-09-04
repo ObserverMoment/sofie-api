@@ -7,7 +7,7 @@ import {
   buildUpdateLoggedWorkoutData,
 } from './workoutBuilders'
 
-import { QueryResolvers, MutationResolvers } from '../generated/graphql'
+import { Resolvers } from '../generated/graphql'
 import {
   deleteFiles,
   checkThenDeleteWorkoutImageFile,
@@ -18,12 +18,6 @@ import {
   checkThenDeleteLoggedWorkoutVideoFiles,
 } from '../uploadcare'
 import { Workout, PrismaClient, LoggedWorkout } from '@prisma/client'
-import workout from './schema/workout'
-
-interface Resolvers {
-  Query: QueryResolvers
-  Mutation: MutationResolvers
-}
 
 const fullWorkoutDataIncludes = {
   workoutType: true,
@@ -51,21 +45,14 @@ const resolvers: Resolvers = {
     officialMoves: async (r, a, { selected, prisma }, i) => {
       // Assumed that you always want requiredEquipments and selectableEquipments.
       // when getting official moves.
-      // You only need the ids so that on the FE you can find the right equipment from the repo by id.
       return prisma.move.findMany({
         select: {
           ...selected.Move,
-          requiredEquipments: {
-            select: { id: true },
-          },
-          selectableEquipments: {
-            select: { id: true },
-          },
         },
       })
     },
     officialEquipments: async (r, a, { selected, prisma }, i) => {
-      return prisma.equipment.findMany({ select: selected.Equipment })
+      return prisma.equipment.findMany()
     },
     officialWorkouts: async (r, a, { selected, prisma }, i) => {
       const workouts = await prisma.workout.findMany({
