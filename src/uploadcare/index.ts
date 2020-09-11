@@ -69,22 +69,20 @@ export async function checkWorkoutMediaForDeletion(
   workoutData: ShallowUpdateWorkoutInput | DeepUpdateWorkoutInput,
 ) {
   // Handle deleting of now unused media from the host.
-  if (workoutData.imageUrl || workoutData.demoVideoUrl) {
-    const oldWorkout: Workout = await prisma.workout.findOne({
-      where: {
-        id: workoutData.id,
-      },
-    })
-    if (workoutData.imageUrl) {
-      await checkThenDeleteWorkoutImageFile(prisma, oldWorkout.imageUrl)
-    }
-    if (workoutData.demoVideoUrl) {
-      await checkThenDeleteWorkoutVideoFiles(
-        prisma,
-        oldWorkout.demoVideoUrl,
-        oldWorkout.demoVideoThumbUrl,
-      )
-    }
+  const oldWorkout: Workout = await prisma.workout.findOne({
+    where: {
+      id: workoutData.id,
+    },
+  })
+  if (workoutData.imageUrl != oldWorkout.imageUrl) {
+    await checkThenDeleteWorkoutImageFile(prisma, oldWorkout.imageUrl)
+  }
+  if (workoutData.demoVideoUrl != oldWorkout.demoVideoUrl) {
+    await checkThenDeleteWorkoutVideoFiles(
+      prisma,
+      oldWorkout.demoVideoUrl,
+      oldWorkout.demoVideoThumbUrl,
+    )
   }
 }
 
@@ -138,22 +136,23 @@ export async function checkLoggedWorkoutMediaForDeletion(
     | DeepUpdateLoggedWorkoutInput,
 ) {
   // Handle deleting of now unused media from the host.
-  if (loggedWorkoutData.imageUrl || loggedWorkoutData.videoUrl) {
-    const oldLoggedWorkout: LoggedWorkout = await prisma.loggedWorkout.findOne({
-      where: {
-        id: loggedWorkoutData.id,
-      },
-    })
-    if (oldLoggedWorkout.imageUrl) {
-      await checkThenDeleteWorkoutImageFile(prisma, oldLoggedWorkout.imageUrl)
-    }
-    if (oldLoggedWorkout.videoUrl) {
-      await checkThenDeleteWorkoutVideoFiles(
-        prisma,
-        oldLoggedWorkout.videoUrl,
-        oldLoggedWorkout.videoThumbUrl,
-      )
-    }
+  const oldLoggedWorkout: LoggedWorkout = await prisma.loggedWorkout.findOne({
+    where: {
+      id: loggedWorkoutData.id,
+    },
+  })
+  // If there is new media and old media, and it is not the same as the new media (it shouldn't be)
+  // Check if it is being used by other logs, if not then delete it.
+  // NOTE: The check may be unnecessary (could just delete) - logs cannot share media at the moment - only workouts can.
+  if (loggedWorkoutData.imageUrl != oldLoggedWorkout.imageUrl) {
+    await checkThenDeleteWorkoutImageFile(prisma, oldLoggedWorkout.imageUrl)
+  }
+  if (loggedWorkoutData.videoUrl != oldLoggedWorkout.videoUrl) {
+    await checkThenDeleteWorkoutVideoFiles(
+      prisma,
+      oldLoggedWorkout.videoUrl,
+      oldLoggedWorkout.videoThumbUrl,
+    )
   }
 }
 

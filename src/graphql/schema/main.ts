@@ -30,6 +30,8 @@ export default gql`
       workoutData: ShallowUpdateWorkoutInput!
     ): Workout!
     deleteWorkout(authedUserId: ID!, workoutId: ID!): ID!
+    createLikedWorkout(likedWorkoutData: CreateLikedWorkoutInput): ID!
+    deleteLikedWorkout(authedUserId: ID!, workoutId: ID!): ID!
     createLoggedWorkout(
       authedUserId: ID!
       loggedWorkoutData: CreateLoggedWorkoutInput!

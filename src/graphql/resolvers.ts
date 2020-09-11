@@ -19,6 +19,8 @@ import {
 } from '../uploadcare'
 import { Workout, PrismaClient, LoggedWorkout } from '@prisma/client'
 
+const util = require('util')
+
 const fullWorkoutDataIncludes = {
   workoutType: true,
   workoutSections: {
@@ -202,6 +204,37 @@ const resolvers: Resolvers = {
       )
 
       return deletedWorkout.id
+    },
+    createLikedWorkout: async (
+      _r,
+      { likedWorkoutData },
+      { selected, prisma }: { selected: any; prisma: PrismaClient },
+      i,
+    ) => {
+      console.log(likedWorkoutData?.userId)
+      console.log(likedWorkoutData?.notes)
+      console.log(likedWorkoutData?.workoutId)
+      await prisma.likedWorkout.create({
+        data: {
+          user: {
+            connect: { id: likedWorkoutData?.userId || undefined },
+          },
+          workout: {
+            connect: { id: likedWorkoutData?.workoutId || undefined },
+          },
+        },
+      })
+      return 'test'
+    },
+    deleteLikedWorkout: async (
+      _r,
+      { authedUserId, workoutId },
+      { selected, prisma }: { selected: any; prisma: PrismaClient },
+      i,
+    ) => {
+      console.log(authedUserId)
+      console.log(workoutId)
+      return 'test'
     },
     createLoggedWorkout: async (
       _r,

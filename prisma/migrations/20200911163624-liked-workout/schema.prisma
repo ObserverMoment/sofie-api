@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 // model ScoreSubmission {
@@ -171,7 +171,8 @@ model Workout {
   scheduledWorkouts ScheduledWorkout[]
   workoutLogs       LoggedWorkout[]
   // tags              WorkoutTag[]
-  likes             LikedWorkout[]
+  // likes             LikedWorkout[]
+  LikedWorkout      LikedWorkout[]
 }
 
 model ScheduledWorkout {
@@ -337,8 +338,9 @@ model User {
   scheduledWorkouts ScheduledWorkout[]
   loggedWorkouts    LoggedWorkout[]
   // workoutTags                        WorkoutTag[]
-  likedWorkouts     LikedWorkout[]
+  // likedWorkouts                      LikedWorkout[]
   // LikedWorkoutTag                    LikedWorkoutTag[]
+  LikedWorkout      LikedWorkout[]
 }
 
 // Enums

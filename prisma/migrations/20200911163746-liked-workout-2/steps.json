@@ -1,0 +1,29 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "CreateField",
+      "model": "Workout",
+      "field": "likes",
+      "type": "LikedWorkout",
+      "arity": "List"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "Workout",
+      "field": "LikedWorkout"
+    },
+    {
+      "tag": "CreateField",
+      "model": "User",
+      "field": "likedWorkouts",
+      "type": "LikedWorkout",
+      "arity": "List"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "User",
+      "field": "LikedWorkout"
+    }
+  ]
+}

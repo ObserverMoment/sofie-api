@@ -62,6 +62,8 @@ export type Mutation = {
   deepUpdateWorkout: Workout;
   shallowUpdateWorkout: Workout;
   deleteWorkout: Scalars['ID'];
+  createLikedWorkout: Scalars['ID'];
+  deleteLikedWorkout: Scalars['ID'];
   createLoggedWorkout: LoggedWorkout;
   deepUpdateLoggedWorkout: LoggedWorkout;
   shallowUpdateLoggedWorkout: LoggedWorkout;
@@ -99,6 +101,17 @@ export type MutationShallowUpdateWorkoutArgs = {
 
 
 export type MutationDeleteWorkoutArgs = {
+  authedUserId: Scalars['ID'];
+  workoutId: Scalars['ID'];
+};
+
+
+export type MutationCreateLikedWorkoutArgs = {
+  likedWorkoutData?: Maybe<CreateLikedWorkoutInput>;
+};
+
+
+export type MutationDeleteLikedWorkoutArgs = {
   authedUserId: Scalars['ID'];
   workoutId: Scalars['ID'];
 };
@@ -265,6 +278,26 @@ export type ShallowUpdateWorkoutInput = {
   timecap?: Maybe<Scalars['Int']>;
   difficultyLevel?: Maybe<DifficultyLevel>;
   scope?: Maybe<AccessScopeType>;
+};
+
+export type LikedWorkout = {
+  __typename?: 'LikedWorkout';
+  id: Scalars['ID'];
+  createdAt: Scalars['String'];
+  user: User;
+  workout: Workout;
+  notes?: Maybe<Scalars['String']>;
+};
+
+export type CreateLikedWorkoutInput = {
+  userId: Scalars['ID'];
+  workoutId: Scalars['ID'];
+  notes?: Maybe<Scalars['String']>;
+};
+
+export type DeleteLikedWorkoutInput = {
+  userId: Scalars['ID'];
+  workoutId: Scalars['ID'];
 };
 
 export type LoggedWorkout = {
@@ -576,6 +609,9 @@ export type ResolversTypes = {
   CreateWorkoutInput: CreateWorkoutInput;
   DeepUpdateWorkoutInput: DeepUpdateWorkoutInput;
   ShallowUpdateWorkoutInput: ShallowUpdateWorkoutInput;
+  LikedWorkout: ResolverTypeWrapper<LikedWorkout>;
+  CreateLikedWorkoutInput: CreateLikedWorkoutInput;
+  DeleteLikedWorkoutInput: DeleteLikedWorkoutInput;
   LoggedWorkout: ResolverTypeWrapper<LoggedWorkout>;
   CreateLoggedWorkoutInput: CreateLoggedWorkoutInput;
   DeepUpdateLoggedWorkoutInput: DeepUpdateLoggedWorkoutInput;
@@ -618,6 +654,9 @@ export type ResolversParentTypes = {
   CreateWorkoutInput: CreateWorkoutInput;
   DeepUpdateWorkoutInput: DeepUpdateWorkoutInput;
   ShallowUpdateWorkoutInput: ShallowUpdateWorkoutInput;
+  LikedWorkout: LikedWorkout;
+  CreateLikedWorkoutInput: CreateLikedWorkoutInput;
+  DeleteLikedWorkoutInput: DeleteLikedWorkoutInput;
   LoggedWorkout: LoggedWorkout;
   CreateLoggedWorkoutInput: CreateLoggedWorkoutInput;
   DeepUpdateLoggedWorkoutInput: DeepUpdateLoggedWorkoutInput;
@@ -655,6 +694,8 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   deepUpdateWorkout?: Resolver<ResolversTypes['Workout'], ParentType, ContextType, RequireFields<MutationDeepUpdateWorkoutArgs, 'authedUserId' | 'workoutData'>>;
   shallowUpdateWorkout?: Resolver<ResolversTypes['Workout'], ParentType, ContextType, RequireFields<MutationShallowUpdateWorkoutArgs, 'authedUserId' | 'workoutData'>>;
   deleteWorkout?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteWorkoutArgs, 'authedUserId' | 'workoutId'>>;
+  createLikedWorkout?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationCreateLikedWorkoutArgs, never>>;
+  deleteLikedWorkout?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteLikedWorkoutArgs, 'authedUserId' | 'workoutId'>>;
   createLoggedWorkout?: Resolver<ResolversTypes['LoggedWorkout'], ParentType, ContextType, RequireFields<MutationCreateLoggedWorkoutArgs, 'authedUserId' | 'loggedWorkoutData'>>;
   deepUpdateLoggedWorkout?: Resolver<ResolversTypes['LoggedWorkout'], ParentType, ContextType, RequireFields<MutationDeepUpdateLoggedWorkoutArgs, 'authedUserId' | 'loggedWorkoutData'>>;
   shallowUpdateLoggedWorkout?: Resolver<ResolversTypes['LoggedWorkout'], ParentType, ContextType, RequireFields<MutationShallowUpdateLoggedWorkoutArgs, 'authedUserId' | 'loggedWorkoutData'>>;
@@ -733,6 +774,15 @@ export type WorkoutResolvers<ContextType = any, ParentType extends ResolversPare
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 };
 
+export type LikedWorkoutResolvers<ContextType = any, ParentType extends ResolversParentTypes['LikedWorkout'] = ResolversParentTypes['LikedWorkout']> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  workout?: Resolver<ResolversTypes['Workout'], ParentType, ContextType>;
+  notes?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
+};
+
 export type LoggedWorkoutResolvers<ContextType = any, ParentType extends ResolversParentTypes['LoggedWorkout'] = ResolversParentTypes['LoggedWorkout']> = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -799,6 +849,7 @@ export type Resolvers<ContextType = any> = {
   User?: UserResolvers<ContextType>;
   WorkoutType?: WorkoutTypeResolvers<ContextType>;
   Workout?: WorkoutResolvers<ContextType>;
+  LikedWorkout?: LikedWorkoutResolvers<ContextType>;
   LoggedWorkout?: LoggedWorkoutResolvers<ContextType>;
   WorkoutSection?: WorkoutSectionResolvers<ContextType>;
   RoundAdjustRule?: RoundAdjustRuleResolvers<ContextType>;

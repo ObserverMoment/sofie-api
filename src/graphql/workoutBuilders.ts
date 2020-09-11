@@ -73,8 +73,8 @@ function buildCreateWorkoutData(
   workoutData: CreateWorkoutInput,
 ) {
   const workoutTypeId = workoutData.workoutTypeId
-  delete workoutData.workoutTypeId
-  return {
+
+  const formattedWorkoutData: any = {
     ...workoutData,
     createdBy: { connect: { id: authedUserId } },
     workoutType: {
@@ -82,6 +82,10 @@ function buildCreateWorkoutData(
     },
     workoutSections: buildWorkoutSectionsData(workoutData.workoutSections),
   }
+
+  delete formattedWorkoutData.workoutTypeId
+
+  return formattedWorkoutData
 }
 
 function buildCreateLoggedWorkoutData(
@@ -89,12 +93,10 @@ function buildCreateLoggedWorkoutData(
   loggedWorkoutData: CreateLoggedWorkoutInput,
 ) {
   const originalWorkoutId = loggedWorkoutData.originalWorkoutId
-  delete loggedWorkoutData.originalWorkoutId
 
   const workoutTypeId = loggedWorkoutData.workoutTypeId
-  delete loggedWorkoutData.workoutTypeId
 
-  return {
+  const formattedLoggedWorkoutData: any = {
     ...loggedWorkoutData,
     originalWorkout: {
       connect: {
@@ -114,6 +116,11 @@ function buildCreateLoggedWorkoutData(
       loggedWorkoutData.workoutSections,
     ),
   }
+
+  delete formattedLoggedWorkoutData.originalWorkoutId
+  delete formattedLoggedWorkoutData.workoutTypeId
+
+  return formattedLoggedWorkoutData
 }
 
 function buildUpdateWorkoutData(workoutData: DeepUpdateWorkoutInput) {
@@ -165,7 +172,7 @@ function buildWorkoutSectionsData(
                     },
                   }
                 : undefined
-              const workoutMoveData = {
+              const workoutMoveData: any = {
                 ...workoutMove,
                 selectedEquipment,
                 move: {
