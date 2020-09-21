@@ -14,6 +14,7 @@ export default gql`
     duration: Int
     workoutType: WorkoutType!
     difficultyLevel: DifficultyLevel!
+    gymProfile: GymProfile
     """
     In a loggedWorkout, when you are doing rounds of a section, each round gets entered as a separate section - with its own time log.
     """
@@ -33,6 +34,7 @@ export default gql`
     imageUrl: String
     duration: Int
     workoutTypeId: String!
+    gymProfileId: String
     difficultyLevel: DifficultyLevel!
     workoutSections: [CreateWorkoutSectionInput!]!
     originalWorkoutId: String
@@ -50,6 +52,7 @@ export default gql`
     videoThumbUrl: String
     imageUrl: String
     duration: Int
+    gymProfileId: String
     difficultyLevel: DifficultyLevel
     workoutSections: [CreateWorkoutSectionInput!]!
   }
@@ -65,6 +68,7 @@ export default gql`
     videoThumbUrl: String
     imageUrl: String
     duration: Int
+    gymProfileId: String
     difficultyLevel: DifficultyLevel
   }
 `

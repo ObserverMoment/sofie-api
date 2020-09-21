@@ -1,0 +1,17 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "UpdateField",
+      "model": "LikedWorkout",
+      "field": "workout",
+      "arity": "Required"
+    },
+    {
+      "tag": "UpdateField",
+      "model": "LikedWorkout",
+      "field": "workoutId",
+      "arity": "Required"
+    }
+  ]
+}

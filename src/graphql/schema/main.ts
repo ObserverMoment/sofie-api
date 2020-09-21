@@ -20,6 +20,7 @@ export default gql`
   type Mutation {
     createUser(uid: ID!): User!
     updateUser(id: ID!, data: UpdateUserInput!): User!
+    createGymProfile(id: ID!, data: CreateGymProfileInput!): User!
     createWorkout(authedUserId: ID!, workoutData: CreateWorkoutInput!): Workout!
     deepUpdateWorkout(
       authedUserId: ID!
@@ -30,8 +31,8 @@ export default gql`
       workoutData: ShallowUpdateWorkoutInput!
     ): Workout!
     deleteWorkout(authedUserId: ID!, workoutId: ID!): ID!
-    createLikedWorkout(likedWorkoutData: CreateLikedWorkoutInput): ID!
-    deleteLikedWorkout(authedUserId: ID!, workoutId: ID!): ID!
+    createLikedWorkout(likedWorkoutData: CreateLikedWorkoutInput!): ID!
+    deleteLikedWorkout(authedUserId: ID!, likedWorkoutId: ID!): ID!
     createLoggedWorkout(
       authedUserId: ID!
       loggedWorkoutData: CreateLoggedWorkoutInput!
@@ -67,6 +68,20 @@ export default gql`
     selectableEquipments: [Equipment!]!
   }
 
+  type GymProfile {
+    id: ID!
+    name: String!
+    description: String
+    postcode: String
+    user: User!
+  }
+
+  input CreateGymProfileInput {
+    name: String!
+    description: String
+    postcode: String
+  }
+
   type User {
     id: ID!
     avatarUrl: String
@@ -79,11 +94,11 @@ export default gql`
     lastname: String
     themePreference: ThemePreference!
     gender: Gender
-    gymBox: String
     hasOnboarded: Boolean!
     height: Float
     weight: Float
     unitSystem: UnitSystem
+    gymProfiles: [GymProfile!]
   }
 
   input UpdateUserInput {

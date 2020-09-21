@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 // model ScoreSubmission {
@@ -147,15 +147,13 @@ model WorkoutType {
 //   workouts    Workout[]
 // }
 
-model GymProfile {
-  id                String             @default(uuid()) @id
-  user              User               @relation(fields: [userId], references: [id])
-  userId            String
-  name              String
-  description       String?
-  postcode          String?
-  scheduledWorkouts ScheduledWorkout[]
-  loggedWorkouts    LoggedWorkout[]
+model WorkoutLocation {
+  id          String  @default(uuid()) @id
+  user        User    @relation(fields: [userId], references: [id])
+  userId      String
+  name        String
+  description String?
+  postcode    String?
 }
 
 model Workout {
@@ -197,8 +195,6 @@ model ScheduledWorkout {
   workoutId       String
   loggedWorkout   LoggedWorkout? @relation(fields: [loggedWorkoutId], references: [id])
   loggedWorkoutId String?
-  gymProfile      GymProfile?    @relation(fields: [gymProfileId], references: [id])
-  gymProfileId    String?
 }
 
 // Users can apply these to any workout they want, whereas WorkoutTags can only
@@ -312,8 +308,6 @@ model LoggedWorkout {
   originalWorkoutScope AccessScopeType
   scheduledWorkout     ScheduledWorkout?
   scheduledWorkoutId   String?
-  gymProfile           GymProfile?       @relation(fields: [gymProfileId], references: [id])
-  gymProfileId         String?
 }
 
 // Height in cms / weight in kgs
@@ -329,9 +323,10 @@ model User {
   themePreference   ThemePreference?   @default(DARK)
   bio               String?
   birthdate         DateTime?
-  gender            Gender?            @default(UNSPECIFIED)
+  gender            Gender?
   height            Float?
   weight            Float?
+  gymBox            String?
   townCity          String?
   countryCode       String?
   unitSystem        UnitSystem         @default(METRIC)
@@ -353,7 +348,7 @@ model User {
   // workoutTags                        WorkoutTag[]
   likedWorkouts     LikedWorkout[]
   // LikedWorkoutTag                    LikedWorkoutTag[]
-  gymProfiles       GymProfile[]
+  workoutLocations  WorkoutLocation[]
 }
 
 // Enums

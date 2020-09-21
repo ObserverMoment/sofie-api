@@ -9,7 +9,6 @@ import {
 
 import { Resolvers } from '../generated/graphql'
 import {
-  deleteFiles,
   checkThenDeleteWorkoutImageFile,
   checkThenDeleteWorkoutVideoFiles,
   checkWorkoutMediaForDeletion,
@@ -17,9 +16,12 @@ import {
   checkThenDeleteLoggedWorkoutImageFile,
   checkThenDeleteLoggedWorkoutVideoFiles,
 } from '../uploadcare'
-import { Workout, PrismaClient, LoggedWorkout } from '@prisma/client'
-
-const util = require('util')
+import {
+  PrismaClient,
+  Workout,
+  LikedWorkout,
+  LoggedWorkout,
+} from '@prisma/client'
 
 const fullWorkoutDataIncludes = {
   workoutType: true,
@@ -117,7 +119,9 @@ const resolvers: Resolvers = {
         data: {
           firebaseUid: uid,
         },
-        select: selected.User,
+        include: {
+          gymProfiles: true,
+        },
       })
     },
     updateUser: async (r, { id, data }, { selected, prisma }, i) => {
@@ -128,6 +132,25 @@ const resolvers: Resolvers = {
       return prisma.user.update({
         where: { id },
         data: formattedData,
+        include: {
+          gymProfiles: true,
+        },
+      })
+    },
+    createGymProfile: async (r, { id, data }, { selected, prisma }, i) => {
+      await prisma.gymProfile.create({
+        data: {
+          ...data,
+          user: {
+            connect: { id },
+          },
+        },
+      })
+      return prisma.user.findOne({
+        where: { id },
+        include: {
+          gymProfiles: true,
+        },
       })
     },
     createWorkout: async (
@@ -211,30 +234,33 @@ const resolvers: Resolvers = {
       { selected, prisma }: { selected: any; prisma: PrismaClient },
       i,
     ) => {
-      console.log(likedWorkoutData?.userId)
-      console.log(likedWorkoutData?.notes)
-      console.log(likedWorkoutData?.workoutId)
-      await prisma.likedWorkout.create({
+      console.log(likedWorkoutData.userId)
+      console.log(likedWorkoutData.notes)
+      console.log(likedWorkoutData.workoutId)
+      const likedWorkout: LikedWorkout = await prisma.likedWorkout.create({
         data: {
           user: {
-            connect: { id: likedWorkoutData?.userId || undefined },
+            connect: { id: likedWorkoutData.userId },
           },
           workout: {
-            connect: { id: likedWorkoutData?.workoutId || undefined },
+            connect: { id: likedWorkoutData.workoutId },
           },
         },
       })
-      return 'test'
+      return likedWorkout.workoutId
     },
     deleteLikedWorkout: async (
       _r,
-      { authedUserId, workoutId },
+      { authedUserId, likedWorkoutId },
       { selected, prisma }: { selected: any; prisma: PrismaClient },
       i,
     ) => {
       console.log(authedUserId)
-      console.log(workoutId)
-      return 'test'
+      console.log(likedWorkoutId)
+      const deletedLikedWorkout: LikedWorkout = await prisma.likedWorkout.delete(
+        { where: { id: likedWorkoutId } },
+      )
+      return deletedLikedWorkout.id
     },
     createLoggedWorkout: async (
       _r,
@@ -284,9 +310,27 @@ const resolvers: Resolvers = {
       // Handle deleting of now unused media from the host.
       await checkLoggedWorkoutMediaForDeletion(prisma, loggedWorkoutData)
 
+      // GymProfile is currently included in the shallow update.
+      // Otherwise chaning the gym profile on a log would cause the deletion and re-creation of all the workoutSections and workoutMoves.
+      // Look at moving it to deep update only at some point.
+      const gymProfile = loggedWorkoutData.gymProfileId
+        ? {
+            gymProfile: {
+              connect: { id: loggedWorkoutData.gymProfileId || undefined },
+            },
+          }
+        : {}
+
+      const data = {
+        ...loggedWorkoutData,
+        ...gymProfile,
+      }
+
+      delete data.gymProfileId
+
       return prisma.loggedWorkout.update({
         where: { id: loggedWorkoutData.id },
-        data: loggedWorkoutData,
+        data,
         include: fullWorkoutDataIncludes,
       })
     },

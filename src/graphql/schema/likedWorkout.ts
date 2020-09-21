@@ -14,9 +14,4 @@ export default gql`
     workoutId: ID!
     notes: String
   }
-
-  input DeleteLikedWorkoutInput {
-    userId: ID!
-    workoutId: ID!
-  }
 `

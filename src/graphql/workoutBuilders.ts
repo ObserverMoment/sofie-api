@@ -96,6 +96,15 @@ function buildCreateLoggedWorkoutData(
 
   const workoutTypeId = loggedWorkoutData.workoutTypeId
 
+  // Format for optional connect fields passed as an ID - empty {} will be ignored.
+  const gymProfile = loggedWorkoutData.gymProfileId
+    ? {
+        gymProfile: {
+          connect: { id: loggedWorkoutData.gymProfileId || undefined },
+        },
+      }
+    : {}
+
   const formattedLoggedWorkoutData: any = {
     ...loggedWorkoutData,
     originalWorkout: {
@@ -109,6 +118,7 @@ function buildCreateLoggedWorkoutData(
         id: authedUserId,
       },
     },
+    ...gymProfile,
     workoutType: {
       connect: { id: workoutTypeId || undefined },
     },
@@ -117,8 +127,10 @@ function buildCreateLoggedWorkoutData(
     ),
   }
 
+  // Prisma will not be expecting these fields and will error.
   delete formattedLoggedWorkoutData.originalWorkoutId
   delete formattedLoggedWorkoutData.workoutTypeId
+  delete formattedLoggedWorkoutData.gymProfileId
 
   return formattedLoggedWorkoutData
 }
@@ -141,12 +153,22 @@ function buildUpdateWorkoutData(workoutData: DeepUpdateWorkoutInput) {
 function buildUpdateLoggedWorkoutData(
   loggedWorkoutData: DeepUpdateLoggedWorkoutInput,
 ) {
+  // Format for when field is optional, empty object will be ignored.
   const completedOn = loggedWorkoutData.completedOn
     ? { completedOn: new Date(loggedWorkoutData.completedOn) }
+    : {}
+
+  const gymProfile = loggedWorkoutData.gymProfileId
+    ? {
+        gymProfile: {
+          connect: { id: loggedWorkoutData.gymProfileId || undefined },
+        },
+      }
     : {}
   return {
     ...loggedWorkoutData,
     ...completedOn,
+    ...gymProfile,
     workoutSections: buildWorkoutSectionsData(
       loggedWorkoutData.workoutSections,
     ),
