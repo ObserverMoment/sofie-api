@@ -9,18 +9,18 @@ import {
 
 import { Resolvers } from '../generated/graphql'
 import {
+  deleteFiles,
   checkThenDeleteWorkoutImageFile,
   checkThenDeleteWorkoutVideoFiles,
   checkWorkoutMediaForDeletion,
   checkLoggedWorkoutMediaForDeletion,
-  checkThenDeleteLoggedWorkoutImageFile,
-  checkThenDeleteLoggedWorkoutVideoFiles,
 } from '../uploadcare'
 import {
   PrismaClient,
   Workout,
   LikedWorkout,
   LoggedWorkout,
+  BatchPayload,
 } from '@prisma/client'
 
 const fullWorkoutDataIncludes = {
@@ -103,6 +103,16 @@ const resolvers: Resolvers = {
         },
         include: fullWorkoutDataIncludes,
       })
+    },
+    likedWorkouts: async (r, { authedUserId }, { selected, prisma }, i) => {
+      const likedWorkouts: LikedWorkout[] = await prisma.likedWorkout.findMany({
+        where: {
+          user: { id: authedUserId },
+        },
+      })
+      return likedWorkouts.map(
+        (likedWorkout: LikedWorkout) => likedWorkout.workoutId,
+      )
     },
     loggedWorkouts: async (r, { authedUserId }, { selected, prisma }, i) => {
       return prisma.loggedWorkout.findMany({
@@ -228,39 +238,39 @@ const resolvers: Resolvers = {
 
       return deletedWorkout.id
     },
-    createLikedWorkout: async (
+    likeWorkout: async (
       _r,
-      { likedWorkoutData },
+      { authedUserId, workoutId },
       { selected, prisma }: { selected: any; prisma: PrismaClient },
       i,
     ) => {
-      console.log(likedWorkoutData.userId)
-      console.log(likedWorkoutData.notes)
-      console.log(likedWorkoutData.workoutId)
       const likedWorkout: LikedWorkout = await prisma.likedWorkout.create({
         data: {
           user: {
-            connect: { id: likedWorkoutData.userId },
+            connect: { id: authedUserId },
           },
           workout: {
-            connect: { id: likedWorkoutData.workoutId },
+            connect: { id: workoutId },
           },
         },
       })
       return likedWorkout.workoutId
     },
-    deleteLikedWorkout: async (
+    unlikeWorkout: async (
       _r,
-      { authedUserId, likedWorkoutId },
+      { authedUserId, workoutId },
       { selected, prisma }: { selected: any; prisma: PrismaClient },
       i,
     ) => {
-      console.log(authedUserId)
-      console.log(likedWorkoutId)
-      const deletedLikedWorkout: LikedWorkout = await prisma.likedWorkout.delete(
-        { where: { id: likedWorkoutId } },
-      )
-      return deletedLikedWorkout.id
+      const likedWorkout: LikedWorkout = await prisma.likedWorkout.delete({
+        where: {
+          userId_workoutId: {
+            workoutId: workoutId,
+            userId: authedUserId,
+          },
+        },
+      })
+      return likedWorkout.workoutId
     },
     createLoggedWorkout: async (
       _r,
@@ -294,10 +304,20 @@ const resolvers: Resolvers = {
 
       const data = buildUpdateLoggedWorkoutData(loggedWorkoutData)
 
+      const gymProfile = loggedWorkoutData.gymProfileId
+        ? {
+            gymProfile: {
+              connect: { id: loggedWorkoutData.gymProfileId || undefined },
+            },
+          }
+        : {}
+
+      delete data.gymProfileId
+
       // Then rebuild all children of the loggedworkout, and update the loggedworkout itself.
       return prisma.loggedWorkout.update({
         where: { id: loggedWorkoutData.id },
-        data,
+        data: { ...data, ...gymProfile },
         include: fullWorkoutDataIncludes,
       })
     },
@@ -311,7 +331,7 @@ const resolvers: Resolvers = {
       await checkLoggedWorkoutMediaForDeletion(prisma, loggedWorkoutData)
 
       // GymProfile is currently included in the shallow update.
-      // Otherwise chaning the gym profile on a log would cause the deletion and re-creation of all the workoutSections and workoutMoves.
+      // Otherwise changing the gym profile on a log would cause the deletion and re-creation of all the workoutSections and workoutMoves.
       // Look at moving it to deep update only at some point.
       const gymProfile = loggedWorkoutData.gymProfileId
         ? {
@@ -353,42 +373,21 @@ const resolvers: Resolvers = {
         },
       )
 
-      await checkThenDeleteLoggedWorkoutImageFile(
-        prisma,
-        deletedLoggedWorkout.imageUrl,
-      )
+      // Remove any media on the server.
+      if (deletedLoggedWorkout.videoUrl) {
+        await deleteFiles([
+          deletedLoggedWorkout.videoUrl,
+          deletedLoggedWorkout.videoThumbUrl,
+        ] as string[])
+      }
 
-      await checkThenDeleteLoggedWorkoutVideoFiles(
-        prisma,
-        deletedLoggedWorkout.videoUrl,
-        deletedLoggedWorkout.videoThumbUrl,
-      )
+      if (deletedLoggedWorkout.imageUrl) {
+        await deleteFiles([deletedLoggedWorkout.imageUrl] as string[])
+      }
 
       return deletedLoggedWorkout.id
     },
   },
-  // NOTE: Currently all top level resolvers are using Prisma includes to get nested relations
-  // NOTE: Until batching / dataloader situation can be clarified.
-  // Workout: {
-  //   // You always need to get the WorkoutMoves and the Moves back along with the workoutSection.
-  //   // So do it in a single call rather than nesting WorkoutMove -> workoutSection -> Move
-  //   workoutSections: async ({ id }, a, { prisma }, i) => {
-  //     return prisma.workoutSection.findMany({
-  //       where: {
-  //         workoutId: id,
-  //       },
-  //       include: {
-  //         roundAdjustRules: true,
-  //         workoutMoves: {
-  //           include: {
-  //             selectedEquipment: true,
-  //             move: true,
-  //           },
-  //         },
-  //       },
-  //     })
-  //   },
-  // },
 }
 
 export default resolvers
