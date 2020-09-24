@@ -27,6 +27,7 @@ export type Query = {
   workoutById?: Maybe<Workout>;
   workouts: Array<Workout>;
   likedWorkouts: Array<Scalars['ID']>;
+  scheduledWorkouts: Array<ScheduledWorkout>;
   loggedWorkouts: Array<LoggedWorkout>;
 };
 
@@ -56,6 +57,11 @@ export type QueryLikedWorkoutsArgs = {
 };
 
 
+export type QueryScheduledWorkoutsArgs = {
+  authedUserId: Scalars['ID'];
+};
+
+
 export type QueryLoggedWorkoutsArgs = {
   authedUserId: Scalars['ID'];
 };
@@ -71,6 +77,9 @@ export type Mutation = {
   deleteWorkout: Scalars['ID'];
   likeWorkout?: Maybe<Scalars['ID']>;
   unlikeWorkout?: Maybe<Scalars['ID']>;
+  scheduleWorkout: ScheduledWorkout;
+  unscheduleWorkout: Scalars['ID'];
+  updateScheduledWorkout: ScheduledWorkout;
   createLoggedWorkout: LoggedWorkout;
   deepUpdateLoggedWorkout: LoggedWorkout;
   shallowUpdateLoggedWorkout: LoggedWorkout;
@@ -128,6 +137,24 @@ export type MutationLikeWorkoutArgs = {
 export type MutationUnlikeWorkoutArgs = {
   authedUserId: Scalars['ID'];
   workoutId: Scalars['ID'];
+};
+
+
+export type MutationScheduleWorkoutArgs = {
+  authedUserId: Scalars['ID'];
+  data: CreateScheduledWorkoutInput;
+};
+
+
+export type MutationUnscheduleWorkoutArgs = {
+  authedUserId: Scalars['ID'];
+  scheduledWorkoutId: Scalars['ID'];
+};
+
+
+export type MutationUpdateScheduledWorkoutArgs = {
+  authedUserId: Scalars['ID'];
+  data: UpdateScheduledWorkoutInput;
 };
 
 
@@ -311,7 +338,6 @@ export type ShallowUpdateWorkoutInput = {
 
 export type LikedWorkout = {
   __typename?: 'LikedWorkout';
-  id: Scalars['ID'];
   createdAt: Scalars['String'];
   user: User;
   workout: Workout;
@@ -386,6 +412,35 @@ export type ShallowUpdateLoggedWorkoutInput = {
   duration?: Maybe<Scalars['Int']>;
   gymProfileId?: Maybe<Scalars['String']>;
   difficultyLevel?: Maybe<DifficultyLevel>;
+};
+
+export type ScheduledWorkout = {
+  __typename?: 'ScheduledWorkout';
+  id: Scalars['ID'];
+  createdAt: Scalars['String'];
+  scheduledAt: Scalars['String'];
+  completedOn?: Maybe<Scalars['String']>;
+  notes?: Maybe<Scalars['String']>;
+  workoutId?: Maybe<Scalars['ID']>;
+  loggedWorkoutId?: Maybe<Scalars['ID']>;
+  gymProfileId?: Maybe<Scalars['ID']>;
+};
+
+export type CreateScheduledWorkoutInput = {
+  scheduledAt: Scalars['String'];
+  notes?: Maybe<Scalars['String']>;
+  workoutId?: Maybe<Scalars['ID']>;
+  gymProfileId?: Maybe<Scalars['ID']>;
+};
+
+export type UpdateScheduledWorkoutInput = {
+  id: Scalars['ID'];
+  scheduledAt?: Maybe<Scalars['String']>;
+  completedOn?: Maybe<Scalars['String']>;
+  notes?: Maybe<Scalars['String']>;
+  workoutId?: Maybe<Scalars['ID']>;
+  loggedWorkoutId?: Maybe<Scalars['ID']>;
+  gymProfileId?: Maybe<Scalars['ID']>;
 };
 
 export type WorkoutSection = {
@@ -638,6 +693,9 @@ export type ResolversTypes = {
   CreateLoggedWorkoutInput: CreateLoggedWorkoutInput;
   DeepUpdateLoggedWorkoutInput: DeepUpdateLoggedWorkoutInput;
   ShallowUpdateLoggedWorkoutInput: ShallowUpdateLoggedWorkoutInput;
+  ScheduledWorkout: ResolverTypeWrapper<ScheduledWorkout>;
+  CreateScheduledWorkoutInput: CreateScheduledWorkoutInput;
+  UpdateScheduledWorkoutInput: UpdateScheduledWorkoutInput;
   WorkoutSection: ResolverTypeWrapper<WorkoutSection>;
   CreateWorkoutSectionInput: CreateWorkoutSectionInput;
   RoundAdjustRule: ResolverTypeWrapper<RoundAdjustRule>;
@@ -683,6 +741,9 @@ export type ResolversParentTypes = {
   CreateLoggedWorkoutInput: CreateLoggedWorkoutInput;
   DeepUpdateLoggedWorkoutInput: DeepUpdateLoggedWorkoutInput;
   ShallowUpdateLoggedWorkoutInput: ShallowUpdateLoggedWorkoutInput;
+  ScheduledWorkout: ScheduledWorkout;
+  CreateScheduledWorkoutInput: CreateScheduledWorkoutInput;
+  UpdateScheduledWorkoutInput: UpdateScheduledWorkoutInput;
   WorkoutSection: WorkoutSection;
   CreateWorkoutSectionInput: CreateWorkoutSectionInput;
   RoundAdjustRule: RoundAdjustRule;
@@ -707,6 +768,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   workoutById?: Resolver<Maybe<ResolversTypes['Workout']>, ParentType, ContextType, RequireFields<QueryWorkoutByIdArgs, 'id'>>;
   workouts?: Resolver<Array<ResolversTypes['Workout']>, ParentType, ContextType, RequireFields<QueryWorkoutsArgs, 'authedUserId'>>;
   likedWorkouts?: Resolver<Array<ResolversTypes['ID']>, ParentType, ContextType, RequireFields<QueryLikedWorkoutsArgs, 'authedUserId'>>;
+  scheduledWorkouts?: Resolver<Array<ResolversTypes['ScheduledWorkout']>, ParentType, ContextType, RequireFields<QueryScheduledWorkoutsArgs, 'authedUserId'>>;
   loggedWorkouts?: Resolver<Array<ResolversTypes['LoggedWorkout']>, ParentType, ContextType, RequireFields<QueryLoggedWorkoutsArgs, 'authedUserId'>>;
 };
 
@@ -720,6 +782,9 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   deleteWorkout?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteWorkoutArgs, 'authedUserId' | 'workoutId'>>;
   likeWorkout?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType, RequireFields<MutationLikeWorkoutArgs, 'authedUserId' | 'workoutId'>>;
   unlikeWorkout?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType, RequireFields<MutationUnlikeWorkoutArgs, 'authedUserId' | 'workoutId'>>;
+  scheduleWorkout?: Resolver<ResolversTypes['ScheduledWorkout'], ParentType, ContextType, RequireFields<MutationScheduleWorkoutArgs, 'authedUserId' | 'data'>>;
+  unscheduleWorkout?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationUnscheduleWorkoutArgs, 'authedUserId' | 'scheduledWorkoutId'>>;
+  updateScheduledWorkout?: Resolver<ResolversTypes['ScheduledWorkout'], ParentType, ContextType, RequireFields<MutationUpdateScheduledWorkoutArgs, 'authedUserId' | 'data'>>;
   createLoggedWorkout?: Resolver<ResolversTypes['LoggedWorkout'], ParentType, ContextType, RequireFields<MutationCreateLoggedWorkoutArgs, 'authedUserId' | 'loggedWorkoutData'>>;
   deepUpdateLoggedWorkout?: Resolver<ResolversTypes['LoggedWorkout'], ParentType, ContextType, RequireFields<MutationDeepUpdateLoggedWorkoutArgs, 'authedUserId' | 'loggedWorkoutData'>>;
   shallowUpdateLoggedWorkout?: Resolver<ResolversTypes['LoggedWorkout'], ParentType, ContextType, RequireFields<MutationShallowUpdateLoggedWorkoutArgs, 'authedUserId' | 'loggedWorkoutData'>>;
@@ -808,7 +873,6 @@ export type WorkoutResolvers<ContextType = any, ParentType extends ResolversPare
 };
 
 export type LikedWorkoutResolvers<ContextType = any, ParentType extends ResolversParentTypes['LikedWorkout'] = ResolversParentTypes['LikedWorkout']> = {
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   workout?: Resolver<ResolversTypes['Workout'], ParentType, ContextType>;
@@ -833,6 +897,18 @@ export type LoggedWorkoutResolvers<ContextType = any, ParentType extends Resolve
   workoutSections?: Resolver<Array<ResolversTypes['WorkoutSection']>, ParentType, ContextType>;
   originalWorkoutId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   originalWorkoutScope?: Resolver<ResolversTypes['AccessScopeType'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
+};
+
+export type ScheduledWorkoutResolvers<ContextType = any, ParentType extends ResolversParentTypes['ScheduledWorkout'] = ResolversParentTypes['ScheduledWorkout']> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  scheduledAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  completedOn?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  notes?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  workoutId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  loggedWorkoutId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  gymProfileId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 };
 
@@ -886,6 +962,7 @@ export type Resolvers<ContextType = any> = {
   Workout?: WorkoutResolvers<ContextType>;
   LikedWorkout?: LikedWorkoutResolvers<ContextType>;
   LoggedWorkout?: LoggedWorkoutResolvers<ContextType>;
+  ScheduledWorkout?: ScheduledWorkoutResolvers<ContextType>;
   WorkoutSection?: WorkoutSectionResolvers<ContextType>;
   RoundAdjustRule?: RoundAdjustRuleResolvers<ContextType>;
   WorkoutMove?: WorkoutMoveResolvers<ContextType>;

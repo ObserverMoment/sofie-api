@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 // model ScoreSubmission {
@@ -138,6 +138,15 @@ model WorkoutType {
   LoggedWorkout LoggedWorkout[]
 }
 
+// model WorkoutTag {
+//   id          String    @default(uuid()) @id
+//   createdAt   DateTime  @default(now())
+//   createdBy   User?     @relation(fields: [createdById], references: [id])
+//   createdById String?
+//   name        String
+//   workouts    Workout[]
+// }
+
 model GymProfile {
   id                String             @default(uuid()) @id
   user              User               @relation(fields: [userId], references: [id])
@@ -183,7 +192,7 @@ model ScheduledWorkout {
   userId          String
   notes           String?
   scheduledAt     DateTime       @default(now())
-  completedOn     DateTime?
+  completed       Boolean        @default(false)
   workout         Workout?       @relation(fields: [workoutId], references: [id])
   workoutId       String?
   loggedWorkout   LoggedWorkout? @relation(fields: [loggedWorkoutId], references: [id])
@@ -191,6 +200,18 @@ model ScheduledWorkout {
   gymProfile      GymProfile?    @relation(fields: [gymProfileId], references: [id])
   gymProfileId    String?
 }
+
+// Users can apply these to any workout they want, whereas WorkoutTags can only
+// be applied to workouts that you create / own.
+// Used for filtering, categorising your favourite workouts.
+// model LikedWorkoutTag {
+//   id            String         @default(uuid()) @id
+//   createdAt     DateTime       @default(now())
+//   createdBy     User?          @relation(fields: [createdById], references: [id])
+//   createdById   String?
+//   name          String
+//   likedWorkouts LikedWorkout[]
+// }
 
 model LikedWorkout {
   createdAt DateTime @default(now())
@@ -329,7 +350,9 @@ model User {
   workouts          Workout[]
   scheduledWorkouts ScheduledWorkout[]
   loggedWorkouts    LoggedWorkout[]
+  // workoutTags                        WorkoutTag[]
   likedWorkouts     LikedWorkout[]
+  // LikedWorkoutTag                    LikedWorkoutTag[]
   gymProfiles       GymProfile[]
 }
 

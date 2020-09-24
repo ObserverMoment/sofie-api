@@ -20,7 +20,7 @@ import {
   Workout,
   LikedWorkout,
   LoggedWorkout,
-  BatchPayload,
+  ScheduledWorkout,
 } from '@prisma/client'
 
 const fullWorkoutDataIncludes = {
@@ -113,6 +113,13 @@ const resolvers: Resolvers = {
       return likedWorkouts.map(
         (likedWorkout: LikedWorkout) => likedWorkout.workoutId,
       )
+    },
+    scheduledWorkouts: async (r, { authedUserId }, { selected, prisma }, i) => {
+      return prisma.scheduledWorkout.findMany({
+        where: {
+          user: { id: authedUserId },
+        },
+      })
     },
     loggedWorkouts: async (r, { authedUserId }, { selected, prisma }, i) => {
       return prisma.loggedWorkout.findMany({
@@ -271,6 +278,86 @@ const resolvers: Resolvers = {
         },
       })
       return likedWorkout.workoutId
+    },
+    scheduleWorkout: async (
+      _r,
+      { authedUserId, data },
+      { selected, prisma },
+      i,
+    ) => {
+      const workout = data.workoutId
+        ? { workout: { connect: { id: data.workoutId } } }
+        : {}
+      const gymProfile = data.gymProfileId
+        ? { gymProfile: { connect: { id: data.gymProfileId } } }
+        : {}
+
+      delete data.workoutId
+      delete data.gymProfileId
+
+      return prisma.scheduledWorkout.create({
+        data: {
+          ...data,
+          scheduledAt: new Date(data.scheduledAt),
+          user: {
+            connect: { id: authedUserId },
+          },
+          ...workout,
+          ...gymProfile,
+        },
+      })
+    },
+    unscheduleWorkout: async (
+      _r,
+      { authedUserId, scheduledWorkoutId },
+      { selected, prisma },
+      i,
+    ) => {
+      const deleted: ScheduledWorkout = await prisma.scheduledWorkout.delete({
+        where: {
+          id: scheduledWorkoutId,
+        },
+      })
+      return deleted.id
+    },
+    updateScheduledWorkout: async (
+      _r,
+      { authedUserId, data },
+      { selected, prisma },
+      i,
+    ) => {
+      const workout = data.workoutId
+        ? { workout: { connect: { id: data.workoutId } } }
+        : {}
+      delete data.workoutId
+
+      const loggedWorkout = data.loggedWorkoutId
+        ? { loggedWorkout: { connect: { id: data.loggedWorkoutId } } }
+        : {}
+      delete data.loggedWorkoutId
+
+      const gymProfile = data.gymProfileId
+        ? { gymProfile: { connect: { id: data.gymProfileId } } }
+        : {}
+      delete data.gymProfileId
+
+      const scheduledAt = data.scheduledAt
+        ? { scheduledAt: new Date(data.scheduledAt) }
+        : {}
+      delete data.scheduledAt
+
+      return prisma.scheduledWorkout.update({
+        where: {
+          id: data.id,
+        },
+        data: {
+          ...data,
+          ...workout,
+          ...loggedWorkout,
+          ...gymProfile,
+          ...scheduledAt,
+        },
+      })
     },
     createLoggedWorkout: async (
       _r,

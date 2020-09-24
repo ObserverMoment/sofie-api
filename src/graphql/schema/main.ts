@@ -15,6 +15,7 @@ export default gql`
     workoutById(id: ID!): Workout
     workouts(authedUserId: ID!): [Workout!]!
     likedWorkouts(authedUserId: ID!): [ID!]!
+    scheduledWorkouts(authedUserId: ID!): [ScheduledWorkout!]!
     loggedWorkouts(authedUserId: ID!): [LoggedWorkout!]!
   }
 
@@ -34,6 +35,15 @@ export default gql`
     deleteWorkout(authedUserId: ID!, workoutId: ID!): ID!
     likeWorkout(authedUserId: ID!, workoutId: ID!): ID
     unlikeWorkout(authedUserId: ID!, workoutId: ID!): ID
+    scheduleWorkout(
+      authedUserId: ID!
+      data: CreateScheduledWorkoutInput!
+    ): ScheduledWorkout!
+    unscheduleWorkout(authedUserId: ID!, scheduledWorkoutId: ID!): ID!
+    updateScheduledWorkout(
+      authedUserId: ID!
+      data: UpdateScheduledWorkoutInput!
+    ): ScheduledWorkout!
     createLoggedWorkout(
       authedUserId: ID!
       loggedWorkoutData: CreateLoggedWorkoutInput!
