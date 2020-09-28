@@ -5,7 +5,6 @@ export default gql`
     id: ID!
     createdAt: String!
     scheduledAt: String!
-    completedOn: String
     notes: String
     workoutId: ID
     loggedWorkoutId: ID
@@ -22,7 +21,6 @@ export default gql`
   input UpdateScheduledWorkoutInput {
     id: ID!
     scheduledAt: String
-    completedOn: String
     notes: String
     workoutId: ID
     loggedWorkoutId: ID

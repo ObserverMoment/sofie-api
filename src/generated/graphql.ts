@@ -419,7 +419,6 @@ export type ScheduledWorkout = {
   id: Scalars['ID'];
   createdAt: Scalars['String'];
   scheduledAt: Scalars['String'];
-  completedOn?: Maybe<Scalars['String']>;
   notes?: Maybe<Scalars['String']>;
   workoutId?: Maybe<Scalars['ID']>;
   loggedWorkoutId?: Maybe<Scalars['ID']>;
@@ -436,7 +435,6 @@ export type CreateScheduledWorkoutInput = {
 export type UpdateScheduledWorkoutInput = {
   id: Scalars['ID'];
   scheduledAt?: Maybe<Scalars['String']>;
-  completedOn?: Maybe<Scalars['String']>;
   notes?: Maybe<Scalars['String']>;
   workoutId?: Maybe<Scalars['ID']>;
   loggedWorkoutId?: Maybe<Scalars['ID']>;
@@ -904,7 +902,6 @@ export type ScheduledWorkoutResolvers<ContextType = any, ParentType extends Reso
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   scheduledAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  completedOn?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   notes?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   workoutId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   loggedWorkoutId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
