@@ -280,7 +280,7 @@ export type Workout = {
   spotifyAudio?: Maybe<Scalars['String']>;
   imageUrl?: Maybe<Scalars['String']>;
   workoutType: WorkoutType;
-  difficultyLevel: DifficultyLevel;
+  difficultyLevel: Scalars['Int'];
   scope: AccessScopeType;
   workoutSections: Array<WorkoutSection>;
   builderData?: Maybe<Scalars['JSON']>;
@@ -297,7 +297,7 @@ export type CreateWorkoutInput = {
   imageUrl?: Maybe<Scalars['String']>;
   timecap?: Maybe<Scalars['Int']>;
   workoutTypeId: Scalars['String'];
-  difficultyLevel: DifficultyLevel;
+  difficultyLevel: Scalars['Int'];
   scope: AccessScopeType;
   workoutSections: Array<CreateWorkoutSectionInput>;
   builderData?: Maybe<Scalars['JSON']>;
@@ -315,7 +315,7 @@ export type DeepUpdateWorkoutInput = {
   imageUrl?: Maybe<Scalars['String']>;
   timecap?: Maybe<Scalars['Int']>;
   workoutTypeId?: Maybe<Scalars['String']>;
-  difficultyLevel?: Maybe<DifficultyLevel>;
+  difficultyLevel?: Maybe<Scalars['Int']>;
   scope?: Maybe<AccessScopeType>;
   workoutSections: Array<CreateWorkoutSectionInput>;
   builderData?: Maybe<Scalars['JSON']>;
@@ -332,7 +332,7 @@ export type ShallowUpdateWorkoutInput = {
   spotifyAudio?: Maybe<Scalars['String']>;
   imageUrl?: Maybe<Scalars['String']>;
   timecap?: Maybe<Scalars['Int']>;
-  difficultyLevel?: Maybe<DifficultyLevel>;
+  difficultyLevel?: Maybe<Scalars['Int']>;
   scope?: Maybe<AccessScopeType>;
 };
 
@@ -357,7 +357,7 @@ export type LoggedWorkout = {
   imageUrl?: Maybe<Scalars['String']>;
   duration?: Maybe<Scalars['Int']>;
   workoutType: WorkoutType;
-  difficultyLevel: DifficultyLevel;
+  difficultyLevel: Scalars['Int'];
   gymProfile?: Maybe<GymProfile>;
   /** In a loggedWorkout, when you are doing rounds of a section, each round gets entered as a separate section - with its own time log. */
   workoutSections: Array<WorkoutSection>;
@@ -377,7 +377,7 @@ export type CreateLoggedWorkoutInput = {
   duration?: Maybe<Scalars['Int']>;
   workoutTypeId: Scalars['String'];
   gymProfileId?: Maybe<Scalars['String']>;
-  difficultyLevel: DifficultyLevel;
+  difficultyLevel: Scalars['Int'];
   workoutSections: Array<CreateWorkoutSectionInput>;
   originalWorkoutId?: Maybe<Scalars['String']>;
   originalWorkoutScope: AccessScopeType;
@@ -395,7 +395,7 @@ export type DeepUpdateLoggedWorkoutInput = {
   imageUrl?: Maybe<Scalars['String']>;
   duration?: Maybe<Scalars['Int']>;
   gymProfileId?: Maybe<Scalars['String']>;
-  difficultyLevel?: Maybe<DifficultyLevel>;
+  difficultyLevel?: Maybe<Scalars['Int']>;
   workoutSections: Array<CreateWorkoutSectionInput>;
 };
 
@@ -411,7 +411,7 @@ export type ShallowUpdateLoggedWorkoutInput = {
   imageUrl?: Maybe<Scalars['String']>;
   duration?: Maybe<Scalars['Int']>;
   gymProfileId?: Maybe<Scalars['String']>;
-  difficultyLevel?: Maybe<DifficultyLevel>;
+  difficultyLevel?: Maybe<Scalars['Int']>;
 };
 
 export type ScheduledWorkout = {
@@ -863,7 +863,7 @@ export type WorkoutResolvers<ContextType = any, ParentType extends ResolversPare
   spotifyAudio?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   imageUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   workoutType?: Resolver<ResolversTypes['WorkoutType'], ParentType, ContextType>;
-  difficultyLevel?: Resolver<ResolversTypes['DifficultyLevel'], ParentType, ContextType>;
+  difficultyLevel?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   scope?: Resolver<ResolversTypes['AccessScopeType'], ParentType, ContextType>;
   workoutSections?: Resolver<Array<ResolversTypes['WorkoutSection']>, ParentType, ContextType>;
   builderData?: Resolver<Maybe<ResolversTypes['JSON']>, ParentType, ContextType>;
@@ -890,7 +890,7 @@ export type LoggedWorkoutResolvers<ContextType = any, ParentType extends Resolve
   imageUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   duration?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   workoutType?: Resolver<ResolversTypes['WorkoutType'], ParentType, ContextType>;
-  difficultyLevel?: Resolver<ResolversTypes['DifficultyLevel'], ParentType, ContextType>;
+  difficultyLevel?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   gymProfile?: Resolver<Maybe<ResolversTypes['GymProfile']>, ParentType, ContextType>;
   workoutSections?: Resolver<Array<ResolversTypes['WorkoutSection']>, ParentType, ContextType>;
   originalWorkoutId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;

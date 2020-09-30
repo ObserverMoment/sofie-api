@@ -1,0 +1,49 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "DeleteEnum",
+      "enum": "DifficultyLevel"
+    },
+    {
+      "tag": "UpdateField",
+      "model": "Workout",
+      "field": "difficultyLevel",
+      "type": "Int"
+    },
+    {
+      "tag": "UpdateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Workout",
+          "field": "difficultyLevel"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "newValue": "50"
+    },
+    {
+      "tag": "UpdateField",
+      "model": "LoggedWorkout",
+      "field": "difficultyLevel",
+      "type": "Int"
+    },
+    {
+      "tag": "UpdateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "LoggedWorkout",
+          "field": "difficultyLevel"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "newValue": "50"
+    }
+  ]
+}

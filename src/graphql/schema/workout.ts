@@ -44,7 +44,7 @@ export default gql`
     spotifyAudio: String
     imageUrl: String
     workoutType: WorkoutType!
-    difficultyLevel: DifficultyLevel!
+    difficultyLevel: Int!
     scope: AccessScopeType!
     workoutSections: [WorkoutSection!]!
     builderData: JSON
@@ -61,7 +61,7 @@ export default gql`
     imageUrl: String
     timecap: Int
     workoutTypeId: String!
-    difficultyLevel: DifficultyLevel!
+    difficultyLevel: Int!
     scope: AccessScopeType!
     workoutSections: [CreateWorkoutSectionInput!]!
     builderData: JSON
@@ -79,7 +79,7 @@ export default gql`
     imageUrl: String
     timecap: Int
     workoutTypeId: String
-    difficultyLevel: DifficultyLevel
+    difficultyLevel: Int
     scope: AccessScopeType
     workoutSections: [CreateWorkoutSectionInput!]!
     builderData: JSON
@@ -96,7 +96,7 @@ export default gql`
     spotifyAudio: String
     imageUrl: String
     timecap: Int
-    difficultyLevel: DifficultyLevel
+    difficultyLevel: Int
     scope: AccessScopeType
   }
 `
