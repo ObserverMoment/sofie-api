@@ -22,7 +22,20 @@ export default gql`
   type Mutation {
     createUser(uid: ID!): User!
     updateUser(id: ID!, data: UpdateUserInput!): User!
-    createGymProfile(id: ID!, data: CreateGymProfileInput!): User!
+    createGymProfile(authedUserId: ID!, data: CreateGymProfileInput!): User!
+    updateGymProfile(
+      authedUserId: ID!
+      data: UpdateGymProfileInput!
+    ): GymProfile!
+    deleteGymProfile(authedUserId: ID!, gymProfileId: ID!): ID!
+    createMoveProfile(
+      authedUserId: ID!
+      data: CreateMoveProfileInput!
+    ): MoveProfile!
+    updateMoveProfile(
+      authedUserId: ID!
+      data: UpdateMoveProfileInput!
+    ): MoveProfile!
     createWorkout(authedUserId: ID!, workoutData: CreateWorkoutInput!): Workout!
     deepUpdateWorkout(
       authedUserId: ID!
@@ -85,12 +98,46 @@ export default gql`
     description: String
     postcode: String
     user: User!
+    availableEquipments: [Equipment!]
   }
 
   input CreateGymProfileInput {
     name: String!
     description: String
     postcode: String
+    availableEquipmentIds: [ID!]
+  }
+
+  input UpdateGymProfileInput {
+    id: ID!
+    name: String
+    description: String
+    postcode: String
+    availableEquipmentIds: [ID!]
+  }
+
+  type MoveProfile {
+    id: ID!
+    name: String!
+    description: String
+    user: User!
+    requiredMoves: [Move!]
+    excludedMoves: [Move!]
+  }
+
+  input CreateMoveProfileInput {
+    name: String!
+    description: String
+    requiredMoveIds: [ID!]
+    excludedMoveIds: [ID!]
+  }
+
+  input UpdateMoveProfileInput {
+    id: ID!
+    name: String
+    description: String
+    requiredMoveIds: [ID!]
+    excludedMoveIds: [ID!]
   }
 
   type User {
@@ -110,6 +157,7 @@ export default gql`
     weight: Float
     unitSystem: UnitSystem
     gymProfiles: [GymProfile!]
+    moveProfiles: [MoveProfile!]
   }
 
   input UpdateUserInput {

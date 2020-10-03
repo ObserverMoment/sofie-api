@@ -21,6 +21,7 @@ import {
   LikedWorkout,
   LoggedWorkout,
   ScheduledWorkout,
+  Equipment,
 } from '@prisma/client'
 
 const fullWorkoutDataIncludes = {
@@ -77,7 +78,13 @@ const resolvers: Resolvers = {
     userByUid: async (r, { uid }, { selected, prisma }, i) => {
       return prisma.user.findOne({
         where: { firebaseUid: uid },
-        select: selected.User,
+        include: {
+          gymProfiles: {
+            include: {
+              availableEquipments: true,
+            },
+          },
+        },
       })
     },
     users: async (r, a, { selected, prisma }, i) => {
@@ -154,19 +161,115 @@ const resolvers: Resolvers = {
         },
       })
     },
-    createGymProfile: async (r, { id, data }, { selected, prisma }, i) => {
+    createGymProfile: async (
+      r,
+      { authedUserId, data },
+      { selected, prisma },
+      i,
+    ) => {
+      const availableEquipments =
+        data.availableEquipmentIds && data.availableEquipmentIds.length > 0
+          ? {
+              availableEquipments: {
+                connect: data.availableEquipmentIds.map((id) => ({ id })),
+              },
+            }
+          : {}
+      delete data.availableEquipmentIds
+
       await prisma.gymProfile.create({
         data: {
           ...data,
+          ...availableEquipments,
           user: {
-            connect: { id },
+            connect: { id: authedUserId },
           },
         },
       })
       return prisma.user.findOne({
-        where: { id },
+        where: { id: authedUserId },
         include: {
-          gymProfiles: true,
+          gymProfiles: {
+            include: { availableEquipments: true },
+          },
+        },
+      })
+    },
+    updateGymProfile: async (
+      r,
+      { authedUserId, data },
+      { selected, prisma },
+      i,
+    ) => {
+      // Always disconnect all availableEquipments before reconnecting them.
+      // Get the old available equipments
+      const oldAvailableEquipments: Equipment[] = await prisma.gymProfile
+        .findOne({
+          where: {
+            id: data.id,
+          },
+        })
+        .availableEquipments()
+
+      await prisma.gymProfile.update({
+        where: {
+          id: data.id,
+        },
+        disconnect: oldAvailableEquipments.map((e) => ({ id: e.id })),
+      })
+
+      const availableEquipments =
+        data.availableEquipmentIds && data.availableEquipmentIds.length > 0
+          ? {
+              availableEquipments: {
+                connect: data.availableEquipmentIds.map((id) => ({ id })),
+              },
+            }
+          : {}
+      delete data.availableEquipmentIds
+
+      await prisma.gymProfile.update({
+        where: {
+          id: data.id,
+        },
+        data: {
+          ...data,
+          ...availableEquipments,
+        },
+      })
+      return prisma.user.findOne({
+        where: { id: authedUserId },
+        include: {
+          gymProfiles: {
+            include: {
+              availableEquipments: true,
+            },
+          },
+        },
+      })
+    },
+    deleteGymProfile: async (
+      r,
+      { authedUserId, gymProfileId },
+      { selected, prisma },
+      i,
+    ) => {
+      // Delete the gymProfile
+      // Does this also remove entries from the gymProfileToEquipment relationship automatically?
+      await prisma.gymProfile.delete({
+        where: {
+          id: gymProfileId,
+        },
+      })
+      // Return a fresh user.
+      return prisma.user.findOne({
+        where: { id: authedUserId },
+        include: {
+          gymProfiles: {
+            include: {
+              availableEquipments: true,
+            },
+          },
         },
       })
     },

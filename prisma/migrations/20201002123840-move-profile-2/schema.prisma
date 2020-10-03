@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 // model ScoreSubmission {
@@ -109,7 +109,8 @@ model Equipment {
   requiredForMoves   Move[]        @relation("moveToRequiredEquipments", references: [id])
   selectableForMoves Move[]        @relation("moveToSelectableEquipments", references: [id])
   WorkoutMove        WorkoutMove[]
-  gymProfiles        GymProfile[]
+  GymProfile         GymProfile?   @relation(fields: [gymProfileId], references: [id])
+  gymProfileId       String?
 }
 
 model Move {
