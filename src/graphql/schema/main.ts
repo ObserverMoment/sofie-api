@@ -7,13 +7,14 @@ export default gql`
     checkUniqueDisplayName(displayName: String!): Boolean!
     officialMoves: [Move!]!
     officialEquipments: [Equipment!]!
-    officialWorkouts: [Workout!]!
     officialWorkoutTypes: [WorkoutType!]!
+    officialWorkouts: [Workout!]!
+    privateWorkouts(authedUserId: ID!): [Workout!]!
+    publicWorkouts(authedUserId: ID!): [Workout!]!
     moves: [Move!]!
     userByUid(uid: ID!): User
     users: [User!]!
     workoutById(id: ID!): Workout
-    workouts(authedUserId: ID!): [Workout!]!
     likedWorkouts(authedUserId: ID!): [ID!]!
     scheduledWorkouts(authedUserId: ID!): [ScheduledWorkout!]!
     loggedWorkouts(authedUserId: ID!): [LoggedWorkout!]!
@@ -23,10 +24,7 @@ export default gql`
     createUser(uid: ID!): User!
     updateUser(id: ID!, data: UpdateUserInput!): User!
     createGymProfile(authedUserId: ID!, data: CreateGymProfileInput!): User!
-    updateGymProfile(
-      authedUserId: ID!
-      data: UpdateGymProfileInput!
-    ): GymProfile!
+    updateGymProfile(authedUserId: ID!, data: UpdateGymProfileInput!): User!
     deleteGymProfile(authedUserId: ID!, gymProfileId: ID!): ID!
     createMoveProfile(
       authedUserId: ID!

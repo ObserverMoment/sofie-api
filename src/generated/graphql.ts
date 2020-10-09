@@ -19,13 +19,14 @@ export type Query = {
   checkUniqueDisplayName: Scalars['Boolean'];
   officialMoves: Array<Move>;
   officialEquipments: Array<Equipment>;
-  officialWorkouts: Array<Workout>;
   officialWorkoutTypes: Array<WorkoutType>;
+  officialWorkouts: Array<Workout>;
+  privateWorkouts: Array<Workout>;
+  publicWorkouts: Array<Workout>;
   moves: Array<Move>;
   userByUid?: Maybe<User>;
   users: Array<User>;
   workoutById?: Maybe<Workout>;
-  workouts: Array<Workout>;
   likedWorkouts: Array<Scalars['ID']>;
   scheduledWorkouts: Array<ScheduledWorkout>;
   loggedWorkouts: Array<LoggedWorkout>;
@@ -37,6 +38,16 @@ export type QueryCheckUniqueDisplayNameArgs = {
 };
 
 
+export type QueryPrivateWorkoutsArgs = {
+  authedUserId: Scalars['ID'];
+};
+
+
+export type QueryPublicWorkoutsArgs = {
+  authedUserId: Scalars['ID'];
+};
+
+
 export type QueryUserByUidArgs = {
   uid: Scalars['ID'];
 };
@@ -44,11 +55,6 @@ export type QueryUserByUidArgs = {
 
 export type QueryWorkoutByIdArgs = {
   id: Scalars['ID'];
-};
-
-
-export type QueryWorkoutsArgs = {
-  authedUserId: Scalars['ID'];
 };
 
 
@@ -830,13 +836,14 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   checkUniqueDisplayName?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryCheckUniqueDisplayNameArgs, 'displayName'>>;
   officialMoves?: Resolver<Array<ResolversTypes['Move']>, ParentType, ContextType>;
   officialEquipments?: Resolver<Array<ResolversTypes['Equipment']>, ParentType, ContextType>;
-  officialWorkouts?: Resolver<Array<ResolversTypes['Workout']>, ParentType, ContextType>;
   officialWorkoutTypes?: Resolver<Array<ResolversTypes['WorkoutType']>, ParentType, ContextType>;
+  officialWorkouts?: Resolver<Array<ResolversTypes['Workout']>, ParentType, ContextType>;
+  privateWorkouts?: Resolver<Array<ResolversTypes['Workout']>, ParentType, ContextType, RequireFields<QueryPrivateWorkoutsArgs, 'authedUserId'>>;
+  publicWorkouts?: Resolver<Array<ResolversTypes['Workout']>, ParentType, ContextType, RequireFields<QueryPublicWorkoutsArgs, 'authedUserId'>>;
   moves?: Resolver<Array<ResolversTypes['Move']>, ParentType, ContextType>;
   userByUid?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserByUidArgs, 'uid'>>;
   users?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType>;
   workoutById?: Resolver<Maybe<ResolversTypes['Workout']>, ParentType, ContextType, RequireFields<QueryWorkoutByIdArgs, 'id'>>;
-  workouts?: Resolver<Array<ResolversTypes['Workout']>, ParentType, ContextType, RequireFields<QueryWorkoutsArgs, 'authedUserId'>>;
   likedWorkouts?: Resolver<Array<ResolversTypes['ID']>, ParentType, ContextType, RequireFields<QueryLikedWorkoutsArgs, 'authedUserId'>>;
   scheduledWorkouts?: Resolver<Array<ResolversTypes['ScheduledWorkout']>, ParentType, ContextType, RequireFields<QueryScheduledWorkoutsArgs, 'authedUserId'>>;
   loggedWorkouts?: Resolver<Array<ResolversTypes['LoggedWorkout']>, ParentType, ContextType, RequireFields<QueryLoggedWorkoutsArgs, 'authedUserId'>>;

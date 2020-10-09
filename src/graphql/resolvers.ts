@@ -66,6 +66,24 @@ const resolvers: Resolvers = {
       })
       return workouts
     },
+    publicWorkouts: async (r, { authedUserId }, { selected, prisma }, i) => {
+      // Once social network is in place you can use
+      // { createdBy: { id: { IN: [ followingIds ] } } }
+      return prisma.workout.findMany({
+        where: {
+          AND: [{ createdBy: { id: authedUserId } }, { scope: 'PUBLIC' }],
+        },
+        include: fullWorkoutDataIncludes,
+      })
+    },
+    privateWorkouts: async (r, { authedUserId }, { selected, prisma }, i) => {
+      return prisma.workout.findMany({
+        where: {
+          AND: [{ createdBy: { id: authedUserId } }, { scope: 'PRIVATE' }],
+        },
+        include: fullWorkoutDataIncludes,
+      })
+    },
     officialWorkoutTypes: async (r, a, { selected, prisma }, i) => {
       const select = selected.WorkoutType || null
       return prisma.workoutType.findMany({
@@ -94,19 +112,6 @@ const resolvers: Resolvers = {
       return prisma.workout.findOne({
         where: {
           id,
-        },
-        include: fullWorkoutDataIncludes,
-      })
-    },
-    workouts: async (r, { authedUserId }, { selected, prisma }, i) => {
-      return prisma.workout.findMany({
-        where: {
-          AND: [
-            { createdBy: { id: authedUserId } },
-            {
-              NOT: [{ scope: 'OFFICIAL' }],
-            },
-          ],
         },
         include: fullWorkoutDataIncludes,
       })
@@ -215,7 +220,11 @@ const resolvers: Resolvers = {
         where: {
           id: data.id,
         },
-        disconnect: oldAvailableEquipments.map((e) => ({ id: e.id })),
+        data: {
+          availableEquipments: {
+            disconnect: oldAvailableEquipments.map((e) => ({ id: e.id })),
+          },
+        },
       })
 
       const availableEquipments =

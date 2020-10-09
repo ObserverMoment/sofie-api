@@ -349,7 +349,6 @@ model User {
 enum AccessScopeType {
   OFFICIAL
   PUBLIC
-  PAID
   PRIVATE
 }
 
