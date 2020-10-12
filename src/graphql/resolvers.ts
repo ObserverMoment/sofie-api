@@ -67,13 +67,12 @@ const resolvers: Resolvers = {
       return workouts
     },
     publicWorkouts: async (r, { authedUserId }, { selected, prisma }, i) => {
-      // Once social network is in place you can use
-      // { createdBy: { id: { IN: [ followingIds ] } } }
+      // Once the number of public workouts gets too large we will need to sort by relevance (ML algo to generate best matches for this user) and then paginate.
       return prisma.workout.findMany({
         where: {
-          AND: [{ createdBy: { id: authedUserId } }, { scope: 'PUBLIC' }],
+          scope: 'PUBLIC',
         },
-        include: fullWorkoutDataIncludes,
+        include: { ...fullWorkoutDataIncludes, createdBy: true },
       })
     },
     privateWorkouts: async (r, { authedUserId }, { selected, prisma }, i) => {
@@ -81,7 +80,7 @@ const resolvers: Resolvers = {
         where: {
           AND: [{ createdBy: { id: authedUserId } }, { scope: 'PRIVATE' }],
         },
-        include: fullWorkoutDataIncludes,
+        include: { ...fullWorkoutDataIncludes, createdBy: true },
       })
     },
     officialWorkoutTypes: async (r, a, { selected, prisma }, i) => {

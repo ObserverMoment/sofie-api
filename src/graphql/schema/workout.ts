@@ -33,11 +33,11 @@ export default gql`
   type Workout {
     id: ID!
     createdAt: String!
+    createdBy: User
     name: String!
     summary: String
     description: String
     timecap: Int
-    isCopy: Boolean
     demoVideoUrl: String
     demoVideoThumbUrl: String
     youtubeVideoUrl: String
