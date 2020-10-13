@@ -25,6 +25,22 @@ import {
 } from '@prisma/client'
 
 const fullWorkoutDataIncludes = {
+  createdBy: true,
+  workoutType: true,
+  workoutSections: {
+    include: {
+      roundAdjustRules: true,
+      workoutMoves: {
+        include: {
+          selectedEquipment: true,
+          move: true,
+        },
+      },
+    },
+  },
+}
+
+const fullLoggedWorkoutDataIncludes = {
   workoutType: true,
   workoutSections: {
     include: {
@@ -72,7 +88,7 @@ const resolvers: Resolvers = {
         where: {
           scope: 'PUBLIC',
         },
-        include: { ...fullWorkoutDataIncludes, createdBy: true },
+        include: fullWorkoutDataIncludes,
       })
     },
     privateWorkouts: async (r, { authedUserId }, { selected, prisma }, i) => {
@@ -80,7 +96,7 @@ const resolvers: Resolvers = {
         where: {
           AND: [{ createdBy: { id: authedUserId } }, { scope: 'PRIVATE' }],
         },
-        include: { ...fullWorkoutDataIncludes, createdBy: true },
+        include: fullWorkoutDataIncludes,
       })
     },
     officialWorkoutTypes: async (r, a, { selected, prisma }, i) => {
@@ -137,7 +153,7 @@ const resolvers: Resolvers = {
         where: {
           completedBy: { id: authedUserId },
         },
-        include: fullWorkoutDataIncludes,
+        include: fullLoggedWorkoutDataIncludes,
       })
     },
   },
@@ -481,7 +497,7 @@ const resolvers: Resolvers = {
 
       return prisma.loggedWorkout.create({
         data,
-        include: fullWorkoutDataIncludes,
+        include: fullLoggedWorkoutDataIncludes,
       })
     },
     deepUpdateLoggedWorkout: async (
@@ -516,7 +532,7 @@ const resolvers: Resolvers = {
       return prisma.loggedWorkout.update({
         where: { id: loggedWorkoutData.id },
         data: { ...data, ...gymProfile },
-        include: fullWorkoutDataIncludes,
+        include: fullLoggedWorkoutDataIncludes,
       })
     },
     shallowUpdateLoggedWorkout: async (
@@ -549,7 +565,7 @@ const resolvers: Resolvers = {
       return prisma.loggedWorkout.update({
         where: { id: loggedWorkoutData.id },
         data,
-        include: fullWorkoutDataIncludes,
+        include: fullLoggedWorkoutDataIncludes,
       })
     },
     deleteLoggedWorkout: async (
