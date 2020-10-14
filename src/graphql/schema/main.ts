@@ -74,7 +74,7 @@ export default gql`
     id: ID!
     name: String!
     imageUrl: String
-    moves: [Move!]!
+    loadAdjustable: Boolean!
   }
 
   type Move {
@@ -95,6 +95,7 @@ export default gql`
     name: String!
     description: String
     postcode: String
+    bodyweightOnly: Boolean!
     user: User!
     availableEquipments: [Equipment!]
   }
@@ -103,6 +104,7 @@ export default gql`
     name: String!
     description: String
     postcode: String
+    bodyweightOnly: Boolean
     availableEquipmentIds: [ID!]
   }
 
@@ -111,6 +113,7 @@ export default gql`
     name: String
     description: String
     postcode: String
+    bodyweightOnly: Boolean
     availableEquipmentIds: [ID!]
   }
 

@@ -220,7 +220,7 @@ export type Equipment = {
   id: Scalars['ID'];
   name: Scalars['String'];
   imageUrl?: Maybe<Scalars['String']>;
-  moves: Array<Move>;
+  loadAdjustable: Scalars['Boolean'];
 };
 
 export type Move = {
@@ -243,6 +243,7 @@ export type GymProfile = {
   name: Scalars['String'];
   description?: Maybe<Scalars['String']>;
   postcode?: Maybe<Scalars['String']>;
+  bodyweightOnly: Scalars['Boolean'];
   user: User;
   availableEquipments?: Maybe<Array<Equipment>>;
 };
@@ -251,6 +252,7 @@ export type CreateGymProfileInput = {
   name: Scalars['String'];
   description?: Maybe<Scalars['String']>;
   postcode?: Maybe<Scalars['String']>;
+  bodyweightOnly?: Maybe<Scalars['Boolean']>;
   availableEquipmentIds?: Maybe<Array<Scalars['ID']>>;
 };
 
@@ -259,6 +261,7 @@ export type UpdateGymProfileInput = {
   name?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   postcode?: Maybe<Scalars['String']>;
+  bodyweightOnly?: Maybe<Scalars['Boolean']>;
   availableEquipmentIds?: Maybe<Array<Scalars['ID']>>;
 };
 
@@ -339,11 +342,11 @@ export type Workout = {
   __typename?: 'Workout';
   id: Scalars['ID'];
   createdAt: Scalars['String'];
+  createdBy?: Maybe<User>;
   name: Scalars['String'];
   summary?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   timecap?: Maybe<Scalars['Int']>;
-  isCopy?: Maybe<Scalars['Boolean']>;
   demoVideoUrl?: Maybe<Scalars['String']>;
   demoVideoThumbUrl?: Maybe<Scalars['String']>;
   youtubeVideoUrl?: Maybe<Scalars['String']>;
@@ -876,7 +879,7 @@ export type EquipmentResolvers<ContextType = any, ParentType extends ResolversPa
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   imageUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  moves?: Resolver<Array<ResolversTypes['Move']>, ParentType, ContextType>;
+  loadAdjustable?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 };
 
@@ -899,6 +902,7 @@ export type GymProfileResolvers<ContextType = any, ParentType extends ResolversP
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   postcode?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  bodyweightOnly?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   availableEquipments?: Resolver<Maybe<Array<ResolversTypes['Equipment']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
@@ -947,11 +951,11 @@ export type WorkoutTypeResolvers<ContextType = any, ParentType extends Resolvers
 export type WorkoutResolvers<ContextType = any, ParentType extends ResolversParentTypes['Workout'] = ResolversParentTypes['Workout']> = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  createdBy?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   summary?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   timecap?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  isCopy?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   demoVideoUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   demoVideoThumbUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   youtubeVideoUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;

@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 // model ScoreSubmission {
@@ -106,7 +106,7 @@ model Equipment {
   id                 String        @id @default(uuid())
   name               String        @unique
   imageUrl           String?
-  loadAdjustable     Boolean       @default(true)
+  loadAjustable      Boolean       @default(true)
   requiredForMoves   Move[]        @relation("moveToRequiredEquipments", references: [id])
   selectableForMoves Move[]        @relation("moveToSelectableEquipments", references: [id])
   WorkoutMove        WorkoutMove[]
@@ -146,8 +146,6 @@ model GymProfile {
   name                String
   description         String?
   postcode            String?
-  // i.e. there is no equipment as this gym.
-  bodyweightOnly      Boolean            @default(false)
   availableEquipments Equipment[]
   scheduledWorkouts   ScheduledWorkout[]
   loggedWorkouts      LoggedWorkout[]
@@ -239,7 +237,6 @@ model WorkoutSection {
 
 // Every {roundFrequency} rounds {operator} reps by {amount}
 // Eg. Every 3 rounds INCREASE reps by 10 (for all workout moves within the section)
-// Currently not in use pending validation of concept and design of UI.
 model RoundAdjustRule {
   id               String         @id @default(uuid())
   action           RuleAction
