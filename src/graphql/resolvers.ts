@@ -55,6 +55,12 @@ const fullLoggedWorkoutDataIncludes = {
   },
 }
 
+const fullUserIncludes = {
+  gymProfiles: {
+    include: { availableEquipments: true },
+  },
+}
+
 const resolvers: Resolvers = {
   Query: {
     checkUniqueDisplayName: async (r, { displayName }, { prisma }, i) => {
@@ -163,11 +169,10 @@ const resolvers: Resolvers = {
         data: {
           firebaseUid: uid,
         },
-        include: {
-          gymProfiles: true,
-        },
+        include: fullUserIncludes,
       })
     },
+    // Use the for user updates only. For gymProfile CRUD use separate resolvers.
     updateUser: async (r, { id, data }, { selected, prisma }, i) => {
       // Handle datetime conversion.
       const formattedData = data.birthdate
@@ -176,9 +181,7 @@ const resolvers: Resolvers = {
       return prisma.user.update({
         where: { id },
         data: formattedData,
-        include: {
-          gymProfiles: true,
-        },
+        include: fullUserIncludes,
       })
     },
     createGymProfile: async (
@@ -208,11 +211,7 @@ const resolvers: Resolvers = {
       })
       return prisma.user.findOne({
         where: { id: authedUserId },
-        include: {
-          gymProfiles: {
-            include: { availableEquipments: true },
-          },
-        },
+        include: fullUserIncludes,
       })
     },
     updateGymProfile: async (
@@ -263,13 +262,7 @@ const resolvers: Resolvers = {
       })
       return prisma.user.findOne({
         where: { id: authedUserId },
-        include: {
-          gymProfiles: {
-            include: {
-              availableEquipments: true,
-            },
-          },
-        },
+        include: fullUserIncludes,
       })
     },
     deleteGymProfile: async (
@@ -288,13 +281,7 @@ const resolvers: Resolvers = {
       // Return a fresh user.
       return prisma.user.findOne({
         where: { id: authedUserId },
-        include: {
-          gymProfiles: {
-            include: {
-              availableEquipments: true,
-            },
-          },
-        },
+        include: fullUserIncludes,
       })
     },
     createWorkout: async (

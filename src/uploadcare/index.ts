@@ -155,10 +155,6 @@ export async function checkLoggedWorkoutMediaForDeletion(
     | ShallowUpdateLoggedWorkoutInput
     | DeepUpdateLoggedWorkoutInput,
 ) {
-  console.log('checkLoggedWorkoutMediaForDeletion')
-  console.log('loggedWorkoutData')
-  console.log(loggedWorkoutData)
-
   // Handle deleting of now unused media from the host.
   if (
     loggedWorkoutData.hasOwnProperty('imageUrl') ||
