@@ -23,6 +23,7 @@ import {
   ScheduledWorkout,
   Equipment,
 } from '@prisma/client'
+import { workoutCascadeDeletes } from './cascadeDeletes'
 
 const fullWorkoutDataIncludes = {
   createdBy: true,
@@ -342,8 +343,11 @@ const resolvers: Resolvers = {
       { selected, prisma }: { selected: any; prisma: PrismaClient },
       i,
     ) => {
-      // Also deletes all sections and moves.
+      // Deletes all sections, LikedWorkouts and ScheduledWorkouts moves.
       await deleteAllDescendents(prisma, workoutId, WorkoutParentType.WORKOUT)
+
+      // Delete relations that require this workout to exist.
+      await workoutCascadeDeletes(prisma, workoutId)
 
       const deletedWorkout: Workout = await prisma.workout.delete({
         where: { id: workoutId },

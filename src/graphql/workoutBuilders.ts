@@ -4,8 +4,6 @@ import {
   DeepUpdateWorkoutInput,
   CreateLoggedWorkoutInput,
   CreateWorkoutSectionInput,
-  LoggedWorkout,
-  Workout,
   DeepUpdateLoggedWorkoutInput,
 } from '../generated/graphql'
 
@@ -65,6 +63,7 @@ async function deleteAllDescendents(
       },
     },
   })
+
   return true
 }
 
