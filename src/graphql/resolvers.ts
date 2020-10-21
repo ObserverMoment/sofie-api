@@ -23,44 +23,13 @@ import {
   ScheduledWorkout,
   Equipment,
 } from '@prisma/client'
+import {
+  fullLoggedWorkoutDataIncludes,
+  fullUserIncludes,
+  fullWorkoutDataIncludes,
+  fullWorkoutProgramDataIncludes,
+} from './includesGraphs'
 import { workoutCascadeDeletes } from './cascadeDeletes'
-
-const fullWorkoutDataIncludes = {
-  createdBy: true,
-  workoutType: true,
-  workoutSections: {
-    include: {
-      roundAdjustRules: true,
-      workoutMoves: {
-        include: {
-          selectedEquipment: true,
-          move: true,
-        },
-      },
-    },
-  },
-}
-
-const fullLoggedWorkoutDataIncludes = {
-  workoutType: true,
-  workoutSections: {
-    include: {
-      roundAdjustRules: true,
-      workoutMoves: {
-        include: {
-          selectedEquipment: true,
-          move: true,
-        },
-      },
-    },
-  },
-}
-
-const fullUserIncludes = {
-  gymProfiles: {
-    include: { availableEquipments: true },
-  },
-}
 
 const resolvers: Resolvers = {
   Query: {
@@ -69,6 +38,21 @@ const resolvers: Resolvers = {
         where: { displayName },
       })
       return user == null
+    },
+    userByUid: async (r, { uid }, { selected, prisma }, i) => {
+      return prisma.user.findOne({
+        where: { firebaseUid: uid },
+        include: {
+          gymProfiles: {
+            include: {
+              availableEquipments: true,
+            },
+          },
+        },
+      })
+    },
+    users: async (r, a, { selected, prisma }, i) => {
+      return prisma.user.findMany({ select: selected.User })
     },
     officialMoves: async (r, a, { selected, prisma }, i) => {
       // Assumed that you always want requiredEquipments and selectableEquipments.
@@ -94,12 +78,14 @@ const resolvers: Resolvers = {
         select,
       })
     },
-    officialWorkouts: async (r, a, { selected, prisma }, i) => {
-      const workouts = await prisma.workout.findMany({
-        where: { scope: 'OFFICIAL' },
-        include: fullWorkoutDataIncludes,
+    officialWorkoutPrograms: async (r, a, { selected, prisma }, i) => {
+      // Once the number of public workouts gets too large we will need to sort by relevance (ML algo to generate best matches for this user) and then paginate.
+      return prisma.workoutProgram.findMany({
+        where: {
+          scope: 'OFFICIAL',
+        },
+        include: fullWorkoutProgramDataIncludes,
       })
-      return workouts
     },
     publicWorkoutPrograms: async (
       r,
@@ -112,14 +98,7 @@ const resolvers: Resolvers = {
         where: {
           scope: 'PUBLIC',
         },
-        include: {
-          workoutGoals: true,
-          programWorkouts: {
-            include: {
-              workout: true,
-            },
-          },
-        },
+        include: fullWorkoutProgramDataIncludes,
       })
     },
     privateWorkoutPrograms: async (
@@ -132,6 +111,13 @@ const resolvers: Resolvers = {
         where: {
           AND: [{ createdBy: { id: authedUserId } }, { scope: 'PRIVATE' }],
         },
+        include: fullWorkoutProgramDataIncludes,
+      })
+    },
+    officialWorkouts: async (r, a, { selected, prisma }, i) => {
+      return prisma.workout.findMany({
+        where: { scope: 'OFFICIAL' },
+        include: fullWorkoutDataIncludes,
       })
     },
     publicWorkouts: async (r, { authedUserId }, { selected, prisma }, i) => {
@@ -150,24 +136,6 @@ const resolvers: Resolvers = {
         },
         include: fullWorkoutDataIncludes,
       })
-    },
-    moves: async (r, a, { selected, prisma }, i) => {
-      return prisma.move.findMany()
-    },
-    userByUid: async (r, { uid }, { selected, prisma }, i) => {
-      return prisma.user.findOne({
-        where: { firebaseUid: uid },
-        include: {
-          gymProfiles: {
-            include: {
-              availableEquipments: true,
-            },
-          },
-        },
-      })
-    },
-    users: async (r, a, { selected, prisma }, i) => {
-      return prisma.user.findMany({ select: selected.User })
     },
     workoutById: async (r, { id }, { selected, prisma }, i) => {
       return prisma.workout.findOne({

@@ -12,12 +12,13 @@ export default gql`
     officialWorkouts: [Workout!]!
     privateWorkouts(authedUserId: ID!): [Workout!]!
     publicWorkouts(authedUserId: ID!): [Workout!]!
+    officialWorkoutPrograms: [WorkoutProgram!]!
     privateWorkoutPrograms(authedUserId: ID!): [WorkoutProgram!]!
     publicWorkoutPrograms(authedUserId: ID!): [WorkoutProgram!]!
-    moves: [Move!]!
     userByUid(uid: ID!): User
     users: [User!]!
     workoutById(id: ID!): Workout
+    workoutProgramById(id: ID!): WorkoutProgram
     likedWorkouts(authedUserId: ID!): [ID!]!
     scheduledWorkouts(authedUserId: ID!): [ScheduledWorkout!]!
     loggedWorkouts(authedUserId: ID!): [LoggedWorkout!]!
