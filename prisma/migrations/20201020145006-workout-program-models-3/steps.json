@@ -1,0 +1,29 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "CreateField",
+      "model": "WorkoutProgram",
+      "field": "programWorkouts",
+      "type": "WorkoutProgramWorkout",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateField",
+      "model": "WorkoutProgram",
+      "field": "programReviews",
+      "type": "WorkoutProgramReview",
+      "arity": "List"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "WorkoutProgram",
+      "field": "workouts"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "WorkoutProgram",
+      "field": "reviews"
+    }
+  ]
+}

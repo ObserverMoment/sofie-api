@@ -82,12 +82,57 @@ const resolvers: Resolvers = {
     officialEquipments: async (r, a, { selected, prisma }, i) => {
       return prisma.equipment.findMany()
     },
+    officialWorkoutGoals: async (r, a, { selected, prisma }, i) => {
+      const select = selected.WorkoutGoal || null
+      return prisma.workoutGoal.findMany({
+        select,
+      })
+    },
+    officialWorkoutTypes: async (r, a, { selected, prisma }, i) => {
+      const select = selected.WorkoutType || null
+      return prisma.workoutType.findMany({
+        select,
+      })
+    },
     officialWorkouts: async (r, a, { selected, prisma }, i) => {
       const workouts = await prisma.workout.findMany({
         where: { scope: 'OFFICIAL' },
         include: fullWorkoutDataIncludes,
       })
       return workouts
+    },
+    publicWorkoutPrograms: async (
+      r,
+      { authedUserId },
+      { selected, prisma },
+      i,
+    ) => {
+      // Once the number of public workouts gets too large we will need to sort by relevance (ML algo to generate best matches for this user) and then paginate.
+      return prisma.workoutProgram.findMany({
+        where: {
+          scope: 'PUBLIC',
+        },
+        include: {
+          workoutGoals: true,
+          programWorkouts: {
+            include: {
+              workout: true,
+            },
+          },
+        },
+      })
+    },
+    privateWorkoutPrograms: async (
+      r,
+      { authedUserId },
+      { selected, prisma },
+      i,
+    ) => {
+      return prisma.workoutProgram.findMany({
+        where: {
+          AND: [{ createdBy: { id: authedUserId } }, { scope: 'PRIVATE' }],
+        },
+      })
     },
     publicWorkouts: async (r, { authedUserId }, { selected, prisma }, i) => {
       // Once the number of public workouts gets too large we will need to sort by relevance (ML algo to generate best matches for this user) and then paginate.
@@ -104,12 +149,6 @@ const resolvers: Resolvers = {
           AND: [{ createdBy: { id: authedUserId } }, { scope: 'PRIVATE' }],
         },
         include: fullWorkoutDataIncludes,
-      })
-    },
-    officialWorkoutTypes: async (r, a, { selected, prisma }, i) => {
-      const select = selected.WorkoutType || null
-      return prisma.workoutType.findMany({
-        select,
       })
     },
     moves: async (r, a, { selected, prisma }, i) => {

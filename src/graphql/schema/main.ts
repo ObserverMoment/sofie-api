@@ -8,9 +8,12 @@ export default gql`
     officialMoves: [Move!]!
     officialEquipments: [Equipment!]!
     officialWorkoutTypes: [WorkoutType!]!
+    officialWorkoutGoals: [WorkoutGoal]!
     officialWorkouts: [Workout!]!
     privateWorkouts(authedUserId: ID!): [Workout!]!
     publicWorkouts(authedUserId: ID!): [Workout!]!
+    privateWorkoutPrograms(authedUserId: ID!): [WorkoutProgram!]!
+    publicWorkoutPrograms(authedUserId: ID!): [WorkoutProgram!]!
     moves: [Move!]!
     userByUid(uid: ID!): User
     users: [User!]!
@@ -68,8 +71,40 @@ export default gql`
       loggedWorkoutData: ShallowUpdateLoggedWorkoutInput!
     ): LoggedWorkout!
     deleteLoggedWorkout(authedUserId: ID!, loggedWorkoutId: ID!): ID!
+    createWorkoutProgram(
+      authedUserId: ID!
+      data: CreateWorkoutProgramInput!
+    ): WorkoutProgram!
+    shallowUpdateWorkoutProgram(
+      authedUserId: ID!
+      data: ShallowUpdateWorkoutProgramInput!
+    ): WorkoutProgram!
+    deepUpdateWorkoutProgram(
+      authedUserId: ID!
+      data: DeepUpdateWorkoutProgramInput!
+    ): WorkoutProgram!
+    deleteWorkoutProgram(authedUserId: ID!, workoutProgramId: ID!): ID!
+    addEnrolmentToWorkoutProgram(
+      authedUserId: ID!
+      workoutProgramId: ID!
+    ): WorkoutProgram!
+    removeEnrolmentFromWorkoutProgram(
+      authedUserId: ID!
+      workoutProgramId: ID!
+    ): WorkoutProgram!
+    addReviewToWorkoutProgram(
+      authedUserId: ID!
+      workoutProgramId: ID!
+      data: CreateWorkoutProgramReviewInput!
+    ): WorkoutProgram!
+    removeReviewFromWorkoutProgram(
+      authedUserId: ID!
+      workoutProgramId: ID!
+      reviewId: ID!
+    ): WorkoutProgram!
   }
 
+  ##### Non user CRUD-able models #####
   type Equipment {
     id: ID!
     name: String!
@@ -90,6 +125,13 @@ export default gql`
     selectableEquipments: [Equipment!]!
   }
 
+  type WorkoutGoal {
+    id: ID!
+    name: String!
+    description: String!
+  }
+
+  ##### User CRUD-able models #####
   type GymProfile {
     id: ID!
     name: String!

@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 model Equipment {
@@ -219,11 +219,10 @@ model WorkoutProgram {
   preciseSchedule Boolean?                  @default(false)
   frequencyPeriod FrequencyPeriod?          @default(WEEK)
   frequencyAmount Int?                      @default(3)
-  scope           AccessScopeType           @default(PRIVATE)
-  createdBy       User                      @relation(fields: [createdById], references: [id])
-  createdById     String
+  creator         User                      @relation(fields: [creatorId], references: [id])
+  creatorId       String
   enrolments      WorkoutProgramEnrolment[]
-  workoutGoals    WorkoutGoal[]
+  goals           WorkoutGoal[]
   programWorkouts WorkoutProgramWorkout[]
   programReviews  WorkoutProgramReview[]
 }
@@ -257,7 +256,6 @@ model WorkoutProgramWorkout {
   // Or manually inputted by the creator if preciseSchedule == true
   // Also acts as sort position for displaying
   dayNumber        Int
-  notes            String?
   workoutProgram   WorkoutProgram @relation(fields: [workoutProgramId], references: [id])
   workoutProgramId String
   workout          Workout        @relation(fields: [workoutId], references: [id])

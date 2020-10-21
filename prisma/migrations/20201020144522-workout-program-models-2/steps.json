@@ -1,0 +1,48 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "CreateEnum",
+      "enum": "FrequencyPeriod",
+      "values": [
+        "DAY",
+        "TWODAYS",
+        "WEEK",
+        "TWOWEEKS",
+        "MONTH"
+      ]
+    },
+    {
+      "tag": "CreateField",
+      "model": "WorkoutProgram",
+      "field": "frequencyPeriod",
+      "type": "FrequencyPeriod",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "WorkoutProgram",
+          "field": "frequencyPeriod"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "WorkoutProgram",
+          "field": "frequencyPeriod"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "WEEK"
+    }
+  ]
+}

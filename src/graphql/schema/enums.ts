@@ -11,20 +11,26 @@ export default gql`
     OFFICIAL
   }
 
-  """
-  For generating rules which can adjust rep and load over the course of a workout
-  """
-  enum RuleAction {
-    INCREASE
-    DECREASE
-    MULTIPLY
+  enum DifficultyLevel {
+    ONE
+    TWO
+    THREE
+    FOUR
   }
-  """
-  For generating rules which can adjust rep and load over the course of a workout
-  """
-  enum RuleTarget {
-    REPS
-    LOAD
+
+  enum DistanceUnit {
+    METRES
+    KILOMETRES
+    YARDS
+    MILES
+  }
+
+  enum FrequencyPeriod {
+    DAY
+    TWODAYS
+    WEEK
+    TWOWEEKS
+    MONTH
   }
 
   enum Gender {
@@ -33,11 +39,20 @@ export default gql`
     UNSPECIFIED
   }
 
-  enum DifficultyLevel {
-    ONE
-    TWO
-    THREE
-    FOUR
+  enum LoadUnit {
+    KG
+    LB
+    BODYWEIGHTPERCENT
+  }
+
+  enum ThemePreference {
+    DARK
+    LIGHT
+  }
+
+  enum UnitSystem {
+    IMPERIAL
+    METRIC
   }
 
   enum WorkoutMoveRepType {
@@ -59,26 +74,20 @@ export default gql`
     FORLOAD
   }
 
-  enum UnitSystem {
-    IMPERIAL
-    METRIC
+  """
+  For generating rules which can adjust rep and load over the course of a workout
+  """
+  enum RuleAction {
+    INCREASE
+    DECREASE
+    MULTIPLY
   }
 
-  enum LoadUnit {
-    KG
-    LB
-    BODYWEIGHTPERCENT
-  }
-
-  enum DistanceUnit {
-    METRES
-    KILOMETRES
-    YARDS
-    MILES
-  }
-
-  enum ThemePreference {
-    DARK
-    LIGHT
+  """
+  For generating rules which can adjust rep and load over the course of a workout
+  """
+  enum RuleTarget {
+    REPS
+    LOAD
   }
 `

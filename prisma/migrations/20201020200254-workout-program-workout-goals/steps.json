@@ -1,0 +1,17 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "CreateField",
+      "model": "WorkoutProgram",
+      "field": "workoutGoals",
+      "type": "WorkoutGoal",
+      "arity": "List"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "WorkoutProgram",
+      "field": "goals"
+    }
+  ]
+}
