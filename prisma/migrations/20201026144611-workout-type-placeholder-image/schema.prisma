@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 model Equipment {
@@ -288,7 +288,7 @@ model WorkoutType {
   id                  String           @id @default(uuid())
   name                String
   description         String
-  placeholderImageUrl String
+  placeholderImageUrl String?
   scoreType           WorkoutScoreType
   Workout             Workout[]
   LoggedWorkout       LoggedWorkout[]

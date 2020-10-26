@@ -418,6 +418,7 @@ export type WorkoutType = {
   id: Scalars['ID'];
   name?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
+  placeholderImageUrl?: Maybe<Scalars['String']>;
   scoreType?: Maybe<WorkoutScoreType>;
   Workout: Array<Workout>;
 };
@@ -1184,6 +1185,7 @@ export type WorkoutTypeResolvers<ContextType = any, ParentType extends Resolvers
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  placeholderImageUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   scoreType?: Resolver<Maybe<ResolversTypes['WorkoutScoreType']>, ParentType, ContextType>;
   Workout?: Resolver<Array<ResolversTypes['Workout']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;

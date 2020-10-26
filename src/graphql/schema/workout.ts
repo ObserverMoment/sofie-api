@@ -26,6 +26,7 @@ export default gql`
     id: ID!
     name: String
     description: String
+    placeholderImageUrl: String
     scoreType: WorkoutScoreType
     Workout: [Workout!]!
   }

@@ -207,10 +207,13 @@ const resolvers: Resolvers = {
             }
           : {}
       delete data.availableEquipmentIds
+      const bodyweightOnly: boolean = !!data.bodyweightOnly
+      delete data.bodyweightOnly
 
       await prisma.gymProfile.create({
         data: {
           ...data,
+          bodyweightOnly,
           ...availableEquipments,
           user: {
             connect: { id: authedUserId },
