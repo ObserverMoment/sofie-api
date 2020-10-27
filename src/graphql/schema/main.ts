@@ -29,7 +29,7 @@ export default gql`
     updateUser(id: ID!, data: UpdateUserInput!): User!
     createGymProfile(authedUserId: ID!, data: CreateGymProfileInput!): User!
     updateGymProfile(authedUserId: ID!, data: UpdateGymProfileInput!): User!
-    deleteGymProfile(authedUserId: ID!, gymProfileId: ID!): ID!
+    deleteGymProfile(authedUserId: ID!, gymProfileId: ID!): User!
     createMoveProfile(
       authedUserId: ID!
       data: CreateMoveProfileInput!
