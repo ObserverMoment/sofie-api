@@ -1,0 +1,18 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "UpdateField",
+      "model": "WorkoutType",
+      "field": "placeholderImageUrl",
+      "arity": "Required"
+    },
+    {
+      "tag": "UpdateField",
+      "model": "WorkoutProgramReview",
+      "field": "score",
+      "type": "Float",
+      "arity": "Optional"
+    }
+  ]
+}

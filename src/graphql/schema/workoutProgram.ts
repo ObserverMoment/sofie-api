@@ -93,13 +93,13 @@ export default gql`
 
   type WorkoutProgramReview {
     id: ID!
-    score: Int!
+    score: Float!
     comment: String
     user: User!
   }
 
   input CreateWorkoutProgramReviewInput {
-    score: Int!
+    score: Float!
     comment: String
   }
 `

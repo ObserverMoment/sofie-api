@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 model Equipment {
@@ -242,7 +242,7 @@ model WorkoutProgramEnrolment {
 model WorkoutProgramReview {
   id               String         @id @default(uuid())
   createdAt        DateTime       @default(now())
-  score            Float
+  score            Float?
   comment          String?
   workoutProgram   WorkoutProgram @relation(fields: [workoutProgramId], references: [id])
   workoutProgramId String

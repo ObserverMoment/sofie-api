@@ -589,13 +589,13 @@ export type RemoveEnrolmentFromWorkoutProgram = {
 export type WorkoutProgramReview = {
   __typename?: 'WorkoutProgramReview';
   id: Scalars['ID'];
-  score: Scalars['Int'];
+  score: Scalars['Float'];
   comment?: Maybe<Scalars['String']>;
   user: User;
 };
 
 export type CreateWorkoutProgramReviewInput = {
-  score: Scalars['Int'];
+  score: Scalars['Float'];
   comment?: Maybe<Scalars['String']>;
 };
 
@@ -1250,7 +1250,7 @@ export type WorkoutProgramEnrolmentResolvers<ContextType = any, ParentType exten
 
 export type WorkoutProgramReviewResolvers<ContextType = any, ParentType extends ResolversParentTypes['WorkoutProgramReview'] = ResolversParentTypes['WorkoutProgramReview']> = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  score?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  score?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   comment?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
