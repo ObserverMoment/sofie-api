@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 model Equipment {
@@ -255,7 +255,7 @@ model WorkoutProgramWorkout {
   createdAt        DateTime       @default(now())
   // Day on which the workout is planned. i.e. day 8 == week 2 day 1.
   // The decimal can be used to differentiate between having multiple workouts on each day.
-  dayNumber        Float
+  dayNumber        Float?
   notes            String?
   workoutProgram   WorkoutProgram @relation(fields: [workoutProgramId], references: [id])
   workoutProgramId String

@@ -63,13 +63,13 @@ export default gql`
 
   type WorkoutProgramWorkout {
     id: ID!
-    dayNumber: Int!
+    dayNumber: Float!
     notes: String
     workout: Workout!
   }
 
   input CreateWorkoutProgramWorkoutInput {
-    dayNumber: Int!
+    dayNumber: Float!
     notes: String
     workoutId: ID!
   }

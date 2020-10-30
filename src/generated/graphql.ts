@@ -557,13 +557,13 @@ export type ShallowUpdateWorkoutProgramInput = {
 export type WorkoutProgramWorkout = {
   __typename?: 'WorkoutProgramWorkout';
   id: Scalars['ID'];
-  dayNumber: Scalars['Int'];
+  dayNumber: Scalars['Float'];
   notes?: Maybe<Scalars['String']>;
   workout: Workout;
 };
 
 export type CreateWorkoutProgramWorkoutInput = {
-  dayNumber: Scalars['Int'];
+  dayNumber: Scalars['Float'];
   notes?: Maybe<Scalars['String']>;
   workoutId: Scalars['ID'];
 };
@@ -1234,7 +1234,7 @@ export type WorkoutProgramResolvers<ContextType = any, ParentType extends Resolv
 
 export type WorkoutProgramWorkoutResolvers<ContextType = any, ParentType extends ResolversParentTypes['WorkoutProgramWorkout'] = ResolversParentTypes['WorkoutProgramWorkout']> = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  dayNumber?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  dayNumber?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   notes?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   workout?: Resolver<ResolversTypes['Workout'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
