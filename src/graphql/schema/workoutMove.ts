@@ -32,7 +32,7 @@ export default gql`
     duration is used when logging workout moves - when rep type is not time it allows you to log how long the user took to complete one round of the section.
     """
     duration: Int
-    moveId: String!
-    selectedEquipmentId: String
+    move: ID!
+    selectedEquipment: ID
   }
 `

@@ -13,7 +13,7 @@ export default gql`
     sortPosition: Int!
     workoutMoves: [WorkoutMove!]
     workout: Workout!
-    roundAdjustRules: [RoundAdjustRule!]
+    # roundAdjustRules: [RoundAdjustRule!]
   }
 
   input CreateWorkoutSectionInput {
@@ -23,21 +23,21 @@ export default gql`
     sortPosition: Int!
     rounds: Int!
     workoutMoves: [CreateWorkoutMoveInput!]!
-    roundAdjustRules: [CreateRoundAdjustRuleInput!]
+    # roundAdjustRules: [CreateRoundAdjustRuleInput!]
   }
 
-  type RoundAdjustRule {
-    id: ID!
-    target: RuleTarget
-    action: RuleAction
-    amount: Float
-    roundFrequency: Int
-  }
+  # type RoundAdjustRule {
+  #   id: ID!
+  #   target: RuleTarget
+  #   action: RuleAction
+  #   amount: Float
+  #   roundFrequency: Int
+  # }
 
-  input CreateRoundAdjustRuleInput {
-    target: RuleTarget!
-    action: RuleAction!
-    amount: Float!
-    roundFrequency: Int!
-  }
+  # input CreateRoundAdjustRuleInput {
+  #   target: RuleTarget!
+  #   action: RuleAction!
+  #   amount: Float!
+  #   roundFrequency: Int!
+  # }
 `

@@ -6,7 +6,7 @@ export default gql`
     name: String!
     summary: String
     description: String
-    completedOn: String!
+    completedOn: DateTime!
     notes: String
     videoUrl: String
     videoThumbUrl: String
@@ -27,7 +27,7 @@ export default gql`
     name: String
     summary: String
     description: String
-    completedOn: String!
+    completedOn: DateTime!
     notes: String
     videoUrl: String
     videoThumbUrl: String
@@ -46,7 +46,7 @@ export default gql`
     name: String
     summary: String
     description: String
-    completedOn: String
+    completedOn: DateTime
     notes: String
     videoUrl: String
     videoThumbUrl: String
@@ -62,7 +62,7 @@ export default gql`
     name: String
     summary: String
     description: String
-    completedOn: String
+    completedOn: DateTime
     notes: String
     videoUrl: String
     videoThumbUrl: String

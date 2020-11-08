@@ -9,7 +9,7 @@ import workoutSectionSchema from './workoutSection'
 import workoutMoveSchema from './workoutMove'
 import enumSchema from './enums'
 
-const schema = mergeTypeDefs([
+const typeDefs = mergeTypeDefs([
   mainSchema,
   workoutSchema,
   workoutProgramSchema,
@@ -21,4 +21,4 @@ const schema = mergeTypeDefs([
   enumSchema,
 ])
 
-export default schema
+export default typeDefs

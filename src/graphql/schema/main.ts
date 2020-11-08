@@ -2,6 +2,7 @@ import { gql } from 'apollo-server-express'
 
 export default gql`
   scalar JSON
+  scalar DateTime
 
   type Query {
     checkUniqueDisplayName(displayName: String!): Boolean!
@@ -16,7 +17,6 @@ export default gql`
     privateWorkoutPrograms(authedUserId: ID!): [WorkoutProgram!]!
     publicWorkoutPrograms(authedUserId: ID!): [WorkoutProgram!]!
     userByUid(uid: ID!): User
-    users: [User!]!
     workoutById(id: ID!): Workout
     workoutProgramById(id: ID!): WorkoutProgram
     likedWorkouts(authedUserId: ID!): [ID!]!
@@ -27,9 +27,15 @@ export default gql`
   type Mutation {
     createUser(uid: ID!): User!
     updateUser(id: ID!, data: UpdateUserInput!): User!
-    createGymProfile(authedUserId: ID!, data: CreateGymProfileInput!): User!
-    updateGymProfile(authedUserId: ID!, data: UpdateGymProfileInput!): User!
-    deleteGymProfile(authedUserId: ID!, gymProfileId: ID!): User!
+    createGymProfile(
+      authedUserId: ID!
+      data: CreateGymProfileInput!
+    ): GymProfile!
+    updateGymProfile(
+      authedUserId: ID!
+      data: UpdateGymProfileInput!
+    ): GymProfile!
+    deleteGymProfile(authedUserId: ID!, gymProfileId: ID!): ID!
     createMoveProfile(
       authedUserId: ID!
       data: CreateMoveProfileInput!
@@ -38,14 +44,14 @@ export default gql`
       authedUserId: ID!
       data: UpdateMoveProfileInput!
     ): MoveProfile!
-    createWorkout(authedUserId: ID!, workoutData: CreateWorkoutInput!): Workout!
+    createWorkout(authedUserId: ID!, data: CreateWorkoutInput!): Workout!
     deepUpdateWorkout(
       authedUserId: ID!
-      workoutData: DeepUpdateWorkoutInput!
+      data: DeepUpdateWorkoutInput!
     ): Workout!
     shallowUpdateWorkout(
       authedUserId: ID!
-      workoutData: ShallowUpdateWorkoutInput!
+      data: ShallowUpdateWorkoutInput!
     ): Workout!
     deleteWorkout(authedUserId: ID!, workoutId: ID!): ID!
     likeWorkout(authedUserId: ID!, workoutId: ID!): ID
@@ -148,7 +154,8 @@ export default gql`
     description: String
     postcode: String
     bodyweightOnly: Boolean
-    availableEquipmentIds: [ID!]
+    # List of String (ID) ids to connect.
+    availableEquipments: [ID!]
   }
 
   input UpdateGymProfileInput {
@@ -157,7 +164,8 @@ export default gql`
     description: String
     postcode: String
     bodyweightOnly: Boolean
-    availableEquipmentIds: [ID!]
+    # List of String (ID) ids to connect.
+    availableEquipments: [ID!]
   }
 
   type MoveProfile {
@@ -188,7 +196,7 @@ export default gql`
     id: ID!
     avatarUrl: String
     bio: String
-    birthdate: String
+    birthdate: DateTime
     city: String
     countryCode: String
     displayName: String
@@ -207,7 +215,7 @@ export default gql`
   input UpdateUserInput {
     avatarUrl: String
     bio: String
-    birthdate: String
+    birthdate: DateTime
     city: String
     countryCode: String
     displayName: String

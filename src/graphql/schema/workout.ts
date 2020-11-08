@@ -28,12 +28,12 @@ export default gql`
     description: String
     placeholderImageUrl: String
     scoreType: WorkoutScoreType
-    Workout: [Workout!]!
+    workouts: [Workout!]!
   }
 
   type Workout {
     id: ID!
-    createdAt: String!
+    createdAt: DateTime!
     createdBy: User
     name: String!
     summary: String
@@ -61,7 +61,7 @@ export default gql`
     spotifyAudio: String
     imageUrl: String
     timecap: Int
-    workoutTypeId: String!
+    workoutType: ID!
     difficultyLevel: Int!
     scope: AccessScopeType!
     workoutSections: [CreateWorkoutSectionInput!]!
@@ -79,7 +79,7 @@ export default gql`
     spotifyAudio: String
     imageUrl: String
     timecap: Int
-    workoutTypeId: String
+    workoutType: ID
     difficultyLevel: Int
     scope: AccessScopeType
     workoutSections: [CreateWorkoutSectionInput!]!

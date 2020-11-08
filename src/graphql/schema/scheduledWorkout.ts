@@ -3,8 +3,8 @@ import { gql } from 'apollo-server-express'
 export default gql`
   type ScheduledWorkout {
     id: ID!
-    createdAt: String!
-    scheduledAt: String!
+    createdAt: DateTime!
+    scheduledAt: DateTime!
     notes: String
     workoutId: ID
     loggedWorkoutId: ID
@@ -12,7 +12,7 @@ export default gql`
   }
 
   input CreateScheduledWorkoutInput {
-    scheduledAt: String!
+    scheduledAt: DateTime!
     notes: String
     workoutId: ID
     gymProfileId: ID
@@ -20,7 +20,7 @@ export default gql`
 
   input UpdateScheduledWorkoutInput {
     id: ID!
-    scheduledAt: String
+    scheduledAt: DateTime
     notes: String
     workoutId: ID
     loggedWorkoutId: ID

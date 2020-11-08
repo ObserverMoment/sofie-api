@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 model Equipment {
@@ -17,7 +17,7 @@ model Equipment {
   loadAdjustable     Boolean       @default(true)
   requiredForMoves   Move[]        @relation("moveToRequiredEquipments", references: [id])
   selectableForMoves Move[]        @relation("moveToSelectableEquipments", references: [id])
-  workoutMoves       WorkoutMove[]
+  WorkoutMove        WorkoutMove[]
   gymProfiles        GymProfile[]
 }
 
@@ -276,7 +276,7 @@ model WorkoutSection {
   workoutId        String?
   workoutMoves     WorkoutMove[]
   roundAdjustRules RoundAdjustRule[]
-  loggedWorkout    LoggedWorkout?    @relation(fields: [loggedWorkoutId], references: [id])
+  LoggedWorkout    LoggedWorkout?    @relation(fields: [loggedWorkoutId], references: [id])
   loggedWorkoutId  String?
 }
 
@@ -286,8 +286,8 @@ model WorkoutType {
   description         String
   placeholderImageUrl String
   scoreType           WorkoutScoreType
-  workouts            Workout[]
-  loggedWorkouts      LoggedWorkout[]
+  Workout             Workout[]
+  LoggedWorkout       LoggedWorkout[]
 }
 
 // Enums

@@ -3,15 +3,12 @@ import { gql } from 'apollo-server-express'
 export default gql`
   type WorkoutProgram {
     id: ID!
-    createdAt: String!
+    createdAt: DateTime!
     name: String!
     description: String!
     imageUrl: String
     videoUrl: String
     videoThumbUrl: String
-    preciseSchedule: Boolean!
-    frequencyPeriod: FrequencyPeriod
-    frequencyAmount: Int
     scope: AccessScopeType!
     createdBy: User
     enrolments: [WorkoutProgramEnrolment!]
@@ -26,9 +23,6 @@ export default gql`
     imageUrl: String
     videoUrl: String
     videoThumbUrl: String
-    preciseSchedule: Boolean!
-    frequencyPeriod: FrequencyPeriod
-    frequencyAmount: Int
     workoutGoalIds: [ID!]!
     programWorkouts: [CreateWorkoutProgramWorkoutInput!]!
   }
@@ -41,9 +35,6 @@ export default gql`
     imageUrl: String
     videoUrl: String
     videoThumbUrl: String
-    preciseSchedule: Boolean
-    frequencyPeriod: FrequencyPeriod
-    frequencyAmount: Int
     workoutGoalIds: [ID!]!
     programWorkouts: [CreateWorkoutProgramWorkoutInput!]!
   }
@@ -55,9 +46,6 @@ export default gql`
     imageUrl: String
     videoUrl: String
     videoThumbUrl: String
-    preciseSchedule: Boolean
-    frequencyPeriod: FrequencyPeriod
-    frequencyAmount: Int
     workoutGoalIds: [ID!]!
   }
 
@@ -76,7 +64,7 @@ export default gql`
 
   type WorkoutProgramEnrolment {
     id: ID!
-    startDate: String
+    startDate: DateTime
     user: User!
     loggedWorkouts: [LoggedWorkout!]
   }

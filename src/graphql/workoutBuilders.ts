@@ -1,6 +1,5 @@
 import { PrismaClient, WorkoutSection } from '@prisma/client'
 import {
-  CreateWorkoutInput,
   DeepUpdateWorkoutInput,
   CreateLoggedWorkoutInput,
   CreateWorkoutSectionInput,
@@ -28,6 +27,13 @@ async function deleteAllDescendents(
       : {
           loggedWorkoutId: parentId,
         }
+
+  ///// Use this to delete all children of workout
+  await prisma.workoutSection.deleteMany({
+    where: { workout: { id: parentId } },
+  })
+  /// Then use cascade deletes to ensure that all workoutmoves of these workout sections are also deleted.
+  /////
   // Get all workoutSection children of the workout.
   const workoutSections: WorkoutSection[] = await prisma.workoutSection.findMany(
     { where },
@@ -65,26 +71,6 @@ async function deleteAllDescendents(
   })
 
   return true
-}
-
-function buildCreateWorkoutData(
-  authedUserId: string,
-  workoutData: CreateWorkoutInput,
-) {
-  const workoutTypeId = workoutData.workoutTypeId
-
-  const formattedWorkoutData: any = {
-    ...workoutData,
-    createdBy: { connect: { id: authedUserId } },
-    workoutType: {
-      connect: { id: workoutTypeId || undefined },
-    },
-    workoutSections: buildWorkoutSectionsData(workoutData.workoutSections),
-  }
-
-  delete formattedWorkoutData.workoutTypeId
-
-  return formattedWorkoutData
 }
 
 function buildCreateLoggedWorkoutData(
@@ -135,13 +121,12 @@ function buildCreateLoggedWorkoutData(
 }
 
 function buildUpdateWorkoutData(workoutData: DeepUpdateWorkoutInput) {
-  const workoutType = workoutData.workoutTypeId
+  const workoutType = workoutData.workoutType
     ? {
-        workoutType: { connect: { id: workoutData.workoutTypeId } },
+        workoutType: { connect: { id: workoutData.workoutType } },
       }
     : {}
 
-  delete workoutData.workoutTypeId
   return {
     ...workoutData,
     ...workoutType,
@@ -174,49 +159,35 @@ function buildUpdateLoggedWorkoutData(
   }
 }
 
-function buildWorkoutSectionsData(
+export function buildWorkoutSectionsData(
   workoutSections: Array<CreateWorkoutSectionInput>,
 ) {
-  return {
-    create: [
-      ...workoutSections.map((section) => ({
+  return workoutSections
+    ? workoutSections.map((section) => ({
         ...section,
         workoutMoves: {
-          create: [
-            ...section.workoutMoves.map((workoutMove) => {
-              const { selectedEquipmentId } = workoutMove
-              const selectedEquipment = selectedEquipmentId
-                ? {
-                    connect: {
-                      // Can't pass null to prisma connect calls - must be undefined
-                      id: workoutMove.selectedEquipmentId || undefined,
-                    },
-                  }
-                : undefined
-              const workoutMoveData: any = {
+          create: section.workoutMoves
+            ? section.workoutMoves.map((workoutMove) => ({
                 ...workoutMove,
-                selectedEquipment,
-                move: {
-                  connect: { id: workoutMove.moveId || undefined },
+                selectedEquipment: {
+                  // Can't pass null to prisma connect calls - must be undefined
+                  connect: {
+                    id: workoutMove.selectedEquipment || undefined,
+                  },
                 },
-              }
-              delete workoutMoveData.selectedEquipmentId
-              delete workoutMoveData.moveId
-              return workoutMoveData
-            }),
-          ],
+                move: {
+                  // workoutMove.move is the String ID of the move.
+                  connect: { id: workoutMove.move || undefined },
+                },
+              }))
+            : [],
         },
-        roundAdjustRules: {
-          create: section.roundAdjustRules,
-        },
-      })),
-    ],
-  }
+      }))
+    : []
 }
 
 export {
   deleteAllDescendents,
-  buildCreateWorkoutData,
   buildUpdateWorkoutData,
   buildCreateLoggedWorkoutData,
   buildUpdateLoggedWorkoutData,

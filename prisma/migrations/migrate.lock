@@ -40,3 +40,7 @@
 20201028171304-workout-program-review-score-float-required
 20201030161839-workout-program-workout-day-number-float
 20201030162026-workout-program-workout-day-number-float-required
+20201105172610-workout-program-remove-frequency-data
+20201105175630-user-theme-preference-required
+20201105175935-user-has-onboarded-required
+20201106081838-camel-case-relations

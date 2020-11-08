@@ -1,12 +1,12 @@
-import express from 'express'
-import { ApolloServer } from 'apollo-server-express'
-import resolvers from './graphql/resolvers'
-import schema from './graphql/schema/schema'
-import applyMiddleware from './graphql/middleware/applyMiddleware'
-import helmet from './graphql/middleware/helmet'
-import getSelectedFields from './graphql/middleware/getSelectedFields'
+import { ApolloServer, ResolverFn } from 'apollo-server'
+import resolvers from './graphql/resolvers/resolvers'
+import typeDefs from './graphql/schema/typeDefs'
+import { applyMiddleware } from 'graphql-middleware'
 import { PrismaClient } from '@prisma/client'
+import { PrismaSelect } from '@paljs/plugins'
 import { Context } from './types'
+import { makeExecutableSchema } from 'graphql-tools'
+import { GraphQLResolveInfo } from 'graphql'
 
 require('dotenv').config()
 
@@ -16,25 +16,38 @@ const prisma = new PrismaClient({
   errorFormat: 'pretty',
 })
 
-const middlewareMappings = [
-  {
-    type: 'all', // Either 'all', 'root' or 'field'
-    middlewares: [helmet, getSelectedFields],
-  },
-]
+const selectMiddleware = async (
+  resolve: ResolverFn,
+  root: any,
+  args: any,
+  context: Context,
+  info: GraphQLResolveInfo,
+) => {
+  const result = new PrismaSelect(info).value
+  if (Object.keys(result.select).length > 0) {
+    context = {
+      ...context,
+      ...result,
+    }
+  }
+  return resolve(root, args, context, info)
+}
 
-applyMiddleware(resolvers, middlewareMappings)
+// TODO: Add hemlmet middleware back in to catch errors and wrap all in trycatch
+let schema = makeExecutableSchema({
+  typeDefs,
+  resolvers,
+  logger: { log: (e) => console.error(e) },
+})
 
 // https://github.com/prisma-labs/graphqlgen/issues/15
 const server = new ApolloServer({
-  typeDefs: schema,
-  resolvers: resolvers as any,
+  schema: applyMiddleware(schema, selectMiddleware),
   context: () => ({ prisma } as Context),
 })
 
-const app = express()
-server.applyMiddleware({ app })
-
 const PORT = process.env.PORT || 4000
 
-app.listen({ port: PORT }, () => console.log(`🚀 Server ready on port ${PORT}`))
+server.listen({ port: PORT }).then(({ url }) => {
+  console.log(`🚀  Server ready at ${url}`)
+})

@@ -14,26 +14,6 @@ const fullWorkoutDataIncludes = {
   },
 }
 
-const fullWorkoutProgramDataIncludes = {
-  createdBy: true,
-  enrolments: {
-    include: {
-      user: true,
-    },
-  },
-  workoutGoals: true,
-  programWorkouts: {
-    include: {
-      workout: {
-        include: fullWorkoutDataIncludes,
-      },
-    },
-  },
-  programReviews: {
-    include: { user: true },
-  },
-}
-
 const fullLoggedWorkoutDataIncludes = {
   workoutType: true,
   workoutSections: {
@@ -57,7 +37,6 @@ const fullUserIncludes = {
 
 export {
   fullWorkoutDataIncludes,
-  fullWorkoutProgramDataIncludes,
   fullLoggedWorkoutDataIncludes,
   fullUserIncludes,
 }
