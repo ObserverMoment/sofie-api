@@ -1,5 +1,4 @@
-import { GraphQLResolveInfo } from 'graphql'
-import { Context } from '../../types'
+import { Context } from '../..'
 
 const officialMoves = async (r: any, a: any, { prisma, select }: Context) =>
   prisma.move.findMany({ select })

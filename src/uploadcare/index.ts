@@ -108,7 +108,7 @@ export async function checkWorkoutMediaForDeletion(
 
 export async function checkThenDeleteWorkoutImageFile(
   prisma: PrismaClient,
-  imageId: string | null,
+  imageId: string | null | undefined,
 ) {
   if (imageId) {
     // Are the media files being used by other workouts that have been copied?
@@ -128,8 +128,8 @@ export async function checkThenDeleteWorkoutImageFile(
 
 export async function checkThenDeleteWorkoutVideoFiles(
   prisma: PrismaClient,
-  videoId: string | null,
-  videoThumbId: string | null,
+  videoId: string | null | undefined,
+  videoThumbId: string | null | undefined,
 ) {
   if (videoId) {
     const workoutsSharingVideo: Workout[] = await prisma.workout.findMany({

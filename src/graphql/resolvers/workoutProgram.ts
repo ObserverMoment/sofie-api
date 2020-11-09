@@ -1,9 +1,5 @@
-import {
-  CreateWorkoutProgramInput,
-  MutationCreateWorkoutArgs,
-  QueryPrivateWorkoutProgramsArgs,
-} from '../../generated/graphql'
-import { Context } from '../../types'
+import { Context } from '../..'
+import { QueryPrivateWorkoutProgramsArgs } from '../../generated/graphql'
 
 //// Queries
 const officialWorkoutPrograms = async (

@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 model Equipment {
@@ -67,6 +67,7 @@ model LoggedWorkout {
   workoutSections           WorkoutSection[]
   originalWorkout           Workout?                 @relation(fields: [originalWorkoutId], references: [id])
   originalWorkoutId         String?
+  originalWorkoutScope      AccessScopeType
   scheduledWorkout          ScheduledWorkout?
   scheduledWorkoutId        String?
   gymProfile                GymProfile?              @relation(fields: [gymProfileId], references: [id])

@@ -1,14 +1,22 @@
 import {
   MutationCreateWorkoutArgs,
   MutationDeepUpdateWorkoutArgs,
+  MutationDeleteWorkoutByIdArgs,
+  MutationShallowUpdateWorkoutArgs,
   QueryPrivateWorkoutsArgs,
   QueryWorkoutByIdArgs,
+  Workout,
 } from '../../generated/graphql'
 
 import { buildWorkoutSectionsData } from '../workoutBuilders'
 
-import { Context } from '../../types'
-import { checkWorkoutMediaForDeletion } from '../../uploadcare'
+import {
+  checkThenDeleteWorkoutImageFile,
+  checkThenDeleteWorkoutVideoFiles,
+  checkWorkoutMediaForDeletion,
+} from '../../uploadcare'
+
+import { Context } from '../..'
 
 //// Queries ////
 const officialWorkouts = async (r: any, a: any, { select, prisma }: Context) =>
@@ -61,6 +69,12 @@ const createWorkout = async (
       workoutSections: {
         create: buildWorkoutSectionsData(data.workoutSections),
       },
+      workoutType: {
+        connect: { id: data.workoutType || undefined },
+      },
+      createdBy: {
+        connect: { id: authedUserId },
+      },
     },
     select,
   })
@@ -70,19 +84,16 @@ const deepUpdateWorkout = async (
   { authedUserId, data }: MutationDeepUpdateWorkoutArgs,
   { select, prisma }: Context,
 ) => {
-  // 1. Check media deletion.
-  await checkWorkoutMediaForDeletion(prisma, data)
-  // 2. Delete all descendents - should delete all workoutMoves via cascade deletes.
+  // 1. Delete all descendants - this will delete all workoutMoves via cascade deletes.
   // https://paljs.com/plugins/delete/
-  await prisma.workoutSection.deleteMany({
-    where: {
-      workout: {
-        id: data.id,
-      },
-    },
+  await prisma.onDelete({
+    model: 'WorkoutSection',
+    where: { workoutId: data.id },
+    deleteParent: true, // If false, just the descendants will be deleted.
   })
-  // 3. Update and rebuild new object.
-  return prisma.workout.update({
+
+  // 2. Run the new update and create fresh descendants.
+  const updatedWorkout: Workout = await prisma.workout.update({
     where: {
       id: data.id,
     },
@@ -91,9 +102,84 @@ const deepUpdateWorkout = async (
       workoutSections: {
         create: buildWorkoutSectionsData(data.workoutSections),
       },
+      workoutType: {
+        connect: { id: data.workoutType || undefined },
+      },
     },
     select,
   })
+
+  if (updatedWorkout) {
+    // 3. Check media deletion last once we know that full transactional update is completed.
+    await checkWorkoutMediaForDeletion(prisma, data)
+  }
+
+  // 3. Update and rebuild new object.
+  return updatedWorkout
+}
+
+const shallowUpdateWorkout = async (
+  r: any,
+  { authedUserId, data }: MutationShallowUpdateWorkoutArgs,
+  { select, prisma }: Context,
+) => {
+  // 1. Update workout.
+  const updateWorkout: Workout = await prisma.workout.update({
+    where: {
+      id: data.id,
+    },
+    data,
+    select,
+  })
+
+  // 2. Check media deletion once you know that the main transaction has succeeded.
+  await checkWorkoutMediaForDeletion(prisma, data)
+
+  return updateWorkout
+}
+
+const deleteWorkoutById = async (
+  r: any,
+  { authedUserId, workoutId }: MutationDeleteWorkoutByIdArgs,
+  { prisma }: Context,
+) => {
+  // https://github.com/paljs/prisma-tools/issues/152
+  // Get the workout first before deleting in - you will need access to the media fields to check them for deletion once the main delete is completed.
+  // This can be removed once the above issue is resolved.
+  const workoutForDeletion: Workout = await prisma.workout.findOne({
+    where: { id: workoutId },
+  })
+
+  // Cascade delete reliant descendants with https://paljs.com/plugins/delete/
+  // This is currently returning null
+  // https://github.com/paljs/prisma-tools/issues/152
+  const deletedWorkout: Workout = await prisma.onDelete({
+    model: 'Workout',
+    where: { id: workoutId },
+    deleteParent: true, // If false, just the descendants will be deleted.
+  })
+
+  // Once the above issue is resolved - replace this with the original media check below.
+  await checkThenDeleteWorkoutImageFile(prisma, workoutForDeletion.imageUrl)
+  await checkThenDeleteWorkoutVideoFiles(
+    prisma,
+    workoutForDeletion.demoVideoUrl,
+    workoutForDeletion.demoVideoThumbUrl,
+  )
+
+  // if (deletedWorkout && deletedWorkout.id === workoutId) {
+  //   await checkThenDeleteWorkoutImageFile(prisma, deletedWorkout.imageUrl)
+  //   await checkThenDeleteWorkoutVideoFiles(
+  //     prisma,
+  //     deletedWorkout.demoVideoUrl,
+  //     deletedWorkout.demoVideoThumbUrl,
+  //   )
+  //   return deletedWorkout.id
+  // } else {
+  //   return null
+  // }
+
+  return workoutForDeletion.id
 }
 
 export {
@@ -103,4 +189,6 @@ export {
   workoutById,
   createWorkout,
   deepUpdateWorkout,
+  shallowUpdateWorkout,
+  deleteWorkoutById,
 }

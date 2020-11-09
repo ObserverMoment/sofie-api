@@ -35,7 +35,7 @@ export default gql`
       authedUserId: ID!
       data: UpdateGymProfileInput!
     ): GymProfile!
-    deleteGymProfile(authedUserId: ID!, gymProfileId: ID!): ID!
+    deleteGymProfileById(authedUserId: ID!, gymProfileId: ID!): ID
     createMoveProfile(
       authedUserId: ID!
       data: CreateMoveProfileInput!
@@ -45,15 +45,15 @@ export default gql`
       data: UpdateMoveProfileInput!
     ): MoveProfile!
     createWorkout(authedUserId: ID!, data: CreateWorkoutInput!): Workout!
-    deepUpdateWorkout(
-      authedUserId: ID!
-      data: DeepUpdateWorkoutInput!
-    ): Workout!
     shallowUpdateWorkout(
       authedUserId: ID!
       data: ShallowUpdateWorkoutInput!
     ): Workout!
-    deleteWorkout(authedUserId: ID!, workoutId: ID!): ID!
+    deepUpdateWorkout(
+      authedUserId: ID!
+      data: DeepUpdateWorkoutInput!
+    ): Workout!
+    deleteWorkoutById(authedUserId: ID!, workoutId: ID!): ID
     likeWorkout(authedUserId: ID!, workoutId: ID!): ID
     unlikeWorkout(authedUserId: ID!, workoutId: ID!): ID
     scheduleWorkout(
@@ -67,17 +67,17 @@ export default gql`
     ): ScheduledWorkout!
     createLoggedWorkout(
       authedUserId: ID!
-      loggedWorkoutData: CreateLoggedWorkoutInput!
+      data: CreateLoggedWorkoutInput!
     ): LoggedWorkout!
     deepUpdateLoggedWorkout(
       authedUserId: ID!
-      loggedWorkoutData: DeepUpdateLoggedWorkoutInput!
+      data: DeepUpdateLoggedWorkoutInput!
     ): LoggedWorkout!
     shallowUpdateLoggedWorkout(
       authedUserId: ID!
-      loggedWorkoutData: ShallowUpdateLoggedWorkoutInput!
+      data: ShallowUpdateLoggedWorkoutInput!
     ): LoggedWorkout!
-    deleteLoggedWorkout(authedUserId: ID!, loggedWorkoutId: ID!): ID!
+    deleteLoggedWorkoutById(authedUserId: ID!, loggedWorkoutId: ID!): ID!
     createWorkoutProgram(
       authedUserId: ID!
       data: CreateWorkoutProgramInput!
