@@ -33,7 +33,6 @@ const selectMiddleware = async (
   return resolve(root, args, context, info)
 }
 
-// TODO: Add hemlmet middleware back in to catch errors and wrap all in trycatch
 let schema = makeExecutableSchema({
   typeDefs,
   resolvers,
