@@ -1,11 +1,6 @@
 import fetch from 'node-fetch'
 import crypto from 'crypto'
-import {
-  Workout,
-  PrismaClient,
-  LoggedWorkout,
-  WorkoutArgs,
-} from '@prisma/client'
+import { Workout, PrismaClient, LoggedWorkout } from '@prisma/client'
 import {
   ShallowUpdateWorkoutInput,
   DeepUpdateWorkoutInput,
