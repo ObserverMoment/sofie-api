@@ -9,7 +9,7 @@
     "dev": "concurrently \"tsc -w\" \"nodemon dist/index.js\"",
     "debug": "nodemon --inspect dist/index.js",
     "generate": "graphql-codegen --config codegen.yml",
-    "heroku-prebuild": "npm run generate && prisma migrate up --experimental --auto-approve && prisma generate"
+    "postinstall": "npm run generate && prisma migrate up --experimental --auto-approve && prisma generate && npm run build"
   },
   "author": "",
   "license": "ISC",
