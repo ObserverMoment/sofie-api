@@ -23,8 +23,7 @@
     "graphql-middleware": "^4.0.2",
     "graphql-parse-resolve-info": "^4.7.0",
     "graphql-type-json": "^0.3.2",
-    "node-fetch": "^2.6.0",
-    "puppeteer": "^3.3.0"
+    "node-fetch": "^2.6.0"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "1.17.0",
