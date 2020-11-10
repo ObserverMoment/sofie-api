@@ -7,6 +7,7 @@ import {
   MutationUpdateUserArgs,
   QueryCheckUniqueDisplayNameArgs,
   QueryUserByUidArgs,
+  QueryUsersArgs,
 } from '../../generated/graphql'
 
 //// Queries ////
@@ -20,6 +21,12 @@ const checkUniqueDisplayName = async (
   })
   return user == null
 }
+
+const users = async (
+  r: any,
+  { authedUserId }: QueryUsersArgs,
+  { select, prisma }: Context,
+) => prisma.user.findMany({ select })
 
 const userByUid = async (
   r: any,
@@ -111,6 +118,7 @@ const deleteGymProfileById = async (
 
 export {
   checkUniqueDisplayName,
+  users,
   userByUid,
   createUser,
   updateUser,

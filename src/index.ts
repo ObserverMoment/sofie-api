@@ -23,7 +23,7 @@ class Prisma extends PrismaClient {
 }
 
 export interface Context {
-  // Type is not declared here because of clash between Prisma return types and GraphQL schema types and input definitions. Is a known issue with some workarounds available in Prisma docs.
+  // PrismaClient type is not declared here because of clash between Prisma return types and GraphQL schema types and input definitions. Is a known issue with some workarounds available in Prisma docs.
   prisma: any
   // https://paljs.com/plugins/select
   select?: any

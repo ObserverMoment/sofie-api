@@ -1,29 +1,15 @@
 import { Context } from '../..'
 
-const officialMoves = async (r: any, a: any, { prisma, select }: Context) =>
+const moves = async (r: any, a: any, { prisma, select }: Context) =>
   prisma.move.findMany({ select })
 
-const officialEquipments = async (
-  r: any,
-  a: any,
-  { prisma, select }: Context,
-) => prisma.equipment.findMany({ select })
+const equipments = async (r: any, a: any, { prisma, select }: Context) =>
+  prisma.equipment.findMany({ select })
 
-const officialWorkoutGoals = async (
-  r: any,
-  a: any,
-  { prisma, select }: Context,
-) => prisma.workoutGoal.findMany({ select })
+const workoutGoals = async (r: any, a: any, { prisma, select }: Context) =>
+  prisma.workoutGoal.findMany({ select })
 
-const officialWorkoutTypes = async (
-  r: any,
-  a: any,
-  { prisma, select }: Context,
-) => prisma.workoutType.findMany({ select })
+const workoutTypes = async (r: any, a: any, { prisma, select }: Context) =>
+  prisma.workoutType.findMany({ select })
 
-export {
-  officialMoves,
-  officialEquipments,
-  officialWorkoutGoals,
-  officialWorkoutTypes,
-}
+export { moves, equipments, workoutGoals, workoutTypes }

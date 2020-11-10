@@ -2,6 +2,7 @@ import { Resolvers } from '../../generated/graphql'
 
 import {
   checkUniqueDisplayName,
+  users,
   userByUid,
   createUser,
   updateUser,
@@ -10,12 +11,7 @@ import {
   deleteGymProfileById,
 } from './user'
 
-import {
-  officialMoves,
-  officialEquipments,
-  officialWorkoutGoals,
-  officialWorkoutTypes,
-} from './officialData'
+import { moves, equipments, workoutGoals, workoutTypes } from './officialData'
 
 import {
   officialWorkoutPrograms,
@@ -75,11 +71,12 @@ const resolvers: Resolvers = {
   }),
   Query: {
     checkUniqueDisplayName,
+    users,
     userByUid,
-    officialMoves,
-    officialEquipments,
-    officialWorkoutGoals,
-    officialWorkoutTypes,
+    moves,
+    equipments,
+    workoutGoals,
+    workoutTypes,
     officialWorkoutPrograms,
     publicWorkoutPrograms,
     privateWorkoutPrograms,

@@ -46,6 +46,15 @@ export default gql`
     BODYWEIGHTPERCENT
   }
 
+  """
+  Standard moves are built in / official.
+  Custom moves are created by users.
+  """
+  enum MoveType {
+    STANDARD
+    CUSTOM
+  }
+
   enum ThemePreference {
     DARK
     LIGHT

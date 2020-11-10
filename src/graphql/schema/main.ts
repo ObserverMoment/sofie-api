@@ -6,10 +6,11 @@ export default gql`
 
   type Query {
     checkUniqueDisplayName(displayName: String!): Boolean!
-    officialMoves: [Move!]!
-    officialEquipments: [Equipment!]!
-    officialWorkoutTypes: [WorkoutType!]!
-    officialWorkoutGoals: [WorkoutGoal]!
+    users(authedUserId: ID!): [User!]!
+    moves: [Move!]!
+    equipments: [Equipment!]!
+    workoutTypes: [WorkoutType!]!
+    workoutGoals: [WorkoutGoal]!
     officialWorkouts: [Workout!]!
     privateWorkouts(authedUserId: ID!): [Workout!]!
     publicWorkouts(authedUserId: ID!): [Workout!]!
@@ -122,12 +123,11 @@ export default gql`
   type Move {
     id: ID!
     name: String!
+    searchTerms: String
     description: String
     demoVideoUrl: String
-    scope: AccessScopeType!
-    groupId: String
+    type: MoveType!
     validRepTypes: [WorkoutMoveRepType!]!
-    createdById: String
     requiredEquipments: [Equipment!]!
     selectableEquipments: [Equipment!]!
   }
@@ -190,43 +190,5 @@ export default gql`
     description: String
     requiredMoveIds: [ID!]
     excludedMoveIds: [ID!]
-  }
-
-  type User {
-    id: ID!
-    avatarUrl: String
-    bio: String
-    birthdate: DateTime
-    city: String
-    countryCode: String
-    displayName: String
-    firstname: String
-    lastname: String
-    themePreference: ThemePreference!
-    gender: Gender
-    hasOnboarded: Boolean!
-    height: Float
-    weight: Float
-    unitSystem: UnitSystem
-    gymProfiles: [GymProfile!]
-    moveProfiles: [MoveProfile!]
-  }
-
-  input UpdateUserInput {
-    avatarUrl: String
-    bio: String
-    birthdate: DateTime
-    city: String
-    countryCode: String
-    displayName: String
-    firstname: String
-    themePreference: ThemePreference
-    gender: Gender
-    gymBox: String
-    hasOnboarded: Boolean
-    height: Float
-    lastname: String
-    unitSystem: UnitSystem
-    weight: Float
   }
 `

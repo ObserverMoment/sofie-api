@@ -19,10 +19,11 @@ export type Scalars = {
 export type Query = {
   __typename?: 'Query';
   checkUniqueDisplayName: Scalars['Boolean'];
-  officialMoves: Array<Move>;
-  officialEquipments: Array<Equipment>;
-  officialWorkoutTypes: Array<WorkoutType>;
-  officialWorkoutGoals: Array<Maybe<WorkoutGoal>>;
+  users: Array<User>;
+  moves: Array<Move>;
+  equipments: Array<Equipment>;
+  workoutTypes: Array<WorkoutType>;
+  workoutGoals: Array<Maybe<WorkoutGoal>>;
   officialWorkouts: Array<Workout>;
   privateWorkouts: Array<Workout>;
   publicWorkouts: Array<Workout>;
@@ -40,6 +41,11 @@ export type Query = {
 
 export type QueryCheckUniqueDisplayNameArgs = {
   displayName: Scalars['String'];
+};
+
+
+export type QueryUsersArgs = {
+  authedUserId: Scalars['ID'];
 };
 
 
@@ -305,12 +311,11 @@ export type Move = {
   __typename?: 'Move';
   id: Scalars['ID'];
   name: Scalars['String'];
+  searchTerms?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   demoVideoUrl?: Maybe<Scalars['String']>;
-  scope: AccessScopeType;
-  groupId?: Maybe<Scalars['String']>;
+  type: MoveType;
   validRepTypes: Array<WorkoutMoveRepType>;
-  createdById?: Maybe<Scalars['String']>;
   requiredEquipments: Array<Equipment>;
   selectableEquipments: Array<Equipment>;
 };
@@ -742,7 +747,10 @@ export type CreateWorkoutMoveInput = {
   selectedEquipment?: Maybe<Scalars['ID']>;
 };
 
-/** Enums */
+/**
+ * Enums
+ * enums
+ */
 export type AccessScopeType = 
   | 'PRIVATE'
   | 'PUBLIC'
@@ -777,6 +785,14 @@ export type LoadUnit =
   | 'KG'
   | 'LB'
   | 'BODYWEIGHTPERCENT';
+
+/**
+ * Standard moves are built in / official.
+ * Custom moves are created by users.
+ */
+export type MoveType = 
+  | 'STANDARD'
+  | 'CUSTOM';
 
 export type ThemePreference = 
   | 'DARK'
@@ -947,6 +963,7 @@ export type ResolversTypes = ResolversObject<{
   FrequencyPeriod: FrequencyPeriod;
   Gender: Gender;
   LoadUnit: LoadUnit;
+  MoveType: MoveType;
   ThemePreference: ThemePreference;
   UnitSystem: UnitSystem;
   WorkoutMoveRepType: WorkoutMoveRepType;
@@ -1017,10 +1034,11 @@ export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversT
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   checkUniqueDisplayName?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryCheckUniqueDisplayNameArgs, 'displayName'>>;
-  officialMoves?: Resolver<Array<ResolversTypes['Move']>, ParentType, ContextType>;
-  officialEquipments?: Resolver<Array<ResolversTypes['Equipment']>, ParentType, ContextType>;
-  officialWorkoutTypes?: Resolver<Array<ResolversTypes['WorkoutType']>, ParentType, ContextType>;
-  officialWorkoutGoals?: Resolver<Array<Maybe<ResolversTypes['WorkoutGoal']>>, ParentType, ContextType>;
+  users?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUsersArgs, 'authedUserId'>>;
+  moves?: Resolver<Array<ResolversTypes['Move']>, ParentType, ContextType>;
+  equipments?: Resolver<Array<ResolversTypes['Equipment']>, ParentType, ContextType>;
+  workoutTypes?: Resolver<Array<ResolversTypes['WorkoutType']>, ParentType, ContextType>;
+  workoutGoals?: Resolver<Array<Maybe<ResolversTypes['WorkoutGoal']>>, ParentType, ContextType>;
   officialWorkouts?: Resolver<Array<ResolversTypes['Workout']>, ParentType, ContextType>;
   privateWorkouts?: Resolver<Array<ResolversTypes['Workout']>, ParentType, ContextType, RequireFields<QueryPrivateWorkoutsArgs, 'authedUserId'>>;
   publicWorkouts?: Resolver<Array<ResolversTypes['Workout']>, ParentType, ContextType, RequireFields<QueryPublicWorkoutsArgs, 'authedUserId'>>;
@@ -1077,12 +1095,11 @@ export type EquipmentResolvers<ContextType = any, ParentType extends ResolversPa
 export type MoveResolvers<ContextType = any, ParentType extends ResolversParentTypes['Move'] = ResolversParentTypes['Move']> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  searchTerms?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   demoVideoUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  scope?: Resolver<ResolversTypes['AccessScopeType'], ParentType, ContextType>;
-  groupId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  type?: Resolver<ResolversTypes['MoveType'], ParentType, ContextType>;
   validRepTypes?: Resolver<Array<ResolversTypes['WorkoutMoveRepType']>, ParentType, ContextType>;
-  createdById?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   requiredEquipments?: Resolver<Array<ResolversTypes['Equipment']>, ParentType, ContextType>;
   selectableEquipments?: Resolver<Array<ResolversTypes['Equipment']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
