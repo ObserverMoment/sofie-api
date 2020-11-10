@@ -274,22 +274,22 @@ model WorkoutProgramWorkout {
 // to be on a workout or a loggedWorkout
 // Currently no validation makinhg sure the section is not parentless.
 model WorkoutSection {
-  id               String            @id @default(uuid())
-  createdAt        DateTime          @default(now())
-  sortPosition     Int
-  notes            String?
-  timecap          Int?
+  id              String         @id @default(uuid())
+  createdAt       DateTime       @default(now())
+  sortPosition    Int
+  notes           String?
+  timecap         Int?
   // For logging. Number of seconds it took to complete a single round of the section
-  duration         Int?
-  rounds           Int
-  workout          Workout?          @relation(fields: [workoutId], references: [id])
-  workoutId        String?
+  duration        Int?
+  rounds          Int
+  workout         Workout?       @relation(fields: [workoutId], references: [id])
+  workoutId       String?
   /// @onDelete(CASCADE)
-  workoutMoves     WorkoutMove[]
+  workoutMoves    WorkoutMove[]
   /// @onDelete(CASCADE)
-  roundAdjustRules RoundAdjustRule[]
-  loggedWorkout    LoggedWorkout?    @relation(fields: [loggedWorkoutId], references: [id])
-  loggedWorkoutId  String?
+  // roundAdjustRules RoundAdjustRule[]
+  loggedWorkout   LoggedWorkout? @relation(fields: [loggedWorkoutId], references: [id])
+  loggedWorkoutId String?
 }
 
 model WorkoutType {
@@ -374,23 +374,23 @@ enum WorkoutScoreType {
 // Every {roundFrequency} rounds {operator} reps by {amount}
 // Eg. Every 3 rounds INCREASE reps by 10 (for all workout moves within the section)
 // Currently not in use pending validation of concept and design of UI.
-model RoundAdjustRule {
-  id               String         @id @default(uuid())
-  action           RuleAction
-  target           RuleTarget
-  amount           Float
-  roundFrequency   Int            @default(1) // Every round
-  WorkoutSection   WorkoutSection @relation(fields: [workoutSectionId], references: [id])
-  workoutSectionId String
-}
+// model RoundAdjustRule {
+//   id               String         @id @default(uuid())
+//   action           RuleAction
+//   target           RuleTarget
+//   amount           Float
+//   roundFrequency   Int            @default(1) // Every round
+//   WorkoutSection   WorkoutSection @relation(fields: [workoutSectionId], references: [id])
+//   workoutSectionId String
+// }
 
-enum RuleAction {
-  INCREASE
-  DECREASE
-  MULTIPLY
-}
+// enum RuleAction {
+//   INCREASE
+//   DECREASE
+//   MULTIPLY
+// }
 
-enum RuleTarget {
-  REPS
-  LOAD
-}
+// enum RuleTarget {
+//   REPS
+//   LOAD
+// }

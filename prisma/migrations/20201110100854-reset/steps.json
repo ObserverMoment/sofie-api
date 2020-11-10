@@ -7,6 +7,7 @@
       "values": [
         "OFFICIAL",
         "PUBLIC",
+        "GROUP",
         "PRIVATE"
       ]
     },
@@ -90,23 +91,6 @@
         "AMREPS",
         "FORTIME",
         "FORLOAD"
-      ]
-    },
-    {
-      "tag": "CreateEnum",
-      "enum": "RuleAction",
-      "values": [
-        "INCREASE",
-        "DECREASE",
-        "MULTIPLY"
-      ]
-    },
-    {
-      "tag": "CreateEnum",
-      "enum": "RuleTarget",
-      "values": [
-        "REPS",
-        "LOAD"
       ]
     },
     {
@@ -4362,13 +4346,6 @@
     {
       "tag": "CreateField",
       "model": "WorkoutSection",
-      "field": "roundAdjustRules",
-      "type": "RoundAdjustRule",
-      "arity": "List"
-    },
-    {
-      "tag": "CreateField",
-      "model": "WorkoutSection",
       "field": "loggedWorkout",
       "type": "LoggedWorkout",
       "arity": "Optional"
@@ -4507,159 +4484,6 @@
       "field": "loggedWorkouts",
       "type": "LoggedWorkout",
       "arity": "List"
-    },
-    {
-      "tag": "CreateModel",
-      "model": "RoundAdjustRule"
-    },
-    {
-      "tag": "CreateField",
-      "model": "RoundAdjustRule",
-      "field": "id",
-      "type": "String",
-      "arity": "Required"
-    },
-    {
-      "tag": "CreateDirective",
-      "location": {
-        "path": {
-          "tag": "Field",
-          "model": "RoundAdjustRule",
-          "field": "id"
-        },
-        "directive": "id"
-      }
-    },
-    {
-      "tag": "CreateDirective",
-      "location": {
-        "path": {
-          "tag": "Field",
-          "model": "RoundAdjustRule",
-          "field": "id"
-        },
-        "directive": "default"
-      }
-    },
-    {
-      "tag": "CreateArgument",
-      "location": {
-        "tag": "Directive",
-        "path": {
-          "tag": "Field",
-          "model": "RoundAdjustRule",
-          "field": "id"
-        },
-        "directive": "default"
-      },
-      "argument": "",
-      "value": "uuid()"
-    },
-    {
-      "tag": "CreateField",
-      "model": "RoundAdjustRule",
-      "field": "action",
-      "type": "RuleAction",
-      "arity": "Required"
-    },
-    {
-      "tag": "CreateField",
-      "model": "RoundAdjustRule",
-      "field": "target",
-      "type": "RuleTarget",
-      "arity": "Required"
-    },
-    {
-      "tag": "CreateField",
-      "model": "RoundAdjustRule",
-      "field": "amount",
-      "type": "Float",
-      "arity": "Required"
-    },
-    {
-      "tag": "CreateField",
-      "model": "RoundAdjustRule",
-      "field": "roundFrequency",
-      "type": "Int",
-      "arity": "Required"
-    },
-    {
-      "tag": "CreateDirective",
-      "location": {
-        "path": {
-          "tag": "Field",
-          "model": "RoundAdjustRule",
-          "field": "roundFrequency"
-        },
-        "directive": "default"
-      }
-    },
-    {
-      "tag": "CreateArgument",
-      "location": {
-        "tag": "Directive",
-        "path": {
-          "tag": "Field",
-          "model": "RoundAdjustRule",
-          "field": "roundFrequency"
-        },
-        "directive": "default"
-      },
-      "argument": "",
-      "value": "1"
-    },
-    {
-      "tag": "CreateField",
-      "model": "RoundAdjustRule",
-      "field": "WorkoutSection",
-      "type": "WorkoutSection",
-      "arity": "Required"
-    },
-    {
-      "tag": "CreateDirective",
-      "location": {
-        "path": {
-          "tag": "Field",
-          "model": "RoundAdjustRule",
-          "field": "WorkoutSection"
-        },
-        "directive": "relation"
-      }
-    },
-    {
-      "tag": "CreateArgument",
-      "location": {
-        "tag": "Directive",
-        "path": {
-          "tag": "Field",
-          "model": "RoundAdjustRule",
-          "field": "WorkoutSection"
-        },
-        "directive": "relation"
-      },
-      "argument": "fields",
-      "value": "[workoutSectionId]"
-    },
-    {
-      "tag": "CreateArgument",
-      "location": {
-        "tag": "Directive",
-        "path": {
-          "tag": "Field",
-          "model": "RoundAdjustRule",
-          "field": "WorkoutSection"
-        },
-        "directive": "relation"
-      },
-      "argument": "references",
-      "value": "[id]"
-    },
-    {
-      "tag": "CreateField",
-      "model": "RoundAdjustRule",
-      "field": "workoutSectionId",
-      "type": "String",
-      "arity": "Required"
     }
   ]
 }

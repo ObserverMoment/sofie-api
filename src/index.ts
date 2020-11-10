@@ -10,6 +10,9 @@ import { PrismaDelete, onDeleteArgs } from '@paljs/plugins'
 
 require('dotenv').config()
 
+console.log(process.env.DATABASE_URL)
+console.log(process.env.NODE_ENV)
+
 // https://paljs.com/plugins/delete/
 class Prisma extends PrismaClient {
   constructor(options?: PrismaClientOptions) {
