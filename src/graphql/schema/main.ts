@@ -78,7 +78,7 @@ export default gql`
       authedUserId: ID!
       data: ShallowUpdateLoggedWorkoutInput!
     ): LoggedWorkout!
-    deleteLoggedWorkoutById(authedUserId: ID!, loggedWorkoutId: ID!): ID!
+    deleteLoggedWorkoutById(authedUserId: ID!, loggedWorkoutId: ID!): ID
     createWorkoutProgram(
       authedUserId: ID!
       data: CreateWorkoutProgramInput!
@@ -91,7 +91,7 @@ export default gql`
       authedUserId: ID!
       data: DeepUpdateWorkoutProgramInput!
     ): WorkoutProgram!
-    deleteWorkoutProgram(authedUserId: ID!, workoutProgramId: ID!): ID!
+    deleteWorkoutProgramById(authedUserId: ID!, workoutProgramId: ID!): ID
     addEnrolmentToWorkoutProgram(
       authedUserId: ID!
       workoutProgramId: ID!

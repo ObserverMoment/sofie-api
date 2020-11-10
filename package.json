@@ -15,7 +15,7 @@
   "license": "ISC",
   "dependencies": {
     "@graphql-tools/merge": "^6.0.16",
-    "@paljs/plugins": "^2.5.11",
+    "@paljs/plugins": "^2.5.12",
     "@prisma/client": "^2.10.2",
     "apollo-server": "^2.19.0",
     "dotenv": "^8.2.0",

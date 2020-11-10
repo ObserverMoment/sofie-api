@@ -136,44 +136,33 @@ const deleteLoggedWorkoutById = async (
   { authedUserId, loggedWorkoutId }: MutationDeleteLoggedWorkoutByIdArgs,
   { prisma }: Context,
 ) => {
-  // https://github.com/paljs/prisma-tools/issues/152
-  // Get the workout first before deleting in - you will need access to the media fields to check them for deletion once the main delete is completed.
-  // This can be removed once the above issue is resolved.
-  const loggedWorkoutForDeletion: LoggedWorkout = await prisma.loggedWorkout.findOne(
-    {
-      where: { id: loggedWorkoutId },
-    },
-  )
-
   // Cascade delete reliant descendants with https://paljs.com/plugins/delete/
-  // This is currently returning null...
-  // https://github.com/paljs/prisma-tools/issues/152
   const deletedLoggedWorkout: LoggedWorkout = await prisma.onDelete({
     model: 'LoggedWorkout',
     where: { id: loggedWorkoutId },
     deleteParent: true, // If false, just the descendants will be deleted.
+    returnFields: {
+      id: true,
+      imageUrl: true,
+      videoUrl: true,
+      videoThumbUrl: true,
+    },
   })
 
-  // Once the above issue is resolved - replace this with the original media check below.
-  await deleteFiles([
-    loggedWorkoutForDeletion.videoUrl,
-    loggedWorkoutForDeletion.videoThumbUrl,
-  ] as string[])
-  await deleteFiles([loggedWorkoutForDeletion.imageUrl] as string[])
-
-  // // Remove any media on the server.
-  // if (deletedLoggedWorkout.videoUrl) {
-  //   await deleteFiles([
-  //     deletedLoggedWorkout.videoUrl,
-  //     deletedLoggedWorkout.videoThumbUrl,
-  //   ] as string[])
-  // }
-
-  // if (deletedLoggedWorkout.imageUrl) {
-  //   await deleteFiles([deletedLoggedWorkout.imageUrl] as string[])
-  // }
-
-  return loggedWorkoutForDeletion.id
+  if (deletedLoggedWorkout) {
+    if (deletedLoggedWorkout.imageUrl) {
+      await deleteFiles([deletedLoggedWorkout.imageUrl] as string[])
+    }
+    if (deletedLoggedWorkout.videoUrl) {
+      await deleteFiles([
+        deletedLoggedWorkout.videoUrl,
+        deletedLoggedWorkout.videoThumbUrl,
+      ] as string[])
+    }
+    return deletedLoggedWorkout.id
+  } else {
+    return null
+  }
 }
 
 export {

@@ -23,7 +23,7 @@ export default gql`
     imageUrl: String
     videoUrl: String
     videoThumbUrl: String
-    workoutGoalIds: [ID!]!
+    workoutGoals: [ID!]!
     programWorkouts: [CreateWorkoutProgramWorkoutInput!]!
   }
 
@@ -35,7 +35,7 @@ export default gql`
     imageUrl: String
     videoUrl: String
     videoThumbUrl: String
-    workoutGoalIds: [ID!]!
+    workoutGoals: [ID!]!
     programWorkouts: [CreateWorkoutProgramWorkoutInput!]!
   }
 
@@ -46,7 +46,7 @@ export default gql`
     imageUrl: String
     videoUrl: String
     videoThumbUrl: String
-    workoutGoalIds: [ID!]!
+    workoutGoals: [ID!]!
   }
 
   type WorkoutProgramWorkout {
@@ -59,7 +59,7 @@ export default gql`
   input CreateWorkoutProgramWorkoutInput {
     dayNumber: Float!
     notes: String
-    workoutId: ID!
+    workout: ID!
   }
 
   type WorkoutProgramEnrolment {

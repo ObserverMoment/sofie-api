@@ -143,43 +143,30 @@ const deleteWorkoutById = async (
   { authedUserId, workoutId }: MutationDeleteWorkoutByIdArgs,
   { prisma }: Context,
 ) => {
-  // https://github.com/paljs/prisma-tools/issues/152
-  // Get the workout first before deleting in - you will need access to the media fields to check them for deletion once the main delete is completed.
-  // This can be removed once the above issue is resolved.
-  const workoutForDeletion: Workout = await prisma.workout.findOne({
-    where: { id: workoutId },
-  })
-
   // Cascade delete reliant descendants with https://paljs.com/plugins/delete/
-  // This is currently returning null
-  // https://github.com/paljs/prisma-tools/issues/152
   const deletedWorkout: Workout = await prisma.onDelete({
     model: 'Workout',
     where: { id: workoutId },
     deleteParent: true, // If false, just the descendants will be deleted.
+    returnFields: {
+      id: true,
+      imageUrl: true,
+      demoVideoUrl: true,
+      demoVideoThumbUrl: true,
+    },
   })
 
-  // Once the above issue is resolved - replace this with the original media check below.
-  await checkThenDeleteWorkoutImageFile(prisma, workoutForDeletion.imageUrl)
-  await checkThenDeleteWorkoutVideoFiles(
-    prisma,
-    workoutForDeletion.demoVideoUrl,
-    workoutForDeletion.demoVideoThumbUrl,
-  )
-
-  // if (deletedWorkout && deletedWorkout.id === workoutId) {
-  //   await checkThenDeleteWorkoutImageFile(prisma, deletedWorkout.imageUrl)
-  //   await checkThenDeleteWorkoutVideoFiles(
-  //     prisma,
-  //     deletedWorkout.demoVideoUrl,
-  //     deletedWorkout.demoVideoThumbUrl,
-  //   )
-  //   return deletedWorkout.id
-  // } else {
-  //   return null
-  // }
-
-  return workoutForDeletion.id
+  if (deletedWorkout) {
+    await checkThenDeleteWorkoutImageFile(prisma, deletedWorkout.imageUrl)
+    await checkThenDeleteWorkoutVideoFiles(
+      prisma,
+      deletedWorkout.demoVideoUrl,
+      deletedWorkout.demoVideoThumbUrl,
+    )
+    return deletedWorkout.id
+  } else {
+    return null
+  }
 }
 
 export {

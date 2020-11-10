@@ -119,11 +119,11 @@ export type Mutation = {
   createLoggedWorkout: LoggedWorkout;
   deepUpdateLoggedWorkout: LoggedWorkout;
   shallowUpdateLoggedWorkout: LoggedWorkout;
-  deleteLoggedWorkoutById: Scalars['ID'];
+  deleteLoggedWorkoutById?: Maybe<Scalars['ID']>;
   createWorkoutProgram: WorkoutProgram;
   shallowUpdateWorkoutProgram: WorkoutProgram;
   deepUpdateWorkoutProgram: WorkoutProgram;
-  deleteWorkoutProgram: Scalars['ID'];
+  deleteWorkoutProgramById?: Maybe<Scalars['ID']>;
   addEnrolmentToWorkoutProgram: WorkoutProgram;
   removeEnrolmentFromWorkoutProgram: WorkoutProgram;
   addReviewToWorkoutProgram: WorkoutProgram;
@@ -268,7 +268,7 @@ export type MutationDeepUpdateWorkoutProgramArgs = {
 };
 
 
-export type MutationDeleteWorkoutProgramArgs = {
+export type MutationDeleteWorkoutProgramByIdArgs = {
   authedUserId: Scalars['ID'];
   workoutProgramId: Scalars['ID'];
 };
@@ -523,7 +523,7 @@ export type CreateWorkoutProgramInput = {
   imageUrl?: Maybe<Scalars['String']>;
   videoUrl?: Maybe<Scalars['String']>;
   videoThumbUrl?: Maybe<Scalars['String']>;
-  workoutGoalIds: Array<Scalars['ID']>;
+  workoutGoals: Array<Scalars['ID']>;
   programWorkouts: Array<CreateWorkoutProgramWorkoutInput>;
 };
 
@@ -534,7 +534,7 @@ export type DeepUpdateWorkoutProgramInput = {
   imageUrl?: Maybe<Scalars['String']>;
   videoUrl?: Maybe<Scalars['String']>;
   videoThumbUrl?: Maybe<Scalars['String']>;
-  workoutGoalIds: Array<Scalars['ID']>;
+  workoutGoals: Array<Scalars['ID']>;
   programWorkouts: Array<CreateWorkoutProgramWorkoutInput>;
 };
 
@@ -545,7 +545,7 @@ export type ShallowUpdateWorkoutProgramInput = {
   imageUrl?: Maybe<Scalars['String']>;
   videoUrl?: Maybe<Scalars['String']>;
   videoThumbUrl?: Maybe<Scalars['String']>;
-  workoutGoalIds: Array<Scalars['ID']>;
+  workoutGoals: Array<Scalars['ID']>;
 };
 
 export type WorkoutProgramWorkout = {
@@ -559,7 +559,7 @@ export type WorkoutProgramWorkout = {
 export type CreateWorkoutProgramWorkoutInput = {
   dayNumber: Scalars['Float'];
   notes?: Maybe<Scalars['String']>;
-  workoutId: Scalars['ID'];
+  workout: Scalars['ID'];
 };
 
 export type WorkoutProgramEnrolment = {
@@ -1073,11 +1073,11 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createLoggedWorkout?: Resolver<ResolversTypes['LoggedWorkout'], ParentType, ContextType, RequireFields<MutationCreateLoggedWorkoutArgs, 'authedUserId' | 'data'>>;
   deepUpdateLoggedWorkout?: Resolver<ResolversTypes['LoggedWorkout'], ParentType, ContextType, RequireFields<MutationDeepUpdateLoggedWorkoutArgs, 'authedUserId' | 'data'>>;
   shallowUpdateLoggedWorkout?: Resolver<ResolversTypes['LoggedWorkout'], ParentType, ContextType, RequireFields<MutationShallowUpdateLoggedWorkoutArgs, 'authedUserId' | 'data'>>;
-  deleteLoggedWorkoutById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteLoggedWorkoutByIdArgs, 'authedUserId' | 'loggedWorkoutId'>>;
+  deleteLoggedWorkoutById?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType, RequireFields<MutationDeleteLoggedWorkoutByIdArgs, 'authedUserId' | 'loggedWorkoutId'>>;
   createWorkoutProgram?: Resolver<ResolversTypes['WorkoutProgram'], ParentType, ContextType, RequireFields<MutationCreateWorkoutProgramArgs, 'authedUserId' | 'data'>>;
   shallowUpdateWorkoutProgram?: Resolver<ResolversTypes['WorkoutProgram'], ParentType, ContextType, RequireFields<MutationShallowUpdateWorkoutProgramArgs, 'authedUserId' | 'data'>>;
   deepUpdateWorkoutProgram?: Resolver<ResolversTypes['WorkoutProgram'], ParentType, ContextType, RequireFields<MutationDeepUpdateWorkoutProgramArgs, 'authedUserId' | 'data'>>;
-  deleteWorkoutProgram?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteWorkoutProgramArgs, 'authedUserId' | 'workoutProgramId'>>;
+  deleteWorkoutProgramById?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType, RequireFields<MutationDeleteWorkoutProgramByIdArgs, 'authedUserId' | 'workoutProgramId'>>;
   addEnrolmentToWorkoutProgram?: Resolver<ResolversTypes['WorkoutProgram'], ParentType, ContextType, RequireFields<MutationAddEnrolmentToWorkoutProgramArgs, 'authedUserId' | 'workoutProgramId'>>;
   removeEnrolmentFromWorkoutProgram?: Resolver<ResolversTypes['WorkoutProgram'], ParentType, ContextType, RequireFields<MutationRemoveEnrolmentFromWorkoutProgramArgs, 'authedUserId' | 'workoutProgramId'>>;
   addReviewToWorkoutProgram?: Resolver<ResolversTypes['WorkoutProgram'], ParentType, ContextType, RequireFields<MutationAddReviewToWorkoutProgramArgs, 'authedUserId' | 'workoutProgramId' | 'data'>>;
