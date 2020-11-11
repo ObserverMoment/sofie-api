@@ -20,6 +20,7 @@ export default gql`
   input CreateWorkoutProgramInput {
     name: String!
     description: String
+    scope: AccessScopeType!
     imageUrl: String
     videoUrl: String
     videoThumbUrl: String
@@ -32,6 +33,7 @@ export default gql`
     id: ID!
     name: String
     description: String
+    scope: AccessScopeType
     imageUrl: String
     videoUrl: String
     videoThumbUrl: String
@@ -43,6 +45,7 @@ export default gql`
     id: ID!
     name: String
     description: String
+    scope: AccessScopeType
     imageUrl: String
     videoUrl: String
     videoThumbUrl: String

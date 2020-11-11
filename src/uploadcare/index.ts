@@ -58,7 +58,7 @@ export async function deleteFiles(fileIds: string[]): Promise<boolean> {
   return json.status == 'ok'
 }
 
-/** Checks if there are any media (hosted) files being changed (if they are present then they will be changed - so don't send these fields if they have not changed) in the workouData
+/** Checks if there are any media (hosted) files being changed.
  * If there are then check if they can be removed (are they being shared with other workouts)
  * Then remove them if you can.
  */

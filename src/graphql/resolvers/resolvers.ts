@@ -18,6 +18,8 @@ import {
   publicWorkoutPrograms,
   privateWorkoutPrograms,
   createWorkoutProgram,
+  deepUpdateWorkoutProgram,
+  shallowUpdateWorkoutProgram,
 } from './workoutProgram'
 
 import {
@@ -109,6 +111,8 @@ const resolvers: Resolvers = {
     shallowUpdateLoggedWorkout,
     deleteLoggedWorkoutById,
     createWorkoutProgram,
+    deepUpdateWorkoutProgram,
+    shallowUpdateWorkoutProgram,
   },
 }
 

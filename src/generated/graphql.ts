@@ -520,6 +520,7 @@ export type WorkoutProgram = {
 export type CreateWorkoutProgramInput = {
   name: Scalars['String'];
   description?: Maybe<Scalars['String']>;
+  scope: AccessScopeType;
   imageUrl?: Maybe<Scalars['String']>;
   videoUrl?: Maybe<Scalars['String']>;
   videoThumbUrl?: Maybe<Scalars['String']>;
@@ -531,6 +532,7 @@ export type DeepUpdateWorkoutProgramInput = {
   id: Scalars['ID'];
   name?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
+  scope?: Maybe<AccessScopeType>;
   imageUrl?: Maybe<Scalars['String']>;
   videoUrl?: Maybe<Scalars['String']>;
   videoThumbUrl?: Maybe<Scalars['String']>;
@@ -542,6 +544,7 @@ export type ShallowUpdateWorkoutProgramInput = {
   id: Scalars['ID'];
   name?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
+  scope?: Maybe<AccessScopeType>;
   imageUrl?: Maybe<Scalars['String']>;
   videoUrl?: Maybe<Scalars['String']>;
   videoThumbUrl?: Maybe<Scalars['String']>;

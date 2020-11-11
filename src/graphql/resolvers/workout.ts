@@ -114,7 +114,6 @@ const deepUpdateWorkout = async (
     await checkWorkoutMediaForDeletion(prisma, data)
   }
 
-  // 3. Update and rebuild new object.
   return updatedWorkout
 }
 
@@ -124,7 +123,7 @@ const shallowUpdateWorkout = async (
   { select, prisma }: Context,
 ) => {
   // 1. Update workout.
-  const updateWorkout: Workout = await prisma.workout.update({
+  const updatedWorkout: Workout = await prisma.workout.update({
     where: {
       id: data.id,
     },
@@ -132,10 +131,12 @@ const shallowUpdateWorkout = async (
     select,
   })
 
-  // 2. Check media deletion once you know that the main transaction has succeeded.
-  await checkWorkoutMediaForDeletion(prisma, data)
+  if (updatedWorkout) {
+    // 2. Check media deletion once you know that the main transaction has succeeded.
+    await checkWorkoutMediaForDeletion(prisma, data)
+  }
 
-  return updateWorkout
+  return updatedWorkout
 }
 
 const deleteWorkoutById = async (
