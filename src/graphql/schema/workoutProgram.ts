@@ -5,7 +5,7 @@ export default gql`
     id: ID!
     createdAt: DateTime!
     name: String!
-    description: String!
+    description: String
     imageUrl: String
     videoUrl: String
     videoThumbUrl: String
@@ -19,7 +19,7 @@ export default gql`
 
   input CreateWorkoutProgramInput {
     name: String!
-    description: String!
+    description: String
     imageUrl: String
     videoUrl: String
     videoThumbUrl: String

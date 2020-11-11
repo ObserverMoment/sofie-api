@@ -505,7 +505,7 @@ export type WorkoutProgram = {
   id: Scalars['ID'];
   createdAt: Scalars['DateTime'];
   name: Scalars['String'];
-  description: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
   imageUrl?: Maybe<Scalars['String']>;
   videoUrl?: Maybe<Scalars['String']>;
   videoThumbUrl?: Maybe<Scalars['String']>;
@@ -519,7 +519,7 @@ export type WorkoutProgram = {
 
 export type CreateWorkoutProgramInput = {
   name: Scalars['String'];
-  description: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
   imageUrl?: Maybe<Scalars['String']>;
   videoUrl?: Maybe<Scalars['String']>;
   videoThumbUrl?: Maybe<Scalars['String']>;
@@ -1189,7 +1189,7 @@ export type WorkoutProgramResolvers<ContextType = any, ParentType extends Resolv
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   imageUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   videoUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   videoThumbUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
