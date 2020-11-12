@@ -509,6 +509,7 @@ export type WorkoutProgram = {
   imageUrl?: Maybe<Scalars['String']>;
   videoUrl?: Maybe<Scalars['String']>;
   videoThumbUrl?: Maybe<Scalars['String']>;
+  youtubeVideoUrl?: Maybe<Scalars['String']>;
   scope: AccessScopeType;
   createdBy?: Maybe<User>;
   enrolments?: Maybe<Array<WorkoutProgramEnrolment>>;
@@ -524,6 +525,7 @@ export type CreateWorkoutProgramInput = {
   imageUrl?: Maybe<Scalars['String']>;
   videoUrl?: Maybe<Scalars['String']>;
   videoThumbUrl?: Maybe<Scalars['String']>;
+  youtubeVideoUrl?: Maybe<Scalars['String']>;
   workoutGoals: Array<Scalars['ID']>;
   programWorkouts: Array<CreateWorkoutProgramWorkoutInput>;
 };
@@ -536,6 +538,7 @@ export type DeepUpdateWorkoutProgramInput = {
   imageUrl?: Maybe<Scalars['String']>;
   videoUrl?: Maybe<Scalars['String']>;
   videoThumbUrl?: Maybe<Scalars['String']>;
+  youtubeVideoUrl?: Maybe<Scalars['String']>;
   workoutGoals: Array<Scalars['ID']>;
   programWorkouts: Array<CreateWorkoutProgramWorkoutInput>;
 };
@@ -548,6 +551,7 @@ export type ShallowUpdateWorkoutProgramInput = {
   imageUrl?: Maybe<Scalars['String']>;
   videoUrl?: Maybe<Scalars['String']>;
   videoThumbUrl?: Maybe<Scalars['String']>;
+  youtubeVideoUrl?: Maybe<Scalars['String']>;
   workoutGoals: Array<Scalars['ID']>;
 };
 
@@ -1196,6 +1200,7 @@ export type WorkoutProgramResolvers<ContextType = any, ParentType extends Resolv
   imageUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   videoUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   videoThumbUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  youtubeVideoUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   scope?: Resolver<ResolversTypes['AccessScopeType'], ParentType, ContextType>;
   createdBy?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   enrolments?: Resolver<Maybe<Array<ResolversTypes['WorkoutProgramEnrolment']>>, ParentType, ContextType>;

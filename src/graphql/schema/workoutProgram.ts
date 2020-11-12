@@ -9,6 +9,7 @@ export default gql`
     imageUrl: String
     videoUrl: String
     videoThumbUrl: String
+    youtubeVideoUrl: String
     scope: AccessScopeType!
     createdBy: User
     enrolments: [WorkoutProgramEnrolment!]
@@ -24,6 +25,7 @@ export default gql`
     imageUrl: String
     videoUrl: String
     videoThumbUrl: String
+    youtubeVideoUrl: String
     workoutGoals: [ID!]!
     programWorkouts: [CreateWorkoutProgramWorkoutInput!]!
   }
@@ -37,6 +39,7 @@ export default gql`
     imageUrl: String
     videoUrl: String
     videoThumbUrl: String
+    youtubeVideoUrl: String
     workoutGoals: [ID!]!
     programWorkouts: [CreateWorkoutProgramWorkoutInput!]!
   }
@@ -49,6 +52,7 @@ export default gql`
     imageUrl: String
     videoUrl: String
     videoThumbUrl: String
+    youtubeVideoUrl: String
     workoutGoals: [ID!]!
   }
 

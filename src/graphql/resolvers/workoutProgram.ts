@@ -2,6 +2,7 @@ import { Context } from '../..'
 import {
   MutationCreateWorkoutProgramArgs,
   MutationDeepUpdateWorkoutProgramArgs,
+  MutationDeleteWorkoutProgramByIdArgs,
   MutationShallowUpdateWorkoutProgramArgs,
   QueryPrivateWorkoutProgramsArgs,
   WorkoutProgram,
@@ -147,6 +148,35 @@ const shallowUpdateWorkoutProgram = async (
   return updatedWorkoutProgram
 }
 
+const deleteWorkoutProgramById = async (
+  r: any,
+  { authedUserId, workoutProgramId }: MutationDeleteWorkoutProgramByIdArgs,
+  { prisma }: Context,
+) => {
+  // Cascade delete reliant descendants with https://paljs.com/plugins/delete/
+  const deletedWorkoutProgram: WorkoutProgram = await prisma.onDelete({
+    model: 'WorkoutProgram',
+    where: { id: workoutProgramId },
+    deleteParent: true, // If false, just the descendants will be deleted.
+    returnFields: {
+      id: true,
+      imageUrl: true,
+      videoUrl: true,
+      videoThumbUrl: true,
+    },
+  })
+
+  if (deletedWorkoutProgram) {
+    console.log('TODO!!!!!')
+    console.log(
+      'Check media deletion last once we know that full transactional update is completed.',
+    )
+    return deletedWorkoutProgram.id
+  } else {
+    return null
+  }
+}
+
 export {
   officialWorkoutPrograms,
   publicWorkoutPrograms,
@@ -154,4 +184,5 @@ export {
   createWorkoutProgram,
   deepUpdateWorkoutProgram,
   shallowUpdateWorkoutProgram,
+  deleteWorkoutProgramById,
 }

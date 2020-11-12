@@ -20,6 +20,7 @@ import {
   createWorkoutProgram,
   deepUpdateWorkoutProgram,
   shallowUpdateWorkoutProgram,
+  deleteWorkoutProgramById,
 } from './workoutProgram'
 
 import {
@@ -113,6 +114,7 @@ const resolvers: Resolvers = {
     createWorkoutProgram,
     deepUpdateWorkoutProgram,
     shallowUpdateWorkoutProgram,
+    deleteWorkoutProgramById,
   },
 }
 
