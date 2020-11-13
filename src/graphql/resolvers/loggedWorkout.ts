@@ -63,7 +63,12 @@ const deepUpdateLoggedWorkout = async (
   { authedUserId, data }: MutationDeepUpdateLoggedWorkoutArgs,
   { select, prisma }: Context,
 ) => {
-  // 1. Delete all descendants - this will delete all workoutMoves via cascade deletes.
+  // Check if any media files need to be updated. Only delete files from the server after the rest of the transaction is complete.
+  const fileIdsForDeletion:
+    | string[]
+    | null = await checkLoggedWorkoutMediaForDeletion(prisma, data)
+
+  // Delete all descendants - this will delete all workoutSections and their workoutMoves via cascade deletes.
   // https://paljs.com/plugins/delete/
   await prisma.onDelete({
     model: 'WorkoutSection',
@@ -71,7 +76,7 @@ const deepUpdateLoggedWorkout = async (
     deleteParent: true, // If false, just the descendants will be deleted.
   })
 
-  // 2. Run the new update and create fresh descendants.
+  // Run the new update and create fresh descendants.
   const updatedLoggedWorkout: LoggedWorkout = await prisma.loggedWorkout.update(
     {
       where: {
@@ -92,9 +97,9 @@ const deepUpdateLoggedWorkout = async (
     },
   )
 
-  // 3. Check for media deletion last - once you know that the rest of the transaction has been successful.
-  if (updatedLoggedWorkout) {
-    await checkLoggedWorkoutMediaForDeletion(prisma, data)
+  // Delete stale media from server if update was successful and media has changed.
+  if (updatedLoggedWorkout && fileIdsForDeletion) {
+    await deleteFiles(fileIdsForDeletion)
   }
 
   return updatedLoggedWorkout
@@ -105,6 +110,11 @@ const shallowUpdateLoggedWorkout = async (
   { authedUserId, data }: MutationShallowUpdateLoggedWorkoutArgs,
   { select, prisma }: Context,
 ) => {
+  // Check if any media files need to be updated. Only delete files from the server after the rest of the transaction is complete.
+  const fileIdsForDeletion:
+    | string[]
+    | null = await checkLoggedWorkoutMediaForDeletion(prisma, data)
+
   // 2. Run the new update and create fresh descendants.
   const updatedLoggedWorkout: LoggedWorkout = await prisma.loggedWorkout.update(
     {
@@ -123,9 +133,8 @@ const shallowUpdateLoggedWorkout = async (
     },
   )
 
-  // 3. Check for media deletion last - once you know that the rest of the transaction has been successful.
-  if (updatedLoggedWorkout) {
-    await checkLoggedWorkoutMediaForDeletion(prisma, data)
+  if (updatedLoggedWorkout && fileIdsForDeletion) {
+    await deleteFiles(fileIdsForDeletion)
   }
 
   return updatedLoggedWorkout
@@ -137,27 +146,39 @@ const deleteLoggedWorkoutById = async (
   { prisma }: Context,
 ) => {
   // Cascade delete reliant descendants with https://paljs.com/plugins/delete/
-  const deletedLoggedWorkout: LoggedWorkout = await prisma.onDelete({
+  await prisma.onDelete({
     model: 'LoggedWorkout',
     where: { id: loggedWorkoutId },
-    deleteParent: true, // If false, just the descendants will be deleted.
-    returnFields: {
-      id: true,
-      imageUrl: true,
-      videoUrl: true,
-      videoThumbUrl: true,
-    },
+    deleteParent: false, // If false, just the descendants will be deleted.
   })
 
+  // Delete workout and get back uploaded media related files.
+  const deletedLoggedWorkout: LoggedWorkout = await prisma.loggedWorkout.delete(
+    {
+      where: { id: loggedWorkoutId },
+      select: {
+        id: true,
+        imageUrl: true,
+        videoUrl: true,
+        videoThumbUrl: true,
+      },
+    },
+  )
+
+  // Check if there is media to be deleted from the uploadcare server.
   if (deletedLoggedWorkout) {
+    const fileIdsForDeletion: string[] = []
     if (deletedLoggedWorkout.imageUrl) {
-      await deleteFiles([deletedLoggedWorkout.imageUrl] as string[])
+      fileIdsForDeletion.push(deletedLoggedWorkout.imageUrl)
     }
     if (deletedLoggedWorkout.videoUrl) {
-      await deleteFiles([
-        deletedLoggedWorkout.videoUrl,
-        deletedLoggedWorkout.videoThumbUrl,
-      ] as string[])
+      fileIdsForDeletion.push(deletedLoggedWorkout.videoUrl)
+    }
+    if (deletedLoggedWorkout.videoThumbUrl) {
+      fileIdsForDeletion.push(deletedLoggedWorkout.videoThumbUrl)
+    }
+    if (fileIdsForDeletion.length > 0) {
+      await deleteFiles(fileIdsForDeletion)
     }
     return deletedLoggedWorkout.id
   } else {

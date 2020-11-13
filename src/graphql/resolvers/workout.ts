@@ -10,11 +10,7 @@ import {
 
 import { buildWorkoutSectionsData } from '../workoutBuilders'
 
-import {
-  checkThenDeleteWorkoutImageFile,
-  checkThenDeleteWorkoutVideoFiles,
-  checkWorkoutMediaForDeletion,
-} from '../../uploadcare'
+import { checkWorkoutMediaForDeletion, deleteFiles } from '../../uploadcare'
 
 import { Context } from '../..'
 
@@ -84,7 +80,12 @@ const deepUpdateWorkout = async (
   { authedUserId, data }: MutationDeepUpdateWorkoutArgs,
   { select, prisma }: Context,
 ) => {
-  // 1. Delete all descendants - this will delete all workoutMoves via cascade deletes.
+  // Check if any media files need to be updated. Only delete files from the server after the rest of the transaction is complete.
+  const fileIdsForDeletion:
+    | string[]
+    | null = await checkWorkoutMediaForDeletion(prisma, data)
+
+  // 1. Delete all descendants - this will delete all workoutSections and their workoutMoves via cascade deletes.
   // https://paljs.com/plugins/delete/
   await prisma.onDelete({
     model: 'WorkoutSection',
@@ -109,9 +110,9 @@ const deepUpdateWorkout = async (
     select,
   })
 
-  if (updatedWorkout) {
-    // 3. Check media deletion last once we know that full transactional update is completed.
-    await checkWorkoutMediaForDeletion(prisma, data)
+  // Delete stale media from server if update was successful and media has changed.
+  if (updatedWorkout && fileIdsForDeletion) {
+    await deleteFiles(fileIdsForDeletion)
   }
 
   return updatedWorkout
@@ -122,6 +123,11 @@ const shallowUpdateWorkout = async (
   { authedUserId, data }: MutationShallowUpdateWorkoutArgs,
   { select, prisma }: Context,
 ) => {
+  // Check if any media files need to be updated. Only delete files from the server after the rest of the transaction is complete.
+  const fileIdsForDeletion:
+    | string[]
+    | null = await checkWorkoutMediaForDeletion(prisma, data)
+
   // 1. Update workout.
   const updatedWorkout: Workout = await prisma.workout.update({
     where: {
@@ -131,9 +137,8 @@ const shallowUpdateWorkout = async (
     select,
   })
 
-  if (updatedWorkout) {
-    // 2. Check media deletion once you know that the main transaction has succeeded.
-    await checkWorkoutMediaForDeletion(prisma, data)
+  if (updatedWorkout && fileIdsForDeletion) {
+    await deleteFiles(fileIdsForDeletion)
   }
 
   return updatedWorkout
@@ -145,11 +150,16 @@ const deleteWorkoutById = async (
   { prisma }: Context,
 ) => {
   // Cascade delete reliant descendants with https://paljs.com/plugins/delete/
-  const deletedWorkout: Workout = await prisma.onDelete({
+  await prisma.onDelete({
     model: 'Workout',
     where: { id: workoutId },
-    deleteParent: true, // If false, just the descendants will be deleted.
-    returnFields: {
+    deleteParent: false, // If false, just the descendants will be deleted.
+  })
+
+  // Delete workout and get back uploaded media related files.
+  const deletedWorkout: Workout = await prisma.workout.delete({
+    where: { id: workoutId },
+    select: {
       id: true,
       imageUrl: true,
       demoVideoUrl: true,
@@ -157,13 +167,21 @@ const deleteWorkoutById = async (
     },
   })
 
+  // Check if there is media to be deleted from the uploadcare server.
   if (deletedWorkout) {
-    await checkThenDeleteWorkoutImageFile(prisma, deletedWorkout.imageUrl)
-    await checkThenDeleteWorkoutVideoFiles(
-      prisma,
-      deletedWorkout.demoVideoUrl,
-      deletedWorkout.demoVideoThumbUrl,
-    )
+    const fileIdsForDeletion: string[] = []
+    if (deletedWorkout.imageUrl) {
+      fileIdsForDeletion.push(deletedWorkout.imageUrl)
+    }
+    if (deletedWorkout.demoVideoUrl) {
+      fileIdsForDeletion.push(deletedWorkout.demoVideoUrl)
+    }
+    if (deletedWorkout.demoVideoThumbUrl) {
+      fileIdsForDeletion.push(deletedWorkout.demoVideoThumbUrl)
+    }
+    if (fileIdsForDeletion.length > 0) {
+      await deleteFiles(fileIdsForDeletion)
+    }
     return deletedWorkout.id
   } else {
     return null

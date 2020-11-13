@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 model Equipment {
@@ -172,7 +172,7 @@ model User {
   /// @onDelete(CASCADE)
   workoutProgramEnrolments WorkoutProgramEnrolment[]
   workoutProgramReviews    WorkoutProgramReview[]
-  likedWorkoutPrograms     LikedWorkoutProgram[]
+  LikedWorkoutProgram      LikedWorkoutProgram[]
 }
 
 model Workout {
@@ -234,25 +234,25 @@ model WorkoutMove {
 }
 
 model WorkoutProgram {
-  id              String                    @id @default(uuid())
-  createdAt       DateTime                  @default(now())
-  name            String
-  description     String?
-  imageUrl        String?
-  videoUrl        String?
-  videoThumbUrl   String?
-  youtubeVideoUrl String?
-  scope           AccessScopeType           @default(PRIVATE)
-  createdBy       User                      @relation(fields: [createdById], references: [id])
-  createdById     String
+  id                  String                    @id @default(uuid())
+  createdAt           DateTime                  @default(now())
+  name                String
+  description         String?
+  imageUrl            String?
+  videoUrl            String?
+  videoThumbUrl       String?
+  youtubeVideoUrl     String?
+  scope               AccessScopeType           @default(PRIVATE)
+  createdBy           User                      @relation(fields: [createdById], references: [id])
+  createdById         String
   /// @onDelete(CASCADE)
-  enrolments      WorkoutProgramEnrolment[]
-  workoutGoals    WorkoutGoal[]
+  enrolments          WorkoutProgramEnrolment[]
+  workoutGoals        WorkoutGoal[]
   /// @onDelete(CASCADE)
-  programWorkouts WorkoutProgramWorkout[]
+  programWorkouts     WorkoutProgramWorkout[]
   /// @onDelete(CASCADE)
-  programReviews  WorkoutProgramReview[]
-  likes           LikedWorkoutProgram[]
+  programReviews      WorkoutProgramReview[]
+  LikedWorkoutProgram LikedWorkoutProgram[]
 }
 
 model WorkoutProgramEnrolment {

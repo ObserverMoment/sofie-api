@@ -1,13 +1,18 @@
 import { Context } from '../..'
 import {
+  MutationAddEnrolmentToWorkoutProgramArgs,
   MutationCreateWorkoutProgramArgs,
   MutationDeepUpdateWorkoutProgramArgs,
   MutationDeleteWorkoutProgramByIdArgs,
+  MutationRemoveEnrolmentFromWorkoutProgramArgs,
   MutationShallowUpdateWorkoutProgramArgs,
   QueryPrivateWorkoutProgramsArgs,
   WorkoutProgram,
 } from '../../generated/graphql'
-import { checkWorkoutMediaForDeletion } from '../../uploadcare'
+import {
+  checkWorkoutProgramMediaForDeletion,
+  deleteFiles,
+} from '../../uploadcare'
 
 //// Queries
 const officialWorkoutPrograms = async (
@@ -76,7 +81,13 @@ const deepUpdateWorkoutProgram = async (
   { authedUserId, data }: MutationDeepUpdateWorkoutProgramArgs,
   { select, prisma }: Context,
 ) => {
+  // Check if any media files need to be updated. Only delete files from the server after the rest of the transaction is complete.
+  const fileIdsForDeletion:
+    | string[]
+    | null = await checkWorkoutProgramMediaForDeletion(prisma, data)
+
   // 1. Delete all descendant WorkoutProgramWorkouts.
+  // Not using cascade deletes here as that would also cause enrolments and reviews to be deleted.
   await prisma.workoutProgramWorkout.deleteMany({
     where: {
       workoutProgramId: data.id,
@@ -107,12 +118,9 @@ const deepUpdateWorkoutProgram = async (
     },
   )
 
-  if (updatedWorkoutProgram) {
-    // 3. Check media deletion last once we know that full transactional update is completed.
-    console.log('TODO!!!!!')
-    console.log(
-      '// 3. Check media deletion last once we know that full transactional update is completed.',
-    )
+  // Delete stale media from server if update was successful and media has changed.
+  if (updatedWorkoutProgram && fileIdsForDeletion) {
+    await deleteFiles(fileIdsForDeletion)
   }
 
   return updatedWorkoutProgram
@@ -123,6 +131,11 @@ const shallowUpdateWorkoutProgram = async (
   { authedUserId, data }: MutationShallowUpdateWorkoutProgramArgs,
   { select, prisma }: Context,
 ) => {
+  // Check if any media files need to be updated. Only delete files from the server after the rest of the transaction is complete.
+  const fileIdsForDeletion:
+    | string[]
+    | null = await checkWorkoutProgramMediaForDeletion(prisma, data)
+
   const updatedWorkoutProgram: WorkoutProgram = await prisma.workoutProgram.update(
     {
       where: {
@@ -138,11 +151,8 @@ const shallowUpdateWorkoutProgram = async (
     },
   )
 
-  if (updatedWorkoutProgram) {
-    console.log('TODO!!!!!')
-    console.log(
-      'Check media deletion last once we know that full transactional update is completed.',
-    )
+  if (updatedWorkoutProgram && fileIdsForDeletion) {
+    await deleteFiles(fileIdsForDeletion)
   }
 
   return updatedWorkoutProgram
@@ -154,27 +164,85 @@ const deleteWorkoutProgramById = async (
   { prisma }: Context,
 ) => {
   // Cascade delete reliant descendants with https://paljs.com/plugins/delete/
-  const deletedWorkoutProgram: WorkoutProgram = await prisma.onDelete({
+  await prisma.onDelete({
     model: 'WorkoutProgram',
     where: { id: workoutProgramId },
-    deleteParent: true, // If false, just the descendants will be deleted.
-    returnFields: {
-      id: true,
-      imageUrl: true,
-      videoUrl: true,
-      videoThumbUrl: true,
-    },
+    deleteParent: false, // If false, just the descendants will be deleted.
   })
 
+  // Delete workoutProgram and get back uploaded media related files.
+  const deletedWorkoutProgram: WorkoutProgram = await prisma.workoutProgram.delete(
+    {
+      where: { id: workoutProgramId },
+      select: {
+        id: true,
+        imageUrl: true,
+        videoUrl: true,
+        videoThumbUrl: true,
+      },
+    },
+  )
+
+  // Check if there is media to be deleted from the uploadcare server.
   if (deletedWorkoutProgram) {
-    console.log('TODO!!!!!')
-    console.log(
-      'Check media deletion last once we know that full transactional update is completed.',
-    )
+    const fileIdsForDeletion: string[] = []
+    if (deletedWorkoutProgram.imageUrl) {
+      fileIdsForDeletion.push(deletedWorkoutProgram.imageUrl)
+    }
+    if (deletedWorkoutProgram.videoUrl) {
+      fileIdsForDeletion.push(deletedWorkoutProgram.videoUrl)
+    }
+    if (deletedWorkoutProgram.videoThumbUrl) {
+      fileIdsForDeletion.push(deletedWorkoutProgram.videoThumbUrl)
+    }
+    if (fileIdsForDeletion.length > 0) {
+      await deleteFiles(fileIdsForDeletion)
+    }
     return deletedWorkoutProgram.id
   } else {
     return null
   }
+}
+
+//// Enrolments ////
+const addEnrolmentToWorkoutProgram = async (
+  r: any,
+  { authedUserId, workoutProgramId }: MutationAddEnrolmentToWorkoutProgramArgs,
+  { select, prisma }: Context,
+) =>
+  prisma.workoutProgram.update({
+    where: { id: workoutProgramId },
+    data: {
+      enrolments: {
+        create: {
+          user: {
+            connect: { id: authedUserId },
+          },
+        },
+      },
+    },
+    select,
+  })
+
+const removeEnrolmentFromWorkoutProgram = async (
+  r: any,
+  {
+    authedUserId,
+    workoutProgramId,
+    workoutProgramEnrolmentId,
+  }: MutationRemoveEnrolmentFromWorkoutProgramArgs,
+  { select, prisma }: Context,
+) => {
+  await prisma.workoutProgramEnrolment.delete({
+    where: {
+      id: workoutProgramEnrolmentId,
+    },
+  })
+
+  return prisma.workoutProgram.findOne({
+    where: { id: workoutProgramId },
+    select,
+  })
 }
 
 export {
@@ -185,4 +253,6 @@ export {
   deepUpdateWorkoutProgram,
   shallowUpdateWorkoutProgram,
   deleteWorkoutProgramById,
+  addEnrolmentToWorkoutProgram,
+  removeEnrolmentFromWorkoutProgram,
 }

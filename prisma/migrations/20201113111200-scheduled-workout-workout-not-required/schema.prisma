@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 model Equipment {
@@ -45,17 +45,6 @@ model LikedWorkout {
   workoutId String
 
   @@id([userId, workoutId])
-}
-
-model LikedWorkoutProgram {
-  createdAt        DateTime       @default(now())
-  user             User           @relation(fields: [userId], references: [id])
-  userId           String
-  notes            String?
-  workoutProgram   WorkoutProgram @relation(fields: [workoutProgramId], references: [id])
-  workoutProgramId String
-
-  @@id([userId, workoutProgramId])
 }
 
 // Data from a completed workout. Also inlcudes relation to the 'original' workout
@@ -172,7 +161,6 @@ model User {
   /// @onDelete(CASCADE)
   workoutProgramEnrolments WorkoutProgramEnrolment[]
   workoutProgramReviews    WorkoutProgramReview[]
-  likedWorkoutPrograms     LikedWorkoutProgram[]
 }
 
 model Workout {
@@ -205,11 +193,10 @@ model Workout {
 }
 
 model WorkoutGoal {
-  id                  String           @id @default(uuid())
-  name                String
-  description         String
-  placeholderImageUrl String?
-  workoutPrograms     WorkoutProgram[]
+  id              String           @id @default(uuid())
+  name            String
+  description     String
+  workoutPrograms WorkoutProgram[]
 }
 
 model WorkoutMove {
@@ -252,7 +239,6 @@ model WorkoutProgram {
   programWorkouts WorkoutProgramWorkout[]
   /// @onDelete(CASCADE)
   programReviews  WorkoutProgramReview[]
-  likes           LikedWorkoutProgram[]
 }
 
 model WorkoutProgramEnrolment {

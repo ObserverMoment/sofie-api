@@ -7,4 +7,11 @@ export default gql`
     workout: Workout!
     notes: String
   }
+
+  type LikedWorkoutProgram {
+    createdAt: DateTime!
+    user: User!
+    workoutProgram: WorkoutProgram!
+    notes: String
+  }
 `

@@ -25,15 +25,6 @@ export default gql`
     YARDS
     MILES
   }
-
-  enum FrequencyPeriod {
-    DAY
-    TWODAYS
-    WEEK
-    TWOWEEKS
-    MONTH
-  }
-
   enum Gender {
     MALE
     FEMALE

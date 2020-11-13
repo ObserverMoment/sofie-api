@@ -76,14 +76,9 @@ export default gql`
     loggedWorkouts: [LoggedWorkout!]
   }
 
-  input AddEnrolmentToWorkoutProgram {
-    userId: ID!
-    workoutProgramId: ID!
-  }
-
-  input RemoveEnrolmentFromWorkoutProgram {
-    userId: ID!
-    workoutProgramId: ID!
+  input AddLoggedWorkoutToProgramEnrolmentInput {
+    workoutProgramEnrolmentId: ID!
+    loggedWorkout: CreateLoggedWorkoutInput!
   }
 
   type WorkoutProgramReview {

@@ -23,6 +23,7 @@ export default gql`
     likedWorkouts(authedUserId: ID!): [ID!]!
     scheduledWorkouts(authedUserId: ID!): [ScheduledWorkout!]!
     loggedWorkouts(authedUserId: ID!): [LoggedWorkout!]!
+    likedWorkoutPrograms(authedUserId: ID!): [ID!]!
   }
 
   type Mutation {
@@ -92,6 +93,8 @@ export default gql`
       data: DeepUpdateWorkoutProgramInput!
     ): WorkoutProgram!
     deleteWorkoutProgramById(authedUserId: ID!, workoutProgramId: ID!): ID
+    likeWorkoutProgram(authedUserId: ID!, workoutProgramId: ID!): ID
+    unlikeWorkoutProgram(authedUserId: ID!, workoutProgramId: ID!): ID
     addEnrolmentToWorkoutProgram(
       authedUserId: ID!
       workoutProgramId: ID!
@@ -99,15 +102,15 @@ export default gql`
     removeEnrolmentFromWorkoutProgram(
       authedUserId: ID!
       workoutProgramId: ID!
+      workoutProgramEnrolmentId: ID!
     ): WorkoutProgram!
     addReviewToWorkoutProgram(
       authedUserId: ID!
       workoutProgramId: ID!
       data: CreateWorkoutProgramReviewInput!
     ): WorkoutProgram!
-    removeReviewFromWorkoutProgram(
+    deleteWorkoutProgramReview(
       authedUserId: ID!
-      workoutProgramId: ID!
       reviewId: ID!
     ): WorkoutProgram!
   }
@@ -136,6 +139,7 @@ export default gql`
     id: ID!
     name: String!
     description: String!
+    placeholderImageUrl: String
   }
 
   ##### User CRUD-able models #####

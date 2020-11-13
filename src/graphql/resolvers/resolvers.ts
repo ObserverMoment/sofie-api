@@ -21,6 +21,8 @@ import {
   deepUpdateWorkoutProgram,
   shallowUpdateWorkoutProgram,
   deleteWorkoutProgramById,
+  addEnrolmentToWorkoutProgram,
+  removeEnrolmentFromWorkoutProgram,
 } from './workoutProgram'
 
 import {
@@ -34,7 +36,14 @@ import {
   deleteWorkoutById,
 } from './workout'
 
-import { likedWorkouts, likeWorkout, unlikeWorkout } from './likes'
+import {
+  likedWorkouts,
+  likeWorkout,
+  unlikeWorkout,
+  likedWorkoutPrograms,
+  likeWorkoutProgram,
+  unlikeWorkoutProgram,
+} from './userLikes'
 
 import {
   scheduledWorkouts,
@@ -91,6 +100,7 @@ const resolvers: Resolvers = {
     likedWorkouts,
     scheduledWorkouts,
     loggedWorkouts,
+    likedWorkoutPrograms,
   },
   Mutation: {
     createUser,
@@ -115,6 +125,10 @@ const resolvers: Resolvers = {
     deepUpdateWorkoutProgram,
     shallowUpdateWorkoutProgram,
     deleteWorkoutProgramById,
+    likeWorkoutProgram,
+    unlikeWorkoutProgram,
+    addEnrolmentToWorkoutProgram,
+    removeEnrolmentFromWorkoutProgram,
   },
 }
 
