@@ -61,6 +61,7 @@ export default gql`
     dayNumber: Float!
     notes: String
     workout: Workout!
+    loggedWorkout: LoggedWorkout
   }
 
   input CreateWorkoutProgramWorkoutInput {

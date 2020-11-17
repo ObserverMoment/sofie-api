@@ -6,6 +6,7 @@ import {
   MutationDeleteWorkoutProgramByIdArgs,
   MutationRemoveEnrolmentFromWorkoutProgramArgs,
   MutationShallowUpdateWorkoutProgramArgs,
+  QueryEnrolledWorkoutProgramDataArgs,
   QueryPrivateWorkoutProgramsArgs,
   WorkoutProgram,
 } from '../../generated/graphql'
@@ -44,6 +45,18 @@ const privateWorkoutPrograms = async (
     where: {
       scope: 'PRIVATE',
       createdById: authedUserId,
+    },
+    select,
+  })
+
+const enrolledWorkoutProgramData = async (
+  r: any,
+  { authedUserId, workoutProgramId }: QueryEnrolledWorkoutProgramDataArgs,
+  { prisma, select }: Context,
+) =>
+  prisma.workoutProgram.findOne({
+    where: {
+      id: workoutProgramId,
     },
     select,
   })
@@ -249,6 +262,7 @@ export {
   officialWorkoutPrograms,
   publicWorkoutPrograms,
   privateWorkoutPrograms,
+  enrolledWorkoutProgramData,
   createWorkoutProgram,
   deepUpdateWorkoutProgram,
   shallowUpdateWorkoutProgram,

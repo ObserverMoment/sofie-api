@@ -11,12 +11,19 @@ import {
   deleteGymProfileById,
 } from './user'
 
-import { moves, equipments, workoutGoals, workoutTypes } from './officialData'
+import {
+  moves,
+  bodyAreas,
+  equipments,
+  workoutGoals,
+  workoutTypes,
+} from './officialData'
 
 import {
   officialWorkoutPrograms,
   publicWorkoutPrograms,
   privateWorkoutPrograms,
+  enrolledWorkoutProgramData,
   createWorkoutProgram,
   deepUpdateWorkoutProgram,
   shallowUpdateWorkoutProgram,
@@ -87,12 +94,14 @@ const resolvers: Resolvers = {
     users,
     userByUid,
     moves,
+    bodyAreas,
     equipments,
     workoutGoals,
     workoutTypes,
     officialWorkoutPrograms,
     publicWorkoutPrograms,
     privateWorkoutPrograms,
+    enrolledWorkoutProgramData,
     officialWorkouts,
     publicWorkouts,
     privateWorkouts,

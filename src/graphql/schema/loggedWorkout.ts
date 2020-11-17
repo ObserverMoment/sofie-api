@@ -20,6 +20,7 @@ export default gql`
     """
     workoutSections: [WorkoutSection!]!
     originalWorkoutId: String
+    workoutProgramWorkout: WorkoutProgramWorkout
   }
 
   input CreateLoggedWorkoutInput {

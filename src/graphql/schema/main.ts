@@ -8,6 +8,7 @@ export default gql`
     checkUniqueDisplayName(displayName: String!): Boolean!
     users(authedUserId: ID!): [User!]!
     moves: [Move!]!
+    bodyAreas: [BodyArea!]!
     equipments: [Equipment!]!
     workoutTypes: [WorkoutType!]!
     workoutGoals: [WorkoutGoal]!
@@ -17,6 +18,10 @@ export default gql`
     officialWorkoutPrograms: [WorkoutProgram!]!
     privateWorkoutPrograms(authedUserId: ID!): [WorkoutProgram!]!
     publicWorkoutPrograms(authedUserId: ID!): [WorkoutProgram!]!
+    enrolledWorkoutProgramData(
+      authedUserId: ID!
+      workoutProgramId: ID!
+    ): WorkoutProgram
     userByUid(uid: ID!): User
     workoutById(id: ID!): Workout
     workoutProgramById(id: ID!): WorkoutProgram
@@ -133,6 +138,7 @@ export default gql`
     validRepTypes: [WorkoutMoveRepType!]!
     requiredEquipments: [Equipment!]!
     selectableEquipments: [Equipment!]!
+    bodyAreaMoveScores: [BodyAreaMoveScore!]
   }
 
   type WorkoutGoal {

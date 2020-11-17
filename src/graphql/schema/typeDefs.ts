@@ -8,6 +8,7 @@ import loggedWorkoutSchema from './loggedWorkout'
 import scheduledWorkoutSchema from './scheduledWorkout'
 import workoutSectionSchema from './workoutSection'
 import workoutMoveSchema from './workoutMove'
+import bodyAreaSchema from './bodyArea'
 import enumSchema from './enums'
 
 const typeDefs = mergeTypeDefs([
@@ -20,6 +21,7 @@ const typeDefs = mergeTypeDefs([
   scheduledWorkoutSchema,
   workoutSectionSchema,
   workoutMoveSchema,
+  bodyAreaSchema,
   enumSchema,
 ])
 
