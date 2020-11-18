@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 model BodyArea {
@@ -252,25 +252,25 @@ model WorkoutMove {
 }
 
 model WorkoutProgram {
-  id                     String                    @id @default(uuid())
-  createdAt              DateTime                  @default(now())
-  name                   String
-  description            String?
-  imageUrl               String?
-  videoUrl               String?
-  videoThumbUrl          String?
-  youtubeVideoUrl        String?
-  scope                  AccessScopeType           @default(PRIVATE)
-  createdBy              User                      @relation(fields: [createdById], references: [id])
-  createdById            String
+  id              String                    @id @default(uuid())
+  createdAt       DateTime                  @default(now())
+  name            String
+  description     String?
+  imageUrl        String?
+  videoUrl        String?
+  videoThumbUrl   String?
+  youtubeVideoUrl String?
+  scope           AccessScopeType           @default(PRIVATE)
+  createdBy       User                      @relation(fields: [createdById], references: [id])
+  createdById     String
   /// @onDelete(CASCADE)
-  enrolments             WorkoutProgramEnrolment[]
-  workoutGoals           WorkoutGoal[]
+  enrolments      WorkoutProgramEnrolment[]
+  workoutGoals    WorkoutGoal[]
   /// @onDelete(CASCADE)
-  workoutProgramWorkouts WorkoutProgramWorkout[]
+  programWorkouts WorkoutProgramWorkout[]
   /// @onDelete(CASCADE)
-  workoutProgramReviews  WorkoutProgramReview[]
-  likes                  LikedWorkoutProgram[]
+  programReviews  WorkoutProgramReview[]
+  likes           LikedWorkoutProgram[]
 }
 
 // A single user enrolled in a plan a single time

@@ -43,17 +43,27 @@ const createLoggedWorkout = async (
       workoutType: {
         connect: { id: data.workoutType },
       },
-      gymProfile: data.gymProfile
-        ? {
-            connect: { id: data.gymProfile },
-          }
-        : undefined,
       workoutSections: {
         create: buildWorkoutSectionsData(data.workoutSections),
       },
       originalWorkout: {
         connect: { id: data.originalWorkout },
       },
+      gymProfile: data.gymProfile
+        ? {
+            connect: { id: data.gymProfile },
+          }
+        : undefined,
+      scheduledWorkout: data.scheduledWorkout
+        ? {
+            connect: { id: data.scheduledWorkout },
+          }
+        : undefined,
+      workoutProgramWorkout: data.workoutProgramWorkout
+        ? {
+            connect: { id: data.workoutProgramWorkout },
+          }
+        : undefined,
     },
     select,
   })
@@ -84,14 +94,24 @@ const deepUpdateLoggedWorkout = async (
       },
       data: {
         ...data,
+        workoutSections: {
+          create: buildWorkoutSectionsData(data.workoutSections),
+        },
         gymProfile: data.gymProfile
           ? {
               connect: { id: data.gymProfile },
             }
           : undefined,
-        workoutSections: {
-          create: buildWorkoutSectionsData(data.workoutSections),
-        },
+        scheduledWorkout: data.scheduledWorkout
+          ? {
+              connect: { id: data.scheduledWorkout },
+            }
+          : undefined,
+        workoutProgramWorkout: data.workoutProgramWorkout
+          ? {
+              connect: { id: data.workoutProgramWorkout },
+            }
+          : undefined,
       },
       select,
     },
@@ -126,6 +146,16 @@ const shallowUpdateLoggedWorkout = async (
         gymProfile: data.gymProfile
           ? {
               connect: { id: data.gymProfile },
+            }
+          : undefined,
+        scheduledWorkout: data.scheduledWorkout
+          ? {
+              connect: { id: data.scheduledWorkout },
+            }
+          : undefined,
+        workoutProgramWorkout: data.workoutProgramWorkout
+          ? {
+              connect: { id: data.workoutProgramWorkout },
             }
           : undefined,
       },

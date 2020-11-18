@@ -31,7 +31,7 @@ export type Query = {
   officialWorkoutPrograms: Array<WorkoutProgram>;
   privateWorkoutPrograms: Array<WorkoutProgram>;
   publicWorkoutPrograms: Array<WorkoutProgram>;
-  enrolledWorkoutProgramData?: Maybe<WorkoutProgram>;
+  workoutProgramEnrolmentsByUser?: Maybe<WorkoutProgramEnrolment>;
   userByUid?: Maybe<User>;
   workoutById?: Maybe<Workout>;
   workoutProgramById?: Maybe<WorkoutProgram>;
@@ -72,7 +72,7 @@ export type QueryPublicWorkoutProgramsArgs = {
 };
 
 
-export type QueryEnrolledWorkoutProgramDataArgs = {
+export type QueryWorkoutProgramEnrolmentsByUserArgs = {
   authedUserId: Scalars['ID'];
   workoutProgramId: Scalars['ID'];
 };
@@ -560,8 +560,8 @@ export type WorkoutProgram = {
   createdBy?: Maybe<User>;
   enrolments?: Maybe<Array<WorkoutProgramEnrolment>>;
   workoutGoals: Array<WorkoutGoal>;
-  programWorkouts: Array<WorkoutProgramWorkout>;
-  programReviews?: Maybe<Array<WorkoutProgramReview>>;
+  workoutProgramWorkouts: Array<WorkoutProgramWorkout>;
+  workoutProgramReviews?: Maybe<Array<WorkoutProgramReview>>;
 };
 
 export type CreateWorkoutProgramInput = {
@@ -573,7 +573,7 @@ export type CreateWorkoutProgramInput = {
   videoThumbUrl?: Maybe<Scalars['String']>;
   youtubeVideoUrl?: Maybe<Scalars['String']>;
   workoutGoals: Array<Scalars['ID']>;
-  programWorkouts: Array<CreateWorkoutProgramWorkoutInput>;
+  workoutProgramWorkouts: Array<CreateWorkoutProgramWorkoutInput>;
 };
 
 export type DeepUpdateWorkoutProgramInput = {
@@ -586,7 +586,7 @@ export type DeepUpdateWorkoutProgramInput = {
   videoThumbUrl?: Maybe<Scalars['String']>;
   youtubeVideoUrl?: Maybe<Scalars['String']>;
   workoutGoals: Array<Scalars['ID']>;
-  programWorkouts: Array<CreateWorkoutProgramWorkoutInput>;
+  workoutProgramWorkouts: Array<CreateWorkoutProgramWorkoutInput>;
 };
 
 export type ShallowUpdateWorkoutProgramInput = {
@@ -621,6 +621,7 @@ export type WorkoutProgramEnrolment = {
   id: Scalars['ID'];
   startDate?: Maybe<Scalars['DateTime']>;
   user: User;
+  workoutProgram: WorkoutProgram;
   loggedWorkouts?: Maybe<Array<LoggedWorkout>>;
 };
 
@@ -661,6 +662,7 @@ export type LoggedWorkout = {
   workoutSections: Array<WorkoutSection>;
   originalWorkoutId?: Maybe<Scalars['String']>;
   workoutProgramWorkout?: Maybe<WorkoutProgramWorkout>;
+  scheduledWorkout?: Maybe<ScheduledWorkout>;
 };
 
 export type CreateLoggedWorkoutInput = {
@@ -677,6 +679,8 @@ export type CreateLoggedWorkoutInput = {
   gymProfile?: Maybe<Scalars['ID']>;
   workoutSections: Array<CreateWorkoutSectionInput>;
   originalWorkout: Scalars['ID'];
+  workoutProgramWorkout?: Maybe<Scalars['ID']>;
+  scheduledWorkout?: Maybe<Scalars['ID']>;
 };
 
 export type DeepUpdateLoggedWorkoutInput = {
@@ -692,6 +696,8 @@ export type DeepUpdateLoggedWorkoutInput = {
   duration?: Maybe<Scalars['Int']>;
   gymProfile?: Maybe<Scalars['ID']>;
   workoutSections: Array<CreateWorkoutSectionInput>;
+  workoutProgramWorkout?: Maybe<Scalars['ID']>;
+  scheduledWorkout?: Maybe<Scalars['ID']>;
 };
 
 export type ShallowUpdateLoggedWorkoutInput = {
@@ -706,6 +712,8 @@ export type ShallowUpdateLoggedWorkoutInput = {
   imageUrl?: Maybe<Scalars['String']>;
   duration?: Maybe<Scalars['Int']>;
   gymProfile?: Maybe<Scalars['ID']>;
+  workoutProgramWorkout?: Maybe<Scalars['ID']>;
+  scheduledWorkout?: Maybe<Scalars['ID']>;
 };
 
 export type ScheduledWorkout = {
@@ -1099,7 +1107,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   officialWorkoutPrograms?: Resolver<Array<ResolversTypes['WorkoutProgram']>, ParentType, ContextType>;
   privateWorkoutPrograms?: Resolver<Array<ResolversTypes['WorkoutProgram']>, ParentType, ContextType, RequireFields<QueryPrivateWorkoutProgramsArgs, 'authedUserId'>>;
   publicWorkoutPrograms?: Resolver<Array<ResolversTypes['WorkoutProgram']>, ParentType, ContextType, RequireFields<QueryPublicWorkoutProgramsArgs, 'authedUserId'>>;
-  enrolledWorkoutProgramData?: Resolver<Maybe<ResolversTypes['WorkoutProgram']>, ParentType, ContextType, RequireFields<QueryEnrolledWorkoutProgramDataArgs, 'authedUserId' | 'workoutProgramId'>>;
+  workoutProgramEnrolmentsByUser?: Resolver<Maybe<ResolversTypes['WorkoutProgramEnrolment']>, ParentType, ContextType, RequireFields<QueryWorkoutProgramEnrolmentsByUserArgs, 'authedUserId' | 'workoutProgramId'>>;
   userByUid?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserByUidArgs, 'uid'>>;
   workoutById?: Resolver<Maybe<ResolversTypes['Workout']>, ParentType, ContextType, RequireFields<QueryWorkoutByIdArgs, 'id'>>;
   workoutProgramById?: Resolver<Maybe<ResolversTypes['WorkoutProgram']>, ParentType, ContextType, RequireFields<QueryWorkoutProgramByIdArgs, 'id'>>;
@@ -1274,8 +1282,8 @@ export type WorkoutProgramResolvers<ContextType = any, ParentType extends Resolv
   createdBy?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   enrolments?: Resolver<Maybe<Array<ResolversTypes['WorkoutProgramEnrolment']>>, ParentType, ContextType>;
   workoutGoals?: Resolver<Array<ResolversTypes['WorkoutGoal']>, ParentType, ContextType>;
-  programWorkouts?: Resolver<Array<ResolversTypes['WorkoutProgramWorkout']>, ParentType, ContextType>;
-  programReviews?: Resolver<Maybe<Array<ResolversTypes['WorkoutProgramReview']>>, ParentType, ContextType>;
+  workoutProgramWorkouts?: Resolver<Array<ResolversTypes['WorkoutProgramWorkout']>, ParentType, ContextType>;
+  workoutProgramReviews?: Resolver<Maybe<Array<ResolversTypes['WorkoutProgramReview']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 }>;
 
@@ -1292,6 +1300,7 @@ export type WorkoutProgramEnrolmentResolvers<ContextType = any, ParentType exten
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   startDate?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  workoutProgram?: Resolver<ResolversTypes['WorkoutProgram'], ParentType, ContextType>;
   loggedWorkouts?: Resolver<Maybe<Array<ResolversTypes['LoggedWorkout']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 }>;
@@ -1321,6 +1330,7 @@ export type LoggedWorkoutResolvers<ContextType = any, ParentType extends Resolve
   workoutSections?: Resolver<Array<ResolversTypes['WorkoutSection']>, ParentType, ContextType>;
   originalWorkoutId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   workoutProgramWorkout?: Resolver<Maybe<ResolversTypes['WorkoutProgramWorkout']>, ParentType, ContextType>;
+  scheduledWorkout?: Resolver<Maybe<ResolversTypes['ScheduledWorkout']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 }>;
 

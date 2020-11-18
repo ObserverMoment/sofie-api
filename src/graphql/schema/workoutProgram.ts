@@ -14,8 +14,8 @@ export default gql`
     createdBy: User
     enrolments: [WorkoutProgramEnrolment!]
     workoutGoals: [WorkoutGoal!]!
-    programWorkouts: [WorkoutProgramWorkout!]!
-    programReviews: [WorkoutProgramReview!]
+    workoutProgramWorkouts: [WorkoutProgramWorkout!]!
+    workoutProgramReviews: [WorkoutProgramReview!]
   }
 
   input CreateWorkoutProgramInput {
@@ -27,10 +27,10 @@ export default gql`
     videoThumbUrl: String
     youtubeVideoUrl: String
     workoutGoals: [ID!]!
-    programWorkouts: [CreateWorkoutProgramWorkoutInput!]!
+    workoutProgramWorkouts: [CreateWorkoutProgramWorkoutInput!]!
   }
 
-  # Used when nested children have been updated. i.e programWorkouts.
+  # Used when nested children have been updated. i.e workoutProgramWorkouts.
   input DeepUpdateWorkoutProgramInput {
     id: ID!
     name: String
@@ -41,7 +41,7 @@ export default gql`
     videoThumbUrl: String
     youtubeVideoUrl: String
     workoutGoals: [ID!]!
-    programWorkouts: [CreateWorkoutProgramWorkoutInput!]!
+    workoutProgramWorkouts: [CreateWorkoutProgramWorkoutInput!]!
   }
 
   input ShallowUpdateWorkoutProgramInput {
@@ -74,6 +74,7 @@ export default gql`
     id: ID!
     startDate: DateTime
     user: User!
+    workoutProgram: WorkoutProgram!
     loggedWorkouts: [LoggedWorkout!]
   }
 

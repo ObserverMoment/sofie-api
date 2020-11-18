@@ -21,6 +21,7 @@ export default gql`
     workoutSections: [WorkoutSection!]!
     originalWorkoutId: String
     workoutProgramWorkout: WorkoutProgramWorkout
+    scheduledWorkout: ScheduledWorkout
   }
 
   input CreateLoggedWorkoutInput {
@@ -37,6 +38,8 @@ export default gql`
     gymProfile: ID
     workoutSections: [CreateWorkoutSectionInput!]!
     originalWorkout: ID!
+    workoutProgramWorkout: ID
+    scheduledWorkout: ID
   }
 
   input DeepUpdateLoggedWorkoutInput {
@@ -52,6 +55,8 @@ export default gql`
     duration: Int
     gymProfile: ID
     workoutSections: [CreateWorkoutSectionInput!]!
+    workoutProgramWorkout: ID
+    scheduledWorkout: ID
   }
 
   input ShallowUpdateLoggedWorkoutInput {
@@ -66,5 +71,7 @@ export default gql`
     imageUrl: String
     duration: Int
     gymProfile: ID
+    workoutProgramWorkout: ID
+    scheduledWorkout: ID
   }
 `
