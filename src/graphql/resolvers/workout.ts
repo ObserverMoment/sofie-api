@@ -43,12 +43,12 @@ const privateWorkouts = async (
 
 const workoutById = async (
   r: any,
-  { id }: QueryWorkoutByIdArgs,
+  { workoutId }: QueryWorkoutByIdArgs,
   { select, prisma }: Context,
 ) =>
   prisma.workout.findOne({
     where: {
-      id,
+      workoutId,
     },
     select,
   })

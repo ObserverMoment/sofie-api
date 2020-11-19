@@ -38,6 +38,7 @@ export default gql`
     gymProfile: ID
     workoutSections: [CreateWorkoutSectionInput!]!
     originalWorkout: ID!
+    workoutProgramEnrolment: ID
     workoutProgramWorkout: ID
     scheduledWorkout: ID
   }
@@ -55,6 +56,7 @@ export default gql`
     duration: Int
     gymProfile: ID
     workoutSections: [CreateWorkoutSectionInput!]!
+    workoutProgramEnrolment: ID
     workoutProgramWorkout: ID
     scheduledWorkout: ID
   }
@@ -71,6 +73,7 @@ export default gql`
     imageUrl: String
     duration: Int
     gymProfile: ID
+    workoutProgramEnrolment: ID
     workoutProgramWorkout: ID
     scheduledWorkout: ID
   }

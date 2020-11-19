@@ -1,0 +1,56 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "CreateField",
+      "model": "LoggedWorkout",
+      "field": "workoutProgramEnrolment",
+      "type": "WorkoutProgramEnrolment",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "LoggedWorkout",
+          "field": "workoutProgramEnrolment"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "LoggedWorkout",
+          "field": "workoutProgramEnrolment"
+        },
+        "directive": "relation"
+      },
+      "argument": "fields",
+      "value": "[workoutProgramEnrolmentId]"
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "LoggedWorkout",
+          "field": "workoutProgramEnrolment"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[id]"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "LoggedWorkout",
+      "field": "WorkoutProgramEnrolment"
+    }
+  ]
+}

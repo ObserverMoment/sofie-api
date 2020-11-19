@@ -7,6 +7,7 @@ export default gql`
   type Query {
     checkUniqueDisplayName(displayName: String!): Boolean!
     users(authedUserId: ID!): [User!]!
+    userByUid(uid: ID!): User
     moves: [Move!]!
     bodyAreas: [BodyArea!]!
     equipments: [Equipment!]!
@@ -15,16 +16,15 @@ export default gql`
     officialWorkouts: [Workout!]!
     privateWorkouts(authedUserId: ID!): [Workout!]!
     publicWorkouts(authedUserId: ID!): [Workout!]!
+    workoutById(authedUserId: ID!, workoutId: ID!): Workout
     officialWorkoutPrograms: [WorkoutProgram!]!
     privateWorkoutPrograms(authedUserId: ID!): [WorkoutProgram!]!
     publicWorkoutPrograms(authedUserId: ID!): [WorkoutProgram!]!
+    workoutProgramById(authedUserId: ID!, workoutProgramId: ID!): WorkoutProgram
     workoutProgramEnrolmentsByUser(
       authedUserId: ID!
       workoutProgramId: ID!
-    ): WorkoutProgramEnrolment
-    userByUid(uid: ID!): User
-    workoutById(id: ID!): Workout
-    workoutProgramById(id: ID!): WorkoutProgram
+    ): [WorkoutProgramEnrolment!]
     likedWorkouts(authedUserId: ID!): [ID!]!
     scheduledWorkouts(authedUserId: ID!): [ScheduledWorkout!]!
     loggedWorkouts(authedUserId: ID!): [LoggedWorkout!]!

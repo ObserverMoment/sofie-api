@@ -7,19 +7,17 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 model BodyArea {
   id                 String              @id @default(uuid())
-  createdAt          DateTime            @default(now())
   name               String              @unique
   altNames           String?
   bodyAreaMoveScores BodyAreaMoveScore[]
 }
 
 model BodyAreaMoveScore {
-  createdAt  DateTime @default(now())
   move       Move     @relation(fields: [moveId], references: [id])
   moveId     String
   bodyArea   BodyArea @relation(fields: [bodyAreaId], references: [id])
@@ -31,7 +29,6 @@ model BodyAreaMoveScore {
 
 model Equipment {
   id                 String        @id @default(uuid())
-  createdAt          DateTime      @default(now())
   name               String        @unique
   altNames           String?
   imageUrl           String?
@@ -44,7 +41,6 @@ model Equipment {
 
 model GymProfile {
   id                  String             @id @default(uuid())
-  createdAt           DateTime           @default(now())
   user                User               @relation(fields: [userId], references: [id])
   userId              String
   name                String
@@ -134,14 +130,13 @@ model Move {
 }
 
 model MoveProfile {
-  id            String   @id @default(uuid())
-  createdAt     DateTime @default(now())
-  user          User     @relation(fields: [userId], references: [id])
+  id            String  @id @default(uuid())
+  user          User    @relation(fields: [userId], references: [id])
   userId        String
   name          String
   description   String?
-  requiredMoves Move[]   @relation("requiredMoves", references: [id])
-  excludedMoves Move[]   @relation("excludedMoves", references: [id])
+  requiredMoves Move[]  @relation("requiredMoves", references: [id])
+  excludedMoves Move[]  @relation("excludedMoves", references: [id])
 }
 
 model ScheduledWorkout {
@@ -230,7 +225,6 @@ model Workout {
 
 model WorkoutGoal {
   id                  String           @id @default(uuid())
-  createdAt           DateTime         @default(now())
   name                String
   description         String
   placeholderImageUrl String?
@@ -342,7 +336,6 @@ model WorkoutSection {
 
 model WorkoutType {
   id                  String           @id @default(uuid())
-  createdAt           DateTime         @default(now())
   name                String
   description         String
   placeholderImageUrl String

@@ -7,6 +7,7 @@ import {
   MutationRemoveEnrolmentFromWorkoutProgramArgs,
   MutationShallowUpdateWorkoutProgramArgs,
   QueryPrivateWorkoutProgramsArgs,
+  QueryWorkoutProgramByIdArgs,
   QueryWorkoutProgramEnrolmentsByUserArgs,
   WorkoutProgram,
 } from '../../generated/graphql'
@@ -49,6 +50,16 @@ const privateWorkoutPrograms = async (
     select,
   })
 
+const workoutProgramById = async (
+  r: any,
+  { workoutProgramId }: QueryWorkoutProgramByIdArgs,
+  { prisma, select }: Context,
+) =>
+  prisma.workoutProgram.findOne({
+    where: { id: workoutProgramId },
+    select,
+  })
+
 // gets all a users enrolments for a given workoutProgram.
 // Users can enrol in a plan multiple times if they want.
 const workoutProgramEnrolmentsByUser = async (
@@ -79,7 +90,7 @@ const createWorkoutProgram = async (
       workoutGoals: {
         connect: data.workoutGoals.map((id) => ({ id })),
       },
-      programWorkouts: {
+      workoutProgramWorkouts: {
         create: data.workoutProgramWorkouts.map((pw) => ({
           ...pw,
           workout: {
@@ -265,6 +276,7 @@ export {
   officialWorkoutPrograms,
   publicWorkoutPrograms,
   privateWorkoutPrograms,
+  workoutProgramById,
   workoutProgramEnrolmentsByUser,
   createWorkoutProgram,
   deepUpdateWorkoutProgram,
