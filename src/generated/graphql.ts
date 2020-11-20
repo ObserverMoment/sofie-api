@@ -21,6 +21,7 @@ export type Query = {
   checkUniqueDisplayName: Scalars['Boolean'];
   users: Array<User>;
   userByUid?: Maybe<User>;
+  userPublicProfile?: Maybe<UserPublicProfile>;
   moves: Array<Move>;
   bodyAreas: Array<BodyArea>;
   equipments: Array<Equipment>;
@@ -54,6 +55,11 @@ export type QueryUsersArgs = {
 
 export type QueryUserByUidArgs = {
   uid: Scalars['ID'];
+};
+
+
+export type QueryUserPublicProfileArgs = {
+  userId: Scalars['ID'];
 };
 
 
@@ -449,6 +455,25 @@ export type UpdateUserInput = {
   lastname?: Maybe<Scalars['String']>;
   unitSystem?: Maybe<UnitSystem>;
   weight?: Maybe<Scalars['Float']>;
+};
+
+export type UserPublicProfile = {
+  __typename?: 'UserPublicProfile';
+  id: Scalars['ID'];
+  avatarUrl?: Maybe<Scalars['String']>;
+  bio?: Maybe<Scalars['String']>;
+  countryCode?: Maybe<Scalars['String']>;
+  displayName?: Maybe<Scalars['String']>;
+  workouts?: Maybe<Array<Workout>>;
+  workoutPrograms?: Maybe<Array<WorkoutProgram>>;
+};
+
+export type UserPrivateProfile = {
+  __typename?: 'UserPrivateProfile';
+  loggedWorkouts?: Maybe<Array<LoggedWorkout>>;
+  workouts?: Maybe<Array<Workout>>;
+  workoutPrograms?: Maybe<Array<WorkoutProgram>>;
+  workoutProgramEnrolments?: Maybe<Array<WorkoutProgramEnrolment>>;
 };
 
 export type LikedWorkout = {
@@ -991,6 +1016,8 @@ export type ResolversTypes = ResolversObject<{
   User: ResolverTypeWrapper<User>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
   UpdateUserInput: UpdateUserInput;
+  UserPublicProfile: ResolverTypeWrapper<UserPublicProfile>;
+  UserPrivateProfile: ResolverTypeWrapper<UserPrivateProfile>;
   LikedWorkout: ResolverTypeWrapper<LikedWorkout>;
   LikedWorkoutProgram: ResolverTypeWrapper<LikedWorkoutProgram>;
   WorkoutType: ResolverTypeWrapper<WorkoutType>;
@@ -1057,6 +1084,8 @@ export type ResolversParentTypes = ResolversObject<{
   User: User;
   Float: Scalars['Float'];
   UpdateUserInput: UpdateUserInput;
+  UserPublicProfile: UserPublicProfile;
+  UserPrivateProfile: UserPrivateProfile;
   LikedWorkout: LikedWorkout;
   LikedWorkoutProgram: LikedWorkoutProgram;
   WorkoutType: WorkoutType;
@@ -1102,6 +1131,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   checkUniqueDisplayName?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryCheckUniqueDisplayNameArgs, 'displayName'>>;
   users?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUsersArgs, 'authedUserId'>>;
   userByUid?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserByUidArgs, 'uid'>>;
+  userPublicProfile?: Resolver<Maybe<ResolversTypes['UserPublicProfile']>, ParentType, ContextType, RequireFields<QueryUserPublicProfileArgs, 'userId'>>;
   moves?: Resolver<Array<ResolversTypes['Move']>, ParentType, ContextType>;
   bodyAreas?: Resolver<Array<ResolversTypes['BodyArea']>, ParentType, ContextType>;
   equipments?: Resolver<Array<ResolversTypes['Equipment']>, ParentType, ContextType>;
@@ -1224,6 +1254,25 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   unitSystem?: Resolver<Maybe<ResolversTypes['UnitSystem']>, ParentType, ContextType>;
   gymProfiles?: Resolver<Maybe<Array<ResolversTypes['GymProfile']>>, ParentType, ContextType>;
   moveProfiles?: Resolver<Maybe<Array<ResolversTypes['MoveProfile']>>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
+}>;
+
+export type UserPublicProfileResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserPublicProfile'] = ResolversParentTypes['UserPublicProfile']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  avatarUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  bio?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  countryCode?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  displayName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  workouts?: Resolver<Maybe<Array<ResolversTypes['Workout']>>, ParentType, ContextType>;
+  workoutPrograms?: Resolver<Maybe<Array<ResolversTypes['WorkoutProgram']>>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
+}>;
+
+export type UserPrivateProfileResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserPrivateProfile'] = ResolversParentTypes['UserPrivateProfile']> = ResolversObject<{
+  loggedWorkouts?: Resolver<Maybe<Array<ResolversTypes['LoggedWorkout']>>, ParentType, ContextType>;
+  workouts?: Resolver<Maybe<Array<ResolversTypes['Workout']>>, ParentType, ContextType>;
+  workoutPrograms?: Resolver<Maybe<Array<ResolversTypes['WorkoutProgram']>>, ParentType, ContextType>;
+  workoutProgramEnrolments?: Resolver<Maybe<Array<ResolversTypes['WorkoutProgramEnrolment']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 }>;
 
@@ -1404,6 +1453,8 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   GymProfile?: GymProfileResolvers<ContextType>;
   MoveProfile?: MoveProfileResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
+  UserPublicProfile?: UserPublicProfileResolvers<ContextType>;
+  UserPrivateProfile?: UserPrivateProfileResolvers<ContextType>;
   LikedWorkout?: LikedWorkoutResolvers<ContextType>;
   LikedWorkoutProgram?: LikedWorkoutProgramResolvers<ContextType>;
   WorkoutType?: WorkoutTypeResolvers<ContextType>;

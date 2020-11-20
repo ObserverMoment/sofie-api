@@ -48,7 +48,7 @@ const workoutById = async (
 ) =>
   prisma.workout.findOne({
     where: {
-      workoutId,
+      id: workoutId,
     },
     select,
   })

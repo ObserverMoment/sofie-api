@@ -114,6 +114,13 @@ const deepUpdateLoggedWorkout = async (
               connect: { id: data.scheduledWorkout },
             }
           : undefined,
+        // Connect to the enrolment (single instance of a user being enrolled in a plan)
+        // And to the specific session (via workoutProgramWorkout) within the program.
+        workoutProgramEnrolment: data.workoutProgramEnrolment
+          ? {
+              connect: { id: data.workoutProgramEnrolment },
+            }
+          : undefined,
         workoutProgramWorkout: data.workoutProgramWorkout
           ? {
               connect: { id: data.workoutProgramWorkout },
@@ -158,6 +165,13 @@ const shallowUpdateLoggedWorkout = async (
         scheduledWorkout: data.scheduledWorkout
           ? {
               connect: { id: data.scheduledWorkout },
+            }
+          : undefined,
+        // Connect to the enrolment (single instance of a user being enrolled in a plan)
+        // And to the specific session (via workoutProgramWorkout) within the program.
+        workoutProgramEnrolment: data.workoutProgramEnrolment
+          ? {
+              connect: { id: data.workoutProgramEnrolment },
             }
           : undefined,
         workoutProgramWorkout: data.workoutProgramWorkout

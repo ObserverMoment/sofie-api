@@ -8,6 +8,7 @@ export default gql`
     checkUniqueDisplayName(displayName: String!): Boolean!
     users(authedUserId: ID!): [User!]!
     userByUid(uid: ID!): User
+    userPublicProfile(userId: ID!): UserPublicProfile
     moves: [Move!]!
     bodyAreas: [BodyArea!]!
     equipments: [Equipment!]!

@@ -38,4 +38,21 @@ export default gql`
     unitSystem: UnitSystem
     weight: Float
   }
+
+  type UserPublicProfile {
+    id: ID!
+    avatarUrl: String
+    bio: String
+    countryCode: String
+    displayName: String
+    workouts: [Workout!]
+    workoutPrograms: [WorkoutProgram!]
+  }
+
+  type UserPrivateProfile {
+    loggedWorkouts: [LoggedWorkout!]
+    workouts: [Workout!]
+    workoutPrograms: [WorkoutProgram!]
+    workoutProgramEnrolments: [WorkoutProgramEnrolment!]
+  }
 `

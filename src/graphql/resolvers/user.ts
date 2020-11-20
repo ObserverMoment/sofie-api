@@ -7,6 +7,7 @@ import {
   MutationUpdateUserArgs,
   QueryCheckUniqueDisplayNameArgs,
   QueryUserByUidArgs,
+  QueryUserPublicProfileArgs,
   QueryUsersArgs,
 } from '../../generated/graphql'
 
@@ -36,6 +37,23 @@ const userByUid = async (
   prisma.user.findOne({
     where: { firebaseUid: uid },
     select,
+  })
+
+const userPublicProfile = async (
+  r: any,
+  { userId }: QueryUserPublicProfileArgs,
+  { select, prisma }: Context,
+) =>
+  prisma.user.findOne({
+    where: { id: userId },
+    select: {
+      id: true,
+      displayName: true,
+      avatarUrl: true,
+      bio: true,
+      countryCode: true,
+      ...select,
+    },
   })
 
 //// Mutations ////
@@ -85,7 +103,7 @@ const createGymProfile = async (
 
 const updateGymProfile = async (
   r: any,
-  { authedUserId, data }: MutationUpdateGymProfileArgs,
+  { data }: MutationUpdateGymProfileArgs,
   { select, prisma }: Context,
 ) =>
   prisma.gymProfile.update({
@@ -105,7 +123,7 @@ const updateGymProfile = async (
 
 const deleteGymProfileById = async (
   r: any,
-  { authedUserId, gymProfileId }: MutationDeleteGymProfileByIdArgs,
+  { gymProfileId }: MutationDeleteGymProfileByIdArgs,
   { prisma }: Context,
 ) => {
   const { id } = await prisma.gymProfile.delete({
@@ -120,6 +138,7 @@ export {
   checkUniqueDisplayName,
   users,
   userByUid,
+  userPublicProfile,
   createUser,
   updateUser,
   createGymProfile,
