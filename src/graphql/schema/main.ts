@@ -6,22 +6,30 @@ export default gql`
 
   type Query {
     checkUniqueDisplayName(displayName: String!): Boolean!
-    officialMoves: [Move!]!
-    officialEquipments: [Equipment!]!
-    officialWorkoutTypes: [WorkoutType!]!
-    officialWorkoutGoals: [WorkoutGoal]!
+    users(authedUserId: ID!): [User!]!
+    userByUid(uid: ID!): User
+    userPublicProfile(userId: ID!): UserPublicProfile
+    moves: [Move!]!
+    bodyAreas: [BodyArea!]!
+    equipments: [Equipment!]!
+    workoutTypes: [WorkoutType!]!
+    workoutGoals: [WorkoutGoal]!
     officialWorkouts: [Workout!]!
     privateWorkouts(authedUserId: ID!): [Workout!]!
     publicWorkouts(authedUserId: ID!): [Workout!]!
+    workoutById(authedUserId: ID!, workoutId: ID!): Workout
     officialWorkoutPrograms: [WorkoutProgram!]!
     privateWorkoutPrograms(authedUserId: ID!): [WorkoutProgram!]!
     publicWorkoutPrograms(authedUserId: ID!): [WorkoutProgram!]!
-    userByUid(uid: ID!): User
-    workoutById(id: ID!): Workout
-    workoutProgramById(id: ID!): WorkoutProgram
+    workoutProgramById(authedUserId: ID!, workoutProgramId: ID!): WorkoutProgram
+    workoutProgramEnrolmentsByUser(
+      authedUserId: ID!
+      workoutProgramId: ID!
+    ): [WorkoutProgramEnrolment!]
     likedWorkouts(authedUserId: ID!): [ID!]!
     scheduledWorkouts(authedUserId: ID!): [ScheduledWorkout!]!
     loggedWorkouts(authedUserId: ID!): [LoggedWorkout!]!
+    likedWorkoutPrograms(authedUserId: ID!): [ID!]!
   }
 
   type Mutation {
@@ -35,7 +43,7 @@ export default gql`
       authedUserId: ID!
       data: UpdateGymProfileInput!
     ): GymProfile!
-    deleteGymProfile(authedUserId: ID!, gymProfileId: ID!): ID!
+    deleteGymProfileById(authedUserId: ID!, gymProfileId: ID!): ID
     createMoveProfile(
       authedUserId: ID!
       data: CreateMoveProfileInput!
@@ -45,15 +53,15 @@ export default gql`
       data: UpdateMoveProfileInput!
     ): MoveProfile!
     createWorkout(authedUserId: ID!, data: CreateWorkoutInput!): Workout!
-    deepUpdateWorkout(
-      authedUserId: ID!
-      data: DeepUpdateWorkoutInput!
-    ): Workout!
     shallowUpdateWorkout(
       authedUserId: ID!
       data: ShallowUpdateWorkoutInput!
     ): Workout!
-    deleteWorkout(authedUserId: ID!, workoutId: ID!): ID!
+    deepUpdateWorkout(
+      authedUserId: ID!
+      data: DeepUpdateWorkoutInput!
+    ): Workout!
+    deleteWorkoutById(authedUserId: ID!, workoutId: ID!): ID
     likeWorkout(authedUserId: ID!, workoutId: ID!): ID
     unlikeWorkout(authedUserId: ID!, workoutId: ID!): ID
     scheduleWorkout(
@@ -67,17 +75,17 @@ export default gql`
     ): ScheduledWorkout!
     createLoggedWorkout(
       authedUserId: ID!
-      loggedWorkoutData: CreateLoggedWorkoutInput!
+      data: CreateLoggedWorkoutInput!
     ): LoggedWorkout!
     deepUpdateLoggedWorkout(
       authedUserId: ID!
-      loggedWorkoutData: DeepUpdateLoggedWorkoutInput!
+      data: DeepUpdateLoggedWorkoutInput!
     ): LoggedWorkout!
     shallowUpdateLoggedWorkout(
       authedUserId: ID!
-      loggedWorkoutData: ShallowUpdateLoggedWorkoutInput!
+      data: ShallowUpdateLoggedWorkoutInput!
     ): LoggedWorkout!
-    deleteLoggedWorkout(authedUserId: ID!, loggedWorkoutId: ID!): ID!
+    deleteLoggedWorkoutById(authedUserId: ID!, loggedWorkoutId: ID!): ID
     createWorkoutProgram(
       authedUserId: ID!
       data: CreateWorkoutProgramInput!
@@ -90,7 +98,9 @@ export default gql`
       authedUserId: ID!
       data: DeepUpdateWorkoutProgramInput!
     ): WorkoutProgram!
-    deleteWorkoutProgram(authedUserId: ID!, workoutProgramId: ID!): ID!
+    deleteWorkoutProgramById(authedUserId: ID!, workoutProgramId: ID!): ID
+    likeWorkoutProgram(authedUserId: ID!, workoutProgramId: ID!): ID
+    unlikeWorkoutProgram(authedUserId: ID!, workoutProgramId: ID!): ID
     addEnrolmentToWorkoutProgram(
       authedUserId: ID!
       workoutProgramId: ID!
@@ -98,15 +108,15 @@ export default gql`
     removeEnrolmentFromWorkoutProgram(
       authedUserId: ID!
       workoutProgramId: ID!
+      workoutProgramEnrolmentId: ID!
     ): WorkoutProgram!
     addReviewToWorkoutProgram(
       authedUserId: ID!
       workoutProgramId: ID!
       data: CreateWorkoutProgramReviewInput!
     ): WorkoutProgram!
-    removeReviewFromWorkoutProgram(
+    deleteWorkoutProgramReview(
       authedUserId: ID!
-      workoutProgramId: ID!
       reviewId: ID!
     ): WorkoutProgram!
   }
@@ -122,20 +132,21 @@ export default gql`
   type Move {
     id: ID!
     name: String!
+    searchTerms: String
     description: String
     demoVideoUrl: String
-    scope: AccessScopeType!
-    groupId: String
+    type: MoveType!
     validRepTypes: [WorkoutMoveRepType!]!
-    createdById: String
     requiredEquipments: [Equipment!]!
     selectableEquipments: [Equipment!]!
+    bodyAreaMoveScores: [BodyAreaMoveScore!]
   }
 
   type WorkoutGoal {
     id: ID!
     name: String!
     description: String!
+    placeholderImageUrl: String
   }
 
   ##### User CRUD-able models #####
@@ -190,43 +201,5 @@ export default gql`
     description: String
     requiredMoveIds: [ID!]
     excludedMoveIds: [ID!]
-  }
-
-  type User {
-    id: ID!
-    avatarUrl: String
-    bio: String
-    birthdate: DateTime
-    city: String
-    countryCode: String
-    displayName: String
-    firstname: String
-    lastname: String
-    themePreference: ThemePreference!
-    gender: Gender
-    hasOnboarded: Boolean!
-    height: Float
-    weight: Float
-    unitSystem: UnitSystem
-    gymProfiles: [GymProfile!]
-    moveProfiles: [MoveProfile!]
-  }
-
-  input UpdateUserInput {
-    avatarUrl: String
-    bio: String
-    birthdate: DateTime
-    city: String
-    countryCode: String
-    displayName: String
-    firstname: String
-    themePreference: ThemePreference
-    gender: Gender
-    gymBox: String
-    hasOnboarded: Boolean
-    height: Float
-    lastname: String
-    unitSystem: UnitSystem
-    weight: Float
   }
 `

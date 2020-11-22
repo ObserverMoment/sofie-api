@@ -1,16 +1,15 @@
-import { LikedWorkout } from '@prisma/client'
+import { Context } from '../..'
 import {
   MutationCreateGymProfileArgs,
   MutationCreateUserArgs,
-  MutationDeleteGymProfileArgs,
+  MutationDeleteGymProfileByIdArgs,
   MutationUpdateGymProfileArgs,
   MutationUpdateUserArgs,
   QueryCheckUniqueDisplayNameArgs,
-  QueryLikedWorkoutsArgs,
-  QueryScheduledWorkoutsArgs,
   QueryUserByUidArgs,
+  QueryUserPublicProfileArgs,
+  QueryUsersArgs,
 } from '../../generated/graphql'
-import { Context } from '../../types'
 
 //// Queries ////
 const checkUniqueDisplayName = async (
@@ -24,6 +23,12 @@ const checkUniqueDisplayName = async (
   return user == null
 }
 
+const users = async (
+  r: any,
+  { authedUserId }: QueryUsersArgs,
+  { select, prisma }: Context,
+) => prisma.user.findMany({ select })
+
 const userByUid = async (
   r: any,
   { uid }: QueryUserByUidArgs,
@@ -34,31 +39,21 @@ const userByUid = async (
     select,
   })
 
-const likedWorkouts = async (
+const userPublicProfile = async (
   r: any,
-  { authedUserId }: QueryLikedWorkoutsArgs,
-  { prisma }: Context,
-) => {
-  const likedWorkouts: LikedWorkout[] = await prisma.likedWorkout.findMany({
-    where: {
-      user: { id: authedUserId },
-    },
-  })
-  return likedWorkouts.map(
-    (likedWorkout: LikedWorkout) => likedWorkout.workoutId,
-  )
-}
-
-const scheduledWorkouts = async (
-  r: any,
-  { authedUserId }: QueryScheduledWorkoutsArgs,
+  { userId }: QueryUserPublicProfileArgs,
   { select, prisma }: Context,
 ) =>
-  prisma.scheduledWorkout.findMany({
-    where: {
-      user: { id: authedUserId },
+  prisma.user.findOne({
+    where: { id: userId },
+    select: {
+      id: true,
+      displayName: true,
+      avatarUrl: true,
+      bio: true,
+      countryCode: true,
+      ...select,
     },
-    select,
   })
 
 //// Mutations ////
@@ -108,7 +103,7 @@ const createGymProfile = async (
 
 const updateGymProfile = async (
   r: any,
-  { authedUserId, data }: MutationUpdateGymProfileArgs,
+  { data }: MutationUpdateGymProfileArgs,
   { select, prisma }: Context,
 ) =>
   prisma.gymProfile.update({
@@ -126,9 +121,9 @@ const updateGymProfile = async (
     select,
   })
 
-const deleteGymProfile = async (
+const deleteGymProfileById = async (
   r: any,
-  { authedUserId, gymProfileId }: MutationDeleteGymProfileArgs,
+  { gymProfileId }: MutationDeleteGymProfileByIdArgs,
   { prisma }: Context,
 ) => {
   const { id } = await prisma.gymProfile.delete({
@@ -141,12 +136,12 @@ const deleteGymProfile = async (
 
 export {
   checkUniqueDisplayName,
-  likedWorkouts,
-  scheduledWorkouts,
+  users,
   userByUid,
+  userPublicProfile,
   createUser,
   updateUser,
   createGymProfile,
   updateGymProfile,
-  deleteGymProfile,
+  deleteGymProfileById,
 }

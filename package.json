@@ -8,29 +8,30 @@
     "start": "node dist/index.js",
     "dev": "concurrently \"tsc -w\" \"nodemon dist/index.js\"",
     "debug": "nodemon --inspect dist/index.js",
-    "generate": "graphql-codegen --config codegen.yml"
+    "generate": "graphql-codegen --config codegen.yml",
+    "studio": "prisma studio --port 5000",
+    "postinstall": "npm run generate && prisma migrate up --experimental --auto-approve && prisma generate && npm run build"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@graphql-tools/merge": "^6.0.16",
-    "@paljs/plugins": "^2.5.8",
-    "@prisma/client": "^2.10.2",
+    "@paljs/plugins": "^2.5.12",
+    "@prisma/client": "^2.11.0",
     "apollo-server": "^2.19.0",
     "dotenv": "^8.2.0",
     "graphql-config": "^3.0.3",
     "graphql-middleware": "^4.0.2",
     "graphql-parse-resolve-info": "^4.7.0",
     "graphql-type-json": "^0.3.2",
-    "node-fetch": "^2.6.0",
-    "puppeteer": "^3.3.0"
+    "node-fetch": "^2.6.0"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "1.17.0",
     "@graphql-codegen/typescript": "1.17.0",
     "@graphql-codegen/typescript-document-nodes": "1.17.0",
     "@graphql-codegen/typescript-resolvers": "^1.17.0",
-    "@prisma/cli": "^2.10.2",
+    "@prisma/cli": "^2.11.0",
     "@types/node": "^14.0.27",
     "@types/node-fetch": "^2.5.7",
     "concurrently": "^5.3.0",

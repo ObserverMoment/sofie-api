@@ -1,0 +1,306 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "CreateModel",
+      "model": "BodyArea"
+    },
+    {
+      "tag": "CreateField",
+      "model": "BodyArea",
+      "field": "id",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "BodyArea",
+          "field": "id"
+        },
+        "directive": "id"
+      }
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "BodyArea",
+          "field": "id"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "BodyArea",
+          "field": "id"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "uuid()"
+    },
+    {
+      "tag": "CreateField",
+      "model": "BodyArea",
+      "field": "name",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "BodyArea",
+          "field": "name"
+        },
+        "directive": "unique"
+      }
+    },
+    {
+      "tag": "CreateField",
+      "model": "BodyArea",
+      "field": "altNames",
+      "type": "String",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "BodyArea",
+      "field": "bodyAreaMoveScores",
+      "type": "BodyAreaMoveScore",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateModel",
+      "model": "BodyAreaMoveScore"
+    },
+    {
+      "tag": "CreateField",
+      "model": "BodyAreaMoveScore",
+      "field": "move",
+      "type": "Move",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "BodyAreaMoveScore",
+          "field": "move"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "BodyAreaMoveScore",
+          "field": "move"
+        },
+        "directive": "relation"
+      },
+      "argument": "fields",
+      "value": "[moveId]"
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "BodyAreaMoveScore",
+          "field": "move"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[id]"
+    },
+    {
+      "tag": "CreateField",
+      "model": "BodyAreaMoveScore",
+      "field": "moveId",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "BodyAreaMoveScore",
+      "field": "bodyArea",
+      "type": "BodyArea",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "BodyAreaMoveScore",
+          "field": "bodyArea"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "BodyAreaMoveScore",
+          "field": "bodyArea"
+        },
+        "directive": "relation"
+      },
+      "argument": "fields",
+      "value": "[bodyAreaId]"
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "BodyAreaMoveScore",
+          "field": "bodyArea"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[id]"
+    },
+    {
+      "tag": "CreateField",
+      "model": "BodyAreaMoveScore",
+      "field": "bodyAreaId",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "BodyAreaMoveScore",
+      "field": "score",
+      "type": "Float",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Model",
+          "model": "BodyAreaMoveScore"
+        },
+        "directive": "id"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Model",
+          "model": "BodyAreaMoveScore"
+        },
+        "directive": "id"
+      },
+      "argument": "",
+      "value": "[moveId, bodyAreaId]"
+    },
+    {
+      "tag": "CreateField",
+      "model": "LoggedWorkout",
+      "field": "workoutProgramWorkout",
+      "type": "WorkoutProgramWorkout",
+      "arity": "Optional"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "LoggedWorkout",
+      "field": "workoutProgramEnrolment"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "LoggedWorkout",
+      "field": "workoutProgramEnrolmentId"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Move",
+      "field": "bodyAreaMoveScores",
+      "type": "BodyAreaMoveScore",
+      "arity": "List"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "WorkoutProgramEnrolment",
+      "field": "loggedWorkouts"
+    },
+    {
+      "tag": "CreateField",
+      "model": "WorkoutProgramWorkout",
+      "field": "loggedWorkout",
+      "type": "LoggedWorkout",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "WorkoutProgramWorkout",
+          "field": "loggedWorkout"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "WorkoutProgramWorkout",
+          "field": "loggedWorkout"
+        },
+        "directive": "relation"
+      },
+      "argument": "fields",
+      "value": "[loggedWorkoutId]"
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "WorkoutProgramWorkout",
+          "field": "loggedWorkout"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[id]"
+    },
+    {
+      "tag": "CreateField",
+      "model": "WorkoutProgramWorkout",
+      "field": "loggedWorkoutId",
+      "type": "String",
+      "arity": "Optional"
+    }
+  ]
+}

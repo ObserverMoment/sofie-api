@@ -20,7 +20,8 @@ export default gql`
     """
     workoutSections: [WorkoutSection!]!
     originalWorkoutId: String
-    originalWorkoutScope: AccessScopeType!
+    workoutProgramWorkout: WorkoutProgramWorkout
+    scheduledWorkout: ScheduledWorkout
   }
 
   input CreateLoggedWorkoutInput {
@@ -33,12 +34,13 @@ export default gql`
     videoThumbUrl: String
     imageUrl: String
     duration: Int
-    workoutTypeId: String!
-    gymProfileId: String
-    difficultyLevel: Int!
+    workoutType: ID!
+    gymProfile: ID
     workoutSections: [CreateWorkoutSectionInput!]!
-    originalWorkoutId: String
-    originalWorkoutScope: AccessScopeType!
+    originalWorkout: ID!
+    workoutProgramEnrolment: ID
+    workoutProgramWorkout: ID
+    scheduledWorkout: ID
   }
 
   input DeepUpdateLoggedWorkoutInput {
@@ -52,9 +54,11 @@ export default gql`
     videoThumbUrl: String
     imageUrl: String
     duration: Int
-    gymProfileId: String
-    difficultyLevel: Int
+    gymProfile: ID
     workoutSections: [CreateWorkoutSectionInput!]!
+    workoutProgramEnrolment: ID
+    workoutProgramWorkout: ID
+    scheduledWorkout: ID
   }
 
   input ShallowUpdateLoggedWorkoutInput {
@@ -68,7 +72,9 @@ export default gql`
     videoThumbUrl: String
     imageUrl: String
     duration: Int
-    gymProfileId: String
-    difficultyLevel: Int
+    gymProfile: ID
+    workoutProgramEnrolment: ID
+    workoutProgramWorkout: ID
+    scheduledWorkout: ID
   }
 `

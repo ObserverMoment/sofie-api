@@ -3,6 +3,7 @@ import { gql } from 'apollo-server-express'
 export default gql`
   """
   Enums
+  enums
   """
   enum AccessScopeType {
     PRIVATE
@@ -24,15 +25,6 @@ export default gql`
     YARDS
     MILES
   }
-
-  enum FrequencyPeriod {
-    DAY
-    TWODAYS
-    WEEK
-    TWOWEEKS
-    MONTH
-  }
-
   enum Gender {
     MALE
     FEMALE
@@ -43,6 +35,15 @@ export default gql`
     KG
     LB
     BODYWEIGHTPERCENT
+  }
+
+  """
+  Standard moves are built in / official.
+  Custom moves are created by users.
+  """
+  enum MoveType {
+    STANDARD
+    CUSTOM
   }
 
   enum ThemePreference {

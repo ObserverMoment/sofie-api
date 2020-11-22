@@ -2,17 +2,35 @@ import { ApolloServer, ResolverFn } from 'apollo-server'
 import resolvers from './graphql/resolvers/resolvers'
 import typeDefs from './graphql/schema/typeDefs'
 import { applyMiddleware } from 'graphql-middleware'
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient, PrismaClientOptions } from '@prisma/client'
 import { PrismaSelect } from '@paljs/plugins'
-import { Context } from './types'
 import { makeExecutableSchema } from 'graphql-tools'
 import { GraphQLResolveInfo } from 'graphql'
+import { PrismaDelete, onDeleteArgs } from '@paljs/plugins'
 
 require('dotenv').config()
 
-const prisma = new PrismaClient({
-  debug: true,
-  log: ['info', 'query', 'warn'],
+// https://paljs.com/plugins/delete/
+class Prisma extends PrismaClient {
+  constructor(options?: PrismaClientOptions) {
+    super(options)
+  }
+
+  async onDelete(args: onDeleteArgs) {
+    const prismaDelete = new PrismaDelete(this)
+    await prismaDelete.onDelete(args)
+  }
+}
+
+export interface Context {
+  // PrismaClient type is not declared here because of clash between Prisma return types and GraphQL schema types and input definitions. Is a known issue with some workarounds available in Prisma docs.
+  prisma: any
+  // https://paljs.com/plugins/select
+  select?: any
+}
+
+const prisma = new Prisma({
+  log: ['info', 'query', 'warn', 'error'],
   errorFormat: 'pretty',
 })
 
