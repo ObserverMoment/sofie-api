@@ -40,6 +40,9 @@ export type Query = {
   scheduledWorkouts: Array<ScheduledWorkout>;
   loggedWorkouts: Array<LoggedWorkout>;
   likedWorkoutPrograms: Array<Scalars['ID']>;
+  textSearchWorkouts?: Maybe<Array<TextSearchWorkoutResult>>;
+  textSearchWorkoutPrograms?: Maybe<Array<TextSearchWorkoutProgramResult>>;
+  textSearchCreators?: Maybe<Array<TextSearchCreatorResult>>;
 };
 
 
@@ -118,6 +121,24 @@ export type QueryLoggedWorkoutsArgs = {
 
 export type QueryLikedWorkoutProgramsArgs = {
   authedUserId: Scalars['ID'];
+};
+
+
+export type QueryTextSearchWorkoutsArgs = {
+  authedUserId: Scalars['ID'];
+  text: Scalars['String'];
+};
+
+
+export type QueryTextSearchWorkoutProgramsArgs = {
+  authedUserId: Scalars['ID'];
+  text: Scalars['String'];
+};
+
+
+export type QueryTextSearchCreatorsArgs = {
+  authedUserId: Scalars['ID'];
+  text: Scalars['String'];
 };
 
 export type Mutation = {
@@ -842,6 +863,39 @@ export type BodyAreaMoveScore = {
   score: Scalars['Float'];
 };
 
+export type TextSearchWorkoutResult = {
+  __typename?: 'TextSearchWorkoutResult';
+  id: Scalars['ID'];
+  scope: AccessScopeType;
+  name?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  workoutType: WorkoutType;
+  imageUrl?: Maybe<Scalars['String']>;
+  difficultyLevel: Scalars['Int'];
+  timecap?: Maybe<Scalars['Int']>;
+  createdBy?: Maybe<User>;
+};
+
+export type TextSearchWorkoutProgramResult = {
+  __typename?: 'TextSearchWorkoutProgramResult';
+  id: Scalars['ID'];
+  scope: AccessScopeType;
+  name: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+  imageUrl?: Maybe<Scalars['String']>;
+  createdBy?: Maybe<User>;
+  workoutGoals: Array<WorkoutGoal>;
+};
+
+export type TextSearchCreatorResult = {
+  __typename?: 'TextSearchCreatorResult';
+  id: Scalars['ID'];
+  avatarUrl?: Maybe<Scalars['String']>;
+  bio?: Maybe<Scalars['String']>;
+  countryCode?: Maybe<Scalars['String']>;
+  displayName?: Maybe<Scalars['String']>;
+};
+
 /**
  * Enums
  * enums
@@ -1049,6 +1103,9 @@ export type ResolversTypes = ResolversObject<{
   CreateWorkoutMoveInput: CreateWorkoutMoveInput;
   BodyArea: ResolverTypeWrapper<BodyArea>;
   BodyAreaMoveScore: ResolverTypeWrapper<BodyAreaMoveScore>;
+  TextSearchWorkoutResult: ResolverTypeWrapper<TextSearchWorkoutResult>;
+  TextSearchWorkoutProgramResult: ResolverTypeWrapper<TextSearchWorkoutProgramResult>;
+  TextSearchCreatorResult: ResolverTypeWrapper<TextSearchCreatorResult>;
   AccessScopeType: AccessScopeType;
   DifficultyLevel: DifficultyLevel;
   DistanceUnit: DistanceUnit;
@@ -1117,6 +1174,9 @@ export type ResolversParentTypes = ResolversObject<{
   CreateWorkoutMoveInput: CreateWorkoutMoveInput;
   BodyArea: BodyArea;
   BodyAreaMoveScore: BodyAreaMoveScore;
+  TextSearchWorkoutResult: TextSearchWorkoutResult;
+  TextSearchWorkoutProgramResult: TextSearchWorkoutProgramResult;
+  TextSearchCreatorResult: TextSearchCreatorResult;
 }>;
 
 export interface JsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['JSON'], any> {
@@ -1150,6 +1210,9 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   scheduledWorkouts?: Resolver<Array<ResolversTypes['ScheduledWorkout']>, ParentType, ContextType, RequireFields<QueryScheduledWorkoutsArgs, 'authedUserId'>>;
   loggedWorkouts?: Resolver<Array<ResolversTypes['LoggedWorkout']>, ParentType, ContextType, RequireFields<QueryLoggedWorkoutsArgs, 'authedUserId'>>;
   likedWorkoutPrograms?: Resolver<Array<ResolversTypes['ID']>, ParentType, ContextType, RequireFields<QueryLikedWorkoutProgramsArgs, 'authedUserId'>>;
+  textSearchWorkouts?: Resolver<Maybe<Array<ResolversTypes['TextSearchWorkoutResult']>>, ParentType, ContextType, RequireFields<QueryTextSearchWorkoutsArgs, 'authedUserId' | 'text'>>;
+  textSearchWorkoutPrograms?: Resolver<Maybe<Array<ResolversTypes['TextSearchWorkoutProgramResult']>>, ParentType, ContextType, RequireFields<QueryTextSearchWorkoutProgramsArgs, 'authedUserId' | 'text'>>;
+  textSearchCreators?: Resolver<Maybe<Array<ResolversTypes['TextSearchCreatorResult']>>, ParentType, ContextType, RequireFields<QueryTextSearchCreatorsArgs, 'authedUserId' | 'text'>>;
 }>;
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
@@ -1442,6 +1505,39 @@ export type BodyAreaMoveScoreResolvers<ContextType = any, ParentType extends Res
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 }>;
 
+export type TextSearchWorkoutResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['TextSearchWorkoutResult'] = ResolversParentTypes['TextSearchWorkoutResult']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  scope?: Resolver<ResolversTypes['AccessScopeType'], ParentType, ContextType>;
+  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  workoutType?: Resolver<ResolversTypes['WorkoutType'], ParentType, ContextType>;
+  imageUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  difficultyLevel?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  timecap?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  createdBy?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
+}>;
+
+export type TextSearchWorkoutProgramResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['TextSearchWorkoutProgramResult'] = ResolversParentTypes['TextSearchWorkoutProgramResult']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  scope?: Resolver<ResolversTypes['AccessScopeType'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  imageUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  createdBy?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  workoutGoals?: Resolver<Array<ResolversTypes['WorkoutGoal']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
+}>;
+
+export type TextSearchCreatorResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['TextSearchCreatorResult'] = ResolversParentTypes['TextSearchCreatorResult']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  avatarUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  bio?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  countryCode?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  displayName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
+}>;
+
 export type Resolvers<ContextType = any> = ResolversObject<{
   JSON?: GraphQLScalarType;
   DateTime?: GraphQLScalarType;
@@ -1469,6 +1565,9 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   WorkoutMove?: WorkoutMoveResolvers<ContextType>;
   BodyArea?: BodyAreaResolvers<ContextType>;
   BodyAreaMoveScore?: BodyAreaMoveScoreResolvers<ContextType>;
+  TextSearchWorkoutResult?: TextSearchWorkoutResultResolvers<ContextType>;
+  TextSearchWorkoutProgramResult?: TextSearchWorkoutProgramResultResolvers<ContextType>;
+  TextSearchCreatorResult?: TextSearchCreatorResultResolvers<ContextType>;
 }>;
 
 

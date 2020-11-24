@@ -9,6 +9,7 @@ import scheduledWorkoutSchema from './scheduledWorkout'
 import workoutSectionSchema from './workoutSection'
 import workoutMoveSchema from './workoutMove'
 import bodyAreaSchema from './bodyArea'
+import textSearchSchema from './textSearch'
 import enumSchema from './enums'
 
 const typeDefs = mergeTypeDefs([
@@ -22,6 +23,7 @@ const typeDefs = mergeTypeDefs([
   workoutSectionSchema,
   workoutMoveSchema,
   bodyAreaSchema,
+  textSearchSchema,
   enumSchema,
 ])
 

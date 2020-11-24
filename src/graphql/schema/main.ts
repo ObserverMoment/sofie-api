@@ -30,6 +30,18 @@ export default gql`
     scheduledWorkouts(authedUserId: ID!): [ScheduledWorkout!]!
     loggedWorkouts(authedUserId: ID!): [LoggedWorkout!]!
     likedWorkoutPrograms(authedUserId: ID!): [ID!]!
+    textSearchWorkouts(
+      authedUserId: ID!
+      text: String!
+    ): [TextSearchWorkoutResult!]
+    textSearchWorkoutPrograms(
+      authedUserId: ID!
+      text: String!
+    ): [TextSearchWorkoutProgramResult!]
+    textSearchCreators(
+      authedUserId: ID!
+      text: String!
+    ): [TextSearchCreatorResult!]
   }
 
   type Mutation {

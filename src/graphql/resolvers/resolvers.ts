@@ -21,6 +21,12 @@ import {
 } from './officialData'
 
 import {
+  textSearchWorkouts,
+  textSearchWorkoutPrograms,
+  textSearchCreators,
+} from './textSearch'
+
+import {
   officialWorkoutPrograms,
   publicWorkoutPrograms,
   privateWorkoutPrograms,
@@ -114,6 +120,9 @@ const resolvers: Resolvers = {
     scheduledWorkouts,
     loggedWorkouts,
     likedWorkoutPrograms,
+    textSearchWorkouts,
+    textSearchWorkoutPrograms,
+    textSearchCreators,
   },
   Mutation: {
     createUser,
