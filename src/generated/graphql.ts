@@ -444,6 +444,7 @@ export type User = {
   id: Scalars['ID'];
   avatarUrl?: Maybe<Scalars['String']>;
   bio?: Maybe<Scalars['String']>;
+  tagline?: Maybe<Scalars['String']>;
   birthdate?: Maybe<Scalars['DateTime']>;
   city?: Maybe<Scalars['String']>;
   countryCode?: Maybe<Scalars['String']>;
@@ -463,6 +464,7 @@ export type User = {
 export type UpdateUserInput = {
   avatarUrl?: Maybe<Scalars['String']>;
   bio?: Maybe<Scalars['String']>;
+  tagline?: Maybe<Scalars['String']>;
   birthdate?: Maybe<Scalars['DateTime']>;
   city?: Maybe<Scalars['String']>;
   countryCode?: Maybe<Scalars['String']>;
@@ -483,6 +485,7 @@ export type UserPublicProfile = {
   id: Scalars['ID'];
   avatarUrl?: Maybe<Scalars['String']>;
   bio?: Maybe<Scalars['String']>;
+  tagline?: Maybe<Scalars['String']>;
   countryCode?: Maybe<Scalars['String']>;
   displayName?: Maybe<Scalars['String']>;
   workouts?: Maybe<Array<Workout>>;
@@ -1303,6 +1306,7 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   avatarUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   bio?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  tagline?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   birthdate?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   city?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   countryCode?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -1324,6 +1328,7 @@ export type UserPublicProfileResolvers<ContextType = any, ParentType extends Res
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   avatarUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   bio?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  tagline?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   countryCode?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   displayName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   workouts?: Resolver<Maybe<Array<ResolversTypes['Workout']>>, ParentType, ContextType>;

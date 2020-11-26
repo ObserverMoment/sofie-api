@@ -5,6 +5,7 @@ export default gql`
     id: ID!
     avatarUrl: String
     bio: String
+    tagline: String
     birthdate: DateTime
     city: String
     countryCode: String
@@ -24,6 +25,7 @@ export default gql`
   input UpdateUserInput {
     avatarUrl: String
     bio: String
+    tagline: String
     birthdate: DateTime
     city: String
     countryCode: String
@@ -43,6 +45,7 @@ export default gql`
     id: ID!
     avatarUrl: String
     bio: String
+    tagline: String
     countryCode: String
     displayName: String
     workouts: [Workout!]
