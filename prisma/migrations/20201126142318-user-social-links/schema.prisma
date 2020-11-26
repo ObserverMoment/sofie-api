@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 model BodyArea {
@@ -183,7 +183,6 @@ model User {
   tiktokUrl                String?
   youtubeUrl               String?
   snapUrl                  String?
-  linkedinUrl              String?
   unitSystem               UnitSystem                @default(METRIC)
   followedBy               User[]                    @relation("UserFollows", references: [id])
   following                User[]                    @relation("UserFollows", references: [id])

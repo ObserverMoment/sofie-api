@@ -10,6 +10,11 @@ export default gql`
     city: String
     countryCode: String
     displayName: String
+    instagramUrl: String
+    tiktokUrl: String
+    youtubeUrl: String
+    snapUrl: String
+    linkedinUrl: String
     firstname: String
     lastname: String
     themePreference: ThemePreference!
@@ -30,6 +35,11 @@ export default gql`
     city: String
     countryCode: String
     displayName: String
+    instagramUrl: String
+    tiktokUrl: String
+    youtubeUrl: String
+    snapUrl: String
+    linkedinUrl: String
     firstname: String
     themePreference: ThemePreference
     gender: Gender
@@ -46,6 +56,11 @@ export default gql`
     avatarUrl: String
     bio: String
     tagline: String
+    instagramUrl: String
+    tiktokUrl: String
+    youtubeUrl: String
+    snapUrl: String
+    linkedinUrl: String
     countryCode: String
     displayName: String
     workouts: [Workout!]
