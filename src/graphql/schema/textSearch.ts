@@ -22,5 +22,6 @@ export default gql`
     imageUrl: String
     createdBy: User
     workoutGoals: [WorkoutGoal!]!
+    workoutProgramWorkouts: [WorkoutProgramWorkout!]
   }
 `

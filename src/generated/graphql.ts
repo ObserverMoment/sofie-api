@@ -443,6 +443,8 @@ export type User = {
   __typename?: 'User';
   id: Scalars['ID'];
   avatarUrl?: Maybe<Scalars['String']>;
+  introVideoUrl?: Maybe<Scalars['String']>;
+  coverImageUrl?: Maybe<Scalars['String']>;
   bio?: Maybe<Scalars['String']>;
   tagline?: Maybe<Scalars['String']>;
   birthdate?: Maybe<Scalars['DateTime']>;
@@ -468,6 +470,8 @@ export type User = {
 
 export type UpdateUserInput = {
   avatarUrl?: Maybe<Scalars['String']>;
+  introVideoUrl?: Maybe<Scalars['String']>;
+  coverImageUrl?: Maybe<Scalars['String']>;
   bio?: Maybe<Scalars['String']>;
   tagline?: Maybe<Scalars['String']>;
   birthdate?: Maybe<Scalars['DateTime']>;
@@ -494,6 +498,8 @@ export type UserPublicProfile = {
   __typename?: 'UserPublicProfile';
   id: Scalars['ID'];
   avatarUrl?: Maybe<Scalars['String']>;
+  introVideoUrl?: Maybe<Scalars['String']>;
+  coverImageUrl?: Maybe<Scalars['String']>;
   bio?: Maybe<Scalars['String']>;
   tagline?: Maybe<Scalars['String']>;
   instagramUrl?: Maybe<Scalars['String']>;
@@ -903,6 +909,7 @@ export type TextSearchWorkoutProgramResult = {
   imageUrl?: Maybe<Scalars['String']>;
   createdBy?: Maybe<User>;
   workoutGoals: Array<WorkoutGoal>;
+  workoutProgramWorkouts?: Maybe<Array<WorkoutProgramWorkout>>;
 };
 
 /**
@@ -1309,6 +1316,8 @@ export type MoveProfileResolvers<ContextType = any, ParentType extends Resolvers
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   avatarUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  introVideoUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  coverImageUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   bio?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   tagline?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   birthdate?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
@@ -1336,6 +1345,8 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
 export type UserPublicProfileResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserPublicProfile'] = ResolversParentTypes['UserPublicProfile']> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   avatarUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  introVideoUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  coverImageUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   bio?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   tagline?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   instagramUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -1545,6 +1556,7 @@ export type TextSearchWorkoutProgramResultResolvers<ContextType = any, ParentTyp
   imageUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   createdBy?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   workoutGoals?: Resolver<Array<ResolversTypes['WorkoutGoal']>, ParentType, ContextType>;
+  workoutProgramWorkouts?: Resolver<Maybe<Array<ResolversTypes['WorkoutProgramWorkout']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 }>;
 
