@@ -2,7 +2,7 @@ import { ApolloServer, ResolverFn } from 'apollo-server'
 import resolvers from './graphql/resolvers/resolvers'
 import typeDefs from './graphql/schema/typeDefs'
 import { applyMiddleware } from 'graphql-middleware'
-import { PrismaClient, Prisma } from '@prisma/client'
+import { PrismaClient, Prisma as PrismaOriginal } from '@prisma/client'
 import { PrismaSelect } from '@paljs/plugins'
 import { makeExecutableSchema } from 'graphql-tools'
 import { GraphQLResolveInfo } from 'graphql'
@@ -12,7 +12,7 @@ require('dotenv').config()
 
 // https://paljs.com/plugins/delete/
 class Prisma extends PrismaClient {
-  constructor(options?: Prisma.PrismaClientOptions) {
+  constructor(options?: PrismaOriginal.PrismaClientOptions) {
     super(options)
   }
 
