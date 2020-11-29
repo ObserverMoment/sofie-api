@@ -1,6 +1,6 @@
 import { Context } from '../..'
 import {
-  QueryTextSearchCreatorsArgs,
+  QueryTextSearchCreatorPublicProfilesArgs,
   QueryTextSearchWorkoutProgramsArgs,
   QueryTextSearchWorkoutsArgs,
 } from '../../generated/graphql'
@@ -41,9 +41,9 @@ const textSearchWorkoutPrograms = async (
     select,
   })
 
-const textSearchCreators = async (
+const textSearchCreatorPublicProfiles = async (
   r: any,
-  { text }: QueryTextSearchCreatorsArgs,
+  { text }: QueryTextSearchCreatorPublicProfilesArgs,
   { select, prisma }: Context,
 ) =>
   prisma.user.findMany({
@@ -57,4 +57,8 @@ const textSearchCreators = async (
     select,
   })
 
-export { textSearchWorkouts, textSearchWorkoutPrograms, textSearchCreators }
+export {
+  textSearchWorkouts,
+  textSearchWorkoutPrograms,
+  textSearchCreatorPublicProfiles,
+}

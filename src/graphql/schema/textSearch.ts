@@ -1,5 +1,6 @@
 import { gql } from 'apollo-server-express'
 
+// Optimised search result return objects - only return absolutely required fields.
 export default gql`
   type TextSearchWorkoutResult {
     id: ID!
@@ -21,13 +22,5 @@ export default gql`
     imageUrl: String
     createdBy: User
     workoutGoals: [WorkoutGoal!]!
-  }
-
-  type TextSearchCreatorResult {
-    id: ID!
-    avatarUrl: String
-    bio: String
-    countryCode: String
-    displayName: String
   }
 `

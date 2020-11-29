@@ -2,9 +2,9 @@ import { Resolvers } from '../../generated/graphql'
 
 import {
   checkUniqueDisplayName,
-  users,
   userByUid,
   userPublicProfile,
+  creatorPublicProfiles,
   createUser,
   updateUser,
   createGymProfile,
@@ -23,7 +23,7 @@ import {
 import {
   textSearchWorkouts,
   textSearchWorkoutPrograms,
-  textSearchCreators,
+  textSearchCreatorPublicProfiles,
 } from './textSearch'
 
 import {
@@ -99,9 +99,9 @@ const resolvers: Resolvers = {
   }),
   Query: {
     checkUniqueDisplayName,
-    users,
     userByUid,
     userPublicProfile,
+    creatorPublicProfiles,
     moves,
     bodyAreas,
     equipments,
@@ -122,7 +122,7 @@ const resolvers: Resolvers = {
     likedWorkoutPrograms,
     textSearchWorkouts,
     textSearchWorkoutPrograms,
-    textSearchCreators,
+    textSearchCreatorPublicProfiles,
   },
   Mutation: {
     createUser,

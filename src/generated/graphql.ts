@@ -19,8 +19,8 @@ export type Scalars = {
 export type Query = {
   __typename?: 'Query';
   checkUniqueDisplayName: Scalars['Boolean'];
-  users: Array<User>;
   userByUid?: Maybe<User>;
+  creatorPublicProfiles?: Maybe<Array<UserPublicProfile>>;
   userPublicProfile?: Maybe<UserPublicProfile>;
   moves: Array<Move>;
   bodyAreas: Array<BodyArea>;
@@ -42,7 +42,7 @@ export type Query = {
   likedWorkoutPrograms: Array<Scalars['ID']>;
   textSearchWorkouts?: Maybe<Array<TextSearchWorkoutResult>>;
   textSearchWorkoutPrograms?: Maybe<Array<TextSearchWorkoutProgramResult>>;
-  textSearchCreators?: Maybe<Array<TextSearchCreatorResult>>;
+  textSearchCreatorPublicProfiles?: Maybe<Array<UserPublicProfile>>;
 };
 
 
@@ -51,13 +51,13 @@ export type QueryCheckUniqueDisplayNameArgs = {
 };
 
 
-export type QueryUsersArgs = {
-  authedUserId: Scalars['ID'];
+export type QueryUserByUidArgs = {
+  uid: Scalars['ID'];
 };
 
 
-export type QueryUserByUidArgs = {
-  uid: Scalars['ID'];
+export type QueryCreatorPublicProfilesArgs = {
+  authedUserId: Scalars['ID'];
 };
 
 
@@ -136,7 +136,7 @@ export type QueryTextSearchWorkoutProgramsArgs = {
 };
 
 
-export type QueryTextSearchCreatorsArgs = {
+export type QueryTextSearchCreatorPublicProfilesArgs = {
   authedUserId: Scalars['ID'];
   text: Scalars['String'];
 };
@@ -905,15 +905,6 @@ export type TextSearchWorkoutProgramResult = {
   workoutGoals: Array<WorkoutGoal>;
 };
 
-export type TextSearchCreatorResult = {
-  __typename?: 'TextSearchCreatorResult';
-  id: Scalars['ID'];
-  avatarUrl?: Maybe<Scalars['String']>;
-  bio?: Maybe<Scalars['String']>;
-  countryCode?: Maybe<Scalars['String']>;
-  displayName?: Maybe<Scalars['String']>;
-};
-
 /**
  * Enums
  * enums
@@ -1123,7 +1114,6 @@ export type ResolversTypes = ResolversObject<{
   BodyAreaMoveScore: ResolverTypeWrapper<BodyAreaMoveScore>;
   TextSearchWorkoutResult: ResolverTypeWrapper<TextSearchWorkoutResult>;
   TextSearchWorkoutProgramResult: ResolverTypeWrapper<TextSearchWorkoutProgramResult>;
-  TextSearchCreatorResult: ResolverTypeWrapper<TextSearchCreatorResult>;
   AccessScopeType: AccessScopeType;
   DifficultyLevel: DifficultyLevel;
   DistanceUnit: DistanceUnit;
@@ -1194,7 +1184,6 @@ export type ResolversParentTypes = ResolversObject<{
   BodyAreaMoveScore: BodyAreaMoveScore;
   TextSearchWorkoutResult: TextSearchWorkoutResult;
   TextSearchWorkoutProgramResult: TextSearchWorkoutProgramResult;
-  TextSearchCreatorResult: TextSearchCreatorResult;
 }>;
 
 export interface JsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['JSON'], any> {
@@ -1207,8 +1196,8 @@ export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversT
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   checkUniqueDisplayName?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryCheckUniqueDisplayNameArgs, 'displayName'>>;
-  users?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUsersArgs, 'authedUserId'>>;
   userByUid?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserByUidArgs, 'uid'>>;
+  creatorPublicProfiles?: Resolver<Maybe<Array<ResolversTypes['UserPublicProfile']>>, ParentType, ContextType, RequireFields<QueryCreatorPublicProfilesArgs, 'authedUserId'>>;
   userPublicProfile?: Resolver<Maybe<ResolversTypes['UserPublicProfile']>, ParentType, ContextType, RequireFields<QueryUserPublicProfileArgs, 'userId'>>;
   moves?: Resolver<Array<ResolversTypes['Move']>, ParentType, ContextType>;
   bodyAreas?: Resolver<Array<ResolversTypes['BodyArea']>, ParentType, ContextType>;
@@ -1230,7 +1219,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   likedWorkoutPrograms?: Resolver<Array<ResolversTypes['ID']>, ParentType, ContextType, RequireFields<QueryLikedWorkoutProgramsArgs, 'authedUserId'>>;
   textSearchWorkouts?: Resolver<Maybe<Array<ResolversTypes['TextSearchWorkoutResult']>>, ParentType, ContextType, RequireFields<QueryTextSearchWorkoutsArgs, 'authedUserId' | 'text'>>;
   textSearchWorkoutPrograms?: Resolver<Maybe<Array<ResolversTypes['TextSearchWorkoutProgramResult']>>, ParentType, ContextType, RequireFields<QueryTextSearchWorkoutProgramsArgs, 'authedUserId' | 'text'>>;
-  textSearchCreators?: Resolver<Maybe<Array<ResolversTypes['TextSearchCreatorResult']>>, ParentType, ContextType, RequireFields<QueryTextSearchCreatorsArgs, 'authedUserId' | 'text'>>;
+  textSearchCreatorPublicProfiles?: Resolver<Maybe<Array<ResolversTypes['UserPublicProfile']>>, ParentType, ContextType, RequireFields<QueryTextSearchCreatorPublicProfilesArgs, 'authedUserId' | 'text'>>;
 }>;
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
@@ -1559,15 +1548,6 @@ export type TextSearchWorkoutProgramResultResolvers<ContextType = any, ParentTyp
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 }>;
 
-export type TextSearchCreatorResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['TextSearchCreatorResult'] = ResolversParentTypes['TextSearchCreatorResult']> = ResolversObject<{
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  avatarUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  bio?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  countryCode?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  displayName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
-}>;
-
 export type Resolvers<ContextType = any> = ResolversObject<{
   JSON?: GraphQLScalarType;
   DateTime?: GraphQLScalarType;
@@ -1597,7 +1577,6 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   BodyAreaMoveScore?: BodyAreaMoveScoreResolvers<ContextType>;
   TextSearchWorkoutResult?: TextSearchWorkoutResultResolvers<ContextType>;
   TextSearchWorkoutProgramResult?: TextSearchWorkoutProgramResultResolvers<ContextType>;
-  TextSearchCreatorResult?: TextSearchCreatorResultResolvers<ContextType>;
 }>;
 
 

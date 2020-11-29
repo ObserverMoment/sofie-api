@@ -8,7 +8,7 @@ import {
   QueryCheckUniqueDisplayNameArgs,
   QueryUserByUidArgs,
   QueryUserPublicProfileArgs,
-  QueryUsersArgs,
+  QueryCreatorPublicProfilesArgs,
 } from '../../generated/graphql'
 
 //// Queries ////
@@ -23,11 +23,17 @@ const checkUniqueDisplayName = async (
   return user == null
 }
 
-const users = async (
+const creatorPublicProfiles = async (
   r: any,
-  { authedUserId }: QueryUsersArgs,
+  { authedUserId }: QueryCreatorPublicProfilesArgs,
   { select, prisma }: Context,
-) => prisma.user.findMany({ select })
+) =>
+  prisma.user.findMany({
+    where: {
+      userProfileScope: 'PUBLIC',
+    },
+    select,
+  })
 
 const userByUid = async (
   r: any,
@@ -46,14 +52,7 @@ const userPublicProfile = async (
 ) =>
   prisma.user.findOne({
     where: { id: userId },
-    select: {
-      id: true,
-      displayName: true,
-      avatarUrl: true,
-      bio: true,
-      countryCode: true,
-      ...select,
-    },
+    select,
   })
 
 //// Mutations ////
@@ -136,7 +135,7 @@ const deleteGymProfileById = async (
 
 export {
   checkUniqueDisplayName,
-  users,
+  creatorPublicProfiles,
   userByUid,
   userPublicProfile,
   createUser,

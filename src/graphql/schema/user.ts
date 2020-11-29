@@ -4,6 +4,8 @@ export default gql`
   type User {
     id: ID!
     avatarUrl: String
+    introVideoUrl: String
+    coverImageUrl: String
     bio: String
     tagline: String
     birthdate: DateTime
@@ -29,6 +31,8 @@ export default gql`
 
   input UpdateUserInput {
     avatarUrl: String
+    introVideoUrl: String
+    coverImageUrl: String
     bio: String
     tagline: String
     birthdate: DateTime
@@ -54,6 +58,8 @@ export default gql`
   type UserPublicProfile {
     id: ID!
     avatarUrl: String
+    introVideoUrl: String
+    coverImageUrl: String
     bio: String
     tagline: String
     instagramUrl: String
