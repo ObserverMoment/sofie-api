@@ -55,7 +55,7 @@ const workoutProgramById = async (
   { workoutProgramId }: QueryWorkoutProgramByIdArgs,
   { prisma, select }: Context,
 ) =>
-  prisma.workoutProgram.findOne({
+  prisma.workoutProgram.findUnique({
     where: { id: workoutProgramId },
     select,
   })
@@ -266,10 +266,10 @@ const removeEnrolmentFromWorkoutProgram = async (
     },
   })
 
-  return prisma.workoutProgram.findOne({
+  return prisma.workoutProgram.findUnique({
     where: { id: workoutProgramId },
     select,
-  })
+  });
 }
 
 export {

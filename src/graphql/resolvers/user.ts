@@ -17,7 +17,7 @@ const checkUniqueDisplayName = async (
   { displayName }: QueryCheckUniqueDisplayNameArgs,
   { prisma }: Context,
 ) => {
-  const user = await prisma.user.findOne({
+  const user = await prisma.user.findUnique({
     where: { displayName },
   })
   return user == null
@@ -40,7 +40,7 @@ const userByUid = async (
   { uid }: QueryUserByUidArgs,
   { select, prisma }: Context,
 ) =>
-  prisma.user.findOne({
+  prisma.user.findUnique({
     where: { firebaseUid: uid },
     select,
   })
@@ -50,7 +50,7 @@ const userPublicProfile = async (
   { userId }: QueryUserPublicProfileArgs,
   { select, prisma }: Context,
 ) =>
-  prisma.user.findOne({
+  prisma.user.findUnique({
     where: { id: userId },
     select,
   })

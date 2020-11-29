@@ -46,7 +46,7 @@ const workoutById = async (
   { workoutId }: QueryWorkoutByIdArgs,
   { select, prisma }: Context,
 ) =>
-  prisma.workout.findOne({
+  prisma.workout.findUnique({
     where: {
       id: workoutId,
     },
