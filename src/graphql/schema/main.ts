@@ -6,8 +6,8 @@ export default gql`
 
   type Query {
     checkUniqueDisplayName(displayName: String!): Boolean!
-    users(authedUserId: ID!): [User!]!
     userByUid(uid: ID!): User
+    creatorPublicProfiles(authedUserId: ID!): [UserPublicProfile!]
     userPublicProfile(userId: ID!): UserPublicProfile
     moves: [Move!]!
     bodyAreas: [BodyArea!]!
@@ -30,6 +30,18 @@ export default gql`
     scheduledWorkouts(authedUserId: ID!): [ScheduledWorkout!]!
     loggedWorkouts(authedUserId: ID!): [LoggedWorkout!]!
     likedWorkoutPrograms(authedUserId: ID!): [ID!]!
+    textSearchWorkouts(
+      authedUserId: ID!
+      text: String!
+    ): [TextSearchWorkoutResult!]
+    textSearchWorkoutPrograms(
+      authedUserId: ID!
+      text: String!
+    ): [TextSearchWorkoutProgramResult!]
+    textSearchCreatorPublicProfiles(
+      authedUserId: ID!
+      text: String!
+    ): [UserPublicProfile!]
   }
 
   type Mutation {

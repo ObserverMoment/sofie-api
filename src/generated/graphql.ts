@@ -19,8 +19,8 @@ export type Scalars = {
 export type Query = {
   __typename?: 'Query';
   checkUniqueDisplayName: Scalars['Boolean'];
-  users: Array<User>;
   userByUid?: Maybe<User>;
+  creatorPublicProfiles?: Maybe<Array<UserPublicProfile>>;
   userPublicProfile?: Maybe<UserPublicProfile>;
   moves: Array<Move>;
   bodyAreas: Array<BodyArea>;
@@ -40,6 +40,9 @@ export type Query = {
   scheduledWorkouts: Array<ScheduledWorkout>;
   loggedWorkouts: Array<LoggedWorkout>;
   likedWorkoutPrograms: Array<Scalars['ID']>;
+  textSearchWorkouts?: Maybe<Array<TextSearchWorkoutResult>>;
+  textSearchWorkoutPrograms?: Maybe<Array<TextSearchWorkoutProgramResult>>;
+  textSearchCreatorPublicProfiles?: Maybe<Array<UserPublicProfile>>;
 };
 
 
@@ -48,13 +51,13 @@ export type QueryCheckUniqueDisplayNameArgs = {
 };
 
 
-export type QueryUsersArgs = {
-  authedUserId: Scalars['ID'];
+export type QueryUserByUidArgs = {
+  uid: Scalars['ID'];
 };
 
 
-export type QueryUserByUidArgs = {
-  uid: Scalars['ID'];
+export type QueryCreatorPublicProfilesArgs = {
+  authedUserId: Scalars['ID'];
 };
 
 
@@ -118,6 +121,24 @@ export type QueryLoggedWorkoutsArgs = {
 
 export type QueryLikedWorkoutProgramsArgs = {
   authedUserId: Scalars['ID'];
+};
+
+
+export type QueryTextSearchWorkoutsArgs = {
+  authedUserId: Scalars['ID'];
+  text: Scalars['String'];
+};
+
+
+export type QueryTextSearchWorkoutProgramsArgs = {
+  authedUserId: Scalars['ID'];
+  text: Scalars['String'];
+};
+
+
+export type QueryTextSearchCreatorPublicProfilesArgs = {
+  authedUserId: Scalars['ID'];
+  text: Scalars['String'];
 };
 
 export type Mutation = {
@@ -423,10 +444,16 @@ export type User = {
   id: Scalars['ID'];
   avatarUrl?: Maybe<Scalars['String']>;
   bio?: Maybe<Scalars['String']>;
+  tagline?: Maybe<Scalars['String']>;
   birthdate?: Maybe<Scalars['DateTime']>;
   city?: Maybe<Scalars['String']>;
   countryCode?: Maybe<Scalars['String']>;
   displayName?: Maybe<Scalars['String']>;
+  instagramUrl?: Maybe<Scalars['String']>;
+  tiktokUrl?: Maybe<Scalars['String']>;
+  youtubeUrl?: Maybe<Scalars['String']>;
+  snapUrl?: Maybe<Scalars['String']>;
+  linkedinUrl?: Maybe<Scalars['String']>;
   firstname?: Maybe<Scalars['String']>;
   lastname?: Maybe<Scalars['String']>;
   themePreference: ThemePreference;
@@ -442,10 +469,16 @@ export type User = {
 export type UpdateUserInput = {
   avatarUrl?: Maybe<Scalars['String']>;
   bio?: Maybe<Scalars['String']>;
+  tagline?: Maybe<Scalars['String']>;
   birthdate?: Maybe<Scalars['DateTime']>;
   city?: Maybe<Scalars['String']>;
   countryCode?: Maybe<Scalars['String']>;
   displayName?: Maybe<Scalars['String']>;
+  instagramUrl?: Maybe<Scalars['String']>;
+  tiktokUrl?: Maybe<Scalars['String']>;
+  youtubeUrl?: Maybe<Scalars['String']>;
+  snapUrl?: Maybe<Scalars['String']>;
+  linkedinUrl?: Maybe<Scalars['String']>;
   firstname?: Maybe<Scalars['String']>;
   themePreference?: Maybe<ThemePreference>;
   gender?: Maybe<Gender>;
@@ -462,6 +495,12 @@ export type UserPublicProfile = {
   id: Scalars['ID'];
   avatarUrl?: Maybe<Scalars['String']>;
   bio?: Maybe<Scalars['String']>;
+  tagline?: Maybe<Scalars['String']>;
+  instagramUrl?: Maybe<Scalars['String']>;
+  tiktokUrl?: Maybe<Scalars['String']>;
+  youtubeUrl?: Maybe<Scalars['String']>;
+  snapUrl?: Maybe<Scalars['String']>;
+  linkedinUrl?: Maybe<Scalars['String']>;
   countryCode?: Maybe<Scalars['String']>;
   displayName?: Maybe<Scalars['String']>;
   workouts?: Maybe<Array<Workout>>;
@@ -842,6 +881,30 @@ export type BodyAreaMoveScore = {
   score: Scalars['Float'];
 };
 
+export type TextSearchWorkoutResult = {
+  __typename?: 'TextSearchWorkoutResult';
+  id: Scalars['ID'];
+  scope: AccessScopeType;
+  name?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  workoutType: WorkoutType;
+  imageUrl?: Maybe<Scalars['String']>;
+  difficultyLevel: Scalars['Int'];
+  timecap?: Maybe<Scalars['Int']>;
+  createdBy?: Maybe<User>;
+};
+
+export type TextSearchWorkoutProgramResult = {
+  __typename?: 'TextSearchWorkoutProgramResult';
+  id: Scalars['ID'];
+  scope: AccessScopeType;
+  name: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+  imageUrl?: Maybe<Scalars['String']>;
+  createdBy?: Maybe<User>;
+  workoutGoals: Array<WorkoutGoal>;
+};
+
 /**
  * Enums
  * enums
@@ -1049,6 +1112,8 @@ export type ResolversTypes = ResolversObject<{
   CreateWorkoutMoveInput: CreateWorkoutMoveInput;
   BodyArea: ResolverTypeWrapper<BodyArea>;
   BodyAreaMoveScore: ResolverTypeWrapper<BodyAreaMoveScore>;
+  TextSearchWorkoutResult: ResolverTypeWrapper<TextSearchWorkoutResult>;
+  TextSearchWorkoutProgramResult: ResolverTypeWrapper<TextSearchWorkoutProgramResult>;
   AccessScopeType: AccessScopeType;
   DifficultyLevel: DifficultyLevel;
   DistanceUnit: DistanceUnit;
@@ -1117,6 +1182,8 @@ export type ResolversParentTypes = ResolversObject<{
   CreateWorkoutMoveInput: CreateWorkoutMoveInput;
   BodyArea: BodyArea;
   BodyAreaMoveScore: BodyAreaMoveScore;
+  TextSearchWorkoutResult: TextSearchWorkoutResult;
+  TextSearchWorkoutProgramResult: TextSearchWorkoutProgramResult;
 }>;
 
 export interface JsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['JSON'], any> {
@@ -1129,8 +1196,8 @@ export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversT
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   checkUniqueDisplayName?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryCheckUniqueDisplayNameArgs, 'displayName'>>;
-  users?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUsersArgs, 'authedUserId'>>;
   userByUid?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserByUidArgs, 'uid'>>;
+  creatorPublicProfiles?: Resolver<Maybe<Array<ResolversTypes['UserPublicProfile']>>, ParentType, ContextType, RequireFields<QueryCreatorPublicProfilesArgs, 'authedUserId'>>;
   userPublicProfile?: Resolver<Maybe<ResolversTypes['UserPublicProfile']>, ParentType, ContextType, RequireFields<QueryUserPublicProfileArgs, 'userId'>>;
   moves?: Resolver<Array<ResolversTypes['Move']>, ParentType, ContextType>;
   bodyAreas?: Resolver<Array<ResolversTypes['BodyArea']>, ParentType, ContextType>;
@@ -1150,6 +1217,9 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   scheduledWorkouts?: Resolver<Array<ResolversTypes['ScheduledWorkout']>, ParentType, ContextType, RequireFields<QueryScheduledWorkoutsArgs, 'authedUserId'>>;
   loggedWorkouts?: Resolver<Array<ResolversTypes['LoggedWorkout']>, ParentType, ContextType, RequireFields<QueryLoggedWorkoutsArgs, 'authedUserId'>>;
   likedWorkoutPrograms?: Resolver<Array<ResolversTypes['ID']>, ParentType, ContextType, RequireFields<QueryLikedWorkoutProgramsArgs, 'authedUserId'>>;
+  textSearchWorkouts?: Resolver<Maybe<Array<ResolversTypes['TextSearchWorkoutResult']>>, ParentType, ContextType, RequireFields<QueryTextSearchWorkoutsArgs, 'authedUserId' | 'text'>>;
+  textSearchWorkoutPrograms?: Resolver<Maybe<Array<ResolversTypes['TextSearchWorkoutProgramResult']>>, ParentType, ContextType, RequireFields<QueryTextSearchWorkoutProgramsArgs, 'authedUserId' | 'text'>>;
+  textSearchCreatorPublicProfiles?: Resolver<Maybe<Array<ResolversTypes['UserPublicProfile']>>, ParentType, ContextType, RequireFields<QueryTextSearchCreatorPublicProfilesArgs, 'authedUserId' | 'text'>>;
 }>;
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
@@ -1240,10 +1310,16 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   avatarUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   bio?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  tagline?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   birthdate?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   city?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   countryCode?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   displayName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  instagramUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  tiktokUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  youtubeUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  snapUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  linkedinUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   firstname?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   lastname?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   themePreference?: Resolver<ResolversTypes['ThemePreference'], ParentType, ContextType>;
@@ -1261,6 +1337,12 @@ export type UserPublicProfileResolvers<ContextType = any, ParentType extends Res
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   avatarUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   bio?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  tagline?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  instagramUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  tiktokUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  youtubeUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  snapUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  linkedinUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   countryCode?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   displayName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   workouts?: Resolver<Maybe<Array<ResolversTypes['Workout']>>, ParentType, ContextType>;
@@ -1442,6 +1524,30 @@ export type BodyAreaMoveScoreResolvers<ContextType = any, ParentType extends Res
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 }>;
 
+export type TextSearchWorkoutResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['TextSearchWorkoutResult'] = ResolversParentTypes['TextSearchWorkoutResult']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  scope?: Resolver<ResolversTypes['AccessScopeType'], ParentType, ContextType>;
+  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  workoutType?: Resolver<ResolversTypes['WorkoutType'], ParentType, ContextType>;
+  imageUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  difficultyLevel?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  timecap?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  createdBy?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
+}>;
+
+export type TextSearchWorkoutProgramResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['TextSearchWorkoutProgramResult'] = ResolversParentTypes['TextSearchWorkoutProgramResult']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  scope?: Resolver<ResolversTypes['AccessScopeType'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  imageUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  createdBy?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  workoutGoals?: Resolver<Array<ResolversTypes['WorkoutGoal']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
+}>;
+
 export type Resolvers<ContextType = any> = ResolversObject<{
   JSON?: GraphQLScalarType;
   DateTime?: GraphQLScalarType;
@@ -1469,6 +1575,8 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   WorkoutMove?: WorkoutMoveResolvers<ContextType>;
   BodyArea?: BodyAreaResolvers<ContextType>;
   BodyAreaMoveScore?: BodyAreaMoveScoreResolvers<ContextType>;
+  TextSearchWorkoutResult?: TextSearchWorkoutResultResolvers<ContextType>;
+  TextSearchWorkoutProgramResult?: TextSearchWorkoutProgramResultResolvers<ContextType>;
 }>;
 
 

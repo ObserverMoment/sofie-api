@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 model BodyArea {
@@ -167,8 +167,6 @@ model User {
   hasOnboarded             Boolean                   @default(false)
   userProfileScope         UserProfileScope          @default(PRIVATE)
   avatarUrl                String?
-  introVideoUrl            String?
-  coverImageUrl            String?
   displayName              String?                   @unique
   firstname                String?
   lastname                 String?

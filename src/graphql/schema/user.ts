@@ -4,11 +4,19 @@ export default gql`
   type User {
     id: ID!
     avatarUrl: String
+    introVideoUrl: String
+    coverImageUrl: String
     bio: String
+    tagline: String
     birthdate: DateTime
     city: String
     countryCode: String
     displayName: String
+    instagramUrl: String
+    tiktokUrl: String
+    youtubeUrl: String
+    snapUrl: String
+    linkedinUrl: String
     firstname: String
     lastname: String
     themePreference: ThemePreference!
@@ -23,11 +31,19 @@ export default gql`
 
   input UpdateUserInput {
     avatarUrl: String
+    introVideoUrl: String
+    coverImageUrl: String
     bio: String
+    tagline: String
     birthdate: DateTime
     city: String
     countryCode: String
     displayName: String
+    instagramUrl: String
+    tiktokUrl: String
+    youtubeUrl: String
+    snapUrl: String
+    linkedinUrl: String
     firstname: String
     themePreference: ThemePreference
     gender: Gender
@@ -42,7 +58,15 @@ export default gql`
   type UserPublicProfile {
     id: ID!
     avatarUrl: String
+    introVideoUrl: String
+    coverImageUrl: String
     bio: String
+    tagline: String
+    instagramUrl: String
+    tiktokUrl: String
+    youtubeUrl: String
+    snapUrl: String
+    linkedinUrl: String
     countryCode: String
     displayName: String
     workouts: [Workout!]

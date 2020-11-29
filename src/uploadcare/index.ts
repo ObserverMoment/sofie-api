@@ -65,7 +65,7 @@ export async function checkWorkoutMediaForDeletion(
   workoutData: ShallowUpdateWorkoutInput | DeepUpdateWorkoutInput,
 ): Promise<string[] | null> {
   // Get the old workout data first.
-  const oldWorkout: Workout = await prisma.workout.findOne({
+  const oldWorkout: Workout = await prisma.workout.findUnique({
     where: {
       id: workoutData.id,
     },
@@ -106,7 +106,7 @@ export async function checkLoggedWorkoutMediaForDeletion(
     | DeepUpdateLoggedWorkoutInput,
 ): Promise<string[] | null> {
   // Get the old loggedWorkout data first.
-  const oldLoggedWorkout: LoggedWorkout = await prisma.loggedWorkout.findOne({
+  const oldLoggedWorkout: LoggedWorkout = await prisma.loggedWorkout.findUnique({
     where: {
       id: loggedWorkoutData.id,
     },
@@ -147,7 +147,7 @@ export async function checkWorkoutProgramMediaForDeletion(
     | DeepUpdateWorkoutProgramInput,
 ): Promise<string[] | null> {
   // Get the old workoutProgram data first.
-  const oldWorkoutProgram: WorkoutProgram = await prisma.workoutProgram.findOne(
+  const oldWorkoutProgram: WorkoutProgram = await prisma.workoutProgram.findUnique(
     {
       where: {
         id: workoutProgramData.id,
