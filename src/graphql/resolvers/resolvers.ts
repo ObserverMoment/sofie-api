@@ -13,7 +13,6 @@ import {
 } from './user'
 
 import {
-  moves,
   bodyAreas,
   equipments,
   workoutGoals,
@@ -39,6 +38,8 @@ import {
   addEnrolmentToWorkoutProgram,
   removeEnrolmentFromWorkoutProgram,
 } from './workoutProgram'
+
+import { standardMoves, userCustomMoves } from './move'
 
 import {
   officialWorkouts,
@@ -102,7 +103,8 @@ const resolvers: Resolvers = {
     userByUid,
     userPublicProfile,
     creatorPublicProfiles,
-    moves,
+    standardMoves,
+    userCustomMoves,
     bodyAreas,
     equipments,
     workoutGoals,

@@ -41,9 +41,17 @@ export default gql`
   Standard moves are built in / official.
   Custom moves are created by users.
   """
-  enum MoveType {
+  enum MoveScope {
     STANDARD
     CUSTOM
+  }
+
+  enum MoveType {
+    GENERAL
+    CARDIO
+    YOGAFLEX
+    BARRE
+    PILATES
   }
 
   enum ThemePreference {

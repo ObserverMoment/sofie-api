@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 model BodyArea {
@@ -117,7 +117,7 @@ model Move {
   createdBy               User?                @relation(fields: [createdById], references: [id])
   createdById             String?
   scope                   MoveScope            @default(STANDARD)
-  type                    MoveType             @default(GENERAL)
+  // type                    MoveType             @default(GENERAL)
   // Should be very short!
   name                    String               @unique
   // Text search will search this field - include the main name + any common variations
@@ -190,7 +190,7 @@ model User {
   unitSystem               UnitSystem                @default(METRIC)
   followedBy               User[]                    @relation("UserFollows", references: [id])
   following                User[]                    @relation("UserFollows", references: [id])
-  customMoves              Move[]
+  moves                    Move[]
   workouts                 Workout[]
   /// @onDelete(CASCADE)
   scheduledWorkouts        ScheduledWorkout[]
@@ -395,13 +395,13 @@ enum MoveScope {
   CUSTOM
 }
 
-enum MoveType {
-  GENERAL
-  CARDIO
-  YOGAFLEX
-  BARRE
-  PILATES
-}
+// enum MoveType {
+//   GENERAL
+//   CARDIO
+//   YOGAFLEX
+//   BARRE
+//   PILATES
+// }
 
 enum ThemePreference {
   DARK
