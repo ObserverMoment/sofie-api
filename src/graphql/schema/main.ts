@@ -48,6 +48,12 @@ export default gql`
   type Mutation {
     createUser(uid: ID!): User!
     updateUser(id: ID!, data: UpdateUserInput!): User!
+    createMove(authedUserId: ID!, data: CreateMoveInput!): Move
+    shallowUpdateMove(authedUserId: ID!, data: ShallowUpdateMoveInput!): Move
+    updateMoveBodyAreaScores(
+      authedUserId: ID!
+      data: UpdateMoveBodyAreaMoveScoresInput!
+    ): Move
     createGymProfile(
       authedUserId: ID!
       data: CreateGymProfileInput!

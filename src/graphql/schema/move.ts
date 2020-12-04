@@ -28,7 +28,7 @@ export default gql`
   }
 
   # Shallow update only - does not update body area move scores.
-  input UpdateMoveInput {
+  input ShallowUpdateMoveInput {
     id: ID!
     name: String
     searchTerms: String

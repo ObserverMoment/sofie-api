@@ -151,6 +151,9 @@ export type Mutation = {
   __typename?: 'Mutation';
   createUser: User;
   updateUser: User;
+  createMove?: Maybe<Move>;
+  shallowUpdateMove?: Maybe<Move>;
+  updateMoveBodyAreaScores?: Maybe<Move>;
   createGymProfile: GymProfile;
   updateGymProfile: GymProfile;
   deleteGymProfileById?: Maybe<Scalars['ID']>;
@@ -190,6 +193,24 @@ export type MutationCreateUserArgs = {
 export type MutationUpdateUserArgs = {
   id: Scalars['ID'];
   data: UpdateUserInput;
+};
+
+
+export type MutationCreateMoveArgs = {
+  authedUserId: Scalars['ID'];
+  data: CreateMoveInput;
+};
+
+
+export type MutationShallowUpdateMoveArgs = {
+  authedUserId: Scalars['ID'];
+  data: ShallowUpdateMoveInput;
+};
+
+
+export type MutationUpdateMoveBodyAreaScoresArgs = {
+  authedUserId: Scalars['ID'];
+  data: UpdateMoveBodyAreaMoveScoresInput;
 };
 
 
@@ -556,7 +577,7 @@ export type CreateMoveInput = {
   bodyAreaMoveScores?: Maybe<Array<MoveBodyAreaMoveScoreInput>>;
 };
 
-export type UpdateMoveInput = {
+export type ShallowUpdateMoveInput = {
   id: Scalars['ID'];
   name?: Maybe<Scalars['String']>;
   searchTerms?: Maybe<Scalars['String']>;
@@ -1139,7 +1160,7 @@ export type ResolversTypes = ResolversObject<{
   LikedWorkoutProgram: ResolverTypeWrapper<LikedWorkoutProgram>;
   Move: ResolverTypeWrapper<Move>;
   CreateMoveInput: CreateMoveInput;
-  UpdateMoveInput: UpdateMoveInput;
+  ShallowUpdateMoveInput: ShallowUpdateMoveInput;
   UpdateMoveBodyAreaMoveScoresInput: UpdateMoveBodyAreaMoveScoresInput;
   MoveBodyAreaMoveScoreInput: MoveBodyAreaMoveScoreInput;
   WorkoutType: ResolverTypeWrapper<WorkoutType>;
@@ -1214,7 +1235,7 @@ export type ResolversParentTypes = ResolversObject<{
   LikedWorkoutProgram: LikedWorkoutProgram;
   Move: Move;
   CreateMoveInput: CreateMoveInput;
-  UpdateMoveInput: UpdateMoveInput;
+  ShallowUpdateMoveInput: ShallowUpdateMoveInput;
   UpdateMoveBodyAreaMoveScoresInput: UpdateMoveBodyAreaMoveScoresInput;
   MoveBodyAreaMoveScoreInput: MoveBodyAreaMoveScoreInput;
   WorkoutType: WorkoutType;
@@ -1290,6 +1311,9 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
   createUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'uid'>>;
   updateUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationUpdateUserArgs, 'id' | 'data'>>;
+  createMove?: Resolver<Maybe<ResolversTypes['Move']>, ParentType, ContextType, RequireFields<MutationCreateMoveArgs, 'authedUserId' | 'data'>>;
+  shallowUpdateMove?: Resolver<Maybe<ResolversTypes['Move']>, ParentType, ContextType, RequireFields<MutationShallowUpdateMoveArgs, 'authedUserId' | 'data'>>;
+  updateMoveBodyAreaScores?: Resolver<Maybe<ResolversTypes['Move']>, ParentType, ContextType, RequireFields<MutationUpdateMoveBodyAreaScoresArgs, 'authedUserId' | 'data'>>;
   createGymProfile?: Resolver<ResolversTypes['GymProfile'], ParentType, ContextType, RequireFields<MutationCreateGymProfileArgs, 'authedUserId' | 'data'>>;
   updateGymProfile?: Resolver<ResolversTypes['GymProfile'], ParentType, ContextType, RequireFields<MutationUpdateGymProfileArgs, 'authedUserId' | 'data'>>;
   deleteGymProfileById?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType, RequireFields<MutationDeleteGymProfileByIdArgs, 'authedUserId' | 'gymProfileId'>>;

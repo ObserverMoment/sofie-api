@@ -39,7 +39,13 @@ import {
   removeEnrolmentFromWorkoutProgram,
 } from './workoutProgram'
 
-import { standardMoves, userCustomMoves } from './move'
+import {
+  standardMoves,
+  userCustomMoves,
+  createMove,
+  shallowUpdateMove,
+  updateMoveBodyAreaScores,
+} from './move'
 
 import {
   officialWorkouts,
@@ -129,6 +135,9 @@ const resolvers: Resolvers = {
   Mutation: {
     createUser,
     updateUser,
+    createMove,
+    shallowUpdateMove,
+    updateMoveBodyAreaScores,
     createGymProfile,
     updateGymProfile,
     deleteGymProfileById,
