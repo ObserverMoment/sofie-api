@@ -50,10 +50,8 @@ export default gql`
     updateUser(id: ID!, data: UpdateUserInput!): User!
     createMove(authedUserId: ID!, data: CreateMoveInput!): Move
     shallowUpdateMove(authedUserId: ID!, data: ShallowUpdateMoveInput!): Move
-    updateMoveBodyAreaScores(
-      authedUserId: ID!
-      data: UpdateMoveBodyAreaMoveScoresInput!
-    ): Move
+    deepUpdateMove(authedUserId: ID!, data: DeepUpdateMoveInput!): Move
+    deleteMoveById(authedUserId: ID!, moveId: ID!): ID
     createGymProfile(
       authedUserId: ID!
       data: CreateGymProfileInput!

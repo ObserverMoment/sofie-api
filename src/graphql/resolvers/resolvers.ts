@@ -44,7 +44,8 @@ import {
   userCustomMoves,
   createMove,
   shallowUpdateMove,
-  updateMoveBodyAreaScores,
+  deepUpdateMove,
+  deleteMoveById,
 } from './move'
 
 import {
@@ -137,7 +138,8 @@ const resolvers: Resolvers = {
     updateUser,
     createMove,
     shallowUpdateMove,
-    updateMoveBodyAreaScores,
+    deepUpdateMove,
+    deleteMoveById,
     createGymProfile,
     updateGymProfile,
     deleteGymProfileById,

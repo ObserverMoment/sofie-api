@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 model BodyArea {
@@ -127,14 +127,12 @@ model Move {
   searchTerms             String?
   description             String?
   demoVideoUrl            String?
-  demoVideoThumbUrl       String?
   validRepTypes           WorkoutMoveRepType[]
   requiredEquipments      Equipment[]          @relation("moveToRequiredEquipments", references: [id])
   selectableEquipments    Equipment[]          @relation("moveToSelectableEquipments", references: [id])
   requiredForMoveProfiles MoveProfile[]        @relation("requiredMoves", references: [id])
   excludedForMoveProfiles MoveProfile[]        @relation("excludedMoves", references: [id])
   workoutMoves            WorkoutMove[]
-  /// @onDelete(CASCADE)
   bodyAreaMoveScores      BodyAreaMoveScore[]
 }
 
