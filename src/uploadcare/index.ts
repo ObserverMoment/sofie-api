@@ -9,6 +9,9 @@ import {
   ShallowUpdateWorkoutProgramInput,
   DeepUpdateWorkoutProgramInput,
   WorkoutProgram,
+  Move,
+  ShallowUpdateMoveInput,
+  DeepUpdateMoveInput,
 } from '../generated/graphql'
 
 const uploadcareApiUBaseUrl = 'https://api.uploadcare.com'
@@ -69,6 +72,11 @@ export async function checkWorkoutMediaForDeletion(
     where: {
       id: workoutData.id,
     },
+    select: {
+      imageUrl: true,
+      demoVideoUrl: true,
+      demoVideoThumbUrl: true,
+    },
   })
   const fileIdsForDeletion: string[] = []
   // If previous workout has media url (not null), and new workoutData has sent a media url, and the new media url and the old media url are different, then the old url should be deleted.
@@ -97,7 +105,7 @@ export async function checkWorkoutMediaForDeletion(
 }
 
 /** Checks if there are any media (hosted) files being changed in the loggedWorkouData
- * Returns an array of fileIds (strings) which should be deleted.
+ * Returns an array of fileIds (strings) which should be deleted once the main transaction is successful.
  */
 export async function checkLoggedWorkoutMediaForDeletion(
   prisma: any,
@@ -106,31 +114,38 @@ export async function checkLoggedWorkoutMediaForDeletion(
     | DeepUpdateLoggedWorkoutInput,
 ): Promise<string[] | null> {
   // Get the old loggedWorkout data first.
-  const oldLoggedWorkout: LoggedWorkout = await prisma.loggedWorkout.findUnique({
-    where: {
-      id: loggedWorkoutData.id,
+  const oldLoggedWorkout: LoggedWorkout = await prisma.loggedWorkout.findUnique(
+    {
+      where: {
+        id: loggedWorkoutData.id,
+      },
+      select: {
+        imageUrl: true,
+        videoUrl: true,
+        videoThumbUrl: true,
+      },
     },
-  })
+  )
   const fileIdsForDeletion: string[] = []
   // If previous workout has media url (not null), and new workoutData has sent a media url, and the new media url and the old media url are different, then the old url should be deleted.
   if (
     oldLoggedWorkout.imageUrl != null &&
-    oldLoggedWorkout.hasOwnProperty('imageUrl') &&
-    oldLoggedWorkout.imageUrl != oldLoggedWorkout.imageUrl
+    loggedWorkoutData.hasOwnProperty('imageUrl') &&
+    loggedWorkoutData.imageUrl != oldLoggedWorkout.imageUrl
   ) {
     fileIdsForDeletion.push(oldLoggedWorkout.imageUrl)
   }
   if (
     oldLoggedWorkout.videoUrl != null &&
-    oldLoggedWorkout.hasOwnProperty('videoUrl') &&
-    oldLoggedWorkout.videoUrl != oldLoggedWorkout.videoUrl
+    loggedWorkoutData.hasOwnProperty('videoUrl') &&
+    loggedWorkoutData.videoUrl != oldLoggedWorkout.videoUrl
   ) {
     fileIdsForDeletion.push(oldLoggedWorkout.videoUrl)
   }
   if (
     oldLoggedWorkout.videoThumbUrl != null &&
-    oldLoggedWorkout.hasOwnProperty('videoThumbUrl') &&
-    oldLoggedWorkout.videoThumbUrl != oldLoggedWorkout.videoThumbUrl
+    loggedWorkoutData.hasOwnProperty('videoThumbUrl') &&
+    loggedWorkoutData.videoThumbUrl != oldLoggedWorkout.videoThumbUrl
   ) {
     fileIdsForDeletion.push(oldLoggedWorkout.videoThumbUrl)
   }
@@ -138,7 +153,7 @@ export async function checkLoggedWorkoutMediaForDeletion(
 }
 
 /** Checks if there are any media (hosted) files being changed in the workoutProgramData
- * Returns an array of fileIds (strings) which should be deleted.
+ * Returns an array of fileIds (strings) which should be deleted once the main transaction is successful.
  */
 export async function checkWorkoutProgramMediaForDeletion(
   prisma: any,
@@ -152,30 +167,74 @@ export async function checkWorkoutProgramMediaForDeletion(
       where: {
         id: workoutProgramData.id,
       },
+      select: {
+        imageUrl: true,
+        videoUrl: true,
+        videoThumbUrl: true,
+      },
     },
   )
   const fileIdsForDeletion: string[] = []
-  // If previous workout has media url (not null), and new workoutData has sent a media url, and the new media url and the old media url are different, then the old url should be deleted.
+  // If previous workout has media url (not null), and new workoutData has sent a media url, and the new media url and the old media url are different, then the old url should be deleted once the main transaction is successful.
   if (
     oldWorkoutProgram.imageUrl != null &&
-    oldWorkoutProgram.hasOwnProperty('imageUrl') &&
-    oldWorkoutProgram.imageUrl != oldWorkoutProgram.imageUrl
+    workoutProgramData.hasOwnProperty('imageUrl') &&
+    workoutProgramData.imageUrl != oldWorkoutProgram.imageUrl
   ) {
     fileIdsForDeletion.push(oldWorkoutProgram.imageUrl)
   }
   if (
     oldWorkoutProgram.videoUrl != null &&
-    oldWorkoutProgram.hasOwnProperty('videoUrl') &&
-    oldWorkoutProgram.videoUrl != oldWorkoutProgram.videoUrl
+    workoutProgramData.hasOwnProperty('videoUrl') &&
+    workoutProgramData.videoUrl != oldWorkoutProgram.videoUrl
   ) {
     fileIdsForDeletion.push(oldWorkoutProgram.videoUrl)
   }
   if (
     oldWorkoutProgram.videoThumbUrl != null &&
-    oldWorkoutProgram.hasOwnProperty('videoThumbUrl') &&
-    oldWorkoutProgram.videoThumbUrl != oldWorkoutProgram.videoThumbUrl
+    workoutProgramData.hasOwnProperty('videoThumbUrl') &&
+    workoutProgramData.videoThumbUrl != oldWorkoutProgram.videoThumbUrl
   ) {
     fileIdsForDeletion.push(oldWorkoutProgram.videoThumbUrl)
   }
+  return fileIdsForDeletion.length > 0 ? fileIdsForDeletion : null
+}
+
+/** Checks if there are any media (hosted) files being changed in the updated move data
+ * Returns an array of fileIds (strings) which should be deleted once the main transaction is successful.
+ */
+export async function checkMoveMediaForDeletion(
+  prisma: any,
+  data: ShallowUpdateMoveInput | DeepUpdateMoveInput,
+): Promise<string[] | null> {
+  // Get the original move media file info.
+  // Then once update transaction is complete you can check to see if media should be deleted.
+  const oldMove: Move = await prisma.move.findUnique({
+    where: {
+      id: data.id,
+    },
+    select: {
+      demoVideoUrl: true,
+      demoVideoThumbUrl: true,
+    },
+  })
+
+  const fileIdsForDeletion: string[] = []
+
+  if (
+    oldMove.demoVideoUrl != null &&
+    data.hasOwnProperty('demoVideoUrl') &&
+    data.demoVideoUrl != oldMove.demoVideoUrl
+  ) {
+    fileIdsForDeletion.push(oldMove.demoVideoUrl)
+  }
+  if (
+    oldMove.demoVideoThumbUrl != null &&
+    data.hasOwnProperty('demoVideoThumbUrl') &&
+    data.demoVideoThumbUrl != oldMove.demoVideoThumbUrl
+  ) {
+    fileIdsForDeletion.push(oldMove.demoVideoThumbUrl)
+  }
+
   return fileIdsForDeletion.length > 0 ? fileIdsForDeletion : null
 }

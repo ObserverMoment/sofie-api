@@ -1,0 +1,48 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "CreateEnum",
+      "enum": "MoveType",
+      "values": [
+        "GENERAL",
+        "CARDIO",
+        "YOGAFLEX",
+        "BARRE",
+        "PILATES"
+      ]
+    },
+    {
+      "tag": "CreateField",
+      "model": "Move",
+      "field": "type",
+      "type": "MoveType",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Move",
+          "field": "type"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Move",
+          "field": "type"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "GENERAL"
+    }
+  ]
+}

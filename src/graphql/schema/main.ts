@@ -9,7 +9,8 @@ export default gql`
     userByUid(uid: ID!): User
     creatorPublicProfiles(authedUserId: ID!): [UserPublicProfile!]
     userPublicProfile(userId: ID!): UserPublicProfile
-    moves: [Move!]!
+    standardMoves: [Move!]!
+    userCustomMoves(authedUserId: ID!): [Move!]!
     bodyAreas: [BodyArea!]!
     equipments: [Equipment!]!
     workoutTypes: [WorkoutType!]!
@@ -47,6 +48,10 @@ export default gql`
   type Mutation {
     createUser(uid: ID!): User!
     updateUser(id: ID!, data: UpdateUserInput!): User!
+    createMove(authedUserId: ID!, data: CreateMoveInput!): Move
+    shallowUpdateMove(authedUserId: ID!, data: ShallowUpdateMoveInput!): Move
+    deepUpdateMove(authedUserId: ID!, data: DeepUpdateMoveInput!): Move
+    deleteMoveById(authedUserId: ID!, moveId: ID!): ID
     createGymProfile(
       authedUserId: ID!
       data: CreateGymProfileInput!
@@ -139,19 +144,6 @@ export default gql`
     name: String!
     imageUrl: String
     loadAdjustable: Boolean!
-  }
-
-  type Move {
-    id: ID!
-    name: String!
-    searchTerms: String
-    description: String
-    demoVideoUrl: String
-    type: MoveType!
-    validRepTypes: [WorkoutMoveRepType!]!
-    requiredEquipments: [Equipment!]!
-    selectableEquipments: [Equipment!]!
-    bodyAreaMoveScores: [BodyAreaMoveScore!]
   }
 
   type WorkoutGoal {

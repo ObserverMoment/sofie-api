@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 model BodyArea {
@@ -116,10 +116,8 @@ model Move {
   createdAt               DateTime             @default(now())
   createdBy               User?                @relation(fields: [createdById], references: [id])
   createdById             String?
-  // Default to CUSTOM. GQL Schema does not accept this field as an input.
-  // A creator should never be able to create a STANDARD move (aka an official move)
-  scope                   MoveScope            @default(CUSTOM)
-  type                    MoveType             @default(GENERAL)
+  scope                   MoveScope            @default(STANDARD)
+  // type                    MoveType             @default(GENERAL)
   // Should be very short!
   name                    String               @unique
   // Text search will search this field - include the main name + any common variations
@@ -127,14 +125,12 @@ model Move {
   searchTerms             String?
   description             String?
   demoVideoUrl            String?
-  demoVideoThumbUrl       String?
   validRepTypes           WorkoutMoveRepType[]
   requiredEquipments      Equipment[]          @relation("moveToRequiredEquipments", references: [id])
   selectableEquipments    Equipment[]          @relation("moveToSelectableEquipments", references: [id])
   requiredForMoveProfiles MoveProfile[]        @relation("requiredMoves", references: [id])
   excludedForMoveProfiles MoveProfile[]        @relation("excludedMoves", references: [id])
   workoutMoves            WorkoutMove[]
-  /// @onDelete(CASCADE)
   bodyAreaMoveScores      BodyAreaMoveScore[]
 }
 
@@ -194,7 +190,7 @@ model User {
   unitSystem               UnitSystem                @default(METRIC)
   followedBy               User[]                    @relation("UserFollows", references: [id])
   following                User[]                    @relation("UserFollows", references: [id])
-  customMoves              Move[]
+  moves                    Move[]
   workouts                 Workout[]
   /// @onDelete(CASCADE)
   scheduledWorkouts        ScheduledWorkout[]
@@ -399,13 +395,13 @@ enum MoveScope {
   CUSTOM
 }
 
-enum MoveType {
-  GENERAL
-  CARDIO
-  YOGAFLEX
-  BARRE
-  PILATES
-}
+// enum MoveType {
+//   GENERAL
+//   CARDIO
+//   YOGAFLEX
+//   BARRE
+//   PILATES
+// }
 
 enum ThemePreference {
   DARK

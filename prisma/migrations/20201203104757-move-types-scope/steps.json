@@ -1,0 +1,54 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "CreateEnum",
+      "enum": "MoveScope",
+      "values": [
+        "STANDARD",
+        "CUSTOM"
+      ]
+    },
+    {
+      "tag": "DeleteEnum",
+      "enum": "MoveType"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Move",
+      "field": "scope",
+      "type": "MoveScope",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Move",
+          "field": "scope"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Move",
+          "field": "scope"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "STANDARD"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "Move",
+      "field": "type"
+    }
+  ]
+}
