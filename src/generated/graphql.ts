@@ -959,6 +959,8 @@ export type BodyArea = {
   name?: Maybe<Scalars['String']>;
   altNames?: Maybe<Scalars['String']>;
   bodyAreaMoveScores: Array<BodyAreaMoveScore>;
+  frontBack: BodyAreaFrontBack;
+  upperLower: BodyAreaUpperLower;
 };
 
 export type BodyAreaMoveScore = {
@@ -1002,6 +1004,15 @@ export type AccessScopeType =
   | 'PUBLIC'
   | 'PAID'
   | 'OFFICIAL';
+
+export type BodyAreaFrontBack = 
+  | 'BACK'
+  | 'FRONT';
+
+export type BodyAreaUpperLower = 
+  | 'CORE'
+  | 'LOWER'
+  | 'UPPER';
 
 export type DifficultyLevel = 
   | 'ONE'
@@ -1214,6 +1225,8 @@ export type ResolversTypes = ResolversObject<{
   TextSearchWorkoutResult: ResolverTypeWrapper<TextSearchWorkoutResult>;
   TextSearchWorkoutProgramResult: ResolverTypeWrapper<TextSearchWorkoutProgramResult>;
   AccessScopeType: AccessScopeType;
+  BodyAreaFrontBack: BodyAreaFrontBack;
+  BodyAreaUpperLower: BodyAreaUpperLower;
   DifficultyLevel: DifficultyLevel;
   DistanceUnit: DistanceUnit;
   Gender: Gender;
@@ -1629,6 +1642,8 @@ export type BodyAreaResolvers<ContextType = any, ParentType extends ResolversPar
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   altNames?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   bodyAreaMoveScores?: Resolver<Array<ResolversTypes['BodyAreaMoveScore']>, ParentType, ContextType>;
+  frontBack?: Resolver<ResolversTypes['BodyAreaFrontBack'], ParentType, ContextType>;
+  upperLower?: Resolver<ResolversTypes['BodyAreaUpperLower'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 }>;
 

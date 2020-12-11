@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 model BodyArea {
@@ -16,8 +16,8 @@ model BodyArea {
   name               String              @unique
   altNames           String?
   bodyAreaMoveScores BodyAreaMoveScore[]
-  frontBack          BodyAreaFrontBack   @default(FRONT)
-  upperLower         BodyAreaUpperLower  @default(UPPER)
+  // frontBack          BodyAreaFrontBack
+  // upperLower         BodyAreaUpperLower
 }
 
 model BodyAreaMoveScore {
@@ -381,7 +381,6 @@ enum BodyAreaFrontBack {
 }
 
 enum BodyAreaUpperLower {
-  CORE
   LOWER
   UPPER
 }
