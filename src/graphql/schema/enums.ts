@@ -18,6 +18,7 @@ export default gql`
   }
 
   enum BodyAreaUpperLower {
+    CORE
     LOWER
     UPPER
   }
