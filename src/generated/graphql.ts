@@ -1007,7 +1007,8 @@ export type AccessScopeType =
 
 export type BodyAreaFrontBack = 
   | 'BACK'
-  | 'FRONT';
+  | 'FRONT'
+  | 'BOTH';
 
 export type BodyAreaUpperLower = 
   | 'CORE'
