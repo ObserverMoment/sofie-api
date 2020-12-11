@@ -12,6 +12,16 @@ export default gql`
     OFFICIAL
   }
 
+  enum BodyAreaFrontBack {
+    BACK
+    FRONT
+  }
+
+  enum BodyAreaUpperLower {
+    LOWER
+    UPPER
+  }
+
   enum DifficultyLevel {
     ONE
     TWO

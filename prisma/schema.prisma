@@ -16,6 +16,8 @@ model BodyArea {
   name               String              @unique
   altNames           String?
   bodyAreaMoveScores BodyAreaMoveScore[]
+  // frontBack          BodyAreaFrontBack
+  // upperLower         BodyAreaUpperLower
 }
 
 model BodyAreaMoveScore {
@@ -24,7 +26,7 @@ model BodyAreaMoveScore {
   moveId     String
   bodyArea   BodyArea @relation(fields: [bodyAreaId], references: [id])
   bodyAreaId String
-  score      Float
+  score      Int      @default(1)
 
   @@id([moveId, bodyAreaId])
 }
@@ -371,6 +373,16 @@ enum AccessScopeType {
   PUBLIC
   GROUP
   PRIVATE
+}
+
+enum BodyAreaFrontBack {
+  BACK
+  FRONT
+}
+
+enum BodyAreaUpperLower {
+  LOWER
+  UPPER
 }
 
 enum DistanceUnit {

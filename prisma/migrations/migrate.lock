@@ -1,31 +1,3 @@
 # Prisma Migrate lockfile v1
 
-20201110105310-reset
-20201110131654-ready-to-deploy-init-sandbox
-20201111150308-equipment-alt-names
-20201111184012-workout-program-description-not-required
-20201112155757-workout-program-youtube-video-url
-20201112163403-clean-up
-20201113111200-scheduled-workout-workout-not-required
-20201113114623-workout-goal-placeholder-images
-20201113121320-liked-workout-program
-20201113121438-liked-workout-program-2
-20201117084943-workout-program-workout-logged-workout-body-areas
-20201118095839-logged-workouts-move-to-program-enrolments
-20201118104545-standardise-naming
-20201118154801-syntax-correction
-20201119103920-created-ats-for-all
-20201120090454-user-workout-programs-rename
-20201124100002-user-user-profile-scope
-20201126093028-user-tagline
-20201126142318-user-social-links
-20201126145218-user-social-links-2
-20201127102800-user-intro-video-url
-20201129151611-user-cover-image-url
-20201203104550-move-types-scope
-20201203104708-move-types-scope-2
-20201203104757-move-types-scope
-20201203104834-move-types-scope-2
-20201203111130-user-cutom-moves
-20201207142436-move-scope-default-custom
-20201208143836-move-demo-video-thumb-url
+20201211125236-body-area-categories

@@ -6,6 +6,8 @@ export default gql`
     name: String
     altNames: String
     bodyAreaMoveScores: [BodyAreaMoveScore!]!
+    frontBack: BodyAreaFrontBack!
+    upperLower: BodyAreaUpperLower!
   }
 
   type BodyAreaMoveScore {

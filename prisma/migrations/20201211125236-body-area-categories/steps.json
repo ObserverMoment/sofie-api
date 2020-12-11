@@ -13,23 +13,28 @@
     },
     {
       "tag": "CreateEnum",
+      "enum": "BodyAreaFrontBack",
+      "values": [
+        "BACK",
+        "FRONT"
+      ]
+    },
+    {
+      "tag": "CreateEnum",
+      "enum": "BodyAreaUpperLower",
+      "values": [
+        "LOWER",
+        "UPPER"
+      ]
+    },
+    {
+      "tag": "CreateEnum",
       "enum": "DistanceUnit",
       "values": [
         "METRES",
         "KILOMETRES",
         "YARDS",
         "MILES"
-      ]
-    },
-    {
-      "tag": "CreateEnum",
-      "enum": "FrequencyPeriod",
-      "values": [
-        "DAY",
-        "TWODAYS",
-        "WEEK",
-        "TWOWEEKS",
-        "MONTH"
       ]
     },
     {
@@ -52,10 +57,21 @@
     },
     {
       "tag": "CreateEnum",
-      "enum": "MoveType",
+      "enum": "MoveScope",
       "values": [
         "STANDARD",
         "CUSTOM"
+      ]
+    },
+    {
+      "tag": "CreateEnum",
+      "enum": "MoveType",
+      "values": [
+        "GENERAL",
+        "CARDIO",
+        "YOGAFLEX",
+        "BARRE",
+        "PILATES"
       ]
     },
     {
@@ -72,6 +88,14 @@
       "values": [
         "IMPERIAL",
         "METRIC"
+      ]
+    },
+    {
+      "tag": "CreateEnum",
+      "enum": "UserProfileScope",
+      "values": [
+        "PRIVATE",
+        "PUBLIC"
       ]
     },
     {
@@ -114,6 +138,314 @@
       },
       "argument": "url",
       "value": "\"***\""
+    },
+    {
+      "tag": "CreateModel",
+      "model": "BodyArea"
+    },
+    {
+      "tag": "CreateField",
+      "model": "BodyArea",
+      "field": "id",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "BodyArea",
+          "field": "id"
+        },
+        "directive": "id"
+      }
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "BodyArea",
+          "field": "id"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "BodyArea",
+          "field": "id"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "uuid()"
+    },
+    {
+      "tag": "CreateField",
+      "model": "BodyArea",
+      "field": "createdAt",
+      "type": "DateTime",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "BodyArea",
+          "field": "createdAt"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "BodyArea",
+          "field": "createdAt"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "now()"
+    },
+    {
+      "tag": "CreateField",
+      "model": "BodyArea",
+      "field": "name",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "BodyArea",
+          "field": "name"
+        },
+        "directive": "unique"
+      }
+    },
+    {
+      "tag": "CreateField",
+      "model": "BodyArea",
+      "field": "altNames",
+      "type": "String",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "BodyArea",
+      "field": "bodyAreaMoveScores",
+      "type": "BodyAreaMoveScore",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateModel",
+      "model": "BodyAreaMoveScore"
+    },
+    {
+      "tag": "CreateField",
+      "model": "BodyAreaMoveScore",
+      "field": "createdAt",
+      "type": "DateTime",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "BodyAreaMoveScore",
+          "field": "createdAt"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "BodyAreaMoveScore",
+          "field": "createdAt"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "now()"
+    },
+    {
+      "tag": "CreateField",
+      "model": "BodyAreaMoveScore",
+      "field": "move",
+      "type": "Move",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "BodyAreaMoveScore",
+          "field": "move"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "BodyAreaMoveScore",
+          "field": "move"
+        },
+        "directive": "relation"
+      },
+      "argument": "fields",
+      "value": "[moveId]"
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "BodyAreaMoveScore",
+          "field": "move"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[id]"
+    },
+    {
+      "tag": "CreateField",
+      "model": "BodyAreaMoveScore",
+      "field": "moveId",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "BodyAreaMoveScore",
+      "field": "bodyArea",
+      "type": "BodyArea",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "BodyAreaMoveScore",
+          "field": "bodyArea"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "BodyAreaMoveScore",
+          "field": "bodyArea"
+        },
+        "directive": "relation"
+      },
+      "argument": "fields",
+      "value": "[bodyAreaId]"
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "BodyAreaMoveScore",
+          "field": "bodyArea"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[id]"
+    },
+    {
+      "tag": "CreateField",
+      "model": "BodyAreaMoveScore",
+      "field": "bodyAreaId",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "BodyAreaMoveScore",
+      "field": "score",
+      "type": "Int",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "BodyAreaMoveScore",
+          "field": "score"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "BodyAreaMoveScore",
+          "field": "score"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "1"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Model",
+          "model": "BodyAreaMoveScore"
+        },
+        "directive": "id"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Model",
+          "model": "BodyAreaMoveScore"
+        },
+        "directive": "id"
+      },
+      "argument": "",
+      "value": "[moveId, bodyAreaId]"
     },
     {
       "tag": "CreateModel",
@@ -165,6 +497,38 @@
     {
       "tag": "CreateField",
       "model": "Equipment",
+      "field": "createdAt",
+      "type": "DateTime",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Equipment",
+          "field": "createdAt"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Equipment",
+          "field": "createdAt"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "now()"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Equipment",
       "field": "name",
       "type": "String",
       "arity": "Required"
@@ -179,6 +543,13 @@
         },
         "directive": "unique"
       }
+    },
+    {
+      "tag": "CreateField",
+      "model": "Equipment",
+      "field": "altNames",
+      "type": "String",
+      "arity": "Optional"
     },
     {
       "tag": "CreateField",
@@ -371,6 +742,38 @@
       },
       "argument": "",
       "value": "uuid()"
+    },
+    {
+      "tag": "CreateField",
+      "model": "GymProfile",
+      "field": "createdAt",
+      "type": "DateTime",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "GymProfile",
+          "field": "createdAt"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "GymProfile",
+          "field": "createdAt"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "now()"
     },
     {
       "tag": "CreateField",
@@ -670,6 +1073,178 @@
       },
       "argument": "",
       "value": "[userId, workoutId]"
+    },
+    {
+      "tag": "CreateModel",
+      "model": "LikedWorkoutProgram"
+    },
+    {
+      "tag": "CreateField",
+      "model": "LikedWorkoutProgram",
+      "field": "createdAt",
+      "type": "DateTime",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "LikedWorkoutProgram",
+          "field": "createdAt"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "LikedWorkoutProgram",
+          "field": "createdAt"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "now()"
+    },
+    {
+      "tag": "CreateField",
+      "model": "LikedWorkoutProgram",
+      "field": "user",
+      "type": "User",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "LikedWorkoutProgram",
+          "field": "user"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "LikedWorkoutProgram",
+          "field": "user"
+        },
+        "directive": "relation"
+      },
+      "argument": "fields",
+      "value": "[userId]"
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "LikedWorkoutProgram",
+          "field": "user"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[id]"
+    },
+    {
+      "tag": "CreateField",
+      "model": "LikedWorkoutProgram",
+      "field": "userId",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "LikedWorkoutProgram",
+      "field": "notes",
+      "type": "String",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "LikedWorkoutProgram",
+      "field": "workoutProgram",
+      "type": "WorkoutProgram",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "LikedWorkoutProgram",
+          "field": "workoutProgram"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "LikedWorkoutProgram",
+          "field": "workoutProgram"
+        },
+        "directive": "relation"
+      },
+      "argument": "fields",
+      "value": "[workoutProgramId]"
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "LikedWorkoutProgram",
+          "field": "workoutProgram"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[id]"
+    },
+    {
+      "tag": "CreateField",
+      "model": "LikedWorkoutProgram",
+      "field": "workoutProgramId",
+      "type": "String",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Model",
+          "model": "LikedWorkoutProgram"
+        },
+        "directive": "id"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Model",
+          "model": "LikedWorkoutProgram"
+        },
+        "directive": "id"
+      },
+      "argument": "",
+      "value": "[userId, workoutProgramId]"
     },
     {
       "tag": "CreateModel",
@@ -1100,6 +1675,59 @@
       "arity": "Optional"
     },
     {
+      "tag": "CreateField",
+      "model": "LoggedWorkout",
+      "field": "workoutProgramWorkout",
+      "type": "WorkoutProgramWorkout",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "LoggedWorkout",
+          "field": "workoutProgramWorkout"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "LoggedWorkout",
+          "field": "workoutProgramWorkout"
+        },
+        "directive": "relation"
+      },
+      "argument": "fields",
+      "value": "[workoutProgramWorkoutId]"
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "LoggedWorkout",
+          "field": "workoutProgramWorkout"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[id]"
+    },
+    {
+      "tag": "CreateField",
+      "model": "LoggedWorkout",
+      "field": "workoutProgramWorkoutId",
+      "type": "String",
+      "arity": "Optional"
+    },
+    {
       "tag": "CreateModel",
       "model": "Move"
     },
@@ -1234,6 +1862,38 @@
     {
       "tag": "CreateField",
       "model": "Move",
+      "field": "scope",
+      "type": "MoveScope",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Move",
+          "field": "scope"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Move",
+          "field": "scope"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "CUSTOM"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Move",
       "field": "type",
       "type": "MoveType",
       "arity": "Required"
@@ -1261,7 +1921,7 @@
         "directive": "default"
       },
       "argument": "",
-      "value": "STANDARD"
+      "value": "GENERAL"
     },
     {
       "tag": "CreateField",
@@ -1284,6 +1944,13 @@
     {
       "tag": "CreateField",
       "model": "Move",
+      "field": "searchTerms",
+      "type": "String",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Move",
       "field": "description",
       "type": "String",
       "arity": "Optional"
@@ -1292,6 +1959,13 @@
       "tag": "CreateField",
       "model": "Move",
       "field": "demoVideoUrl",
+      "type": "String",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Move",
+      "field": "demoVideoThumbUrl",
       "type": "String",
       "arity": "Optional"
     },
@@ -1397,7 +2071,7 @@
     {
       "tag": "CreateField",
       "model": "Move",
-      "field": "moveProfileRequired",
+      "field": "requiredForMoveProfiles",
       "type": "MoveProfile",
       "arity": "List"
     },
@@ -1407,7 +2081,7 @@
         "path": {
           "tag": "Field",
           "model": "Move",
-          "field": "moveProfileRequired"
+          "field": "requiredForMoveProfiles"
         },
         "directive": "relation"
       }
@@ -1419,7 +2093,7 @@
         "path": {
           "tag": "Field",
           "model": "Move",
-          "field": "moveProfileRequired"
+          "field": "requiredForMoveProfiles"
         },
         "directive": "relation"
       },
@@ -1433,7 +2107,7 @@
         "path": {
           "tag": "Field",
           "model": "Move",
-          "field": "moveProfileRequired"
+          "field": "requiredForMoveProfiles"
         },
         "directive": "relation"
       },
@@ -1443,7 +2117,7 @@
     {
       "tag": "CreateField",
       "model": "Move",
-      "field": "moveProfileExcluded",
+      "field": "excludedForMoveProfiles",
       "type": "MoveProfile",
       "arity": "List"
     },
@@ -1453,7 +2127,7 @@
         "path": {
           "tag": "Field",
           "model": "Move",
-          "field": "moveProfileExcluded"
+          "field": "excludedForMoveProfiles"
         },
         "directive": "relation"
       }
@@ -1465,7 +2139,7 @@
         "path": {
           "tag": "Field",
           "model": "Move",
-          "field": "moveProfileExcluded"
+          "field": "excludedForMoveProfiles"
         },
         "directive": "relation"
       },
@@ -1479,7 +2153,7 @@
         "path": {
           "tag": "Field",
           "model": "Move",
-          "field": "moveProfileExcluded"
+          "field": "excludedForMoveProfiles"
         },
         "directive": "relation"
       },
@@ -1491,6 +2165,13 @@
       "model": "Move",
       "field": "workoutMoves",
       "type": "WorkoutMove",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Move",
+      "field": "bodyAreaMoveScores",
+      "type": "BodyAreaMoveScore",
       "arity": "List"
     },
     {
@@ -1539,6 +2220,38 @@
       },
       "argument": "",
       "value": "uuid()"
+    },
+    {
+      "tag": "CreateField",
+      "model": "MoveProfile",
+      "field": "createdAt",
+      "type": "DateTime",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "MoveProfile",
+          "field": "createdAt"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "MoveProfile",
+          "field": "createdAt"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "now()"
     },
     {
       "tag": "CreateField",
@@ -1875,7 +2588,7 @@
       "model": "ScheduledWorkout",
       "field": "workout",
       "type": "Workout",
-      "arity": "Required"
+      "arity": "Optional"
     },
     {
       "tag": "CreateDirective",
@@ -1921,7 +2634,7 @@
       "model": "ScheduledWorkout",
       "field": "workoutId",
       "type": "String",
-      "arity": "Required"
+      "arity": "Optional"
     },
     {
       "tag": "CreateField",
@@ -2161,7 +2874,53 @@
     {
       "tag": "CreateField",
       "model": "User",
+      "field": "userProfileScope",
+      "type": "UserProfileScope",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "User",
+          "field": "userProfileScope"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "User",
+          "field": "userProfileScope"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "PRIVATE"
+    },
+    {
+      "tag": "CreateField",
+      "model": "User",
       "field": "avatarUrl",
+      "type": "String",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "User",
+      "field": "introVideoUrl",
+      "type": "String",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "User",
+      "field": "coverImageUrl",
       "type": "String",
       "arity": "Optional"
     },
@@ -2239,6 +2998,13 @@
     {
       "tag": "CreateField",
       "model": "User",
+      "field": "tagline",
+      "type": "String",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "User",
       "field": "birthdate",
       "type": "DateTime",
       "arity": "Optional"
@@ -2300,6 +3066,41 @@
       "tag": "CreateField",
       "model": "User",
       "field": "countryCode",
+      "type": "String",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "User",
+      "field": "instagramUrl",
+      "type": "String",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "User",
+      "field": "tiktokUrl",
+      "type": "String",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "User",
+      "field": "youtubeUrl",
+      "type": "String",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "User",
+      "field": "snapUrl",
+      "type": "String",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "User",
+      "field": "linkedinUrl",
       "type": "String",
       "arity": "Optional"
     },
@@ -2430,7 +3231,7 @@
     {
       "tag": "CreateField",
       "model": "User",
-      "field": "moves",
+      "field": "customMoves",
       "type": "Move",
       "arity": "List"
     },
@@ -2479,7 +3280,7 @@
     {
       "tag": "CreateField",
       "model": "User",
-      "field": "workoutProgramsCreated",
+      "field": "workoutPrograms",
       "type": "WorkoutProgram",
       "arity": "List"
     },
@@ -2495,6 +3296,13 @@
       "model": "User",
       "field": "workoutProgramReviews",
       "type": "WorkoutProgramReview",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateField",
+      "model": "User",
+      "field": "likedWorkoutPrograms",
+      "type": "LikedWorkoutProgram",
       "arity": "List"
     },
     {
@@ -2901,6 +3709,38 @@
     {
       "tag": "CreateField",
       "model": "WorkoutGoal",
+      "field": "createdAt",
+      "type": "DateTime",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "WorkoutGoal",
+          "field": "createdAt"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "WorkoutGoal",
+          "field": "createdAt"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "now()"
+    },
+    {
+      "tag": "CreateField",
+      "model": "WorkoutGoal",
       "field": "name",
       "type": "String",
       "arity": "Required"
@@ -2911,6 +3751,13 @@
       "field": "description",
       "type": "String",
       "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "WorkoutGoal",
+      "field": "placeholderImageUrl",
+      "type": "String",
+      "arity": "Optional"
     },
     {
       "tag": "CreateField",
@@ -3411,7 +4258,7 @@
       "model": "WorkoutProgram",
       "field": "description",
       "type": "String",
-      "arity": "Required"
+      "arity": "Optional"
     },
     {
       "tag": "CreateField",
@@ -3431,6 +4278,13 @@
       "tag": "CreateField",
       "model": "WorkoutProgram",
       "field": "videoThumbUrl",
+      "type": "String",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "WorkoutProgram",
+      "field": "youtubeVideoUrl",
       "type": "String",
       "arity": "Optional"
     },
@@ -3536,15 +4390,22 @@
     {
       "tag": "CreateField",
       "model": "WorkoutProgram",
-      "field": "programWorkouts",
+      "field": "workoutProgramWorkouts",
       "type": "WorkoutProgramWorkout",
       "arity": "List"
     },
     {
       "tag": "CreateField",
       "model": "WorkoutProgram",
-      "field": "programReviews",
+      "field": "workoutProgramReviews",
       "type": "WorkoutProgramReview",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateField",
+      "model": "WorkoutProgram",
+      "field": "likes",
+      "type": "LikedWorkoutProgram",
       "arity": "List"
     },
     {
@@ -4170,6 +5031,13 @@
       "arity": "Required"
     },
     {
+      "tag": "CreateField",
+      "model": "WorkoutProgramWorkout",
+      "field": "loggedWorkouts",
+      "type": "LoggedWorkout",
+      "arity": "List"
+    },
+    {
       "tag": "CreateModel",
       "model": "WorkoutSection"
     },
@@ -4442,6 +5310,38 @@
       },
       "argument": "",
       "value": "uuid()"
+    },
+    {
+      "tag": "CreateField",
+      "model": "WorkoutType",
+      "field": "createdAt",
+      "type": "DateTime",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "WorkoutType",
+          "field": "createdAt"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "WorkoutType",
+          "field": "createdAt"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "now()"
     },
     {
       "tag": "CreateField",
