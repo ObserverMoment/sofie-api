@@ -1,0 +1,69 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "CreateField",
+      "model": "BodyArea",
+      "field": "frontBack",
+      "type": "BodyAreaFrontBack",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "BodyArea",
+          "field": "frontBack"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "BodyArea",
+          "field": "frontBack"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "FRONT"
+    },
+    {
+      "tag": "CreateField",
+      "model": "BodyArea",
+      "field": "upperLower",
+      "type": "BodyAreaUpperLower",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "BodyArea",
+          "field": "upperLower"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "BodyArea",
+          "field": "upperLower"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "UPPER"
+    }
+  ]
+}
