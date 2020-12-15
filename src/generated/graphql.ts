@@ -29,8 +29,8 @@ export type Query = {
   workoutTypes: Array<WorkoutType>;
   workoutGoals: Array<Maybe<WorkoutGoal>>;
   officialWorkouts: Array<Workout>;
-  privateWorkouts: Array<Workout>;
   publicWorkouts: Array<Workout>;
+  userWorkouts: Array<Workout>;
   workoutById?: Maybe<Workout>;
   officialWorkoutPrograms: Array<WorkoutProgram>;
   privateWorkoutPrograms: Array<WorkoutProgram>;
@@ -72,12 +72,12 @@ export type QueryUserCustomMovesArgs = {
 };
 
 
-export type QueryPrivateWorkoutsArgs = {
+export type QueryPublicWorkoutsArgs = {
   authedUserId: Scalars['ID'];
 };
 
 
-export type QueryPublicWorkoutsArgs = {
+export type QueryUserWorkoutsArgs = {
   authedUserId: Scalars['ID'];
 };
 
@@ -1324,8 +1324,8 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   workoutTypes?: Resolver<Array<ResolversTypes['WorkoutType']>, ParentType, ContextType>;
   workoutGoals?: Resolver<Array<Maybe<ResolversTypes['WorkoutGoal']>>, ParentType, ContextType>;
   officialWorkouts?: Resolver<Array<ResolversTypes['Workout']>, ParentType, ContextType>;
-  privateWorkouts?: Resolver<Array<ResolversTypes['Workout']>, ParentType, ContextType, RequireFields<QueryPrivateWorkoutsArgs, 'authedUserId'>>;
   publicWorkouts?: Resolver<Array<ResolversTypes['Workout']>, ParentType, ContextType, RequireFields<QueryPublicWorkoutsArgs, 'authedUserId'>>;
+  userWorkouts?: Resolver<Array<ResolversTypes['Workout']>, ParentType, ContextType, RequireFields<QueryUserWorkoutsArgs, 'authedUserId'>>;
   workoutById?: Resolver<Maybe<ResolversTypes['Workout']>, ParentType, ContextType, RequireFields<QueryWorkoutByIdArgs, 'authedUserId' | 'workoutId'>>;
   officialWorkoutPrograms?: Resolver<Array<ResolversTypes['WorkoutProgram']>, ParentType, ContextType>;
   privateWorkoutPrograms?: Resolver<Array<ResolversTypes['WorkoutProgram']>, ParentType, ContextType, RequireFields<QueryPrivateWorkoutProgramsArgs, 'authedUserId'>>;

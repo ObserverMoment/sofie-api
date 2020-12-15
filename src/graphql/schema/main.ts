@@ -16,8 +16,8 @@ export default gql`
     workoutTypes: [WorkoutType!]!
     workoutGoals: [WorkoutGoal]!
     officialWorkouts: [Workout!]!
-    privateWorkouts(authedUserId: ID!): [Workout!]!
     publicWorkouts(authedUserId: ID!): [Workout!]!
+    userWorkouts(authedUserId: ID!): [Workout!]!
     workoutById(authedUserId: ID!, workoutId: ID!): Workout
     officialWorkoutPrograms: [WorkoutProgram!]!
     privateWorkoutPrograms(authedUserId: ID!): [WorkoutProgram!]!
