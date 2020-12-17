@@ -69,6 +69,7 @@ export default gql`
     linkedinUrl: String
     countryCode: String
     displayName: String
+    customMoves: [Move!]
     workouts: [Workout!]
     workoutPrograms: [WorkoutProgram!]
   }

@@ -529,6 +529,7 @@ export type UserPublicProfile = {
   linkedinUrl?: Maybe<Scalars['String']>;
   countryCode?: Maybe<Scalars['String']>;
   displayName?: Maybe<Scalars['String']>;
+  customMoves?: Maybe<Array<Move>>;
   workouts?: Maybe<Array<Workout>>;
   workoutPrograms?: Maybe<Array<WorkoutProgram>>;
 };
@@ -1458,6 +1459,7 @@ export type UserPublicProfileResolvers<ContextType = any, ParentType extends Res
   linkedinUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   countryCode?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   displayName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  customMoves?: Resolver<Maybe<Array<ResolversTypes['Move']>>, ParentType, ContextType>;
   workouts?: Resolver<Maybe<Array<ResolversTypes['Workout']>>, ParentType, ContextType>;
   workoutPrograms?: Resolver<Maybe<Array<ResolversTypes['WorkoutProgram']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
