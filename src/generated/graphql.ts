@@ -622,8 +622,9 @@ export type MoveBodyAreaMoveScoreInput = {
 export type WorkoutType = {
   __typename?: 'WorkoutType';
   id: Scalars['ID'];
-  name?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+  subtitle: Scalars['String'];
+  description: Scalars['String'];
   placeholderImageUrl?: Maybe<Scalars['String']>;
   scoreType?: Maybe<WorkoutScoreType>;
   workouts: Array<Workout>;
@@ -1507,8 +1508,9 @@ export type MoveResolvers<ContextType = any, ParentType extends ResolversParentT
 
 export type WorkoutTypeResolvers<ContextType = any, ParentType extends ResolversParentTypes['WorkoutType'] = ResolversParentTypes['WorkoutType']> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  subtitle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   placeholderImageUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   scoreType?: Resolver<Maybe<ResolversTypes['WorkoutScoreType']>, ParentType, ContextType>;
   workouts?: Resolver<Array<ResolversTypes['Workout']>, ParentType, ContextType>;
