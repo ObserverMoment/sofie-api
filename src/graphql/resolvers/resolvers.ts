@@ -51,7 +51,7 @@ import {
 import {
   officialWorkouts,
   publicWorkouts,
-  privateWorkouts,
+  userWorkouts,
   workoutById,
   createWorkout,
   deepUpdateWorkout,
@@ -123,7 +123,7 @@ const resolvers: Resolvers = {
     workoutProgramEnrolmentsByUser,
     officialWorkouts,
     publicWorkouts,
-    privateWorkouts,
+    userWorkouts,
     workoutById,
     likedWorkouts,
     scheduledWorkouts,

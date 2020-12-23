@@ -24,9 +24,10 @@ import { gql } from 'apollo-server-express'
 export default gql`
   type WorkoutType {
     id: ID!
-    name: String
-    description: String
-    placeholderImageUrl: String
+    name: String!
+    subtitle: String!
+    description: String!
+    placeholderImageUrl: String!
     scoreType: WorkoutScoreType
     workouts: [Workout!]!
   }

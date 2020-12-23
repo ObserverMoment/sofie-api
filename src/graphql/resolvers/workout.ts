@@ -3,7 +3,7 @@ import {
   MutationDeepUpdateWorkoutArgs,
   MutationDeleteWorkoutByIdArgs,
   MutationShallowUpdateWorkoutArgs,
-  QueryPrivateWorkoutsArgs,
+  QueryUserWorkoutsArgs,
   QueryWorkoutByIdArgs,
   Workout,
 } from '../../generated/graphql'
@@ -29,14 +29,14 @@ const publicWorkouts = async (r: any, a: any, { select, prisma }: Context) =>
     select,
   })
 
-const privateWorkouts = async (
+const userWorkouts = async (
   r: any,
-  { authedUserId }: QueryPrivateWorkoutsArgs,
+  { authedUserId }: QueryUserWorkoutsArgs,
   { select, prisma }: Context,
 ) =>
   prisma.workout.findMany({
     where: {
-      AND: [{ createdBy: { id: authedUserId } }, { scope: 'PRIVATE' }],
+      createdBy: { id: authedUserId },
     },
     select,
   })
@@ -191,7 +191,7 @@ const deleteWorkoutById = async (
 export {
   officialWorkouts,
   publicWorkouts,
-  privateWorkouts,
+  userWorkouts,
   workoutById,
   createWorkout,
   deepUpdateWorkout,

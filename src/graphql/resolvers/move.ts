@@ -73,7 +73,7 @@ const shallowUpdateMove = async (
   { authedUserId, data }: MutationShallowUpdateMoveArgs,
   { prisma, select }: Context,
 ) => {
-  return validateUpdateMoveInput(data, async () => {
+  return validateShallowUpdateMoveInput(data, async () => {
     // Check if any media files need to be updated. Only delete files from the server after the rest of the transaction is complete.
     const fileIdsForDeletion: string[] | null = await checkMoveMediaForDeletion(
       prisma,
@@ -112,7 +112,7 @@ const deepUpdateMove = async (
   { authedUserId, data }: MutationDeepUpdateMoveArgs,
   { prisma, select }: Context,
 ) => {
-  return validateUpdateMoveInput(data, async () => {
+  return validateDeepUpdateMoveInput(data, async () => {
     // // Delete all previous bodyAreaMoveScores - as this is a deep update.
     await prisma.bodyAreaMoveScore.deleteMany({
       where: {
@@ -220,11 +220,24 @@ async function validateCreateMoveInput(
       'ValidRepTypes does not include TIME: A move must always have at least the valid rep type TIME. Please ensure that your valid rep types array includes the string "TIME" or that the array is null if you do not wish to make any changes during an update operation',
     )
   }
+  if (data.bodyAreaMoveScores != null && data.bodyAreaMoveScores.length > 0) {
+    // Check to make sure that (if supplied) the body area move scores sum to 100.
+    const totalBodyAreaScores = data.bodyAreaMoveScores.reduce(
+      (acum, b) => acum + b.score,
+      0,
+    )
+    if (totalBodyAreaScores != 100) {
+      throw new ApolloError(
+        `BodyAreaMoveScores must sum to a total of 100 points for any given move being created or updated. You tried to submit this move with a total of ${totalBodyAreaScores}.`,
+      )
+    }
+  }
+
   return resolver()
 }
 
-async function validateUpdateMoveInput(
-  data: ShallowUpdateMoveInput | DeepUpdateMoveInput,
+async function validateShallowUpdateMoveInput(
+  data: ShallowUpdateMoveInput,
   resolver: () => Promise<Move>,
 ) {
   if (data.validRepTypes && !data.validRepTypes.includes('TIME')) {
@@ -232,6 +245,32 @@ async function validateUpdateMoveInput(
       'ValidRepTypes does not include TIME: A move must always have at least the valid rep type TIME. Please ensure that your valid rep types array includes the string "TIME" or that the array is null if you do not wish to make any changes during an update operation',
     )
   }
+
+  return resolver()
+}
+
+async function validateDeepUpdateMoveInput(
+  data: DeepUpdateMoveInput,
+  resolver: () => Promise<Move>,
+) {
+  if (data.validRepTypes && !data.validRepTypes.includes('TIME')) {
+    throw new ApolloError(
+      'ValidRepTypes does not include TIME: A move must always have at least the valid rep type TIME. Please ensure that your valid rep types array includes the string "TIME" or that the array is null if you do not wish to make any changes during an update operation',
+    )
+  }
+  if (data.bodyAreaMoveScores != null && data.bodyAreaMoveScores.length > 0) {
+    // Check to make sure that (if supplied) the body area move scores sum to 100.
+    const totalBodyAreaScores = data.bodyAreaMoveScores.reduce(
+      (acum, b) => acum + b.score,
+      0,
+    )
+    if (totalBodyAreaScores != 100) {
+      throw new ApolloError(
+        `BodyAreaMoveScores must sum to a total of 100 points for any given move being created or updated. You tried to submit this move with a total of ${totalBodyAreaScores}.`,
+      )
+    }
+  }
+
   return resolver()
 }
 

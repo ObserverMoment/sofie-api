@@ -15,6 +15,7 @@ export default gql`
   enum BodyAreaFrontBack {
     BACK
     FRONT
+    BOTH
   }
 
   enum BodyAreaUpperLower {

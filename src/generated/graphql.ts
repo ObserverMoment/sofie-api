@@ -29,8 +29,8 @@ export type Query = {
   workoutTypes: Array<WorkoutType>;
   workoutGoals: Array<Maybe<WorkoutGoal>>;
   officialWorkouts: Array<Workout>;
-  privateWorkouts: Array<Workout>;
   publicWorkouts: Array<Workout>;
+  userWorkouts: Array<Workout>;
   workoutById?: Maybe<Workout>;
   officialWorkoutPrograms: Array<WorkoutProgram>;
   privateWorkoutPrograms: Array<WorkoutProgram>;
@@ -72,12 +72,12 @@ export type QueryUserCustomMovesArgs = {
 };
 
 
-export type QueryPrivateWorkoutsArgs = {
+export type QueryPublicWorkoutsArgs = {
   authedUserId: Scalars['ID'];
 };
 
 
-export type QueryPublicWorkoutsArgs = {
+export type QueryUserWorkoutsArgs = {
   authedUserId: Scalars['ID'];
 };
 
@@ -529,6 +529,7 @@ export type UserPublicProfile = {
   linkedinUrl?: Maybe<Scalars['String']>;
   countryCode?: Maybe<Scalars['String']>;
   displayName?: Maybe<Scalars['String']>;
+  customMoves?: Maybe<Array<Move>>;
   workouts?: Maybe<Array<Workout>>;
   workoutPrograms?: Maybe<Array<WorkoutProgram>>;
 };
@@ -621,8 +622,9 @@ export type MoveBodyAreaMoveScoreInput = {
 export type WorkoutType = {
   __typename?: 'WorkoutType';
   id: Scalars['ID'];
-  name?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+  subtitle: Scalars['String'];
+  description: Scalars['String'];
   placeholderImageUrl?: Maybe<Scalars['String']>;
   scoreType?: Maybe<WorkoutScoreType>;
   workouts: Array<Workout>;
@@ -1007,7 +1009,8 @@ export type AccessScopeType =
 
 export type BodyAreaFrontBack = 
   | 'BACK'
-  | 'FRONT';
+  | 'FRONT'
+  | 'BOTH';
 
 export type BodyAreaUpperLower = 
   | 'CORE'
@@ -1323,8 +1326,8 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   workoutTypes?: Resolver<Array<ResolversTypes['WorkoutType']>, ParentType, ContextType>;
   workoutGoals?: Resolver<Array<Maybe<ResolversTypes['WorkoutGoal']>>, ParentType, ContextType>;
   officialWorkouts?: Resolver<Array<ResolversTypes['Workout']>, ParentType, ContextType>;
-  privateWorkouts?: Resolver<Array<ResolversTypes['Workout']>, ParentType, ContextType, RequireFields<QueryPrivateWorkoutsArgs, 'authedUserId'>>;
   publicWorkouts?: Resolver<Array<ResolversTypes['Workout']>, ParentType, ContextType, RequireFields<QueryPublicWorkoutsArgs, 'authedUserId'>>;
+  userWorkouts?: Resolver<Array<ResolversTypes['Workout']>, ParentType, ContextType, RequireFields<QueryUserWorkoutsArgs, 'authedUserId'>>;
   workoutById?: Resolver<Maybe<ResolversTypes['Workout']>, ParentType, ContextType, RequireFields<QueryWorkoutByIdArgs, 'authedUserId' | 'workoutId'>>;
   officialWorkoutPrograms?: Resolver<Array<ResolversTypes['WorkoutProgram']>, ParentType, ContextType>;
   privateWorkoutPrograms?: Resolver<Array<ResolversTypes['WorkoutProgram']>, ParentType, ContextType, RequireFields<QueryPrivateWorkoutProgramsArgs, 'authedUserId'>>;
@@ -1457,6 +1460,7 @@ export type UserPublicProfileResolvers<ContextType = any, ParentType extends Res
   linkedinUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   countryCode?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   displayName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  customMoves?: Resolver<Maybe<Array<ResolversTypes['Move']>>, ParentType, ContextType>;
   workouts?: Resolver<Maybe<Array<ResolversTypes['Workout']>>, ParentType, ContextType>;
   workoutPrograms?: Resolver<Maybe<Array<ResolversTypes['WorkoutProgram']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
@@ -1504,8 +1508,9 @@ export type MoveResolvers<ContextType = any, ParentType extends ResolversParentT
 
 export type WorkoutTypeResolvers<ContextType = any, ParentType extends ResolversParentTypes['WorkoutType'] = ResolversParentTypes['WorkoutType']> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  subtitle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   placeholderImageUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   scoreType?: Resolver<Maybe<ResolversTypes['WorkoutScoreType']>, ParentType, ContextType>;
   workouts?: Resolver<Array<ResolversTypes['Workout']>, ParentType, ContextType>;
