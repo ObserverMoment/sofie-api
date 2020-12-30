@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 model BodyArea {
@@ -117,7 +117,6 @@ model LoggedWorkout {
 model Move {
   id                      String               @id @default(uuid())
   createdAt               DateTime             @default(now())
-  archived                Boolean              @default(false)
   createdBy               User?                @relation(fields: [createdById], references: [id])
   createdById             String?
   // Default to CUSTOM. GQL Schema does not accept this field as an input.
