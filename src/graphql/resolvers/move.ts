@@ -1,4 +1,4 @@
-import { WorkoutMoveRepType } from '@prisma/client'
+import { WorkoutMove, WorkoutMoveRepType } from '@prisma/client'
 import { ApolloError } from 'apollo-server'
 import { Context } from '../..'
 import {
@@ -17,7 +17,10 @@ import { checkMoveMediaForDeletion, deleteFiles } from '../../uploadcare'
 //// Queries ////
 // Move scopes are 'STANDARD' or 'CUSTOM'.
 const standardMoves = async (r: any, a: any, { prisma, select }: Context) =>
-  prisma.move.findMany({ where: { scope: 'STANDARD' }, select })
+  prisma.move.findMany({
+    where: { scope: 'STANDARD', archived: false },
+    select,
+  })
 
 const userCustomMoves = async (
   r: any,
@@ -25,7 +28,11 @@ const userCustomMoves = async (
   { prisma, select }: Context,
 ) =>
   prisma.move.findMany({
-    where: { createdBy: { id: authedUserId }, scope: 'CUSTOM' },
+    where: {
+      createdBy: { id: authedUserId },
+      scope: 'CUSTOM',
+      archived: false,
+    },
     select,
   })
 
@@ -168,36 +175,60 @@ const deleteMoveById = async (
   { authedUserId, moveId }: MutationDeleteMoveByIdArgs,
   { prisma }: Context,
 ) => {
-  // Cascade delete reliant descendants with https://paljs.com/plugins/delete/
-  await prisma.onDelete({
-    model: 'Move',
-    where: { id: moveId },
-    deleteParent: false, // If false, just the descendants will be deleted.
-  })
-
-  // Delete move and get back related uploaded media files.
-  const deletedMove: Move = await prisma.move.delete({
-    where: { id: moveId },
-    select: {
-      id: true,
-      demoVideoUrl: true,
-      demoVideoThumbUrl: true,
+  // Is this move part of any workoutMoves (is it part of any workouts)?
+  const numWorkoutMoves: number = await prisma.workoutMove.count({
+    where: {
+      move: { id: moveId },
     },
   })
 
-  // Check if there is media to be deleted from the uploadcare server.
-  if (deletedMove) {
-    if (deletedMove.demoVideoUrl) {
-      const fileIdsForDeletion: string[] = []
-      fileIdsForDeletion.push(deletedMove.demoVideoUrl)
-      if (deletedMove.demoVideoThumbUrl) {
-        fileIdsForDeletion.push(deletedMove.demoVideoThumbUrl)
-      }
-      await deleteFiles(fileIdsForDeletion)
-    }
-    return deletedMove.id
+  if (numWorkoutMoves > 0) {
+    // Yes - then don't delete just archive. Mark for periodic cleanup.
+    const archivedMove: Move = await prisma.move.update({
+      where: {
+        id: moveId,
+      },
+      data: {
+        archived: true,
+      },
+      select: {
+        id: true,
+      },
+    })
+    return archivedMove.id
   } else {
-    return null
+    // No - then continue with delete as below.
+    // Cascade delete reliant descendants with https://paljs.com/plugins/delete/
+    await prisma.onDelete({
+      model: 'Move',
+      where: { id: moveId },
+      deleteParent: false, // If false, just the descendants will be deleted.
+    })
+
+    // Delete move and get back related uploaded media files.
+    const deletedMove: Move = await prisma.move.delete({
+      where: { id: moveId },
+      select: {
+        id: true,
+        demoVideoUrl: true,
+        demoVideoThumbUrl: true,
+      },
+    })
+
+    // Check if there is media to be deleted from the uploadcare server.
+    if (deletedMove) {
+      if (deletedMove.demoVideoUrl) {
+        const fileIdsForDeletion: string[] = []
+        fileIdsForDeletion.push(deletedMove.demoVideoUrl)
+        if (deletedMove.demoVideoThumbUrl) {
+          fileIdsForDeletion.push(deletedMove.demoVideoThumbUrl)
+        }
+        await deleteFiles(fileIdsForDeletion)
+      }
+      return deletedMove.id
+    } else {
+      return null
+    }
   }
 }
 
