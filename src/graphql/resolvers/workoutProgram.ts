@@ -81,6 +81,8 @@ const createWorkoutProgram = async (
   { authedUserId, data }: MutationCreateWorkoutProgramArgs,
   { select, prisma }: Context,
 ) => {
+  console.log('data.workoutProgramWorkouts')
+  console.log(data.workoutProgramWorkouts)
   return prisma.workoutProgram.create({
     data: {
       ...data,
@@ -132,7 +134,7 @@ const deepUpdateWorkoutProgram = async (
         workoutGoals: {
           set: data.workoutGoals.map((id) => ({ id })),
         },
-        programWorkouts: {
+        workoutProgramWorkouts: {
           create: data.workoutProgramWorkouts.map((pw) => ({
             ...pw,
             workout: {
@@ -269,7 +271,7 @@ const removeEnrolmentFromWorkoutProgram = async (
   return prisma.workoutProgram.findUnique({
     where: { id: workoutProgramId },
     select,
-  });
+  })
 }
 
 export {
