@@ -81,8 +81,6 @@ const createWorkoutProgram = async (
   { authedUserId, data }: MutationCreateWorkoutProgramArgs,
   { select, prisma }: Context,
 ) => {
-  console.log('data.workoutProgramWorkouts')
-  console.log(data.workoutProgramWorkouts)
   return prisma.workoutProgram.create({
     data: {
       ...data,
