@@ -28,7 +28,7 @@ import {
 import {
   officialWorkoutPrograms,
   publicWorkoutPrograms,
-  privateWorkoutPrograms,
+  userWorkoutPrograms,
   workoutProgramById,
   workoutProgramEnrolmentsByUser,
   createWorkoutProgram,
@@ -118,7 +118,7 @@ const resolvers: Resolvers = {
     workoutTypes,
     officialWorkoutPrograms,
     publicWorkoutPrograms,
-    privateWorkoutPrograms,
+    userWorkoutPrograms,
     workoutProgramById,
     workoutProgramEnrolmentsByUser,
     officialWorkouts,
