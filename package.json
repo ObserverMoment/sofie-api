@@ -10,6 +10,7 @@
     "debug": "nodemon --inspect dist/index.js",
     "generate": "graphql-codegen --config codegen.yml",
     "studio": "prisma studio --port 5000",
+    "dbpush": "prisma db push --preview-feature",
     "postinstall": "npm run generate && prisma db push --preview-feature && npm run build"
   },
   "author": "",

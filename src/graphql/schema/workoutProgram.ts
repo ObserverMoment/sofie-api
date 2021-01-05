@@ -85,6 +85,7 @@ export default gql`
 
   type WorkoutProgramReview {
     id: ID!
+    createdAt: DateTime!
     score: Float!
     comment: String
     user: User!

@@ -162,42 +162,48 @@ model ProgressJournal {
   userId                 String
   name                   String
   description            String?
+  /// @onDelete(CASCADE)
   progressJournalEntries ProgressJournalEntry[]
+  /// @onDelete(CASCADE)
   progressJournalGoals   ProgressJournalGoal[]
 }
 
 model ProgressJournalEntry {
-  id                String                      @id @default(uuid())
-  createdAt         DateTime                    @default(now())
+  id                String          @id @default(uuid())
+  createdAt         DateTime        @default(now())
   notes             String?
-  bodyWeight        Float?
+  bodyweight        Float?
   moodScore         Float?
   energyScore       Float?
   healthScore       Float?
   fitnessScore      Float?
   sleepScore        Float?
   socialScore       Float?
-  progressPhotos    ProgressJournalEntryPhoto[]
-  progressJournal   ProgressJournal             @relation(fields: [progressJournalId], references: [id])
+  progressPhotoUrls String[]
+  progressJournal   ProgressJournal @relation(fields: [progressJournalId], references: [id])
   progressJournalId String
-}
-
-model ProgressJournalEntryPhoto {
-  id                     String               @id @default(uuid())
-  dateTaken              DateTime             @default(now())
-  notes                  String?
-  progressJournalEntry   ProgressJournalEntry @relation(fields: [progressJournalEntryId], references: [id])
-  progressJournalEntryId String
 }
 
 model ProgressJournalGoal {
-  id                String          @id @default(uuid())
-  createdAt         DateTime        @default(now())
-  name              String
-  description       String?
-  completedDate     DateTime?
-  progressJournal   ProgressJournal @relation(fields: [progressJournalId], references: [id])
-  progressJournalId String
+  id                      String                   @id @default(uuid())
+  createdAt               DateTime                 @default(now())
+  name                    String
+  description             String?
+  deadline                DateTime?
+  completedDate           DateTime?
+  progressJournalGoalTags ProgressJournalGoalTag[]
+  progressJournal         ProgressJournal          @relation(fields: [progressJournalId], references: [id])
+  progressJournalId       String
+}
+
+model ProgressJournalGoalTag {
+  id                   String                @id @default(uuid())
+  createdAt            DateTime              @default(now())
+  tag                  String
+  hexColor             String
+  user                 User                  @relation(fields: [userId], references: [id])
+  userId               String
+  progressJournalGoals ProgressJournalGoal[]
 }
 
 model ScheduledWorkout {
@@ -271,13 +277,15 @@ model User {
   /// @onDelete(CASCADE)
   likedWorkoutPrograms     LikedWorkoutProgram[]
   /// @onDelete(CASCADE)
-  progressJournals         ProgressJournal[]
-  /// @onDelete(CASCADE)
   userBenchmarks           UserBenchmark[]
   /// @onDelete(CASCADE)
   collections              UserCollection[]
   /// @onDelete(CASCADE)
   trainerAccount           TrainerAccount?
+  /// @onDelete(CASCADE)
+  progressJournals         ProgressJournal[]
+  /// @onDelete(CASCADE)
+  progressJournalGoalTags  ProgressJournalGoalTag[]
 }
 
 model UserBenchmark {
