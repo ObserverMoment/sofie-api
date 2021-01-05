@@ -162,32 +162,26 @@ model ProgressJournal {
   userId                 String
   name                   String
   description            String?
+  /// @onDelete(CASCADE)
   progressJournalEntries ProgressJournalEntry[]
+  /// @onDelete(CASCADE)
   progressJournalGoals   ProgressJournalGoal[]
 }
 
 model ProgressJournalEntry {
-  id                String                      @id @default(uuid())
-  createdAt         DateTime                    @default(now())
+  id                String          @id @default(uuid())
+  createdAt         DateTime        @default(now())
   notes             String?
-  bodyWeight        Float?
+  bodyweight        Float?
   moodScore         Float?
   energyScore       Float?
   healthScore       Float?
   fitnessScore      Float?
   sleepScore        Float?
   socialScore       Float?
-  progressPhotos    ProgressJournalEntryPhoto[]
-  progressJournal   ProgressJournal             @relation(fields: [progressJournalId], references: [id])
+  progressPhotoUrls String[]
+  progressJournal   ProgressJournal @relation(fields: [progressJournalId], references: [id])
   progressJournalId String
-}
-
-model ProgressJournalEntryPhoto {
-  id                     String               @id @default(uuid())
-  dateTaken              DateTime             @default(now())
-  notes                  String?
-  progressJournalEntry   ProgressJournalEntry @relation(fields: [progressJournalEntryId], references: [id])
-  progressJournalEntryId String
 }
 
 model ProgressJournalGoal {

@@ -5,32 +5,37 @@ export default gql`
   scalar DateTime
 
   type Query {
+    # User
     checkUniqueDisplayName(displayName: String!): Boolean!
     userByUid(uid: ID!): User
-    creatorPublicProfiles(authedUserId: ID!): [UserPublicProfile!]
     userPublicProfile(userId: ID!): UserPublicProfile
-    standardMoves: [Move!]!
     userCustomMoves(authedUserId: ID!): [Move!]!
+    userWorkouts(authedUserId: ID!): [Workout!]!
+    userWorkoutPrograms(authedUserId: ID!): [WorkoutProgram!]!
+    likedWorkouts(authedUserId: ID!): [ID!]!
+    scheduledWorkouts(authedUserId: ID!): [ScheduledWorkout!]!
+    loggedWorkouts(authedUserId: ID!): [LoggedWorkout!]!
+    progressJournals(authedUserId: ID!): [ProgressJournal!]!
+    likedWorkoutPrograms(authedUserId: ID!): [ID!]!
+    workoutProgramEnrolmentsByUser(
+      authedUserId: ID!
+      workoutProgramId: ID!
+    ): [WorkoutProgramEnrolment!]
+    # Official and Public
+    standardMoves: [Move!]!
     bodyAreas: [BodyArea!]!
     equipments: [Equipment!]!
     workoutTypes: [WorkoutType!]!
     workoutGoals: [WorkoutGoal]!
     officialWorkouts: [Workout!]!
     publicWorkouts(authedUserId: ID!): [Workout!]!
-    userWorkouts(authedUserId: ID!): [Workout!]!
-    workoutById(authedUserId: ID!, workoutId: ID!): Workout
     officialWorkoutPrograms: [WorkoutProgram!]!
     publicWorkoutPrograms(authedUserId: ID!): [WorkoutProgram!]!
-    userWorkoutPrograms(authedUserId: ID!): [WorkoutProgram!]!
+    creatorPublicProfiles(authedUserId: ID!): [UserPublicProfile!]
+    # Get by ID
+    workoutById(authedUserId: ID!, workoutId: ID!): Workout
     workoutProgramById(authedUserId: ID!, workoutProgramId: ID!): WorkoutProgram
-    workoutProgramEnrolmentsByUser(
-      authedUserId: ID!
-      workoutProgramId: ID!
-    ): [WorkoutProgramEnrolment!]
-    likedWorkouts(authedUserId: ID!): [ID!]!
-    scheduledWorkouts(authedUserId: ID!): [ScheduledWorkout!]!
-    loggedWorkouts(authedUserId: ID!): [LoggedWorkout!]!
-    likedWorkoutPrograms(authedUserId: ID!): [ID!]!
+    # Text search
     textSearchWorkouts(
       authedUserId: ID!
       text: String!
@@ -46,12 +51,57 @@ export default gql`
   }
 
   type Mutation {
+    # User
     createUser(uid: ID!): User!
     updateUser(id: ID!, data: UpdateUserInput!): User!
+    # Progress journal
+    createProgressJournal(
+      authedUserId: ID!
+      data: CreateProgressJournalInput!
+    ): ProgressJournal!
+    updateProgressJournal(
+      authedUserId: ID!
+      data: UpdateProgressJournalInput!
+    ): ProgressJournal!
+    deleteProgressJournalById(authedUserId: ID!, progressJournalId: ID!): ID!
+    createProgressJournalGoal(
+      authedUserId: ID!
+      data: CreateProgressJournalGoalInput!
+    ): ProgressJournalGoal!
+    updateProgressJournalGoal(
+      authedUserId: ID!
+      data: UpdateProgressJournalGoalInput!
+    ): ProgressJournalGoal!
+    deleteProgressJournalGoalById(
+      authedUserId: ID!
+      progressJournalGoalId: ID!
+    ): ID!
+    createProgressJournalEntry(
+      authedUserId: ID!
+      data: CreateProgressJournalEntryInput!
+    ): ProgressJournalEntry!
+    updateProgressJournalEntry(
+      authedUserId: ID!
+      data: UpdateProgressJournalEntryInput!
+    ): ProgressJournalEntry!
+    deleteProgressJournalEntryById(
+      authedUserId: ID!
+      progressJournalEntryId: ID!
+    ): ID!
+    # Move
     createMove(authedUserId: ID!, data: CreateMoveInput!): Move
     shallowUpdateMove(authedUserId: ID!, data: ShallowUpdateMoveInput!): Move
     deepUpdateMove(authedUserId: ID!, data: DeepUpdateMoveInput!): Move
     deleteMoveById(authedUserId: ID!, moveId: ID!): ID
+    createMoveProfile(
+      authedUserId: ID!
+      data: CreateMoveProfileInput!
+    ): MoveProfile!
+    updateMoveProfile(
+      authedUserId: ID!
+      data: UpdateMoveProfileInput!
+    ): MoveProfile!
+    # Gym profile
     createGymProfile(
       authedUserId: ID!
       data: CreateGymProfileInput!
@@ -61,14 +111,7 @@ export default gql`
       data: UpdateGymProfileInput!
     ): GymProfile!
     deleteGymProfileById(authedUserId: ID!, gymProfileId: ID!): ID
-    createMoveProfile(
-      authedUserId: ID!
-      data: CreateMoveProfileInput!
-    ): MoveProfile!
-    updateMoveProfile(
-      authedUserId: ID!
-      data: UpdateMoveProfileInput!
-    ): MoveProfile!
+    # Workout
     createWorkout(authedUserId: ID!, data: CreateWorkoutInput!): Workout!
     shallowUpdateWorkout(
       authedUserId: ID!
@@ -90,6 +133,7 @@ export default gql`
       authedUserId: ID!
       data: UpdateScheduledWorkoutInput!
     ): ScheduledWorkout!
+    # Logged workout
     createLoggedWorkout(
       authedUserId: ID!
       data: CreateLoggedWorkoutInput!
@@ -103,6 +147,7 @@ export default gql`
       data: ShallowUpdateLoggedWorkoutInput!
     ): LoggedWorkout!
     deleteLoggedWorkoutById(authedUserId: ID!, loggedWorkoutId: ID!): ID
+    # Workout Program
     createWorkoutProgram(
       authedUserId: ID!
       data: CreateWorkoutProgramInput!

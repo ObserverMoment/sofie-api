@@ -13,6 +13,19 @@ import {
 } from './user'
 
 import {
+  progressJournals,
+  createProgressJournal,
+  updateProgressJournal,
+  deleteProgressJournalById,
+  createProgressJournalGoal,
+  updateProgressJournalGoal,
+  deleteProgressJournalGoalById,
+  createProgressJournalEntry,
+  updateProgressJournalEntry,
+  deleteProgressJournalEntryById,
+} from './progressJournal'
+
+import {
   bodyAreas,
   equipments,
   workoutGoals,
@@ -129,6 +142,7 @@ const resolvers: Resolvers = {
     scheduledWorkouts,
     loggedWorkouts,
     likedWorkoutPrograms,
+    progressJournals,
     textSearchWorkouts,
     textSearchWorkoutPrograms,
     textSearchCreatorPublicProfiles,
@@ -164,6 +178,15 @@ const resolvers: Resolvers = {
     unlikeWorkoutProgram,
     addEnrolmentToWorkoutProgram,
     removeEnrolmentFromWorkoutProgram,
+    createProgressJournal,
+    updateProgressJournal,
+    deleteProgressJournalById,
+    createProgressJournalEntry,
+    updateProgressJournalEntry,
+    deleteProgressJournalEntryById,
+    createProgressJournalGoal,
+    updateProgressJournalGoal,
+    deleteProgressJournalGoalById,
   },
 }
 
