@@ -20,8 +20,8 @@ export default gql`
     userWorkouts(authedUserId: ID!): [Workout!]!
     workoutById(authedUserId: ID!, workoutId: ID!): Workout
     officialWorkoutPrograms: [WorkoutProgram!]!
-    privateWorkoutPrograms(authedUserId: ID!): [WorkoutProgram!]!
     publicWorkoutPrograms(authedUserId: ID!): [WorkoutProgram!]!
+    userWorkoutPrograms(authedUserId: ID!): [WorkoutProgram!]!
     workoutProgramById(authedUserId: ID!, workoutProgramId: ID!): WorkoutProgram
     workoutProgramEnrolmentsByUser(
       authedUserId: ID!

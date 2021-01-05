@@ -215,6 +215,13 @@ model ScheduledWorkout {
   gymProfileId    String?
 }
 
+model TrainerAccount {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+}
+
 // Height in cms / weight in kgs
 model User {
   id                       String                    @id @default(uuid())
@@ -267,6 +274,10 @@ model User {
   progressJournals         ProgressJournal[]
   /// @onDelete(CASCADE)
   userBenchmarks           UserBenchmark[]
+  /// @onDelete(CASCADE)
+  collections              UserCollection[]
+  /// @onDelete(CASCADE)
+  trainerAccount           TrainerAccount?
 }
 
 model UserBenchmark {
@@ -299,6 +310,17 @@ model UserBenchmarkEntry {
   userBenchmarkId String
 }
 
+model UserCollection {
+  id              String           @id @default(uuid())
+  createdAt       DateTime         @default(now())
+  owner           User             @relation(fields: [userId], references: [id])
+  userId          String
+  name            String
+  description     String?
+  workouts        Workout[]
+  workoutPrograms WorkoutProgram[]
+}
+
 model Workout {
   id                String                  @id @default(uuid())
   createdAt         DateTime                @default(now())
@@ -326,6 +348,7 @@ model Workout {
   /// @onDelete(CASCADE)
   likes             LikedWorkout[]
   workoutPrograms   WorkoutProgramWorkout[]
+  userCollections   UserCollection[]
 }
 
 model WorkoutGoal {
@@ -378,6 +401,7 @@ model WorkoutProgram {
   /// @onDelete(CASCADE)
   workoutProgramReviews  WorkoutProgramReview[]
   likes                  LikedWorkoutProgram[]
+  userCollections        UserCollection[]
 }
 
 // A single user enrolled in a plan a single time

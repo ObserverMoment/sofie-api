@@ -6,7 +6,7 @@ import {
   MutationDeleteWorkoutProgramByIdArgs,
   MutationRemoveEnrolmentFromWorkoutProgramArgs,
   MutationShallowUpdateWorkoutProgramArgs,
-  QueryPrivateWorkoutProgramsArgs,
+  QueryUserWorkoutProgramsArgs,
   QueryWorkoutProgramByIdArgs,
   QueryWorkoutProgramEnrolmentsByUserArgs,
   WorkoutProgram,
@@ -37,14 +37,13 @@ const publicWorkoutPrograms = async (
     select,
   })
 
-const privateWorkoutPrograms = async (
+const userWorkoutPrograms = async (
   r: any,
-  { authedUserId }: QueryPrivateWorkoutProgramsArgs,
+  { authedUserId }: QueryUserWorkoutProgramsArgs,
   { prisma, select }: Context,
 ) =>
   prisma.workoutProgram.findMany({
     where: {
-      scope: 'PRIVATE',
       createdById: authedUserId,
     },
     select,
@@ -275,7 +274,7 @@ const removeEnrolmentFromWorkoutProgram = async (
 export {
   officialWorkoutPrograms,
   publicWorkoutPrograms,
-  privateWorkoutPrograms,
+  userWorkoutPrograms,
   workoutProgramById,
   workoutProgramEnrolmentsByUser,
   createWorkoutProgram,
