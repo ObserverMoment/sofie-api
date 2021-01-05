@@ -14,12 +14,16 @@ import {
 
 import {
   progressJournals,
+  progressJournalGoalTags,
   createProgressJournal,
   updateProgressJournal,
   deleteProgressJournalById,
   createProgressJournalGoal,
   updateProgressJournalGoal,
   deleteProgressJournalGoalById,
+  createProgressJournalGoalTag,
+  updateProgressJournalGoalTag,
+  deleteProgressJournalGoalTagById,
   createProgressJournalEntry,
   updateProgressJournalEntry,
   deleteProgressJournalEntryById,
@@ -143,6 +147,7 @@ const resolvers: Resolvers = {
     loggedWorkouts,
     likedWorkoutPrograms,
     progressJournals,
+    progressJournalGoalTags,
     textSearchWorkouts,
     textSearchWorkoutPrograms,
     textSearchCreatorPublicProfiles,
@@ -187,6 +192,9 @@ const resolvers: Resolvers = {
     createProgressJournalGoal,
     updateProgressJournalGoal,
     deleteProgressJournalGoalById,
+    createProgressJournalGoalTag,
+    updateProgressJournalGoalTag,
+    deleteProgressJournalGoalTagById,
   },
 }
 

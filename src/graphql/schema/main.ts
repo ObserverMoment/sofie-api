@@ -16,6 +16,7 @@ export default gql`
     scheduledWorkouts(authedUserId: ID!): [ScheduledWorkout!]!
     loggedWorkouts(authedUserId: ID!): [LoggedWorkout!]!
     progressJournals(authedUserId: ID!): [ProgressJournal!]!
+    progressJournalGoalTags(authedUserId: ID!): [ProgressJournalGoalTag!]!
     likedWorkoutPrograms(authedUserId: ID!): [ID!]!
     workoutProgramEnrolmentsByUser(
       authedUserId: ID!
@@ -75,6 +76,18 @@ export default gql`
     deleteProgressJournalGoalById(
       authedUserId: ID!
       progressJournalGoalId: ID!
+    ): ID!
+    createProgressJournalGoalTag(
+      authedUserId: ID!
+      data: CreateProgressJournalGoalTagInput!
+    ): ProgressJournalGoalTag!
+    updateProgressJournalGoalTag(
+      authedUserId: ID!
+      data: UpdateProgressJournalGoalTagInput!
+    ): ProgressJournalGoalTag!
+    deleteProgressJournalGoalTagById(
+      authedUserId: ID!
+      progressJournalGoalTagId: ID!
     ): ID!
     createProgressJournalEntry(
       authedUserId: ID!

@@ -26,12 +26,16 @@ export default gql`
     createdAt: DateTime!
     name: String!
     description: String
+    deadline: DateTime
     completedDate: DateTime
+    progressJournalGoalTags: [ProgressJournalGoalTag!]
   }
 
   input CreateProgressJournalGoalInput {
     name: String!
     description: String
+    deadline: DateTime
+    progressJournalGoalTags: [ID!]
   }
 
   input UpdateProgressJournalGoalInput {
@@ -39,6 +43,26 @@ export default gql`
     name: String
     description: String
     completedDate: DateTime
+    deadline: DateTime
+    progressJournalGoalTags: [ID!]
+  }
+
+  type ProgressJournalGoalTag {
+    id: ID!
+    createdAt: DateTime!
+    tag: String!
+    hexColor: String!
+  }
+
+  input CreateProgressJournalGoalTagInput {
+    tag: String!
+    hexColor: String!
+  }
+
+  input UpdateProgressJournalGoalTagInput {
+    id: ID!
+    tag: String
+    hexColor: String
   }
 
   type ProgressJournalEntry {
