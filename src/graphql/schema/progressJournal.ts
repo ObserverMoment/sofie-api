@@ -35,6 +35,7 @@ export default gql`
     name: String!
     description: String
     deadline: DateTime
+    progressJournal: ID!
     progressJournalGoalTags: [ID!]
   }
 
@@ -57,6 +58,7 @@ export default gql`
   input CreateProgressJournalGoalTagInput {
     tag: String!
     hexColor: String!
+    user: ID!
   }
 
   input UpdateProgressJournalGoalTagInput {
@@ -91,6 +93,7 @@ export default gql`
     sleepScore: Float
     socialScore: Float
     progressPhotoUrls: [String!]
+    progressJournal: ID!
   }
 
   input UpdateProgressJournalEntryInput {

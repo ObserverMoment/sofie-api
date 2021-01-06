@@ -692,6 +692,7 @@ export type CreateProgressJournalGoalInput = {
   name: Scalars['String'];
   description?: Maybe<Scalars['String']>;
   deadline?: Maybe<Scalars['DateTime']>;
+  progressJournal: Scalars['ID'];
   progressJournalGoalTags?: Maybe<Array<Scalars['ID']>>;
 };
 
@@ -713,6 +714,7 @@ export type ProgressJournalGoalTag = {
 };
 
 export type CreateProgressJournalGoalTagInput = {
+  user: Scalars['ID'];
   tag: Scalars['String'];
   hexColor: Scalars['String'];
 };
@@ -748,6 +750,7 @@ export type CreateProgressJournalEntryInput = {
   sleepScore?: Maybe<Scalars['Float']>;
   socialScore?: Maybe<Scalars['Float']>;
   progressPhotoUrls?: Maybe<Array<Scalars['String']>>;
+  progressJournal: Scalars['ID'];
 };
 
 export type UpdateProgressJournalEntryInput = {
