@@ -1,3 +1,4 @@
+import { User } from '@prisma/client'
 import { Context } from '../..'
 import {
   MutationCreateGymProfileArgs,
@@ -10,6 +11,7 @@ import {
   QueryUserPublicProfileArgs,
   QueryCreatorPublicProfilesArgs,
 } from '../../generated/graphql'
+import { checkUserMediaForDeletion, deleteFiles } from '../../uploadcare'
 
 //// Queries ////
 const checkUniqueDisplayName = async (
@@ -73,12 +75,28 @@ const updateUser = async (
   r: any,
   { id, data }: MutationUpdateUserArgs,
   { select, prisma }: Context,
-) =>
-  prisma.user.update({
-    where: { id },
+) => {
+  // Check if any media files need to be updated. Only delete files from the server after the rest of the transaction is complete.
+  const fileIdsForDeletion: string[] | null = await checkUserMediaForDeletion(
+    prisma,
+    id,
+    data,
+  )
+
+  const updatedUser: User = await prisma.user.update({
+    where: {
+      id,
+    },
     data,
     select,
   })
+
+  if (updatedUser && fileIdsForDeletion) {
+    await deleteFiles(fileIdsForDeletion)
+  }
+
+  return updatedUser
+}
 
 const createGymProfile = async (
   r: any,

@@ -237,6 +237,7 @@ model User {
   userProfileScope         UserProfileScope          @default(PRIVATE)
   avatarUrl                String?
   introVideoUrl            String?
+  introVideoThumbUrl       String?
   coverImageUrl            String?
   displayName              String?                   @unique
   firstname                String?

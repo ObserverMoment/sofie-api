@@ -560,8 +560,10 @@ export type UpdateMoveProfileInput = {
 export type User = {
   __typename?: 'User';
   id: Scalars['ID'];
+  userProfileScope: UserProfileScope;
   avatarUrl?: Maybe<Scalars['String']>;
   introVideoUrl?: Maybe<Scalars['String']>;
+  introVideoThumbUrl?: Maybe<Scalars['String']>;
   coverImageUrl?: Maybe<Scalars['String']>;
   bio?: Maybe<Scalars['String']>;
   tagline?: Maybe<Scalars['String']>;
@@ -587,8 +589,10 @@ export type User = {
 };
 
 export type UpdateUserInput = {
+  userProfileScope?: Maybe<UserProfileScope>;
   avatarUrl?: Maybe<Scalars['String']>;
   introVideoUrl?: Maybe<Scalars['String']>;
+  introVideoThumbUrl?: Maybe<Scalars['String']>;
   coverImageUrl?: Maybe<Scalars['String']>;
   bio?: Maybe<Scalars['String']>;
   tagline?: Maybe<Scalars['String']>;
@@ -617,6 +621,7 @@ export type UserPublicProfile = {
   id: Scalars['ID'];
   avatarUrl?: Maybe<Scalars['String']>;
   introVideoUrl?: Maybe<Scalars['String']>;
+  introVideoThumbUrl?: Maybe<Scalars['String']>;
   coverImageUrl?: Maybe<Scalars['String']>;
   bio?: Maybe<Scalars['String']>;
   tagline?: Maybe<Scalars['String']>;
@@ -714,9 +719,9 @@ export type ProgressJournalGoalTag = {
 };
 
 export type CreateProgressJournalGoalTagInput = {
-  user: Scalars['ID'];
   tag: Scalars['String'];
   hexColor: Scalars['String'];
+  user: Scalars['ID'];
 };
 
 export type UpdateProgressJournalGoalTagInput = {
@@ -1288,6 +1293,10 @@ export type WorkoutScoreType =
   | 'FORTIME'
   | 'FORLOAD';
 
+export type UserProfileScope = 
+  | 'PRIVATE'
+  | 'PUBLIC';
+
 /** For generating rules which can adjust rep and load over the course of a workout */
 export type RuleAction = 
   | 'INCREASE'
@@ -1461,6 +1470,7 @@ export type ResolversTypes = ResolversObject<{
   UnitSystem: UnitSystem;
   WorkoutMoveRepType: WorkoutMoveRepType;
   WorkoutScoreType: WorkoutScoreType;
+  UserProfileScope: UserProfileScope;
   RuleAction: RuleAction;
   RuleTarget: RuleTarget;
 }>;
@@ -1666,8 +1676,10 @@ export type MoveProfileResolvers<ContextType = any, ParentType extends Resolvers
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  userProfileScope?: Resolver<ResolversTypes['UserProfileScope'], ParentType, ContextType>;
   avatarUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   introVideoUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  introVideoThumbUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   coverImageUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   bio?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   tagline?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -1697,6 +1709,7 @@ export type UserPublicProfileResolvers<ContextType = any, ParentType extends Res
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   avatarUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   introVideoUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  introVideoThumbUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   coverImageUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   bio?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   tagline?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;

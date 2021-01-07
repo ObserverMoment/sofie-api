@@ -118,6 +118,8 @@ const deepUpdateWorkout = async (
   return updatedWorkout
 }
 
+// Note: To delete media files you send the value of the field as null.
+// This will set the value in the DB to null and the resolver will also go off and delete the old file from the media server.
 const shallowUpdateWorkout = async (
   r: any,
   { authedUserId, data }: MutationShallowUpdateWorkoutArgs,

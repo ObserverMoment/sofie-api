@@ -3,8 +3,10 @@ import { gql } from 'apollo-server-express'
 export default gql`
   type User {
     id: ID!
+    userProfileScope: UserProfileScope!
     avatarUrl: String
     introVideoUrl: String
+    introVideoThumbUrl: String
     coverImageUrl: String
     bio: String
     tagline: String
@@ -30,8 +32,10 @@ export default gql`
   }
 
   input UpdateUserInput {
+    userProfileScope: UserProfileScope
     avatarUrl: String
     introVideoUrl: String
+    introVideoThumbUrl: String
     coverImageUrl: String
     bio: String
     tagline: String
@@ -59,6 +63,7 @@ export default gql`
     id: ID!
     avatarUrl: String
     introVideoUrl: String
+    introVideoThumbUrl: String
     coverImageUrl: String
     bio: String
     tagline: String
