@@ -1,6 +1,6 @@
 import fetch from 'node-fetch'
 import crypto from 'crypto'
-import { Workout, PrismaClient, LoggedWorkout } from '@prisma/client'
+import { Workout, PrismaClient, LoggedWorkout, User } from '@prisma/client'
 import {
   ShallowUpdateWorkoutInput,
   DeepUpdateWorkoutInput,
@@ -12,6 +12,7 @@ import {
   Move,
   ShallowUpdateMoveInput,
   DeepUpdateMoveInput,
+  UpdateUserInput,
 } from '../generated/graphql'
 
 const uploadcareApiUBaseUrl = 'https://api.uploadcare.com'
@@ -58,6 +59,64 @@ export async function deleteFiles(fileIds: string[]): Promise<boolean> {
   })
   const json = await res.json()
   return json.status == 'ok'
+}
+
+/** Checks if there are any media (hosted) files being changed.
+ * Returns an array of fileIds (strings) which should be deleted.
+ */
+export async function checkUserMediaForDeletion(
+  prisma: any,
+  userId: string,
+  data: UpdateUserInput,
+): Promise<string[] | null> {
+  // Get the original move media file info.
+  // Then once update transaction is complete you can check to see if media should be deleted.
+  const oldUser: User = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+    select: {
+      avatarUrl: true,
+      coverImageUrl: true,
+      introVideoUrl: true,
+      introVideoThumbUrl: true,
+    },
+  })
+
+  const fileIdsForDeletion: string[] = []
+
+  if (
+    oldUser.avatarUrl != null &&
+    data.hasOwnProperty('avatarUrl') &&
+    data.avatarUrl != oldUser.avatarUrl
+  ) {
+    fileIdsForDeletion.push(oldUser.avatarUrl)
+  }
+  if (
+    oldUser.coverImageUrl != null &&
+    data.hasOwnProperty('coverImageUrl') &&
+    data.coverImageUrl != oldUser.coverImageUrl
+  ) {
+    fileIdsForDeletion.push(oldUser.coverImageUrl)
+  }
+  if (
+    oldUser.introVideoUrl != null &&
+    data.hasOwnProperty('introVideoUrl') &&
+    data.introVideoUrl != oldUser.introVideoUrl
+  ) {
+    fileIdsForDeletion.push(oldUser.introVideoUrl)
+  }
+  if (
+    oldUser.introVideoThumbUrl != null &&
+    data.hasOwnProperty('introVideoThumbUrl') &&
+    data.introVideoThumbUrl != oldUser.introVideoThumbUrl
+  ) {
+    fileIdsForDeletion.push(oldUser.introVideoThumbUrl)
+  }
+
+  console.log(fileIdsForDeletion)
+
+  return fileIdsForDeletion.length > 0 ? fileIdsForDeletion : null
 }
 
 /** Checks if there are any media (hosted) files being changed.

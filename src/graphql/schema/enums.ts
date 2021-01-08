@@ -95,6 +95,11 @@ export default gql`
     FORLOAD
   }
 
+  enum UserProfileScope {
+    PRIVATE
+    PUBLIC
+  }
+
   """
   For generating rules which can adjust rep and load over the course of a workout
   """
