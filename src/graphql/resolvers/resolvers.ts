@@ -77,15 +77,6 @@ import {
 } from './workout'
 
 import {
-  likedWorkouts,
-  likeWorkout,
-  unlikeWorkout,
-  likedWorkoutPrograms,
-  likeWorkoutProgram,
-  unlikeWorkoutProgram,
-} from './userLikes'
-
-import {
   scheduledWorkouts,
   scheduleWorkout,
   unscheduleWorkout,
@@ -142,10 +133,8 @@ const resolvers: Resolvers = {
     publicWorkouts,
     userWorkouts,
     workoutById,
-    likedWorkouts,
     scheduledWorkouts,
     loggedWorkouts,
-    likedWorkoutPrograms,
     progressJournals,
     progressJournalGoalTags,
     textSearchWorkouts,
@@ -166,8 +155,6 @@ const resolvers: Resolvers = {
     deepUpdateWorkout,
     shallowUpdateWorkout,
     deleteWorkoutById,
-    likeWorkout,
-    unlikeWorkout,
     scheduleWorkout,
     unscheduleWorkout,
     updateScheduledWorkout,
@@ -179,8 +166,6 @@ const resolvers: Resolvers = {
     deepUpdateWorkoutProgram,
     shallowUpdateWorkoutProgram,
     deleteWorkoutProgramById,
-    likeWorkoutProgram,
-    unlikeWorkoutProgram,
     addEnrolmentToWorkoutProgram,
     removeEnrolmentFromWorkoutProgram,
     createProgressJournal,

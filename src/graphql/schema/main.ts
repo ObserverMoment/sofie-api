@@ -12,12 +12,10 @@ export default gql`
     userCustomMoves(authedUserId: ID!): [Move!]!
     userWorkouts(authedUserId: ID!): [Workout!]!
     userWorkoutPrograms(authedUserId: ID!): [WorkoutProgram!]!
-    likedWorkouts(authedUserId: ID!): [ID!]!
     scheduledWorkouts(authedUserId: ID!): [ScheduledWorkout!]!
     loggedWorkouts(authedUserId: ID!): [LoggedWorkout!]!
     progressJournals(authedUserId: ID!): [ProgressJournal!]!
     progressJournalGoalTags(authedUserId: ID!): [ProgressJournalGoalTag!]!
-    likedWorkoutPrograms(authedUserId: ID!): [ID!]!
     workoutProgramEnrolmentsByUser(
       authedUserId: ID!
       workoutProgramId: ID!
@@ -135,8 +133,6 @@ export default gql`
       data: DeepUpdateWorkoutInput!
     ): Workout!
     deleteWorkoutById(authedUserId: ID!, workoutId: ID!): ID
-    likeWorkout(authedUserId: ID!, workoutId: ID!): ID
-    unlikeWorkout(authedUserId: ID!, workoutId: ID!): ID
     scheduleWorkout(
       authedUserId: ID!
       data: CreateScheduledWorkoutInput!
@@ -174,8 +170,6 @@ export default gql`
       data: DeepUpdateWorkoutProgramInput!
     ): WorkoutProgram!
     deleteWorkoutProgramById(authedUserId: ID!, workoutProgramId: ID!): ID
-    likeWorkoutProgram(authedUserId: ID!, workoutProgramId: ID!): ID
-    unlikeWorkoutProgram(authedUserId: ID!, workoutProgramId: ID!): ID
     addEnrolmentToWorkoutProgram(
       authedUserId: ID!
       workoutProgramId: ID!
