@@ -15,6 +15,7 @@ import {
 import {
   progressJournals,
   progressJournalGoalTags,
+  progressJournalById,
   createProgressJournal,
   updateProgressJournal,
   deleteProgressJournalById,
@@ -137,6 +138,7 @@ const resolvers: Resolvers = {
     loggedWorkouts,
     progressJournals,
     progressJournalGoalTags,
+    progressJournalById,
     textSearchWorkouts,
     textSearchWorkoutPrograms,
     textSearchCreatorPublicProfiles,

@@ -30,7 +30,7 @@ export default gql`
     workoutProgramWorkouts: [CreateWorkoutProgramWorkoutInput!]!
   }
 
-  # Used when nested children have been updated. i.e workoutProgramWorkouts.
+  # Used when nested children have been updated. i.e workoutProgramWorkouts need updating.
   input DeepUpdateWorkoutProgramInput {
     id: ID!
     name: String
@@ -41,7 +41,7 @@ export default gql`
     videoThumbUrl: String
     youtubeVideoUrl: String
     workoutGoals: [ID!]!
-    workoutProgramWorkouts: [CreateWorkoutProgramWorkoutInput!]!
+    workoutProgramWorkouts: [UpdateWorkoutProgramWorkoutInput!]!
   }
 
   input ShallowUpdateWorkoutProgramInput {
@@ -64,6 +64,15 @@ export default gql`
   }
 
   input CreateWorkoutProgramWorkoutInput {
+    dayNumber: Float!
+    notes: String
+    workout: ID!
+  }
+
+  input UpdateWorkoutProgramWorkoutInput {
+    # When id is null a new workoutProgramWorkout will be created.
+    # Otherwise the existing one will be updated.
+    id: ID
     dayNumber: Float!
     notes: String
     workout: ID!

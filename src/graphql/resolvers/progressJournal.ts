@@ -19,6 +19,7 @@ import {
   MutationUpdateProgressJournalEntryArgs,
   MutationUpdateProgressJournalGoalArgs,
   MutationUpdateProgressJournalGoalTagArgs,
+  QueryProgressJournalByIdArgs,
   QueryProgressJournalGoalTagsArgs,
   QueryProgressJournalsArgs,
 } from '../../generated/graphql'
@@ -47,6 +48,18 @@ const progressJournalGoalTags = async (
   prisma.progressJournalGoalTag.findMany({
     where: {
       user: { id: authedUserId },
+    },
+    select,
+  })
+
+const progressJournalById = async (
+  r: any,
+  { authedUserId, progressJournalId }: QueryProgressJournalByIdArgs,
+  { select, prisma }: Context,
+) =>
+  prisma.progressJournal.findUnique({
+    where: {
+      id: progressJournalId,
     },
     select,
   })
@@ -85,7 +98,7 @@ const deleteProgressJournalById = async (
   { prisma }: Context,
 ) => {
   // 1. Get all progressJournalEntry.progressPhotoUrls.
-  const progressJournalEntries: ProgressJournalEntry[] = await prisma.progressJournal.findMany(
+  const progressJournalEntries: ProgressJournalEntry[] = await prisma.progressJournalEntry.findMany(
     {
       where: {
         progressJournal: {
@@ -289,6 +302,7 @@ const deleteProgressJournalEntryById = async (
 export {
   progressJournals,
   progressJournalGoalTags,
+  progressJournalById,
   createProgressJournal,
   updateProgressJournal,
   deleteProgressJournalById,

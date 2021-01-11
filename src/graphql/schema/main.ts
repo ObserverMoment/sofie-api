@@ -32,6 +32,10 @@ export default gql`
     publicWorkoutPrograms(authedUserId: ID!): [WorkoutProgram!]!
     creatorPublicProfiles(authedUserId: ID!): [UserPublicProfile!]
     # Get by ID
+    progressJournalById(
+      authedUserId: ID!
+      progressJournalId: ID!
+    ): ProgressJournal
     workoutById(authedUserId: ID!, workoutId: ID!): Workout
     workoutProgramById(authedUserId: ID!, workoutProgramId: ID!): WorkoutProgram
     # Text search

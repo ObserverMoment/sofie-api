@@ -1,5 +1,7 @@
+import { WorkoutProgramWorkout } from '@prisma/client'
 import { Context } from '../..'
 import {
+  CreateWorkoutProgramWorkoutInput,
   MutationAddEnrolmentToWorkoutProgramArgs,
   MutationCreateWorkoutProgramArgs,
   MutationDeepUpdateWorkoutProgramArgs,
@@ -9,6 +11,7 @@ import {
   QueryUserWorkoutProgramsArgs,
   QueryWorkoutProgramByIdArgs,
   QueryWorkoutProgramEnrolmentsByUserArgs,
+  UpdateWorkoutProgramWorkoutInput,
   WorkoutProgram,
 } from '../../generated/graphql'
 import {
@@ -102,6 +105,13 @@ const createWorkoutProgram = async (
   })
 }
 
+// For deepUpdateWorkoutProgram resolver. Segment inputs by process type depending on prior existence in the DB.
+interface WorkoutProgramWorkoutUpdates {
+  create: CreateWorkoutProgramWorkoutInput[]
+  update: UpdateWorkoutProgramWorkoutInput[]
+  delete: string[]
+}
+
 const deepUpdateWorkoutProgram = async (
   r: any,
   { authedUserId, data }: MutationDeepUpdateWorkoutProgramArgs,
@@ -112,15 +122,45 @@ const deepUpdateWorkoutProgram = async (
     | string[]
     | null = await checkWorkoutProgramMediaForDeletion(prisma, data)
 
-  // 1. Delete all descendant WorkoutProgramWorkouts.
-  // Not using cascade deletes here as that would also cause enrolments and reviews to be deleted.
-  await prisma.workoutProgramWorkout.deleteMany({
-    where: {
-      workoutProgramId: data.id,
-    },
-  })
+  // Check which workoutProgramWorkouts existed prior to this update.
+  const previousWorkoutProgramWorkoutIds: string[] = (
+    await prisma.workoutProgramWorkout.findMany({
+      where: {
+        workoutProgramId: data.id,
+      },
+      select: {
+        id: true,
+      },
+    })
+  ).map((wpw: WorkoutProgramWorkout) => wpw.id)
 
-  // 2. Run the new update and create fresh descendants.
+  const wpwUpdates: WorkoutProgramWorkoutUpdates = data.workoutProgramWorkouts.reduce(
+    (
+      acum: WorkoutProgramWorkoutUpdates,
+      nextWpw: UpdateWorkoutProgramWorkoutInput,
+    ) => {
+      if (nextWpw.id && previousWorkoutProgramWorkoutIds.includes(nextWpw.id)) {
+        // Remove the id from list of wpws that need to be deleted.
+        // i.e. old wpw idss that are not found in the updated array.
+        acum.delete = acum.delete.filter((id) => id != nextWpw.id)
+        // update required
+        acum.update.push(nextWpw)
+      } else if (!nextWpw.id) {
+        // New wpws that are to be created will not have ids - this field will be null.
+        // create required
+        // Remove the null id field so it does not error when prisma call is made.
+        delete nextWpw.id
+        acum.create.push(nextWpw)
+      }
+      return acum
+    },
+    {
+      create: [],
+      update: [],
+      delete: previousWorkoutProgramWorkoutIds, // Start with the full previous list of ids and then remove any that are included in the update data.
+    } as WorkoutProgramWorkoutUpdates,
+  )
+
   const updatedWorkoutProgram: WorkoutProgram = await prisma.workoutProgram.update(
     {
       where: {
@@ -132,12 +172,22 @@ const deepUpdateWorkoutProgram = async (
           set: data.workoutGoals.map((id) => ({ id })),
         },
         workoutProgramWorkouts: {
-          create: data.workoutProgramWorkouts.map((pw) => ({
+          create: wpwUpdates.create.map((pw) => ({
             ...pw,
             workout: {
               connect: { id: pw.workout },
             },
           })),
+          update: wpwUpdates.update.map((pw) => ({
+            where: { id: pw.id },
+            data: {
+              ...pw,
+              workout: {
+                connect: { id: pw.workout },
+              },
+            },
+          })),
+          delete: wpwUpdates.delete.map((id) => ({ id })),
         },
       },
       select,
