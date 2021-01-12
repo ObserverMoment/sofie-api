@@ -689,10 +689,8 @@ export type ProgressJournalEntry = {
   bodyweight?: Maybe<Scalars['Float']>;
   moodScore?: Maybe<Scalars['Float']>;
   energyScore?: Maybe<Scalars['Float']>;
-  healthScore?: Maybe<Scalars['Float']>;
-  fitnessScore?: Maybe<Scalars['Float']>;
-  sleepScore?: Maybe<Scalars['Float']>;
-  socialScore?: Maybe<Scalars['Float']>;
+  stressScore?: Maybe<Scalars['Float']>;
+  motivationScore?: Maybe<Scalars['Float']>;
   progressPhotoUrls?: Maybe<Array<Scalars['String']>>;
 };
 
@@ -1720,10 +1718,8 @@ export type ProgressJournalEntryResolvers<ContextType = any, ParentType extends 
   bodyweight?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   moodScore?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   energyScore?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  healthScore?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  fitnessScore?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  sleepScore?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  socialScore?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  stressScore?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  motivationScore?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   progressPhotoUrls?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;

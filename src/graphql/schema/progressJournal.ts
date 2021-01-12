@@ -75,10 +75,8 @@ export default gql`
     bodyweight: Float
     moodScore: Float
     energyScore: Float
-    healthScore: Float
-    fitnessScore: Float
-    sleepScore: Float
-    socialScore: Float
+    stressScore: Float
+    motivationScore: Float
     progressPhotoUrls: [String!]
   }
 
