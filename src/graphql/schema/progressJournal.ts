@@ -71,6 +71,7 @@ export default gql`
     id: ID!
     createdAt: DateTime!
     notes: String
+    voiceNoteUrl: String
     # Always save in KGs
     bodyweight: Float
     moodScore: Float
@@ -82,6 +83,7 @@ export default gql`
 
   input CreateProgressJournalEntryInput {
     notes: String
+    voiceNoteUrl: String
     # Always save in KGs
     bodyweight: Float
     moodScore: Float
@@ -97,6 +99,7 @@ export default gql`
   input UpdateProgressJournalEntryInput {
     id: ID!
     notes: String
+    voiceNoteUrl: String
     # Always save in KGs
     bodyweight: Float
     moodScore: Float

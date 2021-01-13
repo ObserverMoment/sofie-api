@@ -150,6 +150,7 @@ model ProgressJournalEntry {
   id                String          @id @default(uuid())
   createdAt         DateTime        @default(now())
   notes             String?
+  voiceNoteUrl      String?
   bodyweight        Float?
   moodScore         Float?
   energyScore       Float?
