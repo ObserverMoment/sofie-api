@@ -270,6 +270,7 @@ export type MutationDeleteProgressJournalGoalTagByIdArgs = {
 
 export type MutationCreateProgressJournalEntryArgs = {
   authedUserId: Scalars['ID'];
+  progressJournalId: Scalars['ID'];
   data: CreateProgressJournalEntryInput;
 };
 
@@ -686,6 +687,19 @@ export type ProgressJournalEntry = {
   id: Scalars['ID'];
   createdAt: Scalars['DateTime'];
   notes?: Maybe<Scalars['String']>;
+  voiceNoteUrl?: Maybe<Scalars['String']>;
+  bodyweight?: Maybe<Scalars['Float']>;
+  moodScore?: Maybe<Scalars['Float']>;
+  energyScore?: Maybe<Scalars['Float']>;
+  stressScore?: Maybe<Scalars['Float']>;
+  motivationScore?: Maybe<Scalars['Float']>;
+  progressPhotoUrls?: Maybe<Array<Scalars['String']>>;
+  progressJournal: ProgressJournal;
+};
+
+export type CreateProgressJournalEntryInput = {
+  notes?: Maybe<Scalars['String']>;
+  voiceNoteUrl?: Maybe<Scalars['String']>;
   bodyweight?: Maybe<Scalars['Float']>;
   moodScore?: Maybe<Scalars['Float']>;
   energyScore?: Maybe<Scalars['Float']>;
@@ -694,29 +708,15 @@ export type ProgressJournalEntry = {
   progressPhotoUrls?: Maybe<Array<Scalars['String']>>;
 };
 
-export type CreateProgressJournalEntryInput = {
-  notes?: Maybe<Scalars['String']>;
-  bodyweight?: Maybe<Scalars['Float']>;
-  moodScore?: Maybe<Scalars['Float']>;
-  energyScore?: Maybe<Scalars['Float']>;
-  healthScore?: Maybe<Scalars['Float']>;
-  fitnessScore?: Maybe<Scalars['Float']>;
-  sleepScore?: Maybe<Scalars['Float']>;
-  socialScore?: Maybe<Scalars['Float']>;
-  progressPhotoUrls?: Maybe<Array<Scalars['String']>>;
-  progressJournal: Scalars['ID'];
-};
-
 export type UpdateProgressJournalEntryInput = {
   id: Scalars['ID'];
   notes?: Maybe<Scalars['String']>;
+  voiceNoteUrl?: Maybe<Scalars['String']>;
   bodyweight?: Maybe<Scalars['Float']>;
   moodScore?: Maybe<Scalars['Float']>;
   energyScore?: Maybe<Scalars['Float']>;
-  healthScore?: Maybe<Scalars['Float']>;
-  fitnessScore?: Maybe<Scalars['Float']>;
-  sleepScore?: Maybe<Scalars['Float']>;
-  socialScore?: Maybe<Scalars['Float']>;
+  stressScore?: Maybe<Scalars['Float']>;
+  motivationScore?: Maybe<Scalars['Float']>;
   progressPhotoUrls?: Maybe<Array<Scalars['String']>>;
 };
 
@@ -1552,7 +1552,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createProgressJournalGoalTag?: Resolver<ResolversTypes['ProgressJournalGoalTag'], ParentType, ContextType, RequireFields<MutationCreateProgressJournalGoalTagArgs, 'authedUserId' | 'data'>>;
   updateProgressJournalGoalTag?: Resolver<ResolversTypes['ProgressJournalGoalTag'], ParentType, ContextType, RequireFields<MutationUpdateProgressJournalGoalTagArgs, 'authedUserId' | 'data'>>;
   deleteProgressJournalGoalTagById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteProgressJournalGoalTagByIdArgs, 'authedUserId' | 'progressJournalGoalTagId'>>;
-  createProgressJournalEntry?: Resolver<ResolversTypes['ProgressJournalEntry'], ParentType, ContextType, RequireFields<MutationCreateProgressJournalEntryArgs, 'authedUserId' | 'data'>>;
+  createProgressJournalEntry?: Resolver<ResolversTypes['ProgressJournalEntry'], ParentType, ContextType, RequireFields<MutationCreateProgressJournalEntryArgs, 'authedUserId' | 'progressJournalId' | 'data'>>;
   updateProgressJournalEntry?: Resolver<ResolversTypes['ProgressJournalEntry'], ParentType, ContextType, RequireFields<MutationUpdateProgressJournalEntryArgs, 'authedUserId' | 'data'>>;
   deleteProgressJournalEntryById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteProgressJournalEntryByIdArgs, 'authedUserId' | 'progressJournalEntryId'>>;
   createMove?: Resolver<Maybe<ResolversTypes['Move']>, ParentType, ContextType, RequireFields<MutationCreateMoveArgs, 'authedUserId' | 'data'>>;
@@ -1715,12 +1715,14 @@ export type ProgressJournalEntryResolvers<ContextType = any, ParentType extends 
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   notes?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  voiceNoteUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   bodyweight?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   moodScore?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   energyScore?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   stressScore?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   motivationScore?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   progressPhotoUrls?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
+  progressJournal?: Resolver<ResolversTypes['ProgressJournal'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 

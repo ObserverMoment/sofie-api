@@ -93,6 +93,7 @@ export default gql`
     ): ID!
     createProgressJournalEntry(
       authedUserId: ID!
+      progressJournalId: ID!
       data: CreateProgressJournalEntryInput!
     ): ProgressJournalEntry!
     updateProgressJournalEntry(

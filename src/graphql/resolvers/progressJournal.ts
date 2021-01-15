@@ -232,14 +232,18 @@ const deleteProgressJournalGoalTagById = async (
 //// ProgressJournalEntry ////
 const createProgressJournalEntry = async (
   r: any,
-  { authedUserId, data }: MutationCreateProgressJournalEntryArgs,
+  {
+    authedUserId,
+    progressJournalId,
+    data,
+  }: MutationCreateProgressJournalEntryArgs,
   { select, prisma }: Context,
 ) =>
   prisma.progressJournalEntry.create({
     data: {
       ...data,
       progressJournal: {
-        connect: { id: data.progressJournal },
+        connect: { id: progressJournalId },
       },
     },
     select,
