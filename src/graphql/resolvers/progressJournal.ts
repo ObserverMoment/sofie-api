@@ -265,7 +265,8 @@ const updateProgressJournalEntry = async (
   )
   // Compare with the new array of photo urls and delete any that have been removed.
   const photoIdsForDeletion: string[] = oldProgressJournalEntry.progressPhotoUrls.filter(
-    (url) => !data.progressPhotoUrls || !data.progressPhotoUrls.includes(url),
+    (fileId) =>
+      !data.progressPhotoUrls || !data.progressPhotoUrls.includes(fileId),
   )
 
   if (photoIdsForDeletion.length > 0) {
