@@ -29,6 +29,7 @@ export default gql`
     unitSystem: UnitSystem
     gymProfiles: [GymProfile!]
     moveProfiles: [MoveProfile!]
+    progressJournalGoalTags: [ProgressJournalGoalTag!]
   }
 
   input UpdateUserInput {

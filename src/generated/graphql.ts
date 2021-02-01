@@ -472,59 +472,6 @@ export type WorkoutGoal = {
   placeholderImageUrl?: Maybe<Scalars['String']>;
 };
 
-export type GymProfile = {
-  __typename?: 'GymProfile';
-  id: Scalars['ID'];
-  name: Scalars['String'];
-  description?: Maybe<Scalars['String']>;
-  postcode?: Maybe<Scalars['String']>;
-  bodyweightOnly: Scalars['Boolean'];
-  user: User;
-  availableEquipments?: Maybe<Array<Equipment>>;
-};
-
-export type CreateGymProfileInput = {
-  name: Scalars['String'];
-  description?: Maybe<Scalars['String']>;
-  postcode?: Maybe<Scalars['String']>;
-  bodyweightOnly?: Maybe<Scalars['Boolean']>;
-  availableEquipments?: Maybe<Array<Scalars['ID']>>;
-};
-
-export type UpdateGymProfileInput = {
-  id: Scalars['ID'];
-  name?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-  postcode?: Maybe<Scalars['String']>;
-  bodyweightOnly?: Maybe<Scalars['Boolean']>;
-  availableEquipments?: Maybe<Array<Scalars['ID']>>;
-};
-
-export type MoveProfile = {
-  __typename?: 'MoveProfile';
-  id: Scalars['ID'];
-  name: Scalars['String'];
-  description?: Maybe<Scalars['String']>;
-  user: User;
-  requiredMoves?: Maybe<Array<Move>>;
-  excludedMoves?: Maybe<Array<Move>>;
-};
-
-export type CreateMoveProfileInput = {
-  name: Scalars['String'];
-  description?: Maybe<Scalars['String']>;
-  requiredMoveIds?: Maybe<Array<Scalars['ID']>>;
-  excludedMoveIds?: Maybe<Array<Scalars['ID']>>;
-};
-
-export type UpdateMoveProfileInput = {
-  id: Scalars['ID'];
-  name?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-  requiredMoveIds?: Maybe<Array<Scalars['ID']>>;
-  excludedMoveIds?: Maybe<Array<Scalars['ID']>>;
-};
-
 export type User = {
   __typename?: 'User';
   id: Scalars['ID'];
@@ -554,6 +501,7 @@ export type User = {
   unitSystem?: Maybe<UnitSystem>;
   gymProfiles?: Maybe<Array<GymProfile>>;
   moveProfiles?: Maybe<Array<MoveProfile>>;
+  progressJournalGoalTags?: Maybe<Array<ProgressJournalGoalTag>>;
 };
 
 export type UpdateUserInput = {
@@ -611,6 +559,59 @@ export type UserPrivateProfile = {
   workouts?: Maybe<Array<Workout>>;
   workoutPrograms?: Maybe<Array<WorkoutProgram>>;
   workoutProgramEnrolments?: Maybe<Array<WorkoutProgramEnrolment>>;
+};
+
+export type GymProfile = {
+  __typename?: 'GymProfile';
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+  postcode?: Maybe<Scalars['String']>;
+  bodyweightOnly: Scalars['Boolean'];
+  user: User;
+  availableEquipments?: Maybe<Array<Equipment>>;
+};
+
+export type CreateGymProfileInput = {
+  name: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+  postcode?: Maybe<Scalars['String']>;
+  bodyweightOnly?: Maybe<Scalars['Boolean']>;
+  availableEquipments?: Maybe<Array<Scalars['ID']>>;
+};
+
+export type UpdateGymProfileInput = {
+  id: Scalars['ID'];
+  name?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  postcode?: Maybe<Scalars['String']>;
+  bodyweightOnly?: Maybe<Scalars['Boolean']>;
+  availableEquipments?: Maybe<Array<Scalars['ID']>>;
+};
+
+export type MoveProfile = {
+  __typename?: 'MoveProfile';
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+  user: User;
+  requiredMoves?: Maybe<Array<Move>>;
+  excludedMoves?: Maybe<Array<Move>>;
+};
+
+export type CreateMoveProfileInput = {
+  name: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+  requiredMoveIds?: Maybe<Array<Scalars['ID']>>;
+  excludedMoveIds?: Maybe<Array<Scalars['ID']>>;
+};
+
+export type UpdateMoveProfileInput = {
+  id: Scalars['ID'];
+  name?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  requiredMoveIds?: Maybe<Array<Scalars['ID']>>;
+  excludedMoveIds?: Maybe<Array<Scalars['ID']>>;
 };
 
 export type ProgressJournal = {
@@ -1351,17 +1352,17 @@ export type ResolversTypes = ResolversObject<{
   Mutation: ResolverTypeWrapper<{}>;
   Equipment: ResolverTypeWrapper<Equipment>;
   WorkoutGoal: ResolverTypeWrapper<WorkoutGoal>;
+  User: ResolverTypeWrapper<User>;
+  Float: ResolverTypeWrapper<Scalars['Float']>;
+  UpdateUserInput: UpdateUserInput;
+  UserPublicProfile: ResolverTypeWrapper<UserPublicProfile>;
+  UserPrivateProfile: ResolverTypeWrapper<UserPrivateProfile>;
   GymProfile: ResolverTypeWrapper<GymProfile>;
   CreateGymProfileInput: CreateGymProfileInput;
   UpdateGymProfileInput: UpdateGymProfileInput;
   MoveProfile: ResolverTypeWrapper<MoveProfile>;
   CreateMoveProfileInput: CreateMoveProfileInput;
   UpdateMoveProfileInput: UpdateMoveProfileInput;
-  User: ResolverTypeWrapper<User>;
-  Float: ResolverTypeWrapper<Scalars['Float']>;
-  UpdateUserInput: UpdateUserInput;
-  UserPublicProfile: ResolverTypeWrapper<UserPublicProfile>;
-  UserPrivateProfile: ResolverTypeWrapper<UserPrivateProfile>;
   ProgressJournal: ResolverTypeWrapper<ProgressJournal>;
   CreateProgressJournalInput: CreateProgressJournalInput;
   UpdateProgressJournalInput: UpdateProgressJournalInput;
@@ -1440,17 +1441,17 @@ export type ResolversParentTypes = ResolversObject<{
   Mutation: {};
   Equipment: Equipment;
   WorkoutGoal: WorkoutGoal;
+  User: User;
+  Float: Scalars['Float'];
+  UpdateUserInput: UpdateUserInput;
+  UserPublicProfile: UserPublicProfile;
+  UserPrivateProfile: UserPrivateProfile;
   GymProfile: GymProfile;
   CreateGymProfileInput: CreateGymProfileInput;
   UpdateGymProfileInput: UpdateGymProfileInput;
   MoveProfile: MoveProfile;
   CreateMoveProfileInput: CreateMoveProfileInput;
   UpdateMoveProfileInput: UpdateMoveProfileInput;
-  User: User;
-  Float: Scalars['Float'];
-  UpdateUserInput: UpdateUserInput;
-  UserPublicProfile: UserPublicProfile;
-  UserPrivateProfile: UserPrivateProfile;
   ProgressJournal: ProgressJournal;
   CreateProgressJournalInput: CreateProgressJournalInput;
   UpdateProgressJournalInput: UpdateProgressJournalInput;
@@ -1601,27 +1602,6 @@ export type WorkoutGoalResolvers<ContextType = any, ParentType extends Resolvers
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export type GymProfileResolvers<ContextType = any, ParentType extends ResolversParentTypes['GymProfile'] = ResolversParentTypes['GymProfile']> = ResolversObject<{
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  postcode?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  bodyweightOnly?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
-  availableEquipments?: Resolver<Maybe<Array<ResolversTypes['Equipment']>>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type MoveProfileResolvers<ContextType = any, ParentType extends ResolversParentTypes['MoveProfile'] = ResolversParentTypes['MoveProfile']> = ResolversObject<{
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
-  requiredMoves?: Resolver<Maybe<Array<ResolversTypes['Move']>>, ParentType, ContextType>;
-  excludedMoves?: Resolver<Maybe<Array<ResolversTypes['Move']>>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   userProfileScope?: Resolver<ResolversTypes['UserProfileScope'], ParentType, ContextType>;
@@ -1650,6 +1630,7 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   unitSystem?: Resolver<Maybe<ResolversTypes['UnitSystem']>, ParentType, ContextType>;
   gymProfiles?: Resolver<Maybe<Array<ResolversTypes['GymProfile']>>, ParentType, ContextType>;
   moveProfiles?: Resolver<Maybe<Array<ResolversTypes['MoveProfile']>>, ParentType, ContextType>;
+  progressJournalGoalTags?: Resolver<Maybe<Array<ResolversTypes['ProgressJournalGoalTag']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -1679,6 +1660,27 @@ export type UserPrivateProfileResolvers<ContextType = any, ParentType extends Re
   workouts?: Resolver<Maybe<Array<ResolversTypes['Workout']>>, ParentType, ContextType>;
   workoutPrograms?: Resolver<Maybe<Array<ResolversTypes['WorkoutProgram']>>, ParentType, ContextType>;
   workoutProgramEnrolments?: Resolver<Maybe<Array<ResolversTypes['WorkoutProgramEnrolment']>>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type GymProfileResolvers<ContextType = any, ParentType extends ResolversParentTypes['GymProfile'] = ResolversParentTypes['GymProfile']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  postcode?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  bodyweightOnly?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  availableEquipments?: Resolver<Maybe<Array<ResolversTypes['Equipment']>>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type MoveProfileResolvers<ContextType = any, ParentType extends ResolversParentTypes['MoveProfile'] = ResolversParentTypes['MoveProfile']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  requiredMoves?: Resolver<Maybe<Array<ResolversTypes['Move']>>, ParentType, ContextType>;
+  excludedMoves?: Resolver<Maybe<Array<ResolversTypes['Move']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -1927,11 +1929,11 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   Mutation?: MutationResolvers<ContextType>;
   Equipment?: EquipmentResolvers<ContextType>;
   WorkoutGoal?: WorkoutGoalResolvers<ContextType>;
-  GymProfile?: GymProfileResolvers<ContextType>;
-  MoveProfile?: MoveProfileResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
   UserPublicProfile?: UserPublicProfileResolvers<ContextType>;
   UserPrivateProfile?: UserPrivateProfileResolvers<ContextType>;
+  GymProfile?: GymProfileResolvers<ContextType>;
+  MoveProfile?: MoveProfileResolvers<ContextType>;
   ProgressJournal?: ProgressJournalResolvers<ContextType>;
   ProgressJournalGoal?: ProgressJournalGoalResolvers<ContextType>;
   ProgressJournalGoalTag?: ProgressJournalGoalTagResolvers<ContextType>;

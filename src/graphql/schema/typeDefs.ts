@@ -1,6 +1,7 @@
 import { mergeTypeDefs } from '@graphql-tools/merge'
 import mainSchema from './main'
 import userSchema from './user'
+import userProfile from './userProfile'
 import progressJournal from './progressJournal'
 import moveSchema from './move'
 import workoutSchema from './workout'
@@ -16,6 +17,7 @@ import enumSchema from './enums'
 const typeDefs = mergeTypeDefs([
   mainSchema,
   userSchema,
+  userProfile,
   progressJournal,
   moveSchema,
   workoutSchema,
