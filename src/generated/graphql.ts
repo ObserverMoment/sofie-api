@@ -168,7 +168,7 @@ export type Mutation = {
   deleteProgressJournalGoalById: Scalars['ID'];
   createProgressJournalGoalTag: ProgressJournalGoalTag;
   updateProgressJournalGoalTag: ProgressJournalGoalTag;
-  deleteProgressJournalGoalTagById: Scalars['ID'];
+  deleteProgressJournalGoalTagsById: Scalars['ID'];
   createProgressJournalEntry: ProgressJournalEntry;
   updateProgressJournalEntry: ProgressJournalEntry;
   deleteProgressJournalEntryById: Scalars['ID'];
@@ -262,9 +262,9 @@ export type MutationUpdateProgressJournalGoalTagArgs = {
 };
 
 
-export type MutationDeleteProgressJournalGoalTagByIdArgs = {
+export type MutationDeleteProgressJournalGoalTagsByIdArgs = {
   authedUserId: Scalars['ID'];
-  progressJournalGoalTagId: Scalars['ID'];
+  progressJournalGoalTagIds: Array<Scalars['ID']>;
 };
 
 
@@ -460,6 +460,7 @@ export type Equipment = {
   __typename?: 'Equipment';
   id: Scalars['ID'];
   name: Scalars['String'];
+  altNames?: Maybe<Scalars['String']>;
   imageUrl?: Maybe<Scalars['String']>;
   loadAdjustable: Scalars['Boolean'];
 };
@@ -674,7 +675,6 @@ export type ProgressJournalGoalTag = {
 export type CreateProgressJournalGoalTagInput = {
   tag: Scalars['String'];
   hexColor: Scalars['String'];
-  user: Scalars['ID'];
 };
 
 export type UpdateProgressJournalGoalTagInput = {
@@ -1552,7 +1552,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   deleteProgressJournalGoalById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteProgressJournalGoalByIdArgs, 'authedUserId' | 'progressJournalGoalId'>>;
   createProgressJournalGoalTag?: Resolver<ResolversTypes['ProgressJournalGoalTag'], ParentType, ContextType, RequireFields<MutationCreateProgressJournalGoalTagArgs, 'authedUserId' | 'data'>>;
   updateProgressJournalGoalTag?: Resolver<ResolversTypes['ProgressJournalGoalTag'], ParentType, ContextType, RequireFields<MutationUpdateProgressJournalGoalTagArgs, 'authedUserId' | 'data'>>;
-  deleteProgressJournalGoalTagById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteProgressJournalGoalTagByIdArgs, 'authedUserId' | 'progressJournalGoalTagId'>>;
+  deleteProgressJournalGoalTagsById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteProgressJournalGoalTagsByIdArgs, 'authedUserId' | 'progressJournalGoalTagIds'>>;
   createProgressJournalEntry?: Resolver<ResolversTypes['ProgressJournalEntry'], ParentType, ContextType, RequireFields<MutationCreateProgressJournalEntryArgs, 'authedUserId' | 'progressJournalId' | 'data'>>;
   updateProgressJournalEntry?: Resolver<ResolversTypes['ProgressJournalEntry'], ParentType, ContextType, RequireFields<MutationUpdateProgressJournalEntryArgs, 'authedUserId' | 'data'>>;
   deleteProgressJournalEntryById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteProgressJournalEntryByIdArgs, 'authedUserId' | 'progressJournalEntryId'>>;
@@ -1589,6 +1589,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
 export type EquipmentResolvers<ContextType = any, ParentType extends ResolversParentTypes['Equipment'] = ResolversParentTypes['Equipment']> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  altNames?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   imageUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   loadAdjustable?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;

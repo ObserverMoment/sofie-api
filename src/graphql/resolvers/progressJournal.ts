@@ -1,9 +1,7 @@
 import {
-  prismaVersion,
   ProgressJournal,
   ProgressJournalEntry,
   ProgressJournalGoal,
-  ProgressJournalGoalTag,
 } from '@prisma/client'
 import { Context } from '../..'
 import {
@@ -14,7 +12,7 @@ import {
   MutationDeleteProgressJournalByIdArgs,
   MutationDeleteProgressJournalEntryByIdArgs,
   MutationDeleteProgressJournalGoalByIdArgs,
-  MutationDeleteProgressJournalGoalTagByIdArgs,
+  MutationDeleteProgressJournalGoalTagsByIdArgs,
   MutationUpdateProgressJournalArgs,
   MutationUpdateProgressJournalEntryArgs,
   MutationUpdateProgressJournalGoalArgs,
@@ -196,7 +194,7 @@ const createProgressJournalGoalTag = async (
     data: {
       ...data,
       user: {
-        connect: { id: data.user },
+        connect: { id: authedUserId },
       },
     },
     select,
@@ -213,20 +211,20 @@ const updateProgressJournalGoalTag = async (
     select,
   })
 
-const deleteProgressJournalGoalTagById = async (
+// Deletes one or many tags.
+const deleteProgressJournalGoalTagsById = async (
   r: any,
   {
     authedUserId,
-    progressJournalGoalTagId,
-  }: MutationDeleteProgressJournalGoalTagByIdArgs,
+    progressJournalGoalTagIds,
+  }: MutationDeleteProgressJournalGoalTagsByIdArgs,
   { prisma }: Context,
 ) => {
-  const deletedProgressJournalGoalTag: ProgressJournalGoalTag = await prisma.progressJournalGoalTag.delete(
-    {
-      where: { id: progressJournalGoalTagId },
-    },
-  )
-  return deletedProgressJournalGoalTag.id
+  const { count } = await prisma.progressJournalGoalTag.deleteMany({
+    where: { id: { in: progressJournalGoalTagIds } },
+    select: { count: true },
+  })
+  return count
 }
 
 //// ProgressJournalEntry ////
@@ -316,7 +314,7 @@ export {
   deleteProgressJournalGoalById,
   createProgressJournalGoalTag,
   updateProgressJournalGoalTag,
-  deleteProgressJournalGoalTagById,
+  deleteProgressJournalGoalTagsById,
   createProgressJournalEntry,
   updateProgressJournalEntry,
   deleteProgressJournalEntryById,

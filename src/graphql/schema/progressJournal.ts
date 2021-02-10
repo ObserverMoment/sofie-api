@@ -58,7 +58,6 @@ export default gql`
   input CreateProgressJournalGoalTagInput {
     tag: String!
     hexColor: String!
-    user: ID!
   }
 
   input UpdateProgressJournalGoalTagInput {

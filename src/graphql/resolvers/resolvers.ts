@@ -24,7 +24,7 @@ import {
   deleteProgressJournalGoalById,
   createProgressJournalGoalTag,
   updateProgressJournalGoalTag,
-  deleteProgressJournalGoalTagById,
+  deleteProgressJournalGoalTagsById,
   createProgressJournalEntry,
   updateProgressJournalEntry,
   deleteProgressJournalEntryById,
@@ -181,7 +181,7 @@ const resolvers: Resolvers = {
     deleteProgressJournalGoalById,
     createProgressJournalGoalTag,
     updateProgressJournalGoalTag,
-    deleteProgressJournalGoalTagById,
+    deleteProgressJournalGoalTagsById,
   },
 }
 

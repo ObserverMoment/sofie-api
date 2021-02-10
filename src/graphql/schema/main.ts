@@ -87,9 +87,9 @@ export default gql`
       authedUserId: ID!
       data: UpdateProgressJournalGoalTagInput!
     ): ProgressJournalGoalTag!
-    deleteProgressJournalGoalTagById(
+    deleteProgressJournalGoalTagsById(
       authedUserId: ID!
-      progressJournalGoalTagId: ID!
+      progressJournalGoalTagIds: [ID!]!
     ): ID!
     createProgressJournalEntry(
       authedUserId: ID!
@@ -199,6 +199,7 @@ export default gql`
   type Equipment {
     id: ID!
     name: String!
+    altNames: String
     imageUrl: String
     loadAdjustable: Boolean!
   }
