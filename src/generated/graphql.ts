@@ -172,6 +172,8 @@ export type Mutation = {
   createProgressJournalEntry: ProgressJournalEntry;
   updateProgressJournalEntry: ProgressJournalEntry;
   deleteProgressJournalEntryById: Scalars['ID'];
+  createEquipment?: Maybe<Equipment>;
+  updateEquipment?: Maybe<Equipment>;
   createMove?: Maybe<Move>;
   shallowUpdateMove?: Maybe<Move>;
   deepUpdateMove?: Maybe<Move>;
@@ -284,6 +286,16 @@ export type MutationUpdateProgressJournalEntryArgs = {
 export type MutationDeleteProgressJournalEntryByIdArgs = {
   authedUserId: Scalars['ID'];
   progressJournalEntryId: Scalars['ID'];
+};
+
+
+export type MutationCreateEquipmentArgs = {
+  data: CreateEquipmentInput;
+};
+
+
+export type MutationUpdateEquipmentArgs = {
+  data: UpdateEquipmentInput;
 };
 
 
@@ -454,15 +466,6 @@ export type MutationAddReviewToWorkoutProgramArgs = {
 export type MutationDeleteWorkoutProgramReviewArgs = {
   authedUserId: Scalars['ID'];
   reviewId: Scalars['ID'];
-};
-
-export type Equipment = {
-  __typename?: 'Equipment';
-  id: Scalars['ID'];
-  name: Scalars['String'];
-  altNames?: Maybe<Scalars['String']>;
-  imageUrl?: Maybe<Scalars['String']>;
-  loadAdjustable: Scalars['Boolean'];
 };
 
 export type WorkoutGoal = {
@@ -780,6 +783,30 @@ export type DeepUpdateMoveInput = {
 export type MoveBodyAreaMoveScoreInput = {
   bodyArea: Scalars['ID'];
   score: Scalars['Float'];
+};
+
+export type Equipment = {
+  __typename?: 'Equipment';
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  altNames?: Maybe<Scalars['String']>;
+  imageUrl?: Maybe<Scalars['String']>;
+  loadAdjustable: Scalars['Boolean'];
+};
+
+export type CreateEquipmentInput = {
+  name: Scalars['String'];
+  altNames?: Maybe<Scalars['String']>;
+  imageUrl?: Maybe<Scalars['String']>;
+  loadAdjustable: Scalars['Boolean'];
+};
+
+export type UpdateEquipmentInput = {
+  id: Scalars['ID'];
+  name?: Maybe<Scalars['String']>;
+  altNames?: Maybe<Scalars['String']>;
+  imageUrl?: Maybe<Scalars['String']>;
+  loadAdjustable?: Maybe<Scalars['Boolean']>;
 };
 
 export type WorkoutType = {
@@ -1350,7 +1377,6 @@ export type ResolversTypes = ResolversObject<{
   String: ResolverTypeWrapper<Scalars['String']>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
   Mutation: ResolverTypeWrapper<{}>;
-  Equipment: ResolverTypeWrapper<Equipment>;
   WorkoutGoal: ResolverTypeWrapper<WorkoutGoal>;
   User: ResolverTypeWrapper<User>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
@@ -1380,6 +1406,9 @@ export type ResolversTypes = ResolversObject<{
   ShallowUpdateMoveInput: ShallowUpdateMoveInput;
   DeepUpdateMoveInput: DeepUpdateMoveInput;
   MoveBodyAreaMoveScoreInput: MoveBodyAreaMoveScoreInput;
+  Equipment: ResolverTypeWrapper<Equipment>;
+  CreateEquipmentInput: CreateEquipmentInput;
+  UpdateEquipmentInput: UpdateEquipmentInput;
   WorkoutType: ResolverTypeWrapper<WorkoutType>;
   Workout: ResolverTypeWrapper<Workout>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
@@ -1439,7 +1468,6 @@ export type ResolversParentTypes = ResolversObject<{
   String: Scalars['String'];
   ID: Scalars['ID'];
   Mutation: {};
-  Equipment: Equipment;
   WorkoutGoal: WorkoutGoal;
   User: User;
   Float: Scalars['Float'];
@@ -1469,6 +1497,9 @@ export type ResolversParentTypes = ResolversObject<{
   ShallowUpdateMoveInput: ShallowUpdateMoveInput;
   DeepUpdateMoveInput: DeepUpdateMoveInput;
   MoveBodyAreaMoveScoreInput: MoveBodyAreaMoveScoreInput;
+  Equipment: Equipment;
+  CreateEquipmentInput: CreateEquipmentInput;
+  UpdateEquipmentInput: UpdateEquipmentInput;
   WorkoutType: WorkoutType;
   Workout: Workout;
   Int: Scalars['Int'];
@@ -1556,6 +1587,8 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createProgressJournalEntry?: Resolver<ResolversTypes['ProgressJournalEntry'], ParentType, ContextType, RequireFields<MutationCreateProgressJournalEntryArgs, 'authedUserId' | 'progressJournalId' | 'data'>>;
   updateProgressJournalEntry?: Resolver<ResolversTypes['ProgressJournalEntry'], ParentType, ContextType, RequireFields<MutationUpdateProgressJournalEntryArgs, 'authedUserId' | 'data'>>;
   deleteProgressJournalEntryById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteProgressJournalEntryByIdArgs, 'authedUserId' | 'progressJournalEntryId'>>;
+  createEquipment?: Resolver<Maybe<ResolversTypes['Equipment']>, ParentType, ContextType, RequireFields<MutationCreateEquipmentArgs, 'data'>>;
+  updateEquipment?: Resolver<Maybe<ResolversTypes['Equipment']>, ParentType, ContextType, RequireFields<MutationUpdateEquipmentArgs, 'data'>>;
   createMove?: Resolver<Maybe<ResolversTypes['Move']>, ParentType, ContextType, RequireFields<MutationCreateMoveArgs, 'authedUserId' | 'data'>>;
   shallowUpdateMove?: Resolver<Maybe<ResolversTypes['Move']>, ParentType, ContextType, RequireFields<MutationShallowUpdateMoveArgs, 'authedUserId' | 'data'>>;
   deepUpdateMove?: Resolver<Maybe<ResolversTypes['Move']>, ParentType, ContextType, RequireFields<MutationDeepUpdateMoveArgs, 'authedUserId' | 'data'>>;
@@ -1584,15 +1617,6 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   removeEnrolmentFromWorkoutProgram?: Resolver<ResolversTypes['WorkoutProgram'], ParentType, ContextType, RequireFields<MutationRemoveEnrolmentFromWorkoutProgramArgs, 'authedUserId' | 'workoutProgramId' | 'workoutProgramEnrolmentId'>>;
   addReviewToWorkoutProgram?: Resolver<ResolversTypes['WorkoutProgram'], ParentType, ContextType, RequireFields<MutationAddReviewToWorkoutProgramArgs, 'authedUserId' | 'workoutProgramId' | 'data'>>;
   deleteWorkoutProgramReview?: Resolver<ResolversTypes['WorkoutProgram'], ParentType, ContextType, RequireFields<MutationDeleteWorkoutProgramReviewArgs, 'authedUserId' | 'reviewId'>>;
-}>;
-
-export type EquipmentResolvers<ContextType = any, ParentType extends ResolversParentTypes['Equipment'] = ResolversParentTypes['Equipment']> = ResolversObject<{
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  altNames?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  imageUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  loadAdjustable?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type WorkoutGoalResolvers<ContextType = any, ParentType extends ResolversParentTypes['WorkoutGoal'] = ResolversParentTypes['WorkoutGoal']> = ResolversObject<{
@@ -1742,6 +1766,15 @@ export type MoveResolvers<ContextType = any, ParentType extends ResolversParentT
   requiredEquipments?: Resolver<Array<ResolversTypes['Equipment']>, ParentType, ContextType>;
   selectableEquipments?: Resolver<Array<ResolversTypes['Equipment']>, ParentType, ContextType>;
   bodyAreaMoveScores?: Resolver<Maybe<Array<ResolversTypes['BodyAreaMoveScore']>>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type EquipmentResolvers<ContextType = any, ParentType extends ResolversParentTypes['Equipment'] = ResolversParentTypes['Equipment']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  altNames?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  imageUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  loadAdjustable?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -1928,7 +1961,6 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   DateTime?: GraphQLScalarType;
   Query?: QueryResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
-  Equipment?: EquipmentResolvers<ContextType>;
   WorkoutGoal?: WorkoutGoalResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
   UserPublicProfile?: UserPublicProfileResolvers<ContextType>;
@@ -1940,6 +1972,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   ProgressJournalGoalTag?: ProgressJournalGoalTagResolvers<ContextType>;
   ProgressJournalEntry?: ProgressJournalEntryResolvers<ContextType>;
   Move?: MoveResolvers<ContextType>;
+  Equipment?: EquipmentResolvers<ContextType>;
   WorkoutType?: WorkoutTypeResolvers<ContextType>;
   Workout?: WorkoutResolvers<ContextType>;
   WorkoutProgram?: WorkoutProgramResolvers<ContextType>;

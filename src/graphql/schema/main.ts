@@ -104,6 +104,9 @@ export default gql`
       authedUserId: ID!
       progressJournalEntryId: ID!
     ): ID!
+    #Equipment - Currently no ID is supplied as these resolvers are only accessible via the admin dashboard.
+    createEquipment(data: CreateEquipmentInput!): Equipment
+    updateEquipment(data: UpdateEquipmentInput!): Equipment
     # Move
     createMove(authedUserId: ID!, data: CreateMoveInput!): Move
     shallowUpdateMove(authedUserId: ID!, data: ShallowUpdateMoveInput!): Move
@@ -196,14 +199,6 @@ export default gql`
   }
 
   ##### Non user CRUD-able models #####
-  type Equipment {
-    id: ID!
-    name: String!
-    altNames: String
-    imageUrl: String
-    loadAdjustable: Boolean!
-  }
-
   type WorkoutGoal {
     id: ID!
     name: String!

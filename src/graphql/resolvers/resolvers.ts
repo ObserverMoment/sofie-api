@@ -33,6 +33,8 @@ import {
 import {
   bodyAreas,
   equipments,
+  createEquipment,
+  updateEquipment,
   workoutGoals,
   workoutTypes,
 } from './officialData'
@@ -146,6 +148,8 @@ const resolvers: Resolvers = {
   Mutation: {
     createUser,
     updateUser,
+    createEquipment,
+    updateEquipment,
     createMove,
     shallowUpdateMove,
     deepUpdateMove,
