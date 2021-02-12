@@ -11,6 +11,7 @@ export default gql`
   }
 
   type BodyAreaMoveScore {
+    id: ID!
     move: Move!
     bodyArea: BodyArea!
     score: Float!
