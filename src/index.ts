@@ -7,6 +7,7 @@ import { PrismaSelect } from '@paljs/plugins'
 import { makeExecutableSchema } from 'graphql-tools'
 import { GraphQLResolveInfo } from 'graphql'
 import { PrismaDelete, onDeleteArgs } from '@paljs/plugins'
+import { usersFirebaseSDK, adminsFirebaseSDK } from './lib/firebaseAdmin'
 
 require('dotenv').config()
 
@@ -27,6 +28,8 @@ export interface Context {
   prisma: any
   // https://paljs.com/plugins/select
   select?: any
+  id: string
+  userType: 'ADMIN' | 'USER'
 }
 
 const prisma = new Prisma({
@@ -61,7 +64,74 @@ let schema = makeExecutableSchema({
 // https://github.com/prisma-labs/graphqlgen/issues/15
 const server = new ApolloServer({
   schema: applyMiddleware(schema, selectMiddleware),
-  context: () => ({ prisma } as Context),
+  context: async ({ req }) => {
+    console.log(JSON.stringify(req.headers.authorization))
+    if (!req.headers.authorization) {
+      throw Error(
+        'Please provide a valid access token against the header "authorization"',
+      )
+    }
+
+    // decode token function //
+    let decodedToken
+    if (req.headers.userType === 'ADMIN') {
+      decodedToken = await adminsFirebaseSDK
+        .auth()
+        .verifyIdToken(req.headers.authorization)
+    } else if (req.headers.userType === 'USER') {
+      decodedToken = await usersFirebaseSDK
+        .auth()
+        .verifyIdToken(req.headers.authorization)
+    } else {
+      throw Error(
+        'Please provide a valid user type against the header "userType"',
+      )
+    }
+
+    if (!decodedToken || !decodedToken.uid) {
+      throw Error('The access token you provided was not valid')
+    }
+    // decode token function = returns decoded token //
+
+    // Create admin context function //
+    let databaseId
+    if (req.headers.userType === 'ADMIN') {
+      const admin = await prisma.admin.findUnique({
+        where: {
+          firebaseUid: decodedToken.uid,
+        },
+        select: {
+          id: true,
+        },
+      })
+      if (!admin) {
+        throw Error(
+          'We could not find a valid admin with this id in the database',
+        )
+      } else {
+        return { prisma, id: admin.id, userType: 'ADMIN' } as Context
+      }
+      // Create admin context function //
+      // Create user context function //
+    } else if (req.headers.userType === 'USER') {
+      const user = await prisma.user.findUnique({
+        where: {
+          firebaseUid: decodedToken.uid,
+        },
+        select: {
+          id: true,
+        },
+      })
+      if (!user) {
+        throw Error(
+          'We could not find a valid user with this id in the database',
+        )
+      } else {
+        return { prisma, id: user.id, userType: 'USER' } as Context
+      }
+      // Create user context function //
+    }
+  },
 })
 
 const PORT = process.env.PORT || 4000

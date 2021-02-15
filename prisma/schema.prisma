@@ -10,6 +10,14 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Admin {
+  id           String   @id @default(uuid())
+  firebaseUid  String   @unique
+  createdAt    DateTime @default(now())
+  username     String   @unique
+  passwordHash String
+}
+
 model BodyArea {
   id                 String              @id @default(uuid())
   createdAt          DateTime            @default(now())

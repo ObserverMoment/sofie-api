@@ -37,6 +37,7 @@ const userCustomMoves = async (
   })
 
 //// Mutations ////
+/// Move mutations for custom moves only - for updating official moves see officialData resolvers ////
 const createMove = async (
   r: any,
   { authedUserId, data }: MutationCreateMoveArgs,
@@ -47,7 +48,7 @@ const createMove = async (
       data: {
         ...data,
         createdBy: {
-          connect: { id: authedUserId },
+          connect: { id: authedUserId || undefined },
         },
         requiredEquipments: {
           connect: data.requiredEquipments
