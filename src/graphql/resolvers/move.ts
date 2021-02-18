@@ -1,6 +1,6 @@
 import { WorkoutMove, WorkoutMoveRepType } from '@prisma/client'
 import { ApolloError } from 'apollo-server'
-import { Context } from '../..'
+import { Context, ContextUserType } from '../..'
 import {
   CreateMoveInput,
   DeepUpdateMoveInput,
@@ -9,7 +9,6 @@ import {
   MutationDeepUpdateMoveArgs,
   MutationDeleteMoveByIdArgs,
   MutationShallowUpdateMoveArgs,
-  QueryUserCustomMovesArgs,
   ShallowUpdateMoveInput,
 } from '../../generated/graphql'
 import { checkMoveMediaForDeletion, deleteFiles } from '../../uploadcare'
@@ -24,8 +23,8 @@ const standardMoves = async (r: any, a: any, { prisma, select }: Context) =>
 
 const userCustomMoves = async (
   r: any,
-  { authedUserId }: QueryUserCustomMovesArgs,
-  { prisma, select }: Context,
+  a: any,
+  { authedUserId, prisma, select }: Context,
 ) =>
   prisma.move.findMany({
     where: {
@@ -40,10 +39,10 @@ const userCustomMoves = async (
 /// Move mutations for custom moves only - for updating official moves see officialData resolvers ////
 const createMove = async (
   r: any,
-  { authedUserId, data }: MutationCreateMoveArgs,
-  { prisma, select }: Context,
+  { data }: MutationCreateMoveArgs,
+  { authedUserId, userType, prisma, select }: Context,
 ) => {
-  return validateCreateMoveInput(data, async () =>
+  return validateCreateMoveInput(data, userType, async () =>
     prisma.move.create({
       data: {
         ...data,
@@ -78,10 +77,10 @@ const createMove = async (
 
 const shallowUpdateMove = async (
   r: any,
-  { authedUserId, data }: MutationShallowUpdateMoveArgs,
-  { prisma, select }: Context,
+  { data }: MutationShallowUpdateMoveArgs,
+  { userType, prisma, select }: Context,
 ) => {
-  return validateShallowUpdateMoveInput(data, async () => {
+  return validateShallowUpdateMoveInput(data, userType, async () => {
     // Check if any media files need to be updated. Only delete files from the server after the rest of the transaction is complete.
     const fileIdsForDeletion: string[] | null = await checkMoveMediaForDeletion(
       prisma,
@@ -117,10 +116,10 @@ const shallowUpdateMove = async (
 
 const deepUpdateMove = async (
   r: any,
-  { authedUserId, data }: MutationDeepUpdateMoveArgs,
-  { prisma, select }: Context,
+  { data }: MutationDeepUpdateMoveArgs,
+  { userType, prisma, select }: Context,
 ) => {
-  return validateDeepUpdateMoveInput(data, async () => {
+  return validateDeepUpdateMoveInput(data, userType, async () => {
     // // Delete all previous bodyAreaMoveScores - as this is a deep update.
     await prisma.bodyAreaMoveScore.deleteMany({
       where: {
@@ -173,7 +172,7 @@ const deepUpdateMove = async (
 
 const deleteMoveById = async (
   r: any,
-  { authedUserId, moveId }: MutationDeleteMoveByIdArgs,
+  { moveId }: MutationDeleteMoveByIdArgs,
   { prisma }: Context,
 ) => {
   // Is this move part of any workoutMoves (is it part of any workouts)?
@@ -240,8 +239,12 @@ const deleteMoveById = async (
  */
 async function validateCreateMoveInput(
   data: CreateMoveInput,
+  userType: ContextUserType,
   resolver: () => Promise<Move>,
 ) {
+  if (data.scope === 'STANDARD' && userType !== 'ADMIN') {
+    throw new ApolloError('Only ADMINS can create Official (STANDARD) moves.')
+  }
   if (!data.validRepTypes) {
     throw new ApolloError(
       'No ValidRepTypes supplied: A move must always have at least the valid rep type TIME. Please ensure that your valid rep types array includes the string "TIME" or that the array is null if you do not wish to make any changes during an update operation',
@@ -270,8 +273,12 @@ async function validateCreateMoveInput(
 
 async function validateShallowUpdateMoveInput(
   data: ShallowUpdateMoveInput,
+  userType: ContextUserType,
   resolver: () => Promise<Move>,
 ) {
+  if (data.scope === 'STANDARD' && userType !== 'ADMIN') {
+    throw new ApolloError('Only ADMINS can update Official (STANDARD) moves.')
+  }
   if (data.validRepTypes && !data.validRepTypes.includes('TIME')) {
     throw new ApolloError(
       'ValidRepTypes does not include TIME: A move must always have at least the valid rep type TIME. Please ensure that your valid rep types array includes the string "TIME" or that the array is null if you do not wish to make any changes during an update operation',
@@ -283,8 +290,12 @@ async function validateShallowUpdateMoveInput(
 
 async function validateDeepUpdateMoveInput(
   data: DeepUpdateMoveInput,
+  userType: ContextUserType,
   resolver: () => Promise<Move>,
 ) {
+  if (data.scope === 'STANDARD' && userType !== 'ADMIN') {
+    throw new ApolloError('Only ADMINS can update Official (STANDARD) moves.')
+  }
   if (data.validRepTypes && !data.validRepTypes.includes('TIME')) {
     throw new ApolloError(
       'ValidRepTypes does not include TIME: A move must always have at least the valid rep type TIME. Please ensure that your valid rep types array includes the string "TIME" or that the array is null if you do not wish to make any changes during an update operation',

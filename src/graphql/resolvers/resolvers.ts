@@ -37,6 +37,7 @@ import {
   updateEquipment,
   workoutGoals,
   workoutTypes,
+  moveTypes,
 } from './officialData'
 
 import {
@@ -50,7 +51,7 @@ import {
   publicWorkoutPrograms,
   userWorkoutPrograms,
   workoutProgramById,
-  workoutProgramEnrolmentsByUser,
+  userWorkoutProgramEnrolments,
   createWorkoutProgram,
   deepUpdateWorkoutProgram,
   shallowUpdateWorkoutProgram,
@@ -127,11 +128,12 @@ const resolvers: Resolvers = {
     equipments,
     workoutGoals,
     workoutTypes,
+    moveTypes,
     officialWorkoutPrograms,
     publicWorkoutPrograms,
     userWorkoutPrograms,
     workoutProgramById,
-    workoutProgramEnrolmentsByUser,
+    userWorkoutProgramEnrolments,
     officialWorkouts,
     publicWorkouts,
     userWorkouts,

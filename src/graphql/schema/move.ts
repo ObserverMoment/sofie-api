@@ -9,11 +9,18 @@ export default gql`
     demoVideoUrl: String
     demoVideoThumbUrl: String
     scope: MoveScope!
-    type: MoveType!
+    moveType: MoveType
     validRepTypes: [WorkoutMoveRepType!]!
     requiredEquipments: [Equipment!]!
     selectableEquipments: [Equipment!]!
     bodyAreaMoveScores: [BodyAreaMoveScore!]
+  }
+
+  type MoveType {
+    id: ID!
+    name: String!
+    description: String
+    imageUrl: String
   }
 
   input CreateMoveInput {
@@ -22,7 +29,8 @@ export default gql`
     description: String
     demoVideoUrl: String
     demoVideoThumbUrl: String
-    type: MoveType!
+    scope: MoveScope
+    moveType: ID!
     # validRepTypes must include at least the enum TIME or an error will be thrown.
     validRepTypes: [WorkoutMoveRepType!]!
     requiredEquipments: [ID!]
@@ -38,7 +46,8 @@ export default gql`
     description: String
     demoVideoUrl: String
     demoVideoThumbUrl: String
-    type: MoveType
+    scope: MoveScope
+    moveType: ID
     # If included - validRepTypes must include at least the enum TIME or an error will be thrown.
     validRepTypes: [WorkoutMoveRepType!]
     requiredEquipments: [ID!]
@@ -55,7 +64,8 @@ export default gql`
     description: String
     demoVideoUrl: String
     demoVideoThumbUrl: String
-    type: MoveType
+    scope: MoveScope
+    moveType: ID
     # If included - validRepTypes must include at least the enum TIME or an error will be thrown.
     validRepTypes: [WorkoutMoveRepType!]
     requiredEquipments: [ID!]

@@ -1,4 +1,4 @@
-import { ApolloServer, ResolverFn } from 'apollo-server'
+import { ApolloServer, AuthenticationError, ResolverFn } from 'apollo-server'
 import resolvers from './graphql/resolvers/resolvers'
 import typeDefs from './graphql/schema/typeDefs'
 import { applyMiddleware } from 'graphql-middleware'
@@ -7,7 +7,7 @@ import { PrismaSelect } from '@paljs/plugins'
 import { makeExecutableSchema } from 'graphql-tools'
 import { GraphQLResolveInfo } from 'graphql'
 import { PrismaDelete, onDeleteArgs } from '@paljs/plugins'
-import { usersFirebaseSDK, adminsFirebaseSDK } from './lib/firebaseAdmin'
+import { firebaseVerifyToken } from './lib/firebaseAdmin'
 
 require('dotenv').config()
 
@@ -23,13 +23,15 @@ class Prisma extends PrismaClient {
   }
 }
 
+export type ContextUserType = 'ADMIN' | 'USER'
+
 export interface Context {
   // PrismaClient type is not declared here because of clash between Prisma return types and GraphQL schema types and input definitions. Is a known issue with some workarounds available in Prisma docs.
   prisma: any
   // https://paljs.com/plugins/select
   select?: any
-  id: string
-  userType: 'ADMIN' | 'USER'
+  authedUserId: string
+  userType: ContextUserType
 }
 
 const prisma = new Prisma({
@@ -61,76 +63,70 @@ let schema = makeExecutableSchema({
   logger: { log: (e) => console.error(e) },
 })
 
+const createAdminContext = async (uid: string) => {
+  const admin = await prisma.admin.findUnique({
+    where: {
+      firebaseUid: uid,
+    },
+    select: {
+      id: true,
+    },
+  })
+  if (!admin) {
+    throw new AuthenticationError(
+      'We could not find a valid admin with this id in the database',
+    )
+  } else {
+    return { prisma, authedUserId: admin.id, userType: 'ADMIN' } as Context
+  }
+}
+
+const createUserContext = async (uid: string) => {
+  const user = await prisma.user.findUnique({
+    where: {
+      firebaseUid: uid,
+    },
+    select: {
+      id: true,
+    },
+  })
+  if (!user) {
+    throw new AuthenticationError(
+      'We could not find a valid user with this id in the database',
+    )
+  } else {
+    return { prisma, authedUserId: user.id, userType: 'USER' } as Context
+  }
+}
+
 // https://github.com/prisma-labs/graphqlgen/issues/15
 const server = new ApolloServer({
   schema: applyMiddleware(schema, selectMiddleware),
   context: async ({ req }) => {
-    console.log(JSON.stringify(req.headers.authorization))
-    if (!req.headers.authorization) {
-      throw Error(
+    const userType = req.headers['user-type']
+    const authToken = req.headers.authorization
+
+    if (!authToken) {
+      throw new AuthenticationError(
         'Please provide a valid access token against the header "authorization"',
       )
     }
 
     // decode token function //
-    let decodedToken
-    if (req.headers.userType === 'ADMIN') {
-      decodedToken = await adminsFirebaseSDK
-        .auth()
-        .verifyIdToken(req.headers.authorization)
-    } else if (req.headers.userType === 'USER') {
-      decodedToken = await usersFirebaseSDK
-        .auth()
-        .verifyIdToken(req.headers.authorization)
-    } else {
-      throw Error(
-        'Please provide a valid user type against the header "userType"',
+    const decodedToken = await firebaseVerifyToken(
+      authToken,
+      userType as ContextUserType,
+    )
+
+    if (!decodedToken || !decodedToken.uid) {
+      throw new AuthenticationError(
+        'The access token you provided was not valid',
       )
     }
 
-    if (!decodedToken || !decodedToken.uid) {
-      throw Error('The access token you provided was not valid')
-    }
-    // decode token function = returns decoded token //
-
-    // Create admin context function //
-    let databaseId
-    if (req.headers.userType === 'ADMIN') {
-      const admin = await prisma.admin.findUnique({
-        where: {
-          firebaseUid: decodedToken.uid,
-        },
-        select: {
-          id: true,
-        },
-      })
-      if (!admin) {
-        throw Error(
-          'We could not find a valid admin with this id in the database',
-        )
-      } else {
-        return { prisma, id: admin.id, userType: 'ADMIN' } as Context
-      }
-      // Create admin context function //
-      // Create user context function //
-    } else if (req.headers.userType === 'USER') {
-      const user = await prisma.user.findUnique({
-        where: {
-          firebaseUid: decodedToken.uid,
-        },
-        select: {
-          id: true,
-        },
-      })
-      if (!user) {
-        throw Error(
-          'We could not find a valid user with this id in the database',
-        )
-      } else {
-        return { prisma, id: user.id, userType: 'USER' } as Context
-      }
-      // Create user context function //
-    }
+    return userType === 'ADMIN'
+      ? createAdminContext(decodedToken.uid)
+      : createUserContext(decodedToken.uid)
   },
 })
 

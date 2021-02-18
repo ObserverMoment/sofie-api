@@ -9,7 +9,6 @@ import {
   QueryCheckUniqueDisplayNameArgs,
   QueryUserByUidArgs,
   QueryUserPublicProfileArgs,
-  QueryCreatorPublicProfilesArgs,
 } from '../../generated/graphql'
 import { checkUserMediaForDeletion, deleteFiles } from '../../uploadcare'
 
@@ -25,9 +24,10 @@ const checkUniqueDisplayName = async (
   return user == null
 }
 
+// Public profiles of any users who have set their profiles to public.
 const creatorPublicProfiles = async (
   r: any,
-  { authedUserId }: QueryCreatorPublicProfilesArgs,
+  a: any,
   { select, prisma }: Context,
 ) =>
   prisma.user.findMany({
@@ -100,8 +100,8 @@ const updateUser = async (
 
 const createGymProfile = async (
   r: any,
-  { authedUserId, data }: MutationCreateGymProfileArgs,
-  { select, prisma }: Context,
+  { data }: MutationCreateGymProfileArgs,
+  { authedUserId, select, prisma }: Context,
 ) =>
   prisma.gymProfile.create({
     data: {

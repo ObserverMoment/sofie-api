@@ -5,7 +5,6 @@ import {
   MutationDeepUpdateLoggedWorkoutArgs,
   MutationDeleteLoggedWorkoutByIdArgs,
   MutationShallowUpdateLoggedWorkoutArgs,
-  QueryLoggedWorkoutsArgs,
 } from '../../generated/graphql'
 import {
   checkLoggedWorkoutMediaForDeletion,
@@ -16,8 +15,8 @@ import { buildWorkoutSectionsData } from '../workoutBuilders'
 //// Queries
 const loggedWorkouts = async (
   r: any,
-  { authedUserId }: QueryLoggedWorkoutsArgs,
-  { select, prisma }: Context,
+  a: any,
+  { authedUserId, select, prisma }: Context,
 ) =>
   prisma.loggedWorkout.findMany({
     where: {
@@ -29,8 +28,8 @@ const loggedWorkouts = async (
 //// Mutations
 const createLoggedWorkout = async (
   r: any,
-  { authedUserId, data }: MutationCreateLoggedWorkoutArgs,
-  { select, prisma }: Context,
+  { data }: MutationCreateLoggedWorkoutArgs,
+  { authedUserId, select, prisma }: Context,
 ) =>
   prisma.loggedWorkout.create({
     data: {
@@ -77,7 +76,7 @@ const createLoggedWorkout = async (
 
 const deepUpdateLoggedWorkout = async (
   r: any,
-  { authedUserId, data }: MutationDeepUpdateLoggedWorkoutArgs,
+  { data }: MutationDeepUpdateLoggedWorkoutArgs,
   { select, prisma }: Context,
 ) => {
   // Check if any media files need to be updated. Only delete files from the server after the rest of the transaction is complete.
@@ -141,7 +140,7 @@ const deepUpdateLoggedWorkout = async (
 
 const shallowUpdateLoggedWorkout = async (
   r: any,
-  { authedUserId, data }: MutationShallowUpdateLoggedWorkoutArgs,
+  { data }: MutationShallowUpdateLoggedWorkoutArgs,
   { select, prisma }: Context,
 ) => {
   // Check if any media files need to be updated. Only delete files from the server after the rest of the transaction is complete.
@@ -193,7 +192,7 @@ const shallowUpdateLoggedWorkout = async (
 
 const deleteLoggedWorkoutById = async (
   r: any,
-  { authedUserId, loggedWorkoutId }: MutationDeleteLoggedWorkoutByIdArgs,
+  { loggedWorkoutId }: MutationDeleteLoggedWorkoutByIdArgs,
   { prisma }: Context,
 ) => {
   // Cascade delete reliant descendants with https://paljs.com/plugins/delete/

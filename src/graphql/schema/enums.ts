@@ -58,14 +58,6 @@ export default gql`
     CUSTOM
   }
 
-  enum MoveType {
-    GENERAL
-    CARDIO
-    YOGAFLEX
-    BARRE
-    PILATES
-  }
-
   enum ThemePreference {
     DARK
     LIGHT

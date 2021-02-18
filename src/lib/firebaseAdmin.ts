@@ -1,5 +1,7 @@
 // https://github.com/colinhacks/next-firebase-ssr/blob/master/firebaseAdmin.ts
+import { AuthenticationError } from 'apollo-server'
 import firebaseAdmin from 'firebase-admin'
+import { ContextUserType } from '..'
 
 // Setup firebase 'users' admin sdk
 const usersPrivateKey = process.env['FIREBASE_USERS_PRIVATE_KEY']
@@ -8,7 +10,7 @@ const usersProjectId = process.env['FIREBASE_USERS_PROJECT_ID']
 
 if (!usersPrivateKey || !usersClientEmail || !usersProjectId) {
   console.log(
-    'Failed to load Firebase credentials for admins. Check environment variables are present',
+    'Failed to load Firebase credentials for users. Check environment variables are present',
   )
 }
 
@@ -47,4 +49,18 @@ const adminsFirebaseSDK = firebaseAdmin.initializeApp(
   'firebase_admins',
 )
 
-export { usersFirebaseSDK, adminsFirebaseSDK }
+const firebaseVerifyToken = async (
+  authHeader: string,
+  userType: ContextUserType,
+): Promise<firebaseAdmin.auth.DecodedIdToken> => {
+  try {
+    return userType === 'ADMIN'
+      ? await adminsFirebaseSDK.auth().verifyIdToken(authHeader, true)
+      : await usersFirebaseSDK.auth().verifyIdToken(authHeader, true)
+  } catch (err) {
+    console.error(err)
+    throw new AuthenticationError(err)
+  }
+}
+
+export { usersFirebaseSDK, adminsFirebaseSDK, firebaseVerifyToken }

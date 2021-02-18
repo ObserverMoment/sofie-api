@@ -8,9 +8,8 @@ import {
   MutationDeleteWorkoutProgramByIdArgs,
   MutationRemoveEnrolmentFromWorkoutProgramArgs,
   MutationShallowUpdateWorkoutProgramArgs,
-  QueryUserWorkoutProgramsArgs,
+  QueryUserWorkoutProgramEnrolmentsArgs,
   QueryWorkoutProgramByIdArgs,
-  QueryWorkoutProgramEnrolmentsByUserArgs,
   UpdateWorkoutProgramWorkoutInput,
   WorkoutProgram,
 } from '../../generated/graphql'
@@ -42,8 +41,8 @@ const publicWorkoutPrograms = async (
 
 const userWorkoutPrograms = async (
   r: any,
-  { authedUserId }: QueryUserWorkoutProgramsArgs,
-  { prisma, select }: Context,
+  a: any,
+  { authedUserId, prisma, select }: Context,
 ) =>
   prisma.workoutProgram.findMany({
     where: {
@@ -62,12 +61,12 @@ const workoutProgramById = async (
     select,
   })
 
-// gets all a users enrolments for a given workoutProgram.
+// Gets all a users enrolments for a given workoutProgram.
 // Users can enrol in a plan multiple times if they want.
-const workoutProgramEnrolmentsByUser = async (
+const userWorkoutProgramEnrolments = async (
   r: any,
-  { authedUserId, workoutProgramId }: QueryWorkoutProgramEnrolmentsByUserArgs,
-  { prisma, select }: Context,
+  { workoutProgramId }: QueryUserWorkoutProgramEnrolmentsArgs,
+  { authedUserId, prisma, select }: Context,
 ) =>
   prisma.workoutProgramEnrolment.findMany({
     where: {
@@ -80,8 +79,8 @@ const workoutProgramEnrolmentsByUser = async (
 //// Mutations
 const createWorkoutProgram = async (
   r: any,
-  { authedUserId, data }: MutationCreateWorkoutProgramArgs,
-  { select, prisma }: Context,
+  { data }: MutationCreateWorkoutProgramArgs,
+  { authedUserId, select, prisma }: Context,
 ) => {
   return prisma.workoutProgram.create({
     data: {
@@ -114,7 +113,7 @@ interface WorkoutProgramWorkoutUpdates {
 
 const deepUpdateWorkoutProgram = async (
   r: any,
-  { authedUserId, data }: MutationDeepUpdateWorkoutProgramArgs,
+  { data }: MutationDeepUpdateWorkoutProgramArgs,
   { select, prisma }: Context,
 ) => {
   // Check if any media files need to be updated. Only delete files from the server after the rest of the transaction is complete.
@@ -204,7 +203,7 @@ const deepUpdateWorkoutProgram = async (
 
 const shallowUpdateWorkoutProgram = async (
   r: any,
-  { authedUserId, data }: MutationShallowUpdateWorkoutProgramArgs,
+  { data }: MutationShallowUpdateWorkoutProgramArgs,
   { select, prisma }: Context,
 ) => {
   // Check if any media files need to be updated. Only delete files from the server after the rest of the transaction is complete.
@@ -236,7 +235,7 @@ const shallowUpdateWorkoutProgram = async (
 
 const deleteWorkoutProgramById = async (
   r: any,
-  { authedUserId, workoutProgramId }: MutationDeleteWorkoutProgramByIdArgs,
+  { workoutProgramId }: MutationDeleteWorkoutProgramByIdArgs,
   { prisma }: Context,
 ) => {
   // Cascade delete reliant descendants with https://paljs.com/plugins/delete/
@@ -283,8 +282,8 @@ const deleteWorkoutProgramById = async (
 //// Enrolments ////
 const addEnrolmentToWorkoutProgram = async (
   r: any,
-  { authedUserId, workoutProgramId }: MutationAddEnrolmentToWorkoutProgramArgs,
-  { select, prisma }: Context,
+  { workoutProgramId }: MutationAddEnrolmentToWorkoutProgramArgs,
+  { authedUserId, select, prisma }: Context,
 ) =>
   prisma.workoutProgram.update({
     where: { id: workoutProgramId },
@@ -303,7 +302,6 @@ const addEnrolmentToWorkoutProgram = async (
 const removeEnrolmentFromWorkoutProgram = async (
   r: any,
   {
-    authedUserId,
     workoutProgramId,
     workoutProgramEnrolmentId,
   }: MutationRemoveEnrolmentFromWorkoutProgramArgs,
@@ -326,7 +324,7 @@ export {
   publicWorkoutPrograms,
   userWorkoutPrograms,
   workoutProgramById,
-  workoutProgramEnrolmentsByUser,
+  userWorkoutProgramEnrolments,
   createWorkoutProgram,
   deepUpdateWorkoutProgram,
   shallowUpdateWorkoutProgram,

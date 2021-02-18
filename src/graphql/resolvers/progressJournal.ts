@@ -18,8 +18,6 @@ import {
   MutationUpdateProgressJournalGoalArgs,
   MutationUpdateProgressJournalGoalTagArgs,
   QueryProgressJournalByIdArgs,
-  QueryProgressJournalGoalTagsArgs,
-  QueryProgressJournalsArgs,
 } from '../../generated/graphql'
 import { deleteFiles } from '../../uploadcare'
 
@@ -27,8 +25,8 @@ import { deleteFiles } from '../../uploadcare'
 /// Get all users specific progress journals.
 const progressJournals = async (
   r: any,
-  { authedUserId }: QueryProgressJournalsArgs,
-  { select, prisma }: Context,
+  a: any,
+  { authedUserId, select, prisma }: Context,
 ) =>
   prisma.progressJournal.findMany({
     where: {
@@ -40,8 +38,8 @@ const progressJournals = async (
 /// Get all users specific progress journal tags.
 const progressJournalGoalTags = async (
   r: any,
-  { authedUserId }: QueryProgressJournalGoalTagsArgs,
-  { select, prisma }: Context,
+  a: any,
+  { authedUserId, select, prisma }: Context,
 ) =>
   prisma.progressJournalGoalTag.findMany({
     where: {
@@ -52,7 +50,7 @@ const progressJournalGoalTags = async (
 
 const progressJournalById = async (
   r: any,
-  { authedUserId, progressJournalId }: QueryProgressJournalByIdArgs,
+  { progressJournalId }: QueryProgressJournalByIdArgs,
   { select, prisma }: Context,
 ) =>
   prisma.progressJournal.findUnique({
@@ -66,8 +64,8 @@ const progressJournalById = async (
 //// ProgressJournal ////
 const createProgressJournal = async (
   r: any,
-  { authedUserId, data }: MutationCreateProgressJournalArgs,
-  { select, prisma }: Context,
+  { data }: MutationCreateProgressJournalArgs,
+  { authedUserId, select, prisma }: Context,
 ) =>
   prisma.progressJournal.create({
     data: {
@@ -81,7 +79,7 @@ const createProgressJournal = async (
 
 const updateProgressJournal = async (
   r: any,
-  { authedUserId, data }: MutationUpdateProgressJournalArgs,
+  { data }: MutationUpdateProgressJournalArgs,
   { select, prisma }: Context,
 ) =>
   prisma.progressJournal.update({
@@ -92,7 +90,7 @@ const updateProgressJournal = async (
 
 const deleteProgressJournalById = async (
   r: any,
-  { authedUserId, progressJournalId }: MutationDeleteProgressJournalByIdArgs,
+  { progressJournalId }: MutationDeleteProgressJournalByIdArgs,
   { prisma }: Context,
 ) => {
   // 1. Get all progressJournalEntry.progressPhotoUrls.
@@ -134,7 +132,7 @@ const deleteProgressJournalById = async (
 //// ProgressJournalGoal ////
 const createProgressJournalGoal = async (
   r: any,
-  { authedUserId, data }: MutationCreateProgressJournalGoalArgs,
+  { data }: MutationCreateProgressJournalGoalArgs,
   { select, prisma }: Context,
 ) =>
   prisma.progressJournalGoal.create({
@@ -154,7 +152,7 @@ const createProgressJournalGoal = async (
 
 const updateProgressJournalGoal = async (
   r: any,
-  { authedUserId, data }: MutationUpdateProgressJournalGoalArgs,
+  { data }: MutationUpdateProgressJournalGoalArgs,
   { select, prisma }: Context,
 ) =>
   prisma.progressJournalGoal.update({
@@ -170,10 +168,7 @@ const updateProgressJournalGoal = async (
 
 const deleteProgressJournalGoalById = async (
   r: any,
-  {
-    authedUserId,
-    progressJournalGoalId,
-  }: MutationDeleteProgressJournalGoalByIdArgs,
+  { progressJournalGoalId }: MutationDeleteProgressJournalGoalByIdArgs,
   { prisma }: Context,
 ) => {
   const deletedProgressJournalGoal: ProgressJournalGoal = await prisma.progressJournalGoal.delete(
@@ -187,8 +182,8 @@ const deleteProgressJournalGoalById = async (
 //// ProgressJournalGoalTags ////
 const createProgressJournalGoalTag = async (
   r: any,
-  { authedUserId, data }: MutationCreateProgressJournalGoalTagArgs,
-  { select, prisma }: Context,
+  { data }: MutationCreateProgressJournalGoalTagArgs,
+  { authedUserId, select, prisma }: Context,
 ) =>
   prisma.progressJournalGoalTag.create({
     data: {
@@ -202,7 +197,7 @@ const createProgressJournalGoalTag = async (
 
 const updateProgressJournalGoalTag = async (
   r: any,
-  { authedUserId, data }: MutationUpdateProgressJournalGoalTagArgs,
+  { data }: MutationUpdateProgressJournalGoalTagArgs,
   { select, prisma }: Context,
 ) =>
   prisma.progressJournalGoalTag.update({
@@ -214,10 +209,7 @@ const updateProgressJournalGoalTag = async (
 // Deletes one or many tags.
 const deleteProgressJournalGoalTagsById = async (
   r: any,
-  {
-    authedUserId,
-    progressJournalGoalTagIds,
-  }: MutationDeleteProgressJournalGoalTagsByIdArgs,
+  { progressJournalGoalTagIds }: MutationDeleteProgressJournalGoalTagsByIdArgs,
   { prisma }: Context,
 ) => {
   const { count } = await prisma.progressJournalGoalTag.deleteMany({
@@ -230,11 +222,7 @@ const deleteProgressJournalGoalTagsById = async (
 //// ProgressJournalEntry ////
 const createProgressJournalEntry = async (
   r: any,
-  {
-    authedUserId,
-    progressJournalId,
-    data,
-  }: MutationCreateProgressJournalEntryArgs,
+  { progressJournalId, data }: MutationCreateProgressJournalEntryArgs,
   { select, prisma }: Context,
 ) =>
   prisma.progressJournalEntry.create({
@@ -249,7 +237,7 @@ const createProgressJournalEntry = async (
 
 const updateProgressJournalEntry = async (
   r: any,
-  { authedUserId, data }: MutationUpdateProgressJournalEntryArgs,
+  { data }: MutationUpdateProgressJournalEntryArgs,
   { select, prisma }: Context,
 ) => {
   // Check for any old photos.
@@ -280,10 +268,7 @@ const updateProgressJournalEntry = async (
 
 const deleteProgressJournalEntryById = async (
   r: any,
-  {
-    authedUserId,
-    progressJournalEntryId,
-  }: MutationDeleteProgressJournalEntryByIdArgs,
+  { progressJournalEntryId }: MutationDeleteProgressJournalEntryByIdArgs,
   { prisma }: Context,
 ) => {
   const deletedJournalEntry: ProgressJournalEntry = await prisma.progressJournalEntry.delete(

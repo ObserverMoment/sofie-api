@@ -3,7 +3,6 @@ import {
   MutationDeepUpdateWorkoutArgs,
   MutationDeleteWorkoutByIdArgs,
   MutationShallowUpdateWorkoutArgs,
-  QueryUserWorkoutsArgs,
   QueryWorkoutByIdArgs,
   Workout,
 } from '../../generated/graphql'
@@ -31,8 +30,8 @@ const publicWorkouts = async (r: any, a: any, { select, prisma }: Context) =>
 
 const userWorkouts = async (
   r: any,
-  { authedUserId }: QueryUserWorkoutsArgs,
-  { select, prisma }: Context,
+  a: any,
+  { authedUserId, select, prisma }: Context,
 ) =>
   prisma.workout.findMany({
     where: {
@@ -56,8 +55,8 @@ const workoutById = async (
 //// Mutations ////
 const createWorkout = async (
   r: any,
-  { authedUserId, data }: MutationCreateWorkoutArgs,
-  { select, prisma }: Context,
+  { data }: MutationCreateWorkoutArgs,
+  { authedUserId, select, prisma }: Context,
 ) =>
   prisma.workout.create({
     data: {
@@ -77,7 +76,7 @@ const createWorkout = async (
 
 const deepUpdateWorkout = async (
   r: any,
-  { authedUserId, data }: MutationDeepUpdateWorkoutArgs,
+  { data }: MutationDeepUpdateWorkoutArgs,
   { select, prisma }: Context,
 ) => {
   // Check if any media files need to be updated. Only delete files from the server after the rest of the transaction is complete.
@@ -122,7 +121,7 @@ const deepUpdateWorkout = async (
 // This will set the value in the DB to null and the resolver will also go off and delete the old file from the media server.
 const shallowUpdateWorkout = async (
   r: any,
-  { authedUserId, data }: MutationShallowUpdateWorkoutArgs,
+  { data }: MutationShallowUpdateWorkoutArgs,
   { select, prisma }: Context,
 ) => {
   // Check if any media files need to be updated. Only delete files from the server after the rest of the transaction is complete.
@@ -148,7 +147,7 @@ const shallowUpdateWorkout = async (
 
 const deleteWorkoutById = async (
   r: any,
-  { authedUserId, workoutId }: MutationDeleteWorkoutByIdArgs,
+  { workoutId }: MutationDeleteWorkoutByIdArgs,
   { prisma }: Context,
 ) => {
   // Cascade delete reliant descendants with https://paljs.com/plugins/delete/

@@ -5,14 +5,13 @@ import {
   MutationScheduleWorkoutArgs,
   MutationUnscheduleWorkoutArgs,
   MutationUpdateScheduledWorkoutArgs,
-  QueryScheduledWorkoutsArgs,
 } from '../../generated/graphql'
 
 //// Queries
 const scheduledWorkouts = async (
   r: any,
-  { authedUserId }: QueryScheduledWorkoutsArgs,
-  { select, prisma }: Context,
+  a: any,
+  { authedUserId, select, prisma }: Context,
 ) =>
   prisma.scheduledWorkout.findMany({
     where: {
@@ -24,8 +23,8 @@ const scheduledWorkouts = async (
 //// Mutations
 const scheduleWorkout = async (
   r: any,
-  { authedUserId, data }: MutationScheduleWorkoutArgs,
-  { select, prisma }: Context,
+  { data }: MutationScheduleWorkoutArgs,
+  { authedUserId, select, prisma }: Context,
 ) =>
   prisma.scheduledWorkout.create({
     data: {
@@ -49,7 +48,7 @@ const scheduleWorkout = async (
 
 const unscheduleWorkout = async (
   r: any,
-  { authedUserId, scheduledWorkoutId }: MutationUnscheduleWorkoutArgs,
+  { scheduledWorkoutId }: MutationUnscheduleWorkoutArgs,
   { prisma }: Context,
 ) => {
   const deleted: ScheduledWorkout = await prisma.scheduledWorkout.delete({
@@ -62,7 +61,7 @@ const unscheduleWorkout = async (
 
 const updateScheduledWorkout = async (
   r: any,
-  { authedUserId, data }: MutationUpdateScheduledWorkoutArgs,
+  { data }: MutationUpdateScheduledWorkoutArgs,
   { select, prisma }: Context,
 ) =>
   prisma.scheduledWorkout.update({

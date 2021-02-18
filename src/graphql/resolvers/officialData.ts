@@ -8,7 +8,12 @@ const bodyAreas = async (r: any, a: any, { prisma, select }: Context) =>
   prisma.bodyArea.findMany({ select })
 
 const equipments = async (r: any, a: any, { prisma, select }: Context) =>
-  prisma.equipment.findMany({ select })
+  prisma.equipment.findMany({
+    orderBy: {
+      createdAt: 'desc',
+    },
+    select,
+  })
 
 const createEquipment = async (
   r: any,
@@ -32,6 +37,9 @@ const updateEquipment = async (
 const workoutGoals = async (r: any, a: any, { prisma, select }: Context) =>
   prisma.workoutGoal.findMany({ select })
 
+const moveTypes = async (r: any, a: any, { prisma, select }: Context) =>
+  prisma.moveType.findMany({ select })
+
 const workoutTypes = async (r: any, a: any, { prisma, select }: Context) =>
   prisma.workoutType.findMany({ select })
 
@@ -41,5 +49,6 @@ export {
   createEquipment,
   updateEquipment,
   workoutGoals,
+  moveTypes,
   workoutTypes,
 }

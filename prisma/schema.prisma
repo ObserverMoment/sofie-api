@@ -11,11 +11,10 @@ datasource db {
 }
 
 model Admin {
-  id           String   @id @default(uuid())
-  firebaseUid  String   @unique
-  createdAt    DateTime @default(now())
-  username     String   @unique
-  passwordHash String
+  id          String   @id @default(uuid())
+  firebaseUid String   @unique
+  createdAt   DateTime @default(now())
+  username    String   @unique
 }
 
 model BodyArea {
@@ -109,7 +108,6 @@ model Move {
   // Default to CUSTOM. GQL Schema does not accept this field as an input.
   // A user should never be able to create a STANDARD move (aka an official move)
   scope                   MoveScope            @default(CUSTOM)
-  type                    MoveType             @default(GENERAL)
   // Should be short!
   name                    String
   // Text search will search this field - include the main name + any common variations
@@ -118,6 +116,8 @@ model Move {
   description             String?
   demoVideoUrl            String?
   demoVideoThumbUrl       String?
+  moveType                MoveType?            @relation(fields: [moveTypeId], references: [id])
+  moveTypeId              String?
   validRepTypes           WorkoutMoveRepType[]
   requiredEquipments      Equipment[]          @relation("moveToRequiredEquipments", references: [id])
   selectableEquipments    Equipment[]          @relation("moveToSelectableEquipments", references: [id])
@@ -139,6 +139,15 @@ model MoveProfile {
   description   String?
   requiredMoves Move[]   @relation("requiredMoves", references: [id])
   excludedMoves Move[]   @relation("excludedMoves", references: [id])
+}
+
+model MoveType {
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  name        String
+  description String
+  imageUrl    String
+  moves       Move[]
 }
 
 model ProgressJournal {
@@ -517,14 +526,6 @@ enum LoadUnit {
 enum MoveScope {
   STANDARD
   CUSTOM
-}
-
-enum MoveType {
-  GENERAL
-  CARDIO
-  YOGAFLEX
-  BARRE
-  PILATES
 }
 
 enum ThemePreference {

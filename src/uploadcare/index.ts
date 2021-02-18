@@ -114,8 +114,6 @@ export async function checkUserMediaForDeletion(
     fileIdsForDeletion.push(oldUser.introVideoThumbUrl)
   }
 
-  console.log(fileIdsForDeletion)
-
   return fileIdsForDeletion.length > 0 ? fileIdsForDeletion : null
 }
 
