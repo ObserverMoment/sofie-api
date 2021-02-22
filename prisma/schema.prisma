@@ -105,8 +105,8 @@ model Move {
   archived                Boolean              @default(false)
   createdBy               User?                @relation(fields: [createdById], references: [id])
   createdById             String?
-  // Default to CUSTOM. GQL Schema does not accept this field as an input.
-  // A user should never be able to create a STANDARD move (aka an official move)
+  // Default to CUSTOM.
+  // A user should never be able to create a STANDARD move (aka an official move), only ADMIN.
   scope                   MoveScope            @default(CUSTOM)
   // Should be short!
   name                    String

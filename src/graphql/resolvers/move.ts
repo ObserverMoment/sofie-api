@@ -1,4 +1,4 @@
-import { WorkoutMove, WorkoutMoveRepType } from '@prisma/client'
+import { Prisma } from '@prisma/client'
 import { ApolloError } from 'apollo-server'
 import { Context, ContextUserType } from '../..'
 import {
@@ -42,37 +42,46 @@ const createMove = async (
   { data }: MutationCreateMoveArgs,
   { authedUserId, userType, prisma, select }: Context,
 ) => {
-  return validateCreateMoveInput(data, userType, async () =>
-    prisma.move.create({
-      data: {
-        ...data,
-        createdBy: {
-          connect: { id: authedUserId || undefined },
-        },
-        requiredEquipments: {
-          connect: data.requiredEquipments
-            ? data.requiredEquipments.map((id: string) => ({ id }))
-            : undefined,
-        },
-        selectableEquipments: {
-          connect: data.selectableEquipments
-            ? data.selectableEquipments.map((id: string) => ({ id }))
-            : undefined,
-        },
-        bodyAreaMoveScores: {
-          create: data.bodyAreaMoveScores
-            ? data.bodyAreaMoveScores.map((bams) => ({
-                bodyArea: {
-                  connect: { id: bams.bodyArea },
-                },
-                score: bams.score,
-              }))
-            : undefined,
+  return validateCreateMoveInput(data, userType, async () => {
+    const formattedData: Prisma.MoveCreateInput = {
+      ...data,
+      createdBy: {
+        connect: {
+          id: userType === 'ADMIN' || !authedUserId ? undefined : authedUserId,
         },
       },
+      moveType: {
+        connect: {
+          id: data.moveType || undefined,
+        },
+      },
+      scope: data.scope || 'CUSTOM',
+      requiredEquipments: {
+        connect: data.requiredEquipments
+          ? data.requiredEquipments.map((id: string) => ({ id }))
+          : undefined,
+      },
+      selectableEquipments: {
+        connect: data.selectableEquipments
+          ? data.selectableEquipments.map((id: string) => ({ id }))
+          : undefined,
+      },
+      bodyAreaMoveScores: {
+        create: data.bodyAreaMoveScores
+          ? data.bodyAreaMoveScores.map((bams) => ({
+              bodyArea: {
+                connect: { id: bams.bodyArea },
+              },
+              score: bams.score,
+            }))
+          : undefined,
+      },
+    }
+    return prisma.move.create({
+      data: formattedData,
       select,
-    }),
-  )
+    })
+  })
 }
 
 const shallowUpdateMove = async (
@@ -98,6 +107,12 @@ const shallowUpdateMove = async (
             ? data.requiredEquipments.map((id: string) => ({ id }))
             : [],
         },
+        moveType: {
+          connect: {
+            id: data.moveType || undefined,
+          },
+        },
+        scope: data.scope || 'CUSTOM',
         selectableEquipments: {
           set: data.selectableEquipments
             ? data.selectableEquipments.map((id: string) => ({ id }))
@@ -139,6 +154,12 @@ const deepUpdateMove = async (
       },
       data: {
         ...data,
+        moveType: {
+          connect: {
+            id: data.moveType || undefined,
+          },
+        },
+        scope: data.scope || 'CUSTOM',
         requiredEquipments: {
           set: data.requiredEquipments
             ? data.requiredEquipments.map((id: string) => ({ id }))
