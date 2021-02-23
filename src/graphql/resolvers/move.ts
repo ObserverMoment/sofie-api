@@ -45,14 +45,15 @@ const createMove = async (
   return validateCreateMoveInput(data, userType, async () => {
     const formattedData: Prisma.MoveCreateInput = {
       ...data,
-      createdBy: {
-        connect: {
-          id: userType === 'ADMIN' || !authedUserId ? undefined : authedUserId,
-        },
-      },
+      createdBy:
+        userType === 'ADMIN' || !authedUserId
+          ? undefined
+          : {
+              connect: { id: authedUserId },
+            },
       moveType: {
         connect: {
-          id: data.moveType || undefined,
+          id: data.moveType,
         },
       },
       scope: data.scope || 'CUSTOM',
@@ -77,6 +78,7 @@ const createMove = async (
           : undefined,
       },
     }
+
     return prisma.move.create({
       data: formattedData,
       select,

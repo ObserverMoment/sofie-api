@@ -9,7 +9,7 @@ export default gql`
     demoVideoUrl: String
     demoVideoThumbUrl: String
     scope: MoveScope!
-    moveType: MoveType
+    moveType: MoveType!
     validRepTypes: [WorkoutMoveRepType!]!
     requiredEquipments: [Equipment!]!
     selectableEquipments: [Equipment!]!
