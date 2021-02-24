@@ -101,6 +101,9 @@ const createUserContext = async (uid: string) => {
 
 // https://github.com/prisma-labs/graphqlgen/issues/15
 const server = new ApolloServer({
+  cors: {
+    origin: process.env.ADMIN_APP_CLIENT_URL,
+  },
   schema: applyMiddleware(schema, selectMiddleware),
   context: async ({ req }) => {
     const userType = req.headers['user-type']
