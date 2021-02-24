@@ -4,9 +4,12 @@ import firebaseAdmin from 'firebase-admin'
 import { ContextUserType } from '..'
 
 // Setup firebase 'users' admin sdk
-const usersPrivateKey = process.env['FIREBASE_USERS_PRIVATE_KEY']
-const usersClientEmail = process.env['FIREBASE_USERS_CLIENT_EMAIL']
-const usersProjectId = process.env['FIREBASE_USERS_PROJECT_ID']
+// https://stackoverflow.com/questions/39492587/escaping-issue-with-firebase-privatekey-as-a-heroku-config-variable
+const usersPrivateKey = process.env.FIREBASE_USERS_PRIVATE_KEY
+  ? process.env.FIREBASE_USERS_PRIVATE_KEY.replace(/\\n/g, '\n')
+  : undefined
+const usersClientEmail = process.env.FIREBASE_USERS_CLIENT_EMAIL
+const usersProjectId = process.env.FIREBASE_USERS_PROJECT_ID
 
 if (!usersPrivateKey || !usersClientEmail || !usersProjectId) {
   console.log(
@@ -27,9 +30,12 @@ const usersFirebaseSDK = firebaseAdmin.initializeApp(
 )
 
 // Setup firebase 'admins' admin sdk
-const adminsPrivateKey = process.env['FIREBASE_ADMINS_PRIVATE_KEY']
-const adminsClientEmail = process.env['FIREBASE_ADMINS_CLIENT_EMAIL']
-const adminsProjectId = process.env['FIREBASE_ADMINS_PROJECT_ID']
+// https://stackoverflow.com/questions/39492587/escaping-issue-with-firebase-privatekey-as-a-heroku-config-variable
+const adminsPrivateKey = process.env.FIREBASE_ADMINS_PRIVATE_KEY
+  ? process.env.FIREBASE_ADMINS_PRIVATE_KEY.replace(/\\n/g, '\n')
+  : undefined
+const adminsClientEmail = process.env.FIREBASE_ADMINS_CLIENT_EMAIL
+const adminsProjectId = process.env.FIREBASE_ADMINS_PROJECT_ID
 
 if (!adminsPrivateKey || !adminsClientEmail || !adminsProjectId) {
   console.log(
