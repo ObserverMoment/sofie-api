@@ -70,6 +70,18 @@ model WorkoutGoal {
     WorkoutPrograms WorkoutProgram[]
 }
 
+model WorkoutType {
+    id                   String                 @id @default(uuid())
+    createdAt            DateTime               @default(now())
+    name                 String
+    subtitle             String
+    description          String
+    imageUri             String
+    scoreType            WorkoutScoreType
+    WorkoutSection       WorkoutSection[]
+    LoggedWorkoutSection LoggedWorkoutSection[]
+}
+
 ///////////////////////////////////////
 //// User and User Related ////////////
 ///////////////////////////////////////
@@ -90,7 +102,7 @@ model User {
     bio                      String?
     tagline                  String?
     birthdate                DateTime?
-    gender                   Gender?                   @default(UNSPECIFIED)
+    gender                   Gender?                   @default(NONBINARY)
     height                   Float?
     weight                   Float?
     townCity                 String?
@@ -246,15 +258,19 @@ model WorkoutSection {
     amrapWorkoutSectionId    String?
     FortimeWorkoutSection    FortimeWorkoutSection?  @relation(fields: [fortimeWorkoutSectionId], references: [id])
     fortimeWorkoutSectionId  String?
-    LastStandingSection      LastStandingSection[]
+    LastStandingSection      LastStandingSection?    @relation(fields: [lastStandingSectionId], references: [id])
+    lastStandingSectionId    String?
+    // The workout type tells you which type of workout section to use.
+    // TODO: Validation in Postgres - map the WorkoutType ids to the section types above and ensure they match when creating / updating.
+    // E.g. TimedWorkoutSection must be 'HIIT', 'EMOM' or 'Tabata' type.
+    WorkoutType              WorkoutType             @relation(fields: [workoutTypeId], references: [id])
+    workoutTypeId            String
 }
 
 //// Timed Sections i.e. HIIT Circuit, Tabata, EMOM ////
 model TimedWorkoutSection {
     id                String             @id @default(uuid())
     createdAt         DateTime           @default(now())
-    // Use type to know how to display a workout section when viewing it and when doing it.
-    type              TimedWorkoutType   @default(HIIT)
     name              String?
     notes             String?
     rounds            Int
@@ -310,17 +326,16 @@ model FortimeWorkoutSection {
 
 //// Keep completing the workout sets within the timecap for as long as possible ////
 model LastStandingSection {
-    id               String          @id @default(uuid())
-    createdAt        DateTime        @default(now())
-    name             String?
-    notes            String?
-    finishAfter      Int? // Seconds - optional "finish line" for if you need to ensure non open ended length.
+    id             String          @id @default(uuid())
+    createdAt      DateTime        @default(now())
+    name           String?
+    notes          String?
+    finishAfter    Int? // Seconds - optional "finish line" for if you need to ensure non open ended length.
     // Initially timecaps[0] is timecap for workoutsSets[0], timecaps[1] for workoutSets[1] etc
     // Arrays do not need to be the same length - each can loop at different points
-    timecaps         Int[]
-    WorkoutSets      WorkoutSet[]
-    WorkoutSection   WorkoutSection? @relation(fields: [workoutSectionId], references: [id])
-    workoutSectionId String?
+    timecaps       Int[]
+    WorkoutSets    WorkoutSet[]
+    WorkoutSection WorkoutSection?
 }
 
 model WorkoutSet {
@@ -462,6 +477,8 @@ model LoggedWorkout {
     completedOn               DateTime
     User                      User                     @relation(fields: [userId], references: [id])
     userId                    String
+    // The name of the original workout by default
+    name                      String
     notes                     String?
     videoUri                  String?
     videoThumbUri             String?
@@ -483,18 +500,24 @@ model LoggedWorkoutSection {
     id                String             @id @default(uuid())
     createdAt         DateTime           @default(now())
     sortPosition      Int
-    timetakenMs       Int // Milliseconds
+    timeTakenMs       Int // Milliseconds
     notes             String?
+    /// @onDelete(CASCADE)
     LoggedWorkoutSets LoggedWorkoutSet[]
     LoggedWorkout     LoggedWorkout      @relation(fields: [loggedWorkoutId], references: [id])
     loggedWorkoutId   String
+    // TODO: Validation in Postgres - map the WorkoutType ids to the section types above and ensure they match when creating / updating.
+    // E.g. TimedWorkoutSection must be 'HIIT', 'EMOM' or 'Tabata' type.
+    WorkoutType       WorkoutType        @relation(fields: [workoutTypeId], references: [id])
+    workoutTypeId     String
 }
 
 model LoggedWorkoutSet {
     id                     String               @id @default(uuid())
     createdAt              DateTime             @default(now())
     sortPosition           Int
-    timetakenMs            Int? // Milliseconds - optional
+    timeTakenMs            Int? // Milliseconds - optional
+    /// @onDelete(CASCADE)
     LoggedWorkoutMoves     LoggedWorkoutMove[]
     LoggedWorkoutSection   LoggedWorkoutSection @relation(fields: [loggedWorkoutSectionId], references: [id])
     loggedWorkoutSectionId String
@@ -504,7 +527,7 @@ model LoggedWorkoutMove {
     id                 String             @id @default(uuid())
     createdAt          DateTime           @default(now())
     sortPosition       Int
-    timetakenMs        Int? // Milliseconds - optional
+    timeTakenMs        Int? // Milliseconds - optional
     repType            WorkoutMoveRepType @default(REPS)
     reps               Float?             @default(10)
     distanceUnit       DistanceUnit       @default(METRES)
@@ -612,7 +635,7 @@ enum DistanceUnit {
 enum Gender {
     MALE
     FEMALE
-    UNSPECIFIED
+    NONBINARY
 }
 
 enum LoadUnit {
@@ -633,12 +656,6 @@ enum ThemePreference {
     LIGHT
 }
 
-enum TimedWorkoutType {
-    HIIT
-    TABATA
-    EMOM
-}
-
 enum UnitSystem {
     IMPERIAL
     METRIC
@@ -649,6 +666,15 @@ enum WorkoutMoveRepType {
     CALORIES
     DISTANCE
     TIME
+}
+
+// AMREPS in reps
+// TIME in seconds
+// LOAD in kgs
+enum WorkoutScoreType {
+    AMREPS
+    FORTIME
+    FORLOAD
 }
 
 enum UserProfileScope {

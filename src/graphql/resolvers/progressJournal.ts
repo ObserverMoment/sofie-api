@@ -3,6 +3,7 @@ import {
   ProgressJournalEntry,
   ProgressJournalGoal,
 } from '@prisma/client'
+import { AuthenticationError } from 'apollo-server'
 import { Context } from '../..'
 import {
   MutationCreateProgressJournalArgs,
@@ -30,7 +31,7 @@ const progressJournals = async (
 ) =>
   prisma.progressJournal.findMany({
     where: {
-      user: { id: authedUserId },
+      userId: authedUserId,
     },
     select,
   })
@@ -43,7 +44,7 @@ const progressJournalGoalTags = async (
 ) =>
   prisma.progressJournalGoalTag.findMany({
     where: {
-      user: { id: authedUserId },
+      userId: authedUserId,
     },
     select,
   })
@@ -51,11 +52,12 @@ const progressJournalGoalTags = async (
 const progressJournalById = async (
   r: any,
   { progressJournalId }: QueryProgressJournalByIdArgs,
-  { select, prisma }: Context,
+  { authedUserId, select, prisma }: Context,
 ) =>
   prisma.progressJournal.findUnique({
     where: {
       id: progressJournalId,
+      userId: authedUserId,
     },
     select,
   })
@@ -70,7 +72,7 @@ const createProgressJournal = async (
   prisma.progressJournal.create({
     data: {
       ...data,
-      user: {
+      User: {
         connect: { id: authedUserId },
       },
     },
@@ -80,10 +82,10 @@ const createProgressJournal = async (
 const updateProgressJournal = async (
   r: any,
   { data }: MutationUpdateProgressJournalArgs,
-  { select, prisma }: Context,
+  { authedUserId, select, prisma }: Context,
 ) =>
   prisma.progressJournal.update({
-    where: { id: data.id },
+    where: { id: data.id, userId: authedUserId },
     data,
     select,
   })
@@ -91,34 +93,35 @@ const updateProgressJournal = async (
 const deleteProgressJournalById = async (
   r: any,
   { progressJournalId }: MutationDeleteProgressJournalByIdArgs,
-  { prisma }: Context,
+  { authedUserId, prisma }: Context,
 ) => {
   // 1. Get all progressJournalEntry.progressPhotoUrls.
   const progressJournalEntries: ProgressJournalEntry[] = await prisma.progressJournalEntry.findMany(
     {
       where: {
-        progressJournal: {
+        ProgressJournal: {
           id: progressJournalId,
+          userId: authedUserId,
         },
       },
     },
   )
   const allProgressPhotosIdsForDeletion: string[] = progressJournalEntries.reduce(
-    (acum, next) => [...acum, ...next.progressPhotoUrls],
+    (acum, next) => [...acum, ...next.progressPhotoUris],
     [] as string[],
   )
   // 2. Delete the progress journal and all of its children (children first).
   // Cascade delete reliant descendants with https://paljs.com/plugins/delete/
   await prisma.onDelete({
     model: 'ProgressJournal',
-    where: { id: progressJournalId },
+    where: { id: progressJournalId, userId: authedUserId },
     deleteParent: false, // If false, just the descendants will be deleted.
   })
 
   // Delete workout and get back uploaded media related files.
   const deletedProgressJournal: ProgressJournal = await prisma.progressJournal.delete(
     {
-      where: { id: progressJournalId },
+      where: { id: progressJournalId, userId: authedUserId },
     },
   )
   // 3. Delete all the media from uploadcare.
@@ -133,38 +136,55 @@ const deleteProgressJournalById = async (
 const createProgressJournalGoal = async (
   r: any,
   { data }: MutationCreateProgressJournalGoalArgs,
-  { select, prisma }: Context,
-) =>
-  prisma.progressJournalGoal.create({
-    data: {
-      ...data,
-      progressJournalGoalTags: {
-        set: data.progressJournalGoalTags
-          ? data.progressJournalGoalTags.map((id) => ({ id }))
-          : [],
-      },
-      progressJournal: {
-        connect: { id: data.progressJournal },
-      },
-    },
-    select,
+  { authedUserId, select, prisma }: Context,
+) => {
+  // Check the user owns the progress journal.
+  const parentProgressJournal = await prisma.progressJournal.findUnique({
+    where: { id: data.ProgressJournal, userId: authedUserId },
   })
+  if (parentProgressJournal) {
+    return prisma.progressJournalGoal.create({
+      data: {
+        ...data,
+        ProgressJournalGoalTags: {
+          set: data.ProgressJournalGoalTags
+            ? data.ProgressJournalGoalTags.map((id) => ({ id }))
+            : [],
+        },
+        ProgressJournal: {
+          connect: { id: data.ProgressJournal },
+        },
+      },
+      select,
+    })
+  } else {
+    console.error(
+      'Resolver: createProgressJournalGoal - authed user does not own the parent journal',
+    )
+    throw new AuthenticationError(
+      'Sorry, you do not own this journal so cannot create a goal for it.',
+    )
+  }
+}
 
 const updateProgressJournalGoal = async (
   r: any,
   { data }: MutationUpdateProgressJournalGoalArgs,
-  { select, prisma }: Context,
-) =>
-  prisma.progressJournalGoal.update({
-    where: { id: data.id },
-    ...data,
-    progressJournalGoalTags: {
-      set: data.progressJournalGoalTags
-        ? data.progressJournalGoalTags.map((id) => ({ id }))
-        : [],
+  { authedUserId, select, prisma }: Context,
+) => {
+  return prisma.progressJournalGoal.update({
+    where: { id: data.id, ProgressJournal: { userId: authedUserId } },
+    data: {
+      ...data,
+      ProgressJournalGoalTags: {
+        set: data.ProgressJournalGoalTags
+          ? data.ProgressJournalGoalTags.map((id) => ({ id }))
+          : [],
+      },
     },
     select,
   })
+}
 
 const deleteProgressJournalGoalById = async (
   r: any,
@@ -188,7 +208,7 @@ const createProgressJournalGoalTag = async (
   prisma.progressJournalGoalTag.create({
     data: {
       ...data,
-      user: {
+      User: {
         connect: { id: authedUserId },
       },
     },
@@ -198,10 +218,10 @@ const createProgressJournalGoalTag = async (
 const updateProgressJournalGoalTag = async (
   r: any,
   { data }: MutationUpdateProgressJournalGoalTagArgs,
-  { select, prisma }: Context,
+  { authedUserId, select, prisma }: Context,
 ) =>
   prisma.progressJournalGoalTag.update({
-    where: { id: data.id },
+    where: { id: data.id, userId: authedUserId },
     data,
     select,
   })
@@ -210,10 +230,13 @@ const updateProgressJournalGoalTag = async (
 const deleteProgressJournalGoalTagsById = async (
   r: any,
   { progressJournalGoalTagIds }: MutationDeleteProgressJournalGoalTagsByIdArgs,
-  { prisma }: Context,
+  { authedUserId, prisma }: Context,
 ) => {
   const { count } = await prisma.progressJournalGoalTag.deleteMany({
-    where: { id: { in: progressJournalGoalTagIds } },
+    where: {
+      id: { in: progressJournalGoalTagIds },
+      userId: authedUserId,
+    },
     select: { count: true },
   })
   return count
@@ -223,36 +246,52 @@ const deleteProgressJournalGoalTagsById = async (
 const createProgressJournalEntry = async (
   r: any,
   { progressJournalId, data }: MutationCreateProgressJournalEntryArgs,
-  { select, prisma }: Context,
-) =>
-  prisma.progressJournalEntry.create({
-    data: {
-      ...data,
-      progressJournal: {
-        connect: { id: progressJournalId },
-      },
-    },
-    select,
+  { authedUserId, select, prisma }: Context,
+) => {
+  // Check the user owns the progress journal.
+  const parentProgressJournal = await prisma.progressJournal.findUnique({
+    where: { id: progressJournalId, userId: authedUserId },
   })
+  if (parentProgressJournal) {
+    return prisma.progressJournalEntry.create({
+      data: {
+        ...data,
+        ProgressJournal: {
+          connect: { id: progressJournalId },
+        },
+      },
+      select,
+    })
+  } else {
+    console.error(
+      'Resolver: createProgressJournalEntry - authed user does not own the parent journal',
+    )
+    throw new AuthenticationError(
+      'Sorry, you do not own this journal so cannot create an entry for it.',
+    )
+  }
+}
 
 const updateProgressJournalEntry = async (
   r: any,
   { data }: MutationUpdateProgressJournalEntryArgs,
   { select, prisma }: Context,
 ) => {
+  // TODO: Check the user owns the parent progress journal. May need to pass the parent ID as an arg. Or add a User relation directly to the ProgressJournalEntry model.
+
   // Check for any old photos.
   const oldProgressJournalEntry: ProgressJournalEntry = await prisma.progressJournalEntry.findUnique(
     {
       where: { id: data.id },
       select: {
-        progressPhotoUrls: true,
+        progressPhotoUris: true,
       },
     },
   )
   // Compare with the new array of photo urls and delete any that have been removed.
-  const photoIdsForDeletion: string[] = oldProgressJournalEntry.progressPhotoUrls.filter(
+  const photoIdsForDeletion: string[] = oldProgressJournalEntry.progressPhotoUris.filter(
     (fileId) =>
-      !data.progressPhotoUrls || !data.progressPhotoUrls.includes(fileId),
+      !data.progressPhotoUris || !data.progressPhotoUris.includes(fileId),
   )
 
   if (photoIdsForDeletion.length > 0) {
@@ -271,17 +310,18 @@ const deleteProgressJournalEntryById = async (
   { progressJournalEntryId }: MutationDeleteProgressJournalEntryByIdArgs,
   { prisma }: Context,
 ) => {
+  // TODO: Check the user owns the parent progress journal. May need to pass the parent ID as an arg. Or add a User relation directly to the ProgressJournalEntry model.
   const deletedJournalEntry: ProgressJournalEntry = await prisma.progressJournalEntry.delete(
     {
       where: { id: progressJournalEntryId },
       select: {
-        progressPhotoUrls: true,
+        progressPhotoUris: true,
       },
     },
   )
 
-  if (deletedJournalEntry.progressPhotoUrls.length > 0) {
-    await deleteFiles(deletedJournalEntry.progressPhotoUrls)
+  if (deletedJournalEntry.progressPhotoUris.length > 0) {
+    await deleteFiles(deletedJournalEntry.progressPhotoUris)
   }
 
   return deletedJournalEntry.id

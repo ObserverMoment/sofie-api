@@ -15,7 +15,7 @@ const scheduledWorkouts = async (
 ) =>
   prisma.scheduledWorkout.findMany({
     where: {
-      user: { id: authedUserId },
+      User: { id: authedUserId },
     },
     select,
   })
@@ -29,17 +29,13 @@ const scheduleWorkout = async (
   prisma.scheduledWorkout.create({
     data: {
       ...data,
-      workout: data.workout
-        ? {
-            connect: { id: data.workout },
-          }
-        : undefined,
-      gymProfile: data.gymProfile
-        ? {
-            connect: { id: data.gymProfile },
-          }
-        : undefined,
-      user: {
+      Workout: {
+        connect: { id: data.Workout || undefined },
+      },
+      GymProfile: {
+        connect: { id: data.GymProfile || undefined },
+      },
+      User: {
         connect: { id: authedUserId },
       },
     },
@@ -49,11 +45,12 @@ const scheduleWorkout = async (
 const unscheduleWorkout = async (
   r: any,
   { scheduledWorkoutId }: MutationUnscheduleWorkoutArgs,
-  { prisma }: Context,
+  { authedUserId, prisma }: Context,
 ) => {
   const deleted: ScheduledWorkout = await prisma.scheduledWorkout.delete({
     where: {
       id: scheduledWorkoutId,
+      User: { id: authedUserId },
     },
   })
   return deleted.id
@@ -62,29 +59,24 @@ const unscheduleWorkout = async (
 const updateScheduledWorkout = async (
   r: any,
   { data }: MutationUpdateScheduledWorkoutArgs,
-  { select, prisma }: Context,
+  { authedUserId, select, prisma }: Context,
 ) =>
   prisma.scheduledWorkout.update({
     where: {
       id: data.id,
+      User: { id: authedUserId },
     },
     data: {
       ...data,
-      workout: data.workout
-        ? {
-            connect: { id: data.workout },
-          }
-        : undefined,
-      gymProfile: data.gymProfile
-        ? {
-            connect: { id: data.gymProfile },
-          }
-        : undefined,
-      loggedWorkout: data.loggedWorkout
-        ? {
-            connect: { id: data.loggedWorkout },
-          }
-        : undefined,
+      Workout: {
+        connect: { id: data.Workout || undefined },
+      },
+      GymProfile: {
+        connect: { id: data.GymProfile || undefined },
+      },
+      LoggedWorkout: {
+        connect: { id: data.LoggedWorkout || undefined },
+      },
     },
     select,
   })

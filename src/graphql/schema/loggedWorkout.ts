@@ -3,78 +3,104 @@ import { gql } from 'apollo-server-express'
 export default gql`
   type LoggedWorkout {
     id: ID!
-    name: String!
-    summary: String
-    description: String
     completedOn: DateTime!
+    name: String!
     notes: String
-    videoUrl: String
-    videoThumbUrl: String
-    imageUrl: String
-    duration: Int
-    workoutType: WorkoutType!
-    difficultyLevel: Int!
-    gymProfile: GymProfile
-    """
-    In a loggedWorkout, when you are doing rounds of a section, each round gets entered as a separate section - with its own time log.
-    """
-    workoutSections: [WorkoutSection!]!
-    originalWorkoutId: String
-    workoutProgramWorkout: WorkoutProgramWorkout
-    scheduledWorkout: ScheduledWorkout
+    videoUri: String
+    videoThumbUri: String
+    imageUri: String
+    LoggedWorkoutSections: [LoggedWorkoutSection!]!
+    Workout: Workout!
+    ScheduledWorkout: ScheduledWorkout
+    GymProfile: GymProfile
+    WorkoutProgramWorkout: WorkoutProgramWorkout
+    WorkoutProgramEnrolment: WorkoutProgramWorkout
   }
 
   input CreateLoggedWorkoutInput {
-    name: String
-    summary: String
-    description: String
     completedOn: DateTime!
+    name: String!
     notes: String
-    videoUrl: String
-    videoThumbUrl: String
-    imageUrl: String
-    duration: Int
-    workoutType: ID!
-    gymProfile: ID
-    workoutSections: [CreateWorkoutSectionInput!]!
-    originalWorkout: ID!
-    workoutProgramEnrolment: ID
-    workoutProgramWorkout: ID
-    scheduledWorkout: ID
+    videoUri: String
+    videoThumbUri: String
+    imageUri: String
+    LoggedWorkoutSections: [CreateLoggedWorkoutSectionInput!]!
+    Workout: ID!
+    ScheduledWorkout: ID
+    GymProfile: ID
+    WorkoutProgramWorkout: ID
+    WorkoutProgramEnrolment: ID
   }
 
-  input DeepUpdateLoggedWorkoutInput {
+  input UpdateLoggedWorkoutInput {
     id: ID!
-    name: String
-    summary: String
-    description: String
     completedOn: DateTime
+    name: String
     notes: String
-    videoUrl: String
-    videoThumbUrl: String
-    imageUrl: String
-    duration: Int
-    gymProfile: ID
-    workoutSections: [CreateWorkoutSectionInput!]!
-    workoutProgramEnrolment: ID
-    workoutProgramWorkout: ID
-    scheduledWorkout: ID
+    videoUri: String
+    videoThumbUri: String
+    imageUri: String
+    LoggedWorkoutSections: [CreateLoggedWorkoutSectionInput!]
+    Workout: ID
+    ScheduledWorkout: ID
+    GymProfile: ID
+    WorkoutProgramWorkout: ID
+    WorkoutProgramEnrolment: ID
   }
 
-  input ShallowUpdateLoggedWorkoutInput {
+  type LoggedWorkoutSection {
     id: ID!
-    name: String
-    summary: String
-    description: String
-    completedOn: DateTime
+    sortPosition: Int!
+    timeTakenMs: Int!
     notes: String
-    videoUrl: String
-    videoThumbUrl: String
-    imageUrl: String
-    duration: Int
-    gymProfile: ID
-    workoutProgramEnrolment: ID
-    workoutProgramWorkout: ID
-    scheduledWorkout: ID
+    WorkoutSectionType: WorkoutSectionType!
+    LoggedWorkoutSets: [LoggedWorkoutSet!]!
+    LoggedWorkout: LoggedWorkout!
+  }
+
+  input CreateLoggedWorkoutSectionInput {
+    sortPosition: Int!
+    timeTakenMs: Int!
+    notes: String
+    WorkoutSectionType: ID!
+    LoggedWorkoutSets: [CreateLoggedWorkoutSetInput!]!
+  }
+
+  type LoggedWorkoutSet {
+    id: ID!
+    sortPosition: Int!
+    timeTakenMs: Int
+    LoggedWorkoutMoves: [LoggedWorkoutMove!]!
+  }
+
+  input CreateLoggedWorkoutSetInput {
+    sortPosition: Int!
+    timeTakenMs: Int
+    LoggedWorkoutMoves: [CreateLoggedWorkoutMoveInput!]!
+  }
+
+  type LoggedWorkoutMove {
+    id: ID!
+    sortPosition: Int!
+    timeTakenMs: Int
+    repType: WorkoutMoveRepType!
+    reps: Float!
+    distanceUnit: DistanceUnit!
+    loadAmount: Float
+    loadUnit: LoadUnit!
+    Move: Move!
+    Equipment: Equipment
+  }
+
+  input CreateLoggedWorkoutMoveInput {
+    sortPosition: Int!
+    timeTakenMs: Int
+    repType: WorkoutMoveRepType!
+    reps: Float!
+    distanceUnit: DistanceUnit!
+    loadAmount: Float
+    loadUnit: LoadUnit
+    Move: ID!
+    Equipment: ID
   }
 `

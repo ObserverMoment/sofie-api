@@ -6,67 +6,55 @@ export default gql`
     createdAt: DateTime!
     name: String!
     description: String
-    imageUrl: String
-    videoUrl: String
-    videoThumbUrl: String
-    youtubeVideoUrl: String
-    scope: AccessScopeType!
-    createdBy: User
-    enrolments: [WorkoutProgramEnrolment!]
-    workoutGoals: [WorkoutGoal!]!
-    workoutProgramWorkouts: [WorkoutProgramWorkout!]!
-    workoutProgramReviews: [WorkoutProgramReview!]
+    coverImageUri: String
+    introVideoUri: String
+    introVideoThumbUri: String
+    introAudioUri: String
+    contentAccessScope: ContentAccessScope!
+    User: User
+    Enrolments: [WorkoutProgramEnrolment!]
+    WorkoutGoals: [WorkoutGoal!]!
+    WorkoutProgramWorkouts: [WorkoutProgramWorkout!]!
+    WorkoutProgramReviews: [WorkoutProgramReview!]
   }
 
   input CreateWorkoutProgramInput {
     name: String!
     description: String
-    scope: AccessScopeType!
-    imageUrl: String
-    videoUrl: String
-    videoThumbUrl: String
-    youtubeVideoUrl: String
-    workoutGoals: [ID!]!
-    workoutProgramWorkouts: [CreateWorkoutProgramWorkoutInput!]!
+    coverImageUri: String
+    introVideoUri: String
+    introVideoUri: String
+    introAudioUri: String
+    contentAccessScope: ContentAccessScope!
+    WorkoutGoals: [ID!]
+    WorkoutProgramWorkouts: [CreateWorkoutProgramWorkoutInput!]!
   }
 
-  # Used when nested children have been updated. i.e workoutProgramWorkouts need updating.
-  input DeepUpdateWorkoutProgramInput {
+  input UpdateWorkoutProgramInput {
     id: ID!
     name: String
     description: String
-    scope: AccessScopeType
-    imageUrl: String
-    videoUrl: String
-    videoThumbUrl: String
-    youtubeVideoUrl: String
-    workoutGoals: [ID!]!
-    workoutProgramWorkouts: [UpdateWorkoutProgramWorkoutInput!]!
-  }
-
-  input ShallowUpdateWorkoutProgramInput {
-    id: ID!
-    name: String
-    description: String
-    scope: AccessScopeType
-    imageUrl: String
-    videoUrl: String
-    videoThumbUrl: String
-    youtubeVideoUrl: String
-    workoutGoals: [ID!]!
+    coverImageUri: String
+    introVideoUri: String
+    introVideoUri: String
+    introAudioUri: String
+    contentAccessScope: ContentAccessScope
+    WorkoutGoals: [ID!]
+    # If present - resolver will deep update - deleting all descendants and rebuilding based on this input.
+    WorkoutProgramWorkouts: [UpdateWorkoutProgramWorkoutInput!]
   }
 
   type WorkoutProgramWorkout {
     id: ID!
     dayNumber: Float!
     notes: String
-    workout: Workout!
+    Workout: Workout!
   }
 
   input CreateWorkoutProgramWorkoutInput {
     dayNumber: Float!
     notes: String
-    workout: ID!
+    Workout: ID!
   }
 
   input UpdateWorkoutProgramWorkoutInput {
@@ -75,20 +63,20 @@ export default gql`
     id: ID
     dayNumber: Float!
     notes: String
-    workout: ID!
+    Workout: ID!
   }
 
   type WorkoutProgramEnrolment {
     id: ID!
     startDate: DateTime
-    user: User!
-    workoutProgram: WorkoutProgram!
-    loggedWorkouts: [LoggedWorkout!]
+    User: User!
+    WorkoutProgram: WorkoutProgram!
+    LoggedWorkouts: [LoggedWorkout!]
   }
 
   input AddLoggedWorkoutToProgramEnrolmentInput {
     workoutProgramEnrolmentId: ID!
-    loggedWorkout: CreateLoggedWorkoutInput!
+    LoggedWorkout: CreateLoggedWorkoutInput!
   }
 
   type WorkoutProgramReview {
@@ -96,7 +84,7 @@ export default gql`
     createdAt: DateTime!
     score: Float!
     comment: String
-    user: User!
+    User: User!
   }
 
   input CreateWorkoutProgramReviewInput {

@@ -40,8 +40,11 @@ const workoutGoals = async (r: any, a: any, { prisma, select }: Context) =>
 const moveTypes = async (r: any, a: any, { prisma, select }: Context) =>
   prisma.moveType.findMany({ select })
 
-const workoutTypes = async (r: any, a: any, { prisma, select }: Context) =>
-  prisma.workoutType.findMany({ select })
+const workoutSectionTypes = async (
+  r: any,
+  a: any,
+  { prisma, select }: Context,
+) => prisma.workoutSectionType.findMany({ select })
 
 export {
   bodyAreas,
@@ -50,5 +53,5 @@ export {
   updateEquipment,
   workoutGoals,
   moveTypes,
-  workoutTypes,
+  workoutSectionTypes,
 }

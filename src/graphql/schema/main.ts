@@ -6,6 +6,7 @@ export default gql`
 
   type Query {
     # User
+    validateToken: Boolean!
     checkUniqueDisplayName(displayName: String!): Boolean!
     userByUid(uid: ID!): User
     userPublicProfile(userId: ID!): UserPublicProfile
@@ -23,7 +24,7 @@ export default gql`
     standardMoves: [Move!]!
     bodyAreas: [BodyArea!]!
     equipments: [Equipment!]!
-    workoutTypes: [WorkoutType!]!
+    workoutSectionTypes: [WorkoutSectionType!]!
     moveTypes: [MoveType!]!
     workoutGoals: [WorkoutGoal]!
     officialWorkouts: [Workout!]!
@@ -76,11 +77,8 @@ export default gql`
     updateEquipment(data: UpdateEquipmentInput!): Equipment
     # Move
     createMove(data: CreateMoveInput!): Move
-    shallowUpdateMove(data: ShallowUpdateMoveInput!): Move
-    deepUpdateMove(data: DeepUpdateMoveInput!): Move
+    updateMove(data: UpdateMoveInput!): Move
     deleteMoveById(moveId: ID!): ID
-    createMoveProfile(data: CreateMoveProfileInput!): MoveProfile!
-    updateMoveProfile(data: UpdateMoveProfileInput!): MoveProfile!
     # Gym profile
     createGymProfile(data: CreateGymProfileInput!): GymProfile!
     updateGymProfile(data: UpdateGymProfileInput!): GymProfile!
@@ -88,8 +86,12 @@ export default gql`
     # Workout
     createWorkout(data: CreateWorkoutInput!): Workout!
     shallowUpdateWorkout(data: ShallowUpdateWorkoutInput!): Workout!
-    deepUpdateWorkout(data: DeepUpdateWorkoutInput!): Workout!
     deleteWorkoutById(workoutId: ID!): ID
+    updateWorkoutSections(
+      data: [UpdateWorkoutSectionInput!]!
+    ): [WorkoutSection!]!
+    deleteWorkoutSectionsById(workoutSectionIds: [ID!]!): [ID]
+    # Schedule Workout
     scheduleWorkout(data: CreateScheduledWorkoutInput!): ScheduledWorkout!
     unscheduleWorkout(scheduledWorkoutId: ID!): ID!
     updateScheduledWorkout(
@@ -97,19 +99,11 @@ export default gql`
     ): ScheduledWorkout!
     # Logged workout
     createLoggedWorkout(data: CreateLoggedWorkoutInput!): LoggedWorkout!
-    deepUpdateLoggedWorkout(data: DeepUpdateLoggedWorkoutInput!): LoggedWorkout!
-    shallowUpdateLoggedWorkout(
-      data: ShallowUpdateLoggedWorkoutInput!
-    ): LoggedWorkout!
+    updateLoggedWorkout(data: UpdateLoggedWorkoutInput!): LoggedWorkout!
     deleteLoggedWorkoutById(loggedWorkoutId: ID!): ID
     # Workout Program
     createWorkoutProgram(data: CreateWorkoutProgramInput!): WorkoutProgram!
-    shallowUpdateWorkoutProgram(
-      data: ShallowUpdateWorkoutProgramInput!
-    ): WorkoutProgram!
-    deepUpdateWorkoutProgram(
-      data: DeepUpdateWorkoutProgramInput!
-    ): WorkoutProgram!
+    updateWorkoutProgram(data: UpdateWorkoutProgramInput!): WorkoutProgram!
     deleteWorkoutProgramById(workoutProgramId: ID!): ID
     addEnrolmentToWorkoutProgram(workoutProgramId: ID!): WorkoutProgram!
     removeEnrolmentFromWorkoutProgram(
@@ -128,6 +122,17 @@ export default gql`
     id: ID!
     name: String!
     description: String!
-    placeholderImageUrl: String
+    imageUri: String
+  }
+
+  type WorkoutSectionType {
+    id: ID!
+    name: String!
+    subtitle: String!
+    description: String!
+    imageUri: String!
+    scoreType: WorkoutScoreType
+    WorkoutSections: [WorkoutSection!]!
+    LoggedWorkoutSections: [LoggedWorkoutSection!]!
   }
 `

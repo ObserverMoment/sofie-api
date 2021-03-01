@@ -1,8 +1,16 @@
+import { Prisma } from '@prisma/client'
 import {
+  CreateAmrapWorkoutSectionInput,
+  CreateFortimeWorkoutSectionInput,
+  CreateLastStandingWorkoutSectionInput,
+  CreateTimedWorkoutSectionInput,
+  CreateTrainingWorkoutSectionInput,
+  CreateWorkoutSectionInput,
   MutationCreateWorkoutArgs,
-  MutationDeepUpdateWorkoutArgs,
   MutationDeleteWorkoutByIdArgs,
+  MutationDeleteWorkoutSectionsByIdArgs,
   MutationShallowUpdateWorkoutArgs,
+  MutationUpdateWorkoutSectionsArgs,
   QueryWorkoutByIdArgs,
   Workout,
 } from '../../generated/graphql'
@@ -12,22 +20,24 @@ import { buildWorkoutSectionsData } from '../workoutBuilders'
 import { checkWorkoutMediaForDeletion, deleteFiles } from '../../uploadcare'
 
 import { Context } from '../..'
+import { ApolloError } from 'apollo-server'
 
 //// Queries ////
 const officialWorkouts = async (r: any, a: any, { select, prisma }: Context) =>
   prisma.workout.findMany({
-    where: { scope: 'OFFICIAL' },
+    where: { contentAccessScope: 'OFFICIAL' },
     select,
   })
 
 const publicWorkouts = async (r: any, a: any, { select, prisma }: Context) =>
   prisma.workout.findMany({
     where: {
-      scope: 'PUBLIC',
+      contentAccessScope: 'PUBLIC',
     },
     select,
   })
 
+// All user workouts, both public and private
 const userWorkouts = async (
   r: any,
   a: any,
@@ -35,11 +45,12 @@ const userWorkouts = async (
 ) =>
   prisma.workout.findMany({
     where: {
-      createdBy: { id: authedUserId },
+      userId: authedUserId,
     },
     select,
   })
 
+// Public workouts only via this resolver.
 const workoutById = async (
   r: any,
   { workoutId }: QueryWorkoutByIdArgs,
@@ -48,6 +59,7 @@ const workoutById = async (
   prisma.workout.findUnique({
     where: {
       id: workoutId,
+      contentAccessScope: 'PUBLIC',
     },
     select,
   })
@@ -57,82 +69,37 @@ const createWorkout = async (
   r: any,
   { data }: MutationCreateWorkoutArgs,
   { authedUserId, select, prisma }: Context,
-) =>
-  prisma.workout.create({
-    data: {
-      ...data,
-      workoutSections: {
-        create: buildWorkoutSectionsData(data.workoutSections),
-      },
-      workoutType: {
-        connect: { id: data.workoutType || undefined },
-      },
-      createdBy: {
-        connect: { id: authedUserId },
-      },
-    },
-    select,
-  })
-
-const deepUpdateWorkout = async (
-  r: any,
-  { data }: MutationDeepUpdateWorkoutArgs,
-  { select, prisma }: Context,
 ) => {
-  // Check if any media files need to be updated. Only delete files from the server after the rest of the transaction is complete.
-  const fileIdsForDeletion:
-    | string[]
-    | null = await checkWorkoutMediaForDeletion(prisma, data)
-
-  // 1. Delete all descendants - this will delete all workoutSections and their workoutMoves via cascade deletes.
-  // https://paljs.com/plugins/delete/
-  await prisma.onDelete({
-    model: 'WorkoutSection',
-    where: { workoutId: data.id },
-    deleteParent: true, // If false, just the descendants will be deleted.
-  })
-
-  // 2. Run the new update and create fresh descendants.
-  const updatedWorkout: Workout = await prisma.workout.update({
-    where: {
-      id: data.id,
-    },
-    data: {
-      ...data,
-      workoutSections: {
-        create: buildWorkoutSectionsData(data.workoutSections),
+  return validateWorkoutSectionsInput(data.WorkoutSections, async () => {
+    return prisma.workout.create({
+      data: {
+        ...data,
+        WorkoutSections: {
+          create: buildWorkoutSectionsData(data.WorkoutSections),
+        },
+        User: {
+          connect: { id: authedUserId },
+        },
       },
-      workoutType: {
-        connect: { id: data.workoutType || undefined },
-      },
-    },
-    select,
+      select,
+    })
   })
-
-  // Delete stale media from server if update was successful and media has changed.
-  if (updatedWorkout && fileIdsForDeletion) {
-    await deleteFiles(fileIdsForDeletion)
-  }
-
-  return updatedWorkout
 }
 
-// Note: To delete media files you send the value of the field as null.
-// This will set the value in the DB to null and the resolver will also go off and delete the old file from the media server.
 const shallowUpdateWorkout = async (
   r: any,
   { data }: MutationShallowUpdateWorkoutArgs,
-  { select, prisma }: Context,
+  { authedUserId, select, prisma }: Context,
 ) => {
   // Check if any media files need to be updated. Only delete files from the server after the rest of the transaction is complete.
   const fileIdsForDeletion:
     | string[]
     | null = await checkWorkoutMediaForDeletion(prisma, data)
 
-  // 1. Update workout.
   const updatedWorkout: Workout = await prisma.workout.update({
     where: {
       id: data.id,
+      userId: authedUserId,
     },
     data,
     select,
@@ -141,52 +108,149 @@ const shallowUpdateWorkout = async (
   if (updatedWorkout && fileIdsForDeletion) {
     await deleteFiles(fileIdsForDeletion)
   }
-
   return updatedWorkout
 }
 
 const deleteWorkoutById = async (
   r: any,
   { workoutId }: MutationDeleteWorkoutByIdArgs,
-  { prisma }: Context,
+  { authedUserId, prisma }: Context,
 ) => {
-  // Cascade delete reliant descendants with https://paljs.com/plugins/delete/
-  await prisma.onDelete({
-    model: 'Workout',
-    where: { id: workoutId },
-    deleteParent: false, // If false, just the descendants will be deleted.
-  })
-
-  // Delete workout and get back uploaded media related files.
-  const deletedWorkout: Workout = await prisma.workout.delete({
-    where: { id: workoutId },
+  // Get all media file uris from descendants
+  const workoutForDeletion: Workout = await prisma.workout.findUnique({
+    where: { id: workoutId, userId: authedUserId },
     select: {
       id: true,
-      imageUrl: true,
-      demoVideoUrl: true,
-      demoVideoThumbUrl: true,
+      introVideoUri: true,
+      introVideoThumbUri: true,
+      introAudioUri: true,
+      coverImageUri: true,
+      WorkoutSections: true,
     },
   })
 
-  // Check if there is media to be deleted from the uploadcare server.
-  if (deletedWorkout) {
-    const fileIdsForDeletion: string[] = []
-    if (deletedWorkout.imageUrl) {
-      fileIdsForDeletion.push(deletedWorkout.imageUrl)
-    }
-    if (deletedWorkout.demoVideoUrl) {
-      fileIdsForDeletion.push(deletedWorkout.demoVideoUrl)
-    }
-    if (deletedWorkout.demoVideoThumbUrl) {
-      fileIdsForDeletion.push(deletedWorkout.demoVideoThumbUrl)
-    }
+  const fileIdsForDeletion: string[] = [
+    workoutForDeletion.introVideoUri,
+    workoutForDeletion.introVideoThumbUri,
+    workoutForDeletion.introAudioUri,
+    workoutForDeletion.coverImageUri,
+    ...workoutForDeletion.WorkoutSections.map((section) => [
+      section.introAudioUri,
+      section.introVideoUri,
+      section.introVideoThumbUri,
+      section.classAudioUri,
+      section.classVideoUri,
+      section.classVideoThumbUri,
+      section.outroAudioUri,
+      section.outroVideoUri,
+      section.outroVideoThumbUri,
+    ]),
+  ]
+    .flat()
+    .filter((x) => !!x) as string[]
+
+  // Cascade delete Workout and descendants with https://paljs.com/plugins/delete/
+  const { count }: Prisma.BatchPayload = await prisma.onDelete({
+    model: 'Workout',
+    where: { id: workoutId, userId: authedUserId },
+    deleteParent: true, // If false, just the descendants will be deleted.
+  })
+
+  // Is this a valid check for successful cascade delete??
+  if (count && count > 0) {
+    // Check if there is media to be deleted from the uploadcare server.
     if (fileIdsForDeletion.length > 0) {
       await deleteFiles(fileIdsForDeletion)
     }
-    return deletedWorkout.id
+    return workoutForDeletion.id
   } else {
     return null
   }
+}
+
+const updateWorkoutSections = async (
+  r: any,
+  { data }: MutationUpdateWorkoutSectionsArgs,
+  { authedUserId, select, prisma }: Context,
+) => {}
+
+const deleteWorkoutSectionsById = async (
+  r: any,
+  { workoutSectionIds }: MutationDeleteWorkoutSectionsByIdArgs,
+  { authedUserId, select, prisma }: Context,
+) => {}
+
+//// Input validation ////
+/**
+ * Workout Sections Input Validation
+ */
+// DB Ids for the different workout types.
+const sectionSubTypes: { [key: string]: string[] } = {
+  TrainingWorkoutSection: ['1'],
+  TimedWorkoutSection: ['0', '4', '5'],
+  AmrapWorkoutSection: ['2'],
+  FortimeWorkoutSection: ['3'],
+  LastStandingWorkoutSection: ['6'],
+}
+
+export type AnyWorkoutSectionInput =
+  | CreateTimedWorkoutSectionInput
+  | CreateTrainingWorkoutSectionInput
+  | CreateAmrapWorkoutSectionInput
+  | CreateFortimeWorkoutSectionInput
+  | CreateLastStandingWorkoutSectionInput
+
+function validateWorkoutSectionsInput(
+  data: CreateWorkoutSectionInput[],
+  resolver: () => Promise<Workout>,
+) {
+  // Check that only one section subtype is being provided and that it matches the provided workoutType.
+  // Similar to this check for exclusive-belongs-to pattern.
+  // https://hashrocket.com/blog/posts/modeling-polymorphic-associations-in-a-relational-database
+  for (let section of data) {
+    let subTypeKey: string | null = null
+    if (
+      Object.keys(sectionSubTypes).reduce((acum, type) => {
+        if ((section as any)[type]) {
+          if (sectionSubTypes[type].includes(section.WorkoutSectionType)) {
+            subTypeKey = type
+            return acum++
+          } else {
+            throw new ApolloError(
+              'validateWorkoutSectionsInput: The workout section type does not match the sub section type',
+            )
+          }
+        } else {
+          return acum
+        }
+      }, 0) !== 1
+    ) {
+      throw new ApolloError(
+        'validateWorkoutSectionsInput: One "section subtype" exactly per section must be provided',
+      )
+    }
+    if (!subTypeKey) {
+      throw new ApolloError(
+        'validateWorkoutSectionsInput: Could not find the subtype. One "section subtype" exactly per section must be provided',
+      )
+    }
+    // Check that all of the workoutmoves have the correct fields
+    const subSectionData: AnyWorkoutSectionInput = section[subTypeKey]
+    if (
+      (subSectionData as AnyWorkoutSectionInput).WorkoutSets.some((set) =>
+        set.WorkoutMoves.some(
+          (workoutMove) =>
+            (workoutMove.repType === 'DISTANCE' && !workoutMove.distanceUnit) ||
+            (workoutMove.loadAmount && !workoutMove.loadUnit),
+        ),
+      )
+    ) {
+      throw new ApolloError(
+        'Invalid WorkoutMove input: Rep type of DISTANCE requires that distance unit be specified and a non-null loadAmount requires that loadUnit be specified. One of these was missing for one or more of the loggedWorkoutMoves you submitted',
+      )
+    }
+  }
+  return resolver()
 }
 
 export {
@@ -195,7 +259,8 @@ export {
   userWorkouts,
   workoutById,
   createWorkout,
-  deepUpdateWorkout,
   shallowUpdateWorkout,
   deleteWorkoutById,
+  updateWorkoutSections,
+  deleteWorkoutSectionsById,
 }

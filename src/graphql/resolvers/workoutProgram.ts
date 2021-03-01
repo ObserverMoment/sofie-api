@@ -4,12 +4,12 @@ import {
   CreateWorkoutProgramWorkoutInput,
   MutationAddEnrolmentToWorkoutProgramArgs,
   MutationCreateWorkoutProgramArgs,
-  MutationDeepUpdateWorkoutProgramArgs,
   MutationDeleteWorkoutProgramByIdArgs,
   MutationRemoveEnrolmentFromWorkoutProgramArgs,
-  MutationShallowUpdateWorkoutProgramArgs,
+  MutationUpdateWorkoutProgramArgs,
   QueryUserWorkoutProgramEnrolmentsArgs,
   QueryWorkoutProgramByIdArgs,
+  UpdateWorkoutProgramInput,
   UpdateWorkoutProgramWorkoutInput,
   WorkoutProgram,
 } from '../../generated/graphql'
@@ -46,7 +46,7 @@ const userWorkoutPrograms = async (
 ) =>
   prisma.workoutProgram.findMany({
     where: {
-      createdById: authedUserId,
+      Creator: { id: authedUserId },
     },
     select,
   })
@@ -70,8 +70,8 @@ const userWorkoutProgramEnrolments = async (
 ) =>
   prisma.workoutProgramEnrolment.findMany({
     where: {
-      user: { id: authedUserId },
-      workoutProgram: { id: workoutProgramId },
+      User: { id: authedUserId },
+      WorkoutProgram: { id: workoutProgramId },
     },
     select,
   })
@@ -85,17 +85,19 @@ const createWorkoutProgram = async (
   return prisma.workoutProgram.create({
     data: {
       ...data,
-      createdBy: {
+      Creator: {
         connect: { id: authedUserId },
       },
       workoutGoals: {
-        connect: data.workoutGoals.map((id) => ({ id })),
+        connect: data.WorkoutGoals
+          ? data.WorkoutGoals.map((id) => ({ id }))
+          : [],
       },
       workoutProgramWorkouts: {
-        create: data.workoutProgramWorkouts.map((pw) => ({
+        create: data.WorkoutProgramWorkouts.map((pw) => ({
           ...pw,
-          workout: {
-            connect: { id: pw.workout },
+          Workout: {
+            connect: { id: pw.Workout },
           },
         })),
       },
@@ -104,16 +106,17 @@ const createWorkoutProgram = async (
   })
 }
 
-// For deepUpdateWorkoutProgram resolver. Segment inputs by process type depending on prior existence in the DB.
+// For deepUpdateWorkoutProgram resolver. Segment workoutProgramWorkout inputs by process type depending on prior existence in the DB.
 interface WorkoutProgramWorkoutUpdates {
   create: CreateWorkoutProgramWorkoutInput[]
   update: UpdateWorkoutProgramWorkoutInput[]
   delete: string[]
 }
 
-const deepUpdateWorkoutProgram = async (
+//// Main Resolver - Can run a deep or a shallow update depending on which fields are provided.
+const updateWorkoutProgram = async (
   r: any,
-  { data }: MutationDeepUpdateWorkoutProgramArgs,
+  { data }: MutationUpdateWorkoutProgramArgs,
   { select, prisma }: Context,
 ) => {
   // Check if any media files need to be updated. Only delete files from the server after the rest of the transaction is complete.
@@ -121,6 +124,20 @@ const deepUpdateWorkoutProgram = async (
     | string[]
     | null = await checkWorkoutProgramMediaForDeletion(prisma, data)
 
+  if (data.WorkoutProgramWorkouts) {
+    // Deep update
+    return deepUpdateWorkoutProgram(data, prisma, select, fileIdsForDeletion)
+  } else {
+    return shallowUpdateWorkoutProgram(data, prisma, select, fileIdsForDeletion)
+  }
+}
+
+const deepUpdateWorkoutProgram = async (
+  data: UpdateWorkoutProgramInput,
+  prisma: any,
+  select: any,
+  fileIdsForDeletion: string[] | null,
+) => {
   // Check which workoutProgramWorkouts existed prior to this update.
   const previousWorkoutProgramWorkoutIds: string[] = (
     await prisma.workoutProgramWorkout.findMany({
@@ -133,32 +150,38 @@ const deepUpdateWorkoutProgram = async (
     })
   ).map((wpw: WorkoutProgramWorkout) => wpw.id)
 
-  const wpwUpdates: WorkoutProgramWorkoutUpdates = data.workoutProgramWorkouts.reduce(
-    (
-      acum: WorkoutProgramWorkoutUpdates,
-      nextWpw: UpdateWorkoutProgramWorkoutInput,
-    ) => {
-      if (nextWpw.id && previousWorkoutProgramWorkoutIds.includes(nextWpw.id)) {
-        // Remove the id from list of wpws that need to be deleted.
-        // i.e. old wpw idss that are not found in the updated array.
-        acum.delete = acum.delete.filter((id) => id != nextWpw.id)
-        // update required
-        acum.update.push(nextWpw)
-      } else if (!nextWpw.id) {
-        // New wpws that are to be created will not have ids - this field will be null.
-        // create required
-        // Remove the null id field so it does not error when prisma call is made.
-        delete nextWpw.id
-        acum.create.push(nextWpw)
-      }
-      return acum
-    },
-    {
-      create: [],
-      update: [],
-      delete: previousWorkoutProgramWorkoutIds, // Start with the full previous list of ids and then remove any that are included in the update data.
-    } as WorkoutProgramWorkoutUpdates,
-  )
+  // Double check workoutprogramWorkouts exists and if not return and empty update object.
+  const wpwUpdates: WorkoutProgramWorkoutUpdates = data.WorkoutProgramWorkouts
+    ? data.WorkoutProgramWorkouts.reduce(
+        (
+          acum: WorkoutProgramWorkoutUpdates,
+          nextWpw: UpdateWorkoutProgramWorkoutInput,
+        ) => {
+          if (
+            nextWpw.id &&
+            previousWorkoutProgramWorkoutIds.includes(nextWpw.id)
+          ) {
+            // Remove the id from list of wpws that need to be deleted.
+            // i.e. old wpw idss that are not found in the updated array.
+            acum.delete = acum.delete.filter((id) => id != nextWpw.id)
+            // update required
+            acum.update.push(nextWpw)
+          } else if (!nextWpw.id) {
+            // New wpws that are to be created will not have ids - this field will be null.
+            // create required
+            // Remove the null id field so it does not error when prisma call is made.
+            delete nextWpw.id
+            acum.create.push(nextWpw)
+          }
+          return acum
+        },
+        {
+          create: [],
+          update: [],
+          delete: previousWorkoutProgramWorkoutIds, // Start with the full previous list of ids and then remove any that are included in the update data.
+        } as WorkoutProgramWorkoutUpdates,
+      )
+    : { create: [], update: [], delete: [] }
 
   const updatedWorkoutProgram: WorkoutProgram = await prisma.workoutProgram.update(
     {
@@ -168,26 +191,28 @@ const deepUpdateWorkoutProgram = async (
       data: {
         ...data,
         workoutGoals: {
-          set: data.workoutGoals.map((id) => ({ id })),
+          set: data.WorkoutGoals ? data.WorkoutGoals.map((id) => ({ id })) : [],
         },
-        workoutProgramWorkouts: {
-          create: wpwUpdates.create.map((pw) => ({
-            ...pw,
-            workout: {
-              connect: { id: pw.workout },
-            },
-          })),
-          update: wpwUpdates.update.map((pw) => ({
-            where: { id: pw.id },
-            data: {
-              ...pw,
-              workout: {
-                connect: { id: pw.workout },
-              },
-            },
-          })),
-          delete: wpwUpdates.delete.map((id) => ({ id })),
-        },
+        workoutProgramWorkouts: data.WorkoutProgramWorkouts
+          ? {
+              create: wpwUpdates.create.map((pw) => ({
+                ...pw,
+                workout: {
+                  connect: { id: pw.Workout },
+                },
+              })),
+              update: wpwUpdates.update.map((pw) => ({
+                where: { id: pw.id },
+                data: {
+                  ...pw,
+                  workout: {
+                    connect: { id: pw.Workout },
+                  },
+                },
+              })),
+              delete: wpwUpdates.delete.map((id) => ({ id })),
+            }
+          : null,
       },
       select,
     },
@@ -202,15 +227,11 @@ const deepUpdateWorkoutProgram = async (
 }
 
 const shallowUpdateWorkoutProgram = async (
-  r: any,
-  { data }: MutationShallowUpdateWorkoutProgramArgs,
-  { select, prisma }: Context,
+  data: UpdateWorkoutProgramInput,
+  prisma: any,
+  select: any,
+  fileIdsForDeletion: string[] | null,
 ) => {
-  // Check if any media files need to be updated. Only delete files from the server after the rest of the transaction is complete.
-  const fileIdsForDeletion:
-    | string[]
-    | null = await checkWorkoutProgramMediaForDeletion(prisma, data)
-
   const updatedWorkoutProgram: WorkoutProgram = await prisma.workoutProgram.update(
     {
       where: {
@@ -219,7 +240,7 @@ const shallowUpdateWorkoutProgram = async (
       data: {
         ...data,
         workoutGoals: {
-          set: data.workoutGoals.map((id) => ({ id })),
+          set: data.WorkoutGoals ? data.WorkoutGoals.map((id) => ({ id })) : [],
         },
       },
       select,
@@ -251,9 +272,9 @@ const deleteWorkoutProgramById = async (
       where: { id: workoutProgramId },
       select: {
         id: true,
-        imageUrl: true,
-        videoUrl: true,
-        videoThumbUrl: true,
+        imageUri: true,
+        videoUri: true,
+        videoThumbUri: true,
       },
     },
   )
@@ -261,14 +282,14 @@ const deleteWorkoutProgramById = async (
   // Check if there is media to be deleted from the uploadcare server.
   if (deletedWorkoutProgram) {
     const fileIdsForDeletion: string[] = []
-    if (deletedWorkoutProgram.imageUrl) {
-      fileIdsForDeletion.push(deletedWorkoutProgram.imageUrl)
+    if (deletedWorkoutProgram.coverImageUri) {
+      fileIdsForDeletion.push(deletedWorkoutProgram.coverImageUri)
     }
-    if (deletedWorkoutProgram.videoUrl) {
-      fileIdsForDeletion.push(deletedWorkoutProgram.videoUrl)
+    if (deletedWorkoutProgram.introVideoUri) {
+      fileIdsForDeletion.push(deletedWorkoutProgram.introVideoUri)
     }
-    if (deletedWorkoutProgram.videoThumbUrl) {
-      fileIdsForDeletion.push(deletedWorkoutProgram.videoThumbUrl)
+    if (deletedWorkoutProgram.introVideoThumbUri) {
+      fileIdsForDeletion.push(deletedWorkoutProgram.introVideoThumbUri)
     }
     if (fileIdsForDeletion.length > 0) {
       await deleteFiles(fileIdsForDeletion)
@@ -326,8 +347,7 @@ export {
   workoutProgramById,
   userWorkoutProgramEnrolments,
   createWorkoutProgram,
-  deepUpdateWorkoutProgram,
-  shallowUpdateWorkoutProgram,
+  updateWorkoutProgram,
   deleteWorkoutProgramById,
   addEnrolmentToWorkoutProgram,
   removeEnrolmentFromWorkoutProgram,

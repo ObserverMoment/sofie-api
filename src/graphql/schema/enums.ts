@@ -3,9 +3,8 @@ import { gql } from 'apollo-server-express'
 export default gql`
   """
   Enums
-  enums
   """
-  enum AccessScopeType {
+  enum ContentAccessScope {
     PRIVATE
     PUBLIC
     PAID
@@ -24,23 +23,17 @@ export default gql`
     UPPER
   }
 
-  enum DifficultyLevel {
-    ONE
-    TWO
-    THREE
-    FOUR
-  }
-
   enum DistanceUnit {
     METRES
     KILOMETRES
     YARDS
     MILES
   }
+
   enum Gender {
     MALE
     FEMALE
-    UNSPECIFIED
+    NONBINARY
   }
 
   enum LoadUnit {
@@ -90,22 +83,5 @@ export default gql`
   enum UserProfileScope {
     PRIVATE
     PUBLIC
-  }
-
-  """
-  For generating rules which can adjust rep and load over the course of a workout
-  """
-  enum RuleAction {
-    INCREASE
-    DECREASE
-    MULTIPLY
-  }
-
-  """
-  For generating rules which can adjust rep and load over the course of a workout
-  """
-  enum RuleTarget {
-    REPS
-    LOAD
   }
 `

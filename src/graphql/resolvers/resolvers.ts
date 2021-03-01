@@ -36,7 +36,7 @@ import {
   createEquipment,
   updateEquipment,
   workoutGoals,
-  workoutTypes,
+  workoutSectionTypes,
   moveTypes,
 } from './officialData'
 
@@ -53,8 +53,7 @@ import {
   workoutProgramById,
   userWorkoutProgramEnrolments,
   createWorkoutProgram,
-  deepUpdateWorkoutProgram,
-  shallowUpdateWorkoutProgram,
+  updateWorkoutProgram,
   deleteWorkoutProgramById,
   addEnrolmentToWorkoutProgram,
   removeEnrolmentFromWorkoutProgram,
@@ -64,8 +63,7 @@ import {
   standardMoves,
   userCustomMoves,
   createMove,
-  shallowUpdateMove,
-  deepUpdateMove,
+  updateMove,
   deleteMoveById,
 } from './move'
 
@@ -75,9 +73,10 @@ import {
   userWorkouts,
   workoutById,
   createWorkout,
-  deepUpdateWorkout,
   shallowUpdateWorkout,
   deleteWorkoutById,
+  updateWorkoutSections,
+  deleteWorkoutSectionsById,
 } from './workout'
 
 import {
@@ -90,8 +89,7 @@ import {
 import {
   loggedWorkouts,
   createLoggedWorkout,
-  deepUpdateLoggedWorkout,
-  shallowUpdateLoggedWorkout,
+  updateLoggedWorkout,
   deleteLoggedWorkoutById,
 } from './loggedWorkout'
 
@@ -118,6 +116,7 @@ const resolvers: Resolvers = {
     },
   }),
   Query: {
+    validateToken: () => true, // Empty Resolver - call it and it will throw auth error if token is not valid / expired.
     checkUniqueDisplayName,
     userByUid,
     userPublicProfile,
@@ -127,7 +126,7 @@ const resolvers: Resolvers = {
     bodyAreas,
     equipments,
     workoutGoals,
-    workoutTypes,
+    workoutSectionTypes,
     moveTypes,
     officialWorkoutPrograms,
     publicWorkoutPrograms,
@@ -153,26 +152,24 @@ const resolvers: Resolvers = {
     createEquipment,
     updateEquipment,
     createMove,
-    shallowUpdateMove,
-    deepUpdateMove,
+    updateMove,
     deleteMoveById,
     createGymProfile,
     updateGymProfile,
     deleteGymProfileById,
     createWorkout,
-    deepUpdateWorkout,
     shallowUpdateWorkout,
     deleteWorkoutById,
+    updateWorkoutSections,
+    deleteWorkoutSectionsById,
     scheduleWorkout,
     unscheduleWorkout,
     updateScheduledWorkout,
     createLoggedWorkout,
-    deepUpdateLoggedWorkout,
-    shallowUpdateLoggedWorkout,
+    updateLoggedWorkout,
     deleteLoggedWorkoutById,
     createWorkoutProgram,
-    deepUpdateWorkoutProgram,
-    shallowUpdateWorkoutProgram,
+    updateWorkoutProgram,
     deleteWorkoutProgramById,
     addEnrolmentToWorkoutProgram,
     removeEnrolmentFromWorkoutProgram,
