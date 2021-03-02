@@ -260,6 +260,7 @@ model WorkoutSection {
   introVideoThumbUri           String?
   introAudioUri                String? // Will play before workout starts
   classVideoUri                String? // Will loop throughout duration of the workout
+  classVideoThumbUri           String?
   classAudioUri                String? // Will loop throughout duration of the workout
   outroVideoUri                String? // Will play at end of workout
   outroVideoThumbUri           String?
@@ -270,14 +271,8 @@ model WorkoutSection {
   TrainingWorkoutSection       TrainingWorkoutSection?     @relation(fields: [trainingWorkoutSectionId], references: [id])
   trainingWorkoutSectionId     String?
   /// @onDelete(CASCADE)
-  TimedWorkoutSection          TimedWorkoutSection?        @relation(fields: [timedWorkoutSectionId], references: [id])
-  timedWorkoutSectionId        String?
-  /// @onDelete(CASCADE)
   AmrapWorkoutSection          AmrapWorkoutSection?        @relation(fields: [amrapWorkoutSectionId], references: [id])
   amrapWorkoutSectionId        String?
-  /// @onDelete(CASCADE)
-  FortimeWorkoutSection        FortimeWorkoutSection?      @relation(fields: [fortimeWorkoutSectionId], references: [id])
-  fortimeWorkoutSectionId      String?
   /// @onDelete(CASCADE)
   LastStandingWorkoutSection   LastStandingWorkoutSection? @relation(fields: [lastStandingWorkoutSectionId], references: [id])
   lastStandingWorkoutSectionId String?
@@ -286,80 +281,50 @@ model WorkoutSection {
   // E.g. TimedWorkoutSection must be 'HIIT', 'EMOM' or 'Tabata' type.
   WorkoutSectionType           WorkoutSectionType          @relation(fields: [workoutSectionTypeId], references: [id])
   workoutSectionTypeId         String
-}
-
-//// Timed Sections i.e. HIIT Circuit, Tabata, EMOM ////
-model TimedWorkoutSection {
-  id             String          @id @default(uuid())
-  createdAt      DateTime        @default(now())
-  rounds         Int
   /// @onDelete(CASCADE)
-  WorkoutSets    WorkoutSet[]
-  WorkoutSection WorkoutSection?
+  WorkoutSets                  WorkoutSet[]
 }
 
-//// Non Timed / Competitive Sections ////
+/// Fixed Set of moves - open ended time - or timed ///
 model TrainingWorkoutSection {
   id             String           @id @default(uuid())
   createdAt      DateTime         @default(now())
-  /// @onDelete(CASCADE)
-  WorkoutSets    WorkoutSet[]
+  rounds         Int
   WorkoutSection WorkoutSection[]
 }
 
+/// Fixed time - open ended set / quantity of moves ///
 model AmrapWorkoutSection {
-  id             String          @id @default(uuid())
-  createdAt      DateTime        @default(now())
+  id             String           @id @default(uuid())
+  createdAt      DateTime         @default(now())
   timecap        Int // Seconds
-  /// @onDelete(CASCADE)
-  WorkoutSets    WorkoutSet[]
-  WorkoutSection WorkoutSection?
+  WorkoutSection WorkoutSection[]
 }
 
-model FortimeWorkoutSection {
-  id             String          @id @default(uuid())
-  createdAt      DateTime        @default(now())
-  rounds         Int             @default(1)
-  timecap        Int? // Seconds - optional timecap / max time.
-  /// @onDelete(CASCADE)
-  WorkoutSets    WorkoutSet[]
-  WorkoutSection WorkoutSection?
-}
-
-//// Keep completing the workout sets within the timecap for as long as possible ////
+/// Competitive: Keep completing the workout sets within the timecap for as long as possible ///
 model LastStandingWorkoutSection {
-  id             String          @id @default(uuid())
-  createdAt      DateTime        @default(now())
+  id             String           @id @default(uuid())
+  createdAt      DateTime         @default(now())
   finishAfter    Int? // Seconds - optional "finish line" for if you need to ensure non open ended length.
   // Initially timecaps[0] is timecap for workoutsSets[0], timecaps[1] for workoutSets[1] etc
   // Arrays do not need to be the same length - each can loop at different points
   timecaps       Int[]
-  /// @onDelete(CASCADE)
-  WorkoutSets    WorkoutSet[]
-  WorkoutSection WorkoutSection?
+  WorkoutSection WorkoutSection[]
 }
 
 model WorkoutSet {
-  id                           String                      @id @default(uuid())
-  createdAt                    DateTime                    @default(now())
-  sortPosition                 Int
-  rounds                       Int                         @default(1)
-  notes                        String?
+  id               String         @id @default(uuid())
+  createdAt        DateTime       @default(now())
+  sortPosition     Int
+  rounds           Int            @default(1)
+  notes            String?
   // If there is more than one move then this is a superset
   // In a superset you do each workoutMove in the array one after another
   // And then repeat this process {rounds} times
   /// @onDelete(CASCADE)
-  WorkoutMoves                 WorkoutMove[]
-  AmrapWorkoutSection          AmrapWorkoutSection?        @relation(fields: [amrapWorkoutSectionId], references: [id])
-  amrapWorkoutSectionId        String?
-  FortimeWorkoutSection        FortimeWorkoutSection?      @relation(fields: [fortimeWorkoutSectionId], references: [id])
-  fortimeWorkoutSectionId      String?
-  TrainingWorkoutSection       TrainingWorkoutSection?     @relation(fields: [trainingWorkoutSectionId], references: [id])
-  trainingWorkoutSectionId     String?
-  LastStandingWorkoutSection   LastStandingWorkoutSection? @relation(fields: [lastStandingWorkoutSectionId], references: [id])
-  lastStandingWorkoutSectionId String?
-  TimedWorkoutSection          TimedWorkoutSection?        @relation(fields: [timedWorkoutSectionId], references: [id])
-  timedWorkoutSectionId        String?
+  WorkoutMoves     WorkoutMove[]
+  WorkoutSection   WorkoutSection @relation(fields: [workoutSectionId], references: [id])
+  workoutSectionId String
 }
 
 model WorkoutMove {
@@ -524,7 +489,8 @@ model LoggedWorkoutSection {
 model LoggedWorkoutSet {
   id                     String               @id @default(uuid())
   createdAt              DateTime             @default(now())
-  sortPosition           Int
+  setIndex               Int // The sort position of the WorkoutSet
+  roundIndex             Int // The iteration (round) of the set during the workout
   timeTakenMs            Int? // Milliseconds - optional
   /// @onDelete(CASCADE)
   LoggedWorkoutMoves     LoggedWorkoutMove[]
@@ -539,9 +505,9 @@ model LoggedWorkoutMove {
   timeTakenMs        Int? // Milliseconds - optional
   repType            WorkoutMoveRepType @default(TIME)
   reps               Float              @default(10)
-  distanceUnit       DistanceUnit       @default(METRES)
+  distanceUnit       DistanceUnit?      @default(METRES)
   loadAmount         Float?
-  loadUnit           LoadUnit           @default(KG)
+  loadUnit           LoadUnit?          @default(KG)
   Move               Move               @relation(fields: [moveId], references: [id])
   moveId             String
   Equipment          Equipment?         @relation(fields: [equipmentId], references: [id])

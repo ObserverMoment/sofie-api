@@ -1,115 +1,75 @@
 import { Prisma } from '@prisma/client'
 import {
   CreateLoggedWorkoutSectionInput,
-  CreateWorkoutMoveInput,
   CreateWorkoutSectionInput,
-  CreateWorkoutSetInput,
 } from '../generated/graphql'
-import { AnyWorkoutSectionInput } from './resolvers/workout'
 
 export function buildWorkoutSectionsData(
   workoutSections: CreateWorkoutSectionInput[],
 ) {
   return workoutSections.map((section) => ({
     ...section,
-    WorkoutType: {
-      connect: { id: section.WorkoutType },
+    WorkoutSectionType: {
+      connect: { id: section.WorkoutSectionType },
     },
-    TimedWorkoutSection: section.TimedWorkoutSection
-      ? {
-          create: {
-            data: buildWorkoutSection(section.TimedWorkoutSection),
-          },
-        }
-      : undefined,
-    TrainingWorkoutSection: section.TrainingWorkoutSection
-      ? {
-          create: {
-            data: buildWorkoutSection(section.TrainingWorkoutSection),
-          },
-        }
-      : undefined,
-    AmrapWorkoutSection: section.AmrapWorkoutSection
-      ? {
-          create: {
-            data: buildWorkoutSection(section.AmrapWorkoutSection),
-          },
-        }
-      : undefined,
-    FortimeWorkoutSection: section.FortimeWorkoutSection
-      ? {
-          create: {
-            data: buildWorkoutSection(section.FortimeWorkoutSection),
-          },
-        }
-      : undefined,
-    LastStandingSection: section.LastStandingWorkoutSection
-      ? {
-          create: {
-            data: buildWorkoutSection(section.LastStandingWorkoutSection),
-          },
-        }
-      : undefined,
-  }))
-}
-
-function buildWorkoutSection(section: AnyWorkoutSectionInput) {
-  return {
-    ...section,
     WorkoutSets: {
-      create: section.WorkoutSets.map((set: CreateWorkoutSetInput) => ({
+      create: section.WorkoutSets.map((set) => ({
         ...set,
         WorkoutMoves: {
-          create: set.WorkoutMoves.map(
-            (workoutMove: CreateWorkoutMoveInput) => ({
-              ...workoutMove,
-              Move: {
-                connect: {
-                  id: workoutMove.Move,
-                },
+          create: set.WorkoutMoves.map((workoutMove) => ({
+            ...workoutMove,
+            Move: {
+              connect: {
+                id: workoutMove.Move,
               },
-              Equipment: {
-                connect: {
-                  id: workoutMove.Equipment || undefined,
-                },
+            },
+            Equipment: {
+              connect: {
+                id: workoutMove.Equipment || undefined,
               },
-            }),
-          ),
+            },
+          })),
         },
       })),
     },
-  }
+    TrainingWorkoutSection: {
+      create: section.TrainingWorkoutSection || undefined,
+    },
+    AmrapWorkoutSection: {
+      create: section.AmrapWorkoutSection || undefined,
+    },
+    LastStandingWorkoutSection: {
+      create: section.LastStandingWorkoutSection || undefined,
+    },
+  }))
 }
 
 ///// Logged Workout Sections Builder /////
 export function buildLoggedWorkoutSectionsData(
   loggedWorkoutSections: CreateLoggedWorkoutSectionInput[],
 ) {
-  return loggedWorkoutSections.map(
-    (section) =>
-      ({
-        ...section,
-        WorkoutSectionType: {
-          connect: { id: section.WorkoutSectionType },
-        },
-        LoggedWorkoutSets: {
-          create: section.LoggedWorkoutSets.map((set) => ({
-            ...set,
-            LoggedWorkoutMoves: {
-              create: set.LoggedWorkoutMoves.map((workoutMove) => ({
-                ...workoutMove,
-                Equipment: {
-                  connect: {
-                    id: workoutMove.Equipment || undefined,
-                  },
-                },
-                move: {
-                  connect: { id: workoutMove.Move },
-                },
-              })),
+  return loggedWorkoutSections.map((section) => ({
+    ...section,
+    WorkoutSectionType: {
+      connect: { id: section.WorkoutSectionType },
+    },
+    LoggedWorkoutSets: {
+      create: section.LoggedWorkoutSets.map((set) => ({
+        ...set,
+        LoggedWorkoutMoves: {
+          create: set.LoggedWorkoutMoves.map((workoutMove) => ({
+            ...workoutMove,
+            Equipment: {
+              connect: {
+                id: workoutMove.Equipment || undefined,
+              },
+            },
+            move: {
+              connect: { id: workoutMove.Move },
             },
           })),
         },
-      } as Prisma.LoggedWorkoutSectionCreateWithoutLoggedWorkoutInput),
-  )
+      })),
+    },
+  }))
 }

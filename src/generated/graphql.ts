@@ -875,13 +875,15 @@ export type CreateLoggedWorkoutSectionInput = {
 export type LoggedWorkoutSet = {
   __typename?: 'LoggedWorkoutSet';
   id: Scalars['ID'];
-  sortPosition: Scalars['Int'];
+  setIndex: Scalars['Int'];
+  roundIndex: Scalars['Int'];
   timeTakenMs?: Maybe<Scalars['Int']>;
   LoggedWorkoutMoves: Array<LoggedWorkoutMove>;
 };
 
 export type CreateLoggedWorkoutSetInput = {
-  sortPosition: Scalars['Int'];
+  setIndex: Scalars['Int'];
+  roundIndex: Scalars['Int'];
   timeTakenMs?: Maybe<Scalars['Int']>;
   LoggedWorkoutMoves: Array<CreateLoggedWorkoutMoveInput>;
 };
@@ -905,7 +907,7 @@ export type CreateLoggedWorkoutMoveInput = {
   timeTakenMs?: Maybe<Scalars['Int']>;
   repType: WorkoutMoveRepType;
   reps: Scalars['Float'];
-  distanceUnit: DistanceUnit;
+  distanceUnit?: Maybe<DistanceUnit>;
   loadAmount?: Maybe<Scalars['Float']>;
   loadUnit?: Maybe<LoadUnit>;
   Move: Scalars['ID'];
@@ -956,11 +958,10 @@ export type WorkoutSection = {
   outroAudioUri?: Maybe<Scalars['String']>;
   Workout: Workout;
   TrainingWorkoutSection?: Maybe<TrainingWorkoutSection>;
-  TimedWorkoutSection?: Maybe<TimedWorkoutSection>;
   AmrapWorkoutSection?: Maybe<AmrapWorkoutSection>;
-  FortimeWorkoutSection?: Maybe<FortimeWorkoutSection>;
   LastStandingWorkoutSection?: Maybe<LastStandingWorkoutSection>;
   WorkoutSectionType: WorkoutSectionType;
+  WorkoutSets: Array<WorkoutSet>;
 };
 
 export type CreateWorkoutSectionInput = {
@@ -977,11 +978,10 @@ export type CreateWorkoutSectionInput = {
   outroVideoThumbUri?: Maybe<Scalars['String']>;
   outroAudioUri?: Maybe<Scalars['String']>;
   TrainingWorkoutSection?: Maybe<CreateTrainingWorkoutSectionInput>;
-  TimedWorkoutSection?: Maybe<CreateTimedWorkoutSectionInput>;
   AmrapWorkoutSection?: Maybe<CreateAmrapWorkoutSectionInput>;
-  FortimeWorkoutSection?: Maybe<CreateFortimeWorkoutSectionInput>;
   LastStandingWorkoutSection?: Maybe<CreateLastStandingWorkoutSectionInput>;
   WorkoutSectionType: Scalars['ID'];
+  WorkoutSets: Array<CreateWorkoutSetInput>;
 };
 
 export type UpdateWorkoutSectionInput = {
@@ -999,59 +999,30 @@ export type UpdateWorkoutSectionInput = {
   outroVideoThumbUri?: Maybe<Scalars['String']>;
   outroAudioUri?: Maybe<Scalars['String']>;
   TrainingWorkoutSection?: Maybe<CreateTrainingWorkoutSectionInput>;
-  TimedWorkoutSection?: Maybe<CreateTimedWorkoutSectionInput>;
   AmrapWorkoutSection?: Maybe<CreateAmrapWorkoutSectionInput>;
-  FortimeWorkoutSection?: Maybe<CreateFortimeWorkoutSectionInput>;
   LastStandingWorkoutSection?: Maybe<CreateLastStandingWorkoutSectionInput>;
   WorkoutSectionType?: Maybe<Scalars['ID']>;
-};
-
-export type TimedWorkoutSection = {
-  __typename?: 'TimedWorkoutSection';
-  id: Scalars['ID'];
-  rounds: Scalars['Int'];
-  WorkoutSets: Array<WorkoutSet>;
-};
-
-export type CreateTimedWorkoutSectionInput = {
-  rounds: Scalars['Int'];
-  WorkoutSets: Array<CreateWorkoutSetInput>;
+  WorkoutSets?: Maybe<Array<CreateWorkoutSetInput>>;
 };
 
 export type TrainingWorkoutSection = {
   __typename?: 'TrainingWorkoutSection';
   id?: Maybe<Scalars['ID']>;
-  WorkoutSets: Array<WorkoutSet>;
+  rounds: Scalars['Int'];
 };
 
 export type CreateTrainingWorkoutSectionInput = {
-  WorkoutSets: Array<CreateWorkoutSetInput>;
+  rounds: Scalars['Int'];
 };
 
 export type AmrapWorkoutSection = {
   __typename?: 'AmrapWorkoutSection';
   id?: Maybe<Scalars['ID']>;
   timecap: Scalars['Int'];
-  WorkoutSets: Array<WorkoutSet>;
 };
 
 export type CreateAmrapWorkoutSectionInput = {
   timecap: Scalars['Int'];
-  WorkoutSets: Array<CreateWorkoutSetInput>;
-};
-
-export type FortimeWorkoutSection = {
-  __typename?: 'FortimeWorkoutSection';
-  id?: Maybe<Scalars['ID']>;
-  rounds: Scalars['Int'];
-  timecap?: Maybe<Scalars['Int']>;
-  WorkoutSets: Array<WorkoutSet>;
-};
-
-export type CreateFortimeWorkoutSectionInput = {
-  rounds: Scalars['Int'];
-  timecap?: Maybe<Scalars['Int']>;
-  WorkoutSets: Array<CreateWorkoutSetInput>;
 };
 
 export type LastStandingWorkoutSection = {
@@ -1059,13 +1030,11 @@ export type LastStandingWorkoutSection = {
   id?: Maybe<Scalars['ID']>;
   finishAfter?: Maybe<Scalars['Int']>;
   timecaps: Array<Scalars['Int']>;
-  WorkoutSets: Array<WorkoutSet>;
 };
 
 export type CreateLastStandingWorkoutSectionInput = {
   finishAfter?: Maybe<Scalars['Int']>;
   timecaps: Array<Scalars['Int']>;
-  WorkoutSets: Array<CreateWorkoutSetInput>;
 };
 
 export type WorkoutSet = {
@@ -1156,7 +1125,7 @@ export type TextSearchWorkoutProgramResult = {
 export type ContentAccessScope =
   | 'PRIVATE'
   | 'PUBLIC'
-  | 'PAID'
+  | 'GROUP'
   | 'OFFICIAL';
 
 export type BodyAreaFrontBack =
@@ -1367,14 +1336,10 @@ export type ResolversTypes = ResolversObject<{
   WorkoutSection: ResolverTypeWrapper<WorkoutSection>;
   CreateWorkoutSectionInput: CreateWorkoutSectionInput;
   UpdateWorkoutSectionInput: UpdateWorkoutSectionInput;
-  TimedWorkoutSection: ResolverTypeWrapper<TimedWorkoutSection>;
-  CreateTimedWorkoutSectionInput: CreateTimedWorkoutSectionInput;
   TrainingWorkoutSection: ResolverTypeWrapper<TrainingWorkoutSection>;
   CreateTrainingWorkoutSectionInput: CreateTrainingWorkoutSectionInput;
   AmrapWorkoutSection: ResolverTypeWrapper<AmrapWorkoutSection>;
   CreateAmrapWorkoutSectionInput: CreateAmrapWorkoutSectionInput;
-  FortimeWorkoutSection: ResolverTypeWrapper<FortimeWorkoutSection>;
-  CreateFortimeWorkoutSectionInput: CreateFortimeWorkoutSectionInput;
   LastStandingWorkoutSection: ResolverTypeWrapper<LastStandingWorkoutSection>;
   CreateLastStandingWorkoutSectionInput: CreateLastStandingWorkoutSectionInput;
   WorkoutSet: ResolverTypeWrapper<WorkoutSet>;
@@ -1467,14 +1432,10 @@ export type ResolversParentTypes = ResolversObject<{
   WorkoutSection: WorkoutSection;
   CreateWorkoutSectionInput: CreateWorkoutSectionInput;
   UpdateWorkoutSectionInput: UpdateWorkoutSectionInput;
-  TimedWorkoutSection: TimedWorkoutSection;
-  CreateTimedWorkoutSectionInput: CreateTimedWorkoutSectionInput;
   TrainingWorkoutSection: TrainingWorkoutSection;
   CreateTrainingWorkoutSectionInput: CreateTrainingWorkoutSectionInput;
   AmrapWorkoutSection: AmrapWorkoutSection;
   CreateAmrapWorkoutSectionInput: CreateAmrapWorkoutSectionInput;
-  FortimeWorkoutSection: FortimeWorkoutSection;
-  CreateFortimeWorkoutSectionInput: CreateFortimeWorkoutSectionInput;
   LastStandingWorkoutSection: LastStandingWorkoutSection;
   CreateLastStandingWorkoutSectionInput: CreateLastStandingWorkoutSectionInput;
   WorkoutSet: WorkoutSet;
@@ -1828,7 +1789,8 @@ export type LoggedWorkoutSectionResolvers<ContextType = any, ParentType extends 
 
 export type LoggedWorkoutSetResolvers<ContextType = any, ParentType extends ResolversParentTypes['LoggedWorkoutSet'] = ResolversParentTypes['LoggedWorkoutSet']> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  sortPosition?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  setIndex?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  roundIndex?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   timeTakenMs?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   LoggedWorkoutMoves?: Resolver<Array<ResolversTypes['LoggedWorkoutMove']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -1875,39 +1837,22 @@ export type WorkoutSectionResolvers<ContextType = any, ParentType extends Resolv
   outroAudioUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   Workout?: Resolver<ResolversTypes['Workout'], ParentType, ContextType>;
   TrainingWorkoutSection?: Resolver<Maybe<ResolversTypes['TrainingWorkoutSection']>, ParentType, ContextType>;
-  TimedWorkoutSection?: Resolver<Maybe<ResolversTypes['TimedWorkoutSection']>, ParentType, ContextType>;
   AmrapWorkoutSection?: Resolver<Maybe<ResolversTypes['AmrapWorkoutSection']>, ParentType, ContextType>;
-  FortimeWorkoutSection?: Resolver<Maybe<ResolversTypes['FortimeWorkoutSection']>, ParentType, ContextType>;
   LastStandingWorkoutSection?: Resolver<Maybe<ResolversTypes['LastStandingWorkoutSection']>, ParentType, ContextType>;
   WorkoutSectionType?: Resolver<ResolversTypes['WorkoutSectionType'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type TimedWorkoutSectionResolvers<ContextType = any, ParentType extends ResolversParentTypes['TimedWorkoutSection'] = ResolversParentTypes['TimedWorkoutSection']> = ResolversObject<{
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  rounds?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   WorkoutSets?: Resolver<Array<ResolversTypes['WorkoutSet']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type TrainingWorkoutSectionResolvers<ContextType = any, ParentType extends ResolversParentTypes['TrainingWorkoutSection'] = ResolversParentTypes['TrainingWorkoutSection']> = ResolversObject<{
   id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
-  WorkoutSets?: Resolver<Array<ResolversTypes['WorkoutSet']>, ParentType, ContextType>;
+  rounds?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type AmrapWorkoutSectionResolvers<ContextType = any, ParentType extends ResolversParentTypes['AmrapWorkoutSection'] = ResolversParentTypes['AmrapWorkoutSection']> = ResolversObject<{
   id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   timecap?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  WorkoutSets?: Resolver<Array<ResolversTypes['WorkoutSet']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type FortimeWorkoutSectionResolvers<ContextType = any, ParentType extends ResolversParentTypes['FortimeWorkoutSection'] = ResolversParentTypes['FortimeWorkoutSection']> = ResolversObject<{
-  id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
-  rounds?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  timecap?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  WorkoutSets?: Resolver<Array<ResolversTypes['WorkoutSet']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -1915,7 +1860,6 @@ export type LastStandingWorkoutSectionResolvers<ContextType = any, ParentType ex
   id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   finishAfter?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   timecaps?: Resolver<Array<ResolversTypes['Int']>, ParentType, ContextType>;
-  WorkoutSets?: Resolver<Array<ResolversTypes['WorkoutSet']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -2013,10 +1957,8 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   LoggedWorkoutMove?: LoggedWorkoutMoveResolvers<ContextType>;
   ScheduledWorkout?: ScheduledWorkoutResolvers<ContextType>;
   WorkoutSection?: WorkoutSectionResolvers<ContextType>;
-  TimedWorkoutSection?: TimedWorkoutSectionResolvers<ContextType>;
   TrainingWorkoutSection?: TrainingWorkoutSectionResolvers<ContextType>;
   AmrapWorkoutSection?: AmrapWorkoutSectionResolvers<ContextType>;
-  FortimeWorkoutSection?: FortimeWorkoutSectionResolvers<ContextType>;
   LastStandingWorkoutSection?: LastStandingWorkoutSectionResolvers<ContextType>;
   WorkoutSet?: WorkoutSetResolvers<ContextType>;
   WorkoutMove?: WorkoutMoveResolvers<ContextType>;

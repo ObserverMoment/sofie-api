@@ -12,12 +12,14 @@ import { firebaseVerifyToken } from './lib/firebaseAdmin'
 require('dotenv').config()
 
 // https://paljs.com/plugins/delete/
-class Prisma extends PrismaClient {
+class PrismaExtended extends PrismaClient {
   constructor(options?: PrismaOriginal.PrismaClientOptions) {
     super(options)
   }
 
-  async onDelete(args: onDeleteArgs) {
+  async onDelete(
+    args: onDeleteArgs,
+  ): Promise<void | PrismaOriginal.BatchPayload> {
     const prismaDelete = new PrismaDelete(this)
     await prismaDelete.onDelete(args)
   }
@@ -26,15 +28,14 @@ class Prisma extends PrismaClient {
 export type ContextUserType = 'ADMIN' | 'USER'
 
 export interface Context {
-  // PrismaClient type is not declared here because of clash between Prisma return types and GraphQL schema types and input definitions. Is a known issue with some workarounds available in Prisma docs.
-  prisma: any
+  prisma: PrismaExtended
   // https://paljs.com/plugins/select
   select?: any
   authedUserId: string
   userType: ContextUserType
 }
 
-const prisma = new Prisma({
+const prisma = new PrismaExtended({
   log: ['info', 'query', 'warn', 'error'],
   errorFormat: 'pretty',
 })

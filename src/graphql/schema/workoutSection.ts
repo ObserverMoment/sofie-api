@@ -17,11 +17,10 @@ export default gql`
     outroAudioUri: String
     Workout: Workout!
     TrainingWorkoutSection: TrainingWorkoutSection
-    TimedWorkoutSection: TimedWorkoutSection
     AmrapWorkoutSection: AmrapWorkoutSection
-    FortimeWorkoutSection: FortimeWorkoutSection
     LastStandingWorkoutSection: LastStandingWorkoutSection
     WorkoutSectionType: WorkoutSectionType!
+    WorkoutSets: [WorkoutSet!]!
   }
 
   input CreateWorkoutSectionInput {
@@ -38,11 +37,10 @@ export default gql`
     outroVideoThumbUri: String
     outroAudioUri: String
     TrainingWorkoutSection: CreateTrainingWorkoutSectionInput
-    TimedWorkoutSection: CreateTimedWorkoutSectionInput
     AmrapWorkoutSection: CreateAmrapWorkoutSectionInput
-    FortimeWorkoutSection: CreateFortimeWorkoutSectionInput
     LastStandingWorkoutSection: CreateLastStandingWorkoutSectionInput
     WorkoutSectionType: ID!
+    WorkoutSets: [CreateWorkoutSetInput!]!
   }
 
   input UpdateWorkoutSectionInput {
@@ -60,70 +58,42 @@ export default gql`
     outroVideoThumbUri: String
     outroAudioUri: String
     TrainingWorkoutSection: CreateTrainingWorkoutSectionInput
-    TimedWorkoutSection: CreateTimedWorkoutSectionInput
     AmrapWorkoutSection: CreateAmrapWorkoutSectionInput
-    FortimeWorkoutSection: CreateFortimeWorkoutSectionInput
     LastStandingWorkoutSection: CreateLastStandingWorkoutSectionInput
     WorkoutSectionType: ID
-  }
-
-  type TimedWorkoutSection {
-    id: ID!
-    rounds: Int!
-    WorkoutSets: [WorkoutSet!]!
-  }
-
-  input CreateTimedWorkoutSectionInput {
-    rounds: Int!
-    WorkoutSets: [CreateWorkoutSetInput!]!
+    WorkoutSets: [CreateWorkoutSetInput!]
   }
 
   type TrainingWorkoutSection {
     id: ID
-    WorkoutSets: [WorkoutSet!]!
+    rounds: Int!
   }
 
   input CreateTrainingWorkoutSectionInput {
-    WorkoutSets: [CreateWorkoutSetInput!]!
+    rounds: Int!
   }
 
   type AmrapWorkoutSection {
     id: ID
     timecap: Int!
-    WorkoutSets: [WorkoutSet!]!
   }
 
   input CreateAmrapWorkoutSectionInput {
     timecap: Int!
-    WorkoutSets: [CreateWorkoutSetInput!]!
-  }
-
-  type FortimeWorkoutSection {
-    id: ID
-    rounds: Int!
-    timecap: Int
-    WorkoutSets: [WorkoutSet!]!
-  }
-
-  input CreateFortimeWorkoutSectionInput {
-    rounds: Int!
-    timecap: Int
-    WorkoutSets: [CreateWorkoutSetInput!]!
   }
 
   type LastStandingWorkoutSection {
     id: ID
     finishAfter: Int
     # Must have at least one timecap (time period)
+    # This array will loop until finishAfter or until user quits
     timecaps: [Int!]!
-    WorkoutSets: [WorkoutSet!]!
   }
 
   input CreateLastStandingWorkoutSectionInput {
     finishAfter: Int
     # Must have at least one timecap (time period)
     timecaps: [Int!]!
-    WorkoutSets: [CreateWorkoutSetInput!]!
   }
 
   type WorkoutSet {

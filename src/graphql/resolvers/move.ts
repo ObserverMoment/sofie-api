@@ -40,45 +40,44 @@ const createMove = async (
   { data }: MutationCreateMoveArgs,
   { authedUserId, userType, prisma, select }: Context,
 ) => {
-  return validateCreateMoveInput(data, userType, async () => {
-    return prisma.move.create({
-      data: {
-        ...data,
-        Creator:
-          userType === 'ADMIN' || !authedUserId
-            ? undefined
-            : {
-                connect: { id: authedUserId },
+  validateCreateMoveInput(data, userType)
+  return prisma.move.create({
+    data: {
+      ...data,
+      Creator:
+        userType === 'ADMIN' || !authedUserId
+          ? undefined
+          : {
+              connect: { id: authedUserId },
+            },
+      MoveType: {
+        connect: {
+          id: data.MoveType,
+        },
+      },
+      scope: data.scope || 'CUSTOM',
+      RequiredEquipments: {
+        connect: data.RequiredEquipments
+          ? data.RequiredEquipments.map((id: string) => ({ id }))
+          : undefined,
+      },
+      SelectableEquipments: {
+        connect: data.SelectableEquipments
+          ? data.SelectableEquipments.map((id: string) => ({ id }))
+          : undefined,
+      },
+      BodyAreaMoveScores: {
+        create: data.BodyAreaMoveScores
+          ? data.BodyAreaMoveScores.map((bams) => ({
+              BodyArea: {
+                connect: { id: bams.BodyArea },
               },
-        MoveType: {
-          connect: {
-            id: data.MoveType,
-          },
-        },
-        scope: data.scope || 'CUSTOM',
-        RequiredEquipments: {
-          connect: data.RequiredEquipments
-            ? data.RequiredEquipments.map((id: string) => ({ id }))
-            : undefined,
-        },
-        SelectableEquipments: {
-          connect: data.SelectableEquipments
-            ? data.SelectableEquipments.map((id: string) => ({ id }))
-            : undefined,
-        },
-        BodyAreaMoveScores: {
-          create: data.BodyAreaMoveScores
-            ? data.BodyAreaMoveScores.map((bams) => ({
-                BodyArea: {
-                  connect: { id: bams.BodyArea },
-                },
-                score: bams.score,
-              }))
-            : undefined,
-        },
-      } as Prisma.MoveCreateInput,
-      select,
-    })
+              score: bams.score,
+            }))
+          : undefined,
+      },
+    } as Prisma.MoveCreateInput,
+    select,
   })
 }
 
@@ -87,67 +86,66 @@ const updateMove = async (
   { data }: MutationUpdateMoveArgs,
   { userType, prisma, select }: Context,
 ) => {
-  return validateUpdateMoveInput(data, userType, async () => {
-    // Check if any media files need to be updated. Only delete files from the server after the rest of the transaction is complete.
-    const fileIdsForDeletion: string[] | null = await checkMoveMediaForDeletion(
-      prisma,
-      data,
-    )
+  validateUpdateMoveInput(data, userType)
+  // Check if any media files need to be updated. Only delete files from the server after the rest of the transaction is complete.
+  const fileIdsForDeletion: string[] | null = await checkMoveMediaForDeletion(
+    prisma,
+    data,
+  )
 
-    if (data.BodyAreaMoveScores) {
-      // Deep update required
-      // Delete all descendants - this will delete all bodyAreaMoveScores via cascade deletes.
-      // https://paljs.com/plugins/delete/
-      await prisma.onDelete({
-        model: 'BodyAreaMoveScore',
-        where: { moveId: data.id },
-        deleteParent: false, // If false, just the descendants will be deleted.
-      })
-    }
+  if (data.BodyAreaMoveScores) {
+    // Deep update required
+    // Delete all descendants - this will delete all bodyAreaMoveScores via cascade deletes.
+    // https://paljs.com/plugins/delete/
+    await prisma.onDelete({
+      model: 'BodyAreaMoveScore',
+      where: { moveId: data.id },
+      deleteParent: false, // If false, just the descendants will be deleted.
+    })
+  }
 
-    const updatedMove: Move = await prisma.move.update({
-      where: {
-        id: data.id,
+  const updatedMove: Move = await prisma.move.update({
+    where: {
+      id: data.id,
+    },
+    data: {
+      ...data,
+      RequiredEquipments: {
+        set: data.RequiredEquipments
+          ? data.RequiredEquipments.map((id: string) => ({ id }))
+          : [],
       },
-      data: {
-        ...data,
-        RequiredEquipments: {
-          set: data.RequiredEquipments
-            ? data.RequiredEquipments.map((id: string) => ({ id }))
-            : [],
-        },
-        MoveType: {
-          connect: {
-            id: data.MoveType || undefined,
-          },
-        },
-        scope: data.scope || 'CUSTOM',
-        SelectableEquipments: {
-          set: data.SelectableEquipments
-            ? data.SelectableEquipments.map((id: string) => ({ id }))
-            : [],
+      MoveType: {
+        connect: {
+          id: data.MoveType || undefined,
         },
       },
-      BodyAreaMoveScores: data.BodyAreaMoveScores
-        ? {
-            create: data.BodyAreaMoveScores
-              ? data.BodyAreaMoveScores.map((bams) => ({
-                  BodyArea: {
-                    connect: { id: bams.BodyArea },
-                  },
-                  score: bams.score,
-                }))
-              : undefined,
-          }
-        : null,
-      select,
-    } as Prisma.MoveUpdateInput)
+      scope: data.scope || 'CUSTOM',
+      SelectableEquipments: {
+        set: data.SelectableEquipments
+          ? data.SelectableEquipments.map((id: string) => ({ id }))
+          : [],
+      },
+    },
+    BodyAreaMoveScores: data.BodyAreaMoveScores
+      ? {
+          create: data.BodyAreaMoveScores
+            ? data.BodyAreaMoveScores.map((bams) => ({
+                BodyArea: {
+                  connect: { id: bams.BodyArea },
+                },
+                score: bams.score,
+              }))
+            : undefined,
+        }
+      : null,
+    select,
+  } as Prisma.MoveUpdateInput)
 
-    if (updatedMove && fileIdsForDeletion) {
-      await deleteFiles(fileIdsForDeletion)
-    }
-    return updatedMove
-  })
+  if (updatedMove && fileIdsForDeletion) {
+    await deleteFiles(fileIdsForDeletion)
+  }
+  return updatedMove
 }
 
 const deleteMoveById = async (
@@ -223,7 +221,6 @@ const deleteMoveById = async (
 function validateCreateMoveInput(
   data: CreateMoveInput,
   userType: ContextUserType,
-  resolver: () => Promise<Move>,
 ) {
   if (data.scope === 'STANDARD' && userType !== 'ADMIN') {
     throw new ApolloError('Only ADMINS can create Official (STANDARD) moves.')
@@ -250,14 +247,11 @@ function validateCreateMoveInput(
       )
     }
   }
-
-  return resolver()
 }
 
 function validateUpdateMoveInput(
   data: UpdateMoveInput,
   userType: ContextUserType,
-  resolver: () => Promise<Move>,
 ) {
   if (data.scope === 'STANDARD' && userType !== 'ADMIN') {
     throw new ApolloError('Only ADMINS can update Official (STANDARD) moves.')
@@ -279,8 +273,6 @@ function validateUpdateMoveInput(
       )
     }
   }
-
-  return resolver()
 }
 
 export {

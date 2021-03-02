@@ -34,39 +34,38 @@ const createLoggedWorkout = async (
   { data }: MutationCreateLoggedWorkoutArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  return validateLoggedWorkoutInput(data, async () => {
-    const input: Prisma.LoggedWorkoutCreateInput = {
-      ...data,
-      User: {
-        connect: {
-          id: authedUserId,
-        },
+  validateLoggedWorkoutInput(data)
+  const input: Prisma.LoggedWorkoutCreateInput = {
+    ...data,
+    User: {
+      connect: {
+        id: authedUserId,
       },
-      LoggedWorkoutSections: {
-        create: buildLoggedWorkoutSectionsData(data.LoggedWorkoutSections),
-      },
-      Workout: {
-        connect: { id: data.Workout },
-      },
-      GymProfile: {
-        connect: { id: data.GymProfile || undefined },
-      },
-      ScheduledWorkout: {
-        connect: { id: data.ScheduledWorkout || undefined },
-      },
-      // Connect to the enrolment (single instance of a user being enrolled in a plan)
-      // And to the specific session (via workoutProgramWorkout) within the program.
-      WorkoutProgramEnrolment: {
-        connect: { id: data.WorkoutProgramEnrolment || undefined },
-      },
-      WorkoutProgramWorkout: {
-        connect: { id: data.WorkoutProgramWorkout || undefined },
-      },
-    }
-    return prisma.loggedWorkout.create({
-      data: input,
-      select,
-    })
+    },
+    LoggedWorkoutSections: {
+      create: buildLoggedWorkoutSectionsData(data.LoggedWorkoutSections),
+    },
+    Workout: {
+      connect: { id: data.Workout },
+    },
+    GymProfile: {
+      connect: { id: data.GymProfile || undefined },
+    },
+    ScheduledWorkout: {
+      connect: { id: data.ScheduledWorkout || undefined },
+    },
+    // Connect to the enrolment (single instance of a user being enrolled in a plan)
+    // And to the specific session (via workoutProgramWorkout) within the program.
+    WorkoutProgramEnrolment: {
+      connect: { id: data.WorkoutProgramEnrolment || undefined },
+    },
+    WorkoutProgramWorkout: {
+      connect: { id: data.WorkoutProgramWorkout || undefined },
+    },
+  }
+  return prisma.loggedWorkout.create({
+    data: input,
+    select,
   })
 }
 
@@ -75,68 +74,67 @@ const updateLoggedWorkout = async (
   { data }: MutationUpdateLoggedWorkoutArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  return validateLoggedWorkoutInput(data, async () => {
-    // Check if any media files need to be updated. Only delete files from the server after the rest of the transaction is complete.
-    const fileIdsForDeletion:
-      | string[]
-      | null = await checkLoggedWorkoutMediaForDeletion(prisma, data)
+  validateLoggedWorkoutInput(data)
+  // Check if any media files need to be updated. Only delete files from the server after the rest of the transaction is complete.
+  const fileIdsForDeletion:
+    | string[]
+    | null = await checkLoggedWorkoutMediaForDeletion(prisma, data)
 
-    if (data.LoggedWorkoutSections) {
-      // Deep update required
-      // Delete all descendants - this will delete all loggedWorkoutSections, their sets and their workoutMoves via cascade deletes.
-      // https://paljs.com/plugins/delete/
-      await prisma.onDelete({
-        model: 'LoggedWorkoutSection',
-        where: {
-          loggedWorkoutId: data.id,
-          LoggedWorkout: { userId: authedUserId },
-        },
-        deleteParent: true, // If false, just the descendants will be deleted.
-      })
-    }
-
-    // Run the new update and create fresh descendants.
-    const updatedLoggedWorkout: LoggedWorkout = await prisma.loggedWorkout.update(
-      {
-        where: {
-          id: data.id,
-          userId: authedUserId,
-        },
-        data: {
-          ...data,
-          LoggedWorkoutSections: data.LoggedWorkoutSections
-            ? {
-                create: buildLoggedWorkoutSectionsData(
-                  data.LoggedWorkoutSections,
-                ),
-              }
-            : undefined,
-          GymProfile: {
-            connect: { id: data.GymProfile || undefined },
-          },
-          ScheduledWorkout: {
-            connect: { id: data.ScheduledWorkout || undefined },
-          },
-          // Connect to the enrolment (single instance of a user being enrolled in a plan)
-          // And to the specific session (via workoutProgramWorkout) within the program.
-          WorkoutProgramEnrolment: {
-            connect: { id: data.WorkoutProgramEnrolment || undefined },
-          },
-          WorkoutProgramWorkout: {
-            connect: { id: data.WorkoutProgramWorkout || undefined },
-          },
-        },
-        select,
+  if (data.LoggedWorkoutSections) {
+    // Deep update required
+    // Delete all descendants - this will delete all loggedWorkoutSections, their sets and their workoutMoves via cascade deletes.
+    // https://paljs.com/plugins/delete/
+    await prisma.onDelete({
+      model: 'LoggedWorkoutSection',
+      where: {
+        loggedWorkoutId: data.id,
+        LoggedWorkout: { userId: authedUserId },
       },
-    )
+      deleteParent: true, // If false, just the descendants will be deleted.
+    })
+  }
 
-    // Delete stale media from server if update was successful and media has changed.
-    if (updatedLoggedWorkout && fileIdsForDeletion) {
-      await deleteFiles(fileIdsForDeletion)
-    }
+  // Run the new update and create fresh descendants.
+  const updatedLoggedWorkout: LoggedWorkout = await prisma.loggedWorkout.update(
+    {
+      where: {
+        id: data.id,
+        userId: authedUserId,
+      },
+      data: {
+        ...data,
+        LoggedWorkoutSections: data.LoggedWorkoutSections
+          ? {
+              create: buildLoggedWorkoutSectionsData(
+                data.LoggedWorkoutSections,
+              ),
+            }
+          : undefined,
+        GymProfile: {
+          connect: { id: data.GymProfile || undefined },
+        },
+        ScheduledWorkout: {
+          connect: { id: data.ScheduledWorkout || undefined },
+        },
+        // Connect to the enrolment (single instance of a user being enrolled in a plan)
+        // And to the specific session (via workoutProgramWorkout) within the program.
+        WorkoutProgramEnrolment: {
+          connect: { id: data.WorkoutProgramEnrolment || undefined },
+        },
+        WorkoutProgramWorkout: {
+          connect: { id: data.WorkoutProgramWorkout || undefined },
+        },
+      },
+      select,
+    },
+  )
 
-    return updatedLoggedWorkout
-  })
+  // Delete stale media from server if update was successful and media has changed.
+  if (updatedLoggedWorkout && fileIdsForDeletion) {
+    await deleteFiles(fileIdsForDeletion)
+  }
+
+  return updatedLoggedWorkout
 }
 
 const deleteLoggedWorkoutById = async (
@@ -187,7 +185,6 @@ const deleteLoggedWorkoutById = async (
  */
 function validateLoggedWorkoutInput(
   data: CreateLoggedWorkoutInput | UpdateLoggedWorkoutInput,
-  resolver: () => Promise<LoggedWorkout>,
 ) {
   // Check all logged workout moves for valid inputs
   if (
@@ -206,7 +203,6 @@ function validateLoggedWorkoutInput(
       'Invalid loggedWorkoutMove input: Rep type of DISTANCE requires that distance unit be specified and a non-null loadAmount requires that loadUnit be specified. One of these was missing for one or more of the loggedWorkoutMoves you submitted',
     )
   }
-  return resolver()
 }
 
 export {

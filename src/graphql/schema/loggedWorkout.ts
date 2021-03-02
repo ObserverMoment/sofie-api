@@ -68,13 +68,15 @@ export default gql`
 
   type LoggedWorkoutSet {
     id: ID!
-    sortPosition: Int!
+    setIndex: Int!
+    roundIndex: Int!
     timeTakenMs: Int
     LoggedWorkoutMoves: [LoggedWorkoutMove!]!
   }
 
   input CreateLoggedWorkoutSetInput {
-    sortPosition: Int!
+    setIndex: Int!
+    roundIndex: Int!
     timeTakenMs: Int
     LoggedWorkoutMoves: [CreateLoggedWorkoutMoveInput!]!
   }
@@ -97,7 +99,7 @@ export default gql`
     timeTakenMs: Int
     repType: WorkoutMoveRepType!
     reps: Float!
-    distanceUnit: DistanceUnit!
+    distanceUnit: DistanceUnit
     loadAmount: Float
     loadUnit: LoadUnit
     Move: ID!

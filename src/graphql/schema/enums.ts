@@ -7,7 +7,7 @@ export default gql`
   enum ContentAccessScope {
     PRIVATE
     PUBLIC
-    PAID
+    GROUP
     OFFICIAL
   }
 
