@@ -91,16 +91,51 @@ export default gql`
       data: [UpdateWorkoutSectionInput!]!
     ): [WorkoutSection!]!
     deleteWorkoutSectionsById(workoutSectionIds: [ID!]!): [ID]
+    ######################
+    ### Logged Workout ###
+    createLoggedWorkout(data: CreateLoggedWorkoutInput!): LoggedWorkout!
+    updateLoggedWorkout(data: UpdateLoggedWorkoutInput!): LoggedWorkout!
+    deleteLoggedWorkoutById(id: ID!): ID!
+    ### Logged Workout Section ###
+    createLoggedWorkoutSection(
+      data: CreateLoggedWorkoutSectionInput!
+    ): LoggedWorkoutSection!
+    updateLoggedWorkoutSection(
+      data: UpdateLoggedWorkoutSectionInput!
+    ): LoggedWorkoutSection!
+    deleteLoggedWorkoutSectionById(id: ID!): ID!
+    reorderLoggedWorkoutSections(
+      data: [UpdateSortPositionInput!]!
+    ): [LoggedWorkoutSection!]!
+    ### Logged Workout Set ###
+    createLoggedWorkoutSet(
+      data: CreateLoggedWorkoutSetInput!
+    ): LoggedWorkoutSet!
+    updateLoggedWorkoutSet(
+      data: UpdateLoggedWorkoutSetInput!
+    ): LoggedWorkoutSet!
+    deleteLoggedWorkoutSetById(id: ID!): ID!
+    reorderLoggedWorkoutSets(
+      data: [UpdateSortPositionInput!]!
+    ): [LoggedWorkoutSet!]!
+    ### Logged Workout Move ###
+    createLoggedWorkoutMove(
+      data: CreateLoggedWorkoutMoveInput!
+    ): LoggedWorkoutMove!
+    updateLoggedWorkoutMove(
+      data: UpdateLoggedWorkoutMoveInput!
+    ): LoggedWorkoutMove!
+    deleteLoggedWorkoutMoveById(id: ID!): ID!
+    reorderLoggedWorkoutMoves(
+      data: [UpdateSortPositionInput!]!
+    ): [LoggedWorkoutMove!]!
+
     # Schedule Workout
     scheduleWorkout(data: CreateScheduledWorkoutInput!): ScheduledWorkout!
     unscheduleWorkout(scheduledWorkoutId: ID!): ID!
     updateScheduledWorkout(
       data: UpdateScheduledWorkoutInput!
     ): ScheduledWorkout!
-    # Logged workout
-    createLoggedWorkout(data: CreateLoggedWorkoutInput!): LoggedWorkout!
-    updateLoggedWorkout(data: UpdateLoggedWorkoutInput!): LoggedWorkout!
-    deleteLoggedWorkoutById(loggedWorkoutId: ID!): ID
     # Workout Program
     createWorkoutProgram(data: CreateWorkoutProgramInput!): WorkoutProgram!
     updateWorkoutProgram(data: UpdateWorkoutProgramInput!): WorkoutProgram!
@@ -117,7 +152,7 @@ export default gql`
     deleteWorkoutProgramReview(reviewId: ID!): WorkoutProgram!
   }
 
-  ##### Non user CRUD-able models #####
+  ##### Non CRUD-able models #####
   type WorkoutGoal {
     id: ID!
     name: String!
@@ -134,5 +169,10 @@ export default gql`
     scoreType: WorkoutScoreType
     WorkoutSections: [WorkoutSection!]!
     LoggedWorkoutSections: [LoggedWorkoutSection!]!
+  }
+
+  input UpdateSortPositionInput {
+    id: ID!
+    sortPosition: Int!
   }
 `

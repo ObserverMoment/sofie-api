@@ -159,6 +159,9 @@ model User {
   ProgressJournals         ProgressJournal[]
   /// @onDelete(CASCADE)
   ProgressJournalGoalTags  ProgressJournalGoalTag[]
+  LoggedWorkoutSection     LoggedWorkoutSection[]
+  LoggedWorkoutSet         LoggedWorkoutSet[]
+  LoggedWorkoutMove        LoggedWorkoutMove[]
 }
 
 model UserCollection {
@@ -449,11 +452,8 @@ model LoggedWorkout {
   completedOn               DateTime
   User                      User                     @relation(fields: [userId], references: [id])
   userId                    String
-  // The name of the original workout by default
   name                      String
   notes                     String?
-  videoUri                  String?
-  videoThumbUri             String?
   imageUri                  String?
   /// @onDelete(CASCADE)
   LoggedWorkoutSections     LoggedWorkoutSection[]
@@ -473,6 +473,8 @@ model LoggedWorkout {
 model LoggedWorkoutSection {
   id                   String             @id @default(uuid())
   createdAt            DateTime           @default(now())
+  User                 User               @relation(fields: [userId], references: [id])
+  userId               String
   sortPosition         Int
   timeTakenMs          Int // Milliseconds
   notes                String?
@@ -480,8 +482,6 @@ model LoggedWorkoutSection {
   LoggedWorkoutSets    LoggedWorkoutSet[]
   LoggedWorkout        LoggedWorkout      @relation(fields: [loggedWorkoutId], references: [id])
   loggedWorkoutId      String
-  // TODO: Validation in Postgres - map the WorkoutType ids to the section types above and ensure they match when creating / updating.
-  // E.g. TimedWorkoutSection must be 'HIIT', 'EMOM' or 'Tabata' type.
   WorkoutSectionType   WorkoutSectionType @relation(fields: [workoutSectionTypeId], references: [id])
   workoutSectionTypeId String
 }
@@ -489,6 +489,8 @@ model LoggedWorkoutSection {
 model LoggedWorkoutSet {
   id                     String               @id @default(uuid())
   createdAt              DateTime             @default(now())
+  User                   User                 @relation(fields: [userId], references: [id])
+  userId                 String
   setIndex               Int // The sort position of the WorkoutSet
   roundIndex             Int // The iteration (round) of the set during the workout
   timeTakenMs            Int? // Milliseconds - optional
@@ -501,6 +503,8 @@ model LoggedWorkoutSet {
 model LoggedWorkoutMove {
   id                 String             @id @default(uuid())
   createdAt          DateTime           @default(now())
+  User               User               @relation(fields: [userId], references: [id])
+  userId             String
   sortPosition       Int
   timeTakenMs        Int? // Milliseconds - optional
   repType            WorkoutMoveRepType @default(TIME)

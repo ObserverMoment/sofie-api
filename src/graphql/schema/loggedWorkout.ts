@@ -1,13 +1,12 @@
 import { gql } from 'apollo-server-express'
 
 export default gql`
+  #### Types / Return Values - Full Structure Retrievable ####
   type LoggedWorkout {
     id: ID!
     completedOn: DateTime!
     name: String!
     notes: String
-    videoUri: String
-    videoThumbUri: String
     imageUri: String
     LoggedWorkoutSections: [LoggedWorkoutSection!]!
     Workout: Workout!
@@ -15,37 +14,6 @@ export default gql`
     GymProfile: GymProfile
     WorkoutProgramWorkout: WorkoutProgramWorkout
     WorkoutProgramEnrolment: WorkoutProgramWorkout
-  }
-
-  input CreateLoggedWorkoutInput {
-    completedOn: DateTime!
-    name: String!
-    notes: String
-    videoUri: String
-    videoThumbUri: String
-    imageUri: String
-    LoggedWorkoutSections: [CreateLoggedWorkoutSectionInput!]!
-    Workout: ID!
-    ScheduledWorkout: ID
-    GymProfile: ID
-    WorkoutProgramWorkout: ID
-    WorkoutProgramEnrolment: ID
-  }
-
-  input UpdateLoggedWorkoutInput {
-    id: ID!
-    completedOn: DateTime
-    name: String
-    notes: String
-    videoUri: String
-    videoThumbUri: String
-    imageUri: String
-    LoggedWorkoutSections: [CreateLoggedWorkoutSectionInput!]
-    Workout: ID
-    ScheduledWorkout: ID
-    GymProfile: ID
-    WorkoutProgramWorkout: ID
-    WorkoutProgramEnrolment: ID
   }
 
   type LoggedWorkoutSection {
@@ -58,27 +26,12 @@ export default gql`
     LoggedWorkout: LoggedWorkout!
   }
 
-  input CreateLoggedWorkoutSectionInput {
-    sortPosition: Int!
-    timeTakenMs: Int!
-    notes: String
-    WorkoutSectionType: ID!
-    LoggedWorkoutSets: [CreateLoggedWorkoutSetInput!]!
-  }
-
   type LoggedWorkoutSet {
     id: ID!
     setIndex: Int!
     roundIndex: Int!
     timeTakenMs: Int
     LoggedWorkoutMoves: [LoggedWorkoutMove!]!
-  }
-
-  input CreateLoggedWorkoutSetInput {
-    setIndex: Int!
-    roundIndex: Int!
-    timeTakenMs: Int
-    LoggedWorkoutMoves: [CreateLoggedWorkoutMoveInput!]!
   }
 
   type LoggedWorkoutMove {
@@ -94,6 +47,64 @@ export default gql`
     Equipment: Equipment
   }
 
+  #### Create Inputs - Full Structure Passed When Creating ####
+  input CreateLoggedWorkoutInput {
+    completedOn: DateTime!
+    name: String!
+    notes: String
+    imageUri: String
+    LoggedWorkoutSections: [CreateLoggedWorkoutSectionInLoggedWorkoutInput!]!
+    Workout: ID!
+    ScheduledWorkout: ID
+    GymProfile: ID
+    WorkoutProgramWorkout: ID
+    WorkoutProgramEnrolment: ID
+  }
+
+  input CreateLoggedWorkoutSectionInLoggedWorkoutInput {
+    sortPosition: Int!
+    timeTakenMs: Int!
+    notes: String
+    WorkoutSectionType: ID!
+    LoggedWorkoutSets: [CreateLoggedWorkoutSetInLoggedSectionInput!]!
+    LoggedWorkout: ID
+  }
+
+  input CreateLoggedWorkoutSetInLoggedSectionInput {
+    setIndex: Int!
+    roundIndex: Int!
+    timeTakenMs: Int
+    LoggedWorkoutMoves: [CreateLoggedWorkoutMoveInLoggedSetInput!]!
+  }
+
+  input CreateLoggedWorkoutMoveInLoggedSetInput {
+    sortPosition: Int!
+    timeTakenMs: Int
+    repType: WorkoutMoveRepType!
+    reps: Float!
+    distanceUnit: DistanceUnit
+    loadAmount: Float
+    loadUnit: LoadUnit
+    Move: ID!
+    Equipment: ID
+  }
+
+  #### Create and attach to parent ####
+  input CreateLoggedWorkoutSectionInput {
+    sortPosition: Int!
+    timeTakenMs: Int!
+    notes: String
+    WorkoutSectionType: ID!
+    LoggedWorkout: ID!
+  }
+
+  input CreateLoggedWorkoutSetInput {
+    setIndex: Int!
+    roundIndex: Int!
+    timeTakenMs: Int
+    LoggedWorkoutSection: ID!
+  }
+
   input CreateLoggedWorkoutMoveInput {
     sortPosition: Int!
     timeTakenMs: Int
@@ -103,6 +114,44 @@ export default gql`
     loadAmount: Float
     loadUnit: LoadUnit
     Move: ID!
+    Equipment: ID
+    LoggedWorkoutSet: ID!
+  }
+
+  #### Update Inputs - Updates are made atomically at each level. (Non nested) ####
+  #### Relationships can be updated by passing the ID to the relationship name field. ####
+  input UpdateLoggedWorkoutInput {
+    id: ID!
+    completedOn: DateTime
+    name: String
+    notes: String
+    imageUri: String
+    ScheduledWorkout: ID
+    GymProfile: ID
+    WorkoutProgramWorkout: ID
+    WorkoutProgramEnrolment: ID
+  }
+
+  input UpdateLoggedWorkoutSectionInput {
+    id: ID!
+    timeTakenMs: Int
+    notes: String
+    videoUri: String
+  }
+
+  input UpdateLoggedWorkoutSetInput {
+    id: ID!
+    timeTakenMs: Int
+  }
+
+  input UpdateLoggedWorkoutMoveInput {
+    id: ID!
+    timeTakenMs: Int
+    reps: Float
+    distanceUnit: DistanceUnit
+    loadAmount: Float
+    loadUnit: LoadUnit
+    Move: ID
     Equipment: ID
   }
 `

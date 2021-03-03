@@ -87,10 +87,22 @@ import {
 } from './schedule'
 
 import {
-  loggedWorkouts,
+  userLoggedWorkouts,
   createLoggedWorkout,
   updateLoggedWorkout,
   deleteLoggedWorkoutById,
+  createLoggedWorkoutSection,
+  updateLoggedWorkoutSection,
+  deleteLoggedWorkoutSectionById,
+  reorderLoggedWorkoutSections,
+  createLoggedWorkoutSet,
+  updateLoggedWorkoutSet,
+  deleteLoggedWorkoutSetById,
+  reorderLoggedWorkoutSets,
+  createLoggedWorkoutMove,
+  updateLoggedWorkoutMove,
+  deleteLoggedWorkoutMoveById,
+  reorderLoggedWorkoutMoves,
 } from './loggedWorkout'
 
 import GraphQLJSON from 'graphql-type-json'
@@ -165,9 +177,6 @@ const resolvers: Resolvers = {
     scheduleWorkout,
     unscheduleWorkout,
     updateScheduledWorkout,
-    createLoggedWorkout,
-    updateLoggedWorkout,
-    deleteLoggedWorkoutById,
     createWorkoutProgram,
     updateWorkoutProgram,
     deleteWorkoutProgramById,
@@ -185,6 +194,24 @@ const resolvers: Resolvers = {
     createProgressJournalGoalTag,
     updateProgressJournalGoalTag,
     deleteProgressJournalGoalTagsById,
+    ///////////////////////
+    //// LoggedWorkout ////
+    userLoggedWorkouts,
+    createLoggedWorkout,
+    updateLoggedWorkout,
+    deleteLoggedWorkoutById,
+    createLoggedWorkoutSection,
+    updateLoggedWorkoutSection,
+    deleteLoggedWorkoutSectionById,
+    createLoggedWorkoutSet,
+    updateLoggedWorkoutSet,
+    deleteLoggedWorkoutSetById,
+    createLoggedWorkoutMove,
+    updateLoggedWorkoutMove,
+    deleteLoggedWorkoutMoveById,
+    reorderLoggedWorkoutSections,
+    reorderLoggedWorkoutSets,
+    reorderLoggedWorkoutMoves,
   },
 }
 

@@ -12,7 +12,7 @@ import { firebaseVerifyToken } from './lib/firebaseAdmin'
 require('dotenv').config()
 
 // https://paljs.com/plugins/delete/
-class PrismaExtended extends PrismaClient {
+export class PrismaExtended extends PrismaClient {
   constructor(options?: PrismaOriginal.PrismaClientOptions) {
     super(options)
   }
