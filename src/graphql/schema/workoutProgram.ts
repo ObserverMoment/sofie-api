@@ -18,6 +18,29 @@ export default gql`
     WorkoutProgramReviews: [WorkoutProgramReview!]
   }
 
+  type WorkoutProgramWorkout {
+    id: ID!
+    dayNumber: Float!
+    notes: String
+    Workout: Workout!
+  }
+
+  type WorkoutProgramEnrolment {
+    id: ID!
+    startDate: DateTime!
+    User: User!
+    WorkoutProgram: WorkoutProgram!
+    LoggedWorkouts: [LoggedWorkout!]
+  }
+
+  type WorkoutProgramReview {
+    id: ID!
+    createdAt: DateTime!
+    score: Float!
+    comment: String
+    User: User!
+  }
+
   input CreateWorkoutProgramInput {
     name: String!
     description: String
@@ -27,7 +50,7 @@ export default gql`
     introAudioUri: String
     contentAccessScope: ContentAccessScope!
     WorkoutGoals: [ID!]
-    WorkoutProgramWorkouts: [CreateWorkoutProgramWorkoutInput!]!
+    WorkoutProgramWorkouts: [CreateWorkoutProgramWorkoutInput!]
   }
 
   input UpdateWorkoutProgramInput {
@@ -40,38 +63,20 @@ export default gql`
     introAudioUri: String
     contentAccessScope: ContentAccessScope
     WorkoutGoals: [ID!]
-    # If present - resolver will deep update - deleting all descendants and rebuilding based on this input.
-    WorkoutProgramWorkouts: [UpdateWorkoutProgramWorkoutInput!]
-  }
-
-  type WorkoutProgramWorkout {
-    id: ID!
-    dayNumber: Float!
-    notes: String
-    Workout: Workout!
   }
 
   input CreateWorkoutProgramWorkoutInput {
     dayNumber: Float!
     notes: String
     Workout: ID!
+    WorkoutProgram: ID!
   }
 
   input UpdateWorkoutProgramWorkoutInput {
-    # When id is null a new workoutProgramWorkout will be created.
-    # Otherwise the existing one will be updated.
-    id: ID
+    id: ID!
     dayNumber: Float!
     notes: String
     Workout: ID!
-  }
-
-  type WorkoutProgramEnrolment {
-    id: ID!
-    startDate: DateTime
-    User: User!
-    WorkoutProgram: WorkoutProgram!
-    LoggedWorkouts: [LoggedWorkout!]
   }
 
   input AddLoggedWorkoutToProgramEnrolmentInput {
@@ -79,16 +84,15 @@ export default gql`
     LoggedWorkout: CreateLoggedWorkoutInput!
   }
 
-  type WorkoutProgramReview {
-    id: ID!
-    createdAt: DateTime!
-    score: Float!
-    comment: String
-    User: User!
-  }
-
   input CreateWorkoutProgramReviewInput {
     score: Float!
+    comment: String
+    WorkoutProgram: ID!
+  }
+
+  input UpdateWorkoutProgramReviewInput {
+    id: ID!
+    score: Float
     comment: String
   }
 `

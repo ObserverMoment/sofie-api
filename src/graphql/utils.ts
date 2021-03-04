@@ -1,3 +1,4 @@
+import { PrismaClient } from '@prisma/client'
 import { ApolloError } from 'apollo-server-errors'
 import { ContextUserType } from '..'
 
@@ -23,6 +24,9 @@ export type ContentObjectType =
   | 'progressJournalEntry'
   | 'scheduledWorkout'
   | 'workout'
+  | 'workoutProgram'
+  | 'workoutProgramEnrolment'
+  | 'workoutProgramReview'
 
 /// Checks that a user has access to a single object in the database.
 export async function checkUserAccessScope(
@@ -99,5 +103,32 @@ export function checkIsAdmin(userType: ContextUserType) {
     throw new AccessScopeError(
       'Only admins can access this data of functionality.',
     )
+  }
+}
+
+/// Given a WorkoutProgramWorkout instance - does the authed user have access to it.
+// I.e. Do they own the parent.
+export async function checkUserOwnsParentWorkoutProgram(
+  workoutProgramWorkoutId: string,
+  authedUserId: string,
+  prisma: PrismaClient,
+) {
+  const workoutProgramWorkout = await prisma.workoutProgramWorkout.findUnique({
+    where: { id: workoutProgramWorkoutId },
+    select: {
+      WorkoutProgram: {
+        select: {
+          userId: true,
+        },
+      },
+    },
+  })
+
+  if (
+    !workoutProgramWorkout ||
+    (workoutProgramWorkout &&
+      workoutProgramWorkout.WorkoutProgram.userId !== authedUserId)
+  ) {
+    throw new AccessScopeError()
   }
 }

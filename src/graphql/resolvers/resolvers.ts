@@ -87,7 +87,7 @@ import {
   workoutById,
   createWorkout,
   shallowUpdateWorkout,
-  deleteWorkoutById,
+  softDeleteWorkoutById,
   updateWorkoutSections,
   deleteWorkoutSectionsById,
 } from './workout'
@@ -97,12 +97,18 @@ import {
   publicWorkoutPrograms,
   userWorkoutPrograms,
   workoutProgramById,
-  userWorkoutProgramEnrolments,
   createWorkoutProgram,
   updateWorkoutProgram,
-  deleteWorkoutProgramById,
-  addEnrolmentToWorkoutProgram,
-  removeEnrolmentFromWorkoutProgram,
+  softDeleteWorkoutProgramById,
+  createWorkoutProgramWorkout,
+  updateWorkoutProgramWorkout,
+  deleteWorkoutProgramWorkoutById,
+  userWorkoutProgramEnrolments,
+  createWorkoutProgramEnrolment,
+  deleteWorkoutProgramEnrolmentById,
+  createWorkoutProgramReview,
+  updateWorkoutProgramReview,
+  deleteWorkoutProgramReviewById,
 } from './workoutProgram'
 
 import GraphQLJSON from 'graphql-type-json'
@@ -235,7 +241,7 @@ const resolvers: Resolvers = {
     /////////////////
     createWorkout,
     shallowUpdateWorkout,
-    deleteWorkoutById,
+    softDeleteWorkoutById,
     updateWorkoutSections,
     deleteWorkoutSectionsById,
     /////////////////////////
@@ -243,9 +249,15 @@ const resolvers: Resolvers = {
     /////////////////////////
     createWorkoutProgram,
     updateWorkoutProgram,
-    deleteWorkoutProgramById,
-    addEnrolmentToWorkoutProgram,
-    removeEnrolmentFromWorkoutProgram,
+    softDeleteWorkoutProgramById,
+    createWorkoutProgramWorkout,
+    updateWorkoutProgramWorkout,
+    deleteWorkoutProgramWorkoutById,
+    createWorkoutProgramEnrolment,
+    deleteWorkoutProgramEnrolmentById,
+    createWorkoutProgramReview,
+    updateWorkoutProgramReview,
+    deleteWorkoutProgramReviewById,
   },
 }
 

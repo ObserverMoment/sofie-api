@@ -179,7 +179,7 @@ export const softDeleteMoveById = async (
 ) => {
   await checkUserAccessScope(id, 'move', authedUserId, prisma)
 
-  const archivedMove = await prisma.move.update({
+  const archived = await prisma.move.update({
     where: { id },
     data: {
       archived: true,
@@ -188,8 +188,8 @@ export const softDeleteMoveById = async (
       id: true,
     },
   })
-  if (archivedMove) {
-    return archivedMove.id
+  if (archived) {
+    return archived.id
   } else {
     throw new ApolloError('softDeleteMoveById: There was an issue.')
   }

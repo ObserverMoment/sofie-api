@@ -422,7 +422,10 @@ async function checkUserOwnsProgressJournal(
       userId: true,
     },
   })
-  if (parentProgressJournal && parentProgressJournal.userId !== authedUserId) {
+  if (
+    !parentProgressJournal ||
+    (parentProgressJournal && parentProgressJournal.userId !== authedUserId)
+  ) {
     throw new AccessScopeError(
       'You do not own the parent progress journal into which you are trying to write. You do not have access to it',
     )

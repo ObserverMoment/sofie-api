@@ -68,13 +68,15 @@ export const userPublicProfiles = async (
   r: any,
   a: any,
   { select, prisma }: Context,
-) =>
-  prisma.user.findMany({
+) => {
+  const publicUsers = await prisma.user.findMany({
     where: {
       userProfileScope: 'PUBLIC',
     },
     select,
   })
+  return publicUsers as UserPublicProfile[]
+}
 
 //// Mutations ////
 // A brand new user linked to a firebase UID.

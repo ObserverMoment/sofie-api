@@ -6,54 +6,46 @@ export default gql`
 
   type Query {
     validateToken: Boolean!
-
     #### Core Data ####
     bodyAreas: [BodyArea!]!
     equipments: [Equipment!]!
     moveTypes: [MoveType!]!
     workoutGoals: [WorkoutGoal]!
     workoutSectionTypes: [WorkoutSectionType!]!
-
-    userCustomMoves: [Move!]!
-    userWorkouts: [Workout!]!
-    userWorkoutPrograms: [WorkoutProgram!]!
-
+    #### Logged Workouts ####
     loggedWorkouts: [LoggedWorkout!]!
-
-    userWorkoutProgramEnrolments(
-      workoutProgramId: ID!
-    ): [WorkoutProgramEnrolment!]
-
     #### Moves ####
     standardMoves: [Move!]!
-
+    userCustomMoves: [Move!]!
     #### Progress Journal ####
     progressJournals: [ProgressJournal!]!
     progressJournalById(progressJournalId: ID!): ProgressJournal!
     progressJournalGoalTags: [ProgressJournalGoalTag!]!
-
     #### Scheduled Workouts ####
     userScheduledWorkouts: [ScheduledWorkout!]!
-
     #### Text Search ####
     textSearchWorkouts(text: String!): [TextSearchWorkoutResult!]
     textSearchWorkoutPrograms(text: String!): [TextSearchWorkoutProgramResult!]
     textSearchCreatorPublicProfiles(text: String!): [UserPublicProfile!]
-
     #### User ####
     checkUniqueDisplayName(displayName: String!): Boolean!
     userByUid(uid: ID!): User!
+    #### User Public Profiles ####
+    userPublicProfiles: [UserPublicProfile!]
     userPublicProfileByUserId(userId: ID!): UserPublicProfile!
-
+    #### Workouts ####
     officialWorkouts: [Workout!]!
     publicWorkouts: [Workout!]!
-    workoutById(workoutId: ID!): Workout
-
+    userWorkouts: [Workout!]!
+    workoutById(workoutId: ID!): Workout!
+    #### Workout Programs and Enrolments ####
     officialWorkoutPrograms: [WorkoutProgram!]!
     publicWorkoutPrograms: [WorkoutProgram!]!
-    workoutProgramById(workoutProgramId: ID!): WorkoutProgram
-
-    creatorPublicProfiles: [UserPublicProfile!]
+    workoutProgramById(id: ID!): WorkoutProgram!
+    userWorkoutPrograms: [WorkoutProgram!]!
+    userWorkoutProgramEnrolments(
+      workoutProgramId: ID!
+    ): [WorkoutProgramEnrolment!]
   }
 
   type Mutation {
@@ -145,28 +137,41 @@ export default gql`
     #### User ####
     createUser(uid: ID!): User!
     updateUser(data: UpdateUserInput!): User!
+    #################
     #### Workout ####
     createWorkout(data: CreateWorkoutInput!): Workout!
     shallowUpdateWorkout(data: ShallowUpdateWorkoutInput!): Workout!
-    deleteWorkoutById(workoutId: ID!): ID
+    deleteWorkoutById(id: ID!): ID
     updateWorkoutSections(
       data: [UpdateWorkoutSectionInput!]!
     ): [WorkoutSection!]!
     deleteWorkoutSectionsById(workoutSectionIds: [ID!]!): [ID]
+    #########################
     #### Workout Program ####
     createWorkoutProgram(data: CreateWorkoutProgramInput!): WorkoutProgram!
     updateWorkoutProgram(data: UpdateWorkoutProgramInput!): WorkoutProgram!
-    deleteWorkoutProgramById(workoutProgramId: ID!): ID
-    addEnrolmentToWorkoutProgram(workoutProgramId: ID!): WorkoutProgram!
-    removeEnrolmentFromWorkoutProgram(
+    deleteWorkoutProgramById(id: ID!): ID!
+    #### Workout Program Workout ####
+    createWorkoutProgramWorkout(
+      data: CreateWorkoutProgramWorkoutInput!
+    ): WorkoutProgramWorkout!
+    updateWorkoutProgramWorkout(
+      data: UpdateWorkoutProgramWorkoutInput!
+    ): WorkoutProgramWorkout!
+    deleteWorkoutProgramWorkoutById(id: ID!): ID!
+    #### Workout Program Enrolment ####
+    createWorkoutProgramEnrolment(
       workoutProgramId: ID!
-      workoutProgramEnrolmentId: ID!
-    ): WorkoutProgram!
-    addReviewToWorkoutProgram(
-      workoutProgramId: ID!
+    ): WorkoutProgramEnrolment!
+    deleteWorkoutProgramEnrolmentById(id: ID!): ID!
+    #### Workout Program Review ####
+    createWorkoutProgramReview(
       data: CreateWorkoutProgramReviewInput!
-    ): WorkoutProgram!
-    deleteWorkoutProgramReview(reviewId: ID!): WorkoutProgram!
+    ): WorkoutProgramReview!
+    updateWorkoutProgramReview(
+      data: UpdateWorkoutProgramReviewInput!
+    ): WorkoutProgramReview!
+    deleteWorkoutProgramReviewById(id: ID!): ID!
   }
 
   #### Non CRUD-able models ####
