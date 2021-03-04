@@ -25,7 +25,6 @@ model BodyArea {
   createdAt          DateTime            @default(now())
   name               String              @unique
   altNames           String?
-  /// @onDelete(CASCADE)
   BodyAreaMoveScores BodyAreaMoveScore[]
   frontBack          BodyAreaFrontBack   @default(FRONT)
   upperLower         BodyAreaUpperLower  @default(UPPER)
@@ -33,9 +32,9 @@ model BodyArea {
 
 model BodyAreaMoveScore {
   createdAt  DateTime @default(now())
-  move       Move     @relation(fields: [moveId], references: [id])
+  Move       Move     @relation(fields: [moveId], references: [id])
   moveId     String
-  bodyArea   BodyArea @relation(fields: [bodyAreaId], references: [id])
+  BodyArea   BodyArea @relation(fields: [bodyAreaId], references: [id])
   bodyAreaId String
   score      Int      @default(1)
 
@@ -135,33 +134,23 @@ model User {
   snapUrl                  String?
   linkedinUrl              String?
   unitSystem               UnitSystem                @default(METRIC)
-  /// @onDelete(CASCADE)
   CustomMoves              Move[]
-  /// @onDelete(CASCADE)
   Workouts                 Workout[]
-  /// @onDelete(CASCADE)
   ScheduledWorkouts        ScheduledWorkout[]
-  /// @onDelete(CASCADE)
   LoggedWorkouts           LoggedWorkout[]
-  /// @onDelete(CASCADE)
   GymProfiles              GymProfile[]
-  /// @onDelete(CASCADE)
   WorkoutPrograms          WorkoutProgram[]
-  /// @onDelete(CASCADE)
   WorkoutProgramEnrolments WorkoutProgramEnrolment[]
-  /// @onDelete(SET_NULL)
   WorkoutProgramReviews    WorkoutProgramReview[]
-  /// @onDelete(CASCADE)
   UserBenchmarks           UserBenchmark[]
-  /// @onDelete(CASCADE)
   Collections              UserCollection[]
-  /// @onDelete(CASCADE)
   ProgressJournals         ProgressJournal[]
-  /// @onDelete(CASCADE)
   ProgressJournalGoalTags  ProgressJournalGoalTag[]
   LoggedWorkoutSection     LoggedWorkoutSection[]
   LoggedWorkoutSet         LoggedWorkoutSet[]
   LoggedWorkoutMove        LoggedWorkoutMove[]
+  ProgressJournalGoal      ProgressJournalGoal[]
+  ProgressJournalEntry     ProgressJournalEntry[]
 }
 
 model UserCollection {
@@ -206,7 +195,6 @@ model UserBenchmark {
   Equipment    Equipment[]
   Move         Move                 @relation(fields: [moveId], references: [id])
   moveId       String
-  /// @onDelete(CASCADE)
   Entries      UserBenchmarkEntry[]
 }
 
@@ -239,7 +227,6 @@ model Workout {
   coverImageUri         String?
   difficultyLevel       Int                     @default(50)
   contentAccessScope    ContentAccessScope      @default(PRIVATE)
-  /// @onDelete(CASCADE)
   WorkoutSections       WorkoutSection[]
   LoggedWorkout         LoggedWorkout[]
   ScheduledWorkout      ScheduledWorkout[]
@@ -270,13 +257,10 @@ model WorkoutSection {
   outroAudioUri                String? // Will play at end of workout
   Workout                      Workout                     @relation(fields: [workoutId], references: [id])
   workoutId                    String
-  /// @onDelete(CASCADE)
   TrainingWorkoutSection       TrainingWorkoutSection?     @relation(fields: [trainingWorkoutSectionId], references: [id])
   trainingWorkoutSectionId     String?
-  /// @onDelete(CASCADE)
   AmrapWorkoutSection          AmrapWorkoutSection?        @relation(fields: [amrapWorkoutSectionId], references: [id])
   amrapWorkoutSectionId        String?
-  /// @onDelete(CASCADE)
   LastStandingWorkoutSection   LastStandingWorkoutSection? @relation(fields: [lastStandingWorkoutSectionId], references: [id])
   lastStandingWorkoutSectionId String?
   // The workout type tells you which type of workout section to use.
@@ -284,7 +268,6 @@ model WorkoutSection {
   // E.g. TimedWorkoutSection must be 'HIIT', 'EMOM' or 'Tabata' type.
   WorkoutSectionType           WorkoutSectionType          @relation(fields: [workoutSectionTypeId], references: [id])
   workoutSectionTypeId         String
-  /// @onDelete(CASCADE)
   WorkoutSets                  WorkoutSet[]
 }
 
@@ -324,7 +307,6 @@ model WorkoutSet {
   // If there is more than one move then this is a superset
   // In a superset you do each workoutMove in the array one after another
   // And then repeat this process {rounds} times
-  /// @onDelete(CASCADE)
   WorkoutMoves     WorkoutMove[]
   WorkoutSection   WorkoutSection @relation(fields: [workoutSectionId], references: [id])
   workoutSectionId String
@@ -366,17 +348,11 @@ model Move {
   MoveType             MoveType?            @relation(fields: [moveTypeId], references: [id])
   moveTypeId           String?
   validRepTypes        WorkoutMoveRepType[]
-  /// @onDelete(SET_NULL)
   RequiredEquipments   Equipment[]          @relation("moveToRequiredEquipments", references: [id])
-  /// @onDelete(SET_NULL)
   SelectableEquipments Equipment[]          @relation("moveToSelectableEquipments", references: [id])
-  /// @onDelete(SET_NULL)
   WorkoutMoves         WorkoutMove[]
-  /// @onDelete(CASCADE)
   BodyAreaMoveScores   BodyAreaMoveScore[]
-  /// @onDelete(SET_NULL)
   UserBenchmarks       UserBenchmark[]
-  /// @onDelete(SET_NULL)
   LoggedWorkoutMove    LoggedWorkoutMove[]
 }
 
@@ -395,12 +371,9 @@ model WorkoutProgram {
   contentAccessScope     ContentAccessScope        @default(PRIVATE)
   User                   User                      @relation(fields: [userId], references: [id])
   userId                 String
-  /// @onDelete(CASCADE)
   Enrolments             WorkoutProgramEnrolment[]
   WorkoutGoals           WorkoutGoal[]
-  /// @onDelete(CASCADE)
   WorkoutProgramWorkouts WorkoutProgramWorkout[]
-  /// @onDelete(CASCADE)
   WorkoutProgramReviews  WorkoutProgramReview[]
   UserCollections        UserCollection[]
 }
@@ -455,11 +428,9 @@ model LoggedWorkout {
   name                      String
   notes                     String?
   imageUri                  String?
-  /// @onDelete(CASCADE)
   LoggedWorkoutSections     LoggedWorkoutSection[]
   Workout                   Workout?                 @relation(fields: [workoutId], references: [id])
   workoutId                 String?
-  /// @onDelete(SET_NULL)
   ScheduledWorkout          ScheduledWorkout?
   GymProfile                GymProfile?              @relation(fields: [gymProfileId], references: [id])
   gymProfileId              String?
@@ -478,7 +449,6 @@ model LoggedWorkoutSection {
   sortPosition         Int
   timeTakenMs          Int // Milliseconds
   notes                String?
-  /// @onDelete(CASCADE)
   LoggedWorkoutSets    LoggedWorkoutSet[]
   LoggedWorkout        LoggedWorkout      @relation(fields: [loggedWorkoutId], references: [id])
   loggedWorkoutId      String
@@ -494,7 +464,6 @@ model LoggedWorkoutSet {
   setIndex               Int // The sort position of the WorkoutSet
   roundIndex             Int // The iteration (round) of the set during the workout
   timeTakenMs            Int? // Milliseconds - optional
-  /// @onDelete(CASCADE)
   LoggedWorkoutMoves     LoggedWorkoutMove[]
   LoggedWorkoutSection   LoggedWorkoutSection @relation(fields: [loggedWorkoutSectionId], references: [id])
   loggedWorkoutSectionId String
@@ -530,15 +499,15 @@ model ProgressJournal {
   userId                 String
   name                   String
   description            String?
-  /// @onDelete(CASCADE)
   ProgressJournalEntries ProgressJournalEntry[]
-  /// @onDelete(CASCADE)
   ProgressJournalGoals   ProgressJournalGoal[]
 }
 
 model ProgressJournalEntry {
   id                String          @id @default(uuid())
   createdAt         DateTime        @default(now())
+  User              User            @relation(fields: [userId], references: [id])
+  userId            String
   notes             String?
   voiceNoteUri      String?
   bodyweight        Float?
@@ -554,6 +523,8 @@ model ProgressJournalEntry {
 model ProgressJournalGoal {
   id                      String                   @id @default(uuid())
   createdAt               DateTime                 @default(now())
+  User                    User                     @relation(fields: [userId], references: [id])
+  userId                  String
   name                    String
   description             String?
   deadline                DateTime?

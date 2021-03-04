@@ -1,92 +1,6 @@
 import { Resolvers } from '../../generated/graphql'
 
 import {
-  checkUniqueDisplayName,
-  userByUid,
-  userPublicProfile,
-  creatorPublicProfiles,
-  createUser,
-  updateUser,
-  createGymProfile,
-  updateGymProfile,
-  deleteGymProfileById,
-} from './user'
-
-import {
-  progressJournals,
-  progressJournalGoalTags,
-  progressJournalById,
-  createProgressJournal,
-  updateProgressJournal,
-  deleteProgressJournalById,
-  createProgressJournalGoal,
-  updateProgressJournalGoal,
-  deleteProgressJournalGoalById,
-  createProgressJournalGoalTag,
-  updateProgressJournalGoalTag,
-  deleteProgressJournalGoalTagsById,
-  createProgressJournalEntry,
-  updateProgressJournalEntry,
-  deleteProgressJournalEntryById,
-} from './progressJournal'
-
-import {
-  bodyAreas,
-  equipments,
-  createEquipment,
-  updateEquipment,
-  workoutGoals,
-  workoutSectionTypes,
-  moveTypes,
-} from './officialData'
-
-import {
-  textSearchWorkouts,
-  textSearchWorkoutPrograms,
-  textSearchCreatorPublicProfiles,
-} from './textSearch'
-
-import {
-  officialWorkoutPrograms,
-  publicWorkoutPrograms,
-  userWorkoutPrograms,
-  workoutProgramById,
-  userWorkoutProgramEnrolments,
-  createWorkoutProgram,
-  updateWorkoutProgram,
-  deleteWorkoutProgramById,
-  addEnrolmentToWorkoutProgram,
-  removeEnrolmentFromWorkoutProgram,
-} from './workoutProgram'
-
-import {
-  standardMoves,
-  userCustomMoves,
-  createMove,
-  updateMove,
-  deleteMoveById,
-} from './move'
-
-import {
-  officialWorkouts,
-  publicWorkouts,
-  userWorkouts,
-  workoutById,
-  createWorkout,
-  shallowUpdateWorkout,
-  deleteWorkoutById,
-  updateWorkoutSections,
-  deleteWorkoutSectionsById,
-} from './workout'
-
-import {
-  scheduledWorkouts,
-  scheduleWorkout,
-  unscheduleWorkout,
-  updateScheduledWorkout,
-} from './schedule'
-
-import {
   userLoggedWorkouts,
   createLoggedWorkout,
   updateLoggedWorkout,
@@ -104,6 +18,92 @@ import {
   deleteLoggedWorkoutMoveById,
   reorderLoggedWorkoutMoves,
 } from './loggedWorkout'
+
+import {
+  standardMoves,
+  userCustomMoves,
+  createMove,
+  updateMove,
+  softDeleteMoveById,
+} from './move'
+
+import {
+  bodyAreas,
+  equipments,
+  createEquipment,
+  updateEquipment,
+  workoutGoals,
+  workoutSectionTypes,
+  moveTypes,
+} from './officialData'
+
+import {
+  userProgressJournals,
+  progressJournalGoalTags,
+  progressJournalById,
+  createProgressJournal,
+  updateProgressJournal,
+  deleteProgressJournalById,
+  createProgressJournalGoal,
+  updateProgressJournalGoal,
+  deleteProgressJournalGoalById,
+  createProgressJournalGoalTag,
+  updateProgressJournalGoalTag,
+  deleteProgressJournalGoalTagById,
+  createProgressJournalEntry,
+  updateProgressJournalEntry,
+  deleteProgressJournalEntryById,
+} from './progressJournal'
+
+import {
+  userScheduledWorkouts,
+  scheduleWorkout,
+  unscheduleWorkout,
+  updateScheduledWorkout,
+} from './schedule'
+
+import {
+  textSearchWorkouts,
+  textSearchWorkoutPrograms,
+  textSearchCreatorPublicProfiles,
+} from './textSearch'
+
+import {
+  checkUniqueDisplayName,
+  userByUid,
+  userPublicProfile,
+  creatorPublicProfiles,
+  createUser,
+  updateUser,
+  createGymProfile,
+  updateGymProfile,
+  deleteGymProfileById,
+} from './user'
+
+import {
+  officialWorkouts,
+  publicWorkouts,
+  userWorkouts,
+  workoutById,
+  createWorkout,
+  shallowUpdateWorkout,
+  deleteWorkoutById,
+  updateWorkoutSections,
+  deleteWorkoutSectionsById,
+} from './workout'
+
+import {
+  officialWorkoutPrograms,
+  publicWorkoutPrograms,
+  userWorkoutPrograms,
+  workoutProgramById,
+  userWorkoutProgramEnrolments,
+  createWorkoutProgram,
+  updateWorkoutProgram,
+  deleteWorkoutProgramById,
+  addEnrolmentToWorkoutProgram,
+  removeEnrolmentFromWorkoutProgram,
+} from './workoutProgram'
 
 import GraphQLJSON from 'graphql-type-json'
 import { GraphQLScalarType } from 'graphql'
@@ -129,17 +129,24 @@ const resolvers: Resolvers = {
   }),
   Query: {
     validateToken: () => true, // Empty Resolver - call it and it will throw auth error if token is not valid / expired.
+    //// Core Data ////
+    bodyAreas,
+    equipments,
+    moveTypes,
+    workoutGoals,
+    workoutSectionTypes,
+
+    //// Progress Journal ////
+    userProgressJournals,
+    progressJournalGoalTags,
+    progressJournalById,
+
+    //// User ////
     checkUniqueDisplayName,
     userByUid,
     userPublicProfile,
     creatorPublicProfiles,
-    standardMoves,
-    userCustomMoves,
-    bodyAreas,
-    equipments,
-    workoutGoals,
-    workoutSectionTypes,
-    moveTypes,
+
     officialWorkoutPrograms,
     publicWorkoutPrograms,
     userWorkoutPrograms,
@@ -149,39 +156,28 @@ const resolvers: Resolvers = {
     publicWorkouts,
     userWorkouts,
     workoutById,
-    scheduledWorkouts,
-    loggedWorkouts,
-    progressJournals,
-    progressJournalGoalTags,
-    progressJournalById,
+
+    //// Logged Workouts ////
+    userLoggedWorkouts,
+    //// Move ////
+    standardMoves,
+    userCustomMoves,
+    //// Scheduled Workouts ////
+    userScheduledWorkouts,
+
     textSearchWorkouts,
     textSearchWorkoutPrograms,
     textSearchCreatorPublicProfiles,
   },
   Mutation: {
-    createUser,
-    updateUser,
+    ///////////////////
+    //// Equipment ////
+    ///////////////////
     createEquipment,
     updateEquipment,
-    createMove,
-    updateMove,
-    deleteMoveById,
-    createGymProfile,
-    updateGymProfile,
-    deleteGymProfileById,
-    createWorkout,
-    shallowUpdateWorkout,
-    deleteWorkoutById,
-    updateWorkoutSections,
-    deleteWorkoutSectionsById,
-    scheduleWorkout,
-    unscheduleWorkout,
-    updateScheduledWorkout,
-    createWorkoutProgram,
-    updateWorkoutProgram,
-    deleteWorkoutProgramById,
-    addEnrolmentToWorkoutProgram,
-    removeEnrolmentFromWorkoutProgram,
+    //////////////////////////
+    //// Progress Journal ////
+    //////////////////////////
     createProgressJournal,
     updateProgressJournal,
     deleteProgressJournalById,
@@ -193,9 +189,29 @@ const resolvers: Resolvers = {
     deleteProgressJournalGoalById,
     createProgressJournalGoalTag,
     updateProgressJournalGoalTag,
-    deleteProgressJournalGoalTagsById,
+    deleteProgressJournalGoalTagById,
+
+    createUser,
+    updateUser,
+
+    createGymProfile,
+    updateGymProfile,
+    deleteGymProfileById,
+    createWorkout,
+    shallowUpdateWorkout,
+    deleteWorkoutById,
+    updateWorkoutSections,
+    deleteWorkoutSectionsById,
+
+    createWorkoutProgram,
+    updateWorkoutProgram,
+    deleteWorkoutProgramById,
+    addEnrolmentToWorkoutProgram,
+    removeEnrolmentFromWorkoutProgram,
+
     ///////////////////////
     //// LoggedWorkout ////
+    ///////////////////////
     userLoggedWorkouts,
     createLoggedWorkout,
     updateLoggedWorkout,
@@ -212,6 +228,18 @@ const resolvers: Resolvers = {
     reorderLoggedWorkoutSections,
     reorderLoggedWorkoutSets,
     reorderLoggedWorkoutMoves,
+    //////////////
+    //// Move ////
+    //////////////
+    createMove,
+    updateMove,
+    softDeleteMoveById,
+    //////////////////////////
+    //// Schedule Workout ////
+    //////////////////////////
+    scheduleWorkout,
+    unscheduleWorkout,
+    updateScheduledWorkout,
   },
 }
 

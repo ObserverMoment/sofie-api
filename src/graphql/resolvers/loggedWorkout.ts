@@ -2,6 +2,8 @@ import { ApolloError } from 'apollo-server'
 import { Context } from '../..'
 import {
   CreateLoggedWorkoutInput,
+  CreateLoggedWorkoutMoveInLoggedSetInput,
+  CreateLoggedWorkoutMoveInput,
   LoggedWorkout,
   LoggedWorkoutMove,
   LoggedWorkoutSection,
@@ -23,7 +25,11 @@ import {
   MutationUpdateLoggedWorkoutSetArgs,
 } from '../../generated/graphql'
 import { deleteFiles } from '../../uploadcare'
-import { AccessScopeError, checkUserAccessScope } from '../contentAccessScopes'
+import {
+  AccessScopeError,
+  checkAndReorderObjects,
+  checkUserAccessScope,
+} from '../utils'
 
 //// Queries ////
 export const userLoggedWorkouts = async (
@@ -118,7 +124,7 @@ export const updateLoggedWorkout = async (
   { data }: MutationUpdateLoggedWorkoutArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  checkUserAccessScope(data.id, 'loggedWorkout', authedUserId, prisma)
+  await checkUserAccessScope(data.id, 'loggedWorkout', authedUserId, prisma)
   const updated = await prisma.loggedWorkout.update({
     where: {
       id: data.id,
@@ -158,8 +164,8 @@ export const deleteLoggedWorkoutById = async (
   { authedUserId, prisma }: Context,
 ) => {
   // Get original LoggedWorkout and all its sections.
-  // To check user access and to get all media uris back.
-  const logForDeletion: any = await prisma.loggedWorkout.findUnique({
+  // To check user access, get descendant ids and to get media uris back.
+  const logForDeletion = await prisma.loggedWorkout.findUnique({
     where: { id },
     select: {
       id: true,
@@ -171,14 +177,32 @@ export const deleteLoggedWorkoutById = async (
   if (!logForDeletion || logForDeletion.userId !== authedUserId) {
     throw new AccessScopeError()
   } else {
-    // Cascade delete loggedWorkout and all descendants with https://paljs.com/plugins/delete/
-    const res = await prisma.onDelete({
-      model: 'LoggedWorkout',
-      where: { id: id },
-      deleteParent: true, // If false, just the descendants will be deleted and return value will be void
+    const sectionsForDeletion = await prisma.loggedWorkoutSection.findMany({
+      where: { loggedWorkoutId: id },
+      select: { id: true },
     })
+    const sectionIds = sectionsForDeletion.map(({ id }) => id)
 
-    if (res && res.count > 0) {
+    const setsForDeletion = await prisma.loggedWorkoutSet.findMany({
+      where: { loggedWorkoutSectionId: { in: sectionIds } },
+      select: { id: true },
+    })
+    const setIds = setsForDeletion.map(({ id }) => id)
+
+    const ops = [
+      prisma.loggedWorkoutMove.deleteMany({
+        where: { loggedWorkoutSetId: { in: setIds } },
+      }),
+      prisma.loggedWorkoutSet.deleteMany({ where: { id: { in: setIds } } }),
+      prisma.loggedWorkoutSection.deleteMany({
+        where: { id: { in: sectionIds } },
+      }),
+      prisma.loggedWorkout.delete({ where: { id } }),
+    ]
+
+    const [_, __, ___, deleted] = await prisma.$transaction(ops)
+
+    if (deleted) {
       if (logForDeletion.imageUri) {
         await deleteFiles([logForDeletion.imageUri])
       }
@@ -224,7 +248,12 @@ export const updateLoggedWorkoutSection = async (
   { data }: MutationUpdateLoggedWorkoutSectionArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  checkUserAccessScope(data.id, 'loggedWorkoutSection', authedUserId, prisma)
+  await checkUserAccessScope(
+    data.id,
+    'loggedWorkoutSection',
+    authedUserId,
+    prisma,
+  )
   const updated = await prisma.loggedWorkoutSection.update({
     where: {
       id: data.id,
@@ -249,18 +278,43 @@ export const deleteLoggedWorkoutSectionById = async (
   { id }: MutationDeleteLoggedWorkoutSectionByIdArgs,
   { authedUserId, prisma }: Context,
 ) => {
-  checkUserAccessScope(id, 'loggedWorkoutSection', authedUserId, prisma)
-  // Cascade delete it and all its descendants with https://paljs.com/plugins/delete/
-  const res = await prisma.onDelete({
-    model: 'LoggedWorkoutSection',
-    where: { id: id },
-    deleteParent: true, // If false, just the descendants will be deleted and return value will be void
+  // To check user access, get descendant ids and to get media uris back.
+  const sectionForDeletion = await prisma.loggedWorkoutSection.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      userId: true,
+    },
   })
 
-  if (res && res.count > 0) {
-    return id
+  if (!sectionForDeletion || sectionForDeletion.userId !== authedUserId) {
+    throw new AccessScopeError()
   } else {
-    throw new ApolloError('deleteLoggedWorkoutSectionById: There was an issue.')
+    const setsForDeletion = await prisma.loggedWorkoutSet.findMany({
+      where: { loggedWorkoutSectionId: id },
+      select: { id: true },
+    })
+    const setIds = setsForDeletion.map(({ id }) => id)
+
+    const ops = [
+      prisma.loggedWorkoutMove.deleteMany({
+        where: { loggedWorkoutSetId: { in: setIds } },
+      }),
+      prisma.loggedWorkoutSet.deleteMany({
+        where: { id: { in: setIds } },
+      }),
+      prisma.loggedWorkoutSection.delete({ where: { id } }),
+    ]
+
+    const [_, __, deleted] = await prisma.$transaction(ops)
+
+    if (deleted) {
+      return sectionForDeletion.id
+    } else {
+      throw new ApolloError(
+        'deleteLoggedWorkoutSectionById: There was an issue.',
+      )
+    }
   }
 }
 
@@ -294,7 +348,7 @@ export const updateLoggedWorkoutSet = async (
   { data }: MutationUpdateLoggedWorkoutSetArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  checkUserAccessScope(data.id, 'loggedWorkoutSet', authedUserId, prisma)
+  await checkUserAccessScope(data.id, 'loggedWorkoutSet', authedUserId, prisma)
   const updated = await prisma.loggedWorkoutSet.update({
     where: {
       id: data.id,
@@ -316,10 +370,11 @@ export const deleteLoggedWorkoutSetById = async (
   { id }: MutationDeleteLoggedWorkoutSetByIdArgs,
   { authedUserId, prisma }: Context,
 ) => {
-  checkUserAccessScope(id, 'loggedWorkoutSet', authedUserId, prisma)
+  await checkUserAccessScope(id, 'loggedWorkoutSet', authedUserId, prisma)
 
   const deleteLoggedWorkoutSet = prisma.loggedWorkoutSet.delete({
     where: { id },
+    select: { id: true },
   })
   const deleteLoggedWorkoutMoves = prisma.loggedWorkoutMove.deleteMany({
     where: {
@@ -373,7 +428,7 @@ export const updateLoggedWorkoutMove = async (
   { data }: MutationUpdateLoggedWorkoutMoveArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  checkUserAccessScope(data.id, 'loggedWorkoutMove', authedUserId, prisma)
+  await checkUserAccessScope(data.id, 'loggedWorkoutMove', authedUserId, prisma)
   const updated = await prisma.loggedWorkoutMove.update({
     where: {
       id: data.id,
@@ -403,9 +458,10 @@ export const deleteLoggedWorkoutMoveById = async (
   { id }: MutationDeleteLoggedWorkoutMoveByIdArgs,
   { authedUserId, prisma }: Context,
 ) => {
-  checkUserAccessScope(id, 'loggedWorkoutMove', authedUserId, prisma)
+  await checkUserAccessScope(id, 'loggedWorkoutMove', authedUserId, prisma)
   const deleted = await prisma.loggedWorkoutMove.delete({
     where: { id },
+    select: { id: true },
   })
 
   if (deleted) {
@@ -418,35 +474,62 @@ export const deleteLoggedWorkoutMoveById = async (
 export const reorderLoggedWorkoutSections = async (
   r: any,
   { data }: MutationReorderLoggedWorkoutSectionsArgs,
-  { authedUserId, prisma }: Context,
+  { authedUserId, select, prisma }: Context,
 ) => {
-  // Check access scope applies to all section ids
-  // Update all sections - sortPosition
-  // Get the full object and return? Or just the id and sortPosition field
+  const updated = await checkAndReorderObjects<LoggedWorkoutSection>(
+    data,
+    'loggedWorkoutSection',
+    authedUserId,
+    prisma,
+    select,
+  )
+
+  if (updated) {
+    return updated
+  } else {
+    throw new ApolloError('reorderLoggedWorkoutSections: There was an issue.')
+  }
 }
 
 export const reorderLoggedWorkoutSets = async (
   r: any,
   { data }: MutationReorderLoggedWorkoutSetsArgs,
-  { authedUserId, prisma }: Context,
+  { authedUserId, select, prisma }: Context,
 ) => {
-  // Check access scope applies to all section ids
-  // Update all sections - sortPosition
-  // Get the full object and return? Or just the id and sortPosition field
+  const updated = await checkAndReorderObjects<LoggedWorkoutSet>(
+    data,
+    'loggedWorkoutSet',
+    authedUserId,
+    prisma,
+    select,
+  )
+
+  if (updated) {
+    return updated
+  } else {
+    throw new ApolloError('reorderLoggedWorkoutSets: There was an issue.')
+  }
 }
 
 export const reorderLoggedWorkoutMoves = async (
   r: any,
   { data }: MutationReorderLoggedWorkoutMovesArgs,
-  { authedUserId, prisma }: Context,
+  { authedUserId, select, prisma }: Context,
 ) => {
-  // Check access scope applies to all section ids
-  // Update all sections - sortPosition
-  // Get the full object and return? Or just the id and sortPosition field
-}
+  const updated = await checkAndReorderObjects<LoggedWorkoutMove>(
+    data,
+    'loggedWorkoutMove',
+    authedUserId,
+    prisma,
+    select,
+  )
 
-//// TODO: Extrack workout move input validation and add it to the create and update workoutMove resolvers.
-//// Do any of the other resolovers require validation?
+  if (updated) {
+    return updated
+  } else {
+    throw new ApolloError('reorderLoggedWorkoutMoves: There was an issue.')
+  }
+}
 
 //// Input validation ////
 /**
@@ -454,17 +537,23 @@ export const reorderLoggedWorkoutMoves = async (
  */
 function validateCreateLoggedWorkoutInput(data: CreateLoggedWorkoutInput) {
   // Check all logged workout moves for valid inputs
+  for (const section of data.LoggedWorkoutSections) {
+    for (const set of section.LoggedWorkoutSets) {
+      for (const workoutMove of set.LoggedWorkoutMoves) {
+        validateLoggedWorkoutMoveInput(workoutMove)
+      }
+    }
+  }
+}
+
+function validateLoggedWorkoutMoveInput(
+  workoutMove:
+    | CreateLoggedWorkoutMoveInput
+    | CreateLoggedWorkoutMoveInLoggedSetInput,
+) {
   if (
-    data.LoggedWorkoutSections &&
-    data.LoggedWorkoutSections.some((section) =>
-      section.LoggedWorkoutSets.some((set) =>
-        set.LoggedWorkoutMoves.some(
-          (workoutMove) =>
-            (workoutMove.repType === 'DISTANCE' && !workoutMove.distanceUnit) ||
-            (workoutMove.loadAmount && !workoutMove.loadUnit),
-        ),
-      ),
-    )
+    (workoutMove.repType === 'DISTANCE' && !workoutMove.distanceUnit) ||
+    (workoutMove.loadAmount && !workoutMove.loadUnit)
   ) {
     throw new ApolloError(
       'Invalid loggedWorkoutMove input: Rep type of DISTANCE requires that distance unit be specified and a non-null loadAmount requires that loadUnit be specified. One of these was missing for one or more of the loggedWorkoutMoves you submitted',

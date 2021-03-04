@@ -5,6 +5,18 @@ export default gql`
   scalar DateTime
 
   type Query {
+    #### Core Data ####
+    bodyAreas: [BodyArea!]!
+    equipments: [Equipment!]!
+    moveTypes: [MoveType!]!
+    workoutGoals: [WorkoutGoal]!
+    workoutSectionTypes: [WorkoutSectionType!]!
+
+    #### Progress Journal ####
+    progressJournals: [ProgressJournal!]!
+    progressJournalById(progressJournalId: ID!): ProgressJournal!
+    progressJournalGoalTags: [ProgressJournalGoalTag!]!
+
     # User
     validateToken: Boolean!
     checkUniqueDisplayName(displayName: String!): Boolean!
@@ -15,25 +27,20 @@ export default gql`
     userWorkoutPrograms: [WorkoutProgram!]!
     scheduledWorkouts: [ScheduledWorkout!]!
     loggedWorkouts: [LoggedWorkout!]!
-    progressJournals: [ProgressJournal!]!
-    progressJournalGoalTags: [ProgressJournalGoalTag!]!
+
     userWorkoutProgramEnrolments(
       workoutProgramId: ID!
     ): [WorkoutProgramEnrolment!]
     # Official and Public
     standardMoves: [Move!]!
-    bodyAreas: [BodyArea!]!
-    equipments: [Equipment!]!
-    workoutSectionTypes: [WorkoutSectionType!]!
-    moveTypes: [MoveType!]!
-    workoutGoals: [WorkoutGoal]!
+
     officialWorkouts: [Workout!]!
     publicWorkouts: [Workout!]!
     officialWorkoutPrograms: [WorkoutProgram!]!
     publicWorkoutPrograms: [WorkoutProgram!]!
     creatorPublicProfiles: [UserPublicProfile!]
     # Get by ID
-    progressJournalById(progressJournalId: ID!): ProgressJournal
+
     workoutById(workoutId: ID!): Workout
     workoutProgramById(workoutProgramId: ID!): WorkoutProgram
     # Text search
@@ -43,42 +50,43 @@ export default gql`
   }
 
   type Mutation {
-    # User
-    createUser(uid: ID!): User!
-    updateUser(id: ID!, data: UpdateUserInput!): User!
-    # Progress journal
+    #### Equipment ####
+    createEquipment(data: CreateEquipmentInput!): Equipment
+    updateEquipment(data: UpdateEquipmentInput!): Equipment
+
+    #### Progress Journal ####
     createProgressJournal(data: CreateProgressJournalInput!): ProgressJournal!
     updateProgressJournal(data: UpdateProgressJournalInput!): ProgressJournal!
-    deleteProgressJournalById(progressJournalId: ID!): ID!
+    deleteProgressJournalById(id: ID!): ID!
+    #### Progress Journal Entry ####
+    createProgressJournalEntry(
+      data: CreateProgressJournalEntryInput!
+    ): ProgressJournalEntry!
+    updateProgressJournalEntry(
+      data: UpdateProgressJournalEntryInput!
+    ): ProgressJournalEntry!
+    deleteProgressJournalEntryById(id: ID!): ID!
+    #### Progress Journal Goal ####
     createProgressJournalGoal(
       data: CreateProgressJournalGoalInput!
     ): ProgressJournalGoal!
     updateProgressJournalGoal(
       data: UpdateProgressJournalGoalInput!
     ): ProgressJournalGoal!
-    deleteProgressJournalGoalById(progressJournalGoalId: ID!): ID!
+    deleteProgressJournalGoalById(id: ID!): ID!
+    #### Progress Journal Goal Tag ####
     createProgressJournalGoalTag(
       data: CreateProgressJournalGoalTagInput!
     ): ProgressJournalGoalTag!
     updateProgressJournalGoalTag(
       data: UpdateProgressJournalGoalTagInput!
     ): ProgressJournalGoalTag!
-    deleteProgressJournalGoalTagsById(progressJournalGoalTagIds: [ID!]!): ID!
-    createProgressJournalEntry(
-      progressJournalId: ID!
-      data: CreateProgressJournalEntryInput!
-    ): ProgressJournalEntry!
-    updateProgressJournalEntry(
-      data: UpdateProgressJournalEntryInput!
-    ): ProgressJournalEntry!
-    deleteProgressJournalEntryById(progressJournalEntryId: ID!): ID!
-    #Equipment - Currently no ID is supplied as these resolvers are only accessible via the admin dashboard.
-    createEquipment(data: CreateEquipmentInput!): Equipment
-    updateEquipment(data: UpdateEquipmentInput!): Equipment
-    # Move
-    createMove(data: CreateMoveInput!): Move
-    updateMove(data: UpdateMoveInput!): Move
-    deleteMoveById(moveId: ID!): ID
+    deleteProgressJournalGoalTagById(id: ID!): ID!
+
+    # User
+    createUser(uid: ID!): User!
+    updateUser(id: ID!, data: UpdateUserInput!): User!
+
     # Gym profile
     createGymProfile(data: CreateGymProfileInput!): GymProfile!
     updateGymProfile(data: UpdateGymProfileInput!): GymProfile!
@@ -129,6 +137,11 @@ export default gql`
     reorderLoggedWorkoutMoves(
       data: [UpdateSortPositionInput!]!
     ): [LoggedWorkoutMove!]!
+    ############
+    ### Move ###
+    createMove(data: CreateMoveInput!): Move!
+    updateMove(data: UpdateMoveInput!): Move!
+    deleteMoveById(id: ID!): ID!
 
     # Schedule Workout
     scheduleWorkout(data: CreateScheduledWorkoutInput!): ScheduledWorkout!

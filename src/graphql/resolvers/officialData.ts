@@ -1,57 +1,93 @@
 import { Context } from '../..'
 import {
+  BodyArea,
+  Equipment,
+  MoveType,
   MutationCreateEquipmentArgs,
   MutationUpdateEquipmentArgs,
+  WorkoutGoal,
+  WorkoutSectionType,
 } from '../../generated/graphql'
+import { checkIsAdmin } from '../utils'
 
-const bodyAreas = async (r: any, a: any, { prisma, select }: Context) =>
-  prisma.bodyArea.findMany({ select })
+export const bodyAreas = async (
+  r: any,
+  a: any,
+  { prisma, select }: Context,
+) => {
+  const bodyAreas = await prisma.bodyArea.findMany({ select })
+  return bodyAreas as BodyArea[]
+}
 
-const equipments = async (r: any, a: any, { prisma, select }: Context) =>
-  prisma.equipment.findMany({
+export const equipments = async (
+  r: any,
+  a: any,
+  { prisma, select }: Context,
+) => {
+  const equipments = await prisma.equipment.findMany({
     orderBy: {
       createdAt: 'desc',
     },
     select,
   })
+  return equipments as Equipment[]
+}
 
-const createEquipment = async (
+export const createEquipment = async (
   r: any,
   { data }: MutationCreateEquipmentArgs,
-  { prisma, select }: Context,
-) => prisma.equipment.create({ data, select })
+  { userType, prisma, select }: Context,
+) => {
+  checkIsAdmin(userType)
+  const equipment = await prisma.equipment.create({ data, select })
+  return equipment as Equipment
+}
 
-const updateEquipment = async (
+export const updateEquipment = async (
   r: any,
   { data }: MutationUpdateEquipmentArgs,
-  { prisma, select }: Context,
-) =>
-  prisma.equipment.update({
+  { userType, prisma, select }: Context,
+) => {
+  checkIsAdmin(userType)
+  const equipment = await prisma.equipment.update({
     where: {
       id: data.id,
     },
-    data,
+    data: {
+      ...data,
+      name: data.name || undefined,
+      loadAdjustable: data.loadAdjustable || undefined,
+    },
     select,
   })
+  return equipment as Equipment
+}
 
-const workoutGoals = async (r: any, a: any, { prisma, select }: Context) =>
-  prisma.workoutGoal.findMany({ select })
-
-const moveTypes = async (r: any, a: any, { prisma, select }: Context) =>
-  prisma.moveType.findMany({ select })
-
-const workoutSectionTypes = async (
+export const moveTypes = async (
   r: any,
   a: any,
   { prisma, select }: Context,
-) => prisma.workoutSectionType.findMany({ select })
+) => {
+  const moveTypes = await prisma.moveType.findMany({ select })
+  return moveTypes as MoveType[]
+}
 
-export {
-  bodyAreas,
-  equipments,
-  createEquipment,
-  updateEquipment,
-  workoutGoals,
-  moveTypes,
-  workoutSectionTypes,
+export const workoutGoals = async (
+  r: any,
+  a: any,
+  { prisma, select }: Context,
+) => {
+  const workoutGoals = await prisma.moveType.findMany({ select })
+  return workoutGoals as WorkoutGoal[]
+}
+
+export const workoutSectionTypes = async (
+  r: any,
+  a: any,
+  { prisma, select }: Context,
+) => {
+  const workoutSectionTypes = await prisma.workoutSectionType.findMany({
+    select,
+  })
+  return workoutSectionTypes as WorkoutSectionType[]
 }

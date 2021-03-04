@@ -136,7 +136,6 @@ export default gql`
     id: ID!
     timeTakenMs: Int
     notes: String
-    videoUri: String
   }
 
   input UpdateLoggedWorkoutSetInput {

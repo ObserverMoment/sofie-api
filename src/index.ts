@@ -2,40 +2,25 @@ import { ApolloServer, AuthenticationError, ResolverFn } from 'apollo-server'
 import resolvers from './graphql/resolvers/resolvers'
 import typeDefs from './graphql/schema/typeDefs'
 import { applyMiddleware } from 'graphql-middleware'
-import { PrismaClient, Prisma as PrismaOriginal } from '@prisma/client'
+import { PrismaClient } from '@prisma/client'
 import { PrismaSelect } from '@paljs/plugins'
 import { makeExecutableSchema } from 'graphql-tools'
 import { GraphQLResolveInfo } from 'graphql'
-import { PrismaDelete, onDeleteArgs } from '@paljs/plugins'
 import { firebaseVerifyToken } from './lib/firebaseAdmin'
 
 require('dotenv').config()
 
-// https://paljs.com/plugins/delete/
-export class PrismaExtended extends PrismaClient {
-  constructor(options?: PrismaOriginal.PrismaClientOptions) {
-    super(options)
-  }
-
-  async onDelete(
-    args: onDeleteArgs,
-  ): Promise<void | PrismaOriginal.BatchPayload> {
-    const prismaDelete = new PrismaDelete(this)
-    await prismaDelete.onDelete(args)
-  }
-}
-
 export type ContextUserType = 'ADMIN' | 'USER'
 
 export interface Context {
-  prisma: PrismaExtended
+  prisma: PrismaClient
   // https://paljs.com/plugins/select
   select?: any
   authedUserId: string
   userType: ContextUserType
 }
 
-const prisma = new PrismaExtended({
+const prisma = new PrismaClient({
   log: ['info', 'query', 'warn', 'error'],
   errorFormat: 'pretty',
 })

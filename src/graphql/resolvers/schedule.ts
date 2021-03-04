@@ -7,21 +7,19 @@ import {
   MutationUpdateScheduledWorkoutArgs,
 } from '../../generated/graphql'
 
-//// Queries
-const scheduledWorkouts = async (
+//// Queries ////
+export const userScheduledWorkouts = async (
   r: any,
   a: any,
   { authedUserId, select, prisma }: Context,
 ) =>
   prisma.scheduledWorkout.findMany({
-    where: {
-      User: { id: authedUserId },
-    },
+    where: { userId: authedUserId },
     select,
   })
 
-//// Mutations
-const scheduleWorkout = async (
+//// Mutations ////
+export const scheduleWorkout = async (
   r: any,
   { data }: MutationScheduleWorkoutArgs,
   { authedUserId, select, prisma }: Context,
@@ -42,7 +40,7 @@ const scheduleWorkout = async (
     select,
   })
 
-const unscheduleWorkout = async (
+export const unscheduleWorkout = async (
   r: any,
   { scheduledWorkoutId }: MutationUnscheduleWorkoutArgs,
   { authedUserId, prisma }: Context,
@@ -56,7 +54,7 @@ const unscheduleWorkout = async (
   return deleted.id
 }
 
-const updateScheduledWorkout = async (
+export const updateScheduledWorkout = async (
   r: any,
   { data }: MutationUpdateScheduledWorkoutArgs,
   { authedUserId, select, prisma }: Context,
@@ -80,10 +78,3 @@ const updateScheduledWorkout = async (
     },
     select,
   })
-
-export {
-  scheduledWorkouts,
-  scheduleWorkout,
-  unscheduleWorkout,
-  updateScheduledWorkout,
-}

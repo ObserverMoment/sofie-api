@@ -21,6 +21,47 @@ export default gql`
     description: String
   }
 
+  type ProgressJournalEntry {
+    id: ID!
+    createdAt: DateTime!
+    notes: String
+    voiceNoteUri: String
+    # Always save in KGs
+    bodyweight: Float
+    moodScore: Float
+    energyScore: Float
+    stressScore: Float
+    motivationScore: Float
+    progressPhotoUris: [String!]
+    ProgressJournal: ProgressJournal!
+  }
+
+  input CreateProgressJournalEntryInput {
+    notes: String
+    voiceNoteUri: String
+    # Always save in KGs
+    bodyweight: Float
+    moodScore: Float
+    energyScore: Float
+    stressScore: Float
+    motivationScore: Float
+    progressPhotoUris: [String!]
+    ProgressJournal: ID!
+  }
+
+  input UpdateProgressJournalEntryInput {
+    id: ID!
+    notes: String
+    voiceNoteUri: String
+    # Always save in KGs
+    bodyweight: Float
+    moodScore: Float
+    energyScore: Float
+    stressScore: Float
+    motivationScore: Float
+    progressPhotoUris: [String!]
+  }
+
   type ProgressJournalGoal {
     id: ID!
     createdAt: DateTime!
@@ -64,45 +105,5 @@ export default gql`
     id: ID!
     tag: String
     hexColor: String
-  }
-
-  type ProgressJournalEntry {
-    id: ID!
-    createdAt: DateTime!
-    notes: String
-    voiceNoteUri: String
-    # Always save in KGs
-    bodyweight: Float
-    moodScore: Float
-    energyScore: Float
-    stressScore: Float
-    motivationScore: Float
-    progressPhotoUris: [String!]
-    ProgressJournal: ProgressJournal!
-  }
-
-  input CreateProgressJournalEntryInput {
-    notes: String
-    voiceNoteUri: String
-    # Always save in KGs
-    bodyweight: Float
-    moodScore: Float
-    energyScore: Float
-    stressScore: Float
-    motivationScore: Float
-    progressPhotoUris: [String!]
-  }
-
-  input UpdateProgressJournalEntryInput {
-    id: ID!
-    notes: String
-    voiceNoteUri: String
-    # Always save in KGs
-    bodyweight: Float
-    moodScore: Float
-    energyScore: Float
-    stressScore: Float
-    motivationScore: Float
-    progressPhotoUris: [String!]
   }
 `
