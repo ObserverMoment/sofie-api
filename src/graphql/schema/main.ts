@@ -5,6 +5,8 @@ export default gql`
   scalar DateTime
 
   type Query {
+    validateToken: Boolean!
+
     #### Core Data ####
     bodyAreas: [BodyArea!]!
     equipments: [Equipment!]!
@@ -12,48 +14,56 @@ export default gql`
     workoutGoals: [WorkoutGoal]!
     workoutSectionTypes: [WorkoutSectionType!]!
 
-    #### Progress Journal ####
-    progressJournals: [ProgressJournal!]!
-    progressJournalById(progressJournalId: ID!): ProgressJournal!
-    progressJournalGoalTags: [ProgressJournalGoalTag!]!
-
-    # User
-    validateToken: Boolean!
-    checkUniqueDisplayName(displayName: String!): Boolean!
-    userByUid(uid: ID!): User
-    userPublicProfile(userId: ID!): UserPublicProfile
     userCustomMoves: [Move!]!
     userWorkouts: [Workout!]!
     userWorkoutPrograms: [WorkoutProgram!]!
-    scheduledWorkouts: [ScheduledWorkout!]!
+
     loggedWorkouts: [LoggedWorkout!]!
 
     userWorkoutProgramEnrolments(
       workoutProgramId: ID!
     ): [WorkoutProgramEnrolment!]
-    # Official and Public
+
+    #### Moves ####
     standardMoves: [Move!]!
 
-    officialWorkouts: [Workout!]!
-    publicWorkouts: [Workout!]!
-    officialWorkoutPrograms: [WorkoutProgram!]!
-    publicWorkoutPrograms: [WorkoutProgram!]!
-    creatorPublicProfiles: [UserPublicProfile!]
-    # Get by ID
+    #### Progress Journal ####
+    progressJournals: [ProgressJournal!]!
+    progressJournalById(progressJournalId: ID!): ProgressJournal!
+    progressJournalGoalTags: [ProgressJournalGoalTag!]!
 
-    workoutById(workoutId: ID!): Workout
-    workoutProgramById(workoutProgramId: ID!): WorkoutProgram
-    # Text search
+    #### Scheduled Workouts ####
+    userScheduledWorkouts: [ScheduledWorkout!]!
+
+    #### Text Search ####
     textSearchWorkouts(text: String!): [TextSearchWorkoutResult!]
     textSearchWorkoutPrograms(text: String!): [TextSearchWorkoutProgramResult!]
     textSearchCreatorPublicProfiles(text: String!): [UserPublicProfile!]
+
+    #### User ####
+    checkUniqueDisplayName(displayName: String!): Boolean!
+    userByUid(uid: ID!): User!
+    userPublicProfileByUserId(userId: ID!): UserPublicProfile!
+
+    officialWorkouts: [Workout!]!
+    publicWorkouts: [Workout!]!
+    workoutById(workoutId: ID!): Workout
+
+    officialWorkoutPrograms: [WorkoutProgram!]!
+    publicWorkoutPrograms: [WorkoutProgram!]!
+    workoutProgramById(workoutProgramId: ID!): WorkoutProgram
+
+    creatorPublicProfiles: [UserPublicProfile!]
   }
 
   type Mutation {
     #### Equipment ####
     createEquipment(data: CreateEquipmentInput!): Equipment
     updateEquipment(data: UpdateEquipmentInput!): Equipment
-
+    #### Gym profile ####
+    createGymProfile(data: CreateGymProfileInput!): GymProfile!
+    updateGymProfile(data: UpdateGymProfileInput!): GymProfile!
+    deleteGymProfileById(id: ID!): ID
     #### Progress Journal ####
     createProgressJournal(data: CreateProgressJournalInput!): ProgressJournal!
     updateProgressJournal(data: UpdateProgressJournalInput!): ProgressJournal!
@@ -82,29 +92,12 @@ export default gql`
       data: UpdateProgressJournalGoalTagInput!
     ): ProgressJournalGoalTag!
     deleteProgressJournalGoalTagById(id: ID!): ID!
-
-    # User
-    createUser(uid: ID!): User!
-    updateUser(id: ID!, data: UpdateUserInput!): User!
-
-    # Gym profile
-    createGymProfile(data: CreateGymProfileInput!): GymProfile!
-    updateGymProfile(data: UpdateGymProfileInput!): GymProfile!
-    deleteGymProfileById(gymProfileId: ID!): ID
-    # Workout
-    createWorkout(data: CreateWorkoutInput!): Workout!
-    shallowUpdateWorkout(data: ShallowUpdateWorkoutInput!): Workout!
-    deleteWorkoutById(workoutId: ID!): ID
-    updateWorkoutSections(
-      data: [UpdateWorkoutSectionInput!]!
-    ): [WorkoutSection!]!
-    deleteWorkoutSectionsById(workoutSectionIds: [ID!]!): [ID]
-    ######################
-    ### Logged Workout ###
+    ########################
+    #### Logged Workout ####
     createLoggedWorkout(data: CreateLoggedWorkoutInput!): LoggedWorkout!
     updateLoggedWorkout(data: UpdateLoggedWorkoutInput!): LoggedWorkout!
     deleteLoggedWorkoutById(id: ID!): ID!
-    ### Logged Workout Section ###
+    #### Logged Workout Section ####
     createLoggedWorkoutSection(
       data: CreateLoggedWorkoutSectionInput!
     ): LoggedWorkoutSection!
@@ -115,7 +108,7 @@ export default gql`
     reorderLoggedWorkoutSections(
       data: [UpdateSortPositionInput!]!
     ): [LoggedWorkoutSection!]!
-    ### Logged Workout Set ###
+    #### Logged Workout Set ####
     createLoggedWorkoutSet(
       data: CreateLoggedWorkoutSetInput!
     ): LoggedWorkoutSet!
@@ -126,7 +119,7 @@ export default gql`
     reorderLoggedWorkoutSets(
       data: [UpdateSortPositionInput!]!
     ): [LoggedWorkoutSet!]!
-    ### Logged Workout Move ###
+    #### Logged Workout Move ####
     createLoggedWorkoutMove(
       data: CreateLoggedWorkoutMoveInput!
     ): LoggedWorkoutMove!
@@ -137,19 +130,30 @@ export default gql`
     reorderLoggedWorkoutMoves(
       data: [UpdateSortPositionInput!]!
     ): [LoggedWorkoutMove!]!
-    ############
     ### Move ###
     createMove(data: CreateMoveInput!): Move!
     updateMove(data: UpdateMoveInput!): Move!
     deleteMoveById(id: ID!): ID!
-
-    # Schedule Workout
-    scheduleWorkout(data: CreateScheduledWorkoutInput!): ScheduledWorkout!
-    unscheduleWorkout(scheduledWorkoutId: ID!): ID!
+    #### Schedule Workout ####
+    createScheduledWorkout(
+      data: CreateScheduledWorkoutInput!
+    ): ScheduledWorkout!
     updateScheduledWorkout(
       data: UpdateScheduledWorkoutInput!
     ): ScheduledWorkout!
-    # Workout Program
+    deleteScheduledWorkoutById(id: ID!): ID!
+    #### User ####
+    createUser(uid: ID!): User!
+    updateUser(data: UpdateUserInput!): User!
+    #### Workout ####
+    createWorkout(data: CreateWorkoutInput!): Workout!
+    shallowUpdateWorkout(data: ShallowUpdateWorkoutInput!): Workout!
+    deleteWorkoutById(workoutId: ID!): ID
+    updateWorkoutSections(
+      data: [UpdateWorkoutSectionInput!]!
+    ): [WorkoutSection!]!
+    deleteWorkoutSectionsById(workoutSectionIds: [ID!]!): [ID]
+    #### Workout Program ####
     createWorkoutProgram(data: CreateWorkoutProgramInput!): WorkoutProgram!
     updateWorkoutProgram(data: UpdateWorkoutProgramInput!): WorkoutProgram!
     deleteWorkoutProgramById(workoutProgramId: ID!): ID
@@ -165,7 +169,7 @@ export default gql`
     deleteWorkoutProgramReview(reviewId: ID!): WorkoutProgram!
   }
 
-  ##### Non CRUD-able models #####
+  #### Non CRUD-able models ####
   type WorkoutGoal {
     id: ID!
     name: String!

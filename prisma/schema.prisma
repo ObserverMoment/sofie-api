@@ -53,7 +53,34 @@ model Equipment {
   WorkoutMoves       WorkoutMove[]
   GymProfiles        GymProfile[]
   UserBenchmarks     UserBenchmark[]
-  LoggedWorkoutMove  LoggedWorkoutMove[]
+  LoggedWorkoutMoves LoggedWorkoutMove[]
+}
+
+model Move {
+  id                   String               @id @default(uuid())
+  createdAt            DateTime             @default(now())
+  archived             Boolean              @default(false)
+  User                 User?                @relation(fields: [userId], references: [id])
+  userId               String?
+  // Default to CUSTOM.
+  // A user should never be able to create a STANDARD move (aka an official move), only ADMIN.
+  scope                MoveScope            @default(CUSTOM)
+  name                 String
+  // Text search will search this field - include the main name + any common variations
+  // E.g. Air Bike, Assault Bike, specific brands, common misspellings etc.
+  searchTerms          String?
+  description          String?
+  demoVideoUri         String?
+  demoVideoThumbUri    String?
+  MoveType             MoveType?            @relation(fields: [moveTypeId], references: [id])
+  moveTypeId           String?
+  validRepTypes        WorkoutMoveRepType[]
+  RequiredEquipments   Equipment[]          @relation("moveToRequiredEquipments", references: [id])
+  SelectableEquipments Equipment[]          @relation("moveToSelectableEquipments", references: [id])
+  WorkoutMoves         WorkoutMove[]
+  BodyAreaMoveScores   BodyAreaMoveScore[]
+  UserBenchmarks       UserBenchmark[]
+  LoggedWorkoutMove    LoggedWorkoutMove[]
 }
 
 // General, Cardio, Barre, Yoga etc
@@ -77,15 +104,15 @@ model WorkoutGoal {
 }
 
 model WorkoutSectionType {
-  id                   String                 @id @default(uuid())
-  createdAt            DateTime               @default(now())
-  name                 String
-  subtitle             String
-  description          String
-  imageUri             String?
-  scoreType            WorkoutScoreType
-  WorkoutSection       WorkoutSection[]
-  LoggedWorkoutSection LoggedWorkoutSection[]
+  id                    String                 @id @default(uuid())
+  createdAt             DateTime               @default(now())
+  name                  String
+  subtitle              String
+  description           String
+  imageUri              String?
+  scoreType             WorkoutScoreType
+  WorkoutSections       WorkoutSection[]
+  LoggedWorkoutSections LoggedWorkoutSection[]
 }
 
 ///////////////////////////////////////
@@ -104,6 +131,21 @@ model GymProfile {
   Equipments        Equipment[]
   ScheduledWorkouts ScheduledWorkout[]
   LoggedWorkouts    LoggedWorkout[]
+}
+
+model ScheduledWorkout {
+  id              String         @id @default(uuid())
+  createdAt       DateTime       @default(now())
+  User            User           @relation(fields: [userId], references: [id])
+  userId          String
+  notes           String?
+  scheduledAt     DateTime       @default(now())
+  Workout         Workout?       @relation(fields: [workoutId], references: [id])
+  workoutId       String?
+  LoggedWorkout   LoggedWorkout? @relation(fields: [loggedWorkoutId], references: [id])
+  loggedWorkoutId String?
+  GymProfile      GymProfile?    @relation(fields: [gymProfileId], references: [id])
+  gymProfileId    String?
 }
 
 // Height in cms / weight in kgs
@@ -146,11 +188,11 @@ model User {
   Collections              UserCollection[]
   ProgressJournals         ProgressJournal[]
   ProgressJournalGoalTags  ProgressJournalGoalTag[]
-  LoggedWorkoutSection     LoggedWorkoutSection[]
-  LoggedWorkoutSet         LoggedWorkoutSet[]
-  LoggedWorkoutMove        LoggedWorkoutMove[]
-  ProgressJournalGoal      ProgressJournalGoal[]
-  ProgressJournalEntry     ProgressJournalEntry[]
+  LoggedWorkoutSections    LoggedWorkoutSection[]
+  LoggedWorkoutSets        LoggedWorkoutSet[]
+  LoggedWorkoutMoves       LoggedWorkoutMove[]
+  ProgressJournalGoals     ProgressJournalGoal[]
+  ProgressJournalEntrys    ProgressJournalEntry[]
 }
 
 model UserCollection {
@@ -162,21 +204,6 @@ model UserCollection {
   description     String?
   Workouts        Workout[]
   WorkoutPrograms WorkoutProgram[]
-}
-
-model ScheduledWorkout {
-  id              String         @id @default(uuid())
-  createdAt       DateTime       @default(now())
-  User            User           @relation(fields: [userId], references: [id])
-  userId          String
-  notes           String?
-  scheduledAt     DateTime       @default(now())
-  Workout         Workout?       @relation(fields: [workoutId], references: [id])
-  workoutId       String?
-  LoggedWorkout   LoggedWorkout? @relation(fields: [loggedWorkoutId], references: [id])
-  loggedWorkoutId String?
-  GymProfile      GymProfile?    @relation(fields: [gymProfileId], references: [id])
-  gymProfileId    String?
 }
 
 model UserBenchmark {
@@ -192,7 +219,7 @@ model UserBenchmark {
   loadUnit     LoadUnit             @default(KG)
   distanceUnit DistanceUnit         @default(METRES)
   scoreType    BenchmarkScoreType   @default(LOAD)
-  Equipment    Equipment[]
+  Equipments   Equipment[]
   Move         Move                 @relation(fields: [moveId], references: [id])
   moveId       String
   Entries      UserBenchmarkEntry[]
@@ -214,26 +241,25 @@ model UserBenchmarkEntry {
 ///// Workout Related Models and Children //////////
 ////////////////////////////////////////////////////
 model Workout {
-  id                    String                  @id @default(uuid())
-  createdAt             DateTime                @default(now())
-  User                  User?                   @relation(fields: [userId], references: [id])
-  userId                String?
-  name                  String
-  summary               String?
-  description           String?
-  introVideoUri         String?
-  introVideoThumbUri    String?
-  introAudioUri         String?
-  coverImageUri         String?
-  difficultyLevel       Int                     @default(50)
-  contentAccessScope    ContentAccessScope      @default(PRIVATE)
-  WorkoutSections       WorkoutSection[]
-  LoggedWorkout         LoggedWorkout[]
-  ScheduledWorkout      ScheduledWorkout[]
-  WorkoutGoals          WorkoutGoal[]
-  UserCollection        UserCollection?         @relation(fields: [userCollectionId], references: [id])
-  userCollectionId      String?
-  WorkoutProgramWorkout WorkoutProgramWorkout[]
+  id                     String                  @id @default(uuid())
+  createdAt              DateTime                @default(now())
+  User                   User?                   @relation(fields: [userId], references: [id])
+  userId                 String?
+  name                   String
+  summary                String?
+  description            String?
+  introVideoUri          String?
+  introVideoThumbUri     String?
+  introAudioUri          String?
+  coverImageUri          String?
+  difficultyLevel        Int                     @default(50)
+  contentAccessScope     ContentAccessScope      @default(PRIVATE)
+  WorkoutSections        WorkoutSection[]
+  LoggedWorkouts         LoggedWorkout[]
+  ScheduledWorkouts      ScheduledWorkout[]
+  WorkoutGoals           WorkoutGoal[]
+  UserCollections        UserCollection[]
+  WorkoutProgramWorkouts WorkoutProgramWorkout[]
 }
 
 // A workout can have many sections - each one can be a different section type / structure.
@@ -273,29 +299,29 @@ model WorkoutSection {
 
 /// Fixed Set of moves - open ended time - or timed ///
 model TrainingWorkoutSection {
-  id             String           @id @default(uuid())
-  createdAt      DateTime         @default(now())
-  rounds         Int
-  WorkoutSection WorkoutSection[]
+  id              String           @id @default(uuid())
+  createdAt       DateTime         @default(now())
+  rounds          Int
+  WorkoutSections WorkoutSection[]
 }
 
 /// Fixed time - open ended set / quantity of moves ///
 model AmrapWorkoutSection {
-  id             String           @id @default(uuid())
-  createdAt      DateTime         @default(now())
-  timecap        Int // Seconds
-  WorkoutSection WorkoutSection[]
+  id              String           @id @default(uuid())
+  createdAt       DateTime         @default(now())
+  timecap         Int // Seconds
+  WorkoutSections WorkoutSection[]
 }
 
 /// Competitive: Keep completing the workout sets within the timecap for as long as possible ///
 model LastStandingWorkoutSection {
-  id             String           @id @default(uuid())
-  createdAt      DateTime         @default(now())
-  finishAfter    Int? // Seconds - optional "finish line" for if you need to ensure non open ended length.
+  id              String           @id @default(uuid())
+  createdAt       DateTime         @default(now())
+  finishAfter     Int? // Seconds - optional "finish line" for if you need to ensure non open ended length.
   // Initially timecaps[0] is timecap for workoutsSets[0], timecaps[1] for workoutSets[1] etc
   // Arrays do not need to be the same length - each can loop at different points
-  timecaps       Int[]
-  WorkoutSection WorkoutSection[]
+  timecaps        Int[]
+  WorkoutSections WorkoutSection[]
 }
 
 model WorkoutSet {
@@ -327,33 +353,6 @@ model WorkoutMove {
   equipmentId  String?
   WorkoutSet   WorkoutSet         @relation(fields: [workoutSetId], references: [id])
   workoutSetId String
-}
-
-model Move {
-  id                   String               @id @default(uuid())
-  createdAt            DateTime             @default(now())
-  archived             Boolean              @default(false)
-  User                 User?                @relation(fields: [userId], references: [id])
-  userId               String?
-  // Default to CUSTOM.
-  // A user should never be able to create a STANDARD move (aka an official move), only ADMIN.
-  scope                MoveScope            @default(CUSTOM)
-  name                 String
-  // Text search will search this field - include the main name + any common variations
-  // E.g. Air Bike, Assault Bike, specific brands, common misspellings etc.
-  searchTerms          String?
-  description          String?
-  demoVideoUri         String?
-  demoVideoThumbUri    String?
-  MoveType             MoveType?            @relation(fields: [moveTypeId], references: [id])
-  moveTypeId           String?
-  validRepTypes        WorkoutMoveRepType[]
-  RequiredEquipments   Equipment[]          @relation("moveToRequiredEquipments", references: [id])
-  SelectableEquipments Equipment[]          @relation("moveToSelectableEquipments", references: [id])
-  WorkoutMoves         WorkoutMove[]
-  BodyAreaMoveScores   BodyAreaMoveScore[]
-  UserBenchmarks       UserBenchmark[]
-  LoggedWorkoutMove    LoggedWorkoutMove[]
 }
 
 /////////////////////////////////////////////////////////

@@ -1,7 +1,7 @@
-import { User } from '@prisma/client'
-import { AuthenticationError } from 'apollo-server'
+import { ApolloError } from 'apollo-server'
 import { Context } from '../..'
 import {
+  GymProfile,
   MutationCreateGymProfileArgs,
   MutationCreateUserArgs,
   MutationDeleteGymProfileByIdArgs,
@@ -9,12 +9,15 @@ import {
   MutationUpdateUserArgs,
   QueryCheckUniqueDisplayNameArgs,
   QueryUserByUidArgs,
-  QueryUserPublicProfileArgs,
+  QueryUserPublicProfileByUserIdArgs,
+  User,
+  UserPublicProfile,
 } from '../../generated/graphql'
 import { checkUserMediaForDeletion, deleteFiles } from '../../uploadcare'
+import { AccessScopeError, checkUserAccessScope } from '../utils'
 
 //// Queries ////
-const checkUniqueDisplayName = async (
+export const checkUniqueDisplayName = async (
   r: any,
   { displayName }: QueryCheckUniqueDisplayNameArgs,
   { prisma }: Context,
@@ -25,8 +28,43 @@ const checkUniqueDisplayName = async (
   return user === null
 }
 
+export const userByUid = async (
+  r: any,
+  { uid }: QueryUserByUidArgs,
+  { authedUserId, select, prisma }: Context,
+) => {
+  const user = await prisma.user.findUnique({
+    where: { firebaseUid: uid, id: authedUserId },
+    select,
+  })
+
+  if (user) {
+    return user as User
+  } else {
+    throw new ApolloError('userByUid: There was an issue.')
+  }
+}
+
+// Get a single user profile, based on the user id must be public.
+export const userPublicProfileByUserId = async (
+  r: any,
+  { userId }: QueryUserPublicProfileByUserIdArgs,
+  { select, prisma }: Context,
+) => {
+  const user = await prisma.user.findFirst({
+    where: { id: userId, userProfileScope: 'PUBLIC' },
+    select,
+  })
+
+  if (user) {
+    return user as UserPublicProfile
+  } else {
+    throw new ApolloError('userPublicProfileByUserId: There was an issue.')
+  }
+}
+
 // Public profiles of any users who have set their profiles to public.
-const creatorPublicProfiles = async (
+export const userPublicProfiles = async (
   r: any,
   a: any,
   { select, prisma }: Context,
@@ -38,90 +76,70 @@ const creatorPublicProfiles = async (
     select,
   })
 
-const userByUid = async (
-  r: any,
-  { uid }: QueryUserByUidArgs,
-  { authedUserId, select, prisma }: Context,
-) =>
-  prisma.user.findUnique({
-    where: { firebaseUid: uid, id: authedUserId },
-    select,
-  })
-
-// Get a single user profile, must be public.
-const userPublicProfile = async (
-  r: any,
-  { userId }: QueryUserPublicProfileArgs,
-  { select, prisma }: Context,
-) =>
-  prisma.user.findUnique({
-    where: { id: userId, userProfileScope: 'PUBLIC' },
-    select,
-  })
-
 //// Mutations ////
 // A brand new user linked to a firebase UID.
-const createUser = async (
+export const createUser = async (
   r: any,
   { uid }: MutationCreateUserArgs,
   { select, prisma }: Context,
 ) => {
-  return prisma.user.create({
+  const user = await prisma.user.create({
     data: {
       firebaseUid: uid,
     },
     select,
   })
+  return user as User
 }
 
-const updateUser = async (
+export const updateUser = async (
   r: any,
-  { id, data }: MutationUpdateUserArgs,
+  { data }: MutationUpdateUserArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  if (authedUserId !== id) {
-    console.error(
-      'Resolver - updateUser: The authed user id and the id being updated do not match.',
-    )
-    throw new AuthenticationError(
-      'You do not have access to this user data: The logged in user id and the id being updated do not match.',
-    )
+  if (authedUserId !== data.id) {
+    throw new AccessScopeError()
   } else {
     // Check if any media files need to be updated. Only delete files from the server after the rest of the transaction is complete.
-    const fileIdsForDeletion: string[] | null = await checkUserMediaForDeletion(
-      prisma,
-      id,
-      data,
-    )
+    const fileUrisForDeletion:
+      | string[]
+      | null = await checkUserMediaForDeletion(prisma, data)
 
-    const updatedUser: User = await prisma.user.update({
+    const updated = await prisma.user.update({
       where: {
-        id,
+        id: data.id,
       },
-      data,
+      data: {
+        hasOnboarded: data.hasOnboarded || undefined,
+      },
       select,
     })
 
-    if (updatedUser && fileIdsForDeletion) {
-      await deleteFiles(fileIdsForDeletion)
+    if (updated) {
+      if (fileUrisForDeletion && fileUrisForDeletion.length > 0) {
+        await deleteFiles(fileUrisForDeletion)
+      }
+      return updated as User
+    } else {
+      throw new ApolloError('updateUser: There was an issue.')
     }
-
-    return updatedUser
   }
 }
 
-const createGymProfile = async (
+//// Gym Profile ////
+export const createGymProfile = async (
   r: any,
   { data }: MutationCreateGymProfileArgs,
   { authedUserId, select, prisma }: Context,
-) =>
-  prisma.gymProfile.create({
+) => {
+  const gymProfile = await prisma.gymProfile.create({
     data: {
       ...data,
+      bodyweightOnly: data.bodyweightOnly || undefined,
       Equipments: {
         connect: data.Equipments
           ? data.Equipments.map((id: string) => ({ id }))
-          : [],
+          : undefined,
       },
       User: {
         connect: { id: authedUserId },
@@ -130,49 +148,55 @@ const createGymProfile = async (
     select,
   })
 
-const updateGymProfile = async (
+  if (gymProfile) {
+    return gymProfile as GymProfile
+  } else {
+    throw new ApolloError('createGymProfile: There was an issue.')
+  }
+}
+
+export const updateGymProfile = async (
   r: any,
   { data }: MutationUpdateGymProfileArgs,
   { authedUserId, select, prisma }: Context,
-) =>
-  prisma.gymProfile.update({
-    where: {
-      id: data.id,
-      User: { id: authedUserId },
-    },
+) => {
+  await checkUserAccessScope(data.id, 'gymProfile', authedUserId, prisma)
+  const updated = await prisma.gymProfile.update({
+    where: { id: data.id },
     data: {
       ...data,
+      name: data.name || undefined,
+      bodyweightOnly: data.bodyweightOnly || undefined,
       Equipments: {
         set: data.Equipments
           ? data.Equipments.map((id: string) => ({ id }))
-          : [],
+          : undefined,
       },
     },
     select,
   })
 
-const deleteGymProfileById = async (
-  r: any,
-  { gymProfileId }: MutationDeleteGymProfileByIdArgs,
-  { authedUserId, prisma }: Context,
-) => {
-  const { id } = await prisma.gymProfile.delete({
-    where: {
-      id: gymProfileId,
-      User: { id: authedUserId },
-    },
-  })
-  return id
+  if (updated) {
+    return updated as GymProfile
+  } else {
+    throw new ApolloError('updateGymProfile: There was an issue.')
+  }
 }
 
-export {
-  checkUniqueDisplayName,
-  creatorPublicProfiles,
-  userByUid,
-  userPublicProfile,
-  createUser,
-  updateUser,
-  createGymProfile,
-  updateGymProfile,
-  deleteGymProfileById,
+export const deleteGymProfileById = async (
+  r: any,
+  { id }: MutationDeleteGymProfileByIdArgs,
+  { authedUserId, prisma }: Context,
+) => {
+  await checkUserAccessScope(id, 'gymProfile', authedUserId, prisma)
+  const deleted = await prisma.gymProfile.delete({
+    where: { id },
+    select: { id: true },
+  })
+
+  if (deleted) {
+    return deleted.id
+  } else {
+    throw new ApolloError('deleteGymProfileById: There was an issue.')
+  }
 }

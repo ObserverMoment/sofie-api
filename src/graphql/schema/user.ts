@@ -31,6 +31,7 @@ export default gql`
   }
 
   input UpdateUserInput {
+    id: ID!
     userProfileScope: UserProfileScope
     avatarUri: String
     introVideoUri: String

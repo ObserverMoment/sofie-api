@@ -1,30 +1,34 @@
-import { ScheduledWorkout } from '@prisma/client'
+import { ApolloError } from 'apollo-server'
 import { Context } from '../..'
 
 import {
-  MutationScheduleWorkoutArgs,
-  MutationUnscheduleWorkoutArgs,
+  MutationCreateScheduledWorkoutArgs,
+  MutationDeleteScheduledWorkoutByIdArgs,
   MutationUpdateScheduledWorkoutArgs,
+  ScheduledWorkout,
 } from '../../generated/graphql'
+import { checkUserAccessScope } from '../utils'
 
 //// Queries ////
 export const userScheduledWorkouts = async (
   r: any,
   a: any,
   { authedUserId, select, prisma }: Context,
-) =>
-  prisma.scheduledWorkout.findMany({
+) => {
+  const scheduledWorkouts = await prisma.scheduledWorkout.findMany({
     where: { userId: authedUserId },
     select,
   })
+  return scheduledWorkouts as ScheduledWorkout[]
+}
 
 //// Mutations ////
-export const scheduleWorkout = async (
+export const createScheduledWorkout = async (
   r: any,
-  { data }: MutationScheduleWorkoutArgs,
+  { data }: MutationCreateScheduledWorkoutArgs,
   { authedUserId, select, prisma }: Context,
-) =>
-  prisma.scheduledWorkout.create({
+) => {
+  const scheduledWorkout = await prisma.scheduledWorkout.create({
     data: {
       ...data,
       Workout: {
@@ -40,30 +44,22 @@ export const scheduleWorkout = async (
     select,
   })
 
-export const unscheduleWorkout = async (
-  r: any,
-  { scheduledWorkoutId }: MutationUnscheduleWorkoutArgs,
-  { authedUserId, prisma }: Context,
-) => {
-  const deleted: ScheduledWorkout = await prisma.scheduledWorkout.delete({
-    where: {
-      id: scheduledWorkoutId,
-      User: { id: authedUserId },
-    },
-  })
-  return deleted.id
+  if (scheduledWorkout) {
+    return scheduledWorkout as ScheduledWorkout
+  } else {
+    throw new ApolloError('createScheduledWorkout: There was an issue.')
+  }
 }
 
 export const updateScheduledWorkout = async (
   r: any,
   { data }: MutationUpdateScheduledWorkoutArgs,
   { authedUserId, select, prisma }: Context,
-) =>
-  prisma.scheduledWorkout.update({
-    where: {
-      id: data.id,
-      User: { id: authedUserId },
-    },
+) => {
+  await checkUserAccessScope(data.id, 'scheduledWorkout', authedUserId, prisma)
+
+  const updated = await prisma.scheduledWorkout.update({
+    where: { id: data.id },
     data: {
       ...data,
       Workout: {
@@ -78,3 +74,29 @@ export const updateScheduledWorkout = async (
     },
     select,
   })
+
+  if (updated) {
+    return updated as ScheduledWorkout
+  } else {
+    throw new ApolloError('updateScheduledWorkout: There was an issue.')
+  }
+}
+
+export const deleteScheduledWorkoutById = async (
+  r: any,
+  { id }: MutationDeleteScheduledWorkoutByIdArgs,
+  { authedUserId, prisma }: Context,
+) => {
+  await checkUserAccessScope(id, 'scheduledWorkout', authedUserId, prisma)
+
+  const deleted = await prisma.scheduledWorkout.delete({
+    where: { id },
+    select: { id: true },
+  })
+
+  if (deleted) {
+    return deleted.id
+  } else {
+    throw new ApolloError('deleteScheduledWorkoutById: There was an issue.')
+  }
+}

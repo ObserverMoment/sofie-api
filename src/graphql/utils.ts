@@ -11,6 +11,7 @@ export class AccessScopeError extends ApolloError {
 
 /// Must match the prisma model names as per prisma[modelName].findUnique()
 export type ContentObjectType =
+  | 'gymProfile'
   | 'loggedWorkout'
   | 'loggedWorkoutSection'
   | 'loggedWorkoutSet'
@@ -20,6 +21,7 @@ export type ContentObjectType =
   | 'progressJournalGoal'
   | 'progressJournalGoalTag'
   | 'progressJournalEntry'
+  | 'scheduledWorkout'
   | 'workout'
 
 /// Checks that a user has access to a single object in the database.

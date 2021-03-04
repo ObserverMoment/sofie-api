@@ -3,17 +3,20 @@ import {
   QueryTextSearchCreatorPublicProfilesArgs,
   QueryTextSearchWorkoutProgramsArgs,
   QueryTextSearchWorkoutsArgs,
+  TextSearchWorkoutProgramResult,
+  TextSearchWorkoutResult,
+  UserPublicProfile,
 } from '../../generated/graphql'
 
-const textSearchWorkouts = async (
+export const textSearchWorkouts = async (
   r: any,
   { text }: QueryTextSearchWorkoutsArgs,
   { select, prisma }: Context,
-) =>
-  prisma.workout.findMany({
+) => {
+  const workouts = await prisma.workout.findMany({
     where: {
       NOT: {
-        scope: 'PRIVATE',
+        contentAccessScope: 'PRIVATE',
       },
       name: {
         contains: text,
@@ -22,16 +25,18 @@ const textSearchWorkouts = async (
     },
     select,
   })
+  return workouts as TextSearchWorkoutResult[]
+}
 
-const textSearchWorkoutPrograms = async (
+export const textSearchWorkoutPrograms = async (
   r: any,
   { text }: QueryTextSearchWorkoutProgramsArgs,
   { select, prisma }: Context,
-) =>
-  prisma.workoutProgram.findMany({
+) => {
+  const workoutPrograms = await prisma.workoutProgram.findMany({
     where: {
       NOT: {
-        scope: 'PRIVATE',
+        contentAccessScope: 'PRIVATE',
       },
       name: {
         contains: text,
@@ -40,13 +45,15 @@ const textSearchWorkoutPrograms = async (
     },
     select,
   })
+  return workoutPrograms as TextSearchWorkoutProgramResult[]
+}
 
-const textSearchCreatorPublicProfiles = async (
+export const textSearchCreatorPublicProfiles = async (
   r: any,
   { text }: QueryTextSearchCreatorPublicProfilesArgs,
   { select, prisma }: Context,
-) =>
-  prisma.user.findMany({
+) => {
+  const publicUsers = await prisma.user.findMany({
     where: {
       userProfileScope: 'PUBLIC',
       displayName: {
@@ -56,9 +63,5 @@ const textSearchCreatorPublicProfiles = async (
     },
     select,
   })
-
-export {
-  textSearchWorkouts,
-  textSearchWorkoutPrograms,
-  textSearchCreatorPublicProfiles,
+  return publicUsers as UserPublicProfile[]
 }

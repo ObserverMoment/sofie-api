@@ -57,9 +57,9 @@ import {
 
 import {
   userScheduledWorkouts,
-  scheduleWorkout,
-  unscheduleWorkout,
+  createScheduledWorkout,
   updateScheduledWorkout,
+  deleteScheduledWorkoutById,
 } from './schedule'
 
 import {
@@ -71,8 +71,8 @@ import {
 import {
   checkUniqueDisplayName,
   userByUid,
-  userPublicProfile,
-  creatorPublicProfiles,
+  userPublicProfileByUserId,
+  userPublicProfiles,
   createUser,
   updateUser,
   createGymProfile,
@@ -135,28 +135,10 @@ const resolvers: Resolvers = {
     moveTypes,
     workoutGoals,
     workoutSectionTypes,
-
     //// Progress Journal ////
     userProgressJournals,
     progressJournalGoalTags,
     progressJournalById,
-
-    //// User ////
-    checkUniqueDisplayName,
-    userByUid,
-    userPublicProfile,
-    creatorPublicProfiles,
-
-    officialWorkoutPrograms,
-    publicWorkoutPrograms,
-    userWorkoutPrograms,
-    workoutProgramById,
-    userWorkoutProgramEnrolments,
-    officialWorkouts,
-    publicWorkouts,
-    userWorkouts,
-    workoutById,
-
     //// Logged Workouts ////
     userLoggedWorkouts,
     //// Move ////
@@ -164,10 +146,26 @@ const resolvers: Resolvers = {
     userCustomMoves,
     //// Scheduled Workouts ////
     userScheduledWorkouts,
-
+    //// Text Search ////
     textSearchWorkouts,
     textSearchWorkoutPrograms,
     textSearchCreatorPublicProfiles,
+    //// User ////
+    checkUniqueDisplayName,
+    userByUid,
+    userPublicProfileByUserId,
+    userPublicProfiles,
+    //// Workouts ////
+    officialWorkouts,
+    publicWorkouts,
+    userWorkouts,
+    workoutById,
+    //// WorkoutPrograms ////
+    officialWorkoutPrograms,
+    publicWorkoutPrograms,
+    userWorkoutPrograms,
+    workoutProgramById,
+    userWorkoutProgramEnrolments,
   },
   Mutation: {
     ///////////////////
@@ -175,6 +173,12 @@ const resolvers: Resolvers = {
     ///////////////////
     createEquipment,
     updateEquipment,
+    //////////////////////////
+    //// Gym Profile ////
+    //////////////////////////
+    createGymProfile,
+    updateGymProfile,
+    deleteGymProfileById,
     //////////////////////////
     //// Progress Journal ////
     //////////////////////////
@@ -190,25 +194,6 @@ const resolvers: Resolvers = {
     createProgressJournalGoalTag,
     updateProgressJournalGoalTag,
     deleteProgressJournalGoalTagById,
-
-    createUser,
-    updateUser,
-
-    createGymProfile,
-    updateGymProfile,
-    deleteGymProfileById,
-    createWorkout,
-    shallowUpdateWorkout,
-    deleteWorkoutById,
-    updateWorkoutSections,
-    deleteWorkoutSectionsById,
-
-    createWorkoutProgram,
-    updateWorkoutProgram,
-    deleteWorkoutProgramById,
-    addEnrolmentToWorkoutProgram,
-    removeEnrolmentFromWorkoutProgram,
-
     ///////////////////////
     //// LoggedWorkout ////
     ///////////////////////
@@ -237,9 +222,30 @@ const resolvers: Resolvers = {
     //////////////////////////
     //// Schedule Workout ////
     //////////////////////////
-    scheduleWorkout,
-    unscheduleWorkout,
+    createScheduledWorkout,
     updateScheduledWorkout,
+    deleteScheduledWorkoutById,
+    //////////////
+    //// User ////
+    //////////////
+    createUser,
+    updateUser,
+    /////////////////
+    //// Workout ////
+    /////////////////
+    createWorkout,
+    shallowUpdateWorkout,
+    deleteWorkoutById,
+    updateWorkoutSections,
+    deleteWorkoutSectionsById,
+    /////////////////////////
+    //// Workout Program ////
+    /////////////////////////
+    createWorkoutProgram,
+    updateWorkoutProgram,
+    deleteWorkoutProgramById,
+    addEnrolmentToWorkoutProgram,
+    removeEnrolmentFromWorkoutProgram,
   },
 }
 

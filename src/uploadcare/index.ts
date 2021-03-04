@@ -81,14 +81,13 @@ function getFileIdForDeleteOrNull(
  */
 export async function checkUserMediaForDeletion(
   prisma: any,
-  userId: string,
   data: UpdateUserInput,
 ): Promise<string[] | null> {
   // Get the original move media file info.
   // Then once update transaction is complete you can check to see if media should be deleted.
   const oldUser: User = await prisma.user.findUnique({
     where: {
-      id: userId,
+      id: data.id,
     },
     select: {
       avatarUri: true,
