@@ -68,18 +68,6 @@ export default gql`
     TIME
   }
 
-  """
-  AMREPS in reps
-  TIME in seconds
-  LOAD in kgs
-  EMON in reps
-  """
-  enum WorkoutScoreType {
-    AMREPS
-    FORTIME
-    FORLOAD
-  }
-
   enum UserProfileScope {
     PRIVATE
     PUBLIC

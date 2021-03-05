@@ -62,19 +62,16 @@ model Move {
   archived             Boolean              @default(false)
   User                 User?                @relation(fields: [userId], references: [id])
   userId               String?
-  // Default to CUSTOM.
   // A user should never be able to create a STANDARD move (aka an official move), only ADMIN.
   scope                MoveScope            @default(CUSTOM)
   name                 String
-  // Text search will search this field - include the main name + any common variations
-  // E.g. Air Bike, Assault Bike, specific brands, common misspellings etc.
   searchTerms          String?
   description          String?
   demoVideoUri         String?
   demoVideoThumbUri    String?
+  validRepTypes        WorkoutMoveRepType[]
   MoveType             MoveType?            @relation(fields: [moveTypeId], references: [id])
   moveTypeId           String?
-  validRepTypes        WorkoutMoveRepType[]
   RequiredEquipments   Equipment[]          @relation("moveToRequiredEquipments", references: [id])
   SelectableEquipments Equipment[]          @relation("moveToSelectableEquipments", references: [id])
   WorkoutMoves         WorkoutMove[]
@@ -110,7 +107,6 @@ model WorkoutSectionType {
   subtitle              String
   description           String
   imageUri              String?
-  scoreType             WorkoutScoreType
   WorkoutSections       WorkoutSection[]
   LoggedWorkoutSections LoggedWorkoutSection[]
 }
@@ -268,68 +264,70 @@ model Workout {
 // 'Exclusive-belongs-to' example
 // https://hashrocket.com/blog/posts/modeling-polymorphic-associations-in-a-relational-database
 model WorkoutSection {
-  id                           String                      @id @default(uuid())
-  createdAt                    DateTime                    @default(now())
-  name                         String?
-  notes                        String?
-  sortPosition                 Int
-  introVideoUri                String? // Will play before workout starts
-  introVideoThumbUri           String?
-  introAudioUri                String? // Will play before workout starts
-  classVideoUri                String? // Will loop throughout duration of the workout
-  classVideoThumbUri           String?
-  classAudioUri                String? // Will loop throughout duration of the workout
-  outroVideoUri                String? // Will play at end of workout
-  outroVideoThumbUri           String?
-  outroAudioUri                String? // Will play at end of workout
-  Workout                      Workout                     @relation(fields: [workoutId], references: [id])
-  workoutId                    String
-  TrainingWorkoutSection       TrainingWorkoutSection?     @relation(fields: [trainingWorkoutSectionId], references: [id])
-  trainingWorkoutSectionId     String?
-  AmrapWorkoutSection          AmrapWorkoutSection?        @relation(fields: [amrapWorkoutSectionId], references: [id])
-  amrapWorkoutSectionId        String?
-  LastStandingWorkoutSection   LastStandingWorkoutSection? @relation(fields: [lastStandingWorkoutSectionId], references: [id])
-  lastStandingWorkoutSectionId String?
+  id                   String             @id @default(uuid())
+  createdAt            DateTime           @default(now())
+  name                 String?
+  notes                String?
+  rounds               Int?               @default(1)
+  timecap              Int? // Seconds. To finish ALL rounds of the section. i.e. the whole 'workout' as described.
+  sortPosition         Int
+  introVideoUri        String? // Will play before workout starts
+  introVideoThumbUri   String?
+  introAudioUri        String? // Will play before workout starts
+  classVideoUri        String? // Will loop throughout duration of the workout
+  classVideoThumbUri   String?
+  classAudioUri        String? // Will loop throughout duration of the workout
+  outroVideoUri        String? // Will play at end of workout
+  outroVideoThumbUri   String?
+  outroAudioUri        String? // Will play at end of workout
+  Workout              Workout            @relation(fields: [workoutId], references: [id])
+  workoutId            String
+  // TrainingWorkoutSection       TrainingWorkoutSection?     @relation(fields: [trainingWorkoutSectionId], references: [id])
+  // trainingWorkoutSectionId     String?
+  // AmrapWorkoutSection          AmrapWorkoutSection?        @relation(fields: [amrapWorkoutSectionId], references: [id])
+  // amrapWorkoutSectionId        String?
+  // LastStandingWorkoutSection   LastStandingWorkoutSection? @relation(fields: [lastStandingWorkoutSectionId], references: [id])
+  // lastStandingWorkoutSectionId String?
   // The workout type tells you which type of workout section to use.
   // TODO: Validation in Postgres - map the WorkoutType ids to the section types above and ensure they match when creating / updating.
   // E.g. TimedWorkoutSection must be 'HIIT', 'EMOM' or 'Tabata' type.
-  WorkoutSectionType           WorkoutSectionType          @relation(fields: [workoutSectionTypeId], references: [id])
-  workoutSectionTypeId         String
-  WorkoutSets                  WorkoutSet[]
+  WorkoutSectionType   WorkoutSectionType @relation(fields: [workoutSectionTypeId], references: [id])
+  workoutSectionTypeId String
+  WorkoutSets          WorkoutSet[]
 }
 
-/// Fixed Set of moves - open ended time - or timed ///
-model TrainingWorkoutSection {
-  id              String           @id @default(uuid())
-  createdAt       DateTime         @default(now())
-  rounds          Int
-  WorkoutSections WorkoutSection[]
-}
+// /// Fixed Set of moves - open ended time - or timed ///
+// model TrainingWorkoutSection {
+//   id              String           @id @default(uuid())
+//   createdAt       DateTime         @default(now())
+//   rounds          Int
+//   WorkoutSections WorkoutSection[]
+// }
 
-/// Fixed time - open ended set / quantity of moves ///
-model AmrapWorkoutSection {
-  id              String           @id @default(uuid())
-  createdAt       DateTime         @default(now())
-  timecap         Int // Seconds
-  WorkoutSections WorkoutSection[]
-}
+// /// Fixed time - open ended set / quantity of moves ///
+// model AmrapWorkoutSection {
+//   id              String           @id @default(uuid())
+//   createdAt       DateTime         @default(now())
+//   timecap         Int // Seconds
+//   WorkoutSections WorkoutSection[]
+// }
 
-/// Competitive: Keep completing the workout sets within the timecap for as long as possible ///
-model LastStandingWorkoutSection {
-  id              String           @id @default(uuid())
-  createdAt       DateTime         @default(now())
-  finishAfter     Int? // Seconds - optional "finish line" for if you need to ensure non open ended length.
-  // Initially timecaps[0] is timecap for workoutsSets[0], timecaps[1] for workoutSets[1] etc
-  // Arrays do not need to be the same length - each can loop at different points
-  timecaps        Int[]
-  WorkoutSections WorkoutSection[]
-}
+// /// Competitive: Keep completing the workout sets within the timecap for as long as possible ///
+// model LastStandingWorkoutSection {
+//   id              String           @id @default(uuid())
+//   createdAt       DateTime         @default(now())
+//   finishAfter     Int? // Seconds - optional "finish line" for if you need to ensure non open ended length.
+//   // Initially timecaps[0] is timecap for workoutsSets[0], timecaps[1] for workoutSets[1] etc
+//   // Arrays do not need to be the same length - each can loop at different points
+//   timecaps        Int[]
+//   WorkoutSections WorkoutSection[]
+// }
 
 model WorkoutSet {
   id               String         @id @default(uuid())
   createdAt        DateTime       @default(now())
   sortPosition     Int
-  rounds           Int            @default(1)
+  rounds           Int?           @default(1)
   notes            String?
   // If there is more than one move then this is a superset
   // In a superset you do each workoutMove in the array one after another
@@ -343,8 +341,9 @@ model WorkoutMove {
   id           String             @id @default(uuid())
   createdAt    DateTime           @default(now())
   sortPosition Int
-  repType      WorkoutMoveRepType @default(REPS)
-  reps         Float?             @default(10)
+  repType      WorkoutMoveRepType
+  reps         Float
+  distance     Float?
   distanceUnit DistanceUnit       @default(METRES)
   loadAmount   Float?
   loadUnit     LoadUnit           @default(KG)
@@ -447,7 +446,8 @@ model LoggedWorkoutSection {
   createdAt            DateTime           @default(now())
   User                 User               @relation(fields: [userId], references: [id])
   userId               String
-  sortPosition         Int
+  sectionIndex         Int // The sort position of the WorkoutSection
+  roundIndex           Int // The iteration (round) of the section during the workout
   timeTakenMs          Int // Milliseconds
   notes                String?
   LoggedWorkoutSets    LoggedWorkoutSet[]
@@ -477,11 +477,12 @@ model LoggedWorkoutMove {
   userId             String
   sortPosition       Int
   timeTakenMs        Int? // Milliseconds - optional
-  repType            WorkoutMoveRepType @default(TIME)
-  reps               Float              @default(10)
-  distanceUnit       DistanceUnit?      @default(METRES)
+  repType            WorkoutMoveRepType
+  reps               Float
+  distance           Float?
+  distanceUnit       DistanceUnit       @default(METRES)
   loadAmount         Float?
-  loadUnit           LoadUnit?          @default(KG)
+  loadUnit           LoadUnit           @default(KG)
   Move               Move               @relation(fields: [moveId], references: [id])
   moveId             String
   Equipment          Equipment?         @relation(fields: [equipmentId], references: [id])
@@ -583,6 +584,13 @@ enum DistanceUnit {
   MILES
 }
 
+enum HeightUnit {
+  CM
+  IN
+  METRES
+  FEET
+}
+
 enum Gender {
   MALE
   FEMALE
@@ -615,17 +623,7 @@ enum UnitSystem {
 enum WorkoutMoveRepType {
   REPS
   CALORIES
-  DISTANCE
   TIME
-}
-
-// AMREPS in reps
-// TIME in seconds
-// LOAD in kgs
-enum WorkoutScoreType {
-  AMREPS
-  FORTIME
-  FORLOAD
 }
 
 enum UserProfileScope {

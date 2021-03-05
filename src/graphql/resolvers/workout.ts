@@ -6,18 +6,17 @@ import {
   MutationCreateWorkoutArgs,
   MutationDeleteWorkoutByIdArgs,
   MutationDeleteWorkoutSectionsByIdArgs,
-  MutationShallowUpdateWorkoutArgs,
   MutationUpdateWorkoutSectionsArgs,
   QueryWorkoutByIdArgs,
   UpdateWorkoutSectionInput,
+  Workout,
 } from '../../generated/graphql'
 
 import { buildWorkoutSectionsData } from '../workoutBuilders'
 
-import { checkWorkoutMediaForDeletion, deleteFiles } from '../../uploadcare'
-
 import { Context } from '../..'
 import { ApolloError } from 'apollo-server'
+import { AccessScopeError, checkUserAccessScope } from '../utils'
 
 // DB Ids for the different workout section types.
 const sectionSubTypes: { [key: string]: string[] } = {
@@ -27,62 +26,72 @@ const sectionSubTypes: { [key: string]: string[] } = {
 }
 
 //// Queries ////
-const officialWorkouts = async (r: any, a: any, { select, prisma }: Context) =>
-  prisma.workout.findMany({
+export const officialWorkouts = async (
+  r: any,
+  a: any,
+  { select, prisma }: Context,
+) => {
+  const officialWorkouts = await prisma.workout.findMany({
     where: { contentAccessScope: 'OFFICIAL' },
     select,
   })
+  return officialWorkouts as Workout[]
+}
 
-const publicWorkouts = async (r: any, a: any, { select, prisma }: Context) =>
-  prisma.workout.findMany({
+export const publicWorkouts = async (
+  r: any,
+  a: any,
+  { select, prisma }: Context,
+) => {
+  const publicWorkouts = await prisma.workout.findMany({
     where: { contentAccessScope: 'PUBLIC' },
     select,
   })
+  return publicWorkouts as Workout[]
+}
 
 // All user workouts, both public and private
-const userWorkouts = async (
+export const userWorkouts = async (
   r: any,
   a: any,
   { authedUserId, select, prisma }: Context,
-) =>
-  prisma.workout.findMany({
+) => {
+  const userWorkouts = await prisma.workout.findMany({
     where: { userId: authedUserId },
     select,
   })
+  return userWorkouts as Workout[]
+}
 
-const workoutById = async (
+export const workoutById = async (
   r: any,
-  { workoutId }: QueryWorkoutByIdArgs,
+  { id }: QueryWorkoutByIdArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  const workout: any = await prisma.workout.findFirst({
-    where: {
-      id: workoutId,
-      contentAccessScope: 'PUBLIC',
+  const workout = await prisma.workout.findUnique({
+    where: { id },
+    select: {
+      ...select,
+      contentAccessScope: true,
+      userId: true,
     },
-    select: { ...select, contentAccessScope: true, userId: true },
   })
-  if (!workout) {
-    throw new ApolloError(
-      `workoutById: We could not find a workout with id ${workoutId}.`,
-    )
-  } else {
-    if (
-      workout.contentAccessScope === 'PRIVATE' &&
-      workout.userId !== authedUserId
-    ) {
-      throw new ApolloError(
-        `workoutById: You are not the owner of PRIVATE workout with id ${workoutId} - so you cannot access it.`,
-      )
-    } else {
-      // TODO: Handle group scoped workout access check - will need to check that the person owns, is admin or or is a member of the group
-      return workout
+
+  if (workout) {
+    // Check that the user has access. Will need to add a group check here as well once groups are implemented.
+    if ((workout as any).contentAccessScope === 'PRIVATE') {
+      if ((workout as any).userId !== authedUserId) {
+        throw new AccessScopeError()
+      }
     }
+    return workout as Workout
+  } else {
+    throw new ApolloError('workoutProgramById: There was an issue.')
   }
 }
 
 //// Mutations ////
-const createWorkout = async (
+export const createWorkout = async (
   r: any,
   { data }: MutationCreateWorkoutArgs,
   { authedUserId, select, prisma }: Context,
@@ -107,135 +116,27 @@ const createWorkout = async (
   })
 }
 
-const shallowUpdateWorkout = async (
+export const softDeleteWorkoutById = async (
   r: any,
-  { data }: MutationShallowUpdateWorkoutArgs,
-  { authedUserId, select, prisma }: Context,
-) => {
-  // Check user scope.
-  const workout = await prisma.workout.findUnique({
-    where: {
-      id: data.id,
-    },
-    select: {
-      userId: true,
-    },
-  })
-  if (!workout || workout.userId !== authedUserId) {
-    throw new ApolloError(
-      `shallowUpdateWorkout: You are not the owner of workout with id ${data.id} - so you cannot access it.`,
-    )
-  } else {
-    // Check if any media files need to be updated. Only delete files from the server after the rest of the transaction is complete.
-    const fileIdsForDeletion:
-      | string[]
-      | null = await checkWorkoutMediaForDeletion(prisma, data)
-
-    const updatedWorkout = await prisma.workout.update({
-      where: {
-        id: data.id,
-      },
-      data: {
-        ...data,
-        // Fields that are required in the db need to be set as 'undefined' if they are null or if they are not provided.
-        // Otherwise the type mapping between prisma and graphql codegen will fail.
-        // Prisma treats 'undefined' as an instruction to do nothing with this field.
-        name: data.name || undefined,
-        difficultyLevel: data.difficultyLevel || undefined,
-        contentAccessScope: data.contentAccessScope || undefined,
-        WorkoutGoals: data.WorkoutGoals
-          ? { set: data.WorkoutGoals.map((id) => ({ id })) }
-          : undefined,
-      },
-      select,
-    })
-
-    if (!updatedWorkout) {
-      throw new ApolloError(
-        'shallowUpdateWorkout: Sorry, there was an issue updating this workout.',
-      )
-    } else {
-      if (fileIdsForDeletion) {
-        await deleteFiles(fileIdsForDeletion)
-      }
-      return updatedWorkout
-    }
-  }
-}
-
-const deleteWorkoutById = async (
-  r: any,
-  { workoutId }: MutationDeleteWorkoutByIdArgs,
+  { id }: MutationDeleteWorkoutByIdArgs,
   { authedUserId, prisma }: Context,
 ) => {
+  await checkUserAccessScope(id, 'workout', authedUserId, prisma)
   // Get all media file uris from descendants
-  const workoutForDeletion = await prisma.workout.findUnique({
-    where: { id: workoutId },
-    select: {
-      id: true,
-      introVideoUri: true,
-      introVideoThumbUri: true,
-      introAudioUri: true,
-      coverImageUri: true,
-      WorkoutSections: true,
-      userId: true,
-    },
+  const archived = await prisma.workout.update({
+    where: { id },
+    data: { archived: true },
   })
 
-  if (!workoutForDeletion) {
-    throw new ApolloError(
-      `deleteWorkoutById: Sorry, we could not find workout with ID ${workoutId} to delete it.`,
-    )
+  if (archived) {
+    return archived.id
   } else {
-    if (workoutForDeletion.userId !== authedUserId) {
-      throw new ApolloError(
-        `deleteWorkoutById: Sorry, you are not authorised to delete workout with ID ${workoutId}.`,
-      )
-    }
-
-    const fileIdsForDeletion: string[] = [
-      workoutForDeletion.introVideoUri,
-      workoutForDeletion.introVideoThumbUri,
-      workoutForDeletion.introAudioUri,
-      workoutForDeletion.coverImageUri,
-      ...workoutForDeletion.WorkoutSections.map((section) => [
-        section.introAudioUri,
-        section.introVideoUri,
-        section.introVideoThumbUri,
-        section.classAudioUri,
-        section.classVideoUri,
-        section.classVideoThumbUri,
-        section.outroAudioUri,
-        section.outroVideoUri,
-        section.outroVideoThumbUri,
-      ]),
-    ]
-      .flat()
-      .filter((x) => !!x) as string[]
-
-    // Cascade delete Workout and descendants with https://paljs.com/plugins/delete/
-    // Monitor Prisma roadmap for when this can be defined in the schema.
-    const res = await prisma.onDelete({
-      model: 'Workout',
-      where: { id: workoutId, userId: authedUserId },
-      deleteParent: true, // If false, just the descendants will be deleted.
-    })
-
-    // Is this a valid check for successful cascade delete??
-    if (res && res.count && res.count > 0) {
-      // Check if there is media to be deleted from the uploadcare server.
-      if (fileIdsForDeletion.length > 0) {
-        await deleteFiles(fileIdsForDeletion)
-      }
-      return workoutForDeletion.id
-    } else {
-      return null
-    }
+    throw new ApolloError('softDeleteWorkoutById: There was an issue.')
   }
 }
 
 /// If you are sending any workout sub section data then you must also send WorkoutSectionType - otherwise this will throw.
-const updateWorkoutSections = async (
+export const updateWorkoutSection = async (
   r: any,
   { data }: MutationUpdateWorkoutSectionsArgs,
   { authedUserId, select, prisma }: Context,
@@ -249,7 +150,7 @@ const updateWorkoutSections = async (
   })
 }
 
-const deleteWorkoutSectionsById = async (
+export const deleteWorkoutSectionById = async (
   r: any,
   { workoutSectionIds }: MutationDeleteWorkoutSectionsByIdArgs,
   { authedUserId, select, prisma }: Context,
@@ -371,16 +272,4 @@ function validateUpdateWorkoutSectionsInput(data: UpdateWorkoutSectionInput[]) {
       }
     }
   }
-}
-
-export {
-  officialWorkouts,
-  publicWorkouts,
-  userWorkouts,
-  workoutById,
-  createWorkout,
-  shallowUpdateWorkout,
-  deleteWorkoutById,
-  updateWorkoutSections,
-  deleteWorkoutSectionsById,
 }

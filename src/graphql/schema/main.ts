@@ -37,7 +37,7 @@ export default gql`
     officialWorkouts: [Workout!]!
     publicWorkouts: [Workout!]!
     userWorkouts: [Workout!]!
-    workoutById(workoutId: ID!): Workout!
+    workoutById(id: ID!): Workout!
     #### Workout Programs and Enrolments ####
     officialWorkoutPrograms: [WorkoutProgram!]!
     publicWorkoutPrograms: [WorkoutProgram!]!
@@ -175,6 +175,11 @@ export default gql`
   }
 
   #### Non CRUD-able models ####
+  input UpdateSortPositionInput {
+    id: ID!
+    sortPosition: Int!
+  }
+
   type WorkoutGoal {
     id: ID!
     name: String!
@@ -191,10 +196,5 @@ export default gql`
     scoreType: WorkoutScoreType
     WorkoutSections: [WorkoutSection!]!
     LoggedWorkoutSections: [LoggedWorkoutSection!]!
-  }
-
-  input UpdateSortPositionInput {
-    id: ID!
-    sortPosition: Int!
   }
 `

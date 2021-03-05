@@ -18,7 +18,8 @@ export default gql`
 
   type LoggedWorkoutSection {
     id: ID!
-    sortPosition: Int!
+    setIndex: Int!
+    roundIndex: Int!
     timeTakenMs: Int!
     notes: String
     WorkoutSectionType: WorkoutSectionType!
@@ -62,7 +63,8 @@ export default gql`
   }
 
   input CreateLoggedWorkoutSectionInLoggedWorkoutInput {
-    sortPosition: Int!
+    setIndex: Int!
+    roundIndex: Int!
     timeTakenMs: Int!
     notes: String
     WorkoutSectionType: ID!
@@ -91,7 +93,8 @@ export default gql`
 
   #### Create and attach to parent ####
   input CreateLoggedWorkoutSectionInput {
-    sortPosition: Int!
+    setIndex: Int!
+    roundIndex: Int!
     timeTakenMs: Int!
     notes: String
     WorkoutSectionType: ID!

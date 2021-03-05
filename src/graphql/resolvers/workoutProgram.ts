@@ -24,6 +24,7 @@ import {
   deleteFiles,
 } from '../../uploadcare'
 import {
+  AccessScopeError,
   checkUserAccessScope,
   checkUserOwnsParentWorkoutProgram,
 } from '../utils'
@@ -68,14 +69,24 @@ export const userWorkoutPrograms = async (
 export const workoutProgramById = async (
   r: any,
   { id }: QueryWorkoutProgramByIdArgs,
-  { prisma, select }: Context,
+  { authedUserId, prisma, select }: Context,
 ) => {
   const workoutProgram = await prisma.workoutProgram.findUnique({
     where: { id },
-    select,
+    select: {
+      ...select,
+      contentAccessScope: true,
+      userId: true,
+    },
   })
 
   if (workoutProgram) {
+    // Check that the user has access. Will need to add a group check here as well once groups are implemented.
+    if ((workoutProgram as any).contentAccessScope === 'PRIVATE') {
+      if ((workoutProgram as any).userId !== authedUserId) {
+        throw new AccessScopeError()
+      }
+    }
     return workoutProgram as WorkoutProgram
   } else {
     throw new ApolloError('workoutProgramById: There was an issue.')

@@ -88,7 +88,7 @@ export type QueryUserPublicProfileByUserIdArgs = {
 
 
 export type QueryWorkoutByIdArgs = {
-  workoutId: Scalars['ID'];
+  id: Scalars['ID'];
 };
 
 
@@ -441,6 +441,11 @@ export type MutationDeleteWorkoutProgramReviewByIdArgs = {
   id: Scalars['ID'];
 };
 
+export type UpdateSortPositionInput = {
+  id: Scalars['ID'];
+  sortPosition: Scalars['Int'];
+};
+
 export type WorkoutGoal = {
   __typename?: 'WorkoutGoal';
   id: Scalars['ID'];
@@ -459,11 +464,6 @@ export type WorkoutSectionType = {
   scoreType?: Maybe<WorkoutScoreType>;
   WorkoutSections: Array<WorkoutSection>;
   LoggedWorkoutSections: Array<LoggedWorkoutSection>;
-};
-
-export type UpdateSortPositionInput = {
-  id: Scalars['ID'];
-  sortPosition: Scalars['Int'];
 };
 
 export type User = {
@@ -929,7 +929,8 @@ export type LoggedWorkout = {
 export type LoggedWorkoutSection = {
   __typename?: 'LoggedWorkoutSection';
   id: Scalars['ID'];
-  sortPosition: Scalars['Int'];
+  setIndex: Scalars['Int'];
+  roundIndex: Scalars['Int'];
   timeTakenMs: Scalars['Int'];
   notes?: Maybe<Scalars['String']>;
   WorkoutSectionType: WorkoutSectionType;
@@ -974,7 +975,8 @@ export type CreateLoggedWorkoutInput = {
 };
 
 export type CreateLoggedWorkoutSectionInLoggedWorkoutInput = {
-  sortPosition: Scalars['Int'];
+  setIndex: Scalars['Int'];
+  roundIndex: Scalars['Int'];
   timeTakenMs: Scalars['Int'];
   notes?: Maybe<Scalars['String']>;
   WorkoutSectionType: Scalars['ID'];
@@ -1002,7 +1004,8 @@ export type CreateLoggedWorkoutMoveInLoggedSetInput = {
 };
 
 export type CreateLoggedWorkoutSectionInput = {
-  sortPosition: Scalars['Int'];
+  setIndex: Scalars['Int'];
+  roundIndex: Scalars['Int'];
   timeTakenMs: Scalars['Int'];
   notes?: Maybe<Scalars['String']>;
   WorkoutSectionType: Scalars['ID'];
@@ -1426,10 +1429,10 @@ export type ResolversTypes = ResolversObject<{
   ID: ResolverTypeWrapper<Scalars['ID']>;
   String: ResolverTypeWrapper<Scalars['String']>;
   Mutation: ResolverTypeWrapper<{}>;
-  WorkoutGoal: ResolverTypeWrapper<WorkoutGoal>;
-  WorkoutSectionType: ResolverTypeWrapper<WorkoutSectionType>;
   UpdateSortPositionInput: UpdateSortPositionInput;
   Int: ResolverTypeWrapper<Scalars['Int']>;
+  WorkoutGoal: ResolverTypeWrapper<WorkoutGoal>;
+  WorkoutSectionType: ResolverTypeWrapper<WorkoutSectionType>;
   User: ResolverTypeWrapper<User>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
   UpdateUserInput: UpdateUserInput;
@@ -1530,10 +1533,10 @@ export type ResolversParentTypes = ResolversObject<{
   ID: Scalars['ID'];
   String: Scalars['String'];
   Mutation: {};
-  WorkoutGoal: WorkoutGoal;
-  WorkoutSectionType: WorkoutSectionType;
   UpdateSortPositionInput: UpdateSortPositionInput;
   Int: Scalars['Int'];
+  WorkoutGoal: WorkoutGoal;
+  WorkoutSectionType: WorkoutSectionType;
   User: User;
   Float: Scalars['Float'];
   UpdateUserInput: UpdateUserInput;
@@ -1645,7 +1648,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   officialWorkouts?: Resolver<Array<ResolversTypes['Workout']>, ParentType, ContextType>;
   publicWorkouts?: Resolver<Array<ResolversTypes['Workout']>, ParentType, ContextType>;
   userWorkouts?: Resolver<Array<ResolversTypes['Workout']>, ParentType, ContextType>;
-  workoutById?: Resolver<ResolversTypes['Workout'], ParentType, ContextType, RequireFields<QueryWorkoutByIdArgs, 'workoutId'>>;
+  workoutById?: Resolver<ResolversTypes['Workout'], ParentType, ContextType, RequireFields<QueryWorkoutByIdArgs, 'id'>>;
   officialWorkoutPrograms?: Resolver<Array<ResolversTypes['WorkoutProgram']>, ParentType, ContextType>;
   publicWorkoutPrograms?: Resolver<Array<ResolversTypes['WorkoutProgram']>, ParentType, ContextType>;
   workoutProgramById?: Resolver<ResolversTypes['WorkoutProgram'], ParentType, ContextType, RequireFields<QueryWorkoutProgramByIdArgs, 'id'>>;
@@ -1957,7 +1960,8 @@ export type LoggedWorkoutResolvers<ContextType = any, ParentType extends Resolve
 
 export type LoggedWorkoutSectionResolvers<ContextType = any, ParentType extends ResolversParentTypes['LoggedWorkoutSection'] = ResolversParentTypes['LoggedWorkoutSection']> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  sortPosition?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  setIndex?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  roundIndex?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   timeTakenMs?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   notes?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   WorkoutSectionType?: Resolver<ResolversTypes['WorkoutSectionType'], ParentType, ContextType>;
