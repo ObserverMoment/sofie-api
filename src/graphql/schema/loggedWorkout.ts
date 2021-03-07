@@ -63,7 +63,7 @@ export default gql`
   }
 
   input CreateLoggedWorkoutSectionInLoggedWorkoutInput {
-    setIndex: Int!
+    sectionIndex: Int!
     roundIndex: Int!
     timeTakenMs: Int!
     notes: String
@@ -93,7 +93,7 @@ export default gql`
 
   #### Create and attach to parent ####
   input CreateLoggedWorkoutSectionInput {
-    setIndex: Int!
+    sectionIndex: Int!
     roundIndex: Int!
     timeTakenMs: Int!
     notes: String

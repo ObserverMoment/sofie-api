@@ -3,7 +3,6 @@ import { gql } from 'apollo-server-express'
 export default gql`
   type WorkoutMove {
     id: ID!
-    notes: String
     sortPosition: Int!
     reps: Float!
     repType: WorkoutMoveRepType!
@@ -15,14 +14,25 @@ export default gql`
   }
 
   input CreateWorkoutMoveInput {
-    notes: String
     sortPosition: Int!
     reps: Float!
     repType: WorkoutMoveRepType!
-    distanceUnit: DistanceUnit!
+    distanceUnit: DistanceUnit
     loadAmount: Float
-    loadUnit: LoadUnit!
+    loadUnit: LoadUnit
     Move: ID!
+    Equipment: ID
+    WorkoutSet: ID!
+  }
+
+  input UpdateWorkoutMoveInput {
+    id: ID!
+    reps: Float
+    repType: WorkoutMoveRepType
+    distanceUnit: DistanceUnit
+    loadAmount: Float
+    loadUnit: LoadUnit
+    Move: ID
     Equipment: ID
   }
 `

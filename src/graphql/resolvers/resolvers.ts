@@ -86,10 +86,24 @@ import {
   userWorkouts,
   workoutById,
   createWorkout,
-  shallowUpdateWorkout,
+  updateWorkout,
   softDeleteWorkoutById,
-  updateWorkoutSections,
-  deleteWorkoutSectionsById,
+  makeCopyWorkoutById,
+  createWorkoutSection,
+  updateWorkoutSection,
+  deleteWorkoutSectionById,
+  createWorkoutSectionIntervalBuyIn,
+  updateWorkoutSectionIntervalBuyIn,
+  deleteWorkoutSectionIntervalBuyInById,
+  createWorkoutSet,
+  updateWorkoutSet,
+  deleteWorkoutSetById,
+  createWorkoutSetGenerator,
+  updateWorkoutSetGenerator,
+  deleteWorkoutSetGeneratorById,
+  createWorkoutMove,
+  updateWorkoutMove,
+  deleteWorkoutMoveById,
 } from './workout'
 
 import {
@@ -240,10 +254,25 @@ const resolvers: Resolvers = {
     //// Workout ////
     /////////////////
     createWorkout,
-    shallowUpdateWorkout,
+    updateWorkout,
     softDeleteWorkoutById,
-    updateWorkoutSections,
-    deleteWorkoutSectionsById,
+    // Note: Media should not be copied
+    makeCopyWorkoutById,
+    createWorkoutSection,
+    updateWorkoutSection,
+    deleteWorkoutSectionById,
+    createWorkoutSectionIntervalBuyIn,
+    updateWorkoutSectionIntervalBuyIn,
+    deleteWorkoutSectionIntervalBuyInById,
+    createWorkoutSet,
+    updateWorkoutSet,
+    deleteWorkoutSetById,
+    createWorkoutSetGenerator,
+    updateWorkoutSetGenerator,
+    deleteWorkoutSetGeneratorById,
+    createWorkoutMove,
+    updateWorkoutMove,
+    deleteWorkoutMoveById,
     /////////////////////////
     //// Workout Program ////
     /////////////////////////

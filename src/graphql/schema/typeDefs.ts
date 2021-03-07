@@ -10,6 +10,7 @@ import workoutProgramSchema from './workoutProgram'
 import loggedWorkoutSchema from './loggedWorkout'
 import scheduledWorkoutSchema from './scheduledWorkout'
 import workoutSectionSchema from './workoutSection'
+import workoutSetSchema from './workoutSet'
 import workoutMoveSchema from './workoutMove'
 import bodyAreaSchema from './bodyArea'
 import textSearchSchema from './textSearch'
@@ -17,20 +18,21 @@ import enumSchema from './enums'
 
 const typeDefs = mergeTypeDefs([
   mainSchema,
+  bodyAreaSchema,
+  enumSchema,
+  equipmentSchema,
+  moveSchema,
   userSchema,
   userProfile,
-  progressJournal,
-  moveSchema,
-  equipmentSchema,
-  workoutSchema,
-  workoutProgramSchema,
   loggedWorkoutSchema,
+  progressJournal,
   scheduledWorkoutSchema,
-  workoutSectionSchema,
-  workoutMoveSchema,
-  bodyAreaSchema,
   textSearchSchema,
-  enumSchema,
+  workoutSchema,
+  workoutSectionSchema,
+  workoutSetSchema,
+  workoutMoveSchema,
+  workoutProgramSchema,
 ])
 
 export default typeDefs

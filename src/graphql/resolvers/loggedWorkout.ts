@@ -75,6 +75,8 @@ export const createLoggedWorkout = async (
                   LoggedWorkoutMoves: {
                     create: set.LoggedWorkoutMoves.map((workoutMove) => ({
                       ...workoutMove,
+                      distanceUnit: workoutMove.distanceUnit || undefined,
+                      loadUnit: workoutMove.loadUnit || undefined,
                       User: { connect: { id: authedUserId } },
                       Equipment: {
                         connect: {
@@ -402,6 +404,8 @@ export const createLoggedWorkoutMove = async (
   const loggedWorkoutmove = await prisma.loggedWorkoutMove.create({
     data: {
       ...data,
+      distanceUnit: data.distanceUnit || undefined,
+      loadUnit: data.loadUnit || undefined,
       User: { connect: { id: authedUserId } },
       Move: {
         connect: { id: data.Move },
@@ -435,6 +439,8 @@ export const updateLoggedWorkoutMove = async (
     },
     data: {
       ...data,
+      distanceUnit: data.distanceUnit || undefined,
+      loadUnit: data.loadUnit || undefined,
       reps: data.reps || undefined,
       Move: {
         connect: { id: data.Move || undefined },

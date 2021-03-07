@@ -29,6 +29,7 @@ export type ContentObjectType =
   | 'workoutProgramReview'
 
 /// Checks that a user has access to a single object in the database.
+/// Checks for ownership so cannot use this cor checking, for example, access to group scoped content.
 export async function checkUserAccessScope(
   objectId: string,
   objectType: ContentObjectType,

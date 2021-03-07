@@ -107,6 +107,7 @@ model WorkoutSectionType {
   subtitle              String
   description           String
   imageUri              String?
+  validRepTypes         WorkoutMoveRepType[]
   WorkoutSections       WorkoutSection[]
   LoggedWorkoutSections LoggedWorkoutSection[]
 }
@@ -259,16 +260,12 @@ model Workout {
   WorkoutProgramWorkouts WorkoutProgramWorkout[]
 }
 
-// A workout can have many sections - each one can be a different section type / structure.
-// TODO: Check() validation should be written in Postgres to ensure only one section type is on any one section.
-// 'Exclusive-belongs-to' example
-// https://hashrocket.com/blog/posts/modeling-polymorphic-associations-in-a-relational-database
 model WorkoutSection {
-  id                   String             @id @default(uuid())
-  createdAt            DateTime           @default(now())
+  id                   String                        @id @default(uuid())
+  createdAt            DateTime                      @default(now())
   name                 String?
   notes                String?
-  rounds               Int?               @default(1)
+  rounds               Int?                          @default(1)
   timecap              Int? // Seconds. To finish ALL rounds of the section. i.e. the whole 'workout' as described.
   sortPosition         Int
   introVideoUri        String? // Will play before workout starts
@@ -280,79 +277,69 @@ model WorkoutSection {
   outroVideoUri        String? // Will play at end of workout
   outroVideoThumbUri   String?
   outroAudioUri        String? // Will play at end of workout
-  Workout              Workout            @relation(fields: [workoutId], references: [id])
+  Workout              Workout                       @relation(fields: [workoutId], references: [id])
   workoutId            String
-  // TrainingWorkoutSection       TrainingWorkoutSection?     @relation(fields: [trainingWorkoutSectionId], references: [id])
-  // trainingWorkoutSectionId     String?
-  // AmrapWorkoutSection          AmrapWorkoutSection?        @relation(fields: [amrapWorkoutSectionId], references: [id])
-  // amrapWorkoutSectionId        String?
-  // LastStandingWorkoutSection   LastStandingWorkoutSection? @relation(fields: [lastStandingWorkoutSectionId], references: [id])
-  // lastStandingWorkoutSectionId String?
-  // The workout type tells you which type of workout section to use.
-  // TODO: Validation in Postgres - map the WorkoutType ids to the section types above and ensure they match when creating / updating.
-  // E.g. TimedWorkoutSection must be 'HIIT', 'EMOM' or 'Tabata' type.
-  WorkoutSectionType   WorkoutSectionType @relation(fields: [workoutSectionTypeId], references: [id])
+  WorkoutSectionType   WorkoutSectionType            @relation(fields: [workoutSectionTypeId], references: [id])
   workoutSectionTypeId String
   WorkoutSets          WorkoutSet[]
+  IntervalBuyIns       WorkoutSectionIntervalBuyIn[]
 }
 
-// /// Fixed Set of moves - open ended time - or timed ///
-// model TrainingWorkoutSection {
-//   id              String           @id @default(uuid())
-//   createdAt       DateTime         @default(now())
-//   rounds          Int
-//   WorkoutSections WorkoutSection[]
-// }
-
-// /// Fixed time - open ended set / quantity of moves ///
-// model AmrapWorkoutSection {
-//   id              String           @id @default(uuid())
-//   createdAt       DateTime         @default(now())
-//   timecap         Int // Seconds
-//   WorkoutSections WorkoutSection[]
-// }
-
-// /// Competitive: Keep completing the workout sets within the timecap for as long as possible ///
-// model LastStandingWorkoutSection {
-//   id              String           @id @default(uuid())
-//   createdAt       DateTime         @default(now())
-//   finishAfter     Int? // Seconds - optional "finish line" for if you need to ensure non open ended length.
-//   // Initially timecaps[0] is timecap for workoutsSets[0], timecaps[1] for workoutSets[1] etc
-//   // Arrays do not need to be the same length - each can loop at different points
-//   timecaps        Int[]
-//   WorkoutSections WorkoutSection[]
-// }
+model WorkoutSectionIntervalBuyIn {
+  id               String          @id @default(uuid())
+  createdAt        DateTime        @default(now())
+  // Seconds - every {interval} seconds this move interrupts the workout and you must complete it before continuing
+  interval         Int
+  WorkoutMove      WorkoutMove     @relation(fields: [workoutMoveId], references: [id])
+  workoutMoveId    String
+  WorkoutSection   WorkoutSection? @relation(fields: [workoutSectionId], references: [id])
+  workoutSectionId String?
+}
 
 model WorkoutSet {
-  id               String         @id @default(uuid())
-  createdAt        DateTime       @default(now())
+  id               String                @id @default(uuid())
+  createdAt        DateTime              @default(now())
   sortPosition     Int
-  rounds           Int?           @default(1)
+  rounds           Int?                  @default(1)
   notes            String?
+  Generators       WorkoutSetGenerator[]
   // If there is more than one move then this is a superset
   // In a superset you do each workoutMove in the array one after another
   // And then repeat this process {rounds} times
   WorkoutMoves     WorkoutMove[]
-  WorkoutSection   WorkoutSection @relation(fields: [workoutSectionId], references: [id])
+  WorkoutSection   WorkoutSection        @relation(fields: [workoutSectionId], references: [id])
   workoutSectionId String
 }
 
+model WorkoutSetGenerator {
+  id               String                    @id @default(uuid())
+  createdAt        DateTime                  @default(now())
+  type             WorkoutSetGeneratorType
+  workoutMoveIndex Int
+  target           WorkoutSetGeneratorTarget
+  roundFrequency   Int
+  adjustAmount     Float
+  WorkoutSet       WorkoutSet?               @relation(fields: [workoutSetId], references: [id])
+  workoutSetId     String?
+}
+
 model WorkoutMove {
-  id           String             @id @default(uuid())
-  createdAt    DateTime           @default(now())
-  sortPosition Int
-  repType      WorkoutMoveRepType
-  reps         Float
-  distance     Float?
-  distanceUnit DistanceUnit       @default(METRES)
-  loadAmount   Float?
-  loadUnit     LoadUnit           @default(KG)
-  Move         Move               @relation(fields: [moveId], references: [id])
-  moveId       String
-  Equipment    Equipment?         @relation(fields: [equipmentId], references: [id])
-  equipmentId  String?
-  WorkoutSet   WorkoutSet         @relation(fields: [workoutSetId], references: [id])
-  workoutSetId String
+  id                          String                        @id @default(uuid())
+  createdAt                   DateTime                      @default(now())
+  sortPosition                Int
+  repType                     WorkoutMoveRepType
+  reps                        Float
+  distance                    Float?
+  distanceUnit                DistanceUnit                  @default(METRES)
+  loadAmount                  Float?
+  loadUnit                    LoadUnit                      @default(KG)
+  Move                        Move                          @relation(fields: [moveId], references: [id])
+  moveId                      String
+  Equipment                   Equipment?                    @relation(fields: [equipmentId], references: [id])
+  equipmentId                 String?
+  WorkoutSet                  WorkoutSet                    @relation(fields: [workoutSetId], references: [id])
+  workoutSetId                String
+  WorkoutSectionIntervalBuyIn WorkoutSectionIntervalBuyIn[]
 }
 
 /////////////////////////////////////////////////////////
@@ -623,7 +610,20 @@ enum UnitSystem {
 enum WorkoutMoveRepType {
   REPS
   CALORIES
+  DISTANCE
   TIME
+}
+
+enum WorkoutSetGeneratorTarget {
+  REPS
+  LOAD
+}
+
+enum WorkoutSetGeneratorType {
+  LADDERUP
+  LADDERDOWN
+  PYRAMIDUP
+  PYRAMIDDOWN
 }
 
 enum UserProfileScope {

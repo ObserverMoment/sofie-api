@@ -140,8 +140,10 @@ export default gql`
     #################
     #### Workout ####
     createWorkout(data: CreateWorkoutInput!): Workout!
-    shallowUpdateWorkout(data: ShallowUpdateWorkoutInput!): Workout!
-    deleteWorkoutById(id: ID!): ID
+    updateWorkout(data: UpdateWorkoutInput!): Workout!
+    softDeleteWorkoutById(id: ID!): ID
+    # Note: Media should not be copied
+    makeCopyWorkoutById(id: ID!): Workout!
     updateWorkoutSections(
       data: [UpdateWorkoutSectionInput!]!
     ): [WorkoutSection!]!
@@ -193,7 +195,7 @@ export default gql`
     subtitle: String!
     description: String!
     imageUri: String!
-    scoreType: WorkoutScoreType
+    validRepTypes: [WorkoutMoveRepType!]!
     WorkoutSections: [WorkoutSection!]!
     LoggedWorkoutSections: [LoggedWorkoutSection!]!
   }

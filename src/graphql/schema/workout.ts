@@ -32,7 +32,7 @@ export default gql`
     WorkoutGoals: [ID!]
   }
 
-  input ShallowUpdateWorkoutInput {
+  input UpdateWorkoutInput {
     id: ID!
     name: String
     summary: String

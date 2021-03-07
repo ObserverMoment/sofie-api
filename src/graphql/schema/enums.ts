@@ -68,6 +68,18 @@ export default gql`
     TIME
   }
 
+  enum WorkoutSetGeneratorTarget {
+    REPS
+    LOAD
+  }
+
+  enum WorkoutSetGeneratorType {
+    LADDERUP
+    LADDERDOWN
+    PYRAMIDUP
+    PYRAMIDDOWN
+  }
+
   enum UserProfileScope {
     PRIVATE
     PUBLIC
