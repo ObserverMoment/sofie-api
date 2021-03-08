@@ -920,7 +920,6 @@ export type CreateLoggedWorkoutSectionInLoggedWorkoutInput = {
   notes?: Maybe<Scalars['String']>;
   WorkoutSectionType: Scalars['ID'];
   LoggedWorkoutSets: Array<CreateLoggedWorkoutSetInLoggedSectionInput>;
-  LoggedWorkout?: Maybe<Scalars['ID']>;
 };
 
 export type CreateLoggedWorkoutSetInLoggedSectionInput = {

@@ -69,7 +69,6 @@ export default gql`
     notes: String
     WorkoutSectionType: ID!
     LoggedWorkoutSets: [CreateLoggedWorkoutSetInLoggedSectionInput!]!
-    LoggedWorkout: ID
   }
 
   input CreateLoggedWorkoutSetInLoggedSectionInput {
