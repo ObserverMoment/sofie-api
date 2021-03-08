@@ -14,7 +14,7 @@ import {
   UserPublicProfile,
 } from '../../generated/graphql'
 import { checkUserMediaForDeletion, deleteFiles } from '../../uploadcare'
-import { AccessScopeError, checkUserAccessScope } from '../utils'
+import { AccessScopeError, checkUserOwnsObject } from '../utils'
 
 //// Queries ////
 export const checkUniqueDisplayName = async (
@@ -162,7 +162,7 @@ export const updateGymProfile = async (
   { data }: MutationUpdateGymProfileArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  await checkUserAccessScope(data.id, 'gymProfile', authedUserId, prisma)
+  await checkUserOwnsObject(data.id, 'gymProfile', authedUserId, prisma)
   const updated = await prisma.gymProfile.update({
     where: { id: data.id },
     data: {
@@ -190,7 +190,7 @@ export const deleteGymProfileById = async (
   { id }: MutationDeleteGymProfileByIdArgs,
   { authedUserId, prisma }: Context,
 ) => {
-  await checkUserAccessScope(id, 'gymProfile', authedUserId, prisma)
+  await checkUserOwnsObject(id, 'gymProfile', authedUserId, prisma)
   const deleted = await prisma.gymProfile.delete({
     where: { id },
     select: { id: true },

@@ -190,6 +190,11 @@ model User {
   LoggedWorkoutMoves       LoggedWorkoutMove[]
   ProgressJournalGoals     ProgressJournalGoal[]
   ProgressJournalEntrys    ProgressJournalEntry[]
+  WorkoutSections          WorkoutSection[]
+  WorkoutSets              WorkoutSet[]
+  WorkoutMoves             WorkoutMove[]
+  WorkoutSetGenerators     WorkoutSetGenerator[]
+  WorkoutSetIntervalBuyIn  WorkoutSetIntervalBuyIn[]
 }
 
 model UserCollection {
@@ -261,11 +266,14 @@ model Workout {
 }
 
 model WorkoutSection {
-  id                   String                        @id @default(uuid())
-  createdAt            DateTime                      @default(now())
+  id                   String             @id @default(uuid())
+  createdAt            DateTime           @default(now())
+  archived             Boolean            @default(false)
+  User                 User               @relation(fields: [userId], references: [id])
+  userId               String
   name                 String?
   notes                String?
-  rounds               Int?                          @default(1)
+  rounds               Int?               @default(1)
   timecap              Int? // Seconds. To finish ALL rounds of the section. i.e. the whole 'workout' as described.
   sortPosition         Int
   introVideoUri        String? // Will play before workout starts
@@ -277,43 +285,49 @@ model WorkoutSection {
   outroVideoUri        String? // Will play at end of workout
   outroVideoThumbUri   String?
   outroAudioUri        String? // Will play at end of workout
-  Workout              Workout                       @relation(fields: [workoutId], references: [id])
+  Workout              Workout            @relation(fields: [workoutId], references: [id])
   workoutId            String
-  WorkoutSectionType   WorkoutSectionType            @relation(fields: [workoutSectionTypeId], references: [id])
+  WorkoutSectionType   WorkoutSectionType @relation(fields: [workoutSectionTypeId], references: [id])
   workoutSectionTypeId String
   WorkoutSets          WorkoutSet[]
-  IntervalBuyIns       WorkoutSectionIntervalBuyIn[]
-}
-
-model WorkoutSectionIntervalBuyIn {
-  id               String          @id @default(uuid())
-  createdAt        DateTime        @default(now())
-  // Seconds - every {interval} seconds this move interrupts the workout and you must complete it before continuing
-  interval         Int
-  WorkoutMove      WorkoutMove     @relation(fields: [workoutMoveId], references: [id])
-  workoutMoveId    String
-  WorkoutSection   WorkoutSection? @relation(fields: [workoutSectionId], references: [id])
-  workoutSectionId String?
 }
 
 model WorkoutSet {
-  id               String                @id @default(uuid())
-  createdAt        DateTime              @default(now())
+  id               String                   @id @default(uuid())
+  createdAt        DateTime                 @default(now())
+  User             User                     @relation(fields: [userId], references: [id])
+  userId           String
   sortPosition     Int
-  rounds           Int?                  @default(1)
+  rounds           Int?                     @default(1)
   notes            String?
   Generators       WorkoutSetGenerator[]
+  IntervalBuyIn    WorkoutSetIntervalBuyIn?
   // If there is more than one move then this is a superset
   // In a superset you do each workoutMove in the array one after another
   // And then repeat this process {rounds} times
   WorkoutMoves     WorkoutMove[]
-  WorkoutSection   WorkoutSection        @relation(fields: [workoutSectionId], references: [id])
+  WorkoutSection   WorkoutSection           @relation(fields: [workoutSectionId], references: [id])
   workoutSectionId String
+}
+
+model WorkoutSetIntervalBuyIn {
+  id            String      @id @default(uuid())
+  createdAt     DateTime    @default(now())
+  User          User        @relation(fields: [userId], references: [id])
+  userId        String
+  // Seconds - every {interval} seconds this move interrupts the workout and you must complete it before continuing
+  interval      Int
+  WorkoutMove   WorkoutMove @relation(fields: [workoutMoveId], references: [id])
+  workoutMoveId String
+  WorkoutSet    WorkoutSet  @relation(fields: [workoutSetId], references: [id])
+  workoutSetId  String
 }
 
 model WorkoutSetGenerator {
   id               String                    @id @default(uuid())
   createdAt        DateTime                  @default(now())
+  User             User                      @relation(fields: [userId], references: [id])
+  userId           String
   type             WorkoutSetGeneratorType
   workoutMoveIndex Int
   target           WorkoutSetGeneratorTarget
@@ -324,22 +338,24 @@ model WorkoutSetGenerator {
 }
 
 model WorkoutMove {
-  id                          String                        @id @default(uuid())
-  createdAt                   DateTime                      @default(now())
-  sortPosition                Int
-  repType                     WorkoutMoveRepType
-  reps                        Float
-  distance                    Float?
-  distanceUnit                DistanceUnit                  @default(METRES)
-  loadAmount                  Float?
-  loadUnit                    LoadUnit                      @default(KG)
-  Move                        Move                          @relation(fields: [moveId], references: [id])
-  moveId                      String
-  Equipment                   Equipment?                    @relation(fields: [equipmentId], references: [id])
-  equipmentId                 String?
-  WorkoutSet                  WorkoutSet                    @relation(fields: [workoutSetId], references: [id])
-  workoutSetId                String
-  WorkoutSectionIntervalBuyIn WorkoutSectionIntervalBuyIn[]
+  id                      String                    @id @default(uuid())
+  createdAt               DateTime                  @default(now())
+  User                    User                      @relation(fields: [userId], references: [id])
+  userId                  String
+  sortPosition            Int
+  repType                 WorkoutMoveRepType
+  reps                    Float
+  distance                Float?
+  distanceUnit            DistanceUnit              @default(METRES)
+  loadAmount              Float?
+  loadUnit                LoadUnit                  @default(KG)
+  Move                    Move                      @relation(fields: [moveId], references: [id])
+  moveId                  String
+  Equipment               Equipment?                @relation(fields: [equipmentId], references: [id])
+  equipmentId             String?
+  WorkoutSet              WorkoutSet                @relation(fields: [workoutSetId], references: [id])
+  workoutSetId            String
+  WorkoutSetIntervalBuyIn WorkoutSetIntervalBuyIn[]
 }
 
 /////////////////////////////////////////////////////////

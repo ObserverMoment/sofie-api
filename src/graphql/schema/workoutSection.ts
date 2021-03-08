@@ -18,7 +18,6 @@ export default gql`
     Workout: Workout!
     WorkoutSectionType: WorkoutSectionType!
     WorkoutSets: [WorkoutSet!]!
-    IntervalBuyIns: [WorkoutSectionIntervalBuyIn!]
   }
 
   input CreateWorkoutSectionInput {
@@ -35,13 +34,13 @@ export default gql`
     outroVideoThumbUri: String
     outroAudioUri: String
     WorkoutSectionType: ID!
+    Workout: ID!
   }
 
   input UpdateWorkoutSectionInput {
     id: ID!
     name: String
     notes: String
-    sortPosition: Int
     introVideoUri: String
     introVideoThumbUri: String
     introAudioUri: String
@@ -51,23 +50,5 @@ export default gql`
     outroVideoUri: String
     outroVideoThumbUri: String
     outroAudioUri: String
-  }
-
-  type WorkoutSectionIntervalBuyIn {
-    id: ID!
-    interval: Int!
-    WorkoutMove: WorkoutMove!
-  }
-
-  input CreateWorkoutSectionIntervalBuyInInput {
-    interval: Int!
-    WorkoutMove: CreateWorkoutMoveInput!
-    WorkoutSection: ID!
-  }
-
-  input UpdateWorkoutSectionIntervalBuyInInput {
-    id: ID!
-    interval: Int
-    WorkoutMove: UpdateWorkoutMoveInput
   }
 `

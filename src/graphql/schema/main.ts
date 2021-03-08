@@ -13,12 +13,12 @@ export default gql`
     workoutGoals: [WorkoutGoal]!
     workoutSectionTypes: [WorkoutSectionType!]!
     #### Logged Workouts ####
-    loggedWorkouts: [LoggedWorkout!]!
+    userLoggedWorkouts: [LoggedWorkout!]!
     #### Moves ####
     standardMoves: [Move!]!
     userCustomMoves: [Move!]!
     #### Progress Journal ####
-    progressJournals: [ProgressJournal!]!
+    userProgressJournals: [ProgressJournal!]!
     progressJournalById(progressJournalId: ID!): ProgressJournal!
     progressJournalGoalTags: [ProgressJournalGoalTag!]!
     #### Scheduled Workouts ####
@@ -125,7 +125,7 @@ export default gql`
     ### Move ###
     createMove(data: CreateMoveInput!): Move!
     updateMove(data: UpdateMoveInput!): Move!
-    deleteMoveById(id: ID!): ID!
+    softDeleteMoveById(id: ID!): ID!
     #### Schedule Workout ####
     createScheduledWorkout(
       data: CreateScheduledWorkoutInput!
@@ -139,20 +139,46 @@ export default gql`
     updateUser(data: UpdateUserInput!): User!
     #################
     #### Workout ####
+    makeCopyWorkoutById(id: ID!): Workout! # Note: Media should not be copied
     createWorkout(data: CreateWorkoutInput!): Workout!
     updateWorkout(data: UpdateWorkoutInput!): Workout!
     softDeleteWorkoutById(id: ID!): ID
-    # Note: Media should not be copied
-    makeCopyWorkoutById(id: ID!): Workout!
-    updateWorkoutSections(
-      data: [UpdateWorkoutSectionInput!]!
+    #### Workout Section ####
+    createWorkoutSection(data: CreateWorkoutSectionInput!): WorkoutSection!
+    updateWorkoutSection(data: UpdateWorkoutSectionInput!): WorkoutSection!
+    softDeleteWorkoutSectionById(id: ID!): ID!
+    reorderWorkoutSections(
+      data: [UpdateSortPositionInput!]!
     ): [WorkoutSection!]!
-    deleteWorkoutSectionsById(workoutSectionIds: [ID!]!): [ID]
+    #### Workout Set ####
+    createWorkoutSet(data: CreateWorkoutSetInput!): WorkoutSet!
+    updateWorkoutSet(data: UpdateWorkoutSetInput!): WorkoutSet!
+    deleteWorkoutSetById(id: ID!): ID!
+    reorderWorkoutSets(data: [UpdateSortPositionInput!]!): [WorkoutSet!]!
+    createWorkoutSetIntervalBuyIn(
+      data: CreateWorkoutSetIntervalBuyInInput!
+    ): WorkoutSetIntervalBuyIn!
+    updateWorkoutSetIntervalBuyIn(
+      data: UpdateWorkoutSetIntervalBuyInInput!
+    ): WorkoutSetIntervalBuyIn!
+    deleteWorkoutSetIntervalBuyInById(id: ID!): ID!
+    createWorkoutSetGenerator(
+      data: CreateWorkoutSetGeneratorInput!
+    ): WorkoutSetGenerator!
+    updateWorkoutSetGenerator(
+      data: UpdateWorkoutSetGeneratorInput!
+    ): WorkoutSetGenerator!
+    deleteWorkoutSetGeneratorById(id: ID!): ID!
+    #### Workout Move ####
+    createWorkoutMove(data: CreateWorkoutMoveInput!): WorkoutMove!
+    updateWorkoutMove(data: UpdateWorkoutMoveInput!): WorkoutMove!
+    deleteWorkoutMoveById(id: ID!): ID!
+    reorderWorkoutMoves(data: [UpdateSortPositionInput!]!): [WorkoutMove!]!
     #########################
     #### Workout Program ####
     createWorkoutProgram(data: CreateWorkoutProgramInput!): WorkoutProgram!
     updateWorkoutProgram(data: UpdateWorkoutProgramInput!): WorkoutProgram!
-    deleteWorkoutProgramById(id: ID!): ID!
+    softDeleteWorkoutProgramById(id: ID!): ID!
     #### Workout Program Workout ####
     createWorkoutProgramWorkout(
       data: CreateWorkoutProgramWorkoutInput!

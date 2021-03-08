@@ -21,21 +21,22 @@ import {
   QueryProgressJournalByIdArgs,
 } from '../../generated/graphql'
 import { deleteFiles } from '../../uploadcare'
-import { AccessScopeError, checkUserAccessScope } from '../utils'
-import { deleteLoggedWorkoutById } from './loggedWorkout'
+import { AccessScopeError, checkUserOwnsObject } from '../utils'
 
 //// Queries ////
 export const userProgressJournals = async (
   r: any,
   a: any,
   { authedUserId, select, prisma }: Context,
-) =>
-  prisma.progressJournal.findMany({
+) => {
+  const progressJournals = await prisma.progressJournal.findMany({
     where: {
       userId: authedUserId,
     },
     select,
   })
+  return progressJournals as ProgressJournal[]
+}
 
 /// Get all user specific progress journal tags.
 export const progressJournalGoalTags = async (
@@ -96,7 +97,7 @@ export const updateProgressJournal = async (
   { data }: MutationUpdateProgressJournalArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  await checkUserAccessScope(data.id, 'progressJournal', authedUserId, prisma)
+  await checkUserOwnsObject(data.id, 'progressJournal', authedUserId, prisma)
   const updated = await prisma.progressJournal.update({
     where: { id: data.id },
     data: {
@@ -117,7 +118,7 @@ export const deleteProgressJournalById = async (
   { id }: MutationDeleteProgressJournalByIdArgs,
   { authedUserId, prisma }: Context,
 ) => {
-  await checkUserAccessScope(id, 'progressJournal', authedUserId, prisma)
+  await checkUserOwnsObject(id, 'progressJournal', authedUserId, prisma)
   // Get all progressJournalEntry.progressPhotoUris. Once transaction is successful - delete them from uploadcare.
   const progressJournalEntries = await prisma.progressJournalEntry.findMany({
     where: {
@@ -228,7 +229,7 @@ export const deleteProgressJournalEntryById = async (
   { id }: MutationDeleteProgressJournalEntryByIdArgs,
   { authedUserId, prisma }: Context,
 ) => {
-  await checkUserAccessScope(id, 'progressJournalEntry', authedUserId, prisma)
+  await checkUserOwnsObject(id, 'progressJournalEntry', authedUserId, prisma)
   // TODO: Check the user owns the parent progress journal. May need to pass the parent ID as an arg. Or add a User relation directly to the ProgressJournalEntry model.
   const deleted = await prisma.progressJournalEntry.delete({
     where: { id },
@@ -286,7 +287,7 @@ export const updateProgressJournalGoal = async (
   { data }: MutationUpdateProgressJournalGoalArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  await checkUserAccessScope(
+  await checkUserOwnsObject(
     data.id,
     'progressJournalGoal',
     authedUserId,
@@ -322,7 +323,7 @@ export const deleteProgressJournalGoalById = async (
   { id }: MutationDeleteProgressJournalGoalByIdArgs,
   { authedUserId, prisma }: Context,
 ) => {
-  await checkUserAccessScope(id, 'progressJournalGoal', authedUserId, prisma)
+  await checkUserOwnsObject(id, 'progressJournalGoal', authedUserId, prisma)
   const deleted = await prisma.progressJournalGoal.delete({
     where: { id },
     select: { id: true },
@@ -363,7 +364,7 @@ export const updateProgressJournalGoalTag = async (
   { data }: MutationUpdateProgressJournalGoalTagArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  await checkUserAccessScope(
+  await checkUserOwnsObject(
     data.id,
     'progressJournalGoalTag',
     authedUserId,
@@ -393,7 +394,7 @@ export const deleteProgressJournalGoalTagById = async (
   { id }: MutationDeleteProgressJournalGoalTagByIdArgs,
   { authedUserId, prisma }: Context,
 ) => {
-  await checkUserAccessScope(id, 'progressJournalGoalTag', authedUserId, prisma)
+  await checkUserOwnsObject(id, 'progressJournalGoalTag', authedUserId, prisma)
 
   const deleted = await prisma.progressJournalGoalTag.delete({
     where: { id },

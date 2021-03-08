@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client'
 import { ApolloError } from 'apollo-server-errors'
 import { ContextUserType } from '..'
+import { CreateWorkoutMoveInput } from '../generated/graphql'
 
 export class AccessScopeError extends ApolloError {
   constructor(message: string = 'You do not have access to this data.') {
@@ -24,13 +25,18 @@ export type ContentObjectType =
   | 'progressJournalEntry'
   | 'scheduledWorkout'
   | 'workout'
+  | 'workoutSection'
+  | 'workoutSet'
+  | 'workoutSetIntervalBuyIn'
+  | 'workoutSetGenerator'
+  | 'workoutMove'
   | 'workoutProgram'
   | 'workoutProgramEnrolment'
   | 'workoutProgramReview'
 
 /// Checks that a user has access to a single object in the database.
 /// Checks for ownership so cannot use this cor checking, for example, access to group scoped content.
-export async function checkUserAccessScope(
+export async function checkUserOwnsObject(
   objectId: string,
   objectType: ContentObjectType,
   authedUserId: string,
@@ -53,15 +59,15 @@ export async function checkUserAccessScopeMulti(
   authedUserId: string,
   prisma: any,
 ): Promise<void> {
-  const sections = await prisma[objectType].findMany({
+  const items = await prisma[objectType].findMany({
     where: {
       id: { in: objectIds },
     },
   })
 
   if (
-    sections.length !== objectIds.length ||
-    sections.some((s: any) => s.userId !== authedUserId)
+    items.length !== objectIds.length ||
+    items.some((s: any) => s.userId !== authedUserId)
   ) {
     throw new AccessScopeError()
   }

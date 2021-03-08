@@ -89,22 +89,34 @@ import {
   updateWorkout,
   softDeleteWorkoutById,
   makeCopyWorkoutById,
+} from './workout/workout'
+
+import {
   createWorkoutSection,
   updateWorkoutSection,
-  deleteWorkoutSectionById,
-  createWorkoutSectionIntervalBuyIn,
-  updateWorkoutSectionIntervalBuyIn,
-  deleteWorkoutSectionIntervalBuyInById,
+  softDeleteWorkoutSectionById,
+  reorderWorkoutSections,
+} from './workout/workoutSection'
+
+import {
   createWorkoutSet,
   updateWorkoutSet,
   deleteWorkoutSetById,
+  createWorkoutSetIntervalBuyIn,
+  updateWorkoutSetIntervalBuyIn,
+  deleteWorkoutSetIntervalBuyInById,
   createWorkoutSetGenerator,
   updateWorkoutSetGenerator,
   deleteWorkoutSetGeneratorById,
+  reorderWorkoutSets,
+} from './workout/workoutSet'
+
+import {
   createWorkoutMove,
   updateWorkoutMove,
   deleteWorkoutMoveById,
-} from './workout'
+  reorderWorkoutMoves,
+} from './workout/workoutMove'
 
 import {
   officialWorkoutPrograms,
@@ -217,7 +229,6 @@ const resolvers: Resolvers = {
     ///////////////////////
     //// LoggedWorkout ////
     ///////////////////////
-    userLoggedWorkouts,
     createLoggedWorkout,
     updateLoggedWorkout,
     deleteLoggedWorkoutById,
@@ -260,19 +271,22 @@ const resolvers: Resolvers = {
     makeCopyWorkoutById,
     createWorkoutSection,
     updateWorkoutSection,
-    deleteWorkoutSectionById,
-    createWorkoutSectionIntervalBuyIn,
-    updateWorkoutSectionIntervalBuyIn,
-    deleteWorkoutSectionIntervalBuyInById,
+    softDeleteWorkoutSectionById,
+    reorderWorkoutSections,
     createWorkoutSet,
     updateWorkoutSet,
     deleteWorkoutSetById,
+    reorderWorkoutSets,
+    createWorkoutSetIntervalBuyIn,
+    updateWorkoutSetIntervalBuyIn,
+    deleteWorkoutSetIntervalBuyInById,
     createWorkoutSetGenerator,
     updateWorkoutSetGenerator,
     deleteWorkoutSetGeneratorById,
     createWorkoutMove,
     updateWorkoutMove,
     deleteWorkoutMoveById,
+    reorderWorkoutMoves,
     /////////////////////////
     //// Workout Program ////
     /////////////////////////

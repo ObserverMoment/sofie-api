@@ -46,7 +46,7 @@ export default gql`
     description: String
     coverImageUri: String
     introVideoUri: String
-    introVideoUri: String
+    introVideoThumbUri: String
     introAudioUri: String
     contentAccessScope: ContentAccessScope!
     WorkoutGoals: [ID!]
@@ -59,7 +59,7 @@ export default gql`
     description: String
     coverImageUri: String
     introVideoUri: String
-    introVideoUri: String
+    introVideoThumbUri: String
     introAudioUri: String
     contentAccessScope: ContentAccessScope
     WorkoutGoals: [ID!]

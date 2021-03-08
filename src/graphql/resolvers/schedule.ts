@@ -7,7 +7,7 @@ import {
   MutationUpdateScheduledWorkoutArgs,
   ScheduledWorkout,
 } from '../../generated/graphql'
-import { checkUserAccessScope } from '../utils'
+import { checkUserOwnsObject } from '../utils'
 
 //// Queries ////
 export const userScheduledWorkouts = async (
@@ -56,7 +56,7 @@ export const updateScheduledWorkout = async (
   { data }: MutationUpdateScheduledWorkoutArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  await checkUserAccessScope(data.id, 'scheduledWorkout', authedUserId, prisma)
+  await checkUserOwnsObject(data.id, 'scheduledWorkout', authedUserId, prisma)
 
   const updated = await prisma.scheduledWorkout.update({
     where: { id: data.id },
@@ -87,7 +87,7 @@ export const deleteScheduledWorkoutById = async (
   { id }: MutationDeleteScheduledWorkoutByIdArgs,
   { authedUserId, prisma }: Context,
 ) => {
-  await checkUserAccessScope(id, 'scheduledWorkout', authedUserId, prisma)
+  await checkUserOwnsObject(id, 'scheduledWorkout', authedUserId, prisma)
 
   const deleted = await prisma.scheduledWorkout.delete({
     where: { id },

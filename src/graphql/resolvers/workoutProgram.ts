@@ -5,7 +5,7 @@ import {
   MutationCreateWorkoutProgramEnrolmentArgs,
   MutationCreateWorkoutProgramReviewArgs,
   MutationCreateWorkoutProgramWorkoutArgs,
-  MutationDeleteWorkoutProgramByIdArgs,
+  MutationSoftDeleteWorkoutProgramByIdArgs,
   MutationDeleteWorkoutProgramEnrolmentByIdArgs,
   MutationDeleteWorkoutProgramReviewByIdArgs,
   MutationDeleteWorkoutProgramWorkoutByIdArgs,
@@ -25,7 +25,7 @@ import {
 } from '../../uploadcare'
 import {
   AccessScopeError,
-  checkUserAccessScope,
+  checkUserOwnsObject,
   checkUserOwnsParentWorkoutProgram,
 } from '../utils'
 
@@ -154,7 +154,7 @@ export const updateWorkoutProgram = async (
   { data }: MutationUpdateWorkoutProgramArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  await checkUserAccessScope(data.id, 'workoutProgram', authedUserId, prisma)
+  await checkUserOwnsObject(data.id, 'workoutProgram', authedUserId, prisma)
   // Check if any media files need to be updated. Only delete files from the server after the rest of the transaction is complete.
   const fileUrisForDeletion:
     | string[]
@@ -187,14 +187,15 @@ export const updateWorkoutProgram = async (
 
 export const softDeleteWorkoutProgramById = async (
   r: any,
-  { id }: MutationDeleteWorkoutProgramByIdArgs,
+  { id }: MutationSoftDeleteWorkoutProgramByIdArgs,
   { authedUserId, prisma }: Context,
 ) => {
-  await checkUserAccessScope(id, 'workoutProgram', authedUserId, prisma)
+  await checkUserOwnsObject(id, 'workoutProgram', authedUserId, prisma)
 
   const archived = await prisma.workoutProgram.update({
     where: { id },
     data: { archived: true },
+    select: { id: true },
   })
 
   if (archived) {
@@ -210,7 +211,7 @@ export const createWorkoutProgramWorkout = async (
   { data }: MutationCreateWorkoutProgramWorkoutArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  await checkUserAccessScope(
+  await checkUserOwnsObject(
     data.WorkoutProgram,
     'workoutProgram',
     authedUserId,
@@ -313,12 +314,7 @@ export const deleteWorkoutProgramEnrolmentById = async (
   { id }: MutationDeleteWorkoutProgramEnrolmentByIdArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  await checkUserAccessScope(
-    id,
-    'workoutProgramEnrolment',
-    authedUserId,
-    prisma,
-  )
+  await checkUserOwnsObject(id, 'workoutProgramEnrolment', authedUserId, prisma)
 
   const deleted = await prisma.workoutProgramEnrolment.delete({
     where: { id },
@@ -365,7 +361,7 @@ export const updateWorkoutProgramReview = async (
   { data }: MutationUpdateWorkoutProgramReviewArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  await checkUserAccessScope(
+  await checkUserOwnsObject(
     data.id,
     'workoutProgramReview',
     authedUserId,
@@ -393,7 +389,7 @@ export const deleteWorkoutProgramReviewById = async (
   { id }: MutationDeleteWorkoutProgramReviewByIdArgs,
   { authedUserId, prisma }: Context,
 ) => {
-  await checkUserAccessScope(id, 'workoutProgramReview', authedUserId, prisma)
+  await checkUserOwnsObject(id, 'workoutProgramReview', authedUserId, prisma)
 
   const deleted = await prisma.workoutProgramReview.delete({
     where: { id },

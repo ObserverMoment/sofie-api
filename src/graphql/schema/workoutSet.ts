@@ -11,12 +11,38 @@ export default gql`
     # And then repeat this process {rounds} times
     WorkoutMoves: [WorkoutMove!]!
     Generators: [WorkoutSetGenerator!]
+    IntervalBuyIn: WorkoutSetIntervalBuyIn
   }
 
   input CreateWorkoutSetInput {
     sortPosition: Int!
     rounds: Int!
     notes: String
+    WorkoutSection: ID!
+  }
+
+  input UpdateWorkoutSetInput {
+    id: ID!
+    rounds: Int
+    notes: String
+  }
+
+  type WorkoutSetIntervalBuyIn {
+    id: ID!
+    interval: Int!
+    WorkoutMove: WorkoutMove!
+  }
+
+  input CreateWorkoutSetIntervalBuyInInput {
+    interval: Int!
+    WorkoutMove: CreateWorkoutMoveInput!
+    WorkoutSet: ID!
+  }
+
+  input UpdateWorkoutSetIntervalBuyInInput {
+    id: ID!
+    interval: Int
+    WorkoutMove: UpdateWorkoutMoveInput
   }
 
   type WorkoutSetGenerator {

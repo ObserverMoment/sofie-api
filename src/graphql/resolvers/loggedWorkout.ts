@@ -28,7 +28,7 @@ import { deleteFiles } from '../../uploadcare'
 import {
   AccessScopeError,
   checkAndReorderObjects,
-  checkUserAccessScope,
+  checkUserOwnsObject,
 } from '../utils'
 
 //// Queries ////
@@ -36,13 +36,15 @@ export const userLoggedWorkouts = async (
   r: any,
   a: any,
   { authedUserId, select, prisma }: Context,
-) =>
-  prisma.loggedWorkout.findMany({
+) => {
+  const loggedWorkouts = await prisma.loggedWorkout.findMany({
     where: {
       User: { id: authedUserId },
     },
     select,
   })
+  return loggedWorkouts as LoggedWorkout[]
+}
 
 //// Mutations ////
 /// Creates the full structure down to workout moves ////
@@ -126,7 +128,7 @@ export const updateLoggedWorkout = async (
   { data }: MutationUpdateLoggedWorkoutArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  await checkUserAccessScope(data.id, 'loggedWorkout', authedUserId, prisma)
+  await checkUserOwnsObject(data.id, 'loggedWorkout', authedUserId, prisma)
   const updated = await prisma.loggedWorkout.update({
     where: {
       id: data.id,
@@ -220,6 +222,14 @@ export const createLoggedWorkoutSection = async (
   { data }: MutationCreateLoggedWorkoutSectionArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
+  // Check user owns the parent.
+  await checkUserOwnsObject(
+    data.LoggedWorkout,
+    'loggedWorkout',
+    authedUserId,
+    prisma,
+  )
+
   const loggedWorkoutSection = await prisma.loggedWorkoutSection.create({
     data: {
       ...data,
@@ -250,7 +260,7 @@ export const updateLoggedWorkoutSection = async (
   { data }: MutationUpdateLoggedWorkoutSectionArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  await checkUserAccessScope(
+  await checkUserOwnsObject(
     data.id,
     'loggedWorkoutSection',
     authedUserId,
@@ -325,6 +335,14 @@ export const createLoggedWorkoutSet = async (
   { data }: MutationCreateLoggedWorkoutSetArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
+  // Check user owns the parent.
+  await checkUserOwnsObject(
+    data.LoggedWorkoutSection,
+    'loggedWorkoutSection',
+    authedUserId,
+    prisma,
+  )
+
   const loggedWorkoutSet = await prisma.loggedWorkoutSet.create({
     data: {
       ...data,
@@ -350,7 +368,7 @@ export const updateLoggedWorkoutSet = async (
   { data }: MutationUpdateLoggedWorkoutSetArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  await checkUserAccessScope(data.id, 'loggedWorkoutSet', authedUserId, prisma)
+  await checkUserOwnsObject(data.id, 'loggedWorkoutSet', authedUserId, prisma)
   const updated = await prisma.loggedWorkoutSet.update({
     where: {
       id: data.id,
@@ -372,7 +390,7 @@ export const deleteLoggedWorkoutSetById = async (
   { id }: MutationDeleteLoggedWorkoutSetByIdArgs,
   { authedUserId, prisma }: Context,
 ) => {
-  await checkUserAccessScope(id, 'loggedWorkoutSet', authedUserId, prisma)
+  await checkUserOwnsObject(id, 'loggedWorkoutSet', authedUserId, prisma)
 
   const deleteLoggedWorkoutSet = prisma.loggedWorkoutSet.delete({
     where: { id },
@@ -401,6 +419,13 @@ export const createLoggedWorkoutMove = async (
   { data }: MutationCreateLoggedWorkoutMoveArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
+  await checkUserOwnsObject(
+    data.LoggedWorkoutSet,
+    'loggedWorkoutSet',
+    authedUserId,
+    prisma,
+  )
+
   const loggedWorkoutmove = await prisma.loggedWorkoutMove.create({
     data: {
       ...data,
@@ -432,7 +457,7 @@ export const updateLoggedWorkoutMove = async (
   { data }: MutationUpdateLoggedWorkoutMoveArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  await checkUserAccessScope(data.id, 'loggedWorkoutMove', authedUserId, prisma)
+  await checkUserOwnsObject(data.id, 'loggedWorkoutMove', authedUserId, prisma)
   const updated = await prisma.loggedWorkoutMove.update({
     where: {
       id: data.id,
@@ -464,7 +489,7 @@ export const deleteLoggedWorkoutMoveById = async (
   { id }: MutationDeleteLoggedWorkoutMoveByIdArgs,
   { authedUserId, prisma }: Context,
 ) => {
-  await checkUserAccessScope(id, 'loggedWorkoutMove', authedUserId, prisma)
+  await checkUserOwnsObject(id, 'loggedWorkoutMove', authedUserId, prisma)
   const deleted = await prisma.loggedWorkoutMove.delete({
     where: { id },
     select: { id: true },
@@ -482,7 +507,7 @@ export const reorderLoggedWorkoutSections = async (
   { data }: MutationReorderLoggedWorkoutSectionsArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  const updated = await checkAndReorderObjects<LoggedWorkoutSection>(
+  const updated: LoggedWorkoutSection[] = await checkAndReorderObjects<LoggedWorkoutSection>(
     data,
     'loggedWorkoutSection',
     authedUserId,
@@ -502,7 +527,7 @@ export const reorderLoggedWorkoutSets = async (
   { data }: MutationReorderLoggedWorkoutSetsArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  const updated = await checkAndReorderObjects<LoggedWorkoutSet>(
+  const updated: LoggedWorkoutSet[] = await checkAndReorderObjects<LoggedWorkoutSet>(
     data,
     'loggedWorkoutSet',
     authedUserId,
@@ -522,7 +547,7 @@ export const reorderLoggedWorkoutMoves = async (
   { data }: MutationReorderLoggedWorkoutMovesArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  const updated = await checkAndReorderObjects<LoggedWorkoutMove>(
+  const updated: LoggedWorkoutMove[] = await checkAndReorderObjects<LoggedWorkoutMove>(
     data,
     'loggedWorkoutMove',
     authedUserId,

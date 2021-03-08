@@ -1,14 +1,7 @@
 import fetch from 'node-fetch'
 import crypto from 'crypto'
+import { Workout, LoggedWorkout, User, WorkoutSection } from '@prisma/client'
 import {
-  Workout,
-  PrismaClient,
-  LoggedWorkout,
-  User,
-  WorkoutSection,
-} from '@prisma/client'
-import {
-  ShallowUpdateWorkoutInput,
   WorkoutProgram,
   Move,
   UpdateUserInput,
@@ -16,6 +9,7 @@ import {
   UpdateLoggedWorkoutInput,
   UpdateWorkoutProgramInput,
   UpdateMoveInput,
+  UpdateWorkoutInput,
 } from '../generated/graphql'
 
 const uploadcareApiUBaseUri = 'https://api.uploadcare.com'
@@ -71,7 +65,7 @@ function getFileIdForDeleteOrNull(
 ): string | null {
   return oldData[key] != null &&
     newData.hasOwnProperty(key) &&
-    newData[key] != oldData[key]
+    newData[key] !== oldData[key]
     ? oldData[key]
     : null
 }
@@ -82,7 +76,7 @@ function getFileIdForDeleteOrNull(
 export async function checkUserMediaForDeletion(
   prisma: any,
   data: UpdateUserInput,
-): Promise<string[] | null> {
+): Promise<string[]> {
   // Get the original move media file info.
   // Then once update transaction is complete you can check to see if media should be deleted.
   const oldUser: User = await prisma.user.findUnique({
@@ -100,7 +94,7 @@ export async function checkUserMediaForDeletion(
     .map((key: string) => getFileIdForDeleteOrNull(oldUser, data, key))
     .filter((x) => !!x) as string[]
 
-  return fileIdsForDeletion.length > 0 ? fileIdsForDeletion : null
+  return fileIdsForDeletion
 }
 
 /** Checks if there are any media (hosted) files being changed.
@@ -108,8 +102,8 @@ export async function checkUserMediaForDeletion(
  */
 export async function checkWorkoutMediaForDeletion(
   prisma: any,
-  data: ShallowUpdateWorkoutInput,
-): Promise<string[] | null> {
+  data: UpdateWorkoutInput,
+): Promise<string[]> {
   // Get the old workout data first.
   const oldWorkout: Workout = await prisma.workout.findUnique({
     where: {
@@ -127,7 +121,7 @@ export async function checkWorkoutMediaForDeletion(
     .map((key: string) => getFileIdForDeleteOrNull(oldWorkout, data, key))
     .filter((x) => !!x) as string[]
 
-  return fileIdsForDeletion.length > 0 ? fileIdsForDeletion : null
+  return fileIdsForDeletion
 }
 
 /** Checks if there are any media (hosted) files being changed.
@@ -136,7 +130,7 @@ export async function checkWorkoutMediaForDeletion(
 export async function checkWorkoutSectionMediaForDeletion(
   prisma: any,
   data: UpdateWorkoutSectionInput,
-): Promise<string[] | null> {
+): Promise<string[]> {
   // Get the old workout section data first.
   const oldWorkoutSection: WorkoutSection = await prisma.workoutSection.findUnique(
     {
@@ -162,7 +156,7 @@ export async function checkWorkoutSectionMediaForDeletion(
     )
     .filter((x) => !!x) as string[]
 
-  return fileIdsForDeletion.length > 0 ? fileIdsForDeletion : null
+  return fileIdsForDeletion
 }
 
 /** Checks if there are any media (hosted) files being changed in the loggedWorkouData
@@ -171,7 +165,7 @@ export async function checkWorkoutSectionMediaForDeletion(
 export async function checkLoggedWorkoutMediaForDeletion(
   prisma: any,
   data: UpdateLoggedWorkoutInput,
-): Promise<string[] | null> {
+): Promise<string[]> {
   // Get the old loggedWorkout data first.
   const oldLoggedWorkout: LoggedWorkout = await prisma.loggedWorkout.findUnique(
     {
@@ -190,7 +184,7 @@ export async function checkLoggedWorkoutMediaForDeletion(
     .map((key: string) => getFileIdForDeleteOrNull(oldLoggedWorkout, data, key))
     .filter((x) => !!x) as string[]
 
-  return fileIdsForDeletion.length > 0 ? fileIdsForDeletion : null
+  return fileIdsForDeletion
 }
 
 /** Checks if there are any media (hosted) files being changed in the workoutProgramData
@@ -199,7 +193,7 @@ export async function checkLoggedWorkoutMediaForDeletion(
 export async function checkWorkoutProgramMediaForDeletion(
   prisma: any,
   data: UpdateWorkoutProgramInput,
-): Promise<string[] | null> {
+): Promise<string[]> {
   // Get the old workoutProgram data first.
   const oldWorkoutProgram: WorkoutProgram = await prisma.workoutProgram.findUnique(
     {
@@ -221,7 +215,7 @@ export async function checkWorkoutProgramMediaForDeletion(
     )
     .filter((x) => !!x) as string[]
 
-  return fileIdsForDeletion.length > 0 ? fileIdsForDeletion : null
+  return fileIdsForDeletion
 }
 
 /** Checks if there are any media (hosted) files being changed in the updated move data
@@ -230,7 +224,7 @@ export async function checkWorkoutProgramMediaForDeletion(
 export async function checkMoveMediaForDeletion(
   prisma: any,
   data: UpdateMoveInput,
-): Promise<string[] | null> {
+): Promise<string[]> {
   const oldMove: Move = await prisma.move.findUnique({
     where: {
       id: data.id,
@@ -245,5 +239,5 @@ export async function checkMoveMediaForDeletion(
     .map((key: string) => getFileIdForDeleteOrNull(oldMove, data, key))
     .filter((x) => !!x) as string[]
 
-  return fileIdsForDeletion.length > 0 ? fileIdsForDeletion : null
+  return fileIdsForDeletion
 }
