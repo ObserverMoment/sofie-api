@@ -6,24 +6,24 @@ export default gql`
     createdAt: DateTime!
     scheduledAt: DateTime!
     notes: String
-    workoutId: ID!
-    loggedWorkoutId: ID
-    gymProfileId: ID
+    Workout: Workout!
+    LoggedWorkout: LoggedWorkout
+    GymProfile: GymProfile
   }
 
   input CreateScheduledWorkoutInput {
     scheduledAt: DateTime!
     notes: String
-    workout: ID!
-    gymProfile: ID
+    Workout: ID!
+    GymProfile: ID
   }
 
   input UpdateScheduledWorkoutInput {
     id: ID!
     scheduledAt: DateTime
     notes: String
-    workout: ID
-    loggedWorkout: ID
-    gymProfile: ID
+    Workout: ID
+    LoggedWorkout: ID
+    GymProfile: ID
   }
 `

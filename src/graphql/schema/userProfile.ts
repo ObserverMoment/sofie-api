@@ -7,8 +7,8 @@ export default gql`
     description: String
     postcode: String
     bodyweightOnly: Boolean!
-    user: User!
-    availableEquipments: [Equipment!]
+    User: User!
+    Equipments: [Equipment!]
   }
 
   input CreateGymProfileInput {
@@ -17,7 +17,7 @@ export default gql`
     postcode: String
     bodyweightOnly: Boolean
     # List of String (ID) ids to connect.
-    availableEquipments: [ID!]
+    Equipments: [ID!]
   }
 
   input UpdateGymProfileInput {
@@ -27,30 +27,6 @@ export default gql`
     postcode: String
     bodyweightOnly: Boolean
     # List of String (ID) ids to connect.
-    availableEquipments: [ID!]
-  }
-
-  type MoveProfile {
-    id: ID!
-    name: String!
-    description: String
-    user: User!
-    requiredMoves: [Move!]
-    excludedMoves: [Move!]
-  }
-
-  input CreateMoveProfileInput {
-    name: String!
-    description: String
-    requiredMoveIds: [ID!]
-    excludedMoveIds: [ID!]
-  }
-
-  input UpdateMoveProfileInput {
-    id: ID!
-    name: String
-    description: String
-    requiredMoveIds: [ID!]
-    excludedMoveIds: [ID!]
+    Equipments: [ID!]
   }
 `

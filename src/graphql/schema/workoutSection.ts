@@ -3,41 +3,52 @@ import { gql } from 'apollo-server-express'
 export default gql`
   type WorkoutSection {
     id: ID!
+    name: String!
     notes: String
-    timecap: Int
-    """
-    duration is used when logging - it allows you to log how long the user took to complete one round of the section.
-    """
-    duration: Int
-    rounds: Int!
     sortPosition: Int!
-    workoutMoves: [WorkoutMove!]
-    workout: Workout!
-    # roundAdjustRules: [RoundAdjustRule!]
+    introVideoUri: String
+    introVideoThumbUri: String
+    introAudioUri: String
+    classVideoUri: String
+    classVideoThumbUri: String
+    classAudioUri: String
+    outroVideoUri: String
+    outroVideoThumbUri: String
+    outroAudioUri: String
+    Workout: Workout!
+    WorkoutSectionType: WorkoutSectionType!
+    WorkoutSets: [WorkoutSet!]!
   }
 
   input CreateWorkoutSectionInput {
+    name: String!
     notes: String
-    timecap: Int
-    duration: Int
     sortPosition: Int!
-    rounds: Int!
-    workoutMoves: [CreateWorkoutMoveInput!]!
-    # roundAdjustRules: [CreateRoundAdjustRuleInput!]
+    introVideoUri: String
+    introVideoThumbUri: String
+    introAudioUri: String
+    classVideoUri: String
+    classVideoThumbUri: String
+    classAudioUri: String
+    outroVideoUri: String
+    outroVideoThumbUri: String
+    outroAudioUri: String
+    WorkoutSectionType: ID!
+    Workout: ID!
   }
 
-  # type RoundAdjustRule {
-  #   id: ID!
-  #   target: RuleTarget
-  #   action: RuleAction
-  #   amount: Float
-  #   roundFrequency: Int
-  # }
-
-  # input CreateRoundAdjustRuleInput {
-  #   target: RuleTarget!
-  #   action: RuleAction!
-  #   amount: Float!
-  #   roundFrequency: Int!
-  # }
+  input UpdateWorkoutSectionInput {
+    id: ID!
+    name: String
+    notes: String
+    introVideoUri: String
+    introVideoThumbUri: String
+    introAudioUri: String
+    classVideoUri: String
+    classVideoThumbUri: String
+    classAudioUri: String
+    outroVideoUri: String
+    outroVideoThumbUri: String
+    outroAudioUri: String
+  }
 `

@@ -1,19 +1,44 @@
 import { Resolvers } from '../../generated/graphql'
 
 import {
-  checkUniqueDisplayName,
-  userByUid,
-  userPublicProfile,
-  creatorPublicProfiles,
-  createUser,
-  updateUser,
-  createGymProfile,
-  updateGymProfile,
-  deleteGymProfileById,
-} from './user'
+  userLoggedWorkouts,
+  createLoggedWorkout,
+  updateLoggedWorkout,
+  deleteLoggedWorkoutById,
+  createLoggedWorkoutSection,
+  updateLoggedWorkoutSection,
+  deleteLoggedWorkoutSectionById,
+  reorderLoggedWorkoutSections,
+  createLoggedWorkoutSet,
+  updateLoggedWorkoutSet,
+  deleteLoggedWorkoutSetById,
+  reorderLoggedWorkoutSets,
+  createLoggedWorkoutMove,
+  updateLoggedWorkoutMove,
+  deleteLoggedWorkoutMoveById,
+  reorderLoggedWorkoutMoves,
+} from './loggedWorkout'
 
 import {
-  progressJournals,
+  standardMoves,
+  userCustomMoves,
+  createMove,
+  updateMove,
+  softDeleteMoveById,
+} from './move'
+
+import {
+  bodyAreas,
+  equipments,
+  createEquipment,
+  updateEquipment,
+  workoutGoals,
+  workoutSectionTypes,
+  moveTypes,
+} from './officialData'
+
+import {
+  userProgressJournals,
   progressJournalGoalTags,
   progressJournalById,
   createProgressJournal,
@@ -24,21 +49,18 @@ import {
   deleteProgressJournalGoalById,
   createProgressJournalGoalTag,
   updateProgressJournalGoalTag,
-  deleteProgressJournalGoalTagsById,
+  deleteProgressJournalGoalTagById,
   createProgressJournalEntry,
   updateProgressJournalEntry,
   deleteProgressJournalEntryById,
 } from './progressJournal'
 
 import {
-  bodyAreas,
-  equipments,
-  createEquipment,
-  updateEquipment,
-  workoutGoals,
-  workoutTypes,
-  moveTypes,
-} from './officialData'
+  userScheduledWorkouts,
+  createScheduledWorkout,
+  updateScheduledWorkout,
+  deleteScheduledWorkoutById,
+} from './schedule'
 
 import {
   textSearchWorkouts,
@@ -47,27 +69,16 @@ import {
 } from './textSearch'
 
 import {
-  officialWorkoutPrograms,
-  publicWorkoutPrograms,
-  userWorkoutPrograms,
-  workoutProgramById,
-  userWorkoutProgramEnrolments,
-  createWorkoutProgram,
-  deepUpdateWorkoutProgram,
-  shallowUpdateWorkoutProgram,
-  deleteWorkoutProgramById,
-  addEnrolmentToWorkoutProgram,
-  removeEnrolmentFromWorkoutProgram,
-} from './workoutProgram'
-
-import {
-  standardMoves,
-  userCustomMoves,
-  createMove,
-  shallowUpdateMove,
-  deepUpdateMove,
-  deleteMoveById,
-} from './move'
+  checkUniqueDisplayName,
+  userByUid,
+  userPublicProfileByUserId,
+  userPublicProfiles,
+  createUser,
+  updateUser,
+  createGymProfile,
+  updateGymProfile,
+  deleteGymProfileById,
+} from './user'
 
 import {
   officialWorkouts,
@@ -75,25 +86,56 @@ import {
   userWorkouts,
   workoutById,
   createWorkout,
-  deepUpdateWorkout,
-  shallowUpdateWorkout,
-  deleteWorkoutById,
-} from './workout'
+  updateWorkout,
+  softDeleteWorkoutById,
+  makeCopyWorkoutById,
+} from './workout/workout'
 
 import {
-  scheduledWorkouts,
-  scheduleWorkout,
-  unscheduleWorkout,
-  updateScheduledWorkout,
-} from './schedule'
+  createWorkoutSection,
+  updateWorkoutSection,
+  softDeleteWorkoutSectionById,
+  reorderWorkoutSections,
+} from './workout/workoutSection'
 
 import {
-  loggedWorkouts,
-  createLoggedWorkout,
-  deepUpdateLoggedWorkout,
-  shallowUpdateLoggedWorkout,
-  deleteLoggedWorkoutById,
-} from './loggedWorkout'
+  createWorkoutSet,
+  updateWorkoutSet,
+  deleteWorkoutSetById,
+  createWorkoutSetIntervalBuyIn,
+  updateWorkoutSetIntervalBuyIn,
+  deleteWorkoutSetIntervalBuyInById,
+  createWorkoutSetGenerator,
+  updateWorkoutSetGenerator,
+  deleteWorkoutSetGeneratorById,
+  reorderWorkoutSets,
+} from './workout/workoutSet'
+
+import {
+  createWorkoutMove,
+  updateWorkoutMove,
+  deleteWorkoutMoveById,
+  reorderWorkoutMoves,
+} from './workout/workoutMove'
+
+import {
+  officialWorkoutPrograms,
+  publicWorkoutPrograms,
+  userWorkoutPrograms,
+  workoutProgramById,
+  createWorkoutProgram,
+  updateWorkoutProgram,
+  softDeleteWorkoutProgramById,
+  createWorkoutProgramWorkout,
+  updateWorkoutProgramWorkout,
+  deleteWorkoutProgramWorkoutById,
+  userWorkoutProgramEnrolments,
+  createWorkoutProgramEnrolment,
+  deleteWorkoutProgramEnrolmentById,
+  createWorkoutProgramReview,
+  updateWorkoutProgramReview,
+  deleteWorkoutProgramReviewById,
+} from './workoutProgram'
 
 import GraphQLJSON from 'graphql-type-json'
 import { GraphQLScalarType } from 'graphql'
@@ -118,64 +160,60 @@ const resolvers: Resolvers = {
     },
   }),
   Query: {
-    checkUniqueDisplayName,
-    userByUid,
-    userPublicProfile,
-    creatorPublicProfiles,
-    standardMoves,
-    userCustomMoves,
+    validateToken: () => true, // Empty Resolver - call it and it will throw auth error if token is not valid / expired.
+    //// Core Data ////
     bodyAreas,
     equipments,
-    workoutGoals,
-    workoutTypes,
     moveTypes,
+    workoutGoals,
+    workoutSectionTypes,
+    //// Progress Journal ////
+    userProgressJournals,
+    progressJournalGoalTags,
+    progressJournalById,
+    //// Logged Workouts ////
+    userLoggedWorkouts,
+    //// Move ////
+    standardMoves,
+    userCustomMoves,
+    //// Scheduled Workouts ////
+    userScheduledWorkouts,
+    //// Text Search ////
+    textSearchWorkouts,
+    textSearchWorkoutPrograms,
+    textSearchCreatorPublicProfiles,
+    //// User ////
+    checkUniqueDisplayName,
+    userByUid,
+    userPublicProfileByUserId,
+    userPublicProfiles,
+    //// Workouts ////
+    officialWorkouts,
+    publicWorkouts,
+    userWorkouts,
+    workoutById,
+    //// WorkoutPrograms ////
     officialWorkoutPrograms,
     publicWorkoutPrograms,
     userWorkoutPrograms,
     workoutProgramById,
     userWorkoutProgramEnrolments,
-    officialWorkouts,
-    publicWorkouts,
-    userWorkouts,
-    workoutById,
-    scheduledWorkouts,
-    loggedWorkouts,
-    progressJournals,
-    progressJournalGoalTags,
-    progressJournalById,
-    textSearchWorkouts,
-    textSearchWorkoutPrograms,
-    textSearchCreatorPublicProfiles,
   },
   Mutation: {
-    createUser,
-    updateUser,
+    ///////////////////
+    //// Equipment ////
+    ///////////////////
     createEquipment,
     updateEquipment,
-    createMove,
-    shallowUpdateMove,
-    deepUpdateMove,
-    deleteMoveById,
+    //////////////////////////
+    //// Gym Profile ////
+    //////////////////////////
     createGymProfile,
     updateGymProfile,
     deleteGymProfileById,
-    createWorkout,
-    deepUpdateWorkout,
-    shallowUpdateWorkout,
-    deleteWorkoutById,
-    scheduleWorkout,
-    unscheduleWorkout,
-    updateScheduledWorkout,
-    createLoggedWorkout,
-    deepUpdateLoggedWorkout,
-    shallowUpdateLoggedWorkout,
-    deleteLoggedWorkoutById,
-    createWorkoutProgram,
-    deepUpdateWorkoutProgram,
-    shallowUpdateWorkoutProgram,
-    deleteWorkoutProgramById,
-    addEnrolmentToWorkoutProgram,
-    removeEnrolmentFromWorkoutProgram,
+    //////////////////////////
+    //// Progress Journal ////
+    //////////////////////////
     createProgressJournal,
     updateProgressJournal,
     deleteProgressJournalById,
@@ -187,7 +225,82 @@ const resolvers: Resolvers = {
     deleteProgressJournalGoalById,
     createProgressJournalGoalTag,
     updateProgressJournalGoalTag,
-    deleteProgressJournalGoalTagsById,
+    deleteProgressJournalGoalTagById,
+    ///////////////////////
+    //// LoggedWorkout ////
+    ///////////////////////
+    createLoggedWorkout,
+    updateLoggedWorkout,
+    deleteLoggedWorkoutById,
+    createLoggedWorkoutSection,
+    updateLoggedWorkoutSection,
+    deleteLoggedWorkoutSectionById,
+    createLoggedWorkoutSet,
+    updateLoggedWorkoutSet,
+    deleteLoggedWorkoutSetById,
+    createLoggedWorkoutMove,
+    updateLoggedWorkoutMove,
+    deleteLoggedWorkoutMoveById,
+    reorderLoggedWorkoutSections,
+    reorderLoggedWorkoutSets,
+    reorderLoggedWorkoutMoves,
+    //////////////
+    //// Move ////
+    //////////////
+    createMove,
+    updateMove,
+    softDeleteMoveById,
+    //////////////////////////
+    //// Schedule Workout ////
+    //////////////////////////
+    createScheduledWorkout,
+    updateScheduledWorkout,
+    deleteScheduledWorkoutById,
+    //////////////
+    //// User ////
+    //////////////
+    createUser,
+    updateUser,
+    /////////////////
+    //// Workout ////
+    /////////////////
+    createWorkout,
+    updateWorkout,
+    softDeleteWorkoutById,
+    // Note: Media should not be copied
+    makeCopyWorkoutById,
+    createWorkoutSection,
+    updateWorkoutSection,
+    softDeleteWorkoutSectionById,
+    reorderWorkoutSections,
+    createWorkoutSet,
+    updateWorkoutSet,
+    deleteWorkoutSetById,
+    reorderWorkoutSets,
+    createWorkoutSetIntervalBuyIn,
+    updateWorkoutSetIntervalBuyIn,
+    deleteWorkoutSetIntervalBuyInById,
+    createWorkoutSetGenerator,
+    updateWorkoutSetGenerator,
+    deleteWorkoutSetGeneratorById,
+    createWorkoutMove,
+    updateWorkoutMove,
+    deleteWorkoutMoveById,
+    reorderWorkoutMoves,
+    /////////////////////////
+    //// Workout Program ////
+    /////////////////////////
+    createWorkoutProgram,
+    updateWorkoutProgram,
+    softDeleteWorkoutProgramById,
+    createWorkoutProgramWorkout,
+    updateWorkoutProgramWorkout,
+    deleteWorkoutProgramWorkoutById,
+    createWorkoutProgramEnrolment,
+    deleteWorkoutProgramEnrolmentById,
+    createWorkoutProgramReview,
+    updateWorkoutProgramReview,
+    deleteWorkoutProgramReviewById,
   },
 }
 

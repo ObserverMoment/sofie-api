@@ -1,97 +1,102 @@
-import { ScheduledWorkout } from '@prisma/client'
+import { ApolloError } from 'apollo-server'
 import { Context } from '../..'
 
 import {
-  MutationScheduleWorkoutArgs,
-  MutationUnscheduleWorkoutArgs,
+  MutationCreateScheduledWorkoutArgs,
+  MutationDeleteScheduledWorkoutByIdArgs,
   MutationUpdateScheduledWorkoutArgs,
+  ScheduledWorkout,
 } from '../../generated/graphql'
+import { checkUserOwnsObject } from '../utils'
 
-//// Queries
-const scheduledWorkouts = async (
+//// Queries ////
+export const userScheduledWorkouts = async (
   r: any,
   a: any,
   { authedUserId, select, prisma }: Context,
-) =>
-  prisma.scheduledWorkout.findMany({
-    where: {
-      user: { id: authedUserId },
-    },
+) => {
+  const scheduledWorkouts = await prisma.scheduledWorkout.findMany({
+    where: { userId: authedUserId },
     select,
   })
+  return scheduledWorkouts as ScheduledWorkout[]
+}
 
-//// Mutations
-const scheduleWorkout = async (
+//// Mutations ////
+export const createScheduledWorkout = async (
   r: any,
-  { data }: MutationScheduleWorkoutArgs,
+  { data }: MutationCreateScheduledWorkoutArgs,
   { authedUserId, select, prisma }: Context,
-) =>
-  prisma.scheduledWorkout.create({
+) => {
+  const scheduledWorkout = await prisma.scheduledWorkout.create({
     data: {
       ...data,
-      workout: data.workout
-        ? {
-            connect: { id: data.workout },
-          }
-        : undefined,
-      gymProfile: data.gymProfile
-        ? {
-            connect: { id: data.gymProfile },
-          }
-        : undefined,
-      user: {
+      Workout: {
+        connect: { id: data.Workout || undefined },
+      },
+      GymProfile: {
+        connect: { id: data.GymProfile || undefined },
+      },
+      User: {
         connect: { id: authedUserId },
       },
     },
     select,
   })
 
-const unscheduleWorkout = async (
-  r: any,
-  { scheduledWorkoutId }: MutationUnscheduleWorkoutArgs,
-  { prisma }: Context,
-) => {
-  const deleted: ScheduledWorkout = await prisma.scheduledWorkout.delete({
-    where: {
-      id: scheduledWorkoutId,
-    },
-  })
-  return deleted.id
+  if (scheduledWorkout) {
+    return scheduledWorkout as ScheduledWorkout
+  } else {
+    throw new ApolloError('createScheduledWorkout: There was an issue.')
+  }
 }
 
-const updateScheduledWorkout = async (
+export const updateScheduledWorkout = async (
   r: any,
   { data }: MutationUpdateScheduledWorkoutArgs,
-  { select, prisma }: Context,
-) =>
-  prisma.scheduledWorkout.update({
-    where: {
-      id: data.id,
-    },
+  { authedUserId, select, prisma }: Context,
+) => {
+  await checkUserOwnsObject(data.id, 'scheduledWorkout', authedUserId, prisma)
+
+  const updated = await prisma.scheduledWorkout.update({
+    where: { id: data.id },
     data: {
       ...data,
-      workout: data.workout
-        ? {
-            connect: { id: data.workout },
-          }
-        : undefined,
-      gymProfile: data.gymProfile
-        ? {
-            connect: { id: data.gymProfile },
-          }
-        : undefined,
-      loggedWorkout: data.loggedWorkout
-        ? {
-            connect: { id: data.loggedWorkout },
-          }
-        : undefined,
+      Workout: {
+        connect: { id: data.Workout || undefined },
+      },
+      GymProfile: {
+        connect: { id: data.GymProfile || undefined },
+      },
+      LoggedWorkout: {
+        connect: { id: data.LoggedWorkout || undefined },
+      },
     },
     select,
   })
 
-export {
-  scheduledWorkouts,
-  scheduleWorkout,
-  unscheduleWorkout,
-  updateScheduledWorkout,
+  if (updated) {
+    return updated as ScheduledWorkout
+  } else {
+    throw new ApolloError('updateScheduledWorkout: There was an issue.')
+  }
+}
+
+export const deleteScheduledWorkoutById = async (
+  r: any,
+  { id }: MutationDeleteScheduledWorkoutByIdArgs,
+  { authedUserId, prisma }: Context,
+) => {
+  await checkUserOwnsObject(id, 'scheduledWorkout', authedUserId, prisma)
+
+  const deleted = await prisma.scheduledWorkout.delete({
+    where: { id },
+    select: { id: true },
+  })
+
+  if (deleted) {
+    return deleted.id
+  } else {
+    throw new ApolloError('deleteScheduledWorkoutById: There was an issue.')
+  }
 }

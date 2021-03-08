@@ -1,257 +1,193 @@
-import { Prisma } from '@prisma/client'
+import { PrismaPromise } from '@prisma/client'
 import { ApolloError } from 'apollo-server'
 import { Context, ContextUserType } from '../..'
 import {
+  MoveScope,
+  WorkoutMoveRepType,
+} from '../../../prisma/generated/backupPrisma'
+import {
   CreateMoveInput,
-  DeepUpdateMoveInput,
+  UpdateMoveInput,
   Move,
   MutationCreateMoveArgs,
-  MutationDeepUpdateMoveArgs,
-  MutationDeleteMoveByIdArgs,
-  MutationShallowUpdateMoveArgs,
-  ShallowUpdateMoveInput,
+  MutationSoftDeleteMoveByIdArgs,
+  MutationUpdateMoveArgs,
+  BodyAreaMoveScoreInput,
 } from '../../generated/graphql'
 import { checkMoveMediaForDeletion, deleteFiles } from '../../uploadcare'
+import { checkUserOwnsObject } from '../utils'
 
 //// Queries ////
 // Move scopes are 'STANDARD' or 'CUSTOM'.
-const standardMoves = async (r: any, a: any, { prisma, select }: Context) =>
-  prisma.move.findMany({
+export const standardMoves = async (
+  r: any,
+  a: any,
+  { prisma, select }: Context,
+) => {
+  const moves = await prisma.move.findMany({
     where: { scope: 'STANDARD', archived: false },
     select,
   })
+  return moves as Move[]
+}
 
-const userCustomMoves = async (
+export const userCustomMoves = async (
   r: any,
   a: any,
   { authedUserId, prisma, select }: Context,
-) =>
-  prisma.move.findMany({
+) => {
+  const moves = await prisma.move.findMany({
     where: {
-      createdBy: { id: authedUserId },
+      User: { id: authedUserId },
       scope: 'CUSTOM',
       archived: false,
     },
     select,
   })
+  return moves as Move[]
+}
 
 //// Mutations ////
-/// Move mutations for custom moves only - for updating official moves see officialData resolvers ////
-const createMove = async (
+export const createMove = async (
   r: any,
   { data }: MutationCreateMoveArgs,
   { authedUserId, userType, prisma, select }: Context,
 ) => {
-  return validateCreateMoveInput(data, userType, async () => {
-    const formattedData: Prisma.MoveCreateInput = {
+  validateCreateMoveInput(data, userType)
+  const move = await prisma.move.create({
+    data: {
       ...data,
-      createdBy:
+      User:
         userType === 'ADMIN' || !authedUserId
           ? undefined
           : {
               connect: { id: authedUserId },
             },
-      moveType: {
+      MoveType: {
         connect: {
-          id: data.moveType,
+          id: data.MoveType,
         },
       },
       scope: data.scope || 'CUSTOM',
-      requiredEquipments: {
-        connect: data.requiredEquipments
-          ? data.requiredEquipments.map((id: string) => ({ id }))
+      RequiredEquipments: {
+        connect: data.RequiredEquipments
+          ? data.RequiredEquipments.map((id: string) => ({ id }))
           : undefined,
       },
-      selectableEquipments: {
-        connect: data.selectableEquipments
-          ? data.selectableEquipments.map((id: string) => ({ id }))
+      SelectableEquipments: {
+        connect: data.SelectableEquipments
+          ? data.SelectableEquipments.map((id: string) => ({ id }))
           : undefined,
       },
-      bodyAreaMoveScores: {
-        create: data.bodyAreaMoveScores
-          ? data.bodyAreaMoveScores.map((bams) => ({
-              bodyArea: {
-                connect: { id: bams.bodyArea },
+      BodyAreaMoveScores: {
+        create: data.BodyAreaMoveScores
+          ? data.BodyAreaMoveScores.map((bams) => ({
+              BodyArea: {
+                connect: { id: bams.BodyArea },
               },
               score: bams.score,
             }))
           : undefined,
       },
-    }
-
-    return prisma.move.create({
-      data: formattedData,
-      select,
-    })
-  })
-}
-
-const shallowUpdateMove = async (
-  r: any,
-  { data }: MutationShallowUpdateMoveArgs,
-  { userType, prisma, select }: Context,
-) => {
-  return validateShallowUpdateMoveInput(data, userType, async () => {
-    // Check if any media files need to be updated. Only delete files from the server after the rest of the transaction is complete.
-    const fileIdsForDeletion: string[] | null = await checkMoveMediaForDeletion(
-      prisma,
-      data,
-    )
-
-    const updatedMove: Move = await prisma.move.update({
-      where: {
-        id: data.id,
-      },
-      data: {
-        ...data,
-        requiredEquipments: {
-          set: data.requiredEquipments
-            ? data.requiredEquipments.map((id: string) => ({ id }))
-            : [],
-        },
-        moveType: {
-          connect: {
-            id: data.moveType || undefined,
-          },
-        },
-        scope: data.scope || 'CUSTOM',
-        selectableEquipments: {
-          set: data.selectableEquipments
-            ? data.selectableEquipments.map((id: string) => ({ id }))
-            : [],
-        },
-      },
-      select,
-    })
-
-    if (updatedMove && fileIdsForDeletion) {
-      await deleteFiles(fileIdsForDeletion)
-    }
-    return updatedMove
-  })
-}
-
-const deepUpdateMove = async (
-  r: any,
-  { data }: MutationDeepUpdateMoveArgs,
-  { userType, prisma, select }: Context,
-) => {
-  return validateDeepUpdateMoveInput(data, userType, async () => {
-    // // Delete all previous bodyAreaMoveScores - as this is a deep update.
-    await prisma.bodyAreaMoveScore.deleteMany({
-      where: {
-        move: { id: data.id },
-      },
-    })
-
-    // Check if any media files need to be updated. Only delete files from the uploadcare server after the rest of the transaction is complete.
-    const fileIdsForDeletion: string[] | null = await checkMoveMediaForDeletion(
-      prisma,
-      data,
-    )
-
-    const updatedMove: Move = await prisma.move.update({
-      where: {
-        id: data.id,
-      },
-      data: {
-        ...data,
-        moveType: {
-          connect: {
-            id: data.moveType || undefined,
-          },
-        },
-        scope: data.scope || 'CUSTOM',
-        requiredEquipments: {
-          set: data.requiredEquipments
-            ? data.requiredEquipments.map((id: string) => ({ id }))
-            : [],
-        },
-        selectableEquipments: {
-          set: data.selectableEquipments
-            ? data.selectableEquipments.map((id: string) => ({ id }))
-            : [],
-        },
-        bodyAreaMoveScores: {
-          create: data.bodyAreaMoveScores
-            ? data.bodyAreaMoveScores.map((bams) => ({
-                bodyArea: {
-                  connect: { id: bams.bodyArea },
-                },
-                score: bams.score,
-              }))
-            : undefined,
-        },
-      },
-      select,
-    })
-
-    if (updatedMove && fileIdsForDeletion) {
-      await deleteFiles(fileIdsForDeletion)
-    }
-    return updatedMove
-  })
-}
-
-const deleteMoveById = async (
-  r: any,
-  { moveId }: MutationDeleteMoveByIdArgs,
-  { prisma }: Context,
-) => {
-  // Is this move part of any workoutMoves (is it part of any workouts)?
-  const numWorkoutMoves: number = await prisma.workoutMove.count({
-    where: {
-      move: { id: moveId },
     },
+    select,
+  })
+  return move as Move
+}
+
+export const updateMove = async (
+  r: any,
+  { data }: MutationUpdateMoveArgs,
+  { authedUserId, userType, prisma, select }: Context,
+) => {
+  await checkUserOwnsObject(data.id, 'move', authedUserId, prisma)
+  validateUpdateMoveInput(data, userType)
+
+  // Check if any media files need to be updated. Only delete files from the server after the rest of the transaction is complete.
+  const fileIdsForDeletion: string[] | null = await checkMoveMediaForDeletion(
+    prisma,
+    data,
+  )
+
+  const deleteBodyAreaMovesScores = data.BodyAreaMoveScores
+    ? prisma.bodyAreaMoveScore.deleteMany({
+        where: {
+          Move: { id: data.id },
+        },
+      })
+    : null
+
+  const updateMove = prisma.move.update({
+    where: {
+      id: data.id,
+    },
+    data: {
+      ...data,
+      name: data.name || undefined,
+      validRepTypes: data.validRepTypes || undefined,
+      RequiredEquipments: {
+        set: data.RequiredEquipments
+          ? data.RequiredEquipments.map((id: string) => ({ id }))
+          : [],
+      },
+      MoveType: {
+        connect: {
+          id: data.MoveType || undefined,
+        },
+      },
+      scope: data.scope || 'CUSTOM',
+      SelectableEquipments: {
+        set: data.SelectableEquipments
+          ? data.SelectableEquipments.map((id: string) => ({ id }))
+          : [],
+      },
+      BodyAreaMoveScores: {
+        create: data.BodyAreaMoveScores
+          ? data.BodyAreaMoveScores.map((bams) => ({
+              BodyArea: {
+                connect: { id: bams.BodyArea },
+              },
+              score: bams.score,
+            }))
+          : undefined,
+      },
+    },
+    select,
   })
 
-  if (numWorkoutMoves > 0) {
-    // Yes - then don't delete just archive. Mark for periodic cleanup.
-    const archivedMove: Move = await prisma.move.update({
-      where: {
-        id: moveId,
-      },
-      data: {
-        archived: true,
-      },
-      select: {
-        id: true,
-      },
-    })
-    return archivedMove.id
-  } else {
-    // No - then continue with delete as below.
-    // Cascade delete reliant descendants with https://paljs.com/plugins/delete/
-    await prisma.onDelete({
-      model: 'Move',
-      where: { id: moveId },
-      deleteParent: false, // If false, just the descendants will be deleted.
-    })
+  const ops = [deleteBodyAreaMovesScores, updateMove].filter(
+    (x) => !!x,
+  ) as PrismaPromise<any>[]
 
-    // Delete move and get back related uploaded media files.
-    const deletedMove: Move = await prisma.move.delete({
-      where: { id: moveId },
-      select: {
-        id: true,
-        demoVideoUrl: true,
-        demoVideoThumbUrl: true,
-      },
-    })
+  const [_, updatedMove] = await prisma.$transaction(ops)
 
-    // Check if there is media to be deleted from the uploadcare server.
-    if (deletedMove) {
-      if (deletedMove.demoVideoUrl) {
-        const fileIdsForDeletion: string[] = []
-        fileIdsForDeletion.push(deletedMove.demoVideoUrl)
-        if (deletedMove.demoVideoThumbUrl) {
-          fileIdsForDeletion.push(deletedMove.demoVideoThumbUrl)
-        }
-        await deleteFiles(fileIdsForDeletion)
-      }
-      return deletedMove.id
-    } else {
-      return null
+  if (updatedMove) {
+    if (fileIdsForDeletion) {
+      await deleteFiles(fileIdsForDeletion)
     }
+    return updatedMove as Move
+  } else {
+    throw new ApolloError('updateMove: There was an issue.')
+  }
+}
+
+//// Soft deletes / archives by setting { archived: true } - for periodic cleanup.
+export const softDeleteMoveById = async (
+  r: any,
+  { id }: MutationSoftDeleteMoveByIdArgs,
+  { authedUserId, prisma }: Context,
+) => {
+  await checkUserOwnsObject(id, 'move', authedUserId, prisma)
+
+  const archived = await prisma.move.update({
+    where: { id },
+    data: { archived: true },
+    select: { id: true },
+  })
+  if (archived) {
+    return archived.id
+  } else {
+    throw new ApolloError('softDeleteMoveById: There was an issue.')
   }
 }
 
@@ -260,91 +196,63 @@ const deleteMoveById = async (
  * All moves must always have at least TIME as a rep type.
  * Returns true if passes, throws an ApolloError if fails.
  */
-async function validateCreateMoveInput(
+function validateCreateMoveInput(
   data: CreateMoveInput,
   userType: ContextUserType,
-  resolver: () => Promise<Move>,
 ) {
-  if (data.scope === 'STANDARD' && userType !== 'ADMIN') {
-    throw new ApolloError('Only ADMINS can create Official (STANDARD) moves.')
-  }
+  validateScope(data.scope, userType)
   if (!data.validRepTypes) {
     throw new ApolloError(
       'No ValidRepTypes supplied: A move must always have at least the valid rep type TIME. Please ensure that your valid rep types array includes the string "TIME" or that the array is null if you do not wish to make any changes during an update operation',
     )
   }
-  if (!data.validRepTypes.includes('TIME')) {
-    throw new ApolloError(
-      'ValidRepTypes does not include TIME: A move must always have at least the valid rep type TIME. Please ensure that your valid rep types array includes the string "TIME" or that the array is null if you do not wish to make any changes during an update operation',
-    )
+  validateRepTypes(data.validRepTypes)
+  if (data.BodyAreaMoveScores && data.BodyAreaMoveScores.length > 0) {
+    validateBodyAreaMoveScoresInput(data.BodyAreaMoveScores)
   }
-  if (data.bodyAreaMoveScores != null && data.bodyAreaMoveScores.length > 0) {
-    // Check to make sure that (if supplied) the body area move scores sum to 100.
-    const totalBodyAreaScores = data.bodyAreaMoveScores.reduce(
-      (acum, b) => acum + b.score,
-      0,
-    )
-    if (totalBodyAreaScores != 100) {
-      throw new ApolloError(
-        `BodyAreaMoveScores must sum to a total of 100 points for any given move being created or updated. You tried to submit this move with a total of ${totalBodyAreaScores}.`,
-      )
-    }
-  }
-
-  return resolver()
 }
 
-async function validateShallowUpdateMoveInput(
-  data: ShallowUpdateMoveInput,
+function validateUpdateMoveInput(
+  data: UpdateMoveInput,
   userType: ContextUserType,
-  resolver: () => Promise<Move>,
 ) {
-  if (data.scope === 'STANDARD' && userType !== 'ADMIN') {
+  validateScope(data.scope, userType)
+  if (data.validRepTypes) {
+    validateRepTypes(data.validRepTypes)
+  }
+  if (data.BodyAreaMoveScores && data.BodyAreaMoveScores.length > 0) {
+    validateBodyAreaMoveScoresInput(data.BodyAreaMoveScores)
+  }
+}
+
+function validateScope(
+  scope: MoveScope | null | undefined,
+  userType: ContextUserType,
+) {
+  if (scope === 'STANDARD' && userType !== 'ADMIN') {
     throw new ApolloError('Only ADMINS can update Official (STANDARD) moves.')
   }
-  if (data.validRepTypes && !data.validRepTypes.includes('TIME')) {
+}
+
+function validateRepTypes(validRepTypes: WorkoutMoveRepType[]) {
+  if (!validRepTypes.includes('TIME')) {
     throw new ApolloError(
       'ValidRepTypes does not include TIME: A move must always have at least the valid rep type TIME. Please ensure that your valid rep types array includes the string "TIME" or that the array is null if you do not wish to make any changes during an update operation',
     )
   }
-
-  return resolver()
 }
 
-async function validateDeepUpdateMoveInput(
-  data: DeepUpdateMoveInput,
-  userType: ContextUserType,
-  resolver: () => Promise<Move>,
+function validateBodyAreaMoveScoresInput(
+  bodyAreaMoveScores: BodyAreaMoveScoreInput[],
 ) {
-  if (data.scope === 'STANDARD' && userType !== 'ADMIN') {
-    throw new ApolloError('Only ADMINS can update Official (STANDARD) moves.')
-  }
-  if (data.validRepTypes && !data.validRepTypes.includes('TIME')) {
+  // Check to make sure that the body area move scores sum to 100.
+  const totalBodyAreaScores = bodyAreaMoveScores.reduce(
+    (acum, b) => acum + b.score,
+    0,
+  )
+  if (totalBodyAreaScores != 100) {
     throw new ApolloError(
-      'ValidRepTypes does not include TIME: A move must always have at least the valid rep type TIME. Please ensure that your valid rep types array includes the string "TIME" or that the array is null if you do not wish to make any changes during an update operation',
+      `BodyAreaMoveScores must sum to a total of 100 points for any given Move being created or updated. You tried to submit this move with a total of ${totalBodyAreaScores}.`,
     )
   }
-  if (data.bodyAreaMoveScores != null && data.bodyAreaMoveScores.length > 0) {
-    // Check to make sure that (if supplied) the body area move scores sum to 100.
-    const totalBodyAreaScores = data.bodyAreaMoveScores.reduce(
-      (acum, b) => acum + b.score,
-      0,
-    )
-    if (totalBodyAreaScores != 100) {
-      throw new ApolloError(
-        `BodyAreaMoveScores must sum to a total of 100 points for any given move being created or updated. You tried to submit this move with a total of ${totalBodyAreaScores}.`,
-      )
-    }
-  }
-
-  return resolver()
-}
-
-export {
-  standardMoves,
-  userCustomMoves,
-  createMove,
-  shallowUpdateMove,
-  deepUpdateMove,
-  deleteMoveById,
 }

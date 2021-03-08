@@ -4,10 +4,9 @@ export default gql`
   type User {
     id: ID!
     userProfileScope: UserProfileScope!
-    avatarUrl: String
-    introVideoUrl: String
-    introVideoThumbUrl: String
-    coverImageUrl: String
+    avatarUri: String
+    introVideoUri: String
+    introVideoThumbUri: String
     bio: String
     tagline: String
     birthdate: DateTime
@@ -27,17 +26,16 @@ export default gql`
     height: Float
     weight: Float
     unitSystem: UnitSystem
-    gymProfiles: [GymProfile!]
-    moveProfiles: [MoveProfile!]
-    progressJournalGoalTags: [ProgressJournalGoalTag!]
+    GymProfiles: [GymProfile!]
+    ProgressJournalGoalTags: [ProgressJournalGoalTag!]
   }
 
   input UpdateUserInput {
+    id: ID!
     userProfileScope: UserProfileScope
-    avatarUrl: String
-    introVideoUrl: String
-    introVideoThumbUrl: String
-    coverImageUrl: String
+    avatarUri: String
+    introVideoUri: String
+    introVideoThumbUri: String
     bio: String
     tagline: String
     birthdate: DateTime
@@ -52,7 +50,6 @@ export default gql`
     firstname: String
     themePreference: ThemePreference
     gender: Gender
-    gymBox: String
     hasOnboarded: Boolean
     height: Float
     lastname: String
@@ -62,10 +59,9 @@ export default gql`
 
   type UserPublicProfile {
     id: ID!
-    avatarUrl: String
-    introVideoUrl: String
-    introVideoThumbUrl: String
-    coverImageUrl: String
+    avatarUri: String
+    introVideoUri: String
+    introVideoThumbUri: String
     bio: String
     tagline: String
     instagramUrl: String
@@ -75,15 +71,15 @@ export default gql`
     linkedinUrl: String
     countryCode: String
     displayName: String
-    customMoves: [Move!]
-    workouts: [Workout!]
-    workoutPrograms: [WorkoutProgram!]
+    CustomMoves: [Move!]
+    Workouts: [Workout!]
+    WorkoutPrograms: [WorkoutProgram!]
   }
 
   type UserPrivateProfile {
-    loggedWorkouts: [LoggedWorkout!]
-    workouts: [Workout!]
-    workoutPrograms: [WorkoutProgram!]
-    workoutProgramEnrolments: [WorkoutProgramEnrolment!]
+    LoggedWorkouts: [LoggedWorkout!]
+    Workouts: [Workout!]
+    WorkoutPrograms: [WorkoutProgram!]
+    WorkoutProgramEnrolments: [WorkoutProgramEnrolment!]
   }
 `

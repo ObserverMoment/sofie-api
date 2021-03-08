@@ -6,89 +6,31 @@ export default gql`
     createdAt: DateTime!
     name: String!
     description: String
-    imageUrl: String
-    videoUrl: String
-    videoThumbUrl: String
-    youtubeVideoUrl: String
-    scope: AccessScopeType!
-    createdBy: User
-    enrolments: [WorkoutProgramEnrolment!]
-    workoutGoals: [WorkoutGoal!]!
-    workoutProgramWorkouts: [WorkoutProgramWorkout!]!
-    workoutProgramReviews: [WorkoutProgramReview!]
-  }
-
-  input CreateWorkoutProgramInput {
-    name: String!
-    description: String
-    scope: AccessScopeType!
-    imageUrl: String
-    videoUrl: String
-    videoThumbUrl: String
-    youtubeVideoUrl: String
-    workoutGoals: [ID!]!
-    workoutProgramWorkouts: [CreateWorkoutProgramWorkoutInput!]!
-  }
-
-  # Used when nested children have been updated. i.e workoutProgramWorkouts need updating.
-  input DeepUpdateWorkoutProgramInput {
-    id: ID!
-    name: String
-    description: String
-    scope: AccessScopeType
-    imageUrl: String
-    videoUrl: String
-    videoThumbUrl: String
-    youtubeVideoUrl: String
-    workoutGoals: [ID!]!
-    workoutProgramWorkouts: [UpdateWorkoutProgramWorkoutInput!]!
-  }
-
-  input ShallowUpdateWorkoutProgramInput {
-    id: ID!
-    name: String
-    description: String
-    scope: AccessScopeType
-    imageUrl: String
-    videoUrl: String
-    videoThumbUrl: String
-    youtubeVideoUrl: String
-    workoutGoals: [ID!]!
+    coverImageUri: String
+    introVideoUri: String
+    introVideoThumbUri: String
+    introAudioUri: String
+    contentAccessScope: ContentAccessScope!
+    User: User
+    Enrolments: [WorkoutProgramEnrolment!]
+    WorkoutGoals: [WorkoutGoal!]!
+    WorkoutProgramWorkouts: [WorkoutProgramWorkout!]!
+    WorkoutProgramReviews: [WorkoutProgramReview!]
   }
 
   type WorkoutProgramWorkout {
     id: ID!
     dayNumber: Float!
     notes: String
-    workout: Workout!
-  }
-
-  input CreateWorkoutProgramWorkoutInput {
-    dayNumber: Float!
-    notes: String
-    workout: ID!
-  }
-
-  input UpdateWorkoutProgramWorkoutInput {
-    # When id is null a new workoutProgramWorkout will be created.
-    # Otherwise the existing one will be updated.
-    id: ID
-    dayNumber: Float!
-    notes: String
-    workout: ID!
+    Workout: Workout!
   }
 
   type WorkoutProgramEnrolment {
     id: ID!
-    startDate: DateTime
-    user: User!
-    workoutProgram: WorkoutProgram!
-    loggedWorkouts: [LoggedWorkout!]
-  }
-
-  input AddLoggedWorkoutToProgramEnrolmentInput {
-    workoutProgramEnrolmentId: ID!
-    loggedWorkout: CreateLoggedWorkoutInput!
+    startDate: DateTime!
+    User: User!
+    WorkoutProgram: WorkoutProgram!
+    LoggedWorkouts: [LoggedWorkout!]
   }
 
   type WorkoutProgramReview {
@@ -96,11 +38,61 @@ export default gql`
     createdAt: DateTime!
     score: Float!
     comment: String
-    user: User!
+    User: User!
+  }
+
+  input CreateWorkoutProgramInput {
+    name: String!
+    description: String
+    coverImageUri: String
+    introVideoUri: String
+    introVideoThumbUri: String
+    introAudioUri: String
+    contentAccessScope: ContentAccessScope!
+    WorkoutGoals: [ID!]
+    WorkoutProgramWorkouts: [CreateWorkoutProgramWorkoutInput!]
+  }
+
+  input UpdateWorkoutProgramInput {
+    id: ID!
+    name: String
+    description: String
+    coverImageUri: String
+    introVideoUri: String
+    introVideoThumbUri: String
+    introAudioUri: String
+    contentAccessScope: ContentAccessScope
+    WorkoutGoals: [ID!]
+  }
+
+  input CreateWorkoutProgramWorkoutInput {
+    dayNumber: Float!
+    notes: String
+    Workout: ID!
+    WorkoutProgram: ID!
+  }
+
+  input UpdateWorkoutProgramWorkoutInput {
+    id: ID!
+    dayNumber: Float!
+    notes: String
+    Workout: ID!
+  }
+
+  input AddLoggedWorkoutToProgramEnrolmentInput {
+    workoutProgramEnrolmentId: ID!
+    LoggedWorkout: CreateLoggedWorkoutInput!
   }
 
   input CreateWorkoutProgramReviewInput {
     score: Float!
+    comment: String
+    WorkoutProgram: ID!
+  }
+
+  input UpdateWorkoutProgramReviewInput {
+    id: ID!
+    score: Float
     comment: String
   }
 `

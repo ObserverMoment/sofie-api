@@ -4,24 +4,23 @@ import { gql } from 'apollo-server-express'
 export default gql`
   type TextSearchWorkoutResult {
     id: ID!
-    scope: AccessScopeType!
+    scope: ContentAccessScope!
     name: String
     description: String
-    workoutType: WorkoutType!
-    imageUrl: String
+    imageUri: String
     difficultyLevel: Int!
     timecap: Int
-    createdBy: User
+    User: User
   }
 
   type TextSearchWorkoutProgramResult {
     id: ID!
-    scope: AccessScopeType!
+    scope: ContentAccessScope!
     name: String!
     description: String
-    imageUrl: String
-    createdBy: User
-    workoutGoals: [WorkoutGoal!]!
-    workoutProgramWorkouts: [WorkoutProgramWorkout!]
+    imageUri: String
+    User: User
+    WorkoutGoals: [WorkoutGoal!]!
+    WorkoutProgramWorkouts: [WorkoutProgramWorkout!]
   }
 `

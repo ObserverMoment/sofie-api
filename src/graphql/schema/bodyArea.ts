@@ -5,15 +5,15 @@ export default gql`
     id: ID!
     name: String
     altNames: String
-    bodyAreaMoveScores: [BodyAreaMoveScore!]!
+    BodyAreaMoveScores: [BodyAreaMoveScore!]!
     frontBack: BodyAreaFrontBack!
     upperLower: BodyAreaUpperLower!
   }
 
   type BodyAreaMoveScore {
     id: ID!
-    move: Move!
-    bodyArea: BodyArea!
+    Move: Move!
+    BodyArea: BodyArea!
     score: Float!
   }
 `

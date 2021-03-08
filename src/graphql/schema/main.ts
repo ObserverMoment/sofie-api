@@ -5,129 +5,224 @@ export default gql`
   scalar DateTime
 
   type Query {
-    # User
-    checkUniqueDisplayName(displayName: String!): Boolean!
-    userByUid(uid: ID!): User
-    userPublicProfile(userId: ID!): UserPublicProfile
-    userCustomMoves: [Move!]!
-    userWorkouts: [Workout!]!
-    userWorkoutPrograms: [WorkoutProgram!]!
-    scheduledWorkouts: [ScheduledWorkout!]!
-    loggedWorkouts: [LoggedWorkout!]!
-    progressJournals: [ProgressJournal!]!
-    progressJournalGoalTags: [ProgressJournalGoalTag!]!
-    userWorkoutProgramEnrolments(
-      workoutProgramId: ID!
-    ): [WorkoutProgramEnrolment!]
-    # Official and Public
-    standardMoves: [Move!]!
+    validateToken: Boolean!
+    #### Core Data ####
     bodyAreas: [BodyArea!]!
     equipments: [Equipment!]!
-    workoutTypes: [WorkoutType!]!
     moveTypes: [MoveType!]!
     workoutGoals: [WorkoutGoal]!
-    officialWorkouts: [Workout!]!
-    publicWorkouts: [Workout!]!
-    officialWorkoutPrograms: [WorkoutProgram!]!
-    publicWorkoutPrograms: [WorkoutProgram!]!
-    creatorPublicProfiles: [UserPublicProfile!]
-    # Get by ID
-    progressJournalById(progressJournalId: ID!): ProgressJournal
-    workoutById(workoutId: ID!): Workout
-    workoutProgramById(workoutProgramId: ID!): WorkoutProgram
-    # Text search
+    workoutSectionTypes: [WorkoutSectionType!]!
+    #### Logged Workouts ####
+    userLoggedWorkouts: [LoggedWorkout!]!
+    #### Moves ####
+    standardMoves: [Move!]!
+    userCustomMoves: [Move!]!
+    #### Progress Journal ####
+    userProgressJournals: [ProgressJournal!]!
+    progressJournalById(progressJournalId: ID!): ProgressJournal!
+    progressJournalGoalTags: [ProgressJournalGoalTag!]!
+    #### Scheduled Workouts ####
+    userScheduledWorkouts: [ScheduledWorkout!]!
+    #### Text Search ####
     textSearchWorkouts(text: String!): [TextSearchWorkoutResult!]
     textSearchWorkoutPrograms(text: String!): [TextSearchWorkoutProgramResult!]
     textSearchCreatorPublicProfiles(text: String!): [UserPublicProfile!]
+    #### User ####
+    checkUniqueDisplayName(displayName: String!): Boolean!
+    userByUid(uid: ID!): User!
+    #### User Public Profiles ####
+    userPublicProfiles: [UserPublicProfile!]
+    userPublicProfileByUserId(userId: ID!): UserPublicProfile!
+    #### Workouts ####
+    officialWorkouts: [Workout!]!
+    publicWorkouts: [Workout!]!
+    userWorkouts: [Workout!]!
+    workoutById(id: ID!): Workout!
+    #### Workout Programs and Enrolments ####
+    officialWorkoutPrograms: [WorkoutProgram!]!
+    publicWorkoutPrograms: [WorkoutProgram!]!
+    workoutProgramById(id: ID!): WorkoutProgram!
+    userWorkoutPrograms: [WorkoutProgram!]!
+    userWorkoutProgramEnrolments(
+      workoutProgramId: ID!
+    ): [WorkoutProgramEnrolment!]
   }
 
   type Mutation {
-    # User
-    createUser(uid: ID!): User!
-    updateUser(id: ID!, data: UpdateUserInput!): User!
-    # Progress journal
+    #### Equipment ####
+    createEquipment(data: CreateEquipmentInput!): Equipment
+    updateEquipment(data: UpdateEquipmentInput!): Equipment
+    #### Gym profile ####
+    createGymProfile(data: CreateGymProfileInput!): GymProfile!
+    updateGymProfile(data: UpdateGymProfileInput!): GymProfile!
+    deleteGymProfileById(id: ID!): ID
+    #### Progress Journal ####
     createProgressJournal(data: CreateProgressJournalInput!): ProgressJournal!
     updateProgressJournal(data: UpdateProgressJournalInput!): ProgressJournal!
-    deleteProgressJournalById(progressJournalId: ID!): ID!
+    deleteProgressJournalById(id: ID!): ID!
+    #### Progress Journal Entry ####
+    createProgressJournalEntry(
+      data: CreateProgressJournalEntryInput!
+    ): ProgressJournalEntry!
+    updateProgressJournalEntry(
+      data: UpdateProgressJournalEntryInput!
+    ): ProgressJournalEntry!
+    deleteProgressJournalEntryById(id: ID!): ID!
+    #### Progress Journal Goal ####
     createProgressJournalGoal(
       data: CreateProgressJournalGoalInput!
     ): ProgressJournalGoal!
     updateProgressJournalGoal(
       data: UpdateProgressJournalGoalInput!
     ): ProgressJournalGoal!
-    deleteProgressJournalGoalById(progressJournalGoalId: ID!): ID!
+    deleteProgressJournalGoalById(id: ID!): ID!
+    #### Progress Journal Goal Tag ####
     createProgressJournalGoalTag(
       data: CreateProgressJournalGoalTagInput!
     ): ProgressJournalGoalTag!
     updateProgressJournalGoalTag(
       data: UpdateProgressJournalGoalTagInput!
     ): ProgressJournalGoalTag!
-    deleteProgressJournalGoalTagsById(progressJournalGoalTagIds: [ID!]!): ID!
-    createProgressJournalEntry(
-      progressJournalId: ID!
-      data: CreateProgressJournalEntryInput!
-    ): ProgressJournalEntry!
-    updateProgressJournalEntry(
-      data: UpdateProgressJournalEntryInput!
-    ): ProgressJournalEntry!
-    deleteProgressJournalEntryById(progressJournalEntryId: ID!): ID!
-    #Equipment - Currently no ID is supplied as these resolvers are only accessible via the admin dashboard.
-    createEquipment(data: CreateEquipmentInput!): Equipment
-    updateEquipment(data: UpdateEquipmentInput!): Equipment
-    # Move
-    createMove(data: CreateMoveInput!): Move
-    shallowUpdateMove(data: ShallowUpdateMoveInput!): Move
-    deepUpdateMove(data: DeepUpdateMoveInput!): Move
-    deleteMoveById(moveId: ID!): ID
-    createMoveProfile(data: CreateMoveProfileInput!): MoveProfile!
-    updateMoveProfile(data: UpdateMoveProfileInput!): MoveProfile!
-    # Gym profile
-    createGymProfile(data: CreateGymProfileInput!): GymProfile!
-    updateGymProfile(data: UpdateGymProfileInput!): GymProfile!
-    deleteGymProfileById(gymProfileId: ID!): ID
-    # Workout
-    createWorkout(data: CreateWorkoutInput!): Workout!
-    shallowUpdateWorkout(data: ShallowUpdateWorkoutInput!): Workout!
-    deepUpdateWorkout(data: DeepUpdateWorkoutInput!): Workout!
-    deleteWorkoutById(workoutId: ID!): ID
-    scheduleWorkout(data: CreateScheduledWorkoutInput!): ScheduledWorkout!
-    unscheduleWorkout(scheduledWorkoutId: ID!): ID!
+    deleteProgressJournalGoalTagById(id: ID!): ID!
+    ########################
+    #### Logged Workout ####
+    createLoggedWorkout(data: CreateLoggedWorkoutInput!): LoggedWorkout!
+    updateLoggedWorkout(data: UpdateLoggedWorkoutInput!): LoggedWorkout!
+    deleteLoggedWorkoutById(id: ID!): ID!
+    #### Logged Workout Section ####
+    createLoggedWorkoutSection(
+      data: CreateLoggedWorkoutSectionInput!
+    ): LoggedWorkoutSection!
+    updateLoggedWorkoutSection(
+      data: UpdateLoggedWorkoutSectionInput!
+    ): LoggedWorkoutSection!
+    deleteLoggedWorkoutSectionById(id: ID!): ID!
+    reorderLoggedWorkoutSections(
+      data: [UpdateSortPositionInput!]!
+    ): [LoggedWorkoutSection!]!
+    #### Logged Workout Set ####
+    createLoggedWorkoutSet(
+      data: CreateLoggedWorkoutSetInput!
+    ): LoggedWorkoutSet!
+    updateLoggedWorkoutSet(
+      data: UpdateLoggedWorkoutSetInput!
+    ): LoggedWorkoutSet!
+    deleteLoggedWorkoutSetById(id: ID!): ID!
+    reorderLoggedWorkoutSets(
+      data: [UpdateSortPositionInput!]!
+    ): [LoggedWorkoutSet!]!
+    #### Logged Workout Move ####
+    createLoggedWorkoutMove(
+      data: CreateLoggedWorkoutMoveInput!
+    ): LoggedWorkoutMove!
+    updateLoggedWorkoutMove(
+      data: UpdateLoggedWorkoutMoveInput!
+    ): LoggedWorkoutMove!
+    deleteLoggedWorkoutMoveById(id: ID!): ID!
+    reorderLoggedWorkoutMoves(
+      data: [UpdateSortPositionInput!]!
+    ): [LoggedWorkoutMove!]!
+    ### Move ###
+    createMove(data: CreateMoveInput!): Move!
+    updateMove(data: UpdateMoveInput!): Move!
+    softDeleteMoveById(id: ID!): ID!
+    #### Schedule Workout ####
+    createScheduledWorkout(
+      data: CreateScheduledWorkoutInput!
+    ): ScheduledWorkout!
     updateScheduledWorkout(
       data: UpdateScheduledWorkoutInput!
     ): ScheduledWorkout!
-    # Logged workout
-    createLoggedWorkout(data: CreateLoggedWorkoutInput!): LoggedWorkout!
-    deepUpdateLoggedWorkout(data: DeepUpdateLoggedWorkoutInput!): LoggedWorkout!
-    shallowUpdateLoggedWorkout(
-      data: ShallowUpdateLoggedWorkoutInput!
-    ): LoggedWorkout!
-    deleteLoggedWorkoutById(loggedWorkoutId: ID!): ID
-    # Workout Program
+    deleteScheduledWorkoutById(id: ID!): ID!
+    #### User ####
+    createUser(uid: ID!): User!
+    updateUser(data: UpdateUserInput!): User!
+    #################
+    #### Workout ####
+    makeCopyWorkoutById(id: ID!): Workout! # Note: Media should not be copied
+    createWorkout(data: CreateWorkoutInput!): Workout!
+    updateWorkout(data: UpdateWorkoutInput!): Workout!
+    softDeleteWorkoutById(id: ID!): ID
+    #### Workout Section ####
+    createWorkoutSection(data: CreateWorkoutSectionInput!): WorkoutSection!
+    updateWorkoutSection(data: UpdateWorkoutSectionInput!): WorkoutSection!
+    softDeleteWorkoutSectionById(id: ID!): ID!
+    reorderWorkoutSections(
+      data: [UpdateSortPositionInput!]!
+    ): [WorkoutSection!]!
+    #### Workout Set ####
+    createWorkoutSet(data: CreateWorkoutSetInput!): WorkoutSet!
+    updateWorkoutSet(data: UpdateWorkoutSetInput!): WorkoutSet!
+    deleteWorkoutSetById(id: ID!): ID!
+    reorderWorkoutSets(data: [UpdateSortPositionInput!]!): [WorkoutSet!]!
+    createWorkoutSetIntervalBuyIn(
+      data: CreateWorkoutSetIntervalBuyInInput!
+    ): WorkoutSetIntervalBuyIn!
+    updateWorkoutSetIntervalBuyIn(
+      data: UpdateWorkoutSetIntervalBuyInInput!
+    ): WorkoutSetIntervalBuyIn!
+    deleteWorkoutSetIntervalBuyInById(id: ID!): ID!
+    createWorkoutSetGenerator(
+      data: CreateWorkoutSetGeneratorInput!
+    ): WorkoutSetGenerator!
+    updateWorkoutSetGenerator(
+      data: UpdateWorkoutSetGeneratorInput!
+    ): WorkoutSetGenerator!
+    deleteWorkoutSetGeneratorById(id: ID!): ID!
+    #### Workout Move ####
+    createWorkoutMove(data: CreateWorkoutMoveInput!): WorkoutMove!
+    updateWorkoutMove(data: UpdateWorkoutMoveInput!): WorkoutMove!
+    deleteWorkoutMoveById(id: ID!): ID!
+    reorderWorkoutMoves(data: [UpdateSortPositionInput!]!): [WorkoutMove!]!
+    #########################
+    #### Workout Program ####
     createWorkoutProgram(data: CreateWorkoutProgramInput!): WorkoutProgram!
-    shallowUpdateWorkoutProgram(
-      data: ShallowUpdateWorkoutProgramInput!
-    ): WorkoutProgram!
-    deepUpdateWorkoutProgram(
-      data: DeepUpdateWorkoutProgramInput!
-    ): WorkoutProgram!
-    deleteWorkoutProgramById(workoutProgramId: ID!): ID
-    addEnrolmentToWorkoutProgram(workoutProgramId: ID!): WorkoutProgram!
-    removeEnrolmentFromWorkoutProgram(
+    updateWorkoutProgram(data: UpdateWorkoutProgramInput!): WorkoutProgram!
+    softDeleteWorkoutProgramById(id: ID!): ID!
+    #### Workout Program Workout ####
+    createWorkoutProgramWorkout(
+      data: CreateWorkoutProgramWorkoutInput!
+    ): WorkoutProgramWorkout!
+    updateWorkoutProgramWorkout(
+      data: UpdateWorkoutProgramWorkoutInput!
+    ): WorkoutProgramWorkout!
+    deleteWorkoutProgramWorkoutById(id: ID!): ID!
+    #### Workout Program Enrolment ####
+    createWorkoutProgramEnrolment(
       workoutProgramId: ID!
-      workoutProgramEnrolmentId: ID!
-    ): WorkoutProgram!
-    addReviewToWorkoutProgram(
-      workoutProgramId: ID!
+    ): WorkoutProgramEnrolment!
+    deleteWorkoutProgramEnrolmentById(id: ID!): ID!
+    #### Workout Program Review ####
+    createWorkoutProgramReview(
       data: CreateWorkoutProgramReviewInput!
-    ): WorkoutProgram!
-    deleteWorkoutProgramReview(reviewId: ID!): WorkoutProgram!
+    ): WorkoutProgramReview!
+    updateWorkoutProgramReview(
+      data: UpdateWorkoutProgramReviewInput!
+    ): WorkoutProgramReview!
+    deleteWorkoutProgramReviewById(id: ID!): ID!
   }
 
-  ##### Non user CRUD-able models #####
+  #### Non CRUD-able models ####
+  input UpdateSortPositionInput {
+    id: ID!
+    sortPosition: Int!
+  }
+
   type WorkoutGoal {
     id: ID!
     name: String!
     description: String!
-    placeholderImageUrl: String
+    imageUri: String
+  }
+
+  type WorkoutSectionType {
+    id: ID!
+    name: String!
+    subtitle: String!
+    description: String!
+    imageUri: String!
+    validRepTypes: [WorkoutMoveRepType!]!
+    WorkoutSections: [WorkoutSection!]!
+    LoggedWorkoutSections: [LoggedWorkoutSection!]!
   }
 `
