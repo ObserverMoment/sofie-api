@@ -688,7 +688,7 @@ export type Move = {
   demoVideoUri?: Maybe<Scalars['String']>;
   demoVideoThumbUri?: Maybe<Scalars['String']>;
   scope: MoveScope;
-  moveType: MoveType;
+  MoveType: MoveType;
   validRepTypes: Array<WorkoutMoveRepType>;
   RequiredEquipments: Array<Equipment>;
   SelectableEquipments: Array<Equipment>;
@@ -1917,7 +1917,7 @@ export type MoveResolvers<ContextType = any, ParentType extends ResolversParentT
   demoVideoUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   demoVideoThumbUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   scope?: Resolver<ResolversTypes['MoveScope'], ParentType, ContextType>;
-  moveType?: Resolver<ResolversTypes['MoveType'], ParentType, ContextType>;
+  MoveType?: Resolver<ResolversTypes['MoveType'], ParentType, ContextType>;
   validRepTypes?: Resolver<Array<ResolversTypes['WorkoutMoveRepType']>, ParentType, ContextType>;
   RequiredEquipments?: Resolver<Array<ResolversTypes['Equipment']>, ParentType, ContextType>;
   SelectableEquipments?: Resolver<Array<ResolversTypes['Equipment']>, ParentType, ContextType>;

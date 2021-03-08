@@ -56,7 +56,8 @@ export const updateEquipment = async (
     data: {
       ...data,
       name: data.name || undefined,
-      loadAdjustable: data.loadAdjustable || undefined,
+      loadAdjustable:
+        data.loadAdjustable !== null ? data.loadAdjustable : undefined,
     },
     select,
   })
@@ -77,7 +78,7 @@ export const workoutGoals = async (
   a: any,
   { prisma, select }: Context,
 ) => {
-  const workoutGoals = await prisma.moveType.findMany({ select })
+  const workoutGoals = await prisma.workoutGoal.findMany({ select })
   return workoutGoals as WorkoutGoal[]
 }
 
