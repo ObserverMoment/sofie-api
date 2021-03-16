@@ -79,11 +79,6 @@ export default gql`
     Workout: ID!
   }
 
-  input AddLoggedWorkoutToProgramEnrolmentInput {
-    workoutProgramEnrolmentId: ID!
-    LoggedWorkout: CreateLoggedWorkoutInput!
-  }
-
   input CreateWorkoutProgramReviewInput {
     score: Float!
     comment: String

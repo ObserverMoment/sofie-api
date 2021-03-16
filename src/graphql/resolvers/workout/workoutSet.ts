@@ -19,7 +19,7 @@ import {
   WorkoutSetIntervalBuyIn,
 } from '../../../generated/graphql'
 import { Context } from '../../..'
-import { ApolloError } from 'apollo-server'
+import { ApolloError } from 'apollo-server-express'
 import { database } from 'firebase-admin'
 import { PrismaPromise } from '@prisma/client'
 

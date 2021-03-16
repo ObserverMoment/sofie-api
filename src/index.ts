@@ -1,4 +1,9 @@
-import { ApolloServer, AuthenticationError, ResolverFn } from 'apollo-server'
+import express from 'express'
+import {
+  ApolloServer,
+  AuthenticationError,
+  ResolverFn,
+} from 'apollo-server-express'
 import resolvers from './graphql/resolvers/resolvers'
 import typeDefs from './graphql/schema/typeDefs'
 import { applyMiddleware } from 'graphql-middleware'
@@ -9,6 +14,8 @@ import { GraphQLResolveInfo } from 'graphql'
 import { firebaseVerifyToken } from './lib/firebaseAdmin'
 
 require('dotenv').config()
+
+const app = express()
 
 export type ContextUserType = 'ADMIN' | 'USER'
 
@@ -87,13 +94,12 @@ const createUserContext = async (uid: string) => {
 
 // https://github.com/prisma-labs/graphqlgen/issues/15
 const server = new ApolloServer({
-  cors: {
-    origin: process.env.ADMIN_APP_CLIENT_URL,
-  },
   schema: applyMiddleware(schema, selectMiddleware),
   context: async ({ req }) => {
     const userType = req.headers['user-type']
     const authToken = req.headers.authorization
+      ? req.headers.authorization.replace('Bearer ', '')
+      : null
 
     if (!authToken) {
       throw new AuthenticationError(
@@ -119,8 +125,37 @@ const server = new ApolloServer({
   },
 })
 
-const PORT = process.env.PORT || 4000
+const PORT: number = process.env.PORT ? parseInt(process.env.PORT) : 4000
 
-server.listen({ port: PORT }).then(({ url }) => {
-  console.log(`🚀  Server ready at ${url}`)
+app.post('/api/register', async (req, res) => {
+  const authToken = req.headers.authorization
+    ? req.headers.authorization.replace('Bearer ', '')
+    : null
+
+  console.log(authToken)
+
+  if (!authToken) {
+    throw new AuthenticationError(
+      'Please provide a valid access token against the header "authorization"',
+    )
+  }
+
+  const decodedToken = await firebaseVerifyToken(
+    authToken,
+    'USER' as ContextUserType,
+  )
+
+  if (!decodedToken || !decodedToken.uid) {
+    throw new AuthenticationError('The access token you provided was not valid')
+  }
+  // Create a new user
+  console.log(decodedToken.uid)
+  // return the id
+  res.json({ id: decodedToken.uid })
+})
+
+server.applyMiddleware({ app, cors: { credentials: true, origin: true } })
+
+app.listen(PORT, () => {
+  console.log(`🚀  Server ready at port ${PORT}`)
 })

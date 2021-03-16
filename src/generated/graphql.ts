@@ -12,10 +12,8 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  JSON: any;
   DateTime: any;
 };
-
 
 
 export type Query = {
@@ -370,7 +368,7 @@ export type MutationDeleteScheduledWorkoutByIdArgs = {
 
 
 export type MutationCreateUserArgs = {
-  uid: Scalars['ID'];
+  firebaseUid: Scalars['ID'];
 };
 
 
@@ -571,7 +569,7 @@ export type WorkoutSectionType = {
 export type BodyArea = {
   __typename?: 'BodyArea';
   id: Scalars['ID'];
-  name?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
   altNames?: Maybe<Scalars['String']>;
   BodyAreaMoveScores: Array<BodyAreaMoveScore>;
   frontBack: BodyAreaFrontBack;
@@ -614,6 +612,10 @@ export type Gender =
   | 'FEMALE'
   | 'NONBINARY';
 
+export type HeightUnit =
+  | 'CM'
+  | 'IN';
+
 export type LoadUnit =
   | 'KG'
   | 'LB'
@@ -634,6 +636,10 @@ export type ThemePreference =
 export type UnitSystem =
   | 'IMPERIAL'
   | 'METRIC';
+
+export type WeightUnit =
+  | 'KG'
+  | 'LB';
 
 export type WorkoutMoveRepType =
   | 'REPS'
@@ -757,11 +763,12 @@ export type User = {
   linkedinUrl?: Maybe<Scalars['String']>;
   firstname?: Maybe<Scalars['String']>;
   lastname?: Maybe<Scalars['String']>;
-  themePreference: ThemePreference;
   gender?: Maybe<Gender>;
   hasOnboarded: Scalars['Boolean'];
   height?: Maybe<Scalars['Float']>;
+  heightUnit?: Maybe<HeightUnit>;
   weight?: Maybe<Scalars['Float']>;
+  weightUnit?: Maybe<WeightUnit>;
   unitSystem?: Maybe<UnitSystem>;
   GymProfiles?: Maybe<Array<GymProfile>>;
   ProgressJournalGoalTags?: Maybe<Array<ProgressJournalGoalTag>>;
@@ -785,7 +792,6 @@ export type UpdateUserInput = {
   snapUrl?: Maybe<Scalars['String']>;
   linkedinUrl?: Maybe<Scalars['String']>;
   firstname?: Maybe<Scalars['String']>;
-  themePreference?: Maybe<ThemePreference>;
   gender?: Maybe<Gender>;
   hasOnboarded?: Maybe<Scalars['Boolean']>;
   height?: Maybe<Scalars['Float']>;
@@ -1450,11 +1456,6 @@ export type UpdateWorkoutProgramWorkoutInput = {
   Workout: Scalars['ID'];
 };
 
-export type AddLoggedWorkoutToProgramEnrolmentInput = {
-  workoutProgramEnrolmentId: Scalars['ID'];
-  LoggedWorkout: CreateLoggedWorkoutInput;
-};
-
 export type CreateWorkoutProgramReviewInput = {
   score: Scalars['Float'];
   comment?: Maybe<Scalars['String']>;
@@ -1546,7 +1547,6 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
-  JSON: ResolverTypeWrapper<Scalars['JSON']>;
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
   Query: ResolverTypeWrapper<{}>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
@@ -1565,10 +1565,12 @@ export type ResolversTypes = ResolversObject<{
   BodyAreaUpperLower: BodyAreaUpperLower;
   DistanceUnit: DistanceUnit;
   Gender: Gender;
+  HeightUnit: HeightUnit;
   LoadUnit: LoadUnit;
   MoveScope: MoveScope;
   ThemePreference: ThemePreference;
   UnitSystem: UnitSystem;
+  WeightUnit: WeightUnit;
   WorkoutMoveRepType: WorkoutMoveRepType;
   WorkoutSetGeneratorTarget: WorkoutSetGeneratorTarget;
   WorkoutSetGeneratorType: WorkoutSetGeneratorType;
@@ -1646,14 +1648,12 @@ export type ResolversTypes = ResolversObject<{
   UpdateWorkoutProgramInput: UpdateWorkoutProgramInput;
   CreateWorkoutProgramWorkoutInput: CreateWorkoutProgramWorkoutInput;
   UpdateWorkoutProgramWorkoutInput: UpdateWorkoutProgramWorkoutInput;
-  AddLoggedWorkoutToProgramEnrolmentInput: AddLoggedWorkoutToProgramEnrolmentInput;
   CreateWorkoutProgramReviewInput: CreateWorkoutProgramReviewInput;
   UpdateWorkoutProgramReviewInput: UpdateWorkoutProgramReviewInput;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
-  JSON: Scalars['JSON'];
   DateTime: Scalars['DateTime'];
   Query: {};
   Boolean: Scalars['Boolean'];
@@ -1740,14 +1740,9 @@ export type ResolversParentTypes = ResolversObject<{
   UpdateWorkoutProgramInput: UpdateWorkoutProgramInput;
   CreateWorkoutProgramWorkoutInput: CreateWorkoutProgramWorkoutInput;
   UpdateWorkoutProgramWorkoutInput: UpdateWorkoutProgramWorkoutInput;
-  AddLoggedWorkoutToProgramEnrolmentInput: AddLoggedWorkoutToProgramEnrolmentInput;
   CreateWorkoutProgramReviewInput: CreateWorkoutProgramReviewInput;
   UpdateWorkoutProgramReviewInput: UpdateWorkoutProgramReviewInput;
 }>;
-
-export interface JsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['JSON'], any> {
-  name: 'JSON';
-}
 
 export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {
   name: 'DateTime';
@@ -1824,7 +1819,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createScheduledWorkout?: Resolver<ResolversTypes['ScheduledWorkout'], ParentType, ContextType, RequireFields<MutationCreateScheduledWorkoutArgs, 'data'>>;
   updateScheduledWorkout?: Resolver<ResolversTypes['ScheduledWorkout'], ParentType, ContextType, RequireFields<MutationUpdateScheduledWorkoutArgs, 'data'>>;
   deleteScheduledWorkoutById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteScheduledWorkoutByIdArgs, 'id'>>;
-  createUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'uid'>>;
+  createUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'firebaseUid'>>;
   updateUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationUpdateUserArgs, 'data'>>;
   makeCopyWorkoutById?: Resolver<ResolversTypes['Workout'], ParentType, ContextType, RequireFields<MutationMakeCopyWorkoutByIdArgs, 'id'>>;
   createWorkout?: Resolver<ResolversTypes['Workout'], ParentType, ContextType, RequireFields<MutationCreateWorkoutArgs, 'data'>>;
@@ -1883,7 +1878,7 @@ export type WorkoutSectionTypeResolvers<ContextType = any, ParentType extends Re
 
 export type BodyAreaResolvers<ContextType = any, ParentType extends ResolversParentTypes['BodyArea'] = ResolversParentTypes['BodyArea']> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   altNames?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   BodyAreaMoveScores?: Resolver<Array<ResolversTypes['BodyAreaMoveScore']>, ParentType, ContextType>;
   frontBack?: Resolver<ResolversTypes['BodyAreaFrontBack'], ParentType, ContextType>;
@@ -1951,11 +1946,12 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   linkedinUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   firstname?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   lastname?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  themePreference?: Resolver<ResolversTypes['ThemePreference'], ParentType, ContextType>;
   gender?: Resolver<Maybe<ResolversTypes['Gender']>, ParentType, ContextType>;
   hasOnboarded?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   height?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  heightUnit?: Resolver<Maybe<ResolversTypes['HeightUnit']>, ParentType, ContextType>;
   weight?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  weightUnit?: Resolver<Maybe<ResolversTypes['WeightUnit']>, ParentType, ContextType>;
   unitSystem?: Resolver<Maybe<ResolversTypes['UnitSystem']>, ParentType, ContextType>;
   GymProfiles?: Resolver<Maybe<Array<ResolversTypes['GymProfile']>>, ParentType, ContextType>;
   ProgressJournalGoalTags?: Resolver<Maybe<Array<ResolversTypes['ProgressJournalGoalTag']>>, ParentType, ContextType>;
@@ -2255,7 +2251,6 @@ export type WorkoutProgramReviewResolvers<ContextType = any, ParentType extends 
 }>;
 
 export type Resolvers<ContextType = any> = ResolversObject<{
-  JSON?: GraphQLScalarType;
   DateTime?: GraphQLScalarType;
   Query?: QueryResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;

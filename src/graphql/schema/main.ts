@@ -1,7 +1,6 @@
 import { gql } from 'apollo-server-express'
 
 export default gql`
-  scalar JSON
   scalar DateTime
 
   type Query {
@@ -135,7 +134,7 @@ export default gql`
     ): ScheduledWorkout!
     deleteScheduledWorkoutById(id: ID!): ID!
     #### User ####
-    createUser(uid: ID!): User!
+    createUser(firebaseUid: ID!): User!
     updateUser(data: UpdateUserInput!): User!
     #################
     #### Workout ####

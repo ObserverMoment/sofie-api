@@ -20,11 +20,12 @@ export default gql`
     linkedinUrl: String
     firstname: String
     lastname: String
-    themePreference: ThemePreference!
     gender: Gender
     hasOnboarded: Boolean!
     height: Float
+    heightUnit: HeightUnit
     weight: Float
+    weightUnit: WeightUnit
     unitSystem: UnitSystem
     GymProfiles: [GymProfile!]
     ProgressJournalGoalTags: [ProgressJournalGoalTag!]
@@ -48,7 +49,6 @@ export default gql`
     snapUrl: String
     linkedinUrl: String
     firstname: String
-    themePreference: ThemePreference
     gender: Gender
     hasOnboarded: Boolean
     height: Float

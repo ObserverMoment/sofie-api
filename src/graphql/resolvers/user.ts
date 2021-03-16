@@ -1,4 +1,4 @@
-import { ApolloError } from 'apollo-server'
+import { ApolloError } from 'apollo-server-express'
 import { Context } from '../..'
 import {
   GymProfile,
@@ -82,13 +82,11 @@ export const userPublicProfiles = async (
 // A brand new user linked to a firebase UID.
 export const createUser = async (
   r: any,
-  { uid }: MutationCreateUserArgs,
+  { firebaseUid }: MutationCreateUserArgs,
   { select, prisma }: Context,
 ) => {
   const user = await prisma.user.create({
-    data: {
-      firebaseUid: uid,
-    },
+    data: { firebaseUid },
     select,
   })
   return user as User

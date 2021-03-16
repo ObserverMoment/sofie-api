@@ -36,6 +36,11 @@ export default gql`
     NONBINARY
   }
 
+  enum HeightUnit {
+    CM
+    IN
+  }
+
   enum LoadUnit {
     KG
     LB
@@ -59,6 +64,11 @@ export default gql`
   enum UnitSystem {
     IMPERIAL
     METRIC
+  }
+
+  enum WeightUnit {
+    KG
+    LB
   }
 
   enum WorkoutMoveRepType {

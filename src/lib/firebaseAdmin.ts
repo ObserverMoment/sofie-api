@@ -1,5 +1,5 @@
 // https://github.com/colinhacks/next-firebase-ssr/blob/master/firebaseAdmin.ts
-import { AuthenticationError } from 'apollo-server'
+import { AuthenticationError } from 'apollo-server-express'
 import firebaseAdmin from 'firebase-admin'
 import { ContextUserType } from '..'
 
