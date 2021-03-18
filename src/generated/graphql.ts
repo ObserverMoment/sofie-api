@@ -35,7 +35,7 @@ export type Query = {
   textSearchWorkoutPrograms?: Maybe<Array<TextSearchWorkoutProgramResult>>;
   textSearchCreatorPublicProfiles?: Maybe<Array<UserPublicProfile>>;
   checkUniqueDisplayName: Scalars['Boolean'];
-  userByUid: User;
+  authedUser: User;
   userPublicProfiles?: Maybe<Array<UserPublicProfile>>;
   userPublicProfileByUserId: UserPublicProfile;
   officialWorkouts: Array<Workout>;
@@ -72,11 +72,6 @@ export type QueryTextSearchCreatorPublicProfilesArgs = {
 
 export type QueryCheckUniqueDisplayNameArgs = {
   displayName: Scalars['String'];
-};
-
-
-export type QueryUserByUidArgs = {
-  uid: Scalars['ID'];
 };
 
 
@@ -629,7 +624,7 @@ export type MoveScope =
   | 'STANDARD'
   | 'CUSTOM';
 
-export type ThemePreference =
+export type ThemeName =
   | 'DARK'
   | 'LIGHT';
 
@@ -747,6 +742,7 @@ export type User = {
   __typename?: 'User';
   id: Scalars['ID'];
   userProfileScope: UserProfileScope;
+  themeName: ThemeName;
   avatarUri?: Maybe<Scalars['String']>;
   introVideoUri?: Maybe<Scalars['String']>;
   introVideoThumbUri?: Maybe<Scalars['String']>;
@@ -777,6 +773,7 @@ export type User = {
 export type UpdateUserInput = {
   id: Scalars['ID'];
   userProfileScope?: Maybe<UserProfileScope>;
+  themeName?: Maybe<ThemeName>;
   avatarUri?: Maybe<Scalars['String']>;
   introVideoUri?: Maybe<Scalars['String']>;
   introVideoThumbUri?: Maybe<Scalars['String']>;
@@ -1568,7 +1565,7 @@ export type ResolversTypes = ResolversObject<{
   HeightUnit: HeightUnit;
   LoadUnit: LoadUnit;
   MoveScope: MoveScope;
-  ThemePreference: ThemePreference;
+  ThemeName: ThemeName;
   UnitSystem: UnitSystem;
   WeightUnit: WeightUnit;
   WorkoutMoveRepType: WorkoutMoveRepType;
@@ -1766,7 +1763,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   textSearchWorkoutPrograms?: Resolver<Maybe<Array<ResolversTypes['TextSearchWorkoutProgramResult']>>, ParentType, ContextType, RequireFields<QueryTextSearchWorkoutProgramsArgs, 'text'>>;
   textSearchCreatorPublicProfiles?: Resolver<Maybe<Array<ResolversTypes['UserPublicProfile']>>, ParentType, ContextType, RequireFields<QueryTextSearchCreatorPublicProfilesArgs, 'text'>>;
   checkUniqueDisplayName?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryCheckUniqueDisplayNameArgs, 'displayName'>>;
-  userByUid?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<QueryUserByUidArgs, 'uid'>>;
+  authedUser?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   userPublicProfiles?: Resolver<Maybe<Array<ResolversTypes['UserPublicProfile']>>, ParentType, ContextType>;
   userPublicProfileByUserId?: Resolver<ResolversTypes['UserPublicProfile'], ParentType, ContextType, RequireFields<QueryUserPublicProfileByUserIdArgs, 'userId'>>;
   officialWorkouts?: Resolver<Array<ResolversTypes['Workout']>, ParentType, ContextType>;
@@ -1930,6 +1927,7 @@ export type MoveTypeResolvers<ContextType = any, ParentType extends ResolversPar
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   userProfileScope?: Resolver<ResolversTypes['UserProfileScope'], ParentType, ContextType>;
+  themeName?: Resolver<ResolversTypes['ThemeName'], ParentType, ContextType>;
   avatarUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   introVideoUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   introVideoThumbUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;

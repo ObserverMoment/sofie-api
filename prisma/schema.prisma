@@ -151,6 +151,7 @@ model User {
   firebaseUid              String                    @unique
   createdAt                DateTime                  @default(now())
   hasOnboarded             Boolean                   @default(false)
+  themeName                ThemeName                 @default(DARK)
   userProfileScope         UserProfileScope          @default(PRIVATE)
   avatarUri                String?
   introVideoUri            String?
@@ -612,7 +613,7 @@ enum MoveScope {
   CUSTOM
 }
 
-enum ThemePreference {
+enum ThemeName {
   DARK
   LIGHT
 }

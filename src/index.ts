@@ -12,6 +12,8 @@ import { PrismaSelect } from '@paljs/plugins'
 import { makeExecutableSchema } from 'graphql-tools'
 import { GraphQLResolveInfo } from 'graphql'
 import { firebaseVerifyToken } from './lib/firebaseAdmin'
+import registerNewUser from './restApi/registerNewUser'
+import currentUser from './restApi/currentUser'
 
 require('dotenv').config()
 
@@ -127,32 +129,9 @@ const server = new ApolloServer({
 
 const PORT: number = process.env.PORT ? parseInt(process.env.PORT) : 4000
 
-app.post('/api/register', async (req, res) => {
-  const authToken = req.headers.authorization
-    ? req.headers.authorization.replace('Bearer ', '')
-    : null
-
-  console.log(authToken)
-
-  if (!authToken) {
-    throw new AuthenticationError(
-      'Please provide a valid access token against the header "authorization"',
-    )
-  }
-
-  const decodedToken = await firebaseVerifyToken(
-    authToken,
-    'USER' as ContextUserType,
-  )
-
-  if (!decodedToken || !decodedToken.uid) {
-    throw new AuthenticationError('The access token you provided was not valid')
-  }
-  // Create a new user
-  console.log(decodedToken.uid)
-  // return the id
-  res.json({ id: decodedToken.uid })
-})
+// RESTful endpoints - used for registration and auth.
+app.post('/api/user/register', (req, res) => registerNewUser(req, res, prisma))
+app.post('/api/user/current', (req, res) => currentUser(req, res, prisma))
 
 server.applyMiddleware({ app, cors: { credentials: true, origin: true } })
 

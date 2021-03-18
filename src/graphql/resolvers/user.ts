@@ -8,7 +8,6 @@ import {
   MutationUpdateGymProfileArgs,
   MutationUpdateUserArgs,
   QueryCheckUniqueDisplayNameArgs,
-  QueryUserByUidArgs,
   QueryUserPublicProfileByUserIdArgs,
   User,
   UserPublicProfile,
@@ -28,20 +27,20 @@ export const checkUniqueDisplayName = async (
   return user === null
 }
 
-export const userByUid = async (
+export const authedUser = async (
   r: any,
-  { uid }: QueryUserByUidArgs,
+  a: any,
   { authedUserId, select, prisma }: Context,
 ) => {
   const user = await prisma.user.findUnique({
-    where: { firebaseUid: uid, id: authedUserId },
+    where: { id: authedUserId },
     select,
   })
 
   if (user) {
     return user as User
   } else {
-    throw new ApolloError('userByUid: There was an issue.')
+    throw new ApolloError('authedUser: There was an issue.')
   }
 }
 

@@ -56,7 +56,7 @@ export default gql`
     CUSTOM
   }
 
-  enum ThemePreference {
+  enum ThemeName {
     DARK
     LIGHT
   }

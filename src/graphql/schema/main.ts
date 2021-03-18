@@ -28,7 +28,7 @@ export default gql`
     textSearchCreatorPublicProfiles(text: String!): [UserPublicProfile!]
     #### User ####
     checkUniqueDisplayName(displayName: String!): Boolean!
-    userByUid(uid: ID!): User!
+    authedUser: User!
     #### User Public Profiles ####
     userPublicProfiles: [UserPublicProfile!]
     userPublicProfileByUserId(userId: ID!): UserPublicProfile!

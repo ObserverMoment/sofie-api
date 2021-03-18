@@ -4,6 +4,7 @@ export default gql`
   type User {
     id: ID!
     userProfileScope: UserProfileScope!
+    themeName: ThemeName!
     avatarUri: String
     introVideoUri: String
     introVideoThumbUri: String
@@ -34,6 +35,7 @@ export default gql`
   input UpdateUserInput {
     id: ID!
     userProfileScope: UserProfileScope
+    themeName: ThemeName
     avatarUri: String
     introVideoUri: String
     introVideoThumbUri: String
