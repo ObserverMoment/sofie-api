@@ -32,8 +32,8 @@ export default gql`
     ProgressJournalGoalTags: [ProgressJournalGoalTag!]
   }
 
+  # Only used for the currently logged in user to update themselves - so ID not required.
   input UpdateUserInput {
-    id: ID!
     userProfileScope: UserProfileScope
     themeName: ThemeName
     avatarUri: String

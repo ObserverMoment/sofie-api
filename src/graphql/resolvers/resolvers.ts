@@ -73,7 +73,6 @@ import {
   authedUser,
   userPublicProfileByUserId,
   userPublicProfiles,
-  createUser,
   updateUser,
   createGymProfile,
   updateGymProfile,
@@ -257,7 +256,6 @@ const resolvers: Resolvers = {
     //////////////
     //// User ////
     //////////////
-    createUser,
     updateUser,
     /////////////////
     //// Workout ////

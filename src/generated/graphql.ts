@@ -134,7 +134,6 @@ export type Mutation = {
   createScheduledWorkout: ScheduledWorkout;
   updateScheduledWorkout: ScheduledWorkout;
   deleteScheduledWorkoutById: Scalars['ID'];
-  createUser: User;
   updateUser: User;
   makeCopyWorkoutById: Workout;
   createWorkout: Workout;
@@ -359,11 +358,6 @@ export type MutationUpdateScheduledWorkoutArgs = {
 
 export type MutationDeleteScheduledWorkoutByIdArgs = {
   id: Scalars['ID'];
-};
-
-
-export type MutationCreateUserArgs = {
-  firebaseUid: Scalars['ID'];
 };
 
 
@@ -771,7 +765,6 @@ export type User = {
 };
 
 export type UpdateUserInput = {
-  id: Scalars['ID'];
   userProfileScope?: Maybe<UserProfileScope>;
   themeName?: Maybe<ThemeName>;
   avatarUri?: Maybe<Scalars['String']>;
@@ -1816,7 +1809,6 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createScheduledWorkout?: Resolver<ResolversTypes['ScheduledWorkout'], ParentType, ContextType, RequireFields<MutationCreateScheduledWorkoutArgs, 'data'>>;
   updateScheduledWorkout?: Resolver<ResolversTypes['ScheduledWorkout'], ParentType, ContextType, RequireFields<MutationUpdateScheduledWorkoutArgs, 'data'>>;
   deleteScheduledWorkoutById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteScheduledWorkoutByIdArgs, 'id'>>;
-  createUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'firebaseUid'>>;
   updateUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationUpdateUserArgs, 'data'>>;
   makeCopyWorkoutById?: Resolver<ResolversTypes['Workout'], ParentType, ContextType, RequireFields<MutationMakeCopyWorkoutByIdArgs, 'id'>>;
   createWorkout?: Resolver<ResolversTypes['Workout'], ParentType, ContextType, RequireFields<MutationCreateWorkoutArgs, 'data'>>;

@@ -134,7 +134,6 @@ export default gql`
     ): ScheduledWorkout!
     deleteScheduledWorkoutById(id: ID!): ID!
     #### User ####
-    createUser(firebaseUid: ID!): User!
     updateUser(data: UpdateUserInput!): User!
     #################
     #### Workout ####

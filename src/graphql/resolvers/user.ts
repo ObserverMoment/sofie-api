@@ -3,7 +3,6 @@ import { Context } from '../..'
 import {
   GymProfile,
   MutationCreateGymProfileArgs,
-  MutationCreateUserArgs,
   MutationDeleteGymProfileByIdArgs,
   MutationUpdateGymProfileArgs,
   MutationUpdateUserArgs,
@@ -13,7 +12,7 @@ import {
   UserPublicProfile,
 } from '../../generated/graphql'
 import { checkUserMediaForDeletion, deleteFiles } from '../../uploadcare'
-import { AccessScopeError, checkUserOwnsObject } from '../utils'
+import { checkUserOwnsObject } from '../utils'
 
 //// Queries ////
 export const checkUniqueDisplayName = async (
@@ -78,50 +77,40 @@ export const userPublicProfiles = async (
 }
 
 //// Mutations ////
-// A brand new user linked to a firebase UID.
-export const createUser = async (
-  r: any,
-  { firebaseUid }: MutationCreateUserArgs,
-  { select, prisma }: Context,
-) => {
-  const user = await prisma.user.create({
-    data: { firebaseUid },
-    select,
-  })
-  return user as User
-}
-
+// For authed user to update their own details only.
 export const updateUser = async (
   r: any,
   { data }: MutationUpdateUserArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  if (authedUserId !== data.id) {
-    throw new AccessScopeError()
-  } else {
-    // Check if any media files need to be updated. Only delete files from the server after the rest of the transaction is complete.
-    const fileUrisForDeletion:
-      | string[]
-      | null = await checkUserMediaForDeletion(prisma, data)
+  // Check if any media files need to be updated. Only delete files from the server after the rest of the transaction is complete.
+  const fileUrisForDeletion: string[] | null = await checkUserMediaForDeletion(
+    prisma,
+    authedUserId,
+    data,
+  )
 
-    const updated = await prisma.user.update({
-      where: {
-        id: data.id,
-      },
-      data: {
-        hasOnboarded: data.hasOnboarded || undefined,
-      },
-      select,
-    })
+  const updated = await prisma.user.update({
+    where: {
+      id: authedUserId,
+    },
+    data: {
+      ...data,
+      unitSystem: data.unitSystem || undefined,
+      userProfileScope: data.userProfileScope || undefined,
+      themeName: data.themeName || undefined,
+      hasOnboarded: data.hasOnboarded || undefined,
+    },
+    select,
+  })
 
-    if (updated) {
-      if (fileUrisForDeletion && fileUrisForDeletion.length > 0) {
-        await deleteFiles(fileUrisForDeletion)
-      }
-      return updated as User
-    } else {
-      throw new ApolloError('updateUser: There was an issue.')
+  if (updated) {
+    if (fileUrisForDeletion && fileUrisForDeletion.length > 0) {
+      await deleteFiles(fileUrisForDeletion)
     }
+    return updated as User
+  } else {
+    throw new ApolloError('updateUser: There was an issue.')
   }
 }
 
