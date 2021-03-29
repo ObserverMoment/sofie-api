@@ -27,9 +27,7 @@ export default async function (req: any, res: any, prisma: PrismaClient) {
           },
           select: {
             id: true,
-            avatarUri: true,
             hasOnboarded: true,
-            themeName: true,
           },
         })
         if (!user) {

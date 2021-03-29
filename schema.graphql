@@ -169,10 +169,7 @@ enum Gender {
   MALE
   FEMALE
   NONBINARY
-}
-enum HeightUnit {
-  CM
-  IN
+  NONE
 }
 enum LoadUnit {
   KG
@@ -186,18 +183,6 @@ Custom moves are created by users.
 enum MoveScope {
   STANDARD
   CUSTOM
-}
-enum ThemeName {
-  DARK
-  LIGHT
-}
-enum UnitSystem {
-  IMPERIAL
-  METRIC
-}
-enum WeightUnit {
-  KG
-  LB
 }
 enum WorkoutMoveRepType {
   REPS
@@ -293,7 +278,6 @@ input BodyAreaMoveScoreInput {
 type User {
   id: ID!
   userProfileScope: UserProfileScope!
-  themeName: ThemeName!
   avatarUri: String
   introVideoUri: String
   introVideoThumbUri: String
@@ -312,17 +296,11 @@ type User {
   lastname: String
   gender: Gender
   hasOnboarded: Boolean!
-  height: Float
-  heightUnit: HeightUnit
-  weight: Float
-  weightUnit: WeightUnit
-  unitSystem: UnitSystem
   GymProfiles: [GymProfile!]
   ProgressJournalGoalTags: [ProgressJournalGoalTag!]
 }
 input UpdateUserInput {
   userProfileScope: UserProfileScope
-  themeName: ThemeName
   avatarUri: String
   introVideoUri: String
   introVideoThumbUri: String
@@ -340,10 +318,7 @@ input UpdateUserInput {
   firstname: String
   gender: Gender
   hasOnboarded: Boolean
-  height: Float
   lastname: String
-  unitSystem: UnitSystem
-  weight: Float
 }
 type UserPublicProfile {
   id: ID!

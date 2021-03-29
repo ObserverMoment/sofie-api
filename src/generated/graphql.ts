@@ -599,11 +599,8 @@ export type DistanceUnit =
 export type Gender =
   | 'MALE'
   | 'FEMALE'
-  | 'NONBINARY';
-
-export type HeightUnit =
-  | 'CM'
-  | 'IN';
+  | 'NONBINARY'
+  | 'NONE';
 
 export type LoadUnit =
   | 'KG'
@@ -617,18 +614,6 @@ export type LoadUnit =
 export type MoveScope =
   | 'STANDARD'
   | 'CUSTOM';
-
-export type ThemeName =
-  | 'DARK'
-  | 'LIGHT';
-
-export type UnitSystem =
-  | 'IMPERIAL'
-  | 'METRIC';
-
-export type WeightUnit =
-  | 'KG'
-  | 'LB';
 
 export type WorkoutMoveRepType =
   | 'REPS'
@@ -736,7 +721,6 @@ export type User = {
   __typename?: 'User';
   id: Scalars['ID'];
   userProfileScope: UserProfileScope;
-  themeName: ThemeName;
   avatarUri?: Maybe<Scalars['String']>;
   introVideoUri?: Maybe<Scalars['String']>;
   introVideoThumbUri?: Maybe<Scalars['String']>;
@@ -755,18 +739,12 @@ export type User = {
   lastname?: Maybe<Scalars['String']>;
   gender?: Maybe<Gender>;
   hasOnboarded: Scalars['Boolean'];
-  height?: Maybe<Scalars['Float']>;
-  heightUnit?: Maybe<HeightUnit>;
-  weight?: Maybe<Scalars['Float']>;
-  weightUnit?: Maybe<WeightUnit>;
-  unitSystem?: Maybe<UnitSystem>;
   GymProfiles?: Maybe<Array<GymProfile>>;
   ProgressJournalGoalTags?: Maybe<Array<ProgressJournalGoalTag>>;
 };
 
 export type UpdateUserInput = {
   userProfileScope?: Maybe<UserProfileScope>;
-  themeName?: Maybe<ThemeName>;
   avatarUri?: Maybe<Scalars['String']>;
   introVideoUri?: Maybe<Scalars['String']>;
   introVideoThumbUri?: Maybe<Scalars['String']>;
@@ -784,10 +762,7 @@ export type UpdateUserInput = {
   firstname?: Maybe<Scalars['String']>;
   gender?: Maybe<Gender>;
   hasOnboarded?: Maybe<Scalars['Boolean']>;
-  height?: Maybe<Scalars['Float']>;
   lastname?: Maybe<Scalars['String']>;
-  unitSystem?: Maybe<UnitSystem>;
-  weight?: Maybe<Scalars['Float']>;
 };
 
 export type UserPublicProfile = {
@@ -1555,12 +1530,8 @@ export type ResolversTypes = ResolversObject<{
   BodyAreaUpperLower: BodyAreaUpperLower;
   DistanceUnit: DistanceUnit;
   Gender: Gender;
-  HeightUnit: HeightUnit;
   LoadUnit: LoadUnit;
   MoveScope: MoveScope;
-  ThemeName: ThemeName;
-  UnitSystem: UnitSystem;
-  WeightUnit: WeightUnit;
   WorkoutMoveRepType: WorkoutMoveRepType;
   WorkoutSetGeneratorTarget: WorkoutSetGeneratorTarget;
   WorkoutSetGeneratorType: WorkoutSetGeneratorType;
@@ -1919,7 +1890,6 @@ export type MoveTypeResolvers<ContextType = any, ParentType extends ResolversPar
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   userProfileScope?: Resolver<ResolversTypes['UserProfileScope'], ParentType, ContextType>;
-  themeName?: Resolver<ResolversTypes['ThemeName'], ParentType, ContextType>;
   avatarUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   introVideoUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   introVideoThumbUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -1938,11 +1908,6 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   lastname?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   gender?: Resolver<Maybe<ResolversTypes['Gender']>, ParentType, ContextType>;
   hasOnboarded?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  height?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  heightUnit?: Resolver<Maybe<ResolversTypes['HeightUnit']>, ParentType, ContextType>;
-  weight?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  weightUnit?: Resolver<Maybe<ResolversTypes['WeightUnit']>, ParentType, ContextType>;
-  unitSystem?: Resolver<Maybe<ResolversTypes['UnitSystem']>, ParentType, ContextType>;
   GymProfiles?: Resolver<Maybe<Array<ResolversTypes['GymProfile']>>, ParentType, ContextType>;
   ProgressJournalGoalTags?: Resolver<Maybe<Array<ResolversTypes['ProgressJournalGoalTag']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;

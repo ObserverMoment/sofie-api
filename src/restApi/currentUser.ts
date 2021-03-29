@@ -15,9 +15,7 @@ export default async function (req: any, res: any, prisma: PrismaClient) {
         where: { firebaseUid: decodedToken.uid },
         select: {
           id: true,
-          avatarUri: true,
           hasOnboarded: true,
-          themeName: true,
         },
       })
 

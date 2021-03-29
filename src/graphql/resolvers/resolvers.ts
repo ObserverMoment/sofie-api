@@ -142,8 +142,9 @@ import { Kind } from 'graphql/language'
 const resolvers: Resolvers = {
   DateTime: new GraphQLScalarType({
     name: 'DateTime',
-    description: 'DateTime which assumes UTC is being sent to and from the DB.',
-    parseValue(value: string) {
+    description:
+      'DateTime which assumes UTC is being sent to and from the DB as ms since epoch.',
+    parseValue(value: number) {
       return new Date(value) // value from the client
     },
     serialize(value: Date) {

@@ -4,7 +4,6 @@ export default gql`
   type User {
     id: ID!
     userProfileScope: UserProfileScope!
-    themeName: ThemeName!
     avatarUri: String
     introVideoUri: String
     introVideoThumbUri: String
@@ -23,11 +22,6 @@ export default gql`
     lastname: String
     gender: Gender
     hasOnboarded: Boolean!
-    height: Float
-    heightUnit: HeightUnit
-    weight: Float
-    weightUnit: WeightUnit
-    unitSystem: UnitSystem
     GymProfiles: [GymProfile!]
     ProgressJournalGoalTags: [ProgressJournalGoalTag!]
   }
@@ -35,7 +29,6 @@ export default gql`
   # Only used for the currently logged in user to update themselves - so ID not required.
   input UpdateUserInput {
     userProfileScope: UserProfileScope
-    themeName: ThemeName
     avatarUri: String
     introVideoUri: String
     introVideoThumbUri: String
@@ -53,10 +46,7 @@ export default gql`
     firstname: String
     gender: Gender
     hasOnboarded: Boolean
-    height: Float
     lastname: String
-    unitSystem: UnitSystem
-    weight: Float
   }
 
   type UserPublicProfile {

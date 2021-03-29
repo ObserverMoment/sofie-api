@@ -34,11 +34,7 @@ export default gql`
     MALE
     FEMALE
     NONBINARY
-  }
-
-  enum HeightUnit {
-    CM
-    IN
+    NONE
   }
 
   enum LoadUnit {
@@ -54,21 +50,6 @@ export default gql`
   enum MoveScope {
     STANDARD
     CUSTOM
-  }
-
-  enum ThemeName {
-    DARK
-    LIGHT
-  }
-
-  enum UnitSystem {
-    IMPERIAL
-    METRIC
-  }
-
-  enum WeightUnit {
-    KG
-    LB
   }
 
   enum WorkoutMoveRepType {
