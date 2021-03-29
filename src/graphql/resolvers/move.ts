@@ -1,5 +1,5 @@
 import { PrismaPromise } from '@prisma/client'
-import { ApolloError } from 'apollo-server'
+import { ApolloError } from 'apollo-server-express'
 import { Context, ContextUserType } from '../..'
 import {
   MoveScope,

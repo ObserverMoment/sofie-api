@@ -36,6 +36,11 @@ export default gql`
     NONBINARY
   }
 
+  enum HeightUnit {
+    CM
+    IN
+  }
+
   enum LoadUnit {
     KG
     LB
@@ -51,7 +56,7 @@ export default gql`
     CUSTOM
   }
 
-  enum ThemePreference {
+  enum ThemeName {
     DARK
     LIGHT
   }
@@ -59,6 +64,11 @@ export default gql`
   enum UnitSystem {
     IMPERIAL
     METRIC
+  }
+
+  enum WeightUnit {
+    KG
+    LB
   }
 
   enum WorkoutMoveRepType {

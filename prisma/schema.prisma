@@ -151,6 +151,7 @@ model User {
   firebaseUid              String                    @unique
   createdAt                DateTime                  @default(now())
   hasOnboarded             Boolean                   @default(false)
+  themeName                ThemeName                 @default(DARK)
   userProfileScope         UserProfileScope          @default(PRIVATE)
   avatarUri                String?
   introVideoUri            String?
@@ -158,13 +159,14 @@ model User {
   displayName              String?                   @unique
   firstname                String?
   lastname                 String?
-  themePreference          ThemePreference           @default(DARK)
   bio                      String?
   tagline                  String?
   birthdate                DateTime?
   gender                   Gender?                   @default(NONBINARY)
   height                   Float?
+  heightUnit               HeightUnit                @default(CM)
   weight                   Float?
+  weightUnit               WeightUnit                @default(KG)
   townCity                 String?
   countryCode              String?
   instagramUrl             String?
@@ -587,17 +589,15 @@ enum DistanceUnit {
   MILES
 }
 
-enum HeightUnit {
-  CM
-  IN
-  METRES
-  FEET
-}
-
 enum Gender {
   MALE
   FEMALE
   NONBINARY
+}
+
+enum HeightUnit {
+  CM
+  IN
 }
 
 enum LoadUnit {
@@ -613,7 +613,7 @@ enum MoveScope {
   CUSTOM
 }
 
-enum ThemePreference {
+enum ThemeName {
   DARK
   LIGHT
 }
@@ -621,6 +621,11 @@ enum ThemePreference {
 enum UnitSystem {
   IMPERIAL
   METRIC
+}
+
+enum WeightUnit {
+  KG
+  LB
 }
 
 enum WorkoutMoveRepType {

@@ -1,7 +1,6 @@
 import { gql } from 'apollo-server-express'
 
 export default gql`
-  scalar JSON
   scalar DateTime
 
   type Query {
@@ -29,7 +28,7 @@ export default gql`
     textSearchCreatorPublicProfiles(text: String!): [UserPublicProfile!]
     #### User ####
     checkUniqueDisplayName(displayName: String!): Boolean!
-    userByUid(uid: ID!): User!
+    authedUser: User!
     #### User Public Profiles ####
     userPublicProfiles: [UserPublicProfile!]
     userPublicProfileByUserId(userId: ID!): UserPublicProfile!
@@ -135,7 +134,6 @@ export default gql`
     ): ScheduledWorkout!
     deleteScheduledWorkoutById(id: ID!): ID!
     #### User ####
-    createUser(uid: ID!): User!
     updateUser(data: UpdateUserInput!): User!
     #################
     #### Workout ####

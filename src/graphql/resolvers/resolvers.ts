@@ -70,10 +70,9 @@ import {
 
 import {
   checkUniqueDisplayName,
-  userByUid,
+  authedUser,
   userPublicProfileByUserId,
   userPublicProfiles,
-  createUser,
   updateUser,
   createGymProfile,
   updateGymProfile,
@@ -137,12 +136,10 @@ import {
   deleteWorkoutProgramReviewById,
 } from './workoutProgram'
 
-import GraphQLJSON from 'graphql-type-json'
 import { GraphQLScalarType } from 'graphql'
 import { Kind } from 'graphql/language'
 
 const resolvers: Resolvers = {
-  JSON: GraphQLJSON,
   DateTime: new GraphQLScalarType({
     name: 'DateTime',
     description: 'DateTime which assumes UTC is being sent to and from the DB.',
@@ -160,7 +157,7 @@ const resolvers: Resolvers = {
     },
   }),
   Query: {
-    validateToken: () => true, // Empty Resolver - call it and it will throw auth error if token is not valid / expired.
+    validateToken: () => true, // Empty Resolver - call it and it will throw auth error if token is not valid / expired or if an associated user does not exist in the database.
     //// Core Data ////
     bodyAreas,
     equipments,
@@ -184,7 +181,7 @@ const resolvers: Resolvers = {
     textSearchCreatorPublicProfiles,
     //// User ////
     checkUniqueDisplayName,
-    userByUid,
+    authedUser,
     userPublicProfileByUserId,
     userPublicProfiles,
     //// Workouts ////
@@ -259,7 +256,6 @@ const resolvers: Resolvers = {
     //////////////
     //// User ////
     //////////////
-    createUser,
     updateUser,
     /////////////////
     //// Workout ////

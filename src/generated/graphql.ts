@@ -12,10 +12,8 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  JSON: any;
   DateTime: any;
 };
-
 
 
 export type Query = {
@@ -37,7 +35,7 @@ export type Query = {
   textSearchWorkoutPrograms?: Maybe<Array<TextSearchWorkoutProgramResult>>;
   textSearchCreatorPublicProfiles?: Maybe<Array<UserPublicProfile>>;
   checkUniqueDisplayName: Scalars['Boolean'];
-  userByUid: User;
+  authedUser: User;
   userPublicProfiles?: Maybe<Array<UserPublicProfile>>;
   userPublicProfileByUserId: UserPublicProfile;
   officialWorkouts: Array<Workout>;
@@ -74,11 +72,6 @@ export type QueryTextSearchCreatorPublicProfilesArgs = {
 
 export type QueryCheckUniqueDisplayNameArgs = {
   displayName: Scalars['String'];
-};
-
-
-export type QueryUserByUidArgs = {
-  uid: Scalars['ID'];
 };
 
 
@@ -141,7 +134,6 @@ export type Mutation = {
   createScheduledWorkout: ScheduledWorkout;
   updateScheduledWorkout: ScheduledWorkout;
   deleteScheduledWorkoutById: Scalars['ID'];
-  createUser: User;
   updateUser: User;
   makeCopyWorkoutById: Workout;
   createWorkout: Workout;
@@ -369,11 +361,6 @@ export type MutationDeleteScheduledWorkoutByIdArgs = {
 };
 
 
-export type MutationCreateUserArgs = {
-  uid: Scalars['ID'];
-};
-
-
 export type MutationUpdateUserArgs = {
   data: UpdateUserInput;
 };
@@ -571,7 +558,7 @@ export type WorkoutSectionType = {
 export type BodyArea = {
   __typename?: 'BodyArea';
   id: Scalars['ID'];
-  name?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
   altNames?: Maybe<Scalars['String']>;
   BodyAreaMoveScores: Array<BodyAreaMoveScore>;
   frontBack: BodyAreaFrontBack;
@@ -614,6 +601,10 @@ export type Gender =
   | 'FEMALE'
   | 'NONBINARY';
 
+export type HeightUnit =
+  | 'CM'
+  | 'IN';
+
 export type LoadUnit =
   | 'KG'
   | 'LB'
@@ -627,13 +618,17 @@ export type MoveScope =
   | 'STANDARD'
   | 'CUSTOM';
 
-export type ThemePreference =
+export type ThemeName =
   | 'DARK'
   | 'LIGHT';
 
 export type UnitSystem =
   | 'IMPERIAL'
   | 'METRIC';
+
+export type WeightUnit =
+  | 'KG'
+  | 'LB';
 
 export type WorkoutMoveRepType =
   | 'REPS'
@@ -741,6 +736,7 @@ export type User = {
   __typename?: 'User';
   id: Scalars['ID'];
   userProfileScope: UserProfileScope;
+  themeName: ThemeName;
   avatarUri?: Maybe<Scalars['String']>;
   introVideoUri?: Maybe<Scalars['String']>;
   introVideoThumbUri?: Maybe<Scalars['String']>;
@@ -757,19 +753,20 @@ export type User = {
   linkedinUrl?: Maybe<Scalars['String']>;
   firstname?: Maybe<Scalars['String']>;
   lastname?: Maybe<Scalars['String']>;
-  themePreference: ThemePreference;
   gender?: Maybe<Gender>;
   hasOnboarded: Scalars['Boolean'];
   height?: Maybe<Scalars['Float']>;
+  heightUnit?: Maybe<HeightUnit>;
   weight?: Maybe<Scalars['Float']>;
+  weightUnit?: Maybe<WeightUnit>;
   unitSystem?: Maybe<UnitSystem>;
   GymProfiles?: Maybe<Array<GymProfile>>;
   ProgressJournalGoalTags?: Maybe<Array<ProgressJournalGoalTag>>;
 };
 
 export type UpdateUserInput = {
-  id: Scalars['ID'];
   userProfileScope?: Maybe<UserProfileScope>;
+  themeName?: Maybe<ThemeName>;
   avatarUri?: Maybe<Scalars['String']>;
   introVideoUri?: Maybe<Scalars['String']>;
   introVideoThumbUri?: Maybe<Scalars['String']>;
@@ -785,7 +782,6 @@ export type UpdateUserInput = {
   snapUrl?: Maybe<Scalars['String']>;
   linkedinUrl?: Maybe<Scalars['String']>;
   firstname?: Maybe<Scalars['String']>;
-  themePreference?: Maybe<ThemePreference>;
   gender?: Maybe<Gender>;
   hasOnboarded?: Maybe<Scalars['Boolean']>;
   height?: Maybe<Scalars['Float']>;
@@ -1450,11 +1446,6 @@ export type UpdateWorkoutProgramWorkoutInput = {
   Workout: Scalars['ID'];
 };
 
-export type AddLoggedWorkoutToProgramEnrolmentInput = {
-  workoutProgramEnrolmentId: Scalars['ID'];
-  LoggedWorkout: CreateLoggedWorkoutInput;
-};
-
 export type CreateWorkoutProgramReviewInput = {
   score: Scalars['Float'];
   comment?: Maybe<Scalars['String']>;
@@ -1546,7 +1537,6 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
-  JSON: ResolverTypeWrapper<Scalars['JSON']>;
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
   Query: ResolverTypeWrapper<{}>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
@@ -1565,10 +1555,12 @@ export type ResolversTypes = ResolversObject<{
   BodyAreaUpperLower: BodyAreaUpperLower;
   DistanceUnit: DistanceUnit;
   Gender: Gender;
+  HeightUnit: HeightUnit;
   LoadUnit: LoadUnit;
   MoveScope: MoveScope;
-  ThemePreference: ThemePreference;
+  ThemeName: ThemeName;
   UnitSystem: UnitSystem;
+  WeightUnit: WeightUnit;
   WorkoutMoveRepType: WorkoutMoveRepType;
   WorkoutSetGeneratorTarget: WorkoutSetGeneratorTarget;
   WorkoutSetGeneratorType: WorkoutSetGeneratorType;
@@ -1646,14 +1638,12 @@ export type ResolversTypes = ResolversObject<{
   UpdateWorkoutProgramInput: UpdateWorkoutProgramInput;
   CreateWorkoutProgramWorkoutInput: CreateWorkoutProgramWorkoutInput;
   UpdateWorkoutProgramWorkoutInput: UpdateWorkoutProgramWorkoutInput;
-  AddLoggedWorkoutToProgramEnrolmentInput: AddLoggedWorkoutToProgramEnrolmentInput;
   CreateWorkoutProgramReviewInput: CreateWorkoutProgramReviewInput;
   UpdateWorkoutProgramReviewInput: UpdateWorkoutProgramReviewInput;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
-  JSON: Scalars['JSON'];
   DateTime: Scalars['DateTime'];
   Query: {};
   Boolean: Scalars['Boolean'];
@@ -1740,14 +1730,9 @@ export type ResolversParentTypes = ResolversObject<{
   UpdateWorkoutProgramInput: UpdateWorkoutProgramInput;
   CreateWorkoutProgramWorkoutInput: CreateWorkoutProgramWorkoutInput;
   UpdateWorkoutProgramWorkoutInput: UpdateWorkoutProgramWorkoutInput;
-  AddLoggedWorkoutToProgramEnrolmentInput: AddLoggedWorkoutToProgramEnrolmentInput;
   CreateWorkoutProgramReviewInput: CreateWorkoutProgramReviewInput;
   UpdateWorkoutProgramReviewInput: UpdateWorkoutProgramReviewInput;
 }>;
-
-export interface JsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['JSON'], any> {
-  name: 'JSON';
-}
 
 export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {
   name: 'DateTime';
@@ -1771,7 +1756,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   textSearchWorkoutPrograms?: Resolver<Maybe<Array<ResolversTypes['TextSearchWorkoutProgramResult']>>, ParentType, ContextType, RequireFields<QueryTextSearchWorkoutProgramsArgs, 'text'>>;
   textSearchCreatorPublicProfiles?: Resolver<Maybe<Array<ResolversTypes['UserPublicProfile']>>, ParentType, ContextType, RequireFields<QueryTextSearchCreatorPublicProfilesArgs, 'text'>>;
   checkUniqueDisplayName?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryCheckUniqueDisplayNameArgs, 'displayName'>>;
-  userByUid?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<QueryUserByUidArgs, 'uid'>>;
+  authedUser?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   userPublicProfiles?: Resolver<Maybe<Array<ResolversTypes['UserPublicProfile']>>, ParentType, ContextType>;
   userPublicProfileByUserId?: Resolver<ResolversTypes['UserPublicProfile'], ParentType, ContextType, RequireFields<QueryUserPublicProfileByUserIdArgs, 'userId'>>;
   officialWorkouts?: Resolver<Array<ResolversTypes['Workout']>, ParentType, ContextType>;
@@ -1824,7 +1809,6 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createScheduledWorkout?: Resolver<ResolversTypes['ScheduledWorkout'], ParentType, ContextType, RequireFields<MutationCreateScheduledWorkoutArgs, 'data'>>;
   updateScheduledWorkout?: Resolver<ResolversTypes['ScheduledWorkout'], ParentType, ContextType, RequireFields<MutationUpdateScheduledWorkoutArgs, 'data'>>;
   deleteScheduledWorkoutById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteScheduledWorkoutByIdArgs, 'id'>>;
-  createUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'uid'>>;
   updateUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationUpdateUserArgs, 'data'>>;
   makeCopyWorkoutById?: Resolver<ResolversTypes['Workout'], ParentType, ContextType, RequireFields<MutationMakeCopyWorkoutByIdArgs, 'id'>>;
   createWorkout?: Resolver<ResolversTypes['Workout'], ParentType, ContextType, RequireFields<MutationCreateWorkoutArgs, 'data'>>;
@@ -1883,7 +1867,7 @@ export type WorkoutSectionTypeResolvers<ContextType = any, ParentType extends Re
 
 export type BodyAreaResolvers<ContextType = any, ParentType extends ResolversParentTypes['BodyArea'] = ResolversParentTypes['BodyArea']> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   altNames?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   BodyAreaMoveScores?: Resolver<Array<ResolversTypes['BodyAreaMoveScore']>, ParentType, ContextType>;
   frontBack?: Resolver<ResolversTypes['BodyAreaFrontBack'], ParentType, ContextType>;
@@ -1935,6 +1919,7 @@ export type MoveTypeResolvers<ContextType = any, ParentType extends ResolversPar
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   userProfileScope?: Resolver<ResolversTypes['UserProfileScope'], ParentType, ContextType>;
+  themeName?: Resolver<ResolversTypes['ThemeName'], ParentType, ContextType>;
   avatarUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   introVideoUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   introVideoThumbUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -1951,11 +1936,12 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   linkedinUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   firstname?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   lastname?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  themePreference?: Resolver<ResolversTypes['ThemePreference'], ParentType, ContextType>;
   gender?: Resolver<Maybe<ResolversTypes['Gender']>, ParentType, ContextType>;
   hasOnboarded?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   height?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  heightUnit?: Resolver<Maybe<ResolversTypes['HeightUnit']>, ParentType, ContextType>;
   weight?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  weightUnit?: Resolver<Maybe<ResolversTypes['WeightUnit']>, ParentType, ContextType>;
   unitSystem?: Resolver<Maybe<ResolversTypes['UnitSystem']>, ParentType, ContextType>;
   GymProfiles?: Resolver<Maybe<Array<ResolversTypes['GymProfile']>>, ParentType, ContextType>;
   ProgressJournalGoalTags?: Resolver<Maybe<Array<ResolversTypes['ProgressJournalGoalTag']>>, ParentType, ContextType>;
@@ -2255,7 +2241,6 @@ export type WorkoutProgramReviewResolvers<ContextType = any, ParentType extends 
 }>;
 
 export type Resolvers<ContextType = any> = ResolversObject<{
-  JSON?: GraphQLScalarType;
   DateTime?: GraphQLScalarType;
   Query?: QueryResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;

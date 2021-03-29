@@ -1,4 +1,9 @@
-import { ApolloServer, AuthenticationError, ResolverFn } from 'apollo-server'
+import express from 'express'
+import {
+  ApolloServer,
+  AuthenticationError,
+  ResolverFn,
+} from 'apollo-server-express'
 import resolvers from './graphql/resolvers/resolvers'
 import typeDefs from './graphql/schema/typeDefs'
 import { applyMiddleware } from 'graphql-middleware'
@@ -7,8 +12,12 @@ import { PrismaSelect } from '@paljs/plugins'
 import { makeExecutableSchema } from 'graphql-tools'
 import { GraphQLResolveInfo } from 'graphql'
 import { firebaseVerifyToken } from './lib/firebaseAdmin'
+import registerNewUser from './restApi/registerNewUser'
+import currentUser from './restApi/currentUser'
 
 require('dotenv').config()
+
+const app = express()
 
 export type ContextUserType = 'ADMIN' | 'USER'
 
@@ -87,13 +96,12 @@ const createUserContext = async (uid: string) => {
 
 // https://github.com/prisma-labs/graphqlgen/issues/15
 const server = new ApolloServer({
-  cors: {
-    origin: process.env.ADMIN_APP_CLIENT_URL,
-  },
   schema: applyMiddleware(schema, selectMiddleware),
   context: async ({ req }) => {
     const userType = req.headers['user-type']
     const authToken = req.headers.authorization
+      ? req.headers.authorization.replace('Bearer ', '')
+      : null
 
     if (!authToken) {
       throw new AuthenticationError(
@@ -119,8 +127,14 @@ const server = new ApolloServer({
   },
 })
 
-const PORT = process.env.PORT || 4000
+const PORT: number = process.env.PORT ? parseInt(process.env.PORT) : 4000
 
-server.listen({ port: PORT }).then(({ url }) => {
-  console.log(`🚀  Server ready at ${url}`)
+// RESTful endpoints - used for registration and auth.
+app.post('/api/user/register', (req, res) => registerNewUser(req, res, prisma))
+app.post('/api/user/current', (req, res) => currentUser(req, res, prisma))
+
+server.applyMiddleware({ app, cors: { credentials: true, origin: true } })
+
+app.listen(PORT, () => {
+  console.log(`🚀  Server ready at port ${PORT}`)
 })

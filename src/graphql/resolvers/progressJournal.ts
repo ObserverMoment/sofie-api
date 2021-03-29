@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client'
-import { ApolloError, AuthenticationError } from 'apollo-server'
+import { ApolloError, AuthenticationError } from 'apollo-server-express'
 import { Context } from '../..'
 import {
   MutationCreateProgressJournalArgs,
