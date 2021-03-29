@@ -15,7 +15,7 @@ import {
   BodyAreaMoveScoreInput,
 } from '../../generated/graphql'
 import { checkMoveMediaForDeletion, deleteFiles } from '../../uploadcare'
-import { checkUserOwnsObject } from '../utils'
+import { AccessScopeError, checkUserOwnsObject } from '../utils'
 
 //// Queries ////
 // Move scopes are 'STANDARD' or 'CUSTOM'.
@@ -100,7 +100,13 @@ export const updateMove = async (
   { data }: MutationUpdateMoveArgs,
   { authedUserId, userType, prisma, select }: Context,
 ) => {
-  await checkUserOwnsObject(data.id, 'move', authedUserId, prisma)
+  if (data.scope === 'CUSTOM') {
+    await checkUserOwnsObject(data.id, 'move', authedUserId, prisma)
+  } else {
+    if (userType !== 'ADMIN') {
+      throw new AccessScopeError()
+    }
+  }
   validateUpdateMoveInput(data, userType)
 
   // Check if any media files need to be updated. Only delete files from the server after the rest of the transaction is complete.

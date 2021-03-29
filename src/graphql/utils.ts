@@ -1,7 +1,6 @@
 import { PrismaClient } from '@prisma/client'
 import { ApolloError } from 'apollo-server-errors'
 import { ContextUserType } from '..'
-import { CreateWorkoutMoveInput } from '../generated/graphql'
 
 export class AccessScopeError extends ApolloError {
   constructor(message: string = 'You do not have access to this data.') {
