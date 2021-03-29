@@ -133,7 +133,13 @@ const PORT: number = process.env.PORT ? parseInt(process.env.PORT) : 4000
 app.post('/api/user/register', (req, res) => registerNewUser(req, res, prisma))
 app.post('/api/user/current', (req, res) => currentUser(req, res, prisma))
 
-server.applyMiddleware({ app, cors: { credentials: true, origin: true } })
+// CORS configuration
+const corsOptions = {
+  origin: process.env.ADMIN_APP_CLIENT_URL,
+  credentials: true,
+}
+
+server.applyMiddleware({ app, cors: corsOptions })
 
 app.listen(PORT, () => {
   console.log(`🚀  Server ready at port ${PORT}`)

@@ -96,9 +96,7 @@ export const updateUser = async (
     },
     data: {
       ...data,
-      unitSystem: data.unitSystem || undefined,
       userProfileScope: data.userProfileScope || undefined,
-      themeName: data.themeName || undefined,
       hasOnboarded: data.hasOnboarded || undefined,
     },
     select,
