@@ -36,6 +36,7 @@ export type Query = {
   textSearchCreatorPublicProfiles?: Maybe<Array<UserPublicProfile>>;
   checkUniqueDisplayName: Scalars['Boolean'];
   authedUser: User;
+  gymProfiles: Array<GymProfile>;
   userPublicProfiles?: Maybe<Array<UserPublicProfile>>;
   userPublicProfileByUserId: UserPublicProfile;
   officialWorkouts: Array<Workout>;
@@ -574,12 +575,6 @@ export type BodyAreaMoveScore = {
 };
 
 /** Enums */
-export type ContentAccessScope =
-  | 'PRIVATE'
-  | 'PUBLIC'
-  | 'GROUP'
-  | 'OFFICIAL';
-
 export type BodyAreaFrontBack =
   | 'BACK'
   | 'FRONT'
@@ -589,6 +584,19 @@ export type BodyAreaUpperLower =
   | 'CORE'
   | 'LOWER'
   | 'UPPER';
+
+export type ContentAccessScope =
+  | 'PRIVATE'
+  | 'PUBLIC'
+  | 'GROUP'
+  | 'OFFICIAL';
+
+export type DifficultyLevel =
+  | 'LIGHT'
+  | 'CHALLENGING'
+  | 'INTERMEDIATE'
+  | 'ADVANCED'
+  | 'ELITE';
 
 export type DistanceUnit =
   | 'METRES'
@@ -640,14 +648,12 @@ export type Equipment = {
   id: Scalars['ID'];
   name: Scalars['String'];
   altNames?: Maybe<Scalars['String']>;
-  imageUrl?: Maybe<Scalars['String']>;
   loadAdjustable: Scalars['Boolean'];
 };
 
 export type CreateEquipmentInput = {
   name: Scalars['String'];
   altNames?: Maybe<Scalars['String']>;
-  imageUrl?: Maybe<Scalars['String']>;
   loadAdjustable: Scalars['Boolean'];
 };
 
@@ -655,7 +661,6 @@ export type UpdateEquipmentInput = {
   id: Scalars['ID'];
   name?: Maybe<Scalars['String']>;
   altNames?: Maybe<Scalars['String']>;
-  imageUrl?: Maybe<Scalars['String']>;
   loadAdjustable?: Maybe<Scalars['Boolean']>;
 };
 
@@ -798,26 +803,19 @@ export type GymProfile = {
   id: Scalars['ID'];
   name: Scalars['String'];
   description?: Maybe<Scalars['String']>;
-  postcode?: Maybe<Scalars['String']>;
-  bodyweightOnly: Scalars['Boolean'];
-  User: User;
-  Equipments?: Maybe<Array<Equipment>>;
+  Equipments: Array<Equipment>;
 };
 
 export type CreateGymProfileInput = {
   name: Scalars['String'];
   description?: Maybe<Scalars['String']>;
-  postcode?: Maybe<Scalars['String']>;
-  bodyweightOnly?: Maybe<Scalars['Boolean']>;
-  Equipments?: Maybe<Array<Scalars['ID']>>;
+  Equipments: Array<Scalars['ID']>;
 };
 
 export type UpdateGymProfileInput = {
   id: Scalars['ID'];
   name?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
-  postcode?: Maybe<Scalars['String']>;
-  bodyweightOnly?: Maybe<Scalars['Boolean']>;
   Equipments?: Maybe<Array<Scalars['ID']>>;
 };
 
@@ -1145,10 +1143,10 @@ export type Workout = {
   introVideoThumbUri?: Maybe<Scalars['String']>;
   introAudioUri?: Maybe<Scalars['String']>;
   coverImageUri?: Maybe<Scalars['String']>;
-  difficultyLevel: Scalars['Int'];
+  difficultyLevel: DifficultyLevel;
   contentAccessScope: ContentAccessScope;
   WorkoutSections: Array<WorkoutSection>;
-  WorkoutGoals?: Maybe<Array<WorkoutGoal>>;
+  WorkoutGoals: Array<WorkoutGoal>;
 };
 
 export type CreateWorkoutInput = {
@@ -1159,10 +1157,10 @@ export type CreateWorkoutInput = {
   introVideoThumbUri?: Maybe<Scalars['String']>;
   introAudioUri?: Maybe<Scalars['String']>;
   coverImageUri?: Maybe<Scalars['String']>;
-  difficultyLevel: Scalars['Int'];
+  difficultyLevel: DifficultyLevel;
   contentAccessScope: ContentAccessScope;
   WorkoutSections: Array<CreateWorkoutSectionInput>;
-  WorkoutGoals?: Maybe<Array<Scalars['ID']>>;
+  WorkoutGoals: Array<Scalars['ID']>;
 };
 
 export type UpdateWorkoutInput = {
@@ -1174,7 +1172,7 @@ export type UpdateWorkoutInput = {
   introVideoThumbUri?: Maybe<Scalars['String']>;
   introAudioUri?: Maybe<Scalars['String']>;
   coverImageUri?: Maybe<Scalars['String']>;
-  difficultyLevel?: Maybe<Scalars['Int']>;
+  difficultyLevel?: Maybe<DifficultyLevel>;
   contentAccessScope?: Maybe<ContentAccessScope>;
   WorkoutGoals?: Maybe<Array<Scalars['ID']>>;
 };
@@ -1525,9 +1523,10 @@ export type ResolversTypes = ResolversObject<{
   BodyArea: ResolverTypeWrapper<BodyArea>;
   BodyAreaMoveScore: ResolverTypeWrapper<BodyAreaMoveScore>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
-  ContentAccessScope: ContentAccessScope;
   BodyAreaFrontBack: BodyAreaFrontBack;
   BodyAreaUpperLower: BodyAreaUpperLower;
+  ContentAccessScope: ContentAccessScope;
+  DifficultyLevel: DifficultyLevel;
   DistanceUnit: DistanceUnit;
   Gender: Gender;
   LoadUnit: LoadUnit;
@@ -1728,6 +1727,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   textSearchCreatorPublicProfiles?: Resolver<Maybe<Array<ResolversTypes['UserPublicProfile']>>, ParentType, ContextType, RequireFields<QueryTextSearchCreatorPublicProfilesArgs, 'text'>>;
   checkUniqueDisplayName?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryCheckUniqueDisplayNameArgs, 'displayName'>>;
   authedUser?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  gymProfiles?: Resolver<Array<ResolversTypes['GymProfile']>, ParentType, ContextType>;
   userPublicProfiles?: Resolver<Maybe<Array<ResolversTypes['UserPublicProfile']>>, ParentType, ContextType>;
   userPublicProfileByUserId?: Resolver<ResolversTypes['UserPublicProfile'], ParentType, ContextType, RequireFields<QueryUserPublicProfileByUserIdArgs, 'userId'>>;
   officialWorkouts?: Resolver<Array<ResolversTypes['Workout']>, ParentType, ContextType>;
@@ -1858,7 +1858,6 @@ export type EquipmentResolvers<ContextType = any, ParentType extends ResolversPa
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   altNames?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  imageUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   loadAdjustable?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
@@ -1945,10 +1944,7 @@ export type GymProfileResolvers<ContextType = any, ParentType extends ResolversP
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  postcode?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  bodyweightOnly?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  User?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
-  Equipments?: Resolver<Maybe<Array<ResolversTypes['Equipment']>>, ParentType, ContextType>;
+  Equipments?: Resolver<Array<ResolversTypes['Equipment']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -2092,10 +2088,10 @@ export type WorkoutResolvers<ContextType = any, ParentType extends ResolversPare
   introVideoThumbUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   introAudioUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   coverImageUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  difficultyLevel?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  difficultyLevel?: Resolver<ResolversTypes['DifficultyLevel'], ParentType, ContextType>;
   contentAccessScope?: Resolver<ResolversTypes['ContentAccessScope'], ParentType, ContextType>;
   WorkoutSections?: Resolver<Array<ResolversTypes['WorkoutSection']>, ParentType, ContextType>;
-  WorkoutGoals?: Resolver<Maybe<Array<ResolversTypes['WorkoutGoal']>>, ParentType, ContextType>;
+  WorkoutGoals?: Resolver<Array<ResolversTypes['WorkoutGoal']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 

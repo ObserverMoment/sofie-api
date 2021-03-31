@@ -5,27 +5,20 @@ export default gql`
     id: ID!
     name: String!
     description: String
-    postcode: String
-    bodyweightOnly: Boolean!
-    User: User!
-    Equipments: [Equipment!]
+    Equipments: [Equipment!]!
   }
 
   input CreateGymProfileInput {
     name: String!
     description: String
-    postcode: String
-    bodyweightOnly: Boolean
     # List of String (ID) ids to connect.
-    Equipments: [ID!]
+    Equipments: [ID!]!
   }
 
   input UpdateGymProfileInput {
     id: ID!
     name: String
     description: String
-    postcode: String
-    bodyweightOnly: Boolean
     # List of String (ID) ids to connect.
     Equipments: [ID!]
   }

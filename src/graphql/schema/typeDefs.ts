@@ -1,7 +1,7 @@
 import { mergeTypeDefs } from '@graphql-tools/merge'
 import mainSchema from './main'
 import userSchema from './user'
-import userProfile from './userProfile'
+import gymProfile from './gymProfile'
 import progressJournal from './progressJournal'
 import equipmentSchema from './equipment'
 import moveSchema from './move'
@@ -23,7 +23,7 @@ const typeDefs = mergeTypeDefs([
   equipmentSchema,
   moveSchema,
   userSchema,
-  userProfile,
+  gymProfile,
   loggedWorkoutSchema,
   progressJournal,
   scheduledWorkoutSchema,

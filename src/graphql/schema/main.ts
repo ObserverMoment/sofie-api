@@ -29,6 +29,7 @@ export default gql`
     #### User ####
     checkUniqueDisplayName(displayName: String!): Boolean!
     authedUser: User!
+    gymProfiles: [GymProfile!]!
     #### User Public Profiles ####
     userPublicProfiles: [UserPublicProfile!]
     userPublicProfileByUserId(userId: ID!): UserPublicProfile!

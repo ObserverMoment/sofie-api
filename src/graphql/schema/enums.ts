@@ -4,13 +4,6 @@ export default gql`
   """
   Enums
   """
-  enum ContentAccessScope {
-    PRIVATE
-    PUBLIC
-    GROUP
-    OFFICIAL
-  }
-
   enum BodyAreaFrontBack {
     BACK
     FRONT
@@ -21,6 +14,21 @@ export default gql`
     CORE
     LOWER
     UPPER
+  }
+
+  enum ContentAccessScope {
+    PRIVATE
+    PUBLIC
+    GROUP
+    OFFICIAL
+  }
+
+  enum DifficultyLevel {
+    LIGHT
+    CHALLENGING
+    INTERMEDIATE
+    ADVANCED
+    ELITE
   }
 
   enum DistanceUnit {

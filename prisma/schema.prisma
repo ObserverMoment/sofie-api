@@ -18,7 +18,7 @@ model Admin {
 }
 
 ///////////////////////////////////////
-//// Global / Core Data ///////////////
+//// Global / Core Data / Tags ////////
 ///////////////////////////////////////
 model BodyArea {
   id                 String              @id @default(uuid())
@@ -122,9 +122,6 @@ model GymProfile {
   userId            String
   name              String
   description       String?
-  postcode          String?
-  // i.e. there is no equipment as this gym.
-  bodyweightOnly    Boolean            @default(false)
   Equipments        Equipment[]
   ScheduledWorkouts ScheduledWorkout[]
   LoggedWorkouts    LoggedWorkout[]
@@ -251,7 +248,7 @@ model Workout {
   introVideoThumbUri     String?
   introAudioUri          String?
   coverImageUri          String?
-  difficultyLevel        Int                     @default(50)
+  difficultyLevel        DifficultyLevel         @default(INTERMEDIATE)
   contentAccessScope     ContentAccessScope      @default(PRIVATE)
   WorkoutSections        WorkoutSection[]
   LoggedWorkouts         LoggedWorkout[]
@@ -574,6 +571,14 @@ enum ContentAccessScope {
   PUBLIC
   GROUP
   PRIVATE
+}
+
+enum DifficultyLevel {
+  LIGHT
+  CHALLENGING
+  INTERMEDIATE
+  ADVANCED
+  ELITE
 }
 
 enum DistanceUnit {

@@ -12,10 +12,10 @@ export default gql`
     introVideoThumbUri: String
     introAudioUri: String
     coverImageUri: String
-    difficultyLevel: Int!
+    difficultyLevel: DifficultyLevel!
     contentAccessScope: ContentAccessScope!
     WorkoutSections: [WorkoutSection!]!
-    WorkoutGoals: [WorkoutGoal!]
+    WorkoutGoals: [WorkoutGoal!]!
   }
 
   input CreateWorkoutInput {
@@ -26,10 +26,10 @@ export default gql`
     introVideoThumbUri: String
     introAudioUri: String
     coverImageUri: String
-    difficultyLevel: Int!
+    difficultyLevel: DifficultyLevel!
     contentAccessScope: ContentAccessScope!
     WorkoutSections: [CreateWorkoutSectionInput!]!
-    WorkoutGoals: [ID!]
+    WorkoutGoals: [ID!]!
   }
 
   input UpdateWorkoutInput {
@@ -41,7 +41,7 @@ export default gql`
     introVideoThumbUri: String
     introAudioUri: String
     coverImageUri: String
-    difficultyLevel: Int
+    difficultyLevel: DifficultyLevel
     contentAccessScope: ContentAccessScope
     WorkoutGoals: [ID!]
   }

@@ -74,10 +74,14 @@ import {
   userPublicProfileByUserId,
   userPublicProfiles,
   updateUser,
+} from './user'
+
+import {
+  gymProfiles,
   createGymProfile,
   updateGymProfile,
   deleteGymProfileById,
-} from './user'
+} from './gymProfile'
 
 import {
   officialWorkouts,
@@ -183,6 +187,7 @@ const resolvers: Resolvers = {
     //// User ////
     checkUniqueDisplayName,
     authedUser,
+    gymProfiles,
     userPublicProfileByUserId,
     userPublicProfiles,
     //// Workouts ////
