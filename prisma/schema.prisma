@@ -124,7 +124,6 @@ model GymProfile {
   description       String?
   Equipments        Equipment[]
   ScheduledWorkouts ScheduledWorkout[]
-  LoggedWorkouts    LoggedWorkout[]
 }
 
 model ScheduledWorkout {
@@ -428,8 +427,6 @@ model LoggedWorkout {
   Workout                   Workout?                 @relation(fields: [workoutId], references: [id])
   workoutId                 String?
   ScheduledWorkout          ScheduledWorkout?
-  GymProfile                GymProfile?              @relation(fields: [gymProfileId], references: [id])
-  gymProfileId              String?
   // Need to connect to both the enrolment and the programWorkout to ensure ease of lookup.
   WorkoutProgramEnrolment   WorkoutProgramEnrolment? @relation(fields: [workoutProgramEnrolmentId], references: [id])
   workoutProgramEnrolmentId String?
