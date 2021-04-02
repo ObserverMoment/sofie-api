@@ -98,9 +98,6 @@ export const createLoggedWorkout = async (
       Workout: {
         connect: { id: data.Workout || undefined },
       },
-      GymProfile: {
-        connect: { id: data.GymProfile || undefined },
-      },
       ScheduledWorkout: {
         connect: { id: data.ScheduledWorkout || undefined },
       },
@@ -136,9 +133,6 @@ export const updateLoggedWorkout = async (
     data: {
       ...data,
       name: data.name || undefined,
-      GymProfile: {
-        connect: { id: data.GymProfile || undefined },
-      },
       ScheduledWorkout: {
         connect: { id: data.ScheduledWorkout || undefined },
       },

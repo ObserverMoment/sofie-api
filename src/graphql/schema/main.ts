@@ -219,7 +219,6 @@ export default gql`
     name: String!
     subtitle: String!
     description: String!
-    imageUri: String!
     validRepTypes: [WorkoutMoveRepType!]!
     WorkoutSections: [WorkoutSection!]!
     LoggedWorkoutSections: [LoggedWorkoutSection!]!

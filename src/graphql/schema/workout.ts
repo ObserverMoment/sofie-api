@@ -6,7 +6,6 @@ export default gql`
     createdAt: DateTime!
     User: User
     name: String!
-    summary: String
     description: String
     introVideoUri: String
     introVideoThumbUri: String
@@ -16,11 +15,11 @@ export default gql`
     contentAccessScope: ContentAccessScope!
     WorkoutSections: [WorkoutSection!]!
     WorkoutGoals: [WorkoutGoal!]!
+    WorkoutTags: [WorkoutTag!]!
   }
 
   input CreateWorkoutInput {
     name: String!
-    summary: String
     description: String
     introVideoUri: String
     introVideoThumbUri: String
@@ -30,12 +29,12 @@ export default gql`
     contentAccessScope: ContentAccessScope!
     WorkoutSections: [CreateWorkoutSectionInput!]!
     WorkoutGoals: [ID!]!
+    WorkoutTags: [ID!]!
   }
 
   input UpdateWorkoutInput {
     id: ID!
     name: String
-    summary: String
     description: String
     introVideoUri: String
     introVideoThumbUri: String
@@ -44,5 +43,21 @@ export default gql`
     difficultyLevel: DifficultyLevel
     contentAccessScope: ContentAccessScope
     WorkoutGoals: [ID!]
+    WorkoutTags: [ID!]!
+  }
+
+  type WorkoutTag {
+    id: ID!
+    User: User!
+    tag: String!
+  }
+
+  input CreateWorkoutTagInput {
+    tag: String!
+  }
+
+  input UpdateWorkoutTagInput {
+    id: ID!
+    tag: String!
   }
 `

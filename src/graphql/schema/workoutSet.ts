@@ -16,7 +16,7 @@ export default gql`
 
   input CreateWorkoutSetInput {
     sortPosition: Int!
-    rounds: Int!
+    rounds: Int
     notes: String
     WorkoutSection: ID!
   }

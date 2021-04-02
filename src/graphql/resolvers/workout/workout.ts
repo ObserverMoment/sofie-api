@@ -97,6 +97,11 @@ export const createWorkout = async (
           ? data.WorkoutGoals.map((id) => ({ id }))
           : undefined,
       },
+      WorkoutTags: {
+        connect: data.WorkoutTags
+          ? data.WorkoutTags.map((id) => ({ id }))
+          : undefined,
+      },
     },
     select,
   })
@@ -132,6 +137,11 @@ export const updateWorkout = async (
       WorkoutGoals: {
         set: data.WorkoutGoals
           ? data.WorkoutGoals.map((id) => ({ id }))
+          : undefined,
+      },
+      WorkoutTags: {
+        set: data.WorkoutTags
+          ? data.WorkoutTags.map((id) => ({ id }))
           : undefined,
       },
     },
@@ -180,6 +190,7 @@ export const makeCopyWorkoutById = async (
     where: { id },
     include: {
       WorkoutGoals: true,
+      WorkoutTags: true,
       WorkoutSections: {
         include: {
           WorkoutSets: {
@@ -221,6 +232,9 @@ export const makeCopyWorkoutById = async (
       },
       WorkoutGoals: {
         connect: original.WorkoutGoals.map(({ id }) => ({ id })),
+      },
+      WorkoutTags: {
+        connect: original.WorkoutTags.map(({ id }) => ({ id })),
       },
       WorkoutSections: {
         create: original.WorkoutSections.map((section) => ({

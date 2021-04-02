@@ -106,7 +106,6 @@ model WorkoutSectionType {
   name                  String
   subtitle              String
   description           String
-  imageUri              String?
   validRepTypes         WorkoutMoveRepType[]
   WorkoutSections       WorkoutSection[]
   LoggedWorkoutSections LoggedWorkoutSection[]
@@ -187,6 +186,7 @@ model User {
   WorkoutMoves             WorkoutMove[]
   WorkoutSetGenerators     WorkoutSetGenerator[]
   WorkoutSetIntervalBuyIn  WorkoutSetIntervalBuyIn[]
+  WorkoutTag               WorkoutTag[]
 }
 
 model UserCollection {
@@ -241,7 +241,6 @@ model Workout {
   User                   User?                   @relation(fields: [userId], references: [id])
   userId                 String?
   name                   String
-  summary                String?
   description            String?
   introVideoUri          String?
   introVideoThumbUri     String?
@@ -255,6 +254,16 @@ model Workout {
   WorkoutGoals           WorkoutGoal[]
   UserCollections        UserCollection[]
   WorkoutProgramWorkouts WorkoutProgramWorkout[]
+  WorkoutTags            WorkoutTag[]
+}
+
+model WorkoutTag {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  User      User      @relation(fields: [userId], references: [id])
+  userId    String
+  tag       String
+  Workouts  Workout[]
 }
 
 model WorkoutSection {
@@ -265,7 +274,7 @@ model WorkoutSection {
   userId               String
   name                 String?
   notes                String?
-  rounds               Int?               @default(1)
+  rounds               Int                @default(1)
   timecap              Int? // Seconds. To finish ALL rounds of the section. i.e. the whole 'workout' as described.
   sortPosition         Int
   introVideoUri        String? // Will play before workout starts
@@ -290,7 +299,7 @@ model WorkoutSet {
   User             User                     @relation(fields: [userId], references: [id])
   userId           String
   sortPosition     Int
-  rounds           Int?                     @default(1)
+  rounds           Int                      @default(1)
   notes            String?
   Generators       WorkoutSetGenerator[]
   IntervalBuyIn    WorkoutSetIntervalBuyIn?

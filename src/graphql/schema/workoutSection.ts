@@ -3,8 +3,10 @@ import { gql } from 'apollo-server-express'
 export default gql`
   type WorkoutSection {
     id: ID!
-    name: String!
+    name: String
     notes: String
+    rounds: Int!
+    timecap: Int
     sortPosition: Int!
     introVideoUri: String
     introVideoThumbUri: String
@@ -21,8 +23,10 @@ export default gql`
   }
 
   input CreateWorkoutSectionInput {
-    name: String!
+    name: String
     notes: String
+    rounds: Int
+    timecap: Int
     sortPosition: Int!
     introVideoUri: String
     introVideoThumbUri: String
@@ -41,6 +45,8 @@ export default gql`
     id: ID!
     name: String
     notes: String
+    rounds: Int
+    timecap: Int
     introVideoUri: String
     introVideoThumbUri: String
     introAudioUri: String

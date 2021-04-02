@@ -20,7 +20,6 @@ import {
 } from '../../../generated/graphql'
 import { Context } from '../../..'
 import { ApolloError } from 'apollo-server-express'
-import { database } from 'firebase-admin'
 import { PrismaPromise } from '@prisma/client'
 
 export const createWorkoutSet = async (
@@ -38,6 +37,7 @@ export const createWorkoutSet = async (
   const workoutSet = await prisma.workoutSet.create({
     data: {
       ...data,
+      rounds: data.rounds || undefined,
       User: {
         connect: { id: authedUserId },
       },
@@ -63,7 +63,10 @@ export const updateWorkoutSet = async (
   await checkUserOwnsObject(data.id, 'workoutSet', authedUserId, prisma)
   const updated = await prisma.workoutSet.update({
     where: { id: data.id },
-    data,
+    data: {
+      ...data,
+      rounds: data.rounds || undefined,
+    },
     select,
   })
 

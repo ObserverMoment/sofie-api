@@ -24,6 +24,8 @@ export const createWorkoutSection = async (
   const workoutSection = await prisma.workoutSection.create({
     data: {
       ...data,
+      // Will default to 1 in the DB.
+      rounds: data.rounds || undefined,
       User: {
         connect: { id: authedUserId },
       },
@@ -62,6 +64,7 @@ export const updateWorkoutSection = async (
     },
     data: {
       ...data,
+      rounds: data.rounds || undefined,
       // Never update a single section's sort position - use the dedicated re-order resolvers instead..
       sortPosition: undefined,
     },

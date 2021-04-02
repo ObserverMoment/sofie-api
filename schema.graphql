@@ -124,7 +124,6 @@ type WorkoutSectionType {
   name: String!
   subtitle: String!
   description: String!
-  imageUri: String!
   validRepTypes: [WorkoutMoveRepType!]!
   WorkoutSections: [WorkoutSection!]!
   LoggedWorkoutSections: [LoggedWorkoutSection!]!
@@ -640,7 +639,6 @@ type Workout {
   createdAt: DateTime!
   User: User
   name: String!
-  summary: String
   description: String
   introVideoUri: String
   introVideoThumbUri: String
@@ -650,10 +648,10 @@ type Workout {
   contentAccessScope: ContentAccessScope!
   WorkoutSections: [WorkoutSection!]!
   WorkoutGoals: [WorkoutGoal!]!
+  WorkoutTags: [WorkoutTag!]!
 }
 input CreateWorkoutInput {
   name: String!
-  summary: String
   description: String
   introVideoUri: String
   introVideoThumbUri: String
@@ -663,11 +661,11 @@ input CreateWorkoutInput {
   contentAccessScope: ContentAccessScope!
   WorkoutSections: [CreateWorkoutSectionInput!]!
   WorkoutGoals: [ID!]!
+  WorkoutTags: [ID!]!
 }
 input UpdateWorkoutInput {
   id: ID!
   name: String
-  summary: String
   description: String
   introVideoUri: String
   introVideoThumbUri: String
@@ -676,11 +674,26 @@ input UpdateWorkoutInput {
   difficultyLevel: DifficultyLevel
   contentAccessScope: ContentAccessScope
   WorkoutGoals: [ID!]
+  WorkoutTags: [ID!]!
+}
+type WorkoutTag {
+  id: ID!
+  User: User!
+  tag: String!
+}
+input CreateWorkoutTagInput {
+  tag: String!
+}
+input UpdateWorkoutTagInput {
+  id: ID!
+  tag: String!
 }
 type WorkoutSection {
   id: ID!
-  name: String!
+  name: String
   notes: String
+  rounds: Int!
+  timecap: Int
   sortPosition: Int!
   introVideoUri: String
   introVideoThumbUri: String
@@ -696,8 +709,10 @@ type WorkoutSection {
   WorkoutSets: [WorkoutSet!]!
 }
 input CreateWorkoutSectionInput {
-  name: String!
+  name: String
   notes: String
+  rounds: Int
+  timecap: Int
   sortPosition: Int!
   introVideoUri: String
   introVideoThumbUri: String
@@ -715,6 +730,8 @@ input UpdateWorkoutSectionInput {
   id: ID!
   name: String
   notes: String
+  rounds: Int
+  timecap: Int
   introVideoUri: String
   introVideoThumbUri: String
   introAudioUri: String
@@ -736,7 +753,7 @@ type WorkoutSet {
 }
 input CreateWorkoutSetInput {
   sortPosition: Int!
-  rounds: Int!
+  rounds: Int
   notes: String
   WorkoutSection: ID!
 }

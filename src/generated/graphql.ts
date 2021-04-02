@@ -550,7 +550,6 @@ export type WorkoutSectionType = {
   name: Scalars['String'];
   subtitle: Scalars['String'];
   description: Scalars['String'];
-  imageUri: Scalars['String'];
   validRepTypes: Array<WorkoutMoveRepType>;
   WorkoutSections: Array<WorkoutSection>;
   LoggedWorkoutSections: Array<LoggedWorkoutSection>;
@@ -1137,7 +1136,6 @@ export type Workout = {
   createdAt: Scalars['DateTime'];
   User?: Maybe<User>;
   name: Scalars['String'];
-  summary?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   introVideoUri?: Maybe<Scalars['String']>;
   introVideoThumbUri?: Maybe<Scalars['String']>;
@@ -1147,11 +1145,11 @@ export type Workout = {
   contentAccessScope: ContentAccessScope;
   WorkoutSections: Array<WorkoutSection>;
   WorkoutGoals: Array<WorkoutGoal>;
+  WorkoutTags: Array<WorkoutTag>;
 };
 
 export type CreateWorkoutInput = {
   name: Scalars['String'];
-  summary?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   introVideoUri?: Maybe<Scalars['String']>;
   introVideoThumbUri?: Maybe<Scalars['String']>;
@@ -1161,12 +1159,12 @@ export type CreateWorkoutInput = {
   contentAccessScope: ContentAccessScope;
   WorkoutSections: Array<CreateWorkoutSectionInput>;
   WorkoutGoals: Array<Scalars['ID']>;
+  WorkoutTags: Array<Scalars['ID']>;
 };
 
 export type UpdateWorkoutInput = {
   id: Scalars['ID'];
   name?: Maybe<Scalars['String']>;
-  summary?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   introVideoUri?: Maybe<Scalars['String']>;
   introVideoThumbUri?: Maybe<Scalars['String']>;
@@ -1175,13 +1173,32 @@ export type UpdateWorkoutInput = {
   difficultyLevel?: Maybe<DifficultyLevel>;
   contentAccessScope?: Maybe<ContentAccessScope>;
   WorkoutGoals?: Maybe<Array<Scalars['ID']>>;
+  WorkoutTags: Array<Scalars['ID']>;
+};
+
+export type WorkoutTag = {
+  __typename?: 'WorkoutTag';
+  id: Scalars['ID'];
+  User: User;
+  tag: Scalars['String'];
+};
+
+export type CreateWorkoutTagInput = {
+  tag: Scalars['String'];
+};
+
+export type UpdateWorkoutTagInput = {
+  id: Scalars['ID'];
+  tag: Scalars['String'];
 };
 
 export type WorkoutSection = {
   __typename?: 'WorkoutSection';
   id: Scalars['ID'];
-  name: Scalars['String'];
+  name?: Maybe<Scalars['String']>;
   notes?: Maybe<Scalars['String']>;
+  rounds: Scalars['Int'];
+  timecap?: Maybe<Scalars['Int']>;
   sortPosition: Scalars['Int'];
   introVideoUri?: Maybe<Scalars['String']>;
   introVideoThumbUri?: Maybe<Scalars['String']>;
@@ -1198,8 +1215,10 @@ export type WorkoutSection = {
 };
 
 export type CreateWorkoutSectionInput = {
-  name: Scalars['String'];
+  name?: Maybe<Scalars['String']>;
   notes?: Maybe<Scalars['String']>;
+  rounds?: Maybe<Scalars['Int']>;
+  timecap?: Maybe<Scalars['Int']>;
   sortPosition: Scalars['Int'];
   introVideoUri?: Maybe<Scalars['String']>;
   introVideoThumbUri?: Maybe<Scalars['String']>;
@@ -1218,6 +1237,8 @@ export type UpdateWorkoutSectionInput = {
   id: Scalars['ID'];
   name?: Maybe<Scalars['String']>;
   notes?: Maybe<Scalars['String']>;
+  rounds?: Maybe<Scalars['Int']>;
+  timecap?: Maybe<Scalars['Int']>;
   introVideoUri?: Maybe<Scalars['String']>;
   introVideoThumbUri?: Maybe<Scalars['String']>;
   introAudioUri?: Maybe<Scalars['String']>;
@@ -1242,7 +1263,7 @@ export type WorkoutSet = {
 
 export type CreateWorkoutSetInput = {
   sortPosition: Scalars['Int'];
-  rounds: Scalars['Int'];
+  rounds?: Maybe<Scalars['Int']>;
   notes?: Maybe<Scalars['String']>;
   WorkoutSection: Scalars['ID'];
 };
@@ -1585,6 +1606,9 @@ export type ResolversTypes = ResolversObject<{
   Workout: ResolverTypeWrapper<Workout>;
   CreateWorkoutInput: CreateWorkoutInput;
   UpdateWorkoutInput: UpdateWorkoutInput;
+  WorkoutTag: ResolverTypeWrapper<WorkoutTag>;
+  CreateWorkoutTagInput: CreateWorkoutTagInput;
+  UpdateWorkoutTagInput: UpdateWorkoutTagInput;
   WorkoutSection: ResolverTypeWrapper<WorkoutSection>;
   CreateWorkoutSectionInput: CreateWorkoutSectionInput;
   UpdateWorkoutSectionInput: UpdateWorkoutSectionInput;
@@ -1677,6 +1701,9 @@ export type ResolversParentTypes = ResolversObject<{
   Workout: Workout;
   CreateWorkoutInput: CreateWorkoutInput;
   UpdateWorkoutInput: UpdateWorkoutInput;
+  WorkoutTag: WorkoutTag;
+  CreateWorkoutTagInput: CreateWorkoutTagInput;
+  UpdateWorkoutTagInput: UpdateWorkoutTagInput;
   WorkoutSection: WorkoutSection;
   CreateWorkoutSectionInput: CreateWorkoutSectionInput;
   UpdateWorkoutSectionInput: UpdateWorkoutSectionInput;
@@ -1829,7 +1856,6 @@ export type WorkoutSectionTypeResolvers<ContextType = any, ParentType extends Re
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   subtitle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  imageUri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   validRepTypes?: Resolver<Array<ResolversTypes['WorkoutMoveRepType']>, ParentType, ContextType>;
   WorkoutSections?: Resolver<Array<ResolversTypes['WorkoutSection']>, ParentType, ContextType>;
   LoggedWorkoutSections?: Resolver<Array<ResolversTypes['LoggedWorkoutSection']>, ParentType, ContextType>;
@@ -2082,7 +2108,6 @@ export type WorkoutResolvers<ContextType = any, ParentType extends ResolversPare
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   User?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  summary?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   introVideoUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   introVideoThumbUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -2092,13 +2117,23 @@ export type WorkoutResolvers<ContextType = any, ParentType extends ResolversPare
   contentAccessScope?: Resolver<ResolversTypes['ContentAccessScope'], ParentType, ContextType>;
   WorkoutSections?: Resolver<Array<ResolversTypes['WorkoutSection']>, ParentType, ContextType>;
   WorkoutGoals?: Resolver<Array<ResolversTypes['WorkoutGoal']>, ParentType, ContextType>;
+  WorkoutTags?: Resolver<Array<ResolversTypes['WorkoutTag']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type WorkoutTagResolvers<ContextType = any, ParentType extends ResolversParentTypes['WorkoutTag'] = ResolversParentTypes['WorkoutTag']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  User?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  tag?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type WorkoutSectionResolvers<ContextType = any, ParentType extends ResolversParentTypes['WorkoutSection'] = ResolversParentTypes['WorkoutSection']> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   notes?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  rounds?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  timecap?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   sortPosition?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   introVideoUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   introVideoThumbUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -2228,6 +2263,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   TextSearchWorkoutResult?: TextSearchWorkoutResultResolvers<ContextType>;
   TextSearchWorkoutProgramResult?: TextSearchWorkoutProgramResultResolvers<ContextType>;
   Workout?: WorkoutResolvers<ContextType>;
+  WorkoutTag?: WorkoutTagResolvers<ContextType>;
   WorkoutSection?: WorkoutSectionResolvers<ContextType>;
   WorkoutSet?: WorkoutSetResolvers<ContextType>;
   WorkoutSetIntervalBuyIn?: WorkoutSetIntervalBuyInResolvers<ContextType>;
