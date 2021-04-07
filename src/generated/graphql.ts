@@ -567,7 +567,7 @@ export type BodyArea = {
 
 export type BodyAreaMoveScore = {
   __typename?: 'BodyAreaMoveScore';
-  id: Scalars['ID'];
+  moveId_bodyAreaId: Scalars['ID'];
   Move: Move;
   BodyArea: BodyArea;
   score: Scalars['Float'];
@@ -1873,7 +1873,7 @@ export type BodyAreaResolvers<ContextType = any, ParentType extends ResolversPar
 }>;
 
 export type BodyAreaMoveScoreResolvers<ContextType = any, ParentType extends ResolversParentTypes['BodyAreaMoveScore'] = ResolversParentTypes['BodyAreaMoveScore']> = ResolversObject<{
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  moveId_bodyAreaId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   Move?: Resolver<ResolversTypes['Move'], ParentType, ContextType>;
   BodyArea?: Resolver<ResolversTypes['BodyArea'], ParentType, ContextType>;
   score?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;

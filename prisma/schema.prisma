@@ -346,7 +346,6 @@ model WorkoutMove {
   sortPosition            Int
   repType                 WorkoutMoveRepType
   reps                    Float
-  distance                Float?
   distanceUnit            DistanceUnit              @default(METRES)
   loadAmount              Float?
   loadUnit                LoadUnit                  @default(KG)
