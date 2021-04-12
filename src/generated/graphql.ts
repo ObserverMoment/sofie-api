@@ -22,7 +22,7 @@ export type Query = {
   bodyAreas: Array<BodyArea>;
   equipments: Array<Equipment>;
   moveTypes: Array<MoveType>;
-  workoutGoals: Array<Maybe<WorkoutGoal>>;
+  workoutGoals: Array<WorkoutGoal>;
   workoutSectionTypes: Array<WorkoutSectionType>;
   userLoggedWorkouts: Array<LoggedWorkout>;
   standardMoves: Array<Move>;
@@ -37,6 +37,7 @@ export type Query = {
   checkUniqueDisplayName: Scalars['Boolean'];
   authedUser: User;
   gymProfiles: Array<GymProfile>;
+  userWorkoutTags: Array<WorkoutTag>;
   userPublicProfiles?: Maybe<Array<UserPublicProfile>>;
   userPublicProfileByUserId: UserPublicProfile;
   officialWorkouts: Array<Workout>;
@@ -136,6 +137,7 @@ export type Mutation = {
   updateScheduledWorkout: ScheduledWorkout;
   deleteScheduledWorkoutById: Scalars['ID'];
   updateUser: User;
+  createWorkoutTag: WorkoutTag;
   makeCopyWorkoutById: Workout;
   createWorkout: Workout;
   updateWorkout: Workout;
@@ -367,6 +369,11 @@ export type MutationUpdateUserArgs = {
 };
 
 
+export type MutationCreateWorkoutTagArgs = {
+  data: CreateWorkoutTagInput;
+};
+
+
 export type MutationMakeCopyWorkoutByIdArgs = {
   id: Scalars['ID'];
 };
@@ -541,7 +548,6 @@ export type WorkoutGoal = {
   id: Scalars['ID'];
   name: Scalars['String'];
   description: Scalars['String'];
-  imageUri?: Maybe<Scalars['String']>;
 };
 
 export type WorkoutSectionType = {
@@ -567,7 +573,6 @@ export type BodyArea = {
 
 export type BodyAreaMoveScore = {
   __typename?: 'BodyAreaMoveScore';
-  moveId_bodyAreaId: Scalars['ID'];
   Move: Move;
   BodyArea: BodyArea;
   score: Scalars['Float'];
@@ -795,6 +800,22 @@ export type UserPrivateProfile = {
   Workouts?: Maybe<Array<Workout>>;
   WorkoutPrograms?: Maybe<Array<WorkoutProgram>>;
   WorkoutProgramEnrolments?: Maybe<Array<WorkoutProgramEnrolment>>;
+};
+
+export type WorkoutTag = {
+  __typename?: 'WorkoutTag';
+  id: Scalars['ID'];
+  User: User;
+  tag: Scalars['String'];
+};
+
+export type CreateWorkoutTagInput = {
+  tag: Scalars['String'];
+};
+
+export type UpdateWorkoutTagInput = {
+  id: Scalars['ID'];
+  tag: Scalars['String'];
 };
 
 export type GymProfile = {
@@ -1176,22 +1197,6 @@ export type UpdateWorkoutInput = {
   WorkoutTags: Array<Scalars['ID']>;
 };
 
-export type WorkoutTag = {
-  __typename?: 'WorkoutTag';
-  id: Scalars['ID'];
-  User: User;
-  tag: Scalars['String'];
-};
-
-export type CreateWorkoutTagInput = {
-  tag: Scalars['String'];
-};
-
-export type UpdateWorkoutTagInput = {
-  id: Scalars['ID'];
-  tag: Scalars['String'];
-};
-
 export type WorkoutSection = {
   __typename?: 'WorkoutSection';
   id: Scalars['ID'];
@@ -1568,6 +1573,9 @@ export type ResolversTypes = ResolversObject<{
   UpdateUserInput: UpdateUserInput;
   UserPublicProfile: ResolverTypeWrapper<UserPublicProfile>;
   UserPrivateProfile: ResolverTypeWrapper<UserPrivateProfile>;
+  WorkoutTag: ResolverTypeWrapper<WorkoutTag>;
+  CreateWorkoutTagInput: CreateWorkoutTagInput;
+  UpdateWorkoutTagInput: UpdateWorkoutTagInput;
   GymProfile: ResolverTypeWrapper<GymProfile>;
   CreateGymProfileInput: CreateGymProfileInput;
   UpdateGymProfileInput: UpdateGymProfileInput;
@@ -1606,9 +1614,6 @@ export type ResolversTypes = ResolversObject<{
   Workout: ResolverTypeWrapper<Workout>;
   CreateWorkoutInput: CreateWorkoutInput;
   UpdateWorkoutInput: UpdateWorkoutInput;
-  WorkoutTag: ResolverTypeWrapper<WorkoutTag>;
-  CreateWorkoutTagInput: CreateWorkoutTagInput;
-  UpdateWorkoutTagInput: UpdateWorkoutTagInput;
   WorkoutSection: ResolverTypeWrapper<WorkoutSection>;
   CreateWorkoutSectionInput: CreateWorkoutSectionInput;
   UpdateWorkoutSectionInput: UpdateWorkoutSectionInput;
@@ -1663,6 +1668,9 @@ export type ResolversParentTypes = ResolversObject<{
   UpdateUserInput: UpdateUserInput;
   UserPublicProfile: UserPublicProfile;
   UserPrivateProfile: UserPrivateProfile;
+  WorkoutTag: WorkoutTag;
+  CreateWorkoutTagInput: CreateWorkoutTagInput;
+  UpdateWorkoutTagInput: UpdateWorkoutTagInput;
   GymProfile: GymProfile;
   CreateGymProfileInput: CreateGymProfileInput;
   UpdateGymProfileInput: UpdateGymProfileInput;
@@ -1701,9 +1709,6 @@ export type ResolversParentTypes = ResolversObject<{
   Workout: Workout;
   CreateWorkoutInput: CreateWorkoutInput;
   UpdateWorkoutInput: UpdateWorkoutInput;
-  WorkoutTag: WorkoutTag;
-  CreateWorkoutTagInput: CreateWorkoutTagInput;
-  UpdateWorkoutTagInput: UpdateWorkoutTagInput;
   WorkoutSection: WorkoutSection;
   CreateWorkoutSectionInput: CreateWorkoutSectionInput;
   UpdateWorkoutSectionInput: UpdateWorkoutSectionInput;
@@ -1740,7 +1745,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   bodyAreas?: Resolver<Array<ResolversTypes['BodyArea']>, ParentType, ContextType>;
   equipments?: Resolver<Array<ResolversTypes['Equipment']>, ParentType, ContextType>;
   moveTypes?: Resolver<Array<ResolversTypes['MoveType']>, ParentType, ContextType>;
-  workoutGoals?: Resolver<Array<Maybe<ResolversTypes['WorkoutGoal']>>, ParentType, ContextType>;
+  workoutGoals?: Resolver<Array<ResolversTypes['WorkoutGoal']>, ParentType, ContextType>;
   workoutSectionTypes?: Resolver<Array<ResolversTypes['WorkoutSectionType']>, ParentType, ContextType>;
   userLoggedWorkouts?: Resolver<Array<ResolversTypes['LoggedWorkout']>, ParentType, ContextType>;
   standardMoves?: Resolver<Array<ResolversTypes['Move']>, ParentType, ContextType>;
@@ -1755,6 +1760,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   checkUniqueDisplayName?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryCheckUniqueDisplayNameArgs, 'displayName'>>;
   authedUser?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   gymProfiles?: Resolver<Array<ResolversTypes['GymProfile']>, ParentType, ContextType>;
+  userWorkoutTags?: Resolver<Array<ResolversTypes['WorkoutTag']>, ParentType, ContextType>;
   userPublicProfiles?: Resolver<Maybe<Array<ResolversTypes['UserPublicProfile']>>, ParentType, ContextType>;
   userPublicProfileByUserId?: Resolver<ResolversTypes['UserPublicProfile'], ParentType, ContextType, RequireFields<QueryUserPublicProfileByUserIdArgs, 'userId'>>;
   officialWorkouts?: Resolver<Array<ResolversTypes['Workout']>, ParentType, ContextType>;
@@ -1808,6 +1814,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   updateScheduledWorkout?: Resolver<ResolversTypes['ScheduledWorkout'], ParentType, ContextType, RequireFields<MutationUpdateScheduledWorkoutArgs, 'data'>>;
   deleteScheduledWorkoutById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteScheduledWorkoutByIdArgs, 'id'>>;
   updateUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationUpdateUserArgs, 'data'>>;
+  createWorkoutTag?: Resolver<ResolversTypes['WorkoutTag'], ParentType, ContextType, RequireFields<MutationCreateWorkoutTagArgs, 'data'>>;
   makeCopyWorkoutById?: Resolver<ResolversTypes['Workout'], ParentType, ContextType, RequireFields<MutationMakeCopyWorkoutByIdArgs, 'id'>>;
   createWorkout?: Resolver<ResolversTypes['Workout'], ParentType, ContextType, RequireFields<MutationCreateWorkoutArgs, 'data'>>;
   updateWorkout?: Resolver<ResolversTypes['Workout'], ParentType, ContextType, RequireFields<MutationUpdateWorkoutArgs, 'data'>>;
@@ -1847,7 +1854,6 @@ export type WorkoutGoalResolvers<ContextType = any, ParentType extends Resolvers
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  imageUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -1873,7 +1879,6 @@ export type BodyAreaResolvers<ContextType = any, ParentType extends ResolversPar
 }>;
 
 export type BodyAreaMoveScoreResolvers<ContextType = any, ParentType extends ResolversParentTypes['BodyAreaMoveScore'] = ResolversParentTypes['BodyAreaMoveScore']> = ResolversObject<{
-  moveId_bodyAreaId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   Move?: Resolver<ResolversTypes['Move'], ParentType, ContextType>;
   BodyArea?: Resolver<ResolversTypes['BodyArea'], ParentType, ContextType>;
   score?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
@@ -1963,6 +1968,13 @@ export type UserPrivateProfileResolvers<ContextType = any, ParentType extends Re
   Workouts?: Resolver<Maybe<Array<ResolversTypes['Workout']>>, ParentType, ContextType>;
   WorkoutPrograms?: Resolver<Maybe<Array<ResolversTypes['WorkoutProgram']>>, ParentType, ContextType>;
   WorkoutProgramEnrolments?: Resolver<Maybe<Array<ResolversTypes['WorkoutProgramEnrolment']>>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type WorkoutTagResolvers<ContextType = any, ParentType extends ResolversParentTypes['WorkoutTag'] = ResolversParentTypes['WorkoutTag']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  User?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  tag?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -2121,13 +2133,6 @@ export type WorkoutResolvers<ContextType = any, ParentType extends ResolversPare
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export type WorkoutTagResolvers<ContextType = any, ParentType extends ResolversParentTypes['WorkoutTag'] = ResolversParentTypes['WorkoutTag']> = ResolversObject<{
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  User?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
-  tag?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
 export type WorkoutSectionResolvers<ContextType = any, ParentType extends ResolversParentTypes['WorkoutSection'] = ResolversParentTypes['WorkoutSection']> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -2250,6 +2255,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   User?: UserResolvers<ContextType>;
   UserPublicProfile?: UserPublicProfileResolvers<ContextType>;
   UserPrivateProfile?: UserPrivateProfileResolvers<ContextType>;
+  WorkoutTag?: WorkoutTagResolvers<ContextType>;
   GymProfile?: GymProfileResolvers<ContextType>;
   LoggedWorkout?: LoggedWorkoutResolvers<ContextType>;
   LoggedWorkoutSection?: LoggedWorkoutSectionResolvers<ContextType>;
@@ -2263,7 +2269,6 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   TextSearchWorkoutResult?: TextSearchWorkoutResultResolvers<ContextType>;
   TextSearchWorkoutProgramResult?: TextSearchWorkoutProgramResultResolvers<ContextType>;
   Workout?: WorkoutResolvers<ContextType>;
-  WorkoutTag?: WorkoutTagResolvers<ContextType>;
   WorkoutSection?: WorkoutSectionResolvers<ContextType>;
   WorkoutSet?: WorkoutSetResolvers<ContextType>;
   WorkoutSetIntervalBuyIn?: WorkoutSetIntervalBuyInResolvers<ContextType>;

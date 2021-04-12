@@ -74,4 +74,19 @@ export default gql`
     WorkoutPrograms: [WorkoutProgram!]
     WorkoutProgramEnrolments: [WorkoutProgramEnrolment!]
   }
+
+  type WorkoutTag {
+    id: ID!
+    User: User!
+    tag: String!
+  }
+
+  input CreateWorkoutTagInput {
+    tag: String!
+  }
+
+  input UpdateWorkoutTagInput {
+    id: ID!
+    tag: String!
+  }
 `

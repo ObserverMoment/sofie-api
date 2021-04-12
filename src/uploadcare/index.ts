@@ -51,8 +51,8 @@ export async function deleteFiles(fileIds: string[]): Promise<boolean> {
   const requestBody = JSON.stringify(fileIds)
   const res = await fetch(`${uploadcareApiUBaseUri}/files/storage/`, {
     method: 'DELETE',
-    body: requestBody,
     headers: prepareHeaders('DELETE', '/files/storage/', requestBody),
+    body: requestBody,
   })
   const json = await res.json()
   return json.status == 'ok'

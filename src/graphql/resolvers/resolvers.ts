@@ -74,6 +74,8 @@ import {
   userPublicProfileByUserId,
   userPublicProfiles,
   updateUser,
+  userWorkoutTags,
+  createWorkoutTag,
 } from './user'
 
 import {
@@ -190,6 +192,7 @@ const resolvers: Resolvers = {
     gymProfiles,
     userPublicProfileByUserId,
     userPublicProfiles,
+    userWorkoutTags,
     //// Workouts ////
     officialWorkouts,
     publicWorkouts,
@@ -263,6 +266,7 @@ const resolvers: Resolvers = {
     //// User ////
     //////////////
     updateUser,
+    createWorkoutTag,
     /////////////////
     //// Workout ////
     /////////////////

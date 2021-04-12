@@ -95,7 +95,6 @@ model WorkoutGoal {
   createdAt       DateTime         @default(now())
   name            String
   description     String
-  imageUri        String?
   Workouts        Workout[]
   WorkoutPrograms WorkoutProgram[]
 }

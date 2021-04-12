@@ -45,19 +45,4 @@ export default gql`
     WorkoutGoals: [ID!]
     WorkoutTags: [ID!]!
   }
-
-  type WorkoutTag {
-    id: ID!
-    User: User!
-    tag: String!
-  }
-
-  input CreateWorkoutTagInput {
-    tag: String!
-  }
-
-  input UpdateWorkoutTagInput {
-    id: ID!
-    tag: String!
-  }
 `

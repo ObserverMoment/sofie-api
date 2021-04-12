@@ -1,11 +1,13 @@
 import { ApolloError } from 'apollo-server-express'
 import { Context } from '../..'
 import {
+  MutationCreateWorkoutTagArgs,
   MutationUpdateUserArgs,
   QueryCheckUniqueDisplayNameArgs,
   QueryUserPublicProfileByUserIdArgs,
   User,
   UserPublicProfile,
+  WorkoutTag,
 } from '../../generated/graphql'
 import { checkUserMediaForDeletion, deleteFiles } from '../../uploadcare'
 
@@ -105,4 +107,34 @@ export const updateUser = async (
   } else {
     throw new ApolloError('updateUser: There was an issue.')
   }
+}
+
+/// Workout Tags ////
+export const userWorkoutTags = async (
+  r: any,
+  a: any,
+  { authedUserId, select, prisma }: Context,
+) => {
+  const workoutTags = await prisma.workoutTag.findMany({
+    where: {
+      userId: authedUserId,
+    },
+    select,
+  })
+  return workoutTags as WorkoutTag[]
+}
+
+export const createWorkoutTag = async (
+  r: any,
+  { data }: MutationCreateWorkoutTagArgs,
+  { authedUserId, select, prisma }: Context,
+) => {
+  const workoutTag = await prisma.workoutTag.create({
+    data: {
+      User: { connect: { id: authedUserId } },
+      ...data,
+    },
+    select,
+  })
+  return workoutTag as WorkoutTag
 }

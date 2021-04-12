@@ -8,7 +8,7 @@ type Query {
   bodyAreas: [BodyArea!]!
   equipments: [Equipment!]!
   moveTypes: [MoveType!]!
-  workoutGoals: [WorkoutGoal]!
+  workoutGoals: [WorkoutGoal!]!
   workoutSectionTypes: [WorkoutSectionType!]!
   userLoggedWorkouts: [LoggedWorkout!]!
   standardMoves: [Move!]!
@@ -23,6 +23,7 @@ type Query {
   checkUniqueDisplayName(displayName: String!): Boolean!
   authedUser: User!
   gymProfiles: [GymProfile!]!
+  userWorkoutTags: [WorkoutTag!]!
   userPublicProfiles: [UserPublicProfile!]
   userPublicProfileByUserId(userId: ID!): UserPublicProfile!
   officialWorkouts: [Workout!]!
@@ -75,6 +76,7 @@ type Mutation {
   updateScheduledWorkout(data: UpdateScheduledWorkoutInput!): ScheduledWorkout!
   deleteScheduledWorkoutById(id: ID!): ID!
   updateUser(data: UpdateUserInput!): User!
+  createWorkoutTag(data: CreateWorkoutTagInput!): WorkoutTag!
   makeCopyWorkoutById(id: ID!): Workout!
   createWorkout(data: CreateWorkoutInput!): Workout!
   updateWorkout(data: UpdateWorkoutInput!): Workout!
@@ -117,7 +119,6 @@ type WorkoutGoal {
   id: ID!
   name: String!
   description: String!
-  imageUri: String
 }
 type WorkoutSectionType {
   id: ID!
@@ -137,7 +138,6 @@ type BodyArea {
   upperLower: BodyAreaUpperLower!
 }
 type BodyAreaMoveScore {
-  moveId_bodyAreaId: ID!
   Move: Move!
   BodyArea: BodyArea!
   score: Float!
@@ -347,6 +347,18 @@ type UserPrivateProfile {
   Workouts: [Workout!]
   WorkoutPrograms: [WorkoutProgram!]
   WorkoutProgramEnrolments: [WorkoutProgramEnrolment!]
+}
+type WorkoutTag {
+  id: ID!
+  User: User!
+  tag: String!
+}
+input CreateWorkoutTagInput {
+  tag: String!
+}
+input UpdateWorkoutTagInput {
+  id: ID!
+  tag: String!
 }
 type GymProfile {
   id: ID!
@@ -675,18 +687,6 @@ input UpdateWorkoutInput {
   contentAccessScope: ContentAccessScope
   WorkoutGoals: [ID!]
   WorkoutTags: [ID!]!
-}
-type WorkoutTag {
-  id: ID!
-  User: User!
-  tag: String!
-}
-input CreateWorkoutTagInput {
-  tag: String!
-}
-input UpdateWorkoutTagInput {
-  id: ID!
-  tag: String!
 }
 type WorkoutSection {
   id: ID!

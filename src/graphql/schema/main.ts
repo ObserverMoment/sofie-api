@@ -9,7 +9,7 @@ export default gql`
     bodyAreas: [BodyArea!]!
     equipments: [Equipment!]!
     moveTypes: [MoveType!]!
-    workoutGoals: [WorkoutGoal]!
+    workoutGoals: [WorkoutGoal!]!
     workoutSectionTypes: [WorkoutSectionType!]!
     #### Logged Workouts ####
     userLoggedWorkouts: [LoggedWorkout!]!
@@ -30,6 +30,7 @@ export default gql`
     checkUniqueDisplayName(displayName: String!): Boolean!
     authedUser: User!
     gymProfiles: [GymProfile!]!
+    userWorkoutTags: [WorkoutTag!]!
     #### User Public Profiles ####
     userPublicProfiles: [UserPublicProfile!]
     userPublicProfileByUserId(userId: ID!): UserPublicProfile!
@@ -136,6 +137,7 @@ export default gql`
     deleteScheduledWorkoutById(id: ID!): ID!
     #### User ####
     updateUser(data: UpdateUserInput!): User!
+    createWorkoutTag(data: CreateWorkoutTagInput!): WorkoutTag!
     #################
     #### Workout ####
     makeCopyWorkoutById(id: ID!): Workout! # Note: Media should not be copied
@@ -211,7 +213,6 @@ export default gql`
     id: ID!
     name: String!
     description: String!
-    imageUri: String
   }
 
   type WorkoutSectionType {
