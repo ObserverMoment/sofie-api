@@ -4,7 +4,7 @@ export default gql`
   type WorkoutSection {
     id: ID!
     name: String
-    notes: String
+    note: String
     rounds: Int!
     timecap: Int
     sortPosition: Int!
@@ -24,7 +24,7 @@ export default gql`
 
   input CreateWorkoutSectionInput {
     name: String
-    notes: String
+    note: String
     rounds: Int
     timecap: Int
     sortPosition: Int!
@@ -44,7 +44,7 @@ export default gql`
   input UpdateWorkoutSectionInput {
     id: ID!
     name: String
-    notes: String
+    note: String
     rounds: Int
     timecap: Int
     introVideoUri: String

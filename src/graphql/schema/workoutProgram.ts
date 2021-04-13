@@ -21,7 +21,7 @@ export default gql`
   type WorkoutProgramWorkout {
     id: ID!
     dayNumber: Float!
-    notes: String
+    note: String
     Workout: Workout!
   }
 
@@ -67,7 +67,7 @@ export default gql`
 
   input CreateWorkoutProgramWorkoutInput {
     dayNumber: Float!
-    notes: String
+    note: String
     Workout: ID!
     WorkoutProgram: ID!
   }
@@ -75,7 +75,7 @@ export default gql`
   input UpdateWorkoutProgramWorkoutInput {
     id: ID!
     dayNumber: Float!
-    notes: String
+    note: String
     Workout: ID!
   }
 

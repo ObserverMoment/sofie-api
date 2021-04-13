@@ -6,7 +6,7 @@ export default gql`
     id: ID!
     completedOn: DateTime!
     name: String!
-    notes: String
+    note: String
     imageUri: String
     LoggedWorkoutSections: [LoggedWorkoutSection!]!
     Workout: Workout!
@@ -21,7 +21,7 @@ export default gql`
     setIndex: Int!
     roundIndex: Int!
     timeTakenMs: Int!
-    notes: String
+    note: String
     WorkoutSectionType: WorkoutSectionType!
     LoggedWorkoutSets: [LoggedWorkoutSet!]!
     LoggedWorkout: LoggedWorkout!
@@ -52,7 +52,7 @@ export default gql`
   input CreateLoggedWorkoutInput {
     completedOn: DateTime!
     name: String!
-    notes: String
+    note: String
     imageUri: String
     LoggedWorkoutSections: [CreateLoggedWorkoutSectionInLoggedWorkoutInput!]!
     Workout: ID!
@@ -66,7 +66,7 @@ export default gql`
     sectionIndex: Int!
     roundIndex: Int!
     timeTakenMs: Int!
-    notes: String
+    note: String
     WorkoutSectionType: ID!
     LoggedWorkoutSets: [CreateLoggedWorkoutSetInLoggedSectionInput!]!
   }
@@ -95,7 +95,7 @@ export default gql`
     sectionIndex: Int!
     roundIndex: Int!
     timeTakenMs: Int!
-    notes: String
+    note: String
     WorkoutSectionType: ID!
     LoggedWorkout: ID!
   }
@@ -126,7 +126,7 @@ export default gql`
     id: ID!
     completedOn: DateTime
     name: String
-    notes: String
+    note: String
     imageUri: String
     ScheduledWorkout: ID
     GymProfile: ID
@@ -137,7 +137,7 @@ export default gql`
   input UpdateLoggedWorkoutSectionInput {
     id: ID!
     timeTakenMs: Int
-    notes: String
+    note: String
   }
 
   input UpdateLoggedWorkoutSetInput {

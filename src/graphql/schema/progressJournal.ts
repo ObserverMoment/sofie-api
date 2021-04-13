@@ -24,7 +24,7 @@ export default gql`
   type ProgressJournalEntry {
     id: ID!
     createdAt: DateTime!
-    notes: String
+    note: String
     voiceNoteUri: String
     # Always save in KGs
     bodyweight: Float
@@ -37,7 +37,7 @@ export default gql`
   }
 
   input CreateProgressJournalEntryInput {
-    notes: String
+    note: String
     voiceNoteUri: String
     # Always save in KGs
     bodyweight: Float
@@ -51,7 +51,7 @@ export default gql`
 
   input UpdateProgressJournalEntryInput {
     id: ID!
-    notes: String
+    note: String
     voiceNoteUri: String
     # Always save in KGs
     bodyweight: Float

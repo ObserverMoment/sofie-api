@@ -844,7 +844,7 @@ export type LoggedWorkout = {
   id: Scalars['ID'];
   completedOn: Scalars['DateTime'];
   name: Scalars['String'];
-  notes?: Maybe<Scalars['String']>;
+  note?: Maybe<Scalars['String']>;
   imageUri?: Maybe<Scalars['String']>;
   LoggedWorkoutSections: Array<LoggedWorkoutSection>;
   Workout: Workout;
@@ -860,7 +860,7 @@ export type LoggedWorkoutSection = {
   setIndex: Scalars['Int'];
   roundIndex: Scalars['Int'];
   timeTakenMs: Scalars['Int'];
-  notes?: Maybe<Scalars['String']>;
+  note?: Maybe<Scalars['String']>;
   WorkoutSectionType: WorkoutSectionType;
   LoggedWorkoutSets: Array<LoggedWorkoutSet>;
   LoggedWorkout: LoggedWorkout;
@@ -892,7 +892,7 @@ export type LoggedWorkoutMove = {
 export type CreateLoggedWorkoutInput = {
   completedOn: Scalars['DateTime'];
   name: Scalars['String'];
-  notes?: Maybe<Scalars['String']>;
+  note?: Maybe<Scalars['String']>;
   imageUri?: Maybe<Scalars['String']>;
   LoggedWorkoutSections: Array<CreateLoggedWorkoutSectionInLoggedWorkoutInput>;
   Workout: Scalars['ID'];
@@ -906,7 +906,7 @@ export type CreateLoggedWorkoutSectionInLoggedWorkoutInput = {
   sectionIndex: Scalars['Int'];
   roundIndex: Scalars['Int'];
   timeTakenMs: Scalars['Int'];
-  notes?: Maybe<Scalars['String']>;
+  note?: Maybe<Scalars['String']>;
   WorkoutSectionType: Scalars['ID'];
   LoggedWorkoutSets: Array<CreateLoggedWorkoutSetInLoggedSectionInput>;
 };
@@ -934,7 +934,7 @@ export type CreateLoggedWorkoutSectionInput = {
   sectionIndex: Scalars['Int'];
   roundIndex: Scalars['Int'];
   timeTakenMs: Scalars['Int'];
-  notes?: Maybe<Scalars['String']>;
+  note?: Maybe<Scalars['String']>;
   WorkoutSectionType: Scalars['ID'];
   LoggedWorkout: Scalars['ID'];
 };
@@ -963,7 +963,7 @@ export type UpdateLoggedWorkoutInput = {
   id: Scalars['ID'];
   completedOn?: Maybe<Scalars['DateTime']>;
   name?: Maybe<Scalars['String']>;
-  notes?: Maybe<Scalars['String']>;
+  note?: Maybe<Scalars['String']>;
   imageUri?: Maybe<Scalars['String']>;
   ScheduledWorkout?: Maybe<Scalars['ID']>;
   GymProfile?: Maybe<Scalars['ID']>;
@@ -974,7 +974,7 @@ export type UpdateLoggedWorkoutInput = {
 export type UpdateLoggedWorkoutSectionInput = {
   id: Scalars['ID'];
   timeTakenMs?: Maybe<Scalars['Int']>;
-  notes?: Maybe<Scalars['String']>;
+  note?: Maybe<Scalars['String']>;
 };
 
 export type UpdateLoggedWorkoutSetInput = {
@@ -1018,7 +1018,7 @@ export type ProgressJournalEntry = {
   __typename?: 'ProgressJournalEntry';
   id: Scalars['ID'];
   createdAt: Scalars['DateTime'];
-  notes?: Maybe<Scalars['String']>;
+  note?: Maybe<Scalars['String']>;
   voiceNoteUri?: Maybe<Scalars['String']>;
   bodyweight?: Maybe<Scalars['Float']>;
   moodScore?: Maybe<Scalars['Float']>;
@@ -1030,7 +1030,7 @@ export type ProgressJournalEntry = {
 };
 
 export type CreateProgressJournalEntryInput = {
-  notes?: Maybe<Scalars['String']>;
+  note?: Maybe<Scalars['String']>;
   voiceNoteUri?: Maybe<Scalars['String']>;
   bodyweight?: Maybe<Scalars['Float']>;
   moodScore?: Maybe<Scalars['Float']>;
@@ -1043,7 +1043,7 @@ export type CreateProgressJournalEntryInput = {
 
 export type UpdateProgressJournalEntryInput = {
   id: Scalars['ID'];
-  notes?: Maybe<Scalars['String']>;
+  note?: Maybe<Scalars['String']>;
   voiceNoteUri?: Maybe<Scalars['String']>;
   bodyweight?: Maybe<Scalars['Float']>;
   moodScore?: Maybe<Scalars['Float']>;
@@ -1105,7 +1105,7 @@ export type ScheduledWorkout = {
   id: Scalars['ID'];
   createdAt: Scalars['DateTime'];
   scheduledAt: Scalars['DateTime'];
-  notes?: Maybe<Scalars['String']>;
+  note?: Maybe<Scalars['String']>;
   Workout: Workout;
   LoggedWorkout?: Maybe<LoggedWorkout>;
   GymProfile?: Maybe<GymProfile>;
@@ -1113,7 +1113,7 @@ export type ScheduledWorkout = {
 
 export type CreateScheduledWorkoutInput = {
   scheduledAt: Scalars['DateTime'];
-  notes?: Maybe<Scalars['String']>;
+  note?: Maybe<Scalars['String']>;
   Workout: Scalars['ID'];
   GymProfile?: Maybe<Scalars['ID']>;
 };
@@ -1121,7 +1121,7 @@ export type CreateScheduledWorkoutInput = {
 export type UpdateScheduledWorkoutInput = {
   id: Scalars['ID'];
   scheduledAt?: Maybe<Scalars['DateTime']>;
-  notes?: Maybe<Scalars['String']>;
+  note?: Maybe<Scalars['String']>;
   Workout?: Maybe<Scalars['ID']>;
   LoggedWorkout?: Maybe<Scalars['ID']>;
   GymProfile?: Maybe<Scalars['ID']>;
@@ -1201,7 +1201,7 @@ export type WorkoutSection = {
   __typename?: 'WorkoutSection';
   id: Scalars['ID'];
   name?: Maybe<Scalars['String']>;
-  notes?: Maybe<Scalars['String']>;
+  note?: Maybe<Scalars['String']>;
   rounds: Scalars['Int'];
   timecap?: Maybe<Scalars['Int']>;
   sortPosition: Scalars['Int'];
@@ -1221,7 +1221,7 @@ export type WorkoutSection = {
 
 export type CreateWorkoutSectionInput = {
   name?: Maybe<Scalars['String']>;
-  notes?: Maybe<Scalars['String']>;
+  note?: Maybe<Scalars['String']>;
   rounds?: Maybe<Scalars['Int']>;
   timecap?: Maybe<Scalars['Int']>;
   sortPosition: Scalars['Int'];
@@ -1241,7 +1241,7 @@ export type CreateWorkoutSectionInput = {
 export type UpdateWorkoutSectionInput = {
   id: Scalars['ID'];
   name?: Maybe<Scalars['String']>;
-  notes?: Maybe<Scalars['String']>;
+  note?: Maybe<Scalars['String']>;
   rounds?: Maybe<Scalars['Int']>;
   timecap?: Maybe<Scalars['Int']>;
   introVideoUri?: Maybe<Scalars['String']>;
@@ -1260,7 +1260,6 @@ export type WorkoutSet = {
   id: Scalars['ID'];
   sortPosition: Scalars['Int'];
   rounds: Scalars['Int'];
-  notes?: Maybe<Scalars['String']>;
   WorkoutMoves: Array<WorkoutMove>;
   Generators?: Maybe<Array<WorkoutSetGenerator>>;
   IntervalBuyIn?: Maybe<WorkoutSetIntervalBuyIn>;
@@ -1269,14 +1268,12 @@ export type WorkoutSet = {
 export type CreateWorkoutSetInput = {
   sortPosition: Scalars['Int'];
   rounds?: Maybe<Scalars['Int']>;
-  notes?: Maybe<Scalars['String']>;
   WorkoutSection: Scalars['ID'];
 };
 
 export type UpdateWorkoutSetInput = {
   id: Scalars['ID'];
   rounds?: Maybe<Scalars['Int']>;
-  notes?: Maybe<Scalars['String']>;
 };
 
 export type WorkoutSetIntervalBuyIn = {
@@ -1385,7 +1382,7 @@ export type WorkoutProgramWorkout = {
   __typename?: 'WorkoutProgramWorkout';
   id: Scalars['ID'];
   dayNumber: Scalars['Float'];
-  notes?: Maybe<Scalars['String']>;
+  note?: Maybe<Scalars['String']>;
   Workout: Workout;
 };
 
@@ -1433,7 +1430,7 @@ export type UpdateWorkoutProgramInput = {
 
 export type CreateWorkoutProgramWorkoutInput = {
   dayNumber: Scalars['Float'];
-  notes?: Maybe<Scalars['String']>;
+  note?: Maybe<Scalars['String']>;
   Workout: Scalars['ID'];
   WorkoutProgram: Scalars['ID'];
 };
@@ -1441,7 +1438,7 @@ export type CreateWorkoutProgramWorkoutInput = {
 export type UpdateWorkoutProgramWorkoutInput = {
   id: Scalars['ID'];
   dayNumber: Scalars['Float'];
-  notes?: Maybe<Scalars['String']>;
+  note?: Maybe<Scalars['String']>;
   Workout: Scalars['ID'];
 };
 
@@ -1990,7 +1987,7 @@ export type LoggedWorkoutResolvers<ContextType = any, ParentType extends Resolve
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   completedOn?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  notes?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  note?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   imageUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   LoggedWorkoutSections?: Resolver<Array<ResolversTypes['LoggedWorkoutSection']>, ParentType, ContextType>;
   Workout?: Resolver<ResolversTypes['Workout'], ParentType, ContextType>;
@@ -2006,7 +2003,7 @@ export type LoggedWorkoutSectionResolvers<ContextType = any, ParentType extends 
   setIndex?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   roundIndex?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   timeTakenMs?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  notes?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  note?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   WorkoutSectionType?: Resolver<ResolversTypes['WorkoutSectionType'], ParentType, ContextType>;
   LoggedWorkoutSets?: Resolver<Array<ResolversTypes['LoggedWorkoutSet']>, ParentType, ContextType>;
   LoggedWorkout?: Resolver<ResolversTypes['LoggedWorkout'], ParentType, ContextType>;
@@ -2049,7 +2046,7 @@ export type ProgressJournalResolvers<ContextType = any, ParentType extends Resol
 export type ProgressJournalEntryResolvers<ContextType = any, ParentType extends ResolversParentTypes['ProgressJournalEntry'] = ResolversParentTypes['ProgressJournalEntry']> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  notes?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  note?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   voiceNoteUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   bodyweight?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   moodScore?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -2084,7 +2081,7 @@ export type ScheduledWorkoutResolvers<ContextType = any, ParentType extends Reso
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   scheduledAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  notes?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  note?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   Workout?: Resolver<ResolversTypes['Workout'], ParentType, ContextType>;
   LoggedWorkout?: Resolver<Maybe<ResolversTypes['LoggedWorkout']>, ParentType, ContextType>;
   GymProfile?: Resolver<Maybe<ResolversTypes['GymProfile']>, ParentType, ContextType>;
@@ -2136,7 +2133,7 @@ export type WorkoutResolvers<ContextType = any, ParentType extends ResolversPare
 export type WorkoutSectionResolvers<ContextType = any, ParentType extends ResolversParentTypes['WorkoutSection'] = ResolversParentTypes['WorkoutSection']> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  notes?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  note?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   rounds?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   timecap?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   sortPosition?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -2159,7 +2156,6 @@ export type WorkoutSetResolvers<ContextType = any, ParentType extends ResolversP
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   sortPosition?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   rounds?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  notes?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   WorkoutMoves?: Resolver<Array<ResolversTypes['WorkoutMove']>, ParentType, ContextType>;
   Generators?: Resolver<Maybe<Array<ResolversTypes['WorkoutSetGenerator']>>, ParentType, ContextType>;
   IntervalBuyIn?: Resolver<Maybe<ResolversTypes['WorkoutSetIntervalBuyIn']>, ParentType, ContextType>;
@@ -2218,7 +2214,7 @@ export type WorkoutProgramResolvers<ContextType = any, ParentType extends Resolv
 export type WorkoutProgramWorkoutResolvers<ContextType = any, ParentType extends ResolversParentTypes['WorkoutProgramWorkout'] = ResolversParentTypes['WorkoutProgramWorkout']> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   dayNumber?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
-  notes?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  note?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   Workout?: Resolver<ResolversTypes['Workout'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
