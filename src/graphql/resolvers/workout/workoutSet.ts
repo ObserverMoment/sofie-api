@@ -168,6 +168,7 @@ export const createWorkoutSetIntervalBuyIn = async (
           ...data.WorkoutMove,
           distanceUnit: data.WorkoutMove.distanceUnit || undefined,
           loadUnit: data.WorkoutMove.loadUnit || undefined,
+          timeUnit: data.WorkoutMove.timeUnit || undefined,
           User: {
             connect: { id: authedUserId },
           },
@@ -216,6 +217,8 @@ export const updateWorkoutSetIntervalBuyIn = async (
               ...data.WorkoutMove,
               distanceUnit: data.WorkoutMove.distanceUnit || undefined,
               loadUnit: data.WorkoutMove.loadUnit || undefined,
+              loadAmount: data.WorkoutMove.loadAmount || undefined,
+              timeUnit: data.WorkoutMove.timeUnit || undefined,
               repType: data.WorkoutMove.repType || undefined,
               reps: data.WorkoutMove.reps || undefined,
               Move: {

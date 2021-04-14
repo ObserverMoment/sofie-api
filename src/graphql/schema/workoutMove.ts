@@ -7,8 +7,9 @@ export default gql`
     reps: Float!
     repType: WorkoutMoveRepType!
     distanceUnit: DistanceUnit!
-    loadAmount: Float
+    loadAmount: Float!
     loadUnit: LoadUnit!
+    timeUnit: TimeUnit!
     Move: Move!
     Equipment: Equipment
   }
@@ -18,8 +19,9 @@ export default gql`
     reps: Float!
     repType: WorkoutMoveRepType!
     distanceUnit: DistanceUnit
-    loadAmount: Float
+    loadAmount: Float!
     loadUnit: LoadUnit
+    timeUnit: TimeUnit
     Move: ID!
     Equipment: ID
     WorkoutSet: ID!
@@ -32,6 +34,7 @@ export default gql`
     distanceUnit: DistanceUnit
     loadAmount: Float
     loadUnit: LoadUnit
+    timeUnit: TimeUnit
     Move: ID
     Equipment: ID
   }

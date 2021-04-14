@@ -345,7 +345,8 @@ model WorkoutMove {
   repType                 WorkoutMoveRepType
   reps                    Float
   distanceUnit            DistanceUnit              @default(METRES)
-  loadAmount              Float?
+  timeUnit                TimeUnit                  @default(MINUTES)
+  loadAmount              Float                     @default(0)
   loadUnit                LoadUnit                  @default(KG)
   Move                    Move                      @relation(fields: [moveId], references: [id])
   moveId                  String
@@ -613,6 +614,12 @@ enum LoadUnit {
 enum MoveScope {
   STANDARD
   CUSTOM
+}
+
+enum TimeUnit {
+  HOURS
+  MINUTES
+  SECONDS
 }
 
 enum WeightUnit {

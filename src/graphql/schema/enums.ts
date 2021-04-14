@@ -60,6 +60,12 @@ export default gql`
     CUSTOM
   }
 
+  enum TimeUnit {
+    HOURS
+    MINUTES
+    SECONDS
+  }
+
   enum WorkoutMoveRepType {
     REPS
     CALORIES

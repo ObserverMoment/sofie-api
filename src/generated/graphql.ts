@@ -627,6 +627,11 @@ export type MoveScope =
   | 'STANDARD'
   | 'CUSTOM';
 
+export type TimeUnit =
+  | 'HOURS'
+  | 'MINUTES'
+  | 'SECONDS';
+
 export type WorkoutMoveRepType =
   | 'REPS'
   | 'CALORIES'
@@ -1331,8 +1336,9 @@ export type WorkoutMove = {
   reps: Scalars['Float'];
   repType: WorkoutMoveRepType;
   distanceUnit: DistanceUnit;
-  loadAmount?: Maybe<Scalars['Float']>;
+  loadAmount: Scalars['Float'];
   loadUnit: LoadUnit;
+  timeUnit: TimeUnit;
   Move: Move;
   Equipment?: Maybe<Equipment>;
 };
@@ -1342,8 +1348,9 @@ export type CreateWorkoutMoveInput = {
   reps: Scalars['Float'];
   repType: WorkoutMoveRepType;
   distanceUnit?: Maybe<DistanceUnit>;
-  loadAmount?: Maybe<Scalars['Float']>;
+  loadAmount: Scalars['Float'];
   loadUnit?: Maybe<LoadUnit>;
+  timeUnit?: Maybe<TimeUnit>;
   Move: Scalars['ID'];
   Equipment?: Maybe<Scalars['ID']>;
   WorkoutSet: Scalars['ID'];
@@ -1356,6 +1363,7 @@ export type UpdateWorkoutMoveInput = {
   distanceUnit?: Maybe<DistanceUnit>;
   loadAmount?: Maybe<Scalars['Float']>;
   loadUnit?: Maybe<LoadUnit>;
+  timeUnit?: Maybe<TimeUnit>;
   Move?: Maybe<Scalars['ID']>;
   Equipment?: Maybe<Scalars['ID']>;
 };
@@ -1554,6 +1562,7 @@ export type ResolversTypes = ResolversObject<{
   Gender: Gender;
   LoadUnit: LoadUnit;
   MoveScope: MoveScope;
+  TimeUnit: TimeUnit;
   WorkoutMoveRepType: WorkoutMoveRepType;
   WorkoutSetGeneratorTarget: WorkoutSetGeneratorTarget;
   WorkoutSetGeneratorType: WorkoutSetGeneratorType;
@@ -2186,8 +2195,9 @@ export type WorkoutMoveResolvers<ContextType = any, ParentType extends Resolvers
   reps?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   repType?: Resolver<ResolversTypes['WorkoutMoveRepType'], ParentType, ContextType>;
   distanceUnit?: Resolver<ResolversTypes['DistanceUnit'], ParentType, ContextType>;
-  loadAmount?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  loadAmount?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   loadUnit?: Resolver<ResolversTypes['LoadUnit'], ParentType, ContextType>;
+  timeUnit?: Resolver<ResolversTypes['TimeUnit'], ParentType, ContextType>;
   Move?: Resolver<ResolversTypes['Move'], ParentType, ContextType>;
   Equipment?: Resolver<Maybe<ResolversTypes['Equipment']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;

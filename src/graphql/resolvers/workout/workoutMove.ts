@@ -22,6 +22,7 @@ export const createWorkoutMove = async (
       ...data,
       distanceUnit: data.distanceUnit || undefined,
       loadUnit: data.loadUnit || undefined,
+      timeUnit: data.timeUnit || undefined,
       User: {
         connect: { id: authedUserId },
       },
@@ -53,6 +54,8 @@ export const updateWorkoutMove = async (
       reps: data.reps || undefined,
       distanceUnit: data.distanceUnit || undefined,
       loadUnit: data.loadUnit || undefined,
+      timeUnit: data.timeUnit || undefined,
+      loadAmount: data.loadAmount || undefined,
       Move: data.Move ? { connect: { id: data.Move } } : undefined,
       Equipment: data.Equipment
         ? { connect: { id: data.Equipment } }

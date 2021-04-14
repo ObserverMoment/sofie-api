@@ -191,6 +191,11 @@ enum MoveScope {
   STANDARD
   CUSTOM
 }
+enum TimeUnit {
+  HOURS
+  MINUTES
+  SECONDS
+}
 enum WorkoutMoveRepType {
   REPS
   CALORIES
@@ -805,8 +810,9 @@ type WorkoutMove {
   reps: Float!
   repType: WorkoutMoveRepType!
   distanceUnit: DistanceUnit!
-  loadAmount: Float
+  loadAmount: Float!
   loadUnit: LoadUnit!
+  timeUnit: TimeUnit!
   Move: Move!
   Equipment: Equipment
 }
@@ -815,8 +821,9 @@ input CreateWorkoutMoveInput {
   reps: Float!
   repType: WorkoutMoveRepType!
   distanceUnit: DistanceUnit
-  loadAmount: Float
+  loadAmount: Float!
   loadUnit: LoadUnit
+  timeUnit: TimeUnit
   Move: ID!
   Equipment: ID
   WorkoutSet: ID!
@@ -828,6 +835,7 @@ input UpdateWorkoutMoveInput {
   distanceUnit: DistanceUnit
   loadAmount: Float
   loadUnit: LoadUnit
+  timeUnit: TimeUnit
   Move: ID
   Equipment: ID
 }
