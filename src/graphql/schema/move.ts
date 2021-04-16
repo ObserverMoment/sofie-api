@@ -13,7 +13,7 @@ export default gql`
     validRepTypes: [WorkoutMoveRepType!]!
     RequiredEquipments: [Equipment!]!
     SelectableEquipments: [Equipment!]!
-    BodyAreaMoveScores: [BodyAreaMoveScore!]
+    BodyAreaMoveScores: [BodyAreaMoveScore!]!
   }
 
   type MoveType {

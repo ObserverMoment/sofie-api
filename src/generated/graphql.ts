@@ -686,7 +686,7 @@ export type Move = {
   validRepTypes: Array<WorkoutMoveRepType>;
   RequiredEquipments: Array<Equipment>;
   SelectableEquipments: Array<Equipment>;
-  BodyAreaMoveScores?: Maybe<Array<BodyAreaMoveScore>>;
+  BodyAreaMoveScores: Array<BodyAreaMoveScore>;
 };
 
 export type MoveType = {
@@ -1176,16 +1176,8 @@ export type Workout = {
 
 export type CreateWorkoutInput = {
   name: Scalars['String'];
-  description?: Maybe<Scalars['String']>;
-  introVideoUri?: Maybe<Scalars['String']>;
-  introVideoThumbUri?: Maybe<Scalars['String']>;
-  introAudioUri?: Maybe<Scalars['String']>;
-  coverImageUri?: Maybe<Scalars['String']>;
   difficultyLevel: DifficultyLevel;
   contentAccessScope: ContentAccessScope;
-  WorkoutSections: Array<CreateWorkoutSectionInput>;
-  WorkoutGoals: Array<Scalars['ID']>;
-  WorkoutTags: Array<Scalars['ID']>;
 };
 
 export type UpdateWorkoutInput = {
@@ -1199,7 +1191,7 @@ export type UpdateWorkoutInput = {
   difficultyLevel?: Maybe<DifficultyLevel>;
   contentAccessScope?: Maybe<ContentAccessScope>;
   WorkoutGoals?: Maybe<Array<Scalars['ID']>>;
-  WorkoutTags: Array<Scalars['ID']>;
+  WorkoutTags?: Maybe<Array<Scalars['ID']>>;
 };
 
 export type WorkoutSection = {
@@ -1911,7 +1903,7 @@ export type MoveResolvers<ContextType = any, ParentType extends ResolversParentT
   validRepTypes?: Resolver<Array<ResolversTypes['WorkoutMoveRepType']>, ParentType, ContextType>;
   RequiredEquipments?: Resolver<Array<ResolversTypes['Equipment']>, ParentType, ContextType>;
   SelectableEquipments?: Resolver<Array<ResolversTypes['Equipment']>, ParentType, ContextType>;
-  BodyAreaMoveScores?: Resolver<Maybe<Array<ResolversTypes['BodyAreaMoveScore']>>, ParentType, ContextType>;
+  BodyAreaMoveScores?: Resolver<Array<ResolversTypes['BodyAreaMoveScore']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 

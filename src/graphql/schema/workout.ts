@@ -18,18 +18,11 @@ export default gql`
     WorkoutTags: [WorkoutTag!]!
   }
 
+  # Just creates the basic required fields.
   input CreateWorkoutInput {
     name: String!
-    description: String
-    introVideoUri: String
-    introVideoThumbUri: String
-    introAudioUri: String
-    coverImageUri: String
     difficultyLevel: DifficultyLevel!
     contentAccessScope: ContentAccessScope!
-    WorkoutSections: [CreateWorkoutSectionInput!]!
-    WorkoutGoals: [ID!]!
-    WorkoutTags: [ID!]!
   }
 
   input UpdateWorkoutInput {
@@ -43,6 +36,6 @@ export default gql`
     difficultyLevel: DifficultyLevel
     contentAccessScope: ContentAccessScope
     WorkoutGoals: [ID!]
-    WorkoutTags: [ID!]!
+    WorkoutTags: [ID!]
   }
 `

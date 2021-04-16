@@ -92,16 +92,6 @@ export const createWorkout = async (
       User: {
         connect: { id: authedUserId },
       },
-      WorkoutGoals: {
-        connect: data.WorkoutGoals
-          ? data.WorkoutGoals.map((id) => ({ id }))
-          : undefined,
-      },
-      WorkoutTags: {
-        connect: data.WorkoutTags
-          ? data.WorkoutTags.map((id) => ({ id }))
-          : undefined,
-      },
     },
     select,
   })

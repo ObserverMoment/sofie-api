@@ -245,7 +245,7 @@ type Move {
   validRepTypes: [WorkoutMoveRepType!]!
   RequiredEquipments: [Equipment!]!
   SelectableEquipments: [Equipment!]!
-  BodyAreaMoveScores: [BodyAreaMoveScore!]
+  BodyAreaMoveScores: [BodyAreaMoveScore!]!
 }
 type MoveType {
   id: ID!
@@ -669,16 +669,8 @@ type Workout {
 }
 input CreateWorkoutInput {
   name: String!
-  description: String
-  introVideoUri: String
-  introVideoThumbUri: String
-  introAudioUri: String
-  coverImageUri: String
   difficultyLevel: DifficultyLevel!
   contentAccessScope: ContentAccessScope!
-  WorkoutSections: [CreateWorkoutSectionInput!]!
-  WorkoutGoals: [ID!]!
-  WorkoutTags: [ID!]!
 }
 input UpdateWorkoutInput {
   id: ID!
@@ -691,7 +683,7 @@ input UpdateWorkoutInput {
   difficultyLevel: DifficultyLevel
   contentAccessScope: ContentAccessScope
   WorkoutGoals: [ID!]
-  WorkoutTags: [ID!]!
+  WorkoutTags: [ID!]
 }
 type WorkoutSection {
   id: ID!
