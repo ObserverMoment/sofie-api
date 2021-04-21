@@ -309,7 +309,10 @@ export const deleteLoggedWorkoutSectionById = async (
       prisma.loggedWorkoutSet.deleteMany({
         where: { id: { in: setIds } },
       }),
-      prisma.loggedWorkoutSection.delete({ where: { id } }),
+      prisma.loggedWorkoutSection.delete({
+        where: { id },
+        select: { id: true },
+      }),
     ]
 
     const [_, __, deleted] = await prisma.$transaction(ops)

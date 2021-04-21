@@ -5,13 +5,14 @@ import gymProfile from './gymProfile'
 import progressJournal from './progressJournal'
 import equipmentSchema from './equipment'
 import moveSchema from './move'
-import workoutSchema from './workout'
+import workoutSummarySchema from './workout/workoutSummary'
+import workoutSchema from './workout/workout'
 import workoutProgramSchema from './workoutProgram'
 import loggedWorkoutSchema from './loggedWorkout'
 import scheduledWorkoutSchema from './scheduledWorkout'
-import workoutSectionSchema from './workoutSection'
-import workoutSetSchema from './workoutSet'
-import workoutMoveSchema from './workoutMove'
+import workoutSectionSchema from './workout/workoutSection'
+import workoutSetSchema from './workout/workoutSet'
+import workoutMoveSchema from './workout/workoutMove'
 import bodyAreaSchema from './bodyArea'
 import textSearchSchema from './textSearch'
 import enumSchema from './enums'
@@ -28,6 +29,7 @@ const typeDefs = mergeTypeDefs([
   progressJournal,
   scheduledWorkoutSchema,
   textSearchSchema,
+  workoutSummarySchema,
   workoutSchema,
   workoutSectionSchema,
   workoutSetSchema,

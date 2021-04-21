@@ -26,9 +26,9 @@ type Query {
   userWorkoutTags: [WorkoutTag!]!
   userPublicProfiles: [UserPublicProfile!]
   userPublicProfileByUserId(userId: ID!): UserPublicProfile!
-  officialWorkouts: [Workout!]!
-  publicWorkouts: [Workout!]!
-  userWorkouts: [Workout!]!
+  officialWorkouts: [WorkoutSummary!]!
+  publicWorkouts: [WorkoutSummary!]!
+  userWorkouts: [WorkoutSummary!]!
   workoutById(id: ID!): Workout!
   officialWorkoutPrograms: [WorkoutProgram!]!
   publicWorkoutPrograms: [WorkoutProgram!]!
@@ -81,14 +81,14 @@ type Mutation {
   createWorkout(data: CreateWorkoutInput!): Workout!
   updateWorkout(data: UpdateWorkoutInput!): Workout!
   softDeleteWorkoutById(id: ID!): ID
-  createWorkoutSection(data: CreateWorkoutSectionInput!): WorkoutSection!
+  createWorkoutSection(data: CreateWorkoutSectionInput!, sort: Boolean): WorkoutSection!
   updateWorkoutSection(data: UpdateWorkoutSectionInput!): WorkoutSection!
-  softDeleteWorkoutSectionById(id: ID!): ID!
-  reorderWorkoutSections(data: [UpdateSortPositionInput!]!): [WorkoutSection!]!
+  deleteWorkoutSectionById(id: ID!): ID!
+  reorderWorkoutSections(data: [UpdateSortPositionInput!]!): [SortPositionUpdated!]!
   createWorkoutSet(data: CreateWorkoutSetInput!): WorkoutSet!
   updateWorkoutSet(data: UpdateWorkoutSetInput!): WorkoutSet!
   deleteWorkoutSetById(id: ID!): ID!
-  reorderWorkoutSets(data: [UpdateSortPositionInput!]!): [WorkoutSet!]!
+  reorderWorkoutSets(data: [UpdateSortPositionInput!]!): [SortPositionUpdated!]!
   createWorkoutSetIntervalBuyIn(data: CreateWorkoutSetIntervalBuyInInput!): WorkoutSetIntervalBuyIn!
   updateWorkoutSetIntervalBuyIn(data: UpdateWorkoutSetIntervalBuyInInput!): WorkoutSetIntervalBuyIn!
   deleteWorkoutSetIntervalBuyInById(id: ID!): ID!
@@ -98,7 +98,7 @@ type Mutation {
   createWorkoutMove(data: CreateWorkoutMoveInput!): WorkoutMove!
   updateWorkoutMove(data: UpdateWorkoutMoveInput!): WorkoutMove!
   deleteWorkoutMoveById(id: ID!): ID!
-  reorderWorkoutMoves(data: [UpdateSortPositionInput!]!): [WorkoutMove!]!
+  reorderWorkoutMoves(data: [UpdateSortPositionInput!]!): [SortPositionUpdated!]!
   createWorkoutProgram(data: CreateWorkoutProgramInput!): WorkoutProgram!
   updateWorkoutProgram(data: UpdateWorkoutProgramInput!): WorkoutProgram!
   softDeleteWorkoutProgramById(id: ID!): ID!
@@ -111,23 +111,16 @@ type Mutation {
   updateWorkoutProgramReview(data: UpdateWorkoutProgramReviewInput!): WorkoutProgramReview!
   deleteWorkoutProgramReviewById(id: ID!): ID!
 }
+type SortPositionUpdated {
+  id: ID!
+  sortPosition: Int!
+}
 input UpdateSortPositionInput {
   id: ID!
   sortPosition: Int!
 }
-type WorkoutGoal {
+input ConnectRelationInput {
   id: ID!
-  name: String!
-  description: String!
-}
-type WorkoutSectionType {
-  id: ID!
-  name: String!
-  subtitle: String!
-  description: String!
-  validRepTypes: [WorkoutMoveRepType!]!
-  WorkoutSections: [WorkoutSection!]!
-  LoggedWorkoutSections: [LoggedWorkoutSection!]!
 }
 type BodyArea {
   id: ID!
@@ -295,7 +288,7 @@ type User {
   birthdate: DateTime
   city: String
   countryCode: String
-  displayName: String
+  displayName: String!
   instagramUrl: String
   tiktokUrl: String
   youtubeUrl: String
@@ -307,6 +300,11 @@ type User {
   hasOnboarded: Boolean!
   GymProfiles: [GymProfile!]
   ProgressJournalGoalTags: [ProgressJournalGoalTag!]
+}
+type UserSummary {
+  id: ID!
+  displayName: String!
+  avatarUri: String
 }
 input UpdateUserInput {
   userProfileScope: UserProfileScope
@@ -352,18 +350,6 @@ type UserPrivateProfile {
   Workouts: [Workout!]
   WorkoutPrograms: [WorkoutProgram!]
   WorkoutProgramEnrolments: [WorkoutProgramEnrolment!]
-}
-type WorkoutTag {
-  id: ID!
-  User: User!
-  tag: String!
-}
-input CreateWorkoutTagInput {
-  tag: String!
-}
-input UpdateWorkoutTagInput {
-  id: ID!
-  tag: String!
 }
 type GymProfile {
   id: ID!
@@ -651,10 +637,10 @@ type TextSearchWorkoutProgramResult {
   WorkoutGoals: [WorkoutGoal!]!
   WorkoutProgramWorkouts: [WorkoutProgramWorkout!]
 }
-type Workout {
+type WorkoutSummary {
   id: ID!
-  createdAt: DateTime!
-  User: User
+  createdAt: DateTime
+  User: UserSummary
   name: String!
   description: String
   introVideoUri: String
@@ -663,9 +649,45 @@ type Workout {
   coverImageUri: String
   difficultyLevel: DifficultyLevel!
   contentAccessScope: ContentAccessScope!
-  WorkoutSections: [WorkoutSection!]!
   WorkoutGoals: [WorkoutGoal!]!
   WorkoutTags: [WorkoutTag!]!
+  WorkoutSections: [WorkoutSectionSummary!]!
+}
+type WorkoutSectionSummary {
+  id: ID!
+  timecap: Int
+  WorkoutSectionType: WorkoutSectionType!
+  WorkoutSets: [WorkoutSetSummary!]!
+}
+type WorkoutSetSummary {
+  id: ID!
+  WorkoutMoves: [WorkoutMoveSummary!]!
+}
+type WorkoutMoveSummary {
+  id: ID!
+  Equipment: Equipment
+  Move: MoveSummary!
+}
+type MoveSummary {
+  id: ID!
+  name: String!
+  RequiredEquipments: [Equipment!]!
+}
+type Workout {
+  id: ID!
+  createdAt: DateTime
+  User: UserSummary
+  name: String!
+  description: String
+  introVideoUri: String
+  introVideoThumbUri: String
+  introAudioUri: String
+  coverImageUri: String
+  difficultyLevel: DifficultyLevel!
+  contentAccessScope: ContentAccessScope!
+  WorkoutGoals: [WorkoutGoal!]!
+  WorkoutTags: [WorkoutTag!]!
+  WorkoutSections: [WorkoutSection!]!
 }
 input CreateWorkoutInput {
   name: String!
@@ -682,8 +704,25 @@ input UpdateWorkoutInput {
   coverImageUri: String
   difficultyLevel: DifficultyLevel
   contentAccessScope: ContentAccessScope
-  WorkoutGoals: [ID!]
-  WorkoutTags: [ID!]
+  WorkoutGoals: [ConnectRelationInput!]
+  WorkoutTags: [ConnectRelationInput!]
+}
+type WorkoutGoal {
+  id: ID!
+  name: String!
+  description: String!
+}
+type WorkoutTag {
+  id: ID!
+  User: User!
+  tag: String!
+}
+input CreateWorkoutTagInput {
+  tag: String!
+}
+input UpdateWorkoutTagInput {
+  id: ID!
+  tag: String!
 }
 type WorkoutSection {
   id: ID!
@@ -701,7 +740,6 @@ type WorkoutSection {
   outroVideoUri: String
   outroVideoThumbUri: String
   outroAudioUri: String
-  Workout: Workout!
   WorkoutSectionType: WorkoutSectionType!
   WorkoutSets: [WorkoutSet!]!
 }
@@ -720,8 +758,8 @@ input CreateWorkoutSectionInput {
   outroVideoUri: String
   outroVideoThumbUri: String
   outroAudioUri: String
-  WorkoutSectionType: ID!
-  Workout: ID!
+  WorkoutSectionType: ConnectRelationInput!
+  Workout: ConnectRelationInput!
 }
 input UpdateWorkoutSectionInput {
   id: ID!
@@ -738,6 +776,16 @@ input UpdateWorkoutSectionInput {
   outroVideoUri: String
   outroVideoThumbUri: String
   outroAudioUri: String
+  WorkoutSectionType: ConnectRelationInput
+}
+type WorkoutSectionType {
+  id: ID!
+  name: String!
+  subtitle: String!
+  description: String!
+  validRepTypes: [WorkoutMoveRepType!]!
+  WorkoutSections: [WorkoutSection!]!
+  LoggedWorkoutSections: [LoggedWorkoutSection!]!
 }
 type WorkoutSet {
   id: ID!
@@ -750,7 +798,7 @@ type WorkoutSet {
 input CreateWorkoutSetInput {
   sortPosition: Int!
   rounds: Int
-  WorkoutSection: ID!
+  WorkoutSection: ConnectRelationInput!
 }
 input UpdateWorkoutSetInput {
   id: ID!
@@ -764,7 +812,7 @@ type WorkoutSetIntervalBuyIn {
 input CreateWorkoutSetIntervalBuyInInput {
   interval: Int!
   WorkoutMove: CreateWorkoutMoveInput!
-  WorkoutSet: ID!
+  WorkoutSet: ConnectRelationInput!
 }
 input UpdateWorkoutSetIntervalBuyInInput {
   id: ID!
@@ -786,7 +834,7 @@ input CreateWorkoutSetGeneratorInput {
   target: WorkoutSetGeneratorTarget!
   roundFrequency: Int!
   adjustAmount: Float!
-  WorkoutSet: ID!
+  WorkoutSet: ConnectRelationInput!
 }
 input UpdateWorkoutSetGeneratorInput {
   id: ID!
@@ -816,9 +864,9 @@ input CreateWorkoutMoveInput {
   loadAmount: Float!
   loadUnit: LoadUnit
   timeUnit: TimeUnit
-  Move: ID!
-  Equipment: ID
-  WorkoutSet: ID!
+  Move: ConnectRelationInput!
+  Equipment: ConnectRelationInput
+  WorkoutSet: ConnectRelationInput!
 }
 input UpdateWorkoutMoveInput {
   id: ID!
@@ -828,8 +876,8 @@ input UpdateWorkoutMoveInput {
   loadAmount: Float
   loadUnit: LoadUnit
   timeUnit: TimeUnit
-  Move: ID
-  Equipment: ID
+  Move: ConnectRelationInput
+  Equipment: ConnectRelationInput
 }
 type WorkoutProgram {
   id: ID!

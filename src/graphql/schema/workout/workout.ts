@@ -3,8 +3,11 @@ import { gql } from 'apollo-server-express'
 export default gql`
   type Workout {
     id: ID!
-    createdAt: DateTime!
-    User: User
+    # Ideally thiw would be required but needs to be nullable for now until this is resolved
+    # So that Artemis type generation => DateTime coercers work.
+    # https://github.com/comigor/artemis/issues/293
+    createdAt: DateTime
+    User: UserSummary
     name: String!
     description: String
     introVideoUri: String
@@ -13,9 +16,9 @@ export default gql`
     coverImageUri: String
     difficultyLevel: DifficultyLevel!
     contentAccessScope: ContentAccessScope!
-    WorkoutSections: [WorkoutSection!]!
     WorkoutGoals: [WorkoutGoal!]!
     WorkoutTags: [WorkoutTag!]!
+    WorkoutSections: [WorkoutSection!]!
   }
 
   # Just creates the basic required fields.
@@ -35,7 +38,28 @@ export default gql`
     coverImageUri: String
     difficultyLevel: DifficultyLevel
     contentAccessScope: ContentAccessScope
-    WorkoutGoals: [ID!]
-    WorkoutTags: [ID!]
+    WorkoutGoals: [ConnectRelationInput!]
+    WorkoutTags: [ConnectRelationInput!]
+  }
+
+  type WorkoutGoal {
+    id: ID!
+    name: String!
+    description: String!
+  }
+
+  type WorkoutTag {
+    id: ID!
+    User: User!
+    tag: String!
+  }
+
+  input CreateWorkoutTagInput {
+    tag: String!
+  }
+
+  input UpdateWorkoutTagInput {
+    id: ID!
+    tag: String!
   }
 `

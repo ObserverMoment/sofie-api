@@ -22,9 +22,9 @@ export default gql`
     loadAmount: Float!
     loadUnit: LoadUnit
     timeUnit: TimeUnit
-    Move: ID!
-    Equipment: ID
-    WorkoutSet: ID!
+    Move: ConnectRelationInput!
+    Equipment: ConnectRelationInput
+    WorkoutSet: ConnectRelationInput!
   }
 
   input UpdateWorkoutMoveInput {
@@ -35,7 +35,7 @@ export default gql`
     loadAmount: Float
     loadUnit: LoadUnit
     timeUnit: TimeUnit
-    Move: ID
-    Equipment: ID
+    Move: ConnectRelationInput
+    Equipment: ConnectRelationInput
   }
 `

@@ -2,25 +2,32 @@ import { ApolloError } from 'apollo-server-express'
 import { Context } from '../../..'
 import {
   MutationCreateWorkoutSectionArgs,
+  MutationDeleteWorkoutSectionByIdArgs,
   MutationReorderWorkoutSectionsArgs,
-  MutationSoftDeleteWorkoutSectionByIdArgs,
   MutationUpdateWorkoutSectionArgs,
+  SortPositionUpdated,
   WorkoutSection,
 } from '../../../generated/graphql'
-import { checkUserOwnsObject, checkAndReorderObjects } from '../../utils'
+import {
+  checkUserOwnsObject,
+  checkAndReorderObjects,
+  AccessScopeError,
+} from '../../utils'
 import {
   checkWorkoutSectionMediaForDeletion,
   deleteFiles,
 } from '../../../uploadcare/index'
 
+/// Optionally update sort orders - useful for when duplicating a section within a workout.
 export const createWorkoutSection = async (
   r: any,
-  { data }: MutationCreateWorkoutSectionArgs,
+  { data, sort }: MutationCreateWorkoutSectionArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
   // Check user owns the parent.
-  await checkUserOwnsObject(data.Workout, 'workout', authedUserId, prisma)
+  await checkUserOwnsObject(data.Workout.id, 'workout', authedUserId, prisma)
 
+  // Create the new workout section.
   const workoutSection = await prisma.workoutSection.create({
     data: {
       ...data,
@@ -30,16 +37,52 @@ export const createWorkoutSection = async (
         connect: { id: authedUserId },
       },
       WorkoutSectionType: {
-        connect: { id: data.WorkoutSectionType },
+        connect: { id: data.WorkoutSectionType.id },
       },
       Workout: {
         connect: {
-          id: data.Workout,
+          id: data.Workout.id,
         },
       },
     },
     select,
   })
+
+  // Optionally update all sort orders for workout sections in the workout.
+  if (sort) {
+    try {
+      // All sections greater than or equal to the created section will be affected.
+      // Useful if user is duplicating a section that is not at the end of the workout.
+      const affectedSections = await prisma.workoutSection.findMany({
+        where: {
+          workoutId: data.Workout.id,
+          sortPosition: {
+            gte: data.sortPosition,
+          },
+        },
+        select: {
+          id: true,
+          sortPosition: true,
+        },
+      })
+
+      await prisma.$transaction(
+        affectedSections.map(({ id, sortPosition }) =>
+          prisma.workoutSection.update({
+            where: { id },
+            data: {
+              sortPosition: sortPosition + 1,
+            },
+          }),
+        ),
+      )
+    } catch (e) {
+      console.log(e)
+      throw new ApolloError(
+        'createWorkoutSection: There was an issue reordering the workout sections.',
+      )
+    }
+  }
 
   if (workoutSection) {
     return workoutSection as WorkoutSection
@@ -58,6 +101,7 @@ export const updateWorkoutSection = async (
     prisma,
     data,
   )
+
   const updated = await prisma.workoutSection.update({
     where: {
       id: data.id,
@@ -67,6 +111,9 @@ export const updateWorkoutSection = async (
       rounds: data.rounds || undefined,
       // Never update a single section's sort position - use the dedicated re-order resolvers instead..
       sortPosition: undefined,
+      WorkoutSectionType: data.WorkoutSectionType
+        ? { connect: { id: data.WorkoutSectionType.id } }
+        : undefined,
     },
     select,
   })
@@ -80,22 +127,87 @@ export const updateWorkoutSection = async (
     throw new ApolloError('updateWorkoutSection: There was an issue.')
   }
 }
-export const softDeleteWorkoutSectionById = async (
+
+export const deleteWorkoutSectionById = async (
   r: any,
-  { id }: MutationSoftDeleteWorkoutSectionByIdArgs,
+  { id }: MutationDeleteWorkoutSectionByIdArgs,
   { authedUserId, prisma }: Context,
 ) => {
-  await checkUserOwnsObject(id, 'workoutSection', authedUserId, prisma)
-  const archived = await prisma.workoutSection.update({
+  // To check user access, get descendant ids and to get media uris back.
+  const sectionForDeletion = await prisma.workoutSection.findUnique({
     where: { id },
-    data: { archived: true },
-    select: { id: true },
+    select: {
+      id: true,
+      userId: true,
+      introAudioUri: true,
+      introVideoUri: true,
+      introVideoThumbUri: true,
+      classAudioUri: true,
+      classVideoUri: true,
+      classVideoThumbUri: true,
+      outroAudioUri: true,
+      outroVideoUri: true,
+      outroVideoThumbUri: true,
+    },
   })
 
-  if (archived) {
-    return archived.id
+  if (!sectionForDeletion || sectionForDeletion.userId !== authedUserId) {
+    throw new AccessScopeError()
   } else {
-    throw new ApolloError('softDeleteWorkoutSectionById: There was an issue.')
+    const setsForDeletion = await prisma.workoutSet.findMany({
+      where: {
+        workoutSectionId: id,
+      },
+      select: {
+        id: true,
+      },
+    })
+
+    const setIds = setsForDeletion.map((s) => s.id)
+
+    const ops = [
+      prisma.workoutMove.deleteMany({
+        where: { workoutSetId: { in: setIds } },
+      }),
+      prisma.workoutSet.deleteMany({
+        where: { id: { in: setIds } },
+      }),
+      prisma.workoutSection.delete({ where: { id }, select: { id: true } }),
+    ]
+
+    const [_, __, deleted] = await prisma.$transaction(ops)
+
+    if (deleted) {
+      // Run media cleanup.
+      const {
+        introAudioUri,
+        introVideoUri,
+        introVideoThumbUri,
+        classAudioUri,
+        classVideoUri,
+        classVideoThumbUri,
+        outroAudioUri,
+        outroVideoUri,
+        outroVideoThumbUri,
+      } = sectionForDeletion
+
+      const forDeletion = [
+        introAudioUri,
+        introVideoUri,
+        introVideoThumbUri,
+        classAudioUri,
+        classVideoUri,
+        classVideoThumbUri,
+        outroAudioUri,
+        outroVideoUri,
+        outroVideoThumbUri,
+      ].filter((x) => x) as string[]
+
+      await deleteFiles(forDeletion)
+      return sectionForDeletion.id
+    } else {
+      throw new ApolloError('deleteWorkoutSectionById: There was an issue.')
+    }
   }
 }
 
@@ -113,7 +225,10 @@ export const reorderWorkoutSections = async (
   )
 
   if (updated) {
-    return updated
+    return updated.map((u) => ({
+      id: u.id,
+      sortPosition: u.sortPosition,
+    })) as SortPositionUpdated[]
   } else {
     throw new ApolloError('reorderWorkoutSections: There was an issue.')
   }

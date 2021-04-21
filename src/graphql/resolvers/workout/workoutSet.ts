@@ -14,6 +14,7 @@ import {
   MutationUpdateWorkoutSetArgs,
   MutationUpdateWorkoutSetGeneratorArgs,
   MutationUpdateWorkoutSetIntervalBuyInArgs,
+  SortPositionUpdated,
   WorkoutSet,
   WorkoutSetGenerator,
   WorkoutSetIntervalBuyIn,
@@ -29,7 +30,7 @@ export const createWorkoutSet = async (
 ) => {
   // Check user owns the parent.
   await checkUserOwnsObject(
-    data.WorkoutSection,
+    data.WorkoutSection.id,
     'workoutSection',
     authedUserId,
     prisma,
@@ -42,7 +43,7 @@ export const createWorkoutSet = async (
         connect: { id: authedUserId },
       },
       WorkoutSection: {
-        connect: { id: data.WorkoutSection },
+        connect: { id: data.WorkoutSection.id },
       },
     },
     select,
@@ -152,7 +153,12 @@ export const createWorkoutSetIntervalBuyIn = async (
   { authedUserId, select, prisma }: Context,
 ) => {
   // Check user owns the parent.
-  await checkUserOwnsObject(data.WorkoutSet, 'workoutSet', authedUserId, prisma)
+  await checkUserOwnsObject(
+    data.WorkoutSet.id,
+    'workoutSet',
+    authedUserId,
+    prisma,
+  )
 
   const buyIn = await prisma.workoutSetIntervalBuyIn.create({
     data: {
@@ -161,7 +167,7 @@ export const createWorkoutSetIntervalBuyIn = async (
         connect: { id: authedUserId },
       },
       WorkoutSet: {
-        connect: { id: data.WorkoutSet },
+        connect: { id: data.WorkoutSet.id },
       },
       WorkoutMove: {
         create: {
@@ -173,13 +179,13 @@ export const createWorkoutSetIntervalBuyIn = async (
             connect: { id: authedUserId },
           },
           WorkoutSet: {
-            connect: { id: data.WorkoutSet },
+            connect: { id: data.WorkoutSet.id },
           },
           Move: {
-            connect: { id: data.WorkoutMove.Move },
+            connect: { id: data.WorkoutMove.Move.id },
           },
           Equipment: {
-            connect: { id: data.WorkoutMove.Equipment || undefined },
+            connect: { id: data.WorkoutMove.Equipment?.id || undefined },
           },
         },
       },
@@ -222,10 +228,10 @@ export const updateWorkoutSetIntervalBuyIn = async (
               repType: data.WorkoutMove.repType || undefined,
               reps: data.WorkoutMove.reps || undefined,
               Move: {
-                connect: { id: data.WorkoutMove.Move || undefined },
+                connect: { id: data.WorkoutMove.Move?.id || undefined },
               },
               Equipment: {
-                connect: { id: data.WorkoutMove.Equipment || undefined },
+                connect: { id: data.WorkoutMove.Equipment?.id || undefined },
               },
             },
           }
@@ -288,7 +294,12 @@ export const createWorkoutSetGenerator = async (
   { authedUserId, select, prisma }: Context,
 ) => {
   // Check user owns the parent.
-  await checkUserOwnsObject(data.WorkoutSet, 'workoutSet', authedUserId, prisma)
+  await checkUserOwnsObject(
+    data.WorkoutSet.id,
+    'workoutSet',
+    authedUserId,
+    prisma,
+  )
 
   const workoutSetGenerator = await prisma.workoutSetGenerator.create({
     data: {
@@ -297,7 +308,7 @@ export const createWorkoutSetGenerator = async (
         connect: { id: authedUserId },
       },
       WorkoutSet: {
-        connect: { id: data.WorkoutSet },
+        connect: { id: data.WorkoutSet.id },
       },
     },
     select,
@@ -377,7 +388,10 @@ export const reorderWorkoutSets = async (
   )
 
   if (updated) {
-    return updated
+    return updated.map((u) => ({
+      id: u.id,
+      sortPosition: u.sortPosition,
+    })) as SortPositionUpdated[]
   } else {
     throw new ApolloError('reorderWorkoutSets: There was an issue.')
   }

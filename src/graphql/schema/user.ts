@@ -12,7 +12,7 @@ export default gql`
     birthdate: DateTime
     city: String
     countryCode: String
-    displayName: String
+    displayName: String!
     instagramUrl: String
     tiktokUrl: String
     youtubeUrl: String
@@ -24,6 +24,12 @@ export default gql`
     hasOnboarded: Boolean!
     GymProfiles: [GymProfile!]
     ProgressJournalGoalTags: [ProgressJournalGoalTag!]
+  }
+
+  type UserSummary {
+    id: ID!
+    displayName: String!
+    avatarUri: String
   }
 
   # Only used for the currently logged in user to update themselves - so ID not required.
@@ -73,20 +79,5 @@ export default gql`
     Workouts: [Workout!]
     WorkoutPrograms: [WorkoutProgram!]
     WorkoutProgramEnrolments: [WorkoutProgramEnrolment!]
-  }
-
-  type WorkoutTag {
-    id: ID!
-    User: User!
-    tag: String!
-  }
-
-  input CreateWorkoutTagInput {
-    tag: String!
-  }
-
-  input UpdateWorkoutTagInput {
-    id: ID!
-    tag: String!
   }
 `

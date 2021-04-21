@@ -35,9 +35,9 @@ export default gql`
     userPublicProfiles: [UserPublicProfile!]
     userPublicProfileByUserId(userId: ID!): UserPublicProfile!
     #### Workouts ####
-    officialWorkouts: [Workout!]!
-    publicWorkouts: [Workout!]!
-    userWorkouts: [Workout!]!
+    officialWorkouts: [WorkoutSummary!]!
+    publicWorkouts: [WorkoutSummary!]!
+    userWorkouts: [WorkoutSummary!]!
     workoutById(id: ID!): Workout!
     #### Workout Programs and Enrolments ####
     officialWorkoutPrograms: [WorkoutProgram!]!
@@ -145,17 +145,22 @@ export default gql`
     updateWorkout(data: UpdateWorkoutInput!): Workout!
     softDeleteWorkoutById(id: ID!): ID
     #### Workout Section ####
-    createWorkoutSection(data: CreateWorkoutSectionInput!): WorkoutSection!
+    createWorkoutSection(
+      data: CreateWorkoutSectionInput!
+      sort: Boolean
+    ): WorkoutSection!
     updateWorkoutSection(data: UpdateWorkoutSectionInput!): WorkoutSection!
-    softDeleteWorkoutSectionById(id: ID!): ID!
+    deleteWorkoutSectionById(id: ID!): ID!
     reorderWorkoutSections(
       data: [UpdateSortPositionInput!]!
-    ): [WorkoutSection!]!
+    ): [SortPositionUpdated!]!
     #### Workout Set ####
     createWorkoutSet(data: CreateWorkoutSetInput!): WorkoutSet!
     updateWorkoutSet(data: UpdateWorkoutSetInput!): WorkoutSet!
     deleteWorkoutSetById(id: ID!): ID!
-    reorderWorkoutSets(data: [UpdateSortPositionInput!]!): [WorkoutSet!]!
+    reorderWorkoutSets(
+      data: [UpdateSortPositionInput!]!
+    ): [SortPositionUpdated!]!
     createWorkoutSetIntervalBuyIn(
       data: CreateWorkoutSetIntervalBuyInInput!
     ): WorkoutSetIntervalBuyIn!
@@ -174,7 +179,9 @@ export default gql`
     createWorkoutMove(data: CreateWorkoutMoveInput!): WorkoutMove!
     updateWorkoutMove(data: UpdateWorkoutMoveInput!): WorkoutMove!
     deleteWorkoutMoveById(id: ID!): ID!
-    reorderWorkoutMoves(data: [UpdateSortPositionInput!]!): [WorkoutMove!]!
+    reorderWorkoutMoves(
+      data: [UpdateSortPositionInput!]!
+    ): [SortPositionUpdated!]!
     #########################
     #### Workout Program ####
     createWorkoutProgram(data: CreateWorkoutProgramInput!): WorkoutProgram!
@@ -203,25 +210,18 @@ export default gql`
     deleteWorkoutProgramReviewById(id: ID!): ID!
   }
 
-  #### Non CRUD-able models ####
+  type SortPositionUpdated {
+    id: ID!
+    sortPosition: Int!
+  }
+
   input UpdateSortPositionInput {
     id: ID!
     sortPosition: Int!
   }
 
-  type WorkoutGoal {
+  # Only the id is required to create a relationship connection with an existing model.
+  input ConnectRelationInput {
     id: ID!
-    name: String!
-    description: String!
-  }
-
-  type WorkoutSectionType {
-    id: ID!
-    name: String!
-    subtitle: String!
-    description: String!
-    validRepTypes: [WorkoutMoveRepType!]!
-    WorkoutSections: [WorkoutSection!]!
-    LoggedWorkoutSections: [LoggedWorkoutSection!]!
   }
 `

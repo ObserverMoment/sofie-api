@@ -17,7 +17,6 @@ export default gql`
     outroVideoUri: String
     outroVideoThumbUri: String
     outroAudioUri: String
-    Workout: Workout!
     WorkoutSectionType: WorkoutSectionType!
     WorkoutSets: [WorkoutSet!]!
   }
@@ -37,8 +36,8 @@ export default gql`
     outroVideoUri: String
     outroVideoThumbUri: String
     outroAudioUri: String
-    WorkoutSectionType: ID!
-    Workout: ID!
+    WorkoutSectionType: ConnectRelationInput!
+    Workout: ConnectRelationInput!
   }
 
   input UpdateWorkoutSectionInput {
@@ -56,5 +55,16 @@ export default gql`
     outroVideoUri: String
     outroVideoThumbUri: String
     outroAudioUri: String
+    WorkoutSectionType: ConnectRelationInput
+  }
+
+  type WorkoutSectionType {
+    id: ID!
+    name: String!
+    subtitle: String!
+    description: String!
+    validRepTypes: [WorkoutMoveRepType!]!
+    WorkoutSections: [WorkoutSection!]!
+    LoggedWorkoutSections: [LoggedWorkoutSection!]!
   }
 `

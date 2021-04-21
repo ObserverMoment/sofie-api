@@ -7,6 +7,7 @@ import {
   MutationUpdateWorkoutArgs,
   QueryWorkoutByIdArgs,
   Workout,
+  WorkoutSummary,
 } from '../../../generated/graphql'
 import { AccessScopeError, checkUserOwnsObject } from '../../utils'
 import {
@@ -25,7 +26,7 @@ export const officialWorkouts = async (
     where: { contentAccessScope: 'OFFICIAL' },
     select,
   })
-  return officialWorkouts as Workout[]
+  return officialWorkouts as WorkoutSummary[]
 }
 
 export const publicWorkouts = async (
@@ -37,7 +38,7 @@ export const publicWorkouts = async (
     where: { contentAccessScope: 'PUBLIC' },
     select,
   })
-  return publicWorkouts as Workout[]
+  return publicWorkouts as WorkoutSummary[]
 }
 
 // All user workouts, both public and private
@@ -50,7 +51,7 @@ export const userWorkouts = async (
     where: { userId: authedUserId },
     select,
   })
-  return userWorkouts as Workout[]
+  return userWorkouts as WorkoutSummary[]
 }
 
 export const workoutById = async (
@@ -126,12 +127,12 @@ export const updateWorkout = async (
       // https://www.prisma.io/docs/concepts/components/prisma-client/relation-queries#disconnect-all-related-records
       WorkoutGoals: {
         set: data.WorkoutGoals
-          ? data.WorkoutGoals.map((id) => ({ id }))
+          ? data.WorkoutGoals.map(({ id }) => ({ id }))
           : undefined,
       },
       WorkoutTags: {
         set: data.WorkoutTags
-          ? data.WorkoutTags.map((id) => ({ id }))
+          ? data.WorkoutTags.map(({ id }) => ({ id }))
           : undefined,
       },
     },

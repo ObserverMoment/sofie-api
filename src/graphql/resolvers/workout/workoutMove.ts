@@ -5,6 +5,7 @@ import {
   MutationDeleteWorkoutMoveByIdArgs,
   MutationReorderWorkoutMovesArgs,
   MutationUpdateWorkoutMoveArgs,
+  SortPositionUpdated,
   WorkoutMove,
 } from '../../../generated/graphql'
 import { checkUserOwnsObject, checkAndReorderObjects } from '../../utils'
@@ -15,7 +16,12 @@ export const createWorkoutMove = async (
   { authedUserId, select, prisma }: Context,
 ) => {
   // Check user owns the parent.
-  await checkUserOwnsObject(data.WorkoutSet, 'workoutSet', authedUserId, prisma)
+  await checkUserOwnsObject(
+    data.WorkoutSet.id,
+    'workoutSet',
+    authedUserId,
+    prisma,
+  )
 
   const workoutMove = await prisma.workoutMove.create({
     data: {
@@ -26,8 +32,8 @@ export const createWorkoutMove = async (
       User: {
         connect: { id: authedUserId },
       },
-      Move: { connect: { id: data.Move } },
-      Equipment: { connect: { id: data.Equipment || undefined } },
+      Move: { connect: { id: data.Move.id } },
+      Equipment: { connect: { id: data.Equipment?.id || undefined } },
     },
     select,
   })
@@ -56,9 +62,9 @@ export const updateWorkoutMove = async (
       loadUnit: data.loadUnit || undefined,
       timeUnit: data.timeUnit || undefined,
       loadAmount: data.loadAmount || undefined,
-      Move: data.Move ? { connect: { id: data.Move } } : undefined,
+      Move: data.Move ? { connect: { id: data.Move.id } } : undefined,
       Equipment: data.Equipment
-        ? { connect: { id: data.Equipment } }
+        ? { connect: { id: data.Equipment.id } }
         : undefined,
     },
     select,
@@ -104,7 +110,10 @@ export const reorderWorkoutMoves = async (
   )
 
   if (updated) {
-    return updated
+    return updated.map((u) => ({
+      id: u.id,
+      sortPosition: u.sortPosition,
+    })) as SortPositionUpdated[]
   } else {
     throw new ApolloError('reorderWorkoutMoves: There was an issue.')
   }

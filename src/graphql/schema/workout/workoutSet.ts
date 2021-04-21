@@ -16,7 +16,7 @@ export default gql`
   input CreateWorkoutSetInput {
     sortPosition: Int!
     rounds: Int
-    WorkoutSection: ID!
+    WorkoutSection: ConnectRelationInput!
   }
 
   input UpdateWorkoutSetInput {
@@ -33,7 +33,7 @@ export default gql`
   input CreateWorkoutSetIntervalBuyInInput {
     interval: Int!
     WorkoutMove: CreateWorkoutMoveInput!
-    WorkoutSet: ID!
+    WorkoutSet: ConnectRelationInput!
   }
 
   input UpdateWorkoutSetIntervalBuyInInput {
@@ -58,7 +58,7 @@ export default gql`
     target: WorkoutSetGeneratorTarget!
     roundFrequency: Int!
     adjustAmount: Float!
-    WorkoutSet: ID!
+    WorkoutSet: ConnectRelationInput!
   }
 
   input UpdateWorkoutSetGeneratorInput {

@@ -99,7 +99,7 @@ import {
 import {
   createWorkoutSection,
   updateWorkoutSection,
-  softDeleteWorkoutSectionById,
+  deleteWorkoutSectionById,
   reorderWorkoutSections,
 } from './workout/workoutSection'
 
@@ -277,7 +277,7 @@ const resolvers: Resolvers = {
     makeCopyWorkoutById,
     createWorkoutSection,
     updateWorkoutSection,
-    softDeleteWorkoutSectionById,
+    deleteWorkoutSectionById,
     reorderWorkoutSections,
     createWorkoutSet,
     updateWorkoutSet,
