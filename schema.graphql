@@ -81,7 +81,7 @@ type Mutation {
   createWorkout(data: CreateWorkoutInput!): Workout!
   updateWorkout(data: UpdateWorkoutInput!): Workout!
   softDeleteWorkoutById(id: ID!): ID
-  createWorkoutSection(data: CreateWorkoutSectionInput!, sort: Boolean): WorkoutSection!
+  createWorkoutSection(data: CreateWorkoutSectionInput!): WorkoutSection!
   updateWorkoutSection(data: UpdateWorkoutSectionInput!): WorkoutSection!
   deleteWorkoutSectionById(id: ID!): ID!
   reorderWorkoutSections(data: [UpdateSortPositionInput!]!): [SortPositionUpdated!]!
@@ -792,8 +792,6 @@ type WorkoutSet {
   sortPosition: Int!
   rounds: Int!
   WorkoutMoves: [WorkoutMove!]!
-  Generators: [WorkoutSetGenerator!]
-  IntervalBuyIn: WorkoutSetIntervalBuyIn
 }
 input CreateWorkoutSetInput {
   sortPosition: Int!

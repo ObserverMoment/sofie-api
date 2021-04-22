@@ -244,43 +244,6 @@ export const makeCopyWorkoutById = async (
               User: {
                 connect: { id: authedUserId },
               },
-              Generators: {
-                create: set.Generators.map((gen) => ({
-                  ...gen,
-                })),
-              },
-              IntervalBuyIn: set.IntervalBuyIn
-                ? {
-                    create: {
-                      ...set.IntervalBuyIn,
-                      createdAt: undefined,
-                      User: {
-                        connect: { id: authedUserId },
-                      },
-                      WorkoutMove: {
-                        create: {
-                          ...set.IntervalBuyIn.WorkoutMove,
-                          createdAt: undefined,
-                          User: {
-                            connect: { id: authedUserId },
-                          },
-                          Move: {
-                            connect: {
-                              id: set.IntervalBuyIn.WorkoutMove.moveId,
-                            },
-                          },
-                          Equipment: {
-                            connect: {
-                              id: set.IntervalBuyIn.WorkoutMove.equipmentId
-                                ? set.IntervalBuyIn.WorkoutMove.equipmentId
-                                : undefined,
-                            },
-                          },
-                        },
-                      },
-                    },
-                  }
-                : undefined,
               WorkoutMoves: {
                 create: set.WorkoutMoves.map((workoutMove) => ({
                   ...workoutMove,

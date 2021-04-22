@@ -396,7 +396,6 @@ export type MutationSoftDeleteWorkoutByIdArgs = {
 
 export type MutationCreateWorkoutSectionArgs = {
   data: CreateWorkoutSectionInput;
-  sort?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -1322,8 +1321,6 @@ export type WorkoutSet = {
   sortPosition: Scalars['Int'];
   rounds: Scalars['Int'];
   WorkoutMoves: Array<WorkoutMove>;
-  Generators?: Maybe<Array<WorkoutSetGenerator>>;
-  IntervalBuyIn?: Maybe<WorkoutSetIntervalBuyIn>;
 };
 
 export type CreateWorkoutSetInput = {
@@ -2296,8 +2293,6 @@ export type WorkoutSetResolvers<ContextType = any, ParentType extends ResolversP
   sortPosition?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   rounds?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   WorkoutMoves?: Resolver<Array<ResolversTypes['WorkoutMove']>, ParentType, ContextType>;
-  Generators?: Resolver<Maybe<Array<ResolversTypes['WorkoutSetGenerator']>>, ParentType, ContextType>;
-  IntervalBuyIn?: Resolver<Maybe<ResolversTypes['WorkoutSetIntervalBuyIn']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 

@@ -23,6 +23,45 @@ export const createWorkoutMove = async (
     prisma,
   )
 
+  // Update all sort orders for all other workout moves in the set.
+  // Do this before creating the new workoutMove to avoid incorrectly adjusting its sortPosition after being created.
+  try {
+    // All workoutMoves with sortPosition greater than or equal to the new workoutMove will be affected.
+    // When creating a new workoutMove at the end of the set this list will be empty.
+    const affectedWorkoutMoves = await prisma.workoutMove.findMany({
+      where: {
+        workoutSetId: data.WorkoutSet.id,
+        sortPosition: {
+          gte: data.sortPosition,
+        },
+      },
+      select: {
+        id: true,
+        sortPosition: true,
+      },
+    })
+
+    await prisma.$transaction(
+      affectedWorkoutMoves.map(({ id, sortPosition }) =>
+        prisma.workoutSection.update({
+          where: { id },
+          data: {
+            sortPosition: sortPosition + 1,
+          },
+        }),
+      ),
+    )
+  } catch (e) {
+    console.log(e)
+    throw new ApolloError(
+      'createWorkoutMove: There was an issue reordering the workout moves.',
+    )
+  }
+
+  console.log(data.loadUnit)
+
+  // Create the new workout move.
+  // NOTE: Ideally this would be part of the above transaction so full rollback could occur in event of an error.
   const workoutMove = await prisma.workoutMove.create({
     data: {
       ...data,
@@ -32,8 +71,13 @@ export const createWorkoutMove = async (
       User: {
         connect: { id: authedUserId },
       },
+      WorkoutSet: {
+        connect: { id: data.WorkoutSet.id },
+      },
       Move: { connect: { id: data.Move.id } },
-      Equipment: { connect: { id: data.Equipment?.id || undefined } },
+      Equipment: data.Equipment
+        ? { connect: { id: data.Equipment.id } }
+        : undefined,
     },
     select,
   })

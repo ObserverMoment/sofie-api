@@ -35,6 +35,43 @@ export const createWorkoutSet = async (
     authedUserId,
     prisma,
   )
+
+  // Update all sort orders for all other workout sets in the workout section.
+  // Do this before creating the new set to avoid incorrectly adjusting its sortPosition after being created.
+  try {
+    // All sets with sortPosition greater than or equal to the new section will be affected.
+    // When creating a new set at the end of the workout this list will be empty.
+    const affectedSets = await prisma.workoutSet.findMany({
+      where: {
+        workoutSectionId: data.WorkoutSection.id,
+        sortPosition: {
+          gte: data.sortPosition,
+        },
+      },
+      select: {
+        id: true,
+        sortPosition: true,
+      },
+    })
+
+    await prisma.$transaction(
+      affectedSets.map(({ id, sortPosition }) =>
+        prisma.workoutSet.update({
+          where: { id },
+          data: {
+            sortPosition: sortPosition + 1,
+          },
+        }),
+      ),
+    )
+  } catch (e) {
+    console.log(e)
+    throw new ApolloError(
+      'createWorkoutSet: There was an issue reordering the workout sets.',
+    )
+  }
+
+  // NOTE: Ideally this would be part of the above transaction so full rollback could occur in event of an error.
   const workoutSet = await prisma.workoutSet.create({
     data: {
       ...data,

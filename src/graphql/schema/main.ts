@@ -145,10 +145,7 @@ export default gql`
     updateWorkout(data: UpdateWorkoutInput!): Workout!
     softDeleteWorkoutById(id: ID!): ID
     #### Workout Section ####
-    createWorkoutSection(
-      data: CreateWorkoutSectionInput!
-      sort: Boolean
-    ): WorkoutSection!
+    createWorkoutSection(data: CreateWorkoutSectionInput!): WorkoutSection!
     updateWorkoutSection(data: UpdateWorkoutSectionInput!): WorkoutSection!
     deleteWorkoutSectionById(id: ID!): ID!
     reorderWorkoutSections(

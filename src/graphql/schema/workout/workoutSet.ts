@@ -9,8 +9,6 @@ export default gql`
     # In a superset you do each workoutMove in the array one after another
     # And then repeat this process {rounds} times
     WorkoutMoves: [WorkoutMove!]!
-    Generators: [WorkoutSetGenerator!]
-    IntervalBuyIn: WorkoutSetIntervalBuyIn
   }
 
   input CreateWorkoutSetInput {
