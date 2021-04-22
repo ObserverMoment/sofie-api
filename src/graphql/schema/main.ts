@@ -143,6 +143,7 @@ export default gql`
     makeCopyWorkoutById(id: ID!): Workout! # Note: Media should not be copied
     createWorkout(data: CreateWorkoutInput!): Workout!
     updateWorkout(data: UpdateWorkoutInput!): Workout!
+    duplicateWorkoutById(id: ID!): Workout!
     softDeleteWorkoutById(id: ID!): ID
     #### Workout Section ####
     createWorkoutSection(data: CreateWorkoutSectionInput!): WorkoutSection!
@@ -154,6 +155,7 @@ export default gql`
     #### Workout Set ####
     createWorkoutSet(data: CreateWorkoutSetInput!): WorkoutSet!
     updateWorkoutSet(data: UpdateWorkoutSetInput!): WorkoutSet!
+    duplicateWorkoutSetById(id: ID!): WorkoutSet!
     deleteWorkoutSetById(id: ID!): ID!
     reorderWorkoutSets(
       data: [UpdateSortPositionInput!]!
@@ -176,6 +178,7 @@ export default gql`
     createWorkoutMove(data: CreateWorkoutMoveInput!): WorkoutMove!
     updateWorkoutMove(data: UpdateWorkoutMoveInput!): WorkoutMove!
     deleteWorkoutMoveById(id: ID!): ID!
+    duplicateWorkoutMoveById(id: ID!): WorkoutMove!
     reorderWorkoutMoves(
       data: [UpdateSortPositionInput!]!
     ): [SortPositionUpdated!]!

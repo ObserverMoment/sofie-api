@@ -93,7 +93,7 @@ import {
   createWorkout,
   updateWorkout,
   softDeleteWorkoutById,
-  makeCopyWorkoutById,
+  duplicateWorkoutById,
 } from './workout/workout'
 
 import {
@@ -107,6 +107,7 @@ import {
   createWorkoutSet,
   updateWorkoutSet,
   deleteWorkoutSetById,
+  duplicateWorkoutSetById,
   createWorkoutSetIntervalBuyIn,
   updateWorkoutSetIntervalBuyIn,
   deleteWorkoutSetIntervalBuyInById,
@@ -119,6 +120,7 @@ import {
 import {
   createWorkoutMove,
   updateWorkoutMove,
+  duplicateWorkoutMoveById,
   deleteWorkoutMoveById,
   reorderWorkoutMoves,
 } from './workout/workoutMove'
@@ -272,15 +274,17 @@ const resolvers: Resolvers = {
     /////////////////
     createWorkout,
     updateWorkout,
+    duplicateWorkoutById,
     softDeleteWorkoutById,
-    // Note: Media should not be copied
-    makeCopyWorkoutById,
+    //// Workout Section ////
     createWorkoutSection,
     updateWorkoutSection,
     deleteWorkoutSectionById,
     reorderWorkoutSections,
+    //// Workout Set ////
     createWorkoutSet,
     updateWorkoutSet,
+    duplicateWorkoutSetById,
     deleteWorkoutSetById,
     reorderWorkoutSets,
     createWorkoutSetIntervalBuyIn,
@@ -289,8 +293,10 @@ const resolvers: Resolvers = {
     createWorkoutSetGenerator,
     updateWorkoutSetGenerator,
     deleteWorkoutSetGeneratorById,
+    //// Workout Move ////
     createWorkoutMove,
     updateWorkoutMove,
+    duplicateWorkoutMoveById,
     deleteWorkoutMoveById,
     reorderWorkoutMoves,
     /////////////////////////

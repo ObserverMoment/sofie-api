@@ -80,6 +80,7 @@ type Mutation {
   makeCopyWorkoutById(id: ID!): Workout!
   createWorkout(data: CreateWorkoutInput!): Workout!
   updateWorkout(data: UpdateWorkoutInput!): Workout!
+  duplicateWorkoutById(id: ID!): Workout!
   softDeleteWorkoutById(id: ID!): ID
   createWorkoutSection(data: CreateWorkoutSectionInput!): WorkoutSection!
   updateWorkoutSection(data: UpdateWorkoutSectionInput!): WorkoutSection!
@@ -87,6 +88,7 @@ type Mutation {
   reorderWorkoutSections(data: [UpdateSortPositionInput!]!): [SortPositionUpdated!]!
   createWorkoutSet(data: CreateWorkoutSetInput!): WorkoutSet!
   updateWorkoutSet(data: UpdateWorkoutSetInput!): WorkoutSet!
+  duplicateWorkoutSetById(id: ID!): WorkoutSet!
   deleteWorkoutSetById(id: ID!): ID!
   reorderWorkoutSets(data: [UpdateSortPositionInput!]!): [SortPositionUpdated!]!
   createWorkoutSetIntervalBuyIn(data: CreateWorkoutSetIntervalBuyInInput!): WorkoutSetIntervalBuyIn!
@@ -98,6 +100,7 @@ type Mutation {
   createWorkoutMove(data: CreateWorkoutMoveInput!): WorkoutMove!
   updateWorkoutMove(data: UpdateWorkoutMoveInput!): WorkoutMove!
   deleteWorkoutMoveById(id: ID!): ID!
+  duplicateWorkoutMoveById(id: ID!): WorkoutMove!
   reorderWorkoutMoves(data: [UpdateSortPositionInput!]!): [SortPositionUpdated!]!
   createWorkoutProgram(data: CreateWorkoutProgramInput!): WorkoutProgram!
   updateWorkoutProgram(data: UpdateWorkoutProgramInput!): WorkoutProgram!

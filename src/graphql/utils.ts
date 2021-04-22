@@ -104,6 +104,68 @@ export async function checkAndReorderObjects<T>(
   return prisma.$transaction(ops)
 }
 
+interface AffectedItem {
+  id: string
+  sortPosition: number
+}
+
+interface ReorderItemsForInsertDeleteProps {
+  sortPosition: number
+  reorderType: ReorderType
+  parentId: string
+  parentType: ContentObjectType
+  objectType: ContentObjectType
+  prisma: any
+}
+
+type ReorderType = 'insert' | 'delete'
+
+/// Use before inserting an intem into a list via create or via duplicate ops.
+/// All items that have a sortPosition >= the passed sortPosition will have sortPosition incremented.
+export async function reorderItemsForInsertDelete({
+  sortPosition,
+  reorderType,
+  parentId,
+  parentType,
+  objectType,
+  prisma,
+}: ReorderItemsForInsertDeleteProps) {
+  const parentIdKey = `${parentType}Id`
+  try {
+    // All items with sortPosition greater than or equal to the new section will be affected.
+    // When creating a new item at the end of the list, [affected] will be empty.
+    const affected: AffectedItem[] = await prisma[objectType].findMany({
+      where: {
+        [parentIdKey]: parentId,
+        sortPosition: {
+          gte: sortPosition,
+        },
+      },
+      select: {
+        id: true,
+        sortPosition: true,
+      },
+    })
+
+    await prisma.$transaction(
+      affected.map(({ id, sortPosition }) =>
+        prisma[objectType].update({
+          where: { id },
+          data: {
+            sortPosition:
+              reorderType === 'insert' ? sortPosition + 1 : sortPosition - 1,
+          },
+        }),
+      ),
+    )
+  } catch (e) {
+    console.log(e)
+    throw new ApolloError(
+      `reorderItemsForInsertDelete: There was an issue reordering the ${objectType}s.`,
+    )
+  }
+}
+
 export function checkIsAdmin(userType: ContextUserType) {
   if (userType !== 'ADMIN') {
     throw new AccessScopeError(

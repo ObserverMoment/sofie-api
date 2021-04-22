@@ -141,6 +141,7 @@ export type Mutation = {
   makeCopyWorkoutById: Workout;
   createWorkout: Workout;
   updateWorkout: Workout;
+  duplicateWorkoutById: Workout;
   softDeleteWorkoutById?: Maybe<Scalars['ID']>;
   createWorkoutSection: WorkoutSection;
   updateWorkoutSection: WorkoutSection;
@@ -148,6 +149,7 @@ export type Mutation = {
   reorderWorkoutSections: Array<SortPositionUpdated>;
   createWorkoutSet: WorkoutSet;
   updateWorkoutSet: WorkoutSet;
+  duplicateWorkoutSetById: WorkoutSet;
   deleteWorkoutSetById: Scalars['ID'];
   reorderWorkoutSets: Array<SortPositionUpdated>;
   createWorkoutSetIntervalBuyIn: WorkoutSetIntervalBuyIn;
@@ -159,6 +161,7 @@ export type Mutation = {
   createWorkoutMove: WorkoutMove;
   updateWorkoutMove: WorkoutMove;
   deleteWorkoutMoveById: Scalars['ID'];
+  duplicateWorkoutMoveById: WorkoutMove;
   reorderWorkoutMoves: Array<SortPositionUpdated>;
   createWorkoutProgram: WorkoutProgram;
   updateWorkoutProgram: WorkoutProgram;
@@ -389,6 +392,11 @@ export type MutationUpdateWorkoutArgs = {
 };
 
 
+export type MutationDuplicateWorkoutByIdArgs = {
+  id: Scalars['ID'];
+};
+
+
 export type MutationSoftDeleteWorkoutByIdArgs = {
   id: Scalars['ID'];
 };
@@ -421,6 +429,11 @@ export type MutationCreateWorkoutSetArgs = {
 
 export type MutationUpdateWorkoutSetArgs = {
   data: UpdateWorkoutSetInput;
+};
+
+
+export type MutationDuplicateWorkoutSetByIdArgs = {
+  id: Scalars['ID'];
 };
 
 
@@ -475,6 +488,11 @@ export type MutationUpdateWorkoutMoveArgs = {
 
 
 export type MutationDeleteWorkoutMoveByIdArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationDuplicateWorkoutMoveByIdArgs = {
   id: Scalars['ID'];
 };
 
@@ -1893,6 +1911,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   makeCopyWorkoutById?: Resolver<ResolversTypes['Workout'], ParentType, ContextType, RequireFields<MutationMakeCopyWorkoutByIdArgs, 'id'>>;
   createWorkout?: Resolver<ResolversTypes['Workout'], ParentType, ContextType, RequireFields<MutationCreateWorkoutArgs, 'data'>>;
   updateWorkout?: Resolver<ResolversTypes['Workout'], ParentType, ContextType, RequireFields<MutationUpdateWorkoutArgs, 'data'>>;
+  duplicateWorkoutById?: Resolver<ResolversTypes['Workout'], ParentType, ContextType, RequireFields<MutationDuplicateWorkoutByIdArgs, 'id'>>;
   softDeleteWorkoutById?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType, RequireFields<MutationSoftDeleteWorkoutByIdArgs, 'id'>>;
   createWorkoutSection?: Resolver<ResolversTypes['WorkoutSection'], ParentType, ContextType, RequireFields<MutationCreateWorkoutSectionArgs, 'data'>>;
   updateWorkoutSection?: Resolver<ResolversTypes['WorkoutSection'], ParentType, ContextType, RequireFields<MutationUpdateWorkoutSectionArgs, 'data'>>;
@@ -1900,6 +1919,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   reorderWorkoutSections?: Resolver<Array<ResolversTypes['SortPositionUpdated']>, ParentType, ContextType, RequireFields<MutationReorderWorkoutSectionsArgs, 'data'>>;
   createWorkoutSet?: Resolver<ResolversTypes['WorkoutSet'], ParentType, ContextType, RequireFields<MutationCreateWorkoutSetArgs, 'data'>>;
   updateWorkoutSet?: Resolver<ResolversTypes['WorkoutSet'], ParentType, ContextType, RequireFields<MutationUpdateWorkoutSetArgs, 'data'>>;
+  duplicateWorkoutSetById?: Resolver<ResolversTypes['WorkoutSet'], ParentType, ContextType, RequireFields<MutationDuplicateWorkoutSetByIdArgs, 'id'>>;
   deleteWorkoutSetById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteWorkoutSetByIdArgs, 'id'>>;
   reorderWorkoutSets?: Resolver<Array<ResolversTypes['SortPositionUpdated']>, ParentType, ContextType, RequireFields<MutationReorderWorkoutSetsArgs, 'data'>>;
   createWorkoutSetIntervalBuyIn?: Resolver<ResolversTypes['WorkoutSetIntervalBuyIn'], ParentType, ContextType, RequireFields<MutationCreateWorkoutSetIntervalBuyInArgs, 'data'>>;
@@ -1911,6 +1931,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createWorkoutMove?: Resolver<ResolversTypes['WorkoutMove'], ParentType, ContextType, RequireFields<MutationCreateWorkoutMoveArgs, 'data'>>;
   updateWorkoutMove?: Resolver<ResolversTypes['WorkoutMove'], ParentType, ContextType, RequireFields<MutationUpdateWorkoutMoveArgs, 'data'>>;
   deleteWorkoutMoveById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteWorkoutMoveByIdArgs, 'id'>>;
+  duplicateWorkoutMoveById?: Resolver<ResolversTypes['WorkoutMove'], ParentType, ContextType, RequireFields<MutationDuplicateWorkoutMoveByIdArgs, 'id'>>;
   reorderWorkoutMoves?: Resolver<Array<ResolversTypes['SortPositionUpdated']>, ParentType, ContextType, RequireFields<MutationReorderWorkoutMovesArgs, 'data'>>;
   createWorkoutProgram?: Resolver<ResolversTypes['WorkoutProgram'], ParentType, ContextType, RequireFields<MutationCreateWorkoutProgramArgs, 'data'>>;
   updateWorkoutProgram?: Resolver<ResolversTypes['WorkoutProgram'], ParentType, ContextType, RequireFields<MutationUpdateWorkoutProgramArgs, 'data'>>;

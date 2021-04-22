@@ -12,6 +12,7 @@ import {
   checkUserOwnsObject,
   checkAndReorderObjects,
   AccessScopeError,
+  reorderItemsForInsertDelete,
 } from '../../utils'
 import {
   checkWorkoutSectionMediaForDeletion,
@@ -26,40 +27,15 @@ export const createWorkoutSection = async (
   // Check user owns the parent.
   await checkUserOwnsObject(data.Workout.id, 'workout', authedUserId, prisma)
 
-  // Update all sort orders for all other workout sections in the workout.
-  // Do this before creating the new section to avoid incorrectly adjusting its sortPosition after being created.
-  try {
-    // All sections with sortPosition greater than or equal to the new section will be affected.
-    // When creating a new section at the end of the workout this list will be empty.
-    const affectedSections = await prisma.workoutSection.findMany({
-      where: {
-        workoutId: data.Workout.id,
-        sortPosition: {
-          gte: data.sortPosition,
-        },
-      },
-      select: {
-        id: true,
-        sortPosition: true,
-      },
-    })
-
-    await prisma.$transaction(
-      affectedSections.map(({ id, sortPosition }) =>
-        prisma.workoutSection.update({
-          where: { id },
-          data: {
-            sortPosition: sortPosition + 1,
-          },
-        }),
-      ),
-    )
-  } catch (e) {
-    console.log(e)
-    throw new ApolloError(
-      'createWorkoutSection: There was an issue reordering the workout sections.',
-    )
-  }
+  // Update all sortPositions for all other workout sections in the workout.
+  await reorderItemsForInsertDelete({
+    reorderType: 'insert',
+    sortPosition: data.sortPosition,
+    parentId: data.Workout.id,
+    parentType: 'workout',
+    objectType: 'workoutSection',
+    prisma: prisma,
+  })
 
   // Create the new workout section.
   // NOTE: Ideally this would be part of the above transaction so full rollback could occur in event of an error.
@@ -137,6 +113,7 @@ export const deleteWorkoutSectionById = async (
     where: { id },
     select: {
       id: true,
+      sortPosition: true,
       userId: true,
       introAudioUri: true,
       introVideoUri: true,
@@ -147,6 +124,7 @@ export const deleteWorkoutSectionById = async (
       outroAudioUri: true,
       outroVideoUri: true,
       outroVideoThumbUri: true,
+      workoutId: true,
     },
   })
 
@@ -177,6 +155,16 @@ export const deleteWorkoutSectionById = async (
     const [_, __, deleted] = await prisma.$transaction(ops)
 
     if (deleted) {
+      // Reorder remaing sections.
+      await reorderItemsForInsertDelete({
+        reorderType: 'delete',
+        sortPosition: sectionForDeletion.sortPosition,
+        parentId: sectionForDeletion.workoutId,
+        parentType: 'workout',
+        objectType: 'workoutSection',
+        prisma: prisma,
+      })
+
       // Run media cleanup.
       const {
         introAudioUri,

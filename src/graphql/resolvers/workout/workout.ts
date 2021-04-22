@@ -171,7 +171,8 @@ export const softDeleteWorkoutById = async (
 
 // Makes a full copy of the workout and returns it.
 // Adds '- copy' to the name.
-export const makeCopyWorkoutById = async (
+// Does not copy across any media.
+export const duplicateWorkoutById = async (
   r: any,
   { id }: MutationMakeCopyWorkoutByIdArgs,
   { authedUserId, select, prisma }: Context,
@@ -200,7 +201,6 @@ export const makeCopyWorkoutById = async (
     },
   })
 
-  // Check that the user has auth to make a copy
   if (!original) {
     throw new ApolloError(
       'makeCopyWorkoutById: Could not retrieve data for this workout.',
@@ -217,6 +217,10 @@ export const makeCopyWorkoutById = async (
     data: {
       ...original,
       name: `${original.name} - copy`,
+      coverImageUri: null,
+      introAudioUri: null,
+      introVideoUri: null,
+      introVideoThumbUri: null,
       createdAt: undefined,
       User: {
         connect: { id: authedUserId },
@@ -230,6 +234,15 @@ export const makeCopyWorkoutById = async (
       WorkoutSections: {
         create: original.WorkoutSections.map((section) => ({
           ...section,
+          introAudioUri: null,
+          classAudioUri: null,
+          outroAudioUri: null,
+          introVideoUri: null,
+          introVideoThumbUri: null,
+          classVideoUri: null,
+          classVideoThumbUri: null,
+          outroVideoUri: null,
+          outroVideoThumbUri: null,
           createdAt: undefined,
           User: {
             connect: { id: authedUserId },
@@ -274,6 +287,6 @@ export const makeCopyWorkoutById = async (
   if (copy) {
     return copy as Workout
   } else {
-    throw new ApolloError('makeCopyWorkoutById: There was an issue.')
+    throw new ApolloError('duplicateWorkoutById: There was an issue.')
   }
 }

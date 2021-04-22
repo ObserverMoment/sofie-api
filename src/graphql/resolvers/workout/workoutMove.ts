@@ -1,14 +1,20 @@
+import { Prisma } from '@prisma/client'
 import { ApolloError } from 'apollo-server-express'
 import { Context } from '../../..'
 import {
   MutationCreateWorkoutMoveArgs,
   MutationDeleteWorkoutMoveByIdArgs,
+  MutationDuplicateWorkoutMoveByIdArgs,
   MutationReorderWorkoutMovesArgs,
   MutationUpdateWorkoutMoveArgs,
   SortPositionUpdated,
   WorkoutMove,
 } from '../../../generated/graphql'
-import { checkUserOwnsObject, checkAndReorderObjects } from '../../utils'
+import {
+  checkUserOwnsObject,
+  checkAndReorderObjects,
+  reorderItemsForInsertDelete,
+} from '../../utils'
 
 export const createWorkoutMove = async (
   r: any,
@@ -23,51 +29,27 @@ export const createWorkoutMove = async (
     prisma,
   )
 
-  // Update all sort orders for all other workout moves in the set.
-  // Do this before creating the new workoutMove to avoid incorrectly adjusting its sortPosition after being created.
-  try {
-    // All workoutMoves with sortPosition greater than or equal to the new workoutMove will be affected.
-    // When creating a new workoutMove at the end of the set this list will be empty.
-    const affectedWorkoutMoves = await prisma.workoutMove.findMany({
-      where: {
-        workoutSetId: data.WorkoutSet.id,
-        sortPosition: {
-          gte: data.sortPosition,
-        },
-      },
-      select: {
-        id: true,
-        sortPosition: true,
-      },
-    })
-
-    await prisma.$transaction(
-      affectedWorkoutMoves.map(({ id, sortPosition }) =>
-        prisma.workoutSection.update({
-          where: { id },
-          data: {
-            sortPosition: sortPosition + 1,
-          },
-        }),
-      ),
-    )
-  } catch (e) {
-    console.log(e)
-    throw new ApolloError(
-      'createWorkoutMove: There was an issue reordering the workout moves.',
-    )
-  }
-
-  console.log(data.loadUnit)
+  // Reorder other workoutmoves if necessary.
+  await reorderItemsForInsertDelete({
+    reorderType: 'insert',
+    sortPosition: data.sortPosition,
+    parentId: data.WorkoutSet.id,
+    parentType: 'workoutSet',
+    objectType: 'workoutMove',
+    prisma: prisma,
+  })
 
   // Create the new workout move.
   // NOTE: Ideally this would be part of the above transaction so full rollback could occur in event of an error.
   const workoutMove = await prisma.workoutMove.create({
     data: {
-      ...data,
+      reps: data.reps,
+      repType: data.repType,
       distanceUnit: data.distanceUnit || undefined,
       loadUnit: data.loadUnit || undefined,
+      loadAmount: data.loadAmount || undefined,
       timeUnit: data.timeUnit || undefined,
+      sortPosition: data.sortPosition,
       User: {
         connect: { id: authedUserId },
       },
@@ -86,6 +68,70 @@ export const createWorkoutMove = async (
     return workoutMove as WorkoutMove
   } else {
     throw new ApolloError('createWorkoutMove: There was an issue.')
+  }
+}
+
+export const duplicateWorkoutMoveById = async (
+  r: any,
+  { id }: MutationDuplicateWorkoutMoveByIdArgs,
+  { authedUserId, select, prisma }: Context,
+) => {
+  // Get original workout full data
+  const original = await prisma.workoutMove.findFirst({
+    where: { id, User: { id: authedUserId } },
+    include: {
+      WorkoutSet: {
+        select: { id: true },
+      },
+      Move: {
+        select: { id: true },
+      },
+      Equipment: { select: { id: true } },
+    },
+  })
+
+  if (!original) {
+    throw new ApolloError(
+      'duplicateWorkoutMoveById: Could not retrieve data for this workout.',
+    )
+  }
+
+  // Reorder other workoutmoves if necessary.
+  await reorderItemsForInsertDelete({
+    reorderType: 'insert',
+    sortPosition: original.sortPosition + 1,
+    parentId: original.WorkoutSet.id,
+    parentType: 'workoutSet',
+    objectType: 'workoutMove',
+    prisma: prisma,
+  })
+
+  // Create a new copy.
+  const copy = await prisma.workoutMove.create({
+    data: {
+      reps: original.reps,
+      repType: original.repType,
+      distanceUnit: original.distanceUnit || undefined,
+      loadUnit: original.loadUnit || undefined,
+      loadAmount: original.loadAmount || undefined,
+      timeUnit: original.timeUnit || undefined,
+      sortPosition: original.sortPosition + 1,
+      WorkoutSet: { connect: { id: original.WorkoutSet.id } },
+      User: {
+        connect: { id: authedUserId },
+      },
+      Equipment: original.Equipment
+        ? { connect: { id: original.Equipment.id } }
+        : undefined,
+      Move: { connect: { id: original.Move.id } },
+    } as Prisma.WorkoutMoveCreateInput,
+    select,
+  })
+
+  if (copy) {
+    return copy as WorkoutMove
+  } else {
+    throw new ApolloError('duplicateWorkoutMoveById: There was an issue.')
   }
 }
 
@@ -130,10 +176,20 @@ export const deleteWorkoutMoveById = async (
 
   const deleted = await prisma.workoutMove.delete({
     where: { id },
-    select: { id: true },
+    select: { id: true, sortPosition: true, workoutSetId: true },
   })
 
   if (deleted) {
+    // Reorder remaining workoutmoves.
+    await reorderItemsForInsertDelete({
+      reorderType: 'delete',
+      sortPosition: deleted.sortPosition,
+      parentId: deleted.workoutSetId,
+      parentType: 'workoutSet',
+      objectType: 'workoutMove',
+      prisma: prisma,
+    })
+
     return deleted.id
   } else {
     throw new ApolloError('deleteWorkoutMoveById: There was an issue.')
