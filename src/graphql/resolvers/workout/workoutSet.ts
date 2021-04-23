@@ -23,7 +23,7 @@ import {
 } from '../../../generated/graphql'
 import { Context } from '../../..'
 import { ApolloError } from 'apollo-server-express'
-import { Prisma, PrismaPromise } from '@prisma/client'
+import { PrismaPromise } from '@prisma/client'
 
 export const createWorkoutSet = async (
   r: any,
@@ -116,6 +116,7 @@ export const duplicateWorkoutSetById = async (
     data: {
       rounds: original.rounds,
       sortPosition: original.sortPosition + 1,
+      duration: original.duration || undefined,
       WorkoutSection: { connect: { id: original.WorkoutSection.id } },
       User: {
         connect: { id: authedUserId },

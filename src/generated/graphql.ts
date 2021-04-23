@@ -1338,18 +1338,21 @@ export type WorkoutSet = {
   id: Scalars['ID'];
   sortPosition: Scalars['Int'];
   rounds: Scalars['Int'];
+  duration?: Maybe<Scalars['Int']>;
   WorkoutMoves: Array<WorkoutMove>;
 };
 
 export type CreateWorkoutSetInput = {
   sortPosition: Scalars['Int'];
   rounds?: Maybe<Scalars['Int']>;
+  duration?: Maybe<Scalars['Int']>;
   WorkoutSection: ConnectRelationInput;
 };
 
 export type UpdateWorkoutSetInput = {
   id: Scalars['ID'];
   rounds?: Maybe<Scalars['Int']>;
+  duration?: Maybe<Scalars['Int']>;
 };
 
 export type WorkoutSetIntervalBuyIn = {
@@ -2313,6 +2316,7 @@ export type WorkoutSetResolvers<ContextType = any, ParentType extends ResolversP
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   sortPosition?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   rounds?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  duration?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   WorkoutMoves?: Resolver<Array<ResolversTypes['WorkoutMove']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;

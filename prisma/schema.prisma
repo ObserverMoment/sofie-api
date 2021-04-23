@@ -299,6 +299,8 @@ model WorkoutSet {
   userId           String
   sortPosition     Int
   rounds           Int                      @default(1)
+  // Loop around all workoutMoves in this set until duration has elapsed. If this is not null then [WorkoutSetrounds] will be ignored.
+  duration         Int?
   Generators       WorkoutSetGenerator[]
   IntervalBuyIn    WorkoutSetIntervalBuyIn?
   // If there is more than one move then this is a superset
