@@ -65,25 +65,25 @@ export const createMove = async (
             },
       MoveType: {
         connect: {
-          id: data.MoveType,
+          id: data.MoveType.id,
         },
       },
       scope: data.scope || 'CUSTOM',
       RequiredEquipments: {
         connect: data.RequiredEquipments
-          ? data.RequiredEquipments.map((id: string) => ({ id }))
+          ? data.RequiredEquipments.map(({ id }) => ({ id }))
           : undefined,
       },
       SelectableEquipments: {
         connect: data.SelectableEquipments
-          ? data.SelectableEquipments.map((id: string) => ({ id }))
+          ? data.SelectableEquipments.map(({ id }) => ({ id }))
           : undefined,
       },
       BodyAreaMoveScores: {
         create: data.BodyAreaMoveScores
           ? data.BodyAreaMoveScores.map((bams) => ({
               BodyArea: {
-                connect: { id: bams.BodyArea },
+                connect: { id: bams.BodyArea.id },
               },
               score: bams.score,
             }))
@@ -133,25 +133,27 @@ export const updateMove = async (
       validRepTypes: data.validRepTypes || undefined,
       RequiredEquipments: {
         set: data.RequiredEquipments
-          ? data.RequiredEquipments.map((id: string) => ({ id }))
+          ? data.RequiredEquipments.map(({ id }) => ({ id }))
           : [],
       },
-      MoveType: {
-        connect: {
-          id: data.MoveType || undefined,
-        },
-      },
+      MoveType: data.MoveType
+        ? {
+            connect: {
+              id: data.MoveType.id,
+            },
+          }
+        : undefined,
       scope: data.scope || 'CUSTOM',
       SelectableEquipments: {
         set: data.SelectableEquipments
-          ? data.SelectableEquipments.map((id: string) => ({ id }))
+          ? data.SelectableEquipments.map(({ id }) => ({ id }))
           : [],
       },
       BodyAreaMoveScores: {
         create: data.BodyAreaMoveScores
           ? data.BodyAreaMoveScores.map((bams) => ({
               BodyArea: {
-                connect: { id: bams.BodyArea },
+                connect: { id: bams.BodyArea.id },
               },
               score: bams.score,
             }))

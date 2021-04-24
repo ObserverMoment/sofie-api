@@ -585,7 +585,7 @@ export type BodyAreaMoveScore = {
   __typename?: 'BodyAreaMoveScore';
   Move: Move;
   BodyArea: BodyArea;
-  score: Scalars['Float'];
+  score: Scalars['Int'];
 };
 
 /** Enums */
@@ -714,10 +714,10 @@ export type CreateMoveInput = {
   demoVideoUri?: Maybe<Scalars['String']>;
   demoVideoThumbUri?: Maybe<Scalars['String']>;
   scope?: Maybe<MoveScope>;
-  MoveType: Scalars['ID'];
+  MoveType: ConnectRelationInput;
   validRepTypes: Array<WorkoutMoveRepType>;
-  RequiredEquipments?: Maybe<Array<Scalars['ID']>>;
-  SelectableEquipments?: Maybe<Array<Scalars['ID']>>;
+  RequiredEquipments?: Maybe<Array<ConnectRelationInput>>;
+  SelectableEquipments?: Maybe<Array<ConnectRelationInput>>;
   BodyAreaMoveScores?: Maybe<Array<BodyAreaMoveScoreInput>>;
 };
 
@@ -729,15 +729,15 @@ export type UpdateMoveInput = {
   demoVideoUri?: Maybe<Scalars['String']>;
   demoVideoThumbUri?: Maybe<Scalars['String']>;
   scope?: Maybe<MoveScope>;
-  MoveType?: Maybe<Scalars['ID']>;
+  MoveType?: Maybe<ConnectRelationInput>;
   validRepTypes?: Maybe<Array<WorkoutMoveRepType>>;
-  RequiredEquipments?: Maybe<Array<Scalars['ID']>>;
-  SelectableEquipments?: Maybe<Array<Scalars['ID']>>;
+  RequiredEquipments?: Maybe<Array<ConnectRelationInput>>;
+  SelectableEquipments?: Maybe<Array<ConnectRelationInput>>;
   BodyAreaMoveScores?: Maybe<Array<BodyAreaMoveScoreInput>>;
 };
 
 export type BodyAreaMoveScoreInput = {
-  BodyArea: Scalars['ID'];
+  BodyArea: ConnectRelationInput;
   score: Scalars['Float'];
 };
 
@@ -1627,7 +1627,6 @@ export type ResolversTypes = ResolversObject<{
   ConnectRelationInput: ConnectRelationInput;
   BodyArea: ResolverTypeWrapper<BodyArea>;
   BodyAreaMoveScore: ResolverTypeWrapper<BodyAreaMoveScore>;
-  Float: ResolverTypeWrapper<Scalars['Float']>;
   BodyAreaFrontBack: BodyAreaFrontBack;
   BodyAreaUpperLower: BodyAreaUpperLower;
   ContentAccessScope: ContentAccessScope;
@@ -1649,6 +1648,7 @@ export type ResolversTypes = ResolversObject<{
   CreateMoveInput: CreateMoveInput;
   UpdateMoveInput: UpdateMoveInput;
   BodyAreaMoveScoreInput: BodyAreaMoveScoreInput;
+  Float: ResolverTypeWrapper<Scalars['Float']>;
   User: ResolverTypeWrapper<User>;
   UserSummary: ResolverTypeWrapper<UserSummary>;
   UpdateUserInput: UpdateUserInput;
@@ -1743,7 +1743,6 @@ export type ResolversParentTypes = ResolversObject<{
   ConnectRelationInput: ConnectRelationInput;
   BodyArea: BodyArea;
   BodyAreaMoveScore: BodyAreaMoveScore;
-  Float: Scalars['Float'];
   Equipment: Equipment;
   CreateEquipmentInput: CreateEquipmentInput;
   UpdateEquipmentInput: UpdateEquipmentInput;
@@ -1752,6 +1751,7 @@ export type ResolversParentTypes = ResolversObject<{
   CreateMoveInput: CreateMoveInput;
   UpdateMoveInput: UpdateMoveInput;
   BodyAreaMoveScoreInput: BodyAreaMoveScoreInput;
+  Float: Scalars['Float'];
   User: User;
   UserSummary: UserSummary;
   UpdateUserInput: UpdateUserInput;
@@ -1968,7 +1968,7 @@ export type BodyAreaResolvers<ContextType = any, ParentType extends ResolversPar
 export type BodyAreaMoveScoreResolvers<ContextType = any, ParentType extends ResolversParentTypes['BodyAreaMoveScore'] = ResolversParentTypes['BodyAreaMoveScore']> = ResolversObject<{
   Move?: Resolver<ResolversTypes['Move'], ParentType, ContextType>;
   BodyArea?: Resolver<ResolversTypes['BodyArea'], ParentType, ContextType>;
-  score?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  score?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 

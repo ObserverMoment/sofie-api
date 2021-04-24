@@ -136,7 +136,7 @@ type BodyArea {
 type BodyAreaMoveScore {
   Move: Move!
   BodyArea: BodyArea!
-  score: Float!
+  score: Int!
 }
 """Enums"""
 enum BodyAreaFrontBack {
@@ -256,10 +256,10 @@ input CreateMoveInput {
   demoVideoUri: String
   demoVideoThumbUri: String
   scope: MoveScope
-  MoveType: ID!
+  MoveType: ConnectRelationInput!
   validRepTypes: [WorkoutMoveRepType!]!
-  RequiredEquipments: [ID!]
-  SelectableEquipments: [ID!]
+  RequiredEquipments: [ConnectRelationInput!]
+  SelectableEquipments: [ConnectRelationInput!]
   BodyAreaMoveScores: [BodyAreaMoveScoreInput!]
 }
 input UpdateMoveInput {
@@ -270,14 +270,14 @@ input UpdateMoveInput {
   demoVideoUri: String
   demoVideoThumbUri: String
   scope: MoveScope
-  MoveType: ID
+  MoveType: ConnectRelationInput
   validRepTypes: [WorkoutMoveRepType!]
-  RequiredEquipments: [ID!]
-  SelectableEquipments: [ID!]
+  RequiredEquipments: [ConnectRelationInput!]
+  SelectableEquipments: [ConnectRelationInput!]
   BodyAreaMoveScores: [BodyAreaMoveScoreInput!]
 }
 input BodyAreaMoveScoreInput {
-  BodyArea: ID!
+  BodyArea: ConnectRelationInput!
   score: Float!
 }
 type User {

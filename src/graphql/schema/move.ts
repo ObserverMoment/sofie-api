@@ -30,11 +30,11 @@ export default gql`
     demoVideoUri: String
     demoVideoThumbUri: String
     scope: MoveScope
-    MoveType: ID!
+    MoveType: ConnectRelationInput!
     # validRepTypes must include at least the enum TIME or an error will be thrown.
     validRepTypes: [WorkoutMoveRepType!]!
-    RequiredEquipments: [ID!]
-    SelectableEquipments: [ID!]
+    RequiredEquipments: [ConnectRelationInput!]
+    SelectableEquipments: [ConnectRelationInput!]
     BodyAreaMoveScores: [BodyAreaMoveScoreInput!]
   }
 
@@ -46,18 +46,18 @@ export default gql`
     demoVideoUri: String
     demoVideoThumbUri: String
     scope: MoveScope
-    MoveType: ID
+    MoveType: ConnectRelationInput
     # If included - validRepTypes must include at least the enum TIME or an error will be thrown.
     validRepTypes: [WorkoutMoveRepType!]
-    RequiredEquipments: [ID!]
-    SelectableEquipments: [ID!]
+    RequiredEquipments: [ConnectRelationInput!]
+    SelectableEquipments: [ConnectRelationInput!]
     # If included resolver will delete all previous bodyAreaMoveScores and create new ones as per this field
     BodyAreaMoveScores: [BodyAreaMoveScoreInput!]
   }
 
   # Input for a bodyAreaMoveScore - to update scores against a specified move ID.
   input BodyAreaMoveScoreInput {
-    BodyArea: ID!
+    BodyArea: ConnectRelationInput!
     score: Float!
   }
 `
