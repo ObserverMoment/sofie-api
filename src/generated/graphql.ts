@@ -576,7 +576,6 @@ export type BodyArea = {
   id: Scalars['ID'];
   name: Scalars['String'];
   altNames?: Maybe<Scalars['String']>;
-  BodyAreaMoveScores: Array<BodyAreaMoveScore>;
   frontBack: BodyAreaFrontBack;
   upperLower: BodyAreaUpperLower;
 };
@@ -1959,7 +1958,6 @@ export type BodyAreaResolvers<ContextType = any, ParentType extends ResolversPar
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   altNames?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  BodyAreaMoveScores?: Resolver<Array<ResolversTypes['BodyAreaMoveScore']>, ParentType, ContextType>;
   frontBack?: Resolver<ResolversTypes['BodyAreaFrontBack'], ParentType, ContextType>;
   upperLower?: Resolver<ResolversTypes['BodyAreaUpperLower'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;

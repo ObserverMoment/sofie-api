@@ -5,7 +5,6 @@ export default gql`
     id: ID!
     name: String!
     altNames: String
-    BodyAreaMoveScores: [BodyAreaMoveScore!]!
     frontBack: BodyAreaFrontBack!
     upperLower: BodyAreaUpperLower!
   }
