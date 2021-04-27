@@ -47,7 +47,8 @@ export const createWorkoutMove = async (
       repType: data.repType,
       distanceUnit: data.distanceUnit || undefined,
       loadUnit: data.loadUnit || undefined,
-      loadAmount: data.loadAmount || undefined,
+      // Necessary extra check because 0 is falsey in js.
+      loadAmount: data.loadAmount != null ? data.loadAmount : undefined,
       timeUnit: data.timeUnit || undefined,
       sortPosition: data.sortPosition,
       User: {
@@ -111,10 +112,11 @@ export const duplicateWorkoutMoveById = async (
     data: {
       reps: original.reps,
       repType: original.repType,
-      distanceUnit: original.distanceUnit || undefined,
-      loadUnit: original.loadUnit || undefined,
-      loadAmount: original.loadAmount || undefined,
-      timeUnit: original.timeUnit || undefined,
+      distanceUnit: original.distanceUnit,
+      loadUnit: original.loadUnit,
+      // necessary extra check because
+      loadAmount: original.loadAmount,
+      timeUnit: original.timeUnit,
       sortPosition: original.sortPosition + 1,
       WorkoutSet: { connect: { id: original.WorkoutSet.id } },
       User: {
@@ -151,7 +153,8 @@ export const updateWorkoutMove = async (
       distanceUnit: data.distanceUnit || undefined,
       loadUnit: data.loadUnit || undefined,
       timeUnit: data.timeUnit || undefined,
-      loadAmount: data.loadAmount || undefined,
+      // Necessary extra check because 0 is falsey in js.
+      loadAmount: data.loadAmount != null ? data.loadAmount : undefined,
       Move: data.Move ? { connect: { id: data.Move.id } } : undefined,
       Equipment: data.Equipment
         ? { connect: { id: data.Equipment.id } }

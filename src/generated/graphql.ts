@@ -1177,7 +1177,9 @@ export type WorkoutSummary = {
 export type WorkoutSectionSummary = {
   __typename?: 'WorkoutSectionSummary';
   id: Scalars['ID'];
+  name?: Maybe<Scalars['String']>;
   timecap?: Maybe<Scalars['Int']>;
+  sortPosition: Scalars['Int'];
   WorkoutSectionType: WorkoutSectionType;
   WorkoutSets: Array<WorkoutSetSummary>;
 };
@@ -2220,7 +2222,9 @@ export type WorkoutSummaryResolvers<ContextType = any, ParentType extends Resolv
 
 export type WorkoutSectionSummaryResolvers<ContextType = any, ParentType extends ResolversParentTypes['WorkoutSectionSummary'] = ResolversParentTypes['WorkoutSectionSummary']> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   timecap?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  sortPosition?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   WorkoutSectionType?: Resolver<ResolversTypes['WorkoutSectionType'], ParentType, ContextType>;
   WorkoutSets?: Resolver<Array<ResolversTypes['WorkoutSetSummary']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;

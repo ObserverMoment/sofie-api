@@ -26,7 +26,9 @@ export default gql`
 
   type WorkoutSectionSummary {
     id: ID!
+    name: String
     timecap: Int
+    sortPosition: Int!
     WorkoutSectionType: WorkoutSectionType!
     WorkoutSets: [WorkoutSetSummary!]!
   }
