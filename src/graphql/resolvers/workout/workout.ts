@@ -7,7 +7,6 @@ import {
   MutationUpdateWorkoutArgs,
   QueryWorkoutByIdArgs,
   Workout,
-  WorkoutSummary,
 } from '../../../generated/graphql'
 import { AccessScopeError, checkUserOwnsObject } from '../../utils'
 import {
@@ -26,7 +25,7 @@ export const officialWorkouts = async (
     where: { contentAccessScope: 'OFFICIAL' },
     select,
   })
-  return officialWorkouts as WorkoutSummary[]
+  return officialWorkouts as Workout[]
 }
 
 export const publicWorkouts = async (
@@ -38,7 +37,7 @@ export const publicWorkouts = async (
     where: { contentAccessScope: 'PUBLIC' },
     select,
   })
-  return publicWorkouts as WorkoutSummary[]
+  return publicWorkouts as Workout[]
 }
 
 // All user workouts, both public and private
@@ -51,7 +50,7 @@ export const userWorkouts = async (
     where: { userId: authedUserId },
     select,
   })
-  return userWorkouts as WorkoutSummary[]
+  return userWorkouts as Workout[]
 }
 
 export const workoutById = async (

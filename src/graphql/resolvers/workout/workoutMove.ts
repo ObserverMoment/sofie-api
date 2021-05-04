@@ -156,8 +156,12 @@ export const updateWorkoutMove = async (
       // Necessary extra check because 0 is falsey in js.
       loadAmount: data.loadAmount != null ? data.loadAmount : undefined,
       Move: data.Move ? { connect: { id: data.Move.id } } : undefined,
-      Equipment: data.Equipment
-        ? { connect: { id: data.Equipment.id } }
+      // Equipment can be null - i.e no equipment, so it can only be ignored if not present in the data object.
+      // passing null should disconnect any connected Equipment.
+      Equipment: data.hasOwnProperty('Equipment')
+        ? data.Equipment
+          ? { connect: { id: data.Equipment.id } }
+          : { disconnect: true }
         : undefined,
     },
     select,

@@ -35,9 +35,9 @@ export default gql`
     userPublicProfiles: [UserPublicProfile!]
     userPublicProfileByUserId(userId: ID!): UserPublicProfile!
     #### Workouts ####
-    officialWorkouts: [WorkoutSummary!]!
-    publicWorkouts: [WorkoutSummary!]!
-    userWorkouts: [WorkoutSummary!]!
+    officialWorkouts: [Workout!]!
+    publicWorkouts: [Workout!]!
+    userWorkouts: [Workout!]!
     workoutById(id: ID!): Workout!
     #### Workout Programs and Enrolments ####
     officialWorkoutPrograms: [WorkoutProgram!]!
