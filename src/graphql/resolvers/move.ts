@@ -70,13 +70,11 @@ export const createMove = async (
       },
       scope: data.scope || 'CUSTOM',
       RequiredEquipments: {
-        connect: data.RequiredEquipments
-          ? data.RequiredEquipments.map(({ id }) => ({ id }))
-          : undefined,
+        connect: data.RequiredEquipments ? data.RequiredEquipments : undefined,
       },
       SelectableEquipments: {
         connect: data.SelectableEquipments
-          ? data.SelectableEquipments.map(({ id }) => ({ id }))
+          ? data.SelectableEquipments
           : undefined,
       },
       BodyAreaMoveScores: {

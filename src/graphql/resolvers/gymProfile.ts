@@ -30,9 +30,7 @@ export const createGymProfile = async (
     data: {
       ...data,
       Equipments: {
-        connect: data.Equipments
-          ? data.Equipments.map((id: string) => ({ id }))
-          : undefined,
+        connect: data.Equipments ? data.Equipments : undefined,
       },
       User: {
         connect: { id: authedUserId },
@@ -60,9 +58,7 @@ export const updateGymProfile = async (
       ...data,
       name: data.name || undefined,
       Equipments: {
-        set: data.Equipments
-          ? data.Equipments.map((id: string) => ({ id }))
-          : undefined,
+        set: data.Equipments ? data.Equipments : undefined,
       },
     },
     select,

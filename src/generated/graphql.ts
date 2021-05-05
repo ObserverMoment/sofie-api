@@ -750,9 +750,9 @@ export type User = {
   bio?: Maybe<Scalars['String']>;
   tagline?: Maybe<Scalars['String']>;
   birthdate?: Maybe<Scalars['DateTime']>;
-  city?: Maybe<Scalars['String']>;
+  townCity?: Maybe<Scalars['String']>;
   countryCode?: Maybe<Scalars['String']>;
-  displayName: Scalars['String'];
+  displayName?: Maybe<Scalars['String']>;
   instagramUrl?: Maybe<Scalars['String']>;
   tiktokUrl?: Maybe<Scalars['String']>;
   youtubeUrl?: Maybe<Scalars['String']>;
@@ -781,7 +781,7 @@ export type UpdateUserInput = {
   bio?: Maybe<Scalars['String']>;
   tagline?: Maybe<Scalars['String']>;
   birthdate?: Maybe<Scalars['DateTime']>;
-  city?: Maybe<Scalars['String']>;
+  townCity?: Maybe<Scalars['String']>;
   countryCode?: Maybe<Scalars['String']>;
   displayName?: Maybe<Scalars['String']>;
   instagramUrl?: Maybe<Scalars['String']>;
@@ -803,6 +803,7 @@ export type UserPublicProfile = {
   introVideoThumbUri?: Maybe<Scalars['String']>;
   bio?: Maybe<Scalars['String']>;
   tagline?: Maybe<Scalars['String']>;
+  townCity?: Maybe<Scalars['String']>;
   instagramUrl?: Maybe<Scalars['String']>;
   tiktokUrl?: Maybe<Scalars['String']>;
   youtubeUrl?: Maybe<Scalars['String']>;
@@ -834,14 +835,14 @@ export type GymProfile = {
 export type CreateGymProfileInput = {
   name: Scalars['String'];
   description?: Maybe<Scalars['String']>;
-  Equipments: Array<Scalars['ID']>;
+  Equipments?: Maybe<Array<ConnectRelationInput>>;
 };
 
 export type UpdateGymProfileInput = {
   id: Scalars['ID'];
   name?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
-  Equipments?: Maybe<Array<Scalars['ID']>>;
+  Equipments?: Maybe<Array<ConnectRelationInput>>;
 };
 
 export type LoggedWorkout = {
@@ -2013,9 +2014,9 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   bio?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   tagline?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   birthdate?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
-  city?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  townCity?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   countryCode?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  displayName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  displayName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   instagramUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   tiktokUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   youtubeUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -2044,6 +2045,7 @@ export type UserPublicProfileResolvers<ContextType = any, ParentType extends Res
   introVideoThumbUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   bio?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   tagline?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  townCity?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   instagramUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   tiktokUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   youtubeUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;

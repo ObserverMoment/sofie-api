@@ -10,9 +10,9 @@ export default gql`
     bio: String
     tagline: String
     birthdate: DateTime
-    city: String
+    townCity: String
     countryCode: String
-    displayName: String!
+    displayName: String
     instagramUrl: String
     tiktokUrl: String
     youtubeUrl: String
@@ -41,7 +41,7 @@ export default gql`
     bio: String
     tagline: String
     birthdate: DateTime
-    city: String
+    townCity: String
     countryCode: String
     displayName: String
     instagramUrl: String
@@ -62,6 +62,7 @@ export default gql`
     introVideoThumbUri: String
     bio: String
     tagline: String
+    townCity: String
     instagramUrl: String
     tiktokUrl: String
     youtubeUrl: String

@@ -11,15 +11,13 @@ export default gql`
   input CreateGymProfileInput {
     name: String!
     description: String
-    # List of String (ID) ids to connect.
-    Equipments: [ID!]!
+    Equipments: [ConnectRelationInput!]
   }
 
   input UpdateGymProfileInput {
     id: ID!
     name: String
     description: String
-    # List of String (ID) ids to connect.
-    Equipments: [ID!]
+    Equipments: [ConnectRelationInput!]
   }
 `
