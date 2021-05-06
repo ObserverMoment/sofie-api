@@ -40,14 +40,14 @@ export const publicWorkouts = async (
   return publicWorkouts as Workout[]
 }
 
-// All user workouts, both public and private
+// All user workouts, both public and private, but not archived.
 export const userWorkouts = async (
   r: any,
   a: any,
   { authedUserId, select, prisma }: Context,
 ) => {
   const userWorkouts = await prisma.workout.findMany({
-    where: { userId: authedUserId },
+    where: { userId: authedUserId, archived: false },
     select,
   })
   return userWorkouts as Workout[]
@@ -211,16 +211,13 @@ export const duplicateWorkoutById = async (
       throw new AccessScopeError()
     }
   }
-  // Create a new copy.
+  // Create a new copy. Do not copy across the media and adjust the name.
   const copy = await prisma.workout.create({
     data: {
-      ...original,
       name: `${original.name} - copy`,
-      coverImageUri: null,
-      introAudioUri: null,
-      introVideoUri: null,
-      introVideoThumbUri: null,
-      createdAt: undefined,
+      description: original.description,
+      difficultyLevel: original.difficultyLevel,
+      contentAccessScope: 'PRIVATE',
       User: {
         connect: { id: authedUserId },
       },
@@ -232,17 +229,11 @@ export const duplicateWorkoutById = async (
       },
       WorkoutSections: {
         create: original.WorkoutSections.map((section) => ({
-          ...section,
-          introAudioUri: null,
-          classAudioUri: null,
-          outroAudioUri: null,
-          introVideoUri: null,
-          introVideoThumbUri: null,
-          classVideoUri: null,
-          classVideoThumbUri: null,
-          outroVideoUri: null,
-          outroVideoThumbUri: null,
-          createdAt: undefined,
+          name: section.name,
+          note: section.note,
+          rounds: section.rounds,
+          timecap: section.timecap,
+          sortPosition: section.sortPosition,
           User: {
             connect: { id: authedUserId },
           },
@@ -251,28 +242,56 @@ export const duplicateWorkoutById = async (
           },
           WorkoutSets: {
             create: section.WorkoutSets.map((set) => ({
-              ...set,
-              createdAt: undefined,
+              sortPosition: set.sortPosition,
+              rounds: set.rounds,
+              duration: set.duration,
+              Generators: {
+                create: set.Generators.map((g) => ({
+                  type: g.type,
+                  target: g.target,
+                  workoutMoveIndex: g.workoutMoveIndex,
+                  roundFrequency: g.roundFrequency,
+                  adjustAmount: g.adjustAmount,
+                  User: {
+                    connect: { id: authedUserId },
+                  },
+                })),
+              },
               User: {
                 connect: { id: authedUserId },
               },
+              IntervalBuyIn: set.IntervalBuyIn
+                ? {
+                    create: {
+                      interval: set.IntervalBuyIn.interval,
+                      WorkoutMove: {
+                        connect: { id: set.IntervalBuyIn.workoutMoveId },
+                      },
+                    },
+                  }
+                : undefined,
               WorkoutMoves: {
                 create: set.WorkoutMoves.map((workoutMove) => ({
-                  ...workoutMove,
-                  createdAt: undefined,
+                  sortPosition: workoutMove.sortPosition,
+                  reps: workoutMove.reps,
+                  repType: workoutMove.repType,
+                  distanceUnit: workoutMove.distanceUnit,
+                  loadAmount: workoutMove.loadAmount,
+                  loadUnit: workoutMove.loadUnit,
+                  timeUnit: workoutMove.timeUnit,
                   User: {
                     connect: { id: authedUserId },
                   },
                   Move: {
                     connect: { id: workoutMove.moveId },
                   },
-                  Equipment: {
-                    connect: {
-                      id: workoutMove.equipmentId
-                        ? workoutMove.equipmentId
-                        : undefined,
-                    },
-                  },
+                  Equipment: workoutMove.equipmentId
+                    ? {
+                        connect: {
+                          id: workoutMove.equipmentId,
+                        },
+                      }
+                    : undefined,
                 })),
               },
             })),
