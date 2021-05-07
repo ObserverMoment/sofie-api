@@ -1120,17 +1120,17 @@ export type ScheduledWorkout = {
 export type CreateScheduledWorkoutInput = {
   scheduledAt: Scalars['DateTime'];
   note?: Maybe<Scalars['String']>;
-  Workout: Scalars['ID'];
-  GymProfile?: Maybe<Scalars['ID']>;
+  Workout: ConnectRelationInput;
+  GymProfile?: Maybe<ConnectRelationInput>;
 };
 
 export type UpdateScheduledWorkoutInput = {
   id: Scalars['ID'];
   scheduledAt?: Maybe<Scalars['DateTime']>;
   note?: Maybe<Scalars['String']>;
-  Workout?: Maybe<Scalars['ID']>;
-  LoggedWorkout?: Maybe<Scalars['ID']>;
-  GymProfile?: Maybe<Scalars['ID']>;
+  Workout?: Maybe<ConnectRelationInput>;
+  LoggedWorkout?: Maybe<ConnectRelationInput>;
+  GymProfile?: Maybe<ConnectRelationInput>;
 };
 
 export type TextSearchWorkoutResult = {
@@ -1210,6 +1210,7 @@ export type Workout = {
   id: Scalars['ID'];
   createdAt?: Maybe<Scalars['DateTime']>;
   User?: Maybe<UserSummary>;
+  archived: Scalars['Boolean'];
   name: Scalars['String'];
   description?: Maybe<Scalars['String']>;
   introVideoUri?: Maybe<Scalars['String']>;
@@ -1231,6 +1232,7 @@ export type CreateWorkoutInput = {
 
 export type UpdateWorkoutInput = {
   id: Scalars['ID'];
+  archived?: Maybe<Scalars['Boolean']>;
   name?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   introVideoUri?: Maybe<Scalars['String']>;
@@ -2256,6 +2258,7 @@ export type WorkoutResolvers<ContextType = any, ParentType extends ResolversPare
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   createdAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   User?: Resolver<Maybe<ResolversTypes['UserSummary']>, ParentType, ContextType>;
+  archived?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   introVideoUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;

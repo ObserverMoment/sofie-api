@@ -118,6 +118,7 @@ export const updateWorkout = async (
     where: { id: data.id },
     data: {
       ...data,
+      archived: data.archived != null ? data.archived : undefined,
       name: data.name || undefined,
       difficultyLevel: data.difficultyLevel || undefined,
       contentAccessScope: data.contentAccessScope || undefined,
@@ -125,14 +126,10 @@ export const updateWorkout = async (
       // To remove all related items of this type pass an empty array.
       // https://www.prisma.io/docs/concepts/components/prisma-client/relation-queries#disconnect-all-related-records
       WorkoutGoals: {
-        set: data.WorkoutGoals
-          ? data.WorkoutGoals.map(({ id }) => ({ id }))
-          : undefined,
+        set: data.WorkoutGoals ? data.WorkoutGoals : undefined,
       },
       WorkoutTags: {
-        set: data.WorkoutTags
-          ? data.WorkoutTags.map(({ id }) => ({ id }))
-          : undefined,
+        set: data.WorkoutTags ? data.WorkoutTags : undefined,
       },
     },
     select,

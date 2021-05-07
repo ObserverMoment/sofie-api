@@ -8,6 +8,7 @@ export default gql`
     # https://github.com/comigor/artemis/issues/293
     createdAt: DateTime
     User: UserSummary
+    archived: Boolean!
     name: String!
     description: String
     introVideoUri: String
@@ -30,6 +31,7 @@ export default gql`
 
   input UpdateWorkoutInput {
     id: ID!
+    archived: Boolean
     name: String
     description: String
     introVideoUri: String

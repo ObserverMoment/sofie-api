@@ -32,11 +32,13 @@ export const createScheduledWorkout = async (
     data: {
       ...data,
       Workout: {
-        connect: { id: data.Workout || undefined },
+        connect: data.Workout,
       },
-      GymProfile: {
-        connect: { id: data.GymProfile || undefined },
-      },
+      GymProfile: data.GymProfile
+        ? {
+            connect: data.GymProfile,
+          }
+        : undefined,
       User: {
         connect: { id: authedUserId },
       },
@@ -62,15 +64,21 @@ export const updateScheduledWorkout = async (
     where: { id: data.id },
     data: {
       ...data,
-      Workout: {
-        connect: { id: data.Workout || undefined },
-      },
-      GymProfile: {
-        connect: { id: data.GymProfile || undefined },
-      },
-      LoggedWorkout: {
-        connect: { id: data.LoggedWorkout || undefined },
-      },
+      Workout: data.Workout
+        ? {
+            connect: data.Workout,
+          }
+        : undefined,
+      GymProfile: data.GymProfile
+        ? {
+            connect: data.GymProfile,
+          }
+        : undefined,
+      LoggedWorkout: data.LoggedWorkout
+        ? {
+            connect: data.LoggedWorkout,
+          }
+        : undefined,
     },
     select,
   })
