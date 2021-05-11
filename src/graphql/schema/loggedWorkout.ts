@@ -7,7 +7,6 @@ export default gql`
     completedOn: DateTime!
     name: String!
     note: String
-    imageUri: String
     LoggedWorkoutSections: [LoggedWorkoutSection!]!
     Workout: Workout!
     ScheduledWorkout: ScheduledWorkout
@@ -18,9 +17,13 @@ export default gql`
 
   type LoggedWorkoutSection {
     id: ID!
-    setIndex: Int!
-    roundIndex: Int!
-    timeTakenMs: Int!
+    name: String
+    sectionIndex: Int!
+    timecap: Int
+    timeTakenMs: Int
+    roundsCompleted: Int!
+    laptimesMs: [Int!]!
+    repScore: Int
     note: String
     WorkoutSectionType: WorkoutSectionType!
     LoggedWorkoutSets: [LoggedWorkoutSet!]!
@@ -30,7 +33,8 @@ export default gql`
   type LoggedWorkoutSet {
     id: ID!
     setIndex: Int!
-    roundIndex: Int!
+    roundsCompleted: Int!
+    laptimesMs: [Int!]!
     timeTakenMs: Int
     LoggedWorkoutMoves: [LoggedWorkoutMove!]!
   }
@@ -53,27 +57,31 @@ export default gql`
     completedOn: DateTime!
     name: String!
     note: String
-    imageUri: String
     LoggedWorkoutSections: [CreateLoggedWorkoutSectionInLoggedWorkoutInput!]!
-    Workout: ID!
-    ScheduledWorkout: ID
-    GymProfile: ID
-    WorkoutProgramWorkout: ID
-    WorkoutProgramEnrolment: ID
+    Workout: ConnectRelationInput
+    ScheduledWorkout: ConnectRelationInput
+    GymProfile: ConnectRelationInput
+    WorkoutProgramWorkout: ConnectRelationInput
+    WorkoutProgramEnrolment: ConnectRelationInput
   }
 
   input CreateLoggedWorkoutSectionInLoggedWorkoutInput {
+    name: String
     sectionIndex: Int!
-    roundIndex: Int!
-    timeTakenMs: Int!
+    roundsCompleted: Int!
+    laptimesMs: [Int!]
+    repScore: Int
+    timecap: Int
+    timeTakenMs: Int
     note: String
-    WorkoutSectionType: ID!
+    WorkoutSectionType: ConnectRelationInput!
     LoggedWorkoutSets: [CreateLoggedWorkoutSetInLoggedSectionInput!]!
   }
 
   input CreateLoggedWorkoutSetInLoggedSectionInput {
     setIndex: Int!
-    roundIndex: Int!
+    roundsCompleted: Int!
+    laptimesMs: [Int!]
     timeTakenMs: Int
     LoggedWorkoutMoves: [CreateLoggedWorkoutMoveInLoggedSetInput!]!
   }
@@ -86,25 +94,31 @@ export default gql`
     distanceUnit: DistanceUnit
     loadAmount: Float
     loadUnit: LoadUnit
-    Move: ID!
-    Equipment: ID
+    Move: ConnectRelationInput!
+    Equipment: ConnectRelationInput
   }
 
+  #### Used when editing a logged workout that already exists ####
   #### Create and attach to parent ####
   input CreateLoggedWorkoutSectionInput {
+    name: String
     sectionIndex: Int!
-    roundIndex: Int!
-    timeTakenMs: Int!
+    roundsCompleted: Int!
+    laptimesMs: [Int!]
+    repScore: Int
+    timeTakenMs: Int
+    timecap: Int
     note: String
-    WorkoutSectionType: ID!
-    LoggedWorkout: ID!
+    WorkoutSectionType: ConnectRelationInput!
+    LoggedWorkout: ConnectRelationInput!
   }
 
   input CreateLoggedWorkoutSetInput {
     setIndex: Int!
-    roundIndex: Int!
+    roundsCompleted: Int!
+    laptimesMs: [Int!]
     timeTakenMs: Int
-    LoggedWorkoutSection: ID!
+    LoggedWorkoutSection: ConnectRelationInput!
   }
 
   input CreateLoggedWorkoutMoveInput {
@@ -115,34 +129,36 @@ export default gql`
     distanceUnit: DistanceUnit
     loadAmount: Float
     loadUnit: LoadUnit
-    Move: ID!
-    Equipment: ID
-    LoggedWorkoutSet: ID!
+    Move: ConnectRelationInput!
+    Equipment: ConnectRelationInput
+    LoggedWorkoutSet: ConnectRelationInput!
   }
 
   #### Update Inputs - Updates are made atomically at each level. (Non nested) ####
-  #### Relationships can be updated by passing the ID to the relationship name field. ####
   input UpdateLoggedWorkoutInput {
     id: ID!
     completedOn: DateTime
     name: String
     note: String
-    imageUri: String
-    ScheduledWorkout: ID
-    GymProfile: ID
-    WorkoutProgramWorkout: ID
-    WorkoutProgramEnrolment: ID
+    GymProfile: ConnectRelationInput
   }
 
   input UpdateLoggedWorkoutSectionInput {
     id: ID!
+    name: String
     timeTakenMs: Int
+    roundsCompleted: Int
+    laptimesMs: [Int!]
+    timecap: Int
+    repScore: Int
     note: String
   }
 
   input UpdateLoggedWorkoutSetInput {
     id: ID!
     timeTakenMs: Int
+    roundsCompleted: Int
+    laptimesMs: [Int!]
   }
 
   input UpdateLoggedWorkoutMoveInput {
@@ -152,7 +168,7 @@ export default gql`
     distanceUnit: DistanceUnit
     loadAmount: Float
     loadUnit: LoadUnit
-    Move: ID
-    Equipment: ID
+    Move: ConnectRelationInput
+    Equipment: ConnectRelationInput
   }
 `

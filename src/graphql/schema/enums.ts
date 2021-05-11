@@ -20,7 +20,6 @@ export default gql`
     PRIVATE
     PUBLIC
     GROUP
-    OFFICIAL
   }
 
   enum DifficultyLevel {
@@ -49,6 +48,7 @@ export default gql`
     KG
     LB
     BODYWEIGHTPERCENT
+    PERCENTMAX
   }
 
   """

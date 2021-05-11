@@ -86,7 +86,6 @@ import {
 } from './gymProfile'
 
 import {
-  officialWorkouts,
   publicWorkouts,
   userWorkouts,
   workoutById,
@@ -126,7 +125,6 @@ import {
 } from './workout/workoutMove'
 
 import {
-  officialWorkoutPrograms,
   publicWorkoutPrograms,
   userWorkoutPrograms,
   workoutProgramById,
@@ -196,12 +194,10 @@ const resolvers: Resolvers = {
     userPublicProfiles,
     userWorkoutTags,
     //// Workouts ////
-    officialWorkouts,
     publicWorkouts,
     userWorkouts,
     workoutById,
     //// WorkoutPrograms ////
-    officialWorkoutPrograms,
     publicWorkoutPrograms,
     userWorkoutPrograms,
     workoutProgramById,

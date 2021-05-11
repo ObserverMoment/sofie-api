@@ -16,18 +16,6 @@ import {
 import { Prisma } from '@prisma/client'
 
 //// Queries ////
-export const officialWorkouts = async (
-  r: any,
-  a: any,
-  { select, prisma }: Context,
-) => {
-  const officialWorkouts = await prisma.workout.findMany({
-    where: { contentAccessScope: 'OFFICIAL' },
-    select,
-  })
-  return officialWorkouts as Workout[]
-}
-
 export const publicWorkouts = async (
   r: any,
   a: any,

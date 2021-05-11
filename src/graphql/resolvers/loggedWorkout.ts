@@ -24,7 +24,6 @@ import {
   MutationUpdateLoggedWorkoutSectionArgs,
   MutationUpdateLoggedWorkoutSetArgs,
 } from '../../generated/graphql'
-import { deleteFiles } from '../../uploadcare'
 import {
   AccessScopeError,
   checkAndReorderObjects,
@@ -65,14 +64,16 @@ export const createLoggedWorkout = async (
       LoggedWorkoutSections: {
         create: data.LoggedWorkoutSections.map((section) => ({
           ...section,
+          laptimesMs: section.laptimesMs || undefined,
           User: { connect: { id: authedUserId } },
           WorkoutSectionType: {
-            connect: { id: section.WorkoutSectionType },
+            connect: section.WorkoutSectionType,
           },
           LoggedWorkoutSets: {
             create: section.LoggedWorkoutSets
               ? section.LoggedWorkoutSets.map((set) => ({
                   ...set,
+                  laptimesMs: set.laptimesMs || undefined,
                   User: { connect: { id: authedUserId } },
                   LoggedWorkoutMoves: {
                     create: set.LoggedWorkoutMoves.map((workoutMove) => ({
@@ -80,13 +81,13 @@ export const createLoggedWorkout = async (
                       distanceUnit: workoutMove.distanceUnit || undefined,
                       loadUnit: workoutMove.loadUnit || undefined,
                       User: { connect: { id: authedUserId } },
-                      Equipment: {
-                        connect: {
-                          id: workoutMove.Equipment || undefined,
-                        },
-                      },
+                      Equipment: workoutMove.Equipment
+                        ? {
+                            connect: workoutMove.Equipment,
+                          }
+                        : undefined,
                       move: {
-                        connect: { id: workoutMove.Move },
+                        connect: workoutMove.Move,
                       },
                     })),
                   },
@@ -96,18 +97,22 @@ export const createLoggedWorkout = async (
         })),
       },
       Workout: {
-        connect: { id: data.Workout || undefined },
+        connect: data.Workout ? data.Workout : undefined,
       },
       ScheduledWorkout: {
-        connect: { id: data.ScheduledWorkout || undefined },
+        connect: data.ScheduledWorkout ? data.ScheduledWorkout : undefined,
       },
       // Connect to the enrolment (single instance of a user being enrolled in a plan)
       // And to the specific session (via workoutProgramWorkout) within the program.
       WorkoutProgramEnrolment: {
-        connect: { id: data.WorkoutProgramEnrolment || undefined },
+        connect: data.WorkoutProgramEnrolment
+          ? data.WorkoutProgramEnrolment
+          : undefined,
       },
       WorkoutProgramWorkout: {
-        connect: { id: data.WorkoutProgramWorkout || undefined },
+        connect: data.WorkoutProgramWorkout
+          ? data.WorkoutProgramWorkout
+          : undefined,
       },
     },
     select,
@@ -120,6 +125,8 @@ export const createLoggedWorkout = async (
   }
 }
 
+/// Does not do any relation connecting
+/// ScheduledWorkout, WorkoutProgramEnrolment or WorkoutProgramWorkout
 export const updateLoggedWorkout = async (
   r: any,
   { data }: MutationUpdateLoggedWorkoutArgs,
@@ -133,17 +140,6 @@ export const updateLoggedWorkout = async (
     data: {
       ...data,
       name: data.name || undefined,
-      ScheduledWorkout: {
-        connect: { id: data.ScheduledWorkout || undefined },
-      },
-      // Connect to the enrolment (single instance of a user being enrolled in a plan)
-      // And to the specific session within the plan (via workoutProgramWorkout).
-      WorkoutProgramEnrolment: {
-        connect: { id: data.WorkoutProgramEnrolment || undefined },
-      },
-      WorkoutProgramWorkout: {
-        connect: { id: data.WorkoutProgramWorkout || undefined },
-      },
     },
     select,
   })
@@ -167,7 +163,6 @@ export const deleteLoggedWorkoutById = async (
     where: { id },
     select: {
       id: true,
-      imageUri: true,
       userId: true,
     },
   })
@@ -201,9 +196,6 @@ export const deleteLoggedWorkoutById = async (
     const [_, __, ___, deleted] = await prisma.$transaction(ops)
 
     if (deleted) {
-      if (logForDeletion.imageUri) {
-        await deleteFiles([logForDeletion.imageUri])
-      }
       return logForDeletion.id
     } else {
       throw new ApolloError('deleteLoggedWorkoutById: There was an issue.')
@@ -218,7 +210,7 @@ export const createLoggedWorkoutSection = async (
 ) => {
   // Check user owns the parent.
   await checkUserOwnsObject(
-    data.LoggedWorkout,
+    data.LoggedWorkout.id,
     'loggedWorkout',
     authedUserId,
     prisma,
@@ -227,16 +219,15 @@ export const createLoggedWorkoutSection = async (
   const loggedWorkoutSection = await prisma.loggedWorkoutSection.create({
     data: {
       ...data,
+      laptimesMs: data.laptimesMs || undefined,
       User: {
         connect: { id: authedUserId },
       },
       WorkoutSectionType: {
-        connect: { id: data.WorkoutSectionType },
+        connect: data.WorkoutSectionType,
       },
       LoggedWorkout: {
-        connect: {
-          id: data.LoggedWorkout,
-        },
+        connect: data.LoggedWorkout,
       },
     },
     select,
@@ -266,6 +257,8 @@ export const updateLoggedWorkoutSection = async (
     },
     data: {
       ...data,
+      roundsCompleted: data.roundsCompleted || undefined,
+      laptimesMs: data.laptimesMs || undefined,
       timeTakenMs: data.timeTakenMs || undefined,
     },
     select,
@@ -334,7 +327,7 @@ export const createLoggedWorkoutSet = async (
 ) => {
   // Check user owns the parent.
   await checkUserOwnsObject(
-    data.LoggedWorkoutSection,
+    data.LoggedWorkoutSection.id,
     'loggedWorkoutSection',
     authedUserId,
     prisma,
@@ -343,11 +336,12 @@ export const createLoggedWorkoutSet = async (
   const loggedWorkoutSet = await prisma.loggedWorkoutSet.create({
     data: {
       ...data,
+      laptimesMs: data.laptimesMs || undefined,
       User: {
         connect: { id: authedUserId },
       },
       LoggedWorkoutSection: {
-        connect: { id: data.LoggedWorkoutSection },
+        connect: data.LoggedWorkoutSection,
       },
     },
     select,
@@ -370,7 +364,11 @@ export const updateLoggedWorkoutSet = async (
     where: {
       id: data.id,
     },
-    data,
+    data: {
+      ...data,
+      laptimesMs: data.laptimesMs || undefined,
+      roundsCompleted: data.roundsCompleted || undefined,
+    },
     select,
   })
 
@@ -417,7 +415,7 @@ export const createLoggedWorkoutMove = async (
   { authedUserId, select, prisma }: Context,
 ) => {
   await checkUserOwnsObject(
-    data.LoggedWorkoutSet,
+    data.LoggedWorkoutSet.id,
     'loggedWorkoutSet',
     authedUserId,
     prisma,
@@ -430,13 +428,15 @@ export const createLoggedWorkoutMove = async (
       loadUnit: data.loadUnit || undefined,
       User: { connect: { id: authedUserId } },
       Move: {
-        connect: { id: data.Move },
+        connect: data.Move,
       },
-      Equipment: {
-        connect: { id: data.Equipment || undefined },
-      },
+      Equipment: data.Equipment
+        ? {
+            connect: data.Equipment,
+          }
+        : undefined,
       LoggedWorkoutSet: {
-        connect: { id: data.LoggedWorkoutSet },
+        connect: data.LoggedWorkoutSet,
       },
     },
     select,
@@ -464,12 +464,18 @@ export const updateLoggedWorkoutMove = async (
       distanceUnit: data.distanceUnit || undefined,
       loadUnit: data.loadUnit || undefined,
       reps: data.reps || undefined,
-      Move: {
-        connect: { id: data.Move || undefined },
-      },
-      Equipment: {
-        connect: { id: data.Equipment || undefined },
-      },
+      Move: data.Move
+        ? {
+            connect: data.Move,
+          }
+        : undefined,
+      // Equipment can be null - i.e no equipment, so it can only be ignored if not present in the data object.
+      // passing null should disconnect any connected Equipment.
+      Equipment: data.hasOwnProperty('Equipment')
+        ? data.Equipment
+          ? { connect: { id: data.Equipment.id } }
+          : { disconnect: true }
+        : undefined,
     },
     select,
   })
@@ -504,13 +510,14 @@ export const reorderLoggedWorkoutSections = async (
   { data }: MutationReorderLoggedWorkoutSectionsArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  const updated: LoggedWorkoutSection[] = await checkAndReorderObjects<LoggedWorkoutSection>(
-    data,
-    'loggedWorkoutSection',
-    authedUserId,
-    prisma,
-    select,
-  )
+  const updated: LoggedWorkoutSection[] =
+    await checkAndReorderObjects<LoggedWorkoutSection>(
+      data,
+      'loggedWorkoutSection',
+      authedUserId,
+      prisma,
+      select,
+    )
 
   if (updated) {
     return updated
@@ -524,13 +531,14 @@ export const reorderLoggedWorkoutSets = async (
   { data }: MutationReorderLoggedWorkoutSetsArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  const updated: LoggedWorkoutSet[] = await checkAndReorderObjects<LoggedWorkoutSet>(
-    data,
-    'loggedWorkoutSet',
-    authedUserId,
-    prisma,
-    select,
-  )
+  const updated: LoggedWorkoutSet[] =
+    await checkAndReorderObjects<LoggedWorkoutSet>(
+      data,
+      'loggedWorkoutSet',
+      authedUserId,
+      prisma,
+      select,
+    )
 
   if (updated) {
     return updated
@@ -544,13 +552,14 @@ export const reorderLoggedWorkoutMoves = async (
   { data }: MutationReorderLoggedWorkoutMovesArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  const updated: LoggedWorkoutMove[] = await checkAndReorderObjects<LoggedWorkoutMove>(
-    data,
-    'loggedWorkoutMove',
-    authedUserId,
-    prisma,
-    select,
-  )
+  const updated: LoggedWorkoutMove[] =
+    await checkAndReorderObjects<LoggedWorkoutMove>(
+      data,
+      'loggedWorkoutMove',
+      authedUserId,
+      prisma,
+      select,
+    )
 
   if (updated) {
     return updated

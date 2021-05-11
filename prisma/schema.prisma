@@ -237,8 +237,8 @@ model Workout {
   id                     String                  @id @default(uuid())
   createdAt              DateTime                @default(now())
   archived               Boolean                 @default(false)
-  User                   User?                   @relation(fields: [userId], references: [id])
-  userId                 String?
+  User                   User                    @relation(fields: [userId], references: [id])
+  userId                 String
   name                   String
   description            String?
   introVideoUri          String?
@@ -302,7 +302,7 @@ model WorkoutSet {
   // If in Circuit workout, loop around all workoutMoves in this set until duration has elapsed. [WorkoutSetRounds] will be ignored (but should be 1).
   // If in EMOM (non competitive), 'wait' / 'rest' once all workoutMoves have been completed. [WorkoutSetRounds] can be adjusted. E.g. Every 5 minutes do three rounds of these three moves.
   // If in Last Standing (like a competitive EMOM which stops you if you hit a timecap), 'wait', 'rest' once all workoutMoves have been completed. End the workout if duration is reached and all workoutMoves are not completed - different from EMOM which will just move on to the next set. [WorkoutSetRounds] can be adjusted. E.g. Every 5 minutes do three rounds of these three moves.
-  duration         Int?
+  duration         Int? // Seconds
   Generators       WorkoutSetGenerator[]
   IntervalBuyIn    WorkoutSetIntervalBuyIn?
   // If there is more than one move then this is a superset
@@ -349,7 +349,7 @@ model WorkoutMove {
   repType                 WorkoutMoveRepType
   reps                    Float
   distanceUnit            DistanceUnit              @default(METRES)
-  timeUnit                TimeUnit                  @default(MINUTES)
+  timeUnit                TimeUnit                  @default(SECONDS)
   loadAmount              Float                     @default(0)
   loadUnit                LoadUnit                  @default(KG)
   Move                    Move                      @relation(fields: [moveId], references: [id])
@@ -433,7 +433,6 @@ model LoggedWorkout {
   userId                    String
   name                      String
   note                      String?
-  imageUri                  String?
   LoggedWorkoutSections     LoggedWorkoutSection[]
   Workout                   Workout?                 @relation(fields: [workoutId], references: [id])
   workoutId                 String?
@@ -450,9 +449,14 @@ model LoggedWorkoutSection {
   createdAt            DateTime           @default(now())
   User                 User               @relation(fields: [userId], references: [id])
   userId               String
+  name                 String?
+  note                 String?
+  timecap              Int? // Seconds - original timecap on the section
   sectionIndex         Int // The sort position of the WorkoutSection
-  roundIndex           Int // The iteration (round) of the section during the workout
-  timeTakenMs          Int // Milliseconds
+  roundsCompleted      Int                @default(1)
+  timeTakenMs          Int? // Milliseconds
+  laptimesMs           Int[] // Milliseconds
+  repScore             Int? // Score for AMRAP and Last Standing types workouts where your score submission is the number of reps you completed.
   LoggedWorkoutSets    LoggedWorkoutSet[]
   LoggedWorkout        LoggedWorkout      @relation(fields: [loggedWorkoutId], references: [id])
   loggedWorkoutId      String
@@ -466,7 +470,8 @@ model LoggedWorkoutSet {
   User                   User                 @relation(fields: [userId], references: [id])
   userId                 String
   setIndex               Int // The sort position of the WorkoutSet
-  roundIndex             Int // The iteration (round) of the set during the workout
+  roundsCompleted        Int                  @default(1)
+  laptimesMs             Int[] // Milliseconds
   timeTakenMs            Int? // Milliseconds - optional
   LoggedWorkoutMoves     LoggedWorkoutMove[]
   LoggedWorkoutSection   LoggedWorkoutSection @relation(fields: [loggedWorkoutSectionId], references: [id])
@@ -574,7 +579,6 @@ enum BodyAreaUpperLower {
 }
 
 enum ContentAccessScope {
-  OFFICIAL
   PUBLIC
   GROUP
   PRIVATE
@@ -611,6 +615,7 @@ enum LoadUnit {
   KG
   LB
   BODYWEIGHTPERCENT
+  PERCENTMAX
 }
 
 // Standard moves are built in / official.

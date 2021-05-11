@@ -7,7 +7,7 @@ export default gql`
     # So that Artemis type generation => DateTime coercers work.
     # https://github.com/comigor/artemis/issues/293
     createdAt: DateTime
-    User: UserSummary
+    User: UserSummary!
     archived: Boolean!
     name: String!
     description: String
