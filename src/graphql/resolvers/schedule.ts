@@ -69,10 +69,12 @@ export const updateScheduledWorkout = async (
             connect: data.Workout,
           }
         : undefined,
-      GymProfile: data.GymProfile
-        ? {
-            connect: data.GymProfile,
-          }
+      // GymProfile can be null, so it can only be ignored if not present in the data object.
+      // passing null should disconnect a connected GymProfile.
+      GymProfile: data.hasOwnProperty('GymProfile')
+        ? data.GymProfile
+          ? { connect: data.GymProfile }
+          : { disconnect: true }
         : undefined,
       LoggedWorkout: data.LoggedWorkout
         ? {

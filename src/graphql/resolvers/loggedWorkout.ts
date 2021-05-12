@@ -80,13 +80,14 @@ export const createLoggedWorkout = async (
                       ...workoutMove,
                       distanceUnit: workoutMove.distanceUnit || undefined,
                       loadUnit: workoutMove.loadUnit || undefined,
+                      timeUnit: workoutMove.timeUnit || undefined,
                       User: { connect: { id: authedUserId } },
                       Equipment: workoutMove.Equipment
                         ? {
                             connect: workoutMove.Equipment,
                           }
                         : undefined,
-                      move: {
+                      Move: {
                         connect: workoutMove.Move,
                       },
                     })),
@@ -96,24 +97,33 @@ export const createLoggedWorkout = async (
           },
         })),
       },
-      Workout: {
-        connect: data.Workout ? data.Workout : undefined,
-      },
-      ScheduledWorkout: {
-        connect: data.ScheduledWorkout ? data.ScheduledWorkout : undefined,
-      },
+      Workout: data.Workout
+        ? {
+            connect: data.Workout,
+          }
+        : undefined,
+      ScheduledWorkout: data.ScheduledWorkout
+        ? {
+            connect: data.ScheduledWorkout,
+          }
+        : undefined,
+      GymProfile: data.GymProfile
+        ? {
+            connect: data.GymProfile,
+          }
+        : undefined,
       // Connect to the enrolment (single instance of a user being enrolled in a plan)
       // And to the specific session (via workoutProgramWorkout) within the program.
-      WorkoutProgramEnrolment: {
-        connect: data.WorkoutProgramEnrolment
-          ? data.WorkoutProgramEnrolment
-          : undefined,
-      },
-      WorkoutProgramWorkout: {
-        connect: data.WorkoutProgramWorkout
-          ? data.WorkoutProgramWorkout
-          : undefined,
-      },
+      WorkoutProgramEnrolment: data.WorkoutProgramEnrolment
+        ? {
+            connect: data.WorkoutProgramEnrolment,
+          }
+        : undefined,
+      WorkoutProgramWorkout: data.WorkoutProgramWorkout
+        ? {
+            connect: data.WorkoutProgramWorkout,
+          }
+        : undefined,
     },
     select,
   })
@@ -140,6 +150,13 @@ export const updateLoggedWorkout = async (
     data: {
       ...data,
       name: data.name || undefined,
+      // GymProfile can be null , so it can only be ignored if not present in the data object.
+      // passing null should disconnect a connected GymProfile.
+      GymProfile: data.hasOwnProperty('GymProfile')
+        ? data.GymProfile
+          ? { connect: data.GymProfile }
+          : { disconnect: true }
+        : undefined,
     },
     select,
   })
@@ -259,7 +276,6 @@ export const updateLoggedWorkoutSection = async (
       ...data,
       roundsCompleted: data.roundsCompleted || undefined,
       laptimesMs: data.laptimesMs || undefined,
-      timeTakenMs: data.timeTakenMs || undefined,
     },
     select,
   })
@@ -426,6 +442,7 @@ export const createLoggedWorkoutMove = async (
       ...data,
       distanceUnit: data.distanceUnit || undefined,
       loadUnit: data.loadUnit || undefined,
+      timeUnit: data.timeUnit || undefined,
       User: { connect: { id: authedUserId } },
       Move: {
         connect: data.Move,
@@ -463,6 +480,7 @@ export const updateLoggedWorkoutMove = async (
       ...data,
       distanceUnit: data.distanceUnit || undefined,
       loadUnit: data.loadUnit || undefined,
+      timeUnit: data.timeUnit || undefined,
       reps: data.reps || undefined,
       Move: data.Move
         ? {

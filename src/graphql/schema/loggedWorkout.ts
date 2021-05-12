@@ -20,8 +20,8 @@ export default gql`
     name: String
     sectionIndex: Int!
     timecap: Int
-    timeTakenMs: Int
     roundsCompleted: Int!
+    timeTakenMs: Int
     laptimesMs: [Int!]!
     repScore: Int
     note: String
@@ -32,22 +32,24 @@ export default gql`
 
   type LoggedWorkoutSet {
     id: ID!
+    note: String
     setIndex: Int!
     roundsCompleted: Int!
     laptimesMs: [Int!]!
-    timeTakenMs: Int
     LoggedWorkoutMoves: [LoggedWorkoutMove!]!
   }
 
   type LoggedWorkoutMove {
     id: ID!
     sortPosition: Int!
+    note: String
     timeTakenMs: Int
     repType: WorkoutMoveRepType!
     reps: Float!
     distanceUnit: DistanceUnit!
     loadAmount: Float
     loadUnit: LoadUnit!
+    timeUnit: TimeUnit!
     Move: Move!
     Equipment: Equipment
   }
@@ -67,33 +69,35 @@ export default gql`
 
   input CreateLoggedWorkoutSectionInLoggedWorkoutInput {
     name: String
+    note: String
     sectionIndex: Int!
     roundsCompleted: Int!
+    timeTakenMs: Int
     laptimesMs: [Int!]
     repScore: Int
     timecap: Int
-    timeTakenMs: Int
-    note: String
     WorkoutSectionType: ConnectRelationInput!
     LoggedWorkoutSets: [CreateLoggedWorkoutSetInLoggedSectionInput!]!
   }
 
   input CreateLoggedWorkoutSetInLoggedSectionInput {
     setIndex: Int!
+    note: String
     roundsCompleted: Int!
     laptimesMs: [Int!]
-    timeTakenMs: Int
     LoggedWorkoutMoves: [CreateLoggedWorkoutMoveInLoggedSetInput!]!
   }
 
   input CreateLoggedWorkoutMoveInLoggedSetInput {
     sortPosition: Int!
     timeTakenMs: Int
+    note: String
     repType: WorkoutMoveRepType!
     reps: Float!
     distanceUnit: DistanceUnit
     loadAmount: Float
     loadUnit: LoadUnit
+    timeUnit: TimeUnit
     Move: ConnectRelationInput!
     Equipment: ConnectRelationInput
   }
@@ -102,33 +106,34 @@ export default gql`
   #### Create and attach to parent ####
   input CreateLoggedWorkoutSectionInput {
     name: String
+    note: String
     sectionIndex: Int!
     roundsCompleted: Int!
+    timeTakenMs: Int
     laptimesMs: [Int!]
     repScore: Int
-    timeTakenMs: Int
     timecap: Int
-    note: String
     WorkoutSectionType: ConnectRelationInput!
     LoggedWorkout: ConnectRelationInput!
   }
 
   input CreateLoggedWorkoutSetInput {
     setIndex: Int!
+    note: String
     roundsCompleted: Int!
     laptimesMs: [Int!]
-    timeTakenMs: Int
     LoggedWorkoutSection: ConnectRelationInput!
   }
 
   input CreateLoggedWorkoutMoveInput {
     sortPosition: Int!
-    timeTakenMs: Int
+    note: String
     repType: WorkoutMoveRepType!
     reps: Float!
     distanceUnit: DistanceUnit
     loadAmount: Float
     loadUnit: LoadUnit
+    timeUnit: TimeUnit
     Move: ConnectRelationInput!
     Equipment: ConnectRelationInput
     LoggedWorkoutSet: ConnectRelationInput!
@@ -146,8 +151,8 @@ export default gql`
   input UpdateLoggedWorkoutSectionInput {
     id: ID!
     name: String
-    timeTakenMs: Int
     roundsCompleted: Int
+    timeTakenMs: Int
     laptimesMs: [Int!]
     timecap: Int
     repScore: Int
@@ -156,18 +161,20 @@ export default gql`
 
   input UpdateLoggedWorkoutSetInput {
     id: ID!
-    timeTakenMs: Int
+    note: String
     roundsCompleted: Int
     laptimesMs: [Int!]
   }
 
   input UpdateLoggedWorkoutMoveInput {
     id: ID!
+    note: String
     timeTakenMs: Int
     reps: Float
     distanceUnit: DistanceUnit
     loadAmount: Float
     loadUnit: LoadUnit
+    timeUnit: TimeUnit
     Move: ConnectRelationInput
     Equipment: ConnectRelationInput
   }

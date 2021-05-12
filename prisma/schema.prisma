@@ -122,6 +122,7 @@ model GymProfile {
   description       String?
   Equipments        Equipment[]
   ScheduledWorkouts ScheduledWorkout[]
+  LoggedWorkouts    LoggedWorkout[]
 }
 
 model ScheduledWorkout {
@@ -436,6 +437,8 @@ model LoggedWorkout {
   LoggedWorkoutSections     LoggedWorkoutSection[]
   Workout                   Workout?                 @relation(fields: [workoutId], references: [id])
   workoutId                 String?
+  GymProfile                GymProfile?              @relation(fields: [gymProfileId], references: [id])
+  gymProfileId              String?
   ScheduledWorkout          ScheduledWorkout?
   // Need to connect to both the enrolment and the programWorkout to ensure ease of lookup.
   WorkoutProgramEnrolment   WorkoutProgramEnrolment? @relation(fields: [workoutProgramEnrolmentId], references: [id])
@@ -454,8 +457,8 @@ model LoggedWorkoutSection {
   timecap              Int? // Seconds - original timecap on the section
   sectionIndex         Int // The sort position of the WorkoutSection
   roundsCompleted      Int                @default(1)
-  timeTakenMs          Int? // Milliseconds
-  laptimesMs           Int[] // Milliseconds
+  timeTakenMs          Int? // Total time taken - useful for scoring fortime workouts and adding a duration to free session workouts where laptimes can be overkill.
+  laptimesMs           Int[] // Milliseconds - must be no longer than roundsCompleted.
   repScore             Int? // Score for AMRAP and Last Standing types workouts where your score submission is the number of reps you completed.
   LoggedWorkoutSets    LoggedWorkoutSet[]
   LoggedWorkout        LoggedWorkout      @relation(fields: [loggedWorkoutId], references: [id])
@@ -469,10 +472,10 @@ model LoggedWorkoutSet {
   createdAt              DateTime             @default(now())
   User                   User                 @relation(fields: [userId], references: [id])
   userId                 String
+  note                   String?
   setIndex               Int // The sort position of the WorkoutSet
   roundsCompleted        Int                  @default(1)
-  laptimesMs             Int[] // Milliseconds
-  timeTakenMs            Int? // Milliseconds - optional
+  laptimesMs             Int[] // Milliseconds - must be no longer than roundsCompleted.
   LoggedWorkoutMoves     LoggedWorkoutMove[]
   LoggedWorkoutSection   LoggedWorkoutSection @relation(fields: [loggedWorkoutSectionId], references: [id])
   loggedWorkoutSectionId String
@@ -484,6 +487,7 @@ model LoggedWorkoutMove {
   User               User               @relation(fields: [userId], references: [id])
   userId             String
   sortPosition       Int
+  note               String?
   timeTakenMs        Int? // Milliseconds - optional
   repType            WorkoutMoveRepType
   reps               Float
@@ -491,6 +495,7 @@ model LoggedWorkoutMove {
   distanceUnit       DistanceUnit       @default(METRES)
   loadAmount         Float?
   loadUnit           LoadUnit           @default(KG)
+  timeUnit           TimeUnit           @default(SECONDS)
   Move               Move               @relation(fields: [moveId], references: [id])
   moveId             String
   Equipment          Equipment?         @relation(fields: [equipmentId], references: [id])
