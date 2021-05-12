@@ -6,7 +6,7 @@ export default gql`
     createdAt: DateTime!
     scheduledAt: DateTime!
     note: String
-    Workout: Workout!
+    Workout: Workout
     LoggedWorkout: LoggedWorkout
     GymProfile: GymProfile
   }

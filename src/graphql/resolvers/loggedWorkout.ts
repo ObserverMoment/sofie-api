@@ -23,6 +23,7 @@ import {
   MutationUpdateLoggedWorkoutMoveArgs,
   MutationUpdateLoggedWorkoutSectionArgs,
   MutationUpdateLoggedWorkoutSetArgs,
+  QueryLoggedWorkoutByIdArgs,
 } from '../../generated/graphql'
 import {
   AccessScopeError,
@@ -43,6 +44,30 @@ export const userLoggedWorkouts = async (
     select,
   })
   return loggedWorkouts as LoggedWorkout[]
+}
+
+export const loggedWorkoutById = async (
+  r: any,
+  { id }: QueryLoggedWorkoutByIdArgs,
+  { authedUserId, select, prisma }: Context,
+) => {
+  const loggedWorkout: any = await prisma.loggedWorkout.findUnique({
+    where: { id },
+    select: {
+      ...select,
+      userId: true,
+    },
+  })
+
+  if (loggedWorkout) {
+    if (loggedWorkout.userId !== authedUserId) {
+      throw new AccessScopeError()
+    }
+
+    return loggedWorkout as LoggedWorkout
+  } else {
+    throw new ApolloError('loggedWorkoutProgramById: There was an issue.')
+  }
 }
 
 //// Mutations ////

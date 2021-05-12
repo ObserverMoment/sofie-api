@@ -25,6 +25,7 @@ export type Query = {
   workoutGoals: Array<WorkoutGoal>;
   workoutSectionTypes: Array<WorkoutSectionType>;
   userLoggedWorkouts: Array<LoggedWorkout>;
+  loggedWorkoutById: LoggedWorkout;
   standardMoves: Array<Move>;
   userCustomMoves: Array<Move>;
   userProgressJournals: Array<ProgressJournal>;
@@ -47,6 +48,11 @@ export type Query = {
   workoutProgramById: WorkoutProgram;
   userWorkoutPrograms: Array<WorkoutProgram>;
   userWorkoutProgramEnrolments?: Maybe<Array<WorkoutProgramEnrolment>>;
+};
+
+
+export type QueryLoggedWorkoutByIdArgs = {
+  id: Scalars['ID'];
 };
 
 
@@ -1133,7 +1139,7 @@ export type ScheduledWorkout = {
   createdAt: Scalars['DateTime'];
   scheduledAt: Scalars['DateTime'];
   note?: Maybe<Scalars['String']>;
-  Workout: Workout;
+  Workout?: Maybe<Workout>;
   LoggedWorkout?: Maybe<LoggedWorkout>;
   GymProfile?: Maybe<GymProfile>;
 };
@@ -1869,6 +1875,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   workoutGoals?: Resolver<Array<ResolversTypes['WorkoutGoal']>, ParentType, ContextType>;
   workoutSectionTypes?: Resolver<Array<ResolversTypes['WorkoutSectionType']>, ParentType, ContextType>;
   userLoggedWorkouts?: Resolver<Array<ResolversTypes['LoggedWorkout']>, ParentType, ContextType>;
+  loggedWorkoutById?: Resolver<ResolversTypes['LoggedWorkout'], ParentType, ContextType, RequireFields<QueryLoggedWorkoutByIdArgs, 'id'>>;
   standardMoves?: Resolver<Array<ResolversTypes['Move']>, ParentType, ContextType>;
   userCustomMoves?: Resolver<Array<ResolversTypes['Move']>, ParentType, ContextType>;
   userProgressJournals?: Resolver<Array<ResolversTypes['ProgressJournal']>, ParentType, ContextType>;
@@ -2201,7 +2208,7 @@ export type ScheduledWorkoutResolvers<ContextType = any, ParentType extends Reso
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   scheduledAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   note?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  Workout?: Resolver<ResolversTypes['Workout'], ParentType, ContextType>;
+  Workout?: Resolver<Maybe<ResolversTypes['Workout']>, ParentType, ContextType>;
   LoggedWorkout?: Resolver<Maybe<ResolversTypes['LoggedWorkout']>, ParentType, ContextType>;
   GymProfile?: Resolver<Maybe<ResolversTypes['GymProfile']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;

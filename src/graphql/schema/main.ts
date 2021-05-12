@@ -13,6 +13,7 @@ export default gql`
     workoutSectionTypes: [WorkoutSectionType!]!
     #### Logged Workouts ####
     userLoggedWorkouts: [LoggedWorkout!]!
+    loggedWorkoutById(id: ID!): LoggedWorkout!
     #### Moves ####
     standardMoves: [Move!]!
     userCustomMoves: [Move!]!

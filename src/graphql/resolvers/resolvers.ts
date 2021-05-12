@@ -2,6 +2,7 @@ import { Resolvers } from '../../generated/graphql'
 
 import {
   userLoggedWorkouts,
+  loggedWorkoutById,
   createLoggedWorkout,
   updateLoggedWorkout,
   deleteLoggedWorkoutById,
@@ -176,6 +177,7 @@ const resolvers: Resolvers = {
     progressJournalGoalTags,
     progressJournalById,
     //// Logged Workouts ////
+    loggedWorkoutById,
     userLoggedWorkouts,
     //// Move ////
     standardMoves,
