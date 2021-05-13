@@ -89,7 +89,6 @@ export const createLoggedWorkout = async (
       LoggedWorkoutSections: {
         create: data.LoggedWorkoutSections.map((section) => ({
           ...section,
-          laptimesMs: section.laptimesMs || undefined,
           User: { connect: { id: authedUserId } },
           WorkoutSectionType: {
             connect: section.WorkoutSectionType,
@@ -98,7 +97,6 @@ export const createLoggedWorkout = async (
             create: section.LoggedWorkoutSets
               ? section.LoggedWorkoutSets.map((set) => ({
                   ...set,
-                  laptimesMs: set.laptimesMs || undefined,
                   User: { connect: { id: authedUserId } },
                   LoggedWorkoutMoves: {
                     create: set.LoggedWorkoutMoves.map((workoutMove) => ({
@@ -261,7 +259,6 @@ export const createLoggedWorkoutSection = async (
   const loggedWorkoutSection = await prisma.loggedWorkoutSection.create({
     data: {
       ...data,
-      laptimesMs: data.laptimesMs || undefined,
       User: {
         connect: { id: authedUserId },
       },
@@ -300,7 +297,6 @@ export const updateLoggedWorkoutSection = async (
     data: {
       ...data,
       roundsCompleted: data.roundsCompleted || undefined,
-      laptimesMs: data.laptimesMs || undefined,
     },
     select,
   })
@@ -377,7 +373,6 @@ export const createLoggedWorkoutSet = async (
   const loggedWorkoutSet = await prisma.loggedWorkoutSet.create({
     data: {
       ...data,
-      laptimesMs: data.laptimesMs || undefined,
       User: {
         connect: { id: authedUserId },
       },
@@ -407,7 +402,6 @@ export const updateLoggedWorkoutSet = async (
     },
     data: {
       ...data,
-      laptimesMs: data.laptimesMs || undefined,
       roundsCompleted: data.roundsCompleted || undefined,
     },
     select,

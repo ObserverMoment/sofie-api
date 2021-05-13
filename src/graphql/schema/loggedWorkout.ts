@@ -22,7 +22,7 @@ export default gql`
     timecap: Int
     roundsCompleted: Int!
     timeTakenMs: Int
-    laptimesMs: [Int!]!
+    roundTimesMs: JSON!
     repScore: Int
     note: String
     WorkoutSectionType: WorkoutSectionType!
@@ -35,7 +35,7 @@ export default gql`
     note: String
     setIndex: Int!
     roundsCompleted: Int!
-    laptimesMs: [Int!]!
+    roundTimesMs: JSON!
     LoggedWorkoutMoves: [LoggedWorkoutMove!]!
   }
 
@@ -73,7 +73,7 @@ export default gql`
     sectionIndex: Int!
     roundsCompleted: Int!
     timeTakenMs: Int
-    laptimesMs: [Int!]
+    roundTimesMs: JSON
     repScore: Int
     timecap: Int
     WorkoutSectionType: ConnectRelationInput!
@@ -84,7 +84,7 @@ export default gql`
     setIndex: Int!
     note: String
     roundsCompleted: Int!
-    laptimesMs: [Int!]
+    roundTimesMs: JSON
     LoggedWorkoutMoves: [CreateLoggedWorkoutMoveInLoggedSetInput!]!
   }
 
@@ -110,7 +110,7 @@ export default gql`
     sectionIndex: Int!
     roundsCompleted: Int!
     timeTakenMs: Int
-    laptimesMs: [Int!]
+    roundTimesMs: JSON
     repScore: Int
     timecap: Int
     WorkoutSectionType: ConnectRelationInput!
@@ -121,7 +121,7 @@ export default gql`
     setIndex: Int!
     note: String
     roundsCompleted: Int!
-    laptimesMs: [Int!]
+    roundTimesMs: JSON
     LoggedWorkoutSection: ConnectRelationInput!
   }
 
@@ -153,7 +153,7 @@ export default gql`
     name: String
     roundsCompleted: Int
     timeTakenMs: Int
-    laptimesMs: [Int!]
+    roundTimesMs: JSON
     timecap: Int
     repScore: Int
     note: String
@@ -163,7 +163,7 @@ export default gql`
     id: ID!
     note: String
     roundsCompleted: Int
-    laptimesMs: [Int!]
+    roundTimesMs: JSON
   }
 
   input UpdateLoggedWorkoutMoveInput {

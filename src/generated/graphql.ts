@@ -13,7 +13,9 @@ export type Scalars = {
   Int: number;
   Float: number;
   DateTime: any;
+  JSON: any;
 };
+
 
 
 export type Query = {
@@ -871,7 +873,7 @@ export type LoggedWorkoutSection = {
   timecap?: Maybe<Scalars['Int']>;
   roundsCompleted: Scalars['Int'];
   timeTakenMs?: Maybe<Scalars['Int']>;
-  laptimesMs: Array<Scalars['Int']>;
+  roundTimesMs: Scalars['JSON'];
   repScore?: Maybe<Scalars['Int']>;
   note?: Maybe<Scalars['String']>;
   WorkoutSectionType: WorkoutSectionType;
@@ -885,7 +887,7 @@ export type LoggedWorkoutSet = {
   note?: Maybe<Scalars['String']>;
   setIndex: Scalars['Int'];
   roundsCompleted: Scalars['Int'];
-  laptimesMs: Array<Scalars['Int']>;
+  roundTimesMs: Scalars['JSON'];
   LoggedWorkoutMoves: Array<LoggedWorkoutMove>;
 };
 
@@ -923,7 +925,7 @@ export type CreateLoggedWorkoutSectionInLoggedWorkoutInput = {
   sectionIndex: Scalars['Int'];
   roundsCompleted: Scalars['Int'];
   timeTakenMs?: Maybe<Scalars['Int']>;
-  laptimesMs?: Maybe<Array<Scalars['Int']>>;
+  roundTimesMs?: Maybe<Scalars['JSON']>;
   repScore?: Maybe<Scalars['Int']>;
   timecap?: Maybe<Scalars['Int']>;
   WorkoutSectionType: ConnectRelationInput;
@@ -934,7 +936,7 @@ export type CreateLoggedWorkoutSetInLoggedSectionInput = {
   setIndex: Scalars['Int'];
   note?: Maybe<Scalars['String']>;
   roundsCompleted: Scalars['Int'];
-  laptimesMs?: Maybe<Array<Scalars['Int']>>;
+  roundTimesMs?: Maybe<Scalars['JSON']>;
   LoggedWorkoutMoves: Array<CreateLoggedWorkoutMoveInLoggedSetInput>;
 };
 
@@ -958,7 +960,7 @@ export type CreateLoggedWorkoutSectionInput = {
   sectionIndex: Scalars['Int'];
   roundsCompleted: Scalars['Int'];
   timeTakenMs?: Maybe<Scalars['Int']>;
-  laptimesMs?: Maybe<Array<Scalars['Int']>>;
+  roundTimesMs?: Maybe<Scalars['JSON']>;
   repScore?: Maybe<Scalars['Int']>;
   timecap?: Maybe<Scalars['Int']>;
   WorkoutSectionType: ConnectRelationInput;
@@ -969,7 +971,7 @@ export type CreateLoggedWorkoutSetInput = {
   setIndex: Scalars['Int'];
   note?: Maybe<Scalars['String']>;
   roundsCompleted: Scalars['Int'];
-  laptimesMs?: Maybe<Array<Scalars['Int']>>;
+  roundTimesMs?: Maybe<Scalars['JSON']>;
   LoggedWorkoutSection: ConnectRelationInput;
 };
 
@@ -1000,7 +1002,7 @@ export type UpdateLoggedWorkoutSectionInput = {
   name?: Maybe<Scalars['String']>;
   roundsCompleted?: Maybe<Scalars['Int']>;
   timeTakenMs?: Maybe<Scalars['Int']>;
-  laptimesMs?: Maybe<Array<Scalars['Int']>>;
+  roundTimesMs?: Maybe<Scalars['JSON']>;
   timecap?: Maybe<Scalars['Int']>;
   repScore?: Maybe<Scalars['Int']>;
   note?: Maybe<Scalars['String']>;
@@ -1010,7 +1012,7 @@ export type UpdateLoggedWorkoutSetInput = {
   id: Scalars['ID'];
   note?: Maybe<Scalars['String']>;
   roundsCompleted?: Maybe<Scalars['Int']>;
-  laptimesMs?: Maybe<Array<Scalars['Int']>>;
+  roundTimesMs?: Maybe<Scalars['JSON']>;
 };
 
 export type UpdateLoggedWorkoutMoveInput = {
@@ -1647,6 +1649,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
+  JSON: ResolverTypeWrapper<Scalars['JSON']>;
   Query: ResolverTypeWrapper<{}>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
@@ -1763,6 +1766,7 @@ export type ResolversTypes = ResolversObject<{
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
   DateTime: Scalars['DateTime'];
+  JSON: Scalars['JSON'];
   Query: {};
   Boolean: Scalars['Boolean'];
   ID: Scalars['ID'];
@@ -1865,6 +1869,10 @@ export type ResolversParentTypes = ResolversObject<{
 
 export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {
   name: 'DateTime';
+}
+
+export interface JsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['JSON'], any> {
+  name: 'JSON';
 }
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
@@ -2124,7 +2132,7 @@ export type LoggedWorkoutSectionResolvers<ContextType = any, ParentType extends 
   timecap?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   roundsCompleted?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   timeTakenMs?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  laptimesMs?: Resolver<Array<ResolversTypes['Int']>, ParentType, ContextType>;
+  roundTimesMs?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>;
   repScore?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   note?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   WorkoutSectionType?: Resolver<ResolversTypes['WorkoutSectionType'], ParentType, ContextType>;
@@ -2138,7 +2146,7 @@ export type LoggedWorkoutSetResolvers<ContextType = any, ParentType extends Reso
   note?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   setIndex?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   roundsCompleted?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  laptimesMs?: Resolver<Array<ResolversTypes['Int']>, ParentType, ContextType>;
+  roundTimesMs?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>;
   LoggedWorkoutMoves?: Resolver<Array<ResolversTypes['LoggedWorkoutMove']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
@@ -2438,6 +2446,7 @@ export type WorkoutProgramReviewResolvers<ContextType = any, ParentType extends 
 
 export type Resolvers<ContextType = any> = ResolversObject<{
   DateTime?: GraphQLScalarType;
+  JSON?: GraphQLScalarType;
   Query?: QueryResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   SortPositionUpdated?: SortPositionUpdatedResolvers<ContextType>;

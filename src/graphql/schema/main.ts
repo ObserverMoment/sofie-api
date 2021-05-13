@@ -2,6 +2,7 @@ import { gql } from 'apollo-server-express'
 
 export default gql`
   scalar DateTime
+  scalar JSON
 
   type Query {
     validateToken: Boolean!

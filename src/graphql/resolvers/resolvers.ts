@@ -144,9 +144,11 @@ import {
 } from './workoutProgram'
 
 import { GraphQLScalarType } from 'graphql'
+import GraphQLJSON from 'graphql-type-json'
 import { Kind } from 'graphql/language'
 
 const resolvers: Resolvers = {
+  JSON: GraphQLJSON,
   DateTime: new GraphQLScalarType({
     name: 'DateTime',
     description:

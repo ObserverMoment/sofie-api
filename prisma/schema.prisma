@@ -458,7 +458,7 @@ model LoggedWorkoutSection {
   sectionIndex         Int // The sort position of the WorkoutSection
   roundsCompleted      Int                @default(1)
   timeTakenMs          Int? // Total time taken - useful for scoring fortime workouts and adding a duration to free session workouts where laptimes can be overkill.
-  laptimesMs           Int[] // Milliseconds - must be no longer than roundsCompleted.
+  roundTimesMs         Json               @default("{}") // Milliseconds. { roundIndex: timeMs }
   repScore             Int? // Score for AMRAP and Last Standing types workouts where your score submission is the number of reps you completed.
   LoggedWorkoutSets    LoggedWorkoutSet[]
   LoggedWorkout        LoggedWorkout      @relation(fields: [loggedWorkoutId], references: [id])
@@ -475,7 +475,7 @@ model LoggedWorkoutSet {
   note                   String?
   setIndex               Int // The sort position of the WorkoutSet
   roundsCompleted        Int                  @default(1)
-  laptimesMs             Int[] // Milliseconds - must be no longer than roundsCompleted.
+  roundTimesMs           Json                 @default("{}") // Milliseconds. { roundIndex: timeMs }
   LoggedWorkoutMoves     LoggedWorkoutMove[]
   LoggedWorkoutSection   LoggedWorkoutSection @relation(fields: [loggedWorkoutSectionId], references: [id])
   loggedWorkoutSectionId String
