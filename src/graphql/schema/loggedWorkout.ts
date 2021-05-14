@@ -18,7 +18,7 @@ export default gql`
   type LoggedWorkoutSection {
     id: ID!
     name: String
-    sectionIndex: Int!
+    sortPosition: Int!
     timecap: Int
     roundsCompleted: Int!
     timeTakenMs: Int
@@ -33,8 +33,9 @@ export default gql`
   type LoggedWorkoutSet {
     id: ID!
     note: String
-    setIndex: Int!
+    sortPosition: Int!
     roundsCompleted: Int!
+    duration: Int
     roundTimesMs: JSON!
     LoggedWorkoutMoves: [LoggedWorkoutMove!]!
   }
@@ -70,7 +71,7 @@ export default gql`
   input CreateLoggedWorkoutSectionInLoggedWorkoutInput {
     name: String
     note: String
-    sectionIndex: Int!
+    sortPosition: Int!
     roundsCompleted: Int!
     timeTakenMs: Int
     roundTimesMs: JSON
@@ -81,9 +82,10 @@ export default gql`
   }
 
   input CreateLoggedWorkoutSetInLoggedSectionInput {
-    setIndex: Int!
+    sortPosition: Int!
     note: String
     roundsCompleted: Int!
+    duration: Int
     roundTimesMs: JSON
     LoggedWorkoutMoves: [CreateLoggedWorkoutMoveInLoggedSetInput!]!
   }
@@ -107,7 +109,7 @@ export default gql`
   input CreateLoggedWorkoutSectionInput {
     name: String
     note: String
-    sectionIndex: Int!
+    sortPosition: Int!
     roundsCompleted: Int!
     timeTakenMs: Int
     roundTimesMs: JSON
@@ -118,9 +120,10 @@ export default gql`
   }
 
   input CreateLoggedWorkoutSetInput {
-    setIndex: Int!
+    sortPosition: Int!
     note: String
     roundsCompleted: Int!
+    duration: Int
     roundTimesMs: JSON
     LoggedWorkoutSection: ConnectRelationInput!
   }
@@ -162,6 +165,7 @@ export default gql`
   input UpdateLoggedWorkoutSetInput {
     id: ID!
     note: String
+    duration: Int
     roundsCompleted: Int
     roundTimesMs: JSON
   }

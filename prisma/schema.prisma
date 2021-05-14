@@ -455,7 +455,7 @@ model LoggedWorkoutSection {
   name                 String?
   note                 String?
   timecap              Int? // Seconds - original timecap on the section
-  sectionIndex         Int // The sort position of the WorkoutSection
+  sortPosition         Int
   roundsCompleted      Int                @default(1)
   timeTakenMs          Int? // Total time taken - useful for scoring fortime workouts and adding a duration to free session workouts where laptimes can be overkill.
   roundTimesMs         Json               @default("{}") // Milliseconds. { roundIndex: timeMs }
@@ -473,7 +473,8 @@ model LoggedWorkoutSet {
   User                   User                 @relation(fields: [userId], references: [id])
   userId                 String
   note                   String?
-  setIndex               Int // The sort position of the WorkoutSet
+  sortPosition           Int
+  duration               Int? // Seconds - Used in EMOM and HIIT circuit workouts to determine how long to do the moves for. Copied across from WorkoutSet.duration
   roundsCompleted        Int                  @default(1)
   roundTimesMs           Json                 @default("{}") // Milliseconds. { roundIndex: timeMs }
   LoggedWorkoutMoves     LoggedWorkoutMove[]
