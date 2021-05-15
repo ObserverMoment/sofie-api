@@ -59,7 +59,7 @@ export type QueryLoggedWorkoutByIdArgs = {
 
 
 export type QueryProgressJournalByIdArgs = {
-  progressJournalId: Scalars['ID'];
+  id: Scalars['ID'];
 };
 
 
@@ -888,7 +888,6 @@ export type LoggedWorkoutSet = {
   sortPosition: Scalars['Int'];
   roundsCompleted: Scalars['Int'];
   duration?: Maybe<Scalars['Int']>;
-  roundTimesMs: Scalars['JSON'];
   LoggedWorkoutMoves: Array<LoggedWorkoutMove>;
 };
 
@@ -897,7 +896,6 @@ export type LoggedWorkoutMove = {
   id: Scalars['ID'];
   sortPosition: Scalars['Int'];
   note?: Maybe<Scalars['String']>;
-  timeTakenMs?: Maybe<Scalars['Int']>;
   repType: WorkoutMoveRepType;
   reps: Scalars['Float'];
   distanceUnit: DistanceUnit;
@@ -938,13 +936,11 @@ export type CreateLoggedWorkoutSetInLoggedSectionInput = {
   note?: Maybe<Scalars['String']>;
   roundsCompleted: Scalars['Int'];
   duration?: Maybe<Scalars['Int']>;
-  roundTimesMs?: Maybe<Scalars['JSON']>;
   LoggedWorkoutMoves: Array<CreateLoggedWorkoutMoveInLoggedSetInput>;
 };
 
 export type CreateLoggedWorkoutMoveInLoggedSetInput = {
   sortPosition: Scalars['Int'];
-  timeTakenMs?: Maybe<Scalars['Int']>;
   note?: Maybe<Scalars['String']>;
   repType: WorkoutMoveRepType;
   reps: Scalars['Float'];
@@ -974,7 +970,6 @@ export type CreateLoggedWorkoutSetInput = {
   note?: Maybe<Scalars['String']>;
   roundsCompleted: Scalars['Int'];
   duration?: Maybe<Scalars['Int']>;
-  roundTimesMs?: Maybe<Scalars['JSON']>;
   LoggedWorkoutSection: ConnectRelationInput;
 };
 
@@ -1016,13 +1011,11 @@ export type UpdateLoggedWorkoutSetInput = {
   note?: Maybe<Scalars['String']>;
   duration?: Maybe<Scalars['Int']>;
   roundsCompleted?: Maybe<Scalars['Int']>;
-  roundTimesMs?: Maybe<Scalars['JSON']>;
 };
 
 export type UpdateLoggedWorkoutMoveInput = {
   id: Scalars['ID'];
   note?: Maybe<Scalars['String']>;
-  timeTakenMs?: Maybe<Scalars['Int']>;
   reps?: Maybe<Scalars['Float']>;
   distanceUnit?: Maybe<DistanceUnit>;
   loadAmount?: Maybe<Scalars['Float']>;
@@ -1038,8 +1031,8 @@ export type ProgressJournal = {
   createdAt: Scalars['DateTime'];
   name: Scalars['String'];
   description?: Maybe<Scalars['String']>;
-  ProgressJournalEntries?: Maybe<Array<ProgressJournalEntry>>;
-  ProgressJournalGoals?: Maybe<Array<ProgressJournalGoal>>;
+  ProgressJournalEntries: Array<ProgressJournalEntry>;
+  ProgressJournalGoals: Array<ProgressJournalGoal>;
 };
 
 export type CreateProgressJournalInput = {
@@ -1064,7 +1057,7 @@ export type ProgressJournalEntry = {
   energyScore?: Maybe<Scalars['Float']>;
   stressScore?: Maybe<Scalars['Float']>;
   motivationScore?: Maybe<Scalars['Float']>;
-  progressPhotoUris?: Maybe<Array<Scalars['String']>>;
+  progressPhotoUris: Array<Scalars['String']>;
   ProgressJournal: ProgressJournal;
 };
 
@@ -1076,8 +1069,8 @@ export type CreateProgressJournalEntryInput = {
   energyScore?: Maybe<Scalars['Float']>;
   stressScore?: Maybe<Scalars['Float']>;
   motivationScore?: Maybe<Scalars['Float']>;
-  progressPhotoUris?: Maybe<Array<Scalars['String']>>;
-  ProgressJournal: Scalars['ID'];
+  progressPhotoUris: Array<Scalars['String']>;
+  ProgressJournal: ConnectRelationInput;
 };
 
 export type UpdateProgressJournalEntryInput = {
@@ -1089,7 +1082,7 @@ export type UpdateProgressJournalEntryInput = {
   energyScore?: Maybe<Scalars['Float']>;
   stressScore?: Maybe<Scalars['Float']>;
   motivationScore?: Maybe<Scalars['Float']>;
-  progressPhotoUris?: Maybe<Array<Scalars['String']>>;
+  progressPhotoUris: Array<Scalars['String']>;
 };
 
 export type ProgressJournalGoal = {
@@ -1100,15 +1093,15 @@ export type ProgressJournalGoal = {
   description?: Maybe<Scalars['String']>;
   deadline?: Maybe<Scalars['DateTime']>;
   completedDate?: Maybe<Scalars['DateTime']>;
-  ProgressJournalGoalTags?: Maybe<Array<ProgressJournalGoalTag>>;
+  ProgressJournalGoalTags: Array<ProgressJournalGoalTag>;
 };
 
 export type CreateProgressJournalGoalInput = {
   name: Scalars['String'];
   description?: Maybe<Scalars['String']>;
   deadline?: Maybe<Scalars['DateTime']>;
-  ProgressJournal: Scalars['ID'];
-  ProgressJournalGoalTags?: Maybe<Array<Scalars['ID']>>;
+  ProgressJournal: ConnectRelationInput;
+  ProgressJournalGoalTags?: Maybe<Array<ConnectRelationInput>>;
 };
 
 export type UpdateProgressJournalGoalInput = {
@@ -1117,7 +1110,7 @@ export type UpdateProgressJournalGoalInput = {
   description?: Maybe<Scalars['String']>;
   completedDate?: Maybe<Scalars['DateTime']>;
   deadline?: Maybe<Scalars['DateTime']>;
-  ProgressJournalGoalTags?: Maybe<Array<Scalars['ID']>>;
+  ProgressJournalGoalTags?: Maybe<Array<ConnectRelationInput>>;
 };
 
 export type ProgressJournalGoalTag = {
@@ -1891,7 +1884,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   standardMoves?: Resolver<Array<ResolversTypes['Move']>, ParentType, ContextType>;
   userCustomMoves?: Resolver<Array<ResolversTypes['Move']>, ParentType, ContextType>;
   userProgressJournals?: Resolver<Array<ResolversTypes['ProgressJournal']>, ParentType, ContextType>;
-  progressJournalById?: Resolver<ResolversTypes['ProgressJournal'], ParentType, ContextType, RequireFields<QueryProgressJournalByIdArgs, 'progressJournalId'>>;
+  progressJournalById?: Resolver<ResolversTypes['ProgressJournal'], ParentType, ContextType, RequireFields<QueryProgressJournalByIdArgs, 'id'>>;
   progressJournalGoalTags?: Resolver<Array<ResolversTypes['ProgressJournalGoalTag']>, ParentType, ContextType>;
   userScheduledWorkouts?: Resolver<Array<ResolversTypes['ScheduledWorkout']>, ParentType, ContextType>;
   textSearchWorkouts?: Resolver<Maybe<Array<ResolversTypes['TextSearchWorkoutResult']>>, ParentType, ContextType, RequireFields<QueryTextSearchWorkoutsArgs, 'text'>>;
@@ -2151,7 +2144,6 @@ export type LoggedWorkoutSetResolvers<ContextType = any, ParentType extends Reso
   sortPosition?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   roundsCompleted?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   duration?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  roundTimesMs?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>;
   LoggedWorkoutMoves?: Resolver<Array<ResolversTypes['LoggedWorkoutMove']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
@@ -2160,7 +2152,6 @@ export type LoggedWorkoutMoveResolvers<ContextType = any, ParentType extends Res
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   sortPosition?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   note?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  timeTakenMs?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   repType?: Resolver<ResolversTypes['WorkoutMoveRepType'], ParentType, ContextType>;
   reps?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   distanceUnit?: Resolver<ResolversTypes['DistanceUnit'], ParentType, ContextType>;
@@ -2177,8 +2168,8 @@ export type ProgressJournalResolvers<ContextType = any, ParentType extends Resol
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  ProgressJournalEntries?: Resolver<Maybe<Array<ResolversTypes['ProgressJournalEntry']>>, ParentType, ContextType>;
-  ProgressJournalGoals?: Resolver<Maybe<Array<ResolversTypes['ProgressJournalGoal']>>, ParentType, ContextType>;
+  ProgressJournalEntries?: Resolver<Array<ResolversTypes['ProgressJournalEntry']>, ParentType, ContextType>;
+  ProgressJournalGoals?: Resolver<Array<ResolversTypes['ProgressJournalGoal']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -2192,7 +2183,7 @@ export type ProgressJournalEntryResolvers<ContextType = any, ParentType extends 
   energyScore?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   stressScore?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   motivationScore?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  progressPhotoUris?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
+  progressPhotoUris?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   ProgressJournal?: Resolver<ResolversTypes['ProgressJournal'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
@@ -2204,7 +2195,7 @@ export type ProgressJournalGoalResolvers<ContextType = any, ParentType extends R
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   deadline?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   completedDate?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
-  ProgressJournalGoalTags?: Resolver<Maybe<Array<ResolversTypes['ProgressJournalGoalTag']>>, ParentType, ContextType>;
+  ProgressJournalGoalTags?: Resolver<Array<ResolversTypes['ProgressJournalGoalTag']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 

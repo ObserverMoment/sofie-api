@@ -20,7 +20,7 @@ export default gql`
     userCustomMoves: [Move!]!
     #### Progress Journal ####
     userProgressJournals: [ProgressJournal!]!
-    progressJournalById(progressJournalId: ID!): ProgressJournal!
+    progressJournalById(id: ID!): ProgressJournal!
     progressJournalGoalTags: [ProgressJournalGoalTag!]!
     #### Scheduled Workouts ####
     userScheduledWorkouts: [ScheduledWorkout!]!

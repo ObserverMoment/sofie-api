@@ -1,5 +1,4 @@
-import { PrismaClient } from '@prisma/client'
-import { ApolloError, AuthenticationError } from 'apollo-server-express'
+import { ApolloError } from 'apollo-server-express'
 import { Context } from '../..'
 import {
   MutationCreateProgressJournalArgs,
@@ -55,12 +54,12 @@ export const progressJournalGoalTags = async (
 
 export const progressJournalById = async (
   r: any,
-  { progressJournalId }: QueryProgressJournalByIdArgs,
+  { id }: QueryProgressJournalByIdArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
   const progressJournal = await prisma.progressJournal.findFirst({
     where: {
-      id: progressJournalId,
+      id: id,
       userId: authedUserId,
     },
     select,
@@ -146,7 +145,7 @@ export const deleteProgressJournalById = async (
     if (progressPhotoIdsForDeletion && progressPhotoIdsForDeletion.length > 0) {
       await deleteFiles(progressPhotoIdsForDeletion)
     }
-    return (deleted as ProgressJournal).id
+    return id
   } else {
     throw new ApolloError('deleteProgressJournalById: There was an issue.')
   }
@@ -158,7 +157,12 @@ export const createProgressJournalEntry = async (
   { data }: MutationCreateProgressJournalEntryArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  await checkUserOwnsProgressJournal(data.ProgressJournal, authedUserId, prisma)
+  await checkUserOwnsObject(
+    data.ProgressJournal.id,
+    'progressJournal',
+    authedUserId,
+    prisma,
+  )
 
   const progressJournalEntry = await prisma.progressJournalEntry.create({
     data: {
@@ -166,7 +170,7 @@ export const createProgressJournalEntry = async (
       User: { connect: { id: authedUserId } },
       progressPhotoUris: data.progressPhotoUris || undefined,
       ProgressJournal: {
-        connect: { id: data.ProgressJournal },
+        connect: data.ProgressJournal,
       },
     },
     select,
@@ -255,21 +259,26 @@ export const createProgressJournalGoal = async (
   { data }: MutationCreateProgressJournalGoalArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  await checkUserOwnsProgressJournal(data.deadline, authedUserId, prisma)
+  await checkUserOwnsObject(
+    data.ProgressJournal.id,
+    'progressJournal',
+    authedUserId,
+    prisma,
+  )
 
   const progressJournalGoal = await prisma.progressJournalGoal.create({
     data: {
       ...data,
-      ProgressJournalGoalTags: {
-        connect: data.ProgressJournalGoalTags
-          ? data.ProgressJournalGoalTags.map((id) => ({ id }))
-          : undefined,
-      },
+      ProgressJournalGoalTags: data.ProgressJournalGoalTags
+        ? {
+            connect: data.ProgressJournalGoalTags,
+          }
+        : undefined,
       User: {
         connect: { id: authedUserId },
       },
       ProgressJournal: {
-        connect: { id: data.ProgressJournal },
+        connect: data.ProgressJournal,
       },
     },
     select,
@@ -304,7 +313,7 @@ export const updateProgressJournalGoal = async (
         // To remove all related items of this type pass an empty array.
         // https://www.prisma.io/docs/concepts/components/prisma-client/relation-queries#disconnect-all-related-records
         set: data.ProgressJournalGoalTags
-          ? data.ProgressJournalGoalTags.map((id) => ({ id }))
+          ? data.ProgressJournalGoalTags
           : undefined,
       },
     },
@@ -406,29 +415,6 @@ export const deleteProgressJournalGoalTagById = async (
   } else {
     throw new ApolloError(
       'deleteProgressJournalGoalTagById: There was an issue.',
-    )
-  }
-}
-
-//// Access scope ////
-//// Use for when CRUDing Entries and Goals ////
-async function checkUserOwnsProgressJournal(
-  progressJournalId: string,
-  authedUserId: string,
-  prisma: PrismaClient,
-) {
-  const parentProgressJournal = await prisma.progressJournal.findUnique({
-    where: { id: progressJournalId },
-    select: {
-      userId: true,
-    },
-  })
-  if (
-    !parentProgressJournal ||
-    (parentProgressJournal && parentProgressJournal.userId !== authedUserId)
-  ) {
-    throw new AccessScopeError(
-      'You do not own the parent progress journal into which you are trying to write. You do not have access to it',
     )
   }
 }

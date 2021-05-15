@@ -6,8 +6,8 @@ export default gql`
     createdAt: DateTime!
     name: String!
     description: String
-    ProgressJournalEntries: [ProgressJournalEntry!]
-    ProgressJournalGoals: [ProgressJournalGoal!]
+    ProgressJournalEntries: [ProgressJournalEntry!]!
+    ProgressJournalGoals: [ProgressJournalGoal!]!
   }
 
   input CreateProgressJournalInput {
@@ -32,7 +32,7 @@ export default gql`
     energyScore: Float
     stressScore: Float
     motivationScore: Float
-    progressPhotoUris: [String!]
+    progressPhotoUris: [String!]!
     ProgressJournal: ProgressJournal!
   }
 
@@ -45,8 +45,8 @@ export default gql`
     energyScore: Float
     stressScore: Float
     motivationScore: Float
-    progressPhotoUris: [String!]
-    ProgressJournal: ID!
+    progressPhotoUris: [String!]!
+    ProgressJournal: ConnectRelationInput!
   }
 
   input UpdateProgressJournalEntryInput {
@@ -59,7 +59,7 @@ export default gql`
     energyScore: Float
     stressScore: Float
     motivationScore: Float
-    progressPhotoUris: [String!]
+    progressPhotoUris: [String!]!
   }
 
   type ProgressJournalGoal {
@@ -69,15 +69,15 @@ export default gql`
     description: String
     deadline: DateTime
     completedDate: DateTime
-    ProgressJournalGoalTags: [ProgressJournalGoalTag!]
+    ProgressJournalGoalTags: [ProgressJournalGoalTag!]!
   }
 
   input CreateProgressJournalGoalInput {
     name: String!
     description: String
     deadline: DateTime
-    ProgressJournal: ID!
-    ProgressJournalGoalTags: [ID!]
+    ProgressJournal: ConnectRelationInput!
+    ProgressJournalGoalTags: [ConnectRelationInput!]
   }
 
   input UpdateProgressJournalGoalInput {
@@ -86,7 +86,7 @@ export default gql`
     description: String
     completedDate: DateTime
     deadline: DateTime
-    ProgressJournalGoalTags: [ID!]
+    ProgressJournalGoalTags: [ConnectRelationInput!]
   }
 
   type ProgressJournalGoalTag {

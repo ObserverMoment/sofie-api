@@ -15,6 +15,13 @@ export default gql`
     WorkoutProgramEnrolment: WorkoutProgramWorkout
   }
 
+  # roundTimesMs shape - for each section round number.
+  # { sectionRoundNumber: {
+  #   time: roundTimeMs,
+  #   setId: { setRoundNumber: setTimeMs, setRoundNumber: setTimeMs },
+  #   setId: { setRoundNumber: setTimeMs, setRoundNumber: setTimeMs }
+  #  }
+  # }
   type LoggedWorkoutSection {
     id: ID!
     name: String
@@ -36,7 +43,6 @@ export default gql`
     sortPosition: Int!
     roundsCompleted: Int!
     duration: Int
-    roundTimesMs: JSON!
     LoggedWorkoutMoves: [LoggedWorkoutMove!]!
   }
 
@@ -44,7 +50,6 @@ export default gql`
     id: ID!
     sortPosition: Int!
     note: String
-    timeTakenMs: Int
     repType: WorkoutMoveRepType!
     reps: Float!
     distanceUnit: DistanceUnit!
@@ -86,13 +91,11 @@ export default gql`
     note: String
     roundsCompleted: Int!
     duration: Int
-    roundTimesMs: JSON
     LoggedWorkoutMoves: [CreateLoggedWorkoutMoveInLoggedSetInput!]!
   }
 
   input CreateLoggedWorkoutMoveInLoggedSetInput {
     sortPosition: Int!
-    timeTakenMs: Int
     note: String
     repType: WorkoutMoveRepType!
     reps: Float!
@@ -124,7 +127,6 @@ export default gql`
     note: String
     roundsCompleted: Int!
     duration: Int
-    roundTimesMs: JSON
     LoggedWorkoutSection: ConnectRelationInput!
   }
 
@@ -167,13 +169,11 @@ export default gql`
     note: String
     duration: Int
     roundsCompleted: Int
-    roundTimesMs: JSON
   }
 
   input UpdateLoggedWorkoutMoveInput {
     id: ID!
     note: String
-    timeTakenMs: Int
     reps: Float
     distanceUnit: DistanceUnit
     loadAmount: Float
