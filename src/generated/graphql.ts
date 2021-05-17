@@ -1038,6 +1038,14 @@ export type ProgressJournal = {
 export type CreateProgressJournalInput = {
   name: Scalars['String'];
   description?: Maybe<Scalars['String']>;
+  progressJournalGoals?: Maybe<Array<CreateProgressJournalGoalInProgressJournalInput>>;
+};
+
+export type CreateProgressJournalGoalInProgressJournalInput = {
+  name: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+  deadline?: Maybe<Scalars['DateTime']>;
+  ProgressJournalGoalTags?: Maybe<Array<ConnectRelationInput>>;
 };
 
 export type UpdateProgressJournalInput = {
@@ -1705,6 +1713,7 @@ export type ResolversTypes = ResolversObject<{
   UpdateLoggedWorkoutMoveInput: UpdateLoggedWorkoutMoveInput;
   ProgressJournal: ResolverTypeWrapper<ProgressJournal>;
   CreateProgressJournalInput: CreateProgressJournalInput;
+  CreateProgressJournalGoalInProgressJournalInput: CreateProgressJournalGoalInProgressJournalInput;
   UpdateProgressJournalInput: UpdateProgressJournalInput;
   ProgressJournalEntry: ResolverTypeWrapper<ProgressJournalEntry>;
   CreateProgressJournalEntryInput: CreateProgressJournalEntryInput;
@@ -1809,6 +1818,7 @@ export type ResolversParentTypes = ResolversObject<{
   UpdateLoggedWorkoutMoveInput: UpdateLoggedWorkoutMoveInput;
   ProgressJournal: ProgressJournal;
   CreateProgressJournalInput: CreateProgressJournalInput;
+  CreateProgressJournalGoalInProgressJournalInput: CreateProgressJournalGoalInProgressJournalInput;
   UpdateProgressJournalInput: UpdateProgressJournalInput;
   ProgressJournalEntry: ProgressJournalEntry;
   CreateProgressJournalEntryInput: CreateProgressJournalEntryInput;

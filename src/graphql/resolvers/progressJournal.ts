@@ -38,6 +38,8 @@ export const userProgressJournals = async (
 }
 
 /// Get all user specific progress journal tags.
+/// These tags can be used across journals to add general tags to goals
+/// E.g. Lose weight, reduce stress levels etc.
 export const progressJournalGoalTags = async (
   r: any,
   a: any,
@@ -77,6 +79,17 @@ export const createProgressJournal = async (
   const progressJournal = await prisma.progressJournal.create({
     data: {
       ...data,
+      ProgressJournalGoals: data.progressJournalGoals
+        ? {
+            create: data.progressJournalGoals.map((goal) => ({
+              ...goal,
+              ProgressJournalGoalTags: goal.ProgressJournalGoalTags
+                ? { connect: goal.ProgressJournalGoalTags }
+                : undefined,
+              User: { connect: { id: authedUserId } },
+            })),
+          }
+        : undefined,
       User: {
         connect: { id: authedUserId },
       },

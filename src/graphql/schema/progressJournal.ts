@@ -13,6 +13,14 @@ export default gql`
   input CreateProgressJournalInput {
     name: String!
     description: String
+    progressJournalGoals: [CreateProgressJournalGoalInProgressJournalInput!]
+  }
+
+  input CreateProgressJournalGoalInProgressJournalInput {
+    name: String!
+    description: String
+    deadline: DateTime
+    ProgressJournalGoalTags: [ConnectRelationInput!]
   }
 
   input UpdateProgressJournalInput {
