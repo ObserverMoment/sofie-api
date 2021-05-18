@@ -526,6 +526,7 @@ model ProgressJournalEntry {
   note              String?
   voiceNoteUri      String?
   bodyweight        Float?
+  bodyweightUnit    BodyweightUnit  @default(KG)
   moodScore         Float?
   energyScore       Float?
   stressScore       Float?
@@ -581,6 +582,11 @@ enum BodyAreaUpperLower {
   CORE
   LOWER
   UPPER
+}
+
+enum BodyweightUnit {
+  KG
+  LB
 }
 
 enum ContentAccessScope {

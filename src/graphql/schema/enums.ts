@@ -16,6 +16,11 @@ export default gql`
     UPPER
   }
 
+  enum BodyweightUnit {
+    KG
+    LB
+  }
+
   enum ContentAccessScope {
     PRIVATE
     PUBLIC

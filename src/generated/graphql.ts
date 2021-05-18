@@ -604,6 +604,10 @@ export type BodyAreaUpperLower =
   | 'LOWER'
   | 'UPPER';
 
+export type BodyweightUnit =
+  | 'KG'
+  | 'LB';
+
 export type ContentAccessScope =
   | 'PRIVATE'
   | 'PUBLIC'
@@ -1038,14 +1042,6 @@ export type ProgressJournal = {
 export type CreateProgressJournalInput = {
   name: Scalars['String'];
   description?: Maybe<Scalars['String']>;
-  progressJournalGoals?: Maybe<Array<CreateProgressJournalGoalInProgressJournalInput>>;
-};
-
-export type CreateProgressJournalGoalInProgressJournalInput = {
-  name: Scalars['String'];
-  description?: Maybe<Scalars['String']>;
-  deadline?: Maybe<Scalars['DateTime']>;
-  ProgressJournalGoalTags?: Maybe<Array<ConnectRelationInput>>;
 };
 
 export type UpdateProgressJournalInput = {
@@ -1061,6 +1057,7 @@ export type ProgressJournalEntry = {
   note?: Maybe<Scalars['String']>;
   voiceNoteUri?: Maybe<Scalars['String']>;
   bodyweight?: Maybe<Scalars['Float']>;
+  bodyweightUnit: BodyweightUnit;
   moodScore?: Maybe<Scalars['Float']>;
   energyScore?: Maybe<Scalars['Float']>;
   stressScore?: Maybe<Scalars['Float']>;
@@ -1073,6 +1070,7 @@ export type CreateProgressJournalEntryInput = {
   note?: Maybe<Scalars['String']>;
   voiceNoteUri?: Maybe<Scalars['String']>;
   bodyweight?: Maybe<Scalars['Float']>;
+  bodyweightUnit?: Maybe<BodyweightUnit>;
   moodScore?: Maybe<Scalars['Float']>;
   energyScore?: Maybe<Scalars['Float']>;
   stressScore?: Maybe<Scalars['Float']>;
@@ -1086,6 +1084,7 @@ export type UpdateProgressJournalEntryInput = {
   note?: Maybe<Scalars['String']>;
   voiceNoteUri?: Maybe<Scalars['String']>;
   bodyweight?: Maybe<Scalars['Float']>;
+  bodyweightUnit?: Maybe<BodyweightUnit>;
   moodScore?: Maybe<Scalars['Float']>;
   energyScore?: Maybe<Scalars['Float']>;
   stressScore?: Maybe<Scalars['Float']>;
@@ -1668,6 +1667,7 @@ export type ResolversTypes = ResolversObject<{
   BodyAreaMoveScore: ResolverTypeWrapper<BodyAreaMoveScore>;
   BodyAreaFrontBack: BodyAreaFrontBack;
   BodyAreaUpperLower: BodyAreaUpperLower;
+  BodyweightUnit: BodyweightUnit;
   ContentAccessScope: ContentAccessScope;
   DifficultyLevel: DifficultyLevel;
   DistanceUnit: DistanceUnit;
@@ -1713,7 +1713,6 @@ export type ResolversTypes = ResolversObject<{
   UpdateLoggedWorkoutMoveInput: UpdateLoggedWorkoutMoveInput;
   ProgressJournal: ResolverTypeWrapper<ProgressJournal>;
   CreateProgressJournalInput: CreateProgressJournalInput;
-  CreateProgressJournalGoalInProgressJournalInput: CreateProgressJournalGoalInProgressJournalInput;
   UpdateProgressJournalInput: UpdateProgressJournalInput;
   ProgressJournalEntry: ResolverTypeWrapper<ProgressJournalEntry>;
   CreateProgressJournalEntryInput: CreateProgressJournalEntryInput;
@@ -1818,7 +1817,6 @@ export type ResolversParentTypes = ResolversObject<{
   UpdateLoggedWorkoutMoveInput: UpdateLoggedWorkoutMoveInput;
   ProgressJournal: ProgressJournal;
   CreateProgressJournalInput: CreateProgressJournalInput;
-  CreateProgressJournalGoalInProgressJournalInput: CreateProgressJournalGoalInProgressJournalInput;
   UpdateProgressJournalInput: UpdateProgressJournalInput;
   ProgressJournalEntry: ProgressJournalEntry;
   CreateProgressJournalEntryInput: CreateProgressJournalEntryInput;
@@ -2189,6 +2187,7 @@ export type ProgressJournalEntryResolvers<ContextType = any, ParentType extends 
   note?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   voiceNoteUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   bodyweight?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  bodyweightUnit?: Resolver<ResolversTypes['BodyweightUnit'], ParentType, ContextType>;
   moodScore?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   energyScore?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   stressScore?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;

@@ -79,17 +79,6 @@ export const createProgressJournal = async (
   const progressJournal = await prisma.progressJournal.create({
     data: {
       ...data,
-      ProgressJournalGoals: data.progressJournalGoals
-        ? {
-            create: data.progressJournalGoals.map((goal) => ({
-              ...goal,
-              ProgressJournalGoalTags: goal.ProgressJournalGoalTags
-                ? { connect: goal.ProgressJournalGoalTags }
-                : undefined,
-              User: { connect: { id: authedUserId } },
-            })),
-          }
-        : undefined,
       User: {
         connect: { id: authedUserId },
       },
@@ -114,6 +103,7 @@ export const updateProgressJournal = async (
     where: { id: data.id },
     data: {
       name: data.name || undefined,
+      description: data.description || undefined,
     },
     select,
   })
@@ -180,6 +170,7 @@ export const createProgressJournalEntry = async (
   const progressJournalEntry = await prisma.progressJournalEntry.create({
     data: {
       ...data,
+      bodyweightUnit: data.bodyweightUnit || undefined,
       User: { connect: { id: authedUserId } },
       progressPhotoUris: data.progressPhotoUris || undefined,
       ProgressJournal: {
@@ -206,6 +197,7 @@ export const updateProgressJournalEntry = async (
     where: { id: data.id },
     select: {
       userId: true,
+      voiceNoteUri: true,
       progressPhotoUris: true,
     },
   })
@@ -213,26 +205,35 @@ export const updateProgressJournalEntry = async (
   if (!progressJournalEntry || progressJournalEntry.userId !== authedUserId) {
     throw new AccessScopeError()
   } else {
-    // Compare with the new array of photo urls and delete any that have been removed.
+    // Compare with the new array of photo uris and the voiceNoteUri and delete any that have been removed.
     // Delete from uploadcare after the API update has completed.
-    const photoUrisForDeletion: string[] = !data.progressPhotoUris
+    const mediaUrisFordeletion: string[] = data.progressPhotoUris
       ? [] // If null or undefined has been passed then no updates are made so no files should be deleted from the server.
       : progressJournalEntry.progressPhotoUris.filter(
           (uri) =>
             data.progressPhotoUris && !data.progressPhotoUris.includes(uri),
         )
 
+    if (
+      progressJournalEntry.voiceNoteUri != null &&
+      progressJournalEntry.voiceNoteUri != data.voiceNoteUri
+    ) {
+      mediaUrisFordeletion.push(progressJournalEntry.voiceNoteUri)
+    }
+
     const updated = await prisma.progressJournalEntry.update({
       where: { id: data.id },
       data: {
+        ...data,
+        bodyweightUnit: data.bodyweightUnit || undefined,
         progressPhotoUris: data.progressPhotoUris || undefined,
       },
       select,
     })
 
     if (updated) {
-      if (photoUrisForDeletion.length > 0) {
-        await deleteFiles(photoUrisForDeletion)
+      if (mediaUrisFordeletion.length > 0) {
+        await deleteFiles(mediaUrisFordeletion)
       }
       return updated as ProgressJournalEntry
     } else {
