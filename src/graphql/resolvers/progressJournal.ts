@@ -207,12 +207,11 @@ export const updateProgressJournalEntry = async (
   } else {
     // Compare with the new array of photo uris and the voiceNoteUri and delete any that have been removed.
     // Delete from uploadcare after the API update has completed.
-    const mediaUrisFordeletion: string[] = data.progressPhotoUris
-      ? [] // If null or undefined has been passed then no updates are made so no files should be deleted from the server.
-      : progressJournalEntry.progressPhotoUris.filter(
-          (uri) =>
-            data.progressPhotoUris && !data.progressPhotoUris.includes(uri),
-        )
+    const mediaUrisFordeletion: string[] =
+      progressJournalEntry.progressPhotoUris.filter(
+        (uri) =>
+          data.progressPhotoUris && !data.progressPhotoUris.includes(uri),
+      )
 
     if (
       progressJournalEntry.voiceNoteUri != null &&
