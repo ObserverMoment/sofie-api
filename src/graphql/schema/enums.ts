@@ -4,6 +4,15 @@ export default gql`
   """
   Enums
   """
+  enum BenchmarkScoreType {
+    # For 1,3,5 rep max etc
+    LOAD
+    # For max unbroken
+    REPS
+    # For fastest time to complete or max unbroken
+    TIME
+  }
+
   enum BodyAreaFrontBack {
     BACK
     FRONT

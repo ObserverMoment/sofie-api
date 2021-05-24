@@ -13,7 +13,7 @@ export default gql`
     workoutGoals: [WorkoutGoal!]!
     workoutSectionTypes: [WorkoutSectionType!]!
     #### Logged Workouts ####
-    userLoggedWorkouts: [LoggedWorkout!]!
+    userLoggedWorkouts(first: Int): [LoggedWorkout!]!
     loggedWorkoutById(id: ID!): LoggedWorkout!
     #### Moves ####
     standardMoves: [Move!]!
@@ -29,10 +29,12 @@ export default gql`
     textSearchWorkoutPrograms(text: String!): [TextSearchWorkoutProgramResult!]
     textSearchCreatorPublicProfiles(text: String!): [UserPublicProfile!]
     #### User ####
-    checkUniqueDisplayName(displayName: String!): Boolean!
     authedUser: User!
+    checkUniqueDisplayName(displayName: String!): Boolean!
     gymProfiles: [GymProfile!]!
     userWorkoutTags: [WorkoutTag!]!
+    #### UserBenchmark ####
+    userBenchmarks(first: Int): [UserBenchmark!]!
     #### User Public Profiles ####
     userPublicProfiles: [UserPublicProfile!]
     userPublicProfileByUserId(userId: ID!): UserPublicProfile!
@@ -138,6 +140,17 @@ export default gql`
     #### User ####
     updateUser(data: UpdateUserInput!): User!
     createWorkoutTag(data: CreateWorkoutTagInput!): WorkoutTag!
+    #### User Benchmark ####
+    createUserBenchmark(data: CreateUserBenchmarkInput!): UserBenchmark!
+    updateUserBenchmark(data: UpdateUserBenchmarkInput!): UserBenchmark!
+    deleteUserBenchmarkById(id: ID!): ID!
+    createUserBenchmarkEntry(
+      data: CreateUserBenchmarkEntryInput!
+    ): UserBenchmarkEntry!
+    updateUserBenchmarkEntry(
+      data: UpdateUserBenchmarkEntryInput!
+    ): UserBenchmarkEntry!
+    deleteUserBenchmarkEntryById(id: ID!): ID!
     #################
     #### Workout ####
     makeCopyWorkoutById(id: ID!): Workout! # Note: Media should not be copied

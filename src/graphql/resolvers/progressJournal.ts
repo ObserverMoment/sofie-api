@@ -130,9 +130,10 @@ export const deleteProgressJournalById = async (
       progressPhotoUris: true,
     },
   })
-  const progressPhotoIdsForDeletion: string[] = progressJournalEntries
-    .map(({ progressPhotoUris }) => [...progressPhotoUris])
-    .flat()
+
+  const progressPhotoIdsForDeletion: string[] = progressJournalEntries.flatMap(
+    ({ progressPhotoUris }) => [...progressPhotoUris],
+  )
 
   const ops = [
     prisma.progressJournalEntry.deleteMany({
@@ -192,7 +193,7 @@ export const updateProgressJournalEntry = async (
   { data }: MutationUpdateProgressJournalEntryArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  // Check for any old photos.
+  // Check for any old photos. NOTE: Not using /uploadcare/index - check{object}MediaForDeletion style method because progressJournalEntry.progressPhotoUris is a scalar array and the above works for key value pairs.
   const progressJournalEntry = await prisma.progressJournalEntry.findUnique({
     where: { id: data.id },
     select: {
@@ -247,7 +248,7 @@ export const deleteProgressJournalEntryById = async (
   { authedUserId, prisma }: Context,
 ) => {
   await checkUserOwnsObject(id, 'progressJournalEntry', authedUserId, prisma)
-  // TODO: Check the user owns the parent progress journal. May need to pass the parent ID as an arg. Or add a User relation directly to the ProgressJournalEntry model.
+
   const deleted = await prisma.progressJournalEntry.delete({
     where: { id },
     select: {

@@ -187,6 +187,7 @@ model User {
   WorkoutSetGenerators     WorkoutSetGenerator[]
   WorkoutSetIntervalBuyIn  WorkoutSetIntervalBuyIn[]
   WorkoutTag               WorkoutTag[]
+  UserBenchmarkEntries     UserBenchmarkEntry[]
 }
 
 model UserCollection {
@@ -201,31 +202,38 @@ model UserCollection {
 }
 
 model UserBenchmark {
-  id           String               @id @default(uuid())
-  createdAt    DateTime             @default(now())
-  User         User                 @relation(fields: [userId], references: [id])
-  userId       String
-  name         String
-  description  String?
-  reps         Float
-  RepType      WorkoutMoveRepType   @default(REPS)
-  load         Float?
-  loadUnit     LoadUnit             @default(KG)
-  distanceUnit DistanceUnit         @default(METRES)
-  scoreType    BenchmarkScoreType   @default(LOAD)
-  Equipments   Equipment[]
-  Move         Move                 @relation(fields: [moveId], references: [id])
-  moveId       String
-  Entries      UserBenchmarkEntry[]
+  id                   String               @id @default(uuid())
+  createdAt            DateTime             @default(now())
+  // Date that the user last submitted a score / entry for this benchmark. Must be updated in the UserBenchmarkEntry resolvers whenever one is created or updated.
+  lastEntryAt          DateTime             @default(now())
+  User                 User                 @relation(fields: [userId], references: [id])
+  userId               String
+  name                 String
+  description          String?
+  reps                 Float
+  repType              WorkoutMoveRepType   @default(REPS)
+  load                 Float?
+  loadUnit             LoadUnit             @default(KG)
+  distanceUnit         DistanceUnit         @default(METRES)
+  scoreType            BenchmarkScoreType   @default(LOAD)
+  Equipment            Equipment?           @relation(fields: [equipmentId], references: [id])
+  equipmentId          String?
+  Move                 Move                 @relation(fields: [moveId], references: [id])
+  moveId               String
+  UserBenchmarkEntries UserBenchmarkEntry[]
 }
 
 // Allows for progress tracking over time of any given benchmark that the user has created
 model UserBenchmarkEntry {
   id              String        @id @default(uuid())
   createdAt       DateTime      @default(now())
+  User            User          @relation(fields: [userId], references: [id])
+  userId          String
+  completedOn     DateTime      @default(now()) // Date of actually doing the benchmark.
   score           Float
   note            String?
   videoUri        String?
+  videoThumbUri   String?
   imageUri        String?
   UserBenchmark   UserBenchmark @relation(fields: [userBenchmarkId], references: [id])
   userBenchmarkId String
@@ -255,6 +263,7 @@ model Workout {
   UserCollections        UserCollection[]
   WorkoutProgramWorkouts WorkoutProgramWorkout[]
   WorkoutTags            WorkoutTag[]
+  FeaturedWorkouts       FeaturedWorkout[]
 }
 
 model WorkoutTag {
@@ -366,23 +375,24 @@ model WorkoutMove {
 ///// Workout Program (aka Plan) Related Models /////////
 /////////////////////////////////////////////////////////
 model WorkoutProgram {
-  id                     String                    @id @default(uuid())
-  createdAt              DateTime                  @default(now())
-  archived               Boolean                   @default(false)
-  name                   String
-  description            String?
-  coverImageUri          String?
-  introVideoUri          String?
-  introVideoThumbUri     String?
-  introAudioUri          String?
-  contentAccessScope     ContentAccessScope        @default(PRIVATE)
-  User                   User                      @relation(fields: [userId], references: [id])
-  userId                 String
-  Enrolments             WorkoutProgramEnrolment[]
-  WorkoutGoals           WorkoutGoal[]
-  WorkoutProgramWorkouts WorkoutProgramWorkout[]
-  WorkoutProgramReviews  WorkoutProgramReview[]
-  UserCollections        UserCollection[]
+  id                      String                    @id @default(uuid())
+  createdAt               DateTime                  @default(now())
+  archived                Boolean                   @default(false)
+  name                    String
+  description             String?
+  coverImageUri           String?
+  introVideoUri           String?
+  introVideoThumbUri      String?
+  introAudioUri           String?
+  contentAccessScope      ContentAccessScope        @default(PRIVATE)
+  User                    User                      @relation(fields: [userId], references: [id])
+  userId                  String
+  Enrolments              WorkoutProgramEnrolment[]
+  WorkoutGoals            WorkoutGoal[]
+  WorkoutProgramWorkouts  WorkoutProgramWorkout[]
+  WorkoutProgramReviews   WorkoutProgramReview[]
+  UserCollections         UserCollection[]
+  FeaturedWorkoutPrograms FeaturedWorkoutProgram[]
 }
 
 // A single user enrolled in a plan a single time
@@ -558,6 +568,45 @@ model ProgressJournalGoalTag {
   User                 User                  @relation(fields: [userId], references: [id])
   userId               String
   ProgressJournalGoals ProgressJournalGoal[]
+}
+
+////////////////////////////////////////////////////
+///// Discover and Recents Related Models //////////
+////////////////////////////////////////////////////
+model FeaturedWorkout {
+  id                        String                  @id @default(uuid())
+  createdAt                 DateTime                @default(now())
+  Workout                   Workout                 @relation(fields: [workoutId], references: [id])
+  workoutId                 String
+  FeaturedWorkoutCategory   FeaturedWorkoutCategory @relation(fields: [featuredWorkoutCategoryId], references: [id])
+  featuredWorkoutCategoryId String
+}
+
+model FeaturedWorkoutCategory {
+  id               String            @id @default(uuid())
+  createdAt        DateTime          @default(now())
+  name             String
+  description      String
+  coverImageUri    String?
+  FeaturedWorkouts FeaturedWorkout[]
+}
+
+model FeaturedWorkoutProgram {
+  id                               String                         @id @default(uuid())
+  createdAt                        DateTime                       @default(now())
+  WorkoutProgram                   WorkoutProgram                 @relation(fields: [workoutProgramId], references: [id])
+  workoutProgramId                 String
+  FeaturedWorkoutProgramCategory   FeaturedWorkoutProgramCategory @relation(fields: [featuredWorkoutProgramCategoryId], references: [id])
+  featuredWorkoutProgramCategoryId String
+}
+
+model FeaturedWorkoutProgramCategory {
+  id                      String                   @id @default(uuid())
+  createdAt               DateTime                 @default(now())
+  name                    String
+  description             String
+  coverImageUri           String?
+  FeaturedWorkoutPrograms FeaturedWorkoutProgram[]
 }
 
 //////////////////////////////////

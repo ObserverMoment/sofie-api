@@ -9,19 +9,25 @@ import {
   MutationDeleteLoggedWorkoutByIdArgs,
   MutationUpdateLoggedWorkoutArgs,
   QueryLoggedWorkoutByIdArgs,
+  QueryUserLoggedWorkoutsArgs,
 } from '../../../generated/graphql'
 import { AccessScopeError, checkUserOwnsObject } from '../../utils'
 
 //// Queries ////
 export const userLoggedWorkouts = async (
   r: any,
-  a: any,
+  { first }: QueryUserLoggedWorkoutsArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
+  const take = first ? { take: first } : null
   const loggedWorkouts = await prisma.loggedWorkout.findMany({
     where: {
       User: { id: authedUserId },
     },
+    orderBy: {
+      completedOn: 'desc',
+    },
+    ...take,
     select,
   })
   return loggedWorkouts as LoggedWorkout[]

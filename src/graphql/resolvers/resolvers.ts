@@ -1,6 +1,13 @@
 import { Resolvers } from '../../generated/graphql'
 
 import {
+  gymProfiles,
+  createGymProfile,
+  updateGymProfile,
+  deleteGymProfileById,
+} from './gymProfile'
+
+import {
   userLoggedWorkouts,
   loggedWorkoutById,
   createLoggedWorkout,
@@ -89,11 +96,14 @@ import {
 } from './user'
 
 import {
-  gymProfiles,
-  createGymProfile,
-  updateGymProfile,
-  deleteGymProfileById,
-} from './gymProfile'
+  userBenchmarks,
+  createUserBenchmark,
+  updateUserBenchmark,
+  deleteUserBenchmarkById,
+  createUserBenchmarkEntry,
+  updateUserBenchmarkEntry,
+  deleteUserBenchmarkEntryById,
+} from './userBenchmark'
 
 import {
   publicWorkouts,
@@ -200,12 +210,14 @@ const resolvers: Resolvers = {
     textSearchWorkoutPrograms,
     textSearchCreatorPublicProfiles,
     //// User ////
-    checkUniqueDisplayName,
     authedUser,
+    checkUniqueDisplayName,
     gymProfiles,
     userPublicProfileByUserId,
     userPublicProfiles,
     userWorkoutTags,
+    /// User Benchmarks ////
+    userBenchmarks,
     //// Workouts ////
     publicWorkouts,
     userWorkouts,
@@ -278,6 +290,15 @@ const resolvers: Resolvers = {
     //////////////
     updateUser,
     createWorkoutTag,
+    ////////////////////////
+    //// User Benchmark ////
+    ////////////////////////
+    createUserBenchmark,
+    updateUserBenchmark,
+    deleteUserBenchmarkById,
+    createUserBenchmarkEntry,
+    updateUserBenchmarkEntry,
+    deleteUserBenchmarkEntryById,
     /////////////////
     //// Workout ////
     /////////////////

@@ -55,12 +55,10 @@ export const createWorkoutMove = async (
         connect: { id: authedUserId },
       },
       WorkoutSet: {
-        connect: { id: data.WorkoutSet.id },
+        connect: data.WorkoutSet,
       },
-      Move: { connect: { id: data.Move.id } },
-      Equipment: data.Equipment
-        ? { connect: { id: data.Equipment.id } }
-        : undefined,
+      Move: { connect: data.Move },
+      Equipment: data.Equipment ? { connect: data.Equipment } : undefined,
     },
     select,
   })
@@ -155,12 +153,12 @@ export const updateWorkoutMove = async (
       timeUnit: data.timeUnit || undefined,
       // Necessary extra check because 0 is falsey in js.
       loadAmount: data.loadAmount != null ? data.loadAmount : undefined,
-      Move: data.Move ? { connect: { id: data.Move.id } } : undefined,
+      Move: data.Move ? { connect: data.Move } : undefined,
       // Equipment can be null - i.e no equipment, so it can only be ignored if not present in the data object.
       // passing null should disconnect any connected Equipment.
       Equipment: data.hasOwnProperty('Equipment')
         ? data.Equipment
-          ? { connect: { id: data.Equipment.id } }
+          ? { connect: data.Equipment }
           : { disconnect: true }
         : undefined,
     },

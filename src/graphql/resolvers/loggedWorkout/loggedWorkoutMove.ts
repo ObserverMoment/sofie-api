@@ -79,7 +79,7 @@ export const updateLoggedWorkoutMove = async (
       // passing null should disconnect any connected Equipment.
       Equipment: data.hasOwnProperty('Equipment')
         ? data.Equipment
-          ? { connect: { id: data.Equipment.id } }
+          ? { connect: data.Equipment }
           : { disconnect: true }
         : undefined,
     },
