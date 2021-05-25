@@ -42,6 +42,7 @@ export type Query = {
   gymProfiles: Array<GymProfile>;
   userWorkoutTags: Array<WorkoutTag>;
   userBenchmarks: Array<UserBenchmark>;
+  userBenchmarkById: UserBenchmark;
   userPublicProfiles?: Maybe<Array<UserPublicProfile>>;
   userPublicProfileByUserId: UserPublicProfile;
   publicWorkouts: Array<Workout>;
@@ -91,6 +92,11 @@ export type QueryCheckUniqueDisplayNameArgs = {
 
 export type QueryUserBenchmarksArgs = {
   first?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryUserBenchmarkByIdArgs = {
+  id: Scalars['ID'];
 };
 
 
@@ -644,7 +650,8 @@ export type BodyAreaMoveScore = {
 export type BenchmarkScoreType =
   | 'LOAD'
   | 'REPS'
-  | 'TIME';
+  | 'FASTTIME'
+  | 'LONGTIME';
 
 export type BodyAreaFrontBack =
   | 'BACK'
@@ -1632,11 +1639,11 @@ export type UserBenchmark = {
   lastEntryAt: Scalars['DateTime'];
   name: Scalars['String'];
   description?: Maybe<Scalars['String']>;
-  reps: Scalars['Float'];
+  reps?: Maybe<Scalars['Float']>;
   repType: WorkoutMoveRepType;
   load?: Maybe<Scalars['Float']>;
-  loadUnit?: Maybe<LoadUnit>;
-  distanceUnit?: Maybe<DistanceUnit>;
+  loadUnit: LoadUnit;
+  distanceUnit: DistanceUnit;
   scoreType: BenchmarkScoreType;
   Equipment?: Maybe<Equipment>;
   Move: Move;
@@ -1679,7 +1686,6 @@ export type UserBenchmarkEntry = {
   note?: Maybe<Scalars['String']>;
   videoUri?: Maybe<Scalars['String']>;
   videoThumbUri?: Maybe<Scalars['String']>;
-  imageUri?: Maybe<Scalars['String']>;
 };
 
 export type CreateUserBenchmarkEntryInput = {
@@ -1688,7 +1694,6 @@ export type CreateUserBenchmarkEntryInput = {
   note?: Maybe<Scalars['String']>;
   videoUri?: Maybe<Scalars['String']>;
   videoThumbUri?: Maybe<Scalars['String']>;
-  imageUri?: Maybe<Scalars['String']>;
   UserBenchmark: ConnectRelationInput;
 };
 
@@ -1699,7 +1704,6 @@ export type UpdateUserBenchmarkEntryInput = {
   note?: Maybe<Scalars['String']>;
   videoUri?: Maybe<Scalars['String']>;
   videoThumbUri?: Maybe<Scalars['String']>;
-  imageUri?: Maybe<Scalars['String']>;
 };
 
 export type WithIndex<TObject> = TObject & Record<string, any>;
@@ -2045,6 +2049,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   gymProfiles?: Resolver<Array<ResolversTypes['GymProfile']>, ParentType, ContextType>;
   userWorkoutTags?: Resolver<Array<ResolversTypes['WorkoutTag']>, ParentType, ContextType>;
   userBenchmarks?: Resolver<Array<ResolversTypes['UserBenchmark']>, ParentType, ContextType, RequireFields<QueryUserBenchmarksArgs, never>>;
+  userBenchmarkById?: Resolver<ResolversTypes['UserBenchmark'], ParentType, ContextType, RequireFields<QueryUserBenchmarkByIdArgs, 'id'>>;
   userPublicProfiles?: Resolver<Maybe<Array<ResolversTypes['UserPublicProfile']>>, ParentType, ContextType>;
   userPublicProfileByUserId?: Resolver<ResolversTypes['UserPublicProfile'], ParentType, ContextType, RequireFields<QueryUserPublicProfileByUserIdArgs, 'userId'>>;
   publicWorkouts?: Resolver<Array<ResolversTypes['Workout']>, ParentType, ContextType>;
@@ -2604,11 +2609,11 @@ export type UserBenchmarkResolvers<ContextType = any, ParentType extends Resolve
   lastEntryAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  reps?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  reps?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   repType?: Resolver<ResolversTypes['WorkoutMoveRepType'], ParentType, ContextType>;
   load?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  loadUnit?: Resolver<Maybe<ResolversTypes['LoadUnit']>, ParentType, ContextType>;
-  distanceUnit?: Resolver<Maybe<ResolversTypes['DistanceUnit']>, ParentType, ContextType>;
+  loadUnit?: Resolver<ResolversTypes['LoadUnit'], ParentType, ContextType>;
+  distanceUnit?: Resolver<ResolversTypes['DistanceUnit'], ParentType, ContextType>;
   scoreType?: Resolver<ResolversTypes['BenchmarkScoreType'], ParentType, ContextType>;
   Equipment?: Resolver<Maybe<ResolversTypes['Equipment']>, ParentType, ContextType>;
   Move?: Resolver<ResolversTypes['Move'], ParentType, ContextType>;
@@ -2624,7 +2629,6 @@ export type UserBenchmarkEntryResolvers<ContextType = any, ParentType extends Re
   note?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   videoUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   videoThumbUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  imageUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 

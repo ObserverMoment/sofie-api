@@ -7,6 +7,7 @@ import {
   MutationDeleteUserBenchmarkEntryByIdArgs,
   MutationUpdateUserBenchmarkArgs,
   MutationUpdateUserBenchmarkEntryArgs,
+  QueryUserBenchmarkByIdArgs,
   QueryUserBenchmarksArgs,
   UserBenchmark,
   UserBenchmarkEntry,
@@ -35,6 +36,21 @@ export const userBenchmarks = async (
     select,
   })
   return userBenchmarks as UserBenchmark[]
+}
+
+export const userBenchmarkById = async (
+  r: any,
+  { id }: QueryUserBenchmarkByIdArgs,
+  { authedUserId, select, prisma }: Context,
+) => {
+  const userBenchmark = await prisma.userBenchmark.findFirst({
+    where: {
+      id: id,
+      userId: authedUserId,
+    },
+    select,
+  })
+  return userBenchmark as UserBenchmark
 }
 
 //// Mutations ////
@@ -112,18 +128,13 @@ export const deleteUserBenchmarkById = async (
       userBenchmarkId: id,
     },
     select: {
-      imageUri: true,
       videoUri: true,
       videoThumbUri: true,
     },
   })
 
   const mediaIdsForDeletion: string[] = userBenchmarkEntries
-    .flatMap(({ imageUri, videoUri, videoThumbUri }) => [
-      imageUri,
-      videoUri,
-      videoThumbUri,
-    ])
+    .flatMap(({ videoUri, videoThumbUri }) => [videoUri, videoThumbUri])
     .filter((x) => x) as string[]
 
   const ops = [
@@ -236,18 +247,15 @@ export const deleteUserBenchmarkEntryById = async (
     where: { id },
     select: {
       id: true,
-      imageUri: true,
       videoUri: true,
       videoThumbUri: true,
     },
   })
 
   /// Media cleanup.
-  const mediaForDeletion = [
-    deleted.imageUri,
-    deleted.videoUri,
-    deleted.videoThumbUri,
-  ].filter((x) => x) as string[]
+  const mediaForDeletion = [deleted.videoUri, deleted.videoThumbUri].filter(
+    (x) => x,
+  ) as string[]
 
   if (deleted) {
     if (mediaForDeletion.length > 0) {

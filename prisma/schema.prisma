@@ -210,7 +210,7 @@ model UserBenchmark {
   userId               String
   name                 String
   description          String?
-  reps                 Float
+  reps                 Float?
   repType              WorkoutMoveRepType   @default(REPS)
   load                 Float?
   loadUnit             LoadUnit             @default(KG)
@@ -234,7 +234,6 @@ model UserBenchmarkEntry {
   note            String?
   videoUri        String?
   videoThumbUri   String?
-  imageUri        String?
   UserBenchmark   UserBenchmark @relation(fields: [userBenchmarkId], references: [id])
   userBenchmarkId String
 }
@@ -615,10 +614,12 @@ model FeaturedWorkoutProgramCategory {
 enum BenchmarkScoreType {
   // For 1,3,5 rep max etc
   LOAD
-  // For max unbroken
+  // For max unbroken reps
   REPS
-  // For fastest time to complete or max unbroken
-  TIME
+  // For fastest time to complete.
+  FASTTIME
+  // For max unbroken / sustained time
+  LONGTIME
 }
 
 enum BodyAreaFrontBack {

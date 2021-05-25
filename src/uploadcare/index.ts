@@ -264,7 +264,6 @@ export async function checkUserBenchmarkEntryMediaForDeletion(
       id: data.id,
     },
     select: {
-      imageUri: true,
       videoUri: true,
       videoThumbUri: true,
     },

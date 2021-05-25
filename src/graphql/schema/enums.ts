@@ -9,8 +9,10 @@ export default gql`
     LOAD
     # For max unbroken
     REPS
-    # For fastest time to complete or max unbroken
-    TIME
+    # For fastest time to complete.
+    FASTTIME
+    # For max unbroken / sustained time
+    LONGTIME
   }
 
   enum BodyAreaFrontBack {

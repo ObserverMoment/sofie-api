@@ -35,6 +35,7 @@ export default gql`
     userWorkoutTags: [WorkoutTag!]!
     #### UserBenchmark ####
     userBenchmarks(first: Int): [UserBenchmark!]!
+    userBenchmarkById(id: ID!): UserBenchmark!
     #### User Public Profiles ####
     userPublicProfiles: [UserPublicProfile!]
     userPublicProfileByUserId(userId: ID!): UserPublicProfile!

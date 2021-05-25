@@ -7,11 +7,11 @@ export default gql`
     lastEntryAt: DateTime!
     name: String!
     description: String
-    reps: Float!
+    reps: Float
     repType: WorkoutMoveRepType!
     load: Float
-    loadUnit: LoadUnit
-    distanceUnit: DistanceUnit
+    loadUnit: LoadUnit!
+    distanceUnit: DistanceUnit!
     scoreType: BenchmarkScoreType!
     Equipment: Equipment
     Move: Move!
@@ -53,7 +53,6 @@ export default gql`
     note: String
     videoUri: String
     videoThumbUri: String
-    imageUri: String
   }
 
   input CreateUserBenchmarkEntryInput {
@@ -62,7 +61,6 @@ export default gql`
     note: String
     videoUri: String
     videoThumbUri: String
-    imageUri: String
     UserBenchmark: ConnectRelationInput!
   }
 
@@ -73,6 +71,5 @@ export default gql`
     note: String
     videoUri: String
     videoThumbUri: String
-    imageUri: String
   }
 `

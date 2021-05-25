@@ -97,6 +97,7 @@ import {
 
 import {
   userBenchmarks,
+  userBenchmarkById,
   createUserBenchmark,
   updateUserBenchmark,
   deleteUserBenchmarkById,
@@ -218,6 +219,7 @@ const resolvers: Resolvers = {
     userWorkoutTags,
     /// User Benchmarks ////
     userBenchmarks,
+    userBenchmarkById,
     //// Workouts ////
     publicWorkouts,
     userWorkouts,
