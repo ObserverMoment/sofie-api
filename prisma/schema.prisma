@@ -50,10 +50,10 @@ model Equipment {
   loadAdjustable     Boolean             @default(true)
   RequiredForMoves   Move[]              @relation("moveToRequiredEquipments", references: [id])
   SelectableForMoves Move[]              @relation("moveToSelectableEquipments", references: [id])
-  WorkoutMoves       WorkoutMove[]
   GymProfiles        GymProfile[]
-  UserBenchmarks     UserBenchmark[]
+  WorkoutMoves       WorkoutMove[]
   LoggedWorkoutMoves LoggedWorkoutMove[]
+  UserBenchmarks     UserBenchmark[]
 }
 
 model Move {
@@ -76,8 +76,8 @@ model Move {
   SelectableEquipments Equipment[]          @relation("moveToSelectableEquipments", references: [id])
   WorkoutMoves         WorkoutMove[]
   BodyAreaMoveScores   BodyAreaMoveScore[]
+  LoggedWorkoutMoves   LoggedWorkoutMove[]
   UserBenchmarks       UserBenchmark[]
-  LoggedWorkoutMove    LoggedWorkoutMove[]
 }
 
 // General, Cardio, Barre, Yoga etc
@@ -172,7 +172,6 @@ model User {
   WorkoutPrograms          WorkoutProgram[]
   WorkoutProgramEnrolments WorkoutProgramEnrolment[]
   WorkoutProgramReviews    WorkoutProgramReview[]
-  UserBenchmarks           UserBenchmark[]
   Collections              UserCollection[]
   ProgressJournals         ProgressJournal[]
   ProgressJournalGoalTags  ProgressJournalGoalTag[]
@@ -187,6 +186,8 @@ model User {
   WorkoutSetGenerators     WorkoutSetGenerator[]
   WorkoutSetIntervalBuyIn  WorkoutSetIntervalBuyIn[]
   WorkoutTag               WorkoutTag[]
+  UserBenchmarkGroups      UserBenchmarkGroup[]
+  UserBenchmarks           UserBenchmark[]
   UserBenchmarkEntries     UserBenchmarkEntry[]
 }
 
@@ -201,6 +202,17 @@ model UserCollection {
   WorkoutPrograms WorkoutProgram[]
 }
 
+// One or more benchmarks grouped together. For example the class deadlift / press squat moves could be grouped together here.
+model UserBenchmarkGroup {
+  id             String          @id @default(uuid())
+  createdAt      DateTime        @default(now())
+  User           User            @relation(fields: [userId], references: [id])
+  userId         String
+  name           String
+  description    String?
+  UserBenchmarks UserBenchmark[]
+}
+
 model UserBenchmark {
   id                   String               @id @default(uuid())
   createdAt            DateTime             @default(now())
@@ -211,26 +223,26 @@ model UserBenchmark {
   name                 String
   description          String?
   reps                 Float?
-  repType              WorkoutMoveRepType   @default(REPS)
+  repType              BenchmarkRepType     @default(REPS)
   load                 Float?
   loadUnit             LoadUnit             @default(KG)
   distanceUnit         DistanceUnit         @default(METRES)
-  scoreType            BenchmarkScoreType   @default(LOAD)
   Equipment            Equipment?           @relation(fields: [equipmentId], references: [id])
   equipmentId          String?
   Move                 Move                 @relation(fields: [moveId], references: [id])
   moveId               String
+  benchmarkType        BenchmarkType        @default(MAXLOAD)
   UserBenchmarkEntries UserBenchmarkEntry[]
+  UserBenchmarkGroups  UserBenchmarkGroup[]
 }
 
-// Allows for progress tracking over time of any given benchmark that the user has created
 model UserBenchmarkEntry {
   id              String        @id @default(uuid())
   createdAt       DateTime      @default(now())
   User            User          @relation(fields: [userId], references: [id])
   userId          String
   completedOn     DateTime      @default(now()) // Date of actually doing the benchmark.
-  score           Float
+  score           Float // Unit determined by UserBenchmark.benchmarkType
   note            String?
   videoUri        String?
   videoThumbUri   String?
@@ -611,15 +623,17 @@ model FeaturedWorkoutProgramCategory {
 //////////////////////////////////
 //// ENUMS ///////////////////////
 //////////////////////////////////
-enum BenchmarkScoreType {
-  // For 1,3,5 rep max etc
-  LOAD
-  // For max unbroken reps
+enum BenchmarkRepType {
   REPS
-  // For fastest time to complete.
-  FASTTIME
-  // For max unbroken / sustained time
-  LONGTIME
+  CALORIES
+  DISTANCE
+}
+
+enum BenchmarkType {
+  UNBROKENREPS
+  UNBROKENTIME
+  MAXLOAD
+  FASTESTTIME
 }
 
 enum BodyAreaFrontBack {

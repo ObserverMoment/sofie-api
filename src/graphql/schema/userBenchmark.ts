@@ -8,11 +8,11 @@ export default gql`
     name: String!
     description: String
     reps: Float
-    repType: WorkoutMoveRepType!
+    repType: BenchmarkRepType!
     load: Float
     loadUnit: LoadUnit!
     distanceUnit: DistanceUnit!
-    scoreType: BenchmarkScoreType!
+    benchmarkType: BenchmarkType!
     Equipment: Equipment
     Move: Move!
     UserBenchmarkEntries: [UserBenchmarkEntry!]!
@@ -22,11 +22,11 @@ export default gql`
     name: String!
     description: String
     reps: Float!
-    repType: WorkoutMoveRepType!
+    repType: BenchmarkRepType!
     load: Float
     loadUnit: LoadUnit
     distanceUnit: DistanceUnit
-    scoreType: BenchmarkScoreType!
+    benchmarkType: BenchmarkType!
     Equipment: ConnectRelationInput
     Move: ConnectRelationInput!
   }
@@ -36,11 +36,11 @@ export default gql`
     name: String
     description: String
     reps: Float
-    repType: WorkoutMoveRepType
+    repType: BenchmarkRepType
     load: Float
     loadUnit: LoadUnit
     distanceUnit: DistanceUnit
-    scoreType: BenchmarkScoreType
+    benchmarkType: BenchmarkType!
     Equipment: ConnectRelationInput
     Move: ConnectRelationInput
   }

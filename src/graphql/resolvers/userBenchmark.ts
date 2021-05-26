@@ -93,7 +93,6 @@ export const updateUserBenchmark = async (
       name: data.name || undefined,
       reps: data.reps || undefined,
       repType: data.repType || undefined,
-      scoreType: data.scoreType || undefined,
       loadUnit: data.loadUnit || undefined,
       distanceUnit: data.distanceUnit || undefined,
       Move: data.Move ? { connect: data.Move } : undefined,

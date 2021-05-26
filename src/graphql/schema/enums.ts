@@ -4,15 +4,17 @@ export default gql`
   """
   Enums
   """
-  enum BenchmarkScoreType {
-    # For 1,3,5 rep max etc
-    LOAD
-    # For max unbroken
+  enum BenchmarkRepType {
     REPS
-    # For fastest time to complete.
-    FASTTIME
-    # For max unbroken / sustained time
-    LONGTIME
+    CALORIES
+    DISTANCE
+  }
+
+  enum BenchmarkType {
+    UNBROKENREPS
+    UNBROKENTIME
+    MAXLOAD
+    FASTESTTIME
   }
 
   enum BodyAreaFrontBack {
