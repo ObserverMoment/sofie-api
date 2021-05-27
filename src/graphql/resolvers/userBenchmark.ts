@@ -16,7 +16,7 @@ import {
   checkUserBenchmarkEntryMediaForDeletion,
   deleteFiles,
 } from '../../uploadcare'
-import { AccessScopeError, checkUserOwnsObject } from '../utils'
+import { checkUserOwnsObject } from '../utils'
 
 //// Queries ////
 export const userBenchmarks = async (
@@ -62,7 +62,10 @@ export const createUserBenchmark = async (
   const userBenchmark = await prisma.userBenchmark.create({
     data: {
       ...data,
+      reps: data.reps || undefined,
+      repType: data.repType || undefined,
       loadUnit: data.loadUnit || undefined,
+      timeUnit: data.timeUnit || undefined,
       distanceUnit: data.distanceUnit || undefined,
       Move: { connect: data.Move },
       Equipment: data.Equipment ? { connect: data.Equipment } : undefined,
@@ -94,6 +97,7 @@ export const updateUserBenchmark = async (
       reps: data.reps || undefined,
       repType: data.repType || undefined,
       loadUnit: data.loadUnit || undefined,
+      timeUnit: data.timeUnit || undefined,
       distanceUnit: data.distanceUnit || undefined,
       Move: data.Move ? { connect: data.Move } : undefined,
       // Equipment can be null - i.e no equipment, so it can only be ignored if not present in the data object.

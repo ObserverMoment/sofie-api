@@ -17,16 +17,11 @@ export type Scalars = {
 };
 
 /** Enums */
-export type BenchmarkRepType =
-  | 'REPS'
-  | 'CALORIES'
-  | 'DISTANCE';
-
 export type BenchmarkType =
-  | 'UNBROKENREPS'
-  | 'UNBROKENTIME'
   | 'MAXLOAD'
-  | 'FASTESTTIME';
+  | 'FASTESTTIME'
+  | 'UNBROKENREPS'
+  | 'UNBROKENTIME';
 
 export type BodyArea = {
   __typename?: 'BodyArea';
@@ -229,10 +224,11 @@ export type CreateUserBenchmarkEntryInput = {
 export type CreateUserBenchmarkInput = {
   name: Scalars['String'];
   description?: Maybe<Scalars['String']>;
-  reps: Scalars['Float'];
-  repType: BenchmarkRepType;
+  reps?: Maybe<Scalars['Float']>;
+  repType?: Maybe<WorkoutMoveRepType>;
   load?: Maybe<Scalars['Float']>;
   loadUnit?: Maybe<LoadUnit>;
+  timeUnit?: Maybe<TimeUnit>;
   distanceUnit?: Maybe<DistanceUnit>;
   benchmarkType: BenchmarkType;
   Equipment?: Maybe<ConnectRelationInput>;
@@ -1282,9 +1278,10 @@ export type UpdateUserBenchmarkInput = {
   name?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   reps?: Maybe<Scalars['Float']>;
-  repType?: Maybe<BenchmarkRepType>;
+  repType?: Maybe<WorkoutMoveRepType>;
   load?: Maybe<Scalars['Float']>;
   loadUnit?: Maybe<LoadUnit>;
+  timeUnit?: Maybe<TimeUnit>;
   distanceUnit?: Maybe<DistanceUnit>;
   benchmarkType: BenchmarkType;
   Equipment?: Maybe<ConnectRelationInput>;
@@ -1443,9 +1440,10 @@ export type UserBenchmark = {
   name: Scalars['String'];
   description?: Maybe<Scalars['String']>;
   reps?: Maybe<Scalars['Float']>;
-  repType: BenchmarkRepType;
+  repType: WorkoutMoveRepType;
   load?: Maybe<Scalars['Float']>;
   loadUnit: LoadUnit;
+  timeUnit: TimeUnit;
   distanceUnit: DistanceUnit;
   benchmarkType: BenchmarkType;
   Equipment?: Maybe<Equipment>;
@@ -1790,7 +1788,6 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
-  BenchmarkRepType: BenchmarkRepType;
   BenchmarkType: BenchmarkType;
   BodyArea: ResolverTypeWrapper<BodyArea>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
@@ -2389,9 +2386,10 @@ export type UserBenchmarkResolvers<ContextType = any, ParentType extends Resolve
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   reps?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  repType?: Resolver<ResolversTypes['BenchmarkRepType'], ParentType, ContextType>;
+  repType?: Resolver<ResolversTypes['WorkoutMoveRepType'], ParentType, ContextType>;
   load?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   loadUnit?: Resolver<ResolversTypes['LoadUnit'], ParentType, ContextType>;
+  timeUnit?: Resolver<ResolversTypes['TimeUnit'], ParentType, ContextType>;
   distanceUnit?: Resolver<ResolversTypes['DistanceUnit'], ParentType, ContextType>;
   benchmarkType?: Resolver<ResolversTypes['BenchmarkType'], ParentType, ContextType>;
   Equipment?: Resolver<Maybe<ResolversTypes['Equipment']>, ParentType, ContextType>;

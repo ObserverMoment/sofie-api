@@ -223,10 +223,11 @@ model UserBenchmark {
   name                 String
   description          String?
   reps                 Float?
-  repType              BenchmarkRepType     @default(REPS)
+  repType              WorkoutMoveRepType   @default(REPS)
   load                 Float?
   loadUnit             LoadUnit             @default(KG)
   distanceUnit         DistanceUnit         @default(METRES)
+  timeUnit             TimeUnit             @default(SECONDS)
   Equipment            Equipment?           @relation(fields: [equipmentId], references: [id])
   equipmentId          String?
   Move                 Move                 @relation(fields: [moveId], references: [id])
@@ -623,17 +624,11 @@ model FeaturedWorkoutProgramCategory {
 //////////////////////////////////
 //// ENUMS ///////////////////////
 //////////////////////////////////
-enum BenchmarkRepType {
-  REPS
-  CALORIES
-  DISTANCE
-}
-
 enum BenchmarkType {
-  UNBROKENREPS
-  UNBROKENTIME
   MAXLOAD
   FASTESTTIME
+  UNBROKENREPS
+  UNBROKENTIME
 }
 
 enum BodyAreaFrontBack {

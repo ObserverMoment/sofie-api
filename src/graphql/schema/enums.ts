@@ -4,17 +4,11 @@ export default gql`
   """
   Enums
   """
-  enum BenchmarkRepType {
-    REPS
-    CALORIES
-    DISTANCE
-  }
-
   enum BenchmarkType {
-    UNBROKENREPS
-    UNBROKENTIME
     MAXLOAD
     FASTESTTIME
+    UNBROKENREPS
+    UNBROKENTIME
   }
 
   enum BodyAreaFrontBack {
