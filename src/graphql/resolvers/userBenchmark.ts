@@ -175,11 +175,17 @@ export const createUserBenchmarkEntry = async (
   const userBenchmarkEntry: any = await prisma.userBenchmarkEntry.create({
     data: {
       ...data,
+      UserBenchmark: { connect: data.UserBenchmark },
       User: {
         connect: { id: authedUserId },
       },
     },
-    select,
+    select: {
+      ...select,
+      UserBenchmark: {
+        select: { id: true },
+      },
+    },
   })
 
   if (userBenchmarkEntry) {
