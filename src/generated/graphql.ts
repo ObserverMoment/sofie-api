@@ -1018,9 +1018,12 @@ export type Query = {
   progressJournalById: ProgressJournal;
   progressJournalGoalTags: Array<ProgressJournalGoalTag>;
   userScheduledWorkouts: Array<ScheduledWorkout>;
-  textSearchWorkouts?: Maybe<Array<TextSearchWorkoutResult>>;
-  textSearchWorkoutPrograms?: Maybe<Array<TextSearchWorkoutProgramResult>>;
-  textSearchCreatorPublicProfiles?: Maybe<Array<UserPublicProfile>>;
+  textSearchWorkouts?: Maybe<Array<Workout>>;
+  textSearchWorkoutNames?: Maybe<Array<TextSearchResult>>;
+  textSearchWorkoutPrograms?: Maybe<Array<WorkoutProgram>>;
+  textSearchWorkoutProgramNames?: Maybe<Array<TextSearchResult>>;
+  textSearchUserPublicProfiles?: Maybe<Array<UserPublicProfile>>;
+  textSearchUserPublicNames?: Maybe<Array<TextSearchResult>>;
   authedUser: User;
   checkUniqueDisplayName: Scalars['Boolean'];
   gymProfiles: Array<GymProfile>;
@@ -1059,12 +1062,27 @@ export type QueryTextSearchWorkoutsArgs = {
 };
 
 
+export type QueryTextSearchWorkoutNamesArgs = {
+  text: Scalars['String'];
+};
+
+
 export type QueryTextSearchWorkoutProgramsArgs = {
   text: Scalars['String'];
 };
 
 
-export type QueryTextSearchCreatorPublicProfilesArgs = {
+export type QueryTextSearchWorkoutProgramNamesArgs = {
+  text: Scalars['String'];
+};
+
+
+export type QueryTextSearchUserPublicProfilesArgs = {
+  text: Scalars['String'];
+};
+
+
+export type QueryTextSearchUserPublicNamesArgs = {
   text: Scalars['String'];
 };
 
@@ -1120,28 +1138,10 @@ export type SortPositionUpdated = {
   sortPosition: Scalars['Int'];
 };
 
-export type TextSearchWorkoutProgramResult = {
-  __typename?: 'TextSearchWorkoutProgramResult';
+export type TextSearchResult = {
+  __typename?: 'TextSearchResult';
   id: Scalars['ID'];
-  scope: ContentAccessScope;
   name: Scalars['String'];
-  description?: Maybe<Scalars['String']>;
-  imageUri?: Maybe<Scalars['String']>;
-  User?: Maybe<User>;
-  WorkoutGoals: Array<WorkoutGoal>;
-  WorkoutProgramWorkouts?: Maybe<Array<WorkoutProgramWorkout>>;
-};
-
-export type TextSearchWorkoutResult = {
-  __typename?: 'TextSearchWorkoutResult';
-  id: Scalars['ID'];
-  scope: ContentAccessScope;
-  name?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-  imageUri?: Maybe<Scalars['String']>;
-  difficultyLevel: Scalars['Int'];
-  timecap?: Maybe<Scalars['Int']>;
-  User?: Maybe<User>;
 };
 
 export type TimeUnit =
@@ -1853,8 +1853,7 @@ export type ResolversTypes = ResolversObject<{
   Query: ResolverTypeWrapper<{}>;
   ScheduledWorkout: ResolverTypeWrapper<ScheduledWorkout>;
   SortPositionUpdated: ResolverTypeWrapper<SortPositionUpdated>;
-  TextSearchWorkoutProgramResult: ResolverTypeWrapper<TextSearchWorkoutProgramResult>;
-  TextSearchWorkoutResult: ResolverTypeWrapper<TextSearchWorkoutResult>;
+  TextSearchResult: ResolverTypeWrapper<TextSearchResult>;
   TimeUnit: TimeUnit;
   UpdateEquipmentInput: UpdateEquipmentInput;
   UpdateGymProfileInput: UpdateGymProfileInput;
@@ -1968,8 +1967,7 @@ export type ResolversParentTypes = ResolversObject<{
   Query: {};
   ScheduledWorkout: ScheduledWorkout;
   SortPositionUpdated: SortPositionUpdated;
-  TextSearchWorkoutProgramResult: TextSearchWorkoutProgramResult;
-  TextSearchWorkoutResult: TextSearchWorkoutResult;
+  TextSearchResult: TextSearchResult;
   UpdateEquipmentInput: UpdateEquipmentInput;
   UpdateGymProfileInput: UpdateGymProfileInput;
   UpdateLoggedWorkoutInput: UpdateLoggedWorkoutInput;
@@ -2292,9 +2290,12 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   progressJournalById?: Resolver<ResolversTypes['ProgressJournal'], ParentType, ContextType, RequireFields<QueryProgressJournalByIdArgs, 'id'>>;
   progressJournalGoalTags?: Resolver<Array<ResolversTypes['ProgressJournalGoalTag']>, ParentType, ContextType>;
   userScheduledWorkouts?: Resolver<Array<ResolversTypes['ScheduledWorkout']>, ParentType, ContextType>;
-  textSearchWorkouts?: Resolver<Maybe<Array<ResolversTypes['TextSearchWorkoutResult']>>, ParentType, ContextType, RequireFields<QueryTextSearchWorkoutsArgs, 'text'>>;
-  textSearchWorkoutPrograms?: Resolver<Maybe<Array<ResolversTypes['TextSearchWorkoutProgramResult']>>, ParentType, ContextType, RequireFields<QueryTextSearchWorkoutProgramsArgs, 'text'>>;
-  textSearchCreatorPublicProfiles?: Resolver<Maybe<Array<ResolversTypes['UserPublicProfile']>>, ParentType, ContextType, RequireFields<QueryTextSearchCreatorPublicProfilesArgs, 'text'>>;
+  textSearchWorkouts?: Resolver<Maybe<Array<ResolversTypes['Workout']>>, ParentType, ContextType, RequireFields<QueryTextSearchWorkoutsArgs, 'text'>>;
+  textSearchWorkoutNames?: Resolver<Maybe<Array<ResolversTypes['TextSearchResult']>>, ParentType, ContextType, RequireFields<QueryTextSearchWorkoutNamesArgs, 'text'>>;
+  textSearchWorkoutPrograms?: Resolver<Maybe<Array<ResolversTypes['WorkoutProgram']>>, ParentType, ContextType, RequireFields<QueryTextSearchWorkoutProgramsArgs, 'text'>>;
+  textSearchWorkoutProgramNames?: Resolver<Maybe<Array<ResolversTypes['TextSearchResult']>>, ParentType, ContextType, RequireFields<QueryTextSearchWorkoutProgramNamesArgs, 'text'>>;
+  textSearchUserPublicProfiles?: Resolver<Maybe<Array<ResolversTypes['UserPublicProfile']>>, ParentType, ContextType, RequireFields<QueryTextSearchUserPublicProfilesArgs, 'text'>>;
+  textSearchUserPublicNames?: Resolver<Maybe<Array<ResolversTypes['TextSearchResult']>>, ParentType, ContextType, RequireFields<QueryTextSearchUserPublicNamesArgs, 'text'>>;
   authedUser?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   checkUniqueDisplayName?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryCheckUniqueDisplayNameArgs, 'displayName'>>;
   gymProfiles?: Resolver<Array<ResolversTypes['GymProfile']>, ParentType, ContextType>;
@@ -2329,27 +2330,9 @@ export type SortPositionUpdatedResolvers<ContextType = any, ParentType extends R
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export type TextSearchWorkoutProgramResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['TextSearchWorkoutProgramResult'] = ResolversParentTypes['TextSearchWorkoutProgramResult']> = ResolversObject<{
+export type TextSearchResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['TextSearchResult'] = ResolversParentTypes['TextSearchResult']> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  scope?: Resolver<ResolversTypes['ContentAccessScope'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  imageUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  User?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
-  WorkoutGoals?: Resolver<Array<ResolversTypes['WorkoutGoal']>, ParentType, ContextType>;
-  WorkoutProgramWorkouts?: Resolver<Maybe<Array<ResolversTypes['WorkoutProgramWorkout']>>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type TextSearchWorkoutResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['TextSearchWorkoutResult'] = ResolversParentTypes['TextSearchWorkoutResult']> = ResolversObject<{
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  scope?: Resolver<ResolversTypes['ContentAccessScope'], ParentType, ContextType>;
-  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  imageUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  difficultyLevel?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  timecap?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  User?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -2658,8 +2641,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   Query?: QueryResolvers<ContextType>;
   ScheduledWorkout?: ScheduledWorkoutResolvers<ContextType>;
   SortPositionUpdated?: SortPositionUpdatedResolvers<ContextType>;
-  TextSearchWorkoutProgramResult?: TextSearchWorkoutProgramResultResolvers<ContextType>;
-  TextSearchWorkoutResult?: TextSearchWorkoutResultResolvers<ContextType>;
+  TextSearchResult?: TextSearchResultResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
   UserBenchmark?: UserBenchmarkResolvers<ContextType>;
   UserBenchmarkEntry?: UserBenchmarkEntryResolvers<ContextType>;

@@ -25,9 +25,12 @@ export default gql`
     #### Scheduled Workouts ####
     userScheduledWorkouts: [ScheduledWorkout!]!
     #### Text Search ####
-    textSearchWorkouts(text: String!): [TextSearchWorkoutResult!]
-    textSearchWorkoutPrograms(text: String!): [TextSearchWorkoutProgramResult!]
-    textSearchCreatorPublicProfiles(text: String!): [UserPublicProfile!]
+    textSearchWorkouts(text: String!): [Workout!]
+    textSearchWorkoutNames(text: String!): [TextSearchResult!]
+    textSearchWorkoutPrograms(text: String!): [WorkoutProgram!]
+    textSearchWorkoutProgramNames(text: String!): [TextSearchResult!]
+    textSearchUserPublicProfiles(text: String!): [UserPublicProfile!]
+    textSearchUserPublicNames(text: String!): [TextSearchResult!]
     #### User ####
     authedUser: User!
     checkUniqueDisplayName(displayName: String!): Boolean!
@@ -237,5 +240,11 @@ export default gql`
   # Only the id is required to create a relationship connection with an existing model.
   input ConnectRelationInput {
     id: ID!
+  }
+
+  # For results that return as the user is typing - just the name is displayed. ID is used on click to open up full details.
+  type TextSearchResult {
+    id: ID!
+    name: String!
   }
 `

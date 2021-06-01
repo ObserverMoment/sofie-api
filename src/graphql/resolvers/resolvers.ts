@@ -81,8 +81,11 @@ import {
 
 import {
   textSearchWorkouts,
+  textSearchWorkoutNames,
   textSearchWorkoutPrograms,
-  textSearchCreatorPublicProfiles,
+  textSearchWorkoutProgramNames,
+  textSearchUserPublicProfiles,
+  textSearchUserPublicNames,
 } from './textSearch'
 
 import {
@@ -208,8 +211,11 @@ const resolvers: Resolvers = {
     userScheduledWorkouts,
     //// Text Search ////
     textSearchWorkouts,
+    textSearchWorkoutNames,
     textSearchWorkoutPrograms,
-    textSearchCreatorPublicProfiles,
+    textSearchWorkoutProgramNames,
+    textSearchUserPublicProfiles,
+    textSearchUserPublicNames,
     //// User ////
     authedUser,
     checkUniqueDisplayName,

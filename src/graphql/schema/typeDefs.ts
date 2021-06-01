@@ -15,7 +15,6 @@ import workoutSectionSchema from './workout/workoutSection'
 import workoutSetSchema from './workout/workoutSet'
 import workoutMoveSchema from './workout/workoutMove'
 import bodyAreaSchema from './bodyArea'
-import textSearchSchema from './textSearch'
 import enumSchema from './enums'
 
 const typeDefs = mergeTypeDefs([
@@ -28,7 +27,6 @@ const typeDefs = mergeTypeDefs([
   moveSchema,
   progressJournal,
   scheduledWorkoutSchema,
-  textSearchSchema,
   userSchema,
   workoutMoveSchema,
   workoutProgramSchema,
