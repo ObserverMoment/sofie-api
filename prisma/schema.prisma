@@ -266,6 +266,8 @@ model Workout {
   introVideoThumbUri     String?
   introAudioUri          String?
   coverImageUri          String?
+  // Length that the workout should take. User inputted if a non timed workout. Auto calced if all sections are timed.
+  lengthMinutes          Int?
   difficultyLevel        DifficultyLevel         @default(INTERMEDIATE)
   contentAccessScope     ContentAccessScope      @default(PRIVATE)
   WorkoutSections        WorkoutSection[]

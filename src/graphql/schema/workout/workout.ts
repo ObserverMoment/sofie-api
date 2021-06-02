@@ -11,6 +11,7 @@ export default gql`
     archived: Boolean!
     name: String!
     description: String
+    lengthMinutes: Int
     introVideoUri: String
     introVideoThumbUri: String
     introAudioUri: String
@@ -34,6 +35,7 @@ export default gql`
     archived: Boolean
     name: String
     description: String
+    lengthMinutes: Int
     introVideoUri: String
     introVideoThumbUri: String
     introAudioUri: String
