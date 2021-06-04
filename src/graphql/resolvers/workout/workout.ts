@@ -59,6 +59,9 @@ export const userWorkouts = async (
 ) => {
   const userWorkouts = await prisma.workout.findMany({
     where: { userId: authedUserId, archived: false },
+    orderBy: {
+      id: 'desc',
+    },
     select,
   })
   return userWorkouts as Workout[]

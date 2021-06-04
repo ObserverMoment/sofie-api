@@ -71,7 +71,10 @@ export function formatEquipmentFilters(filters: WorkoutFiltersInput) {
                   every: { id: { in: filters.availableEquipments } },
                 },
               },
-              equipmentId: { in: filters.availableEquipments },
+              OR: [
+                { equipmentId: { equals: kBodyweightEquipmentId } },
+                { equipmentId: { in: filters.availableEquipments } },
+              ],
             },
           },
         },
