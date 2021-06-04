@@ -1,6 +1,7 @@
-import { PrismaClient } from '@prisma/client'
+import { Prisma, PrismaClient } from '@prisma/client'
 import { ApolloError } from 'apollo-server-errors'
 import { ContextUserType } from '..'
+import { FullWorkoutDataType } from '../types'
 
 export class AccessScopeError extends ApolloError {
   constructor(message: string = 'You do not have access to this data.') {
@@ -201,4 +202,97 @@ export async function checkUserOwnsParentWorkoutProgram(
   ) {
     throw new AccessScopeError()
   }
+}
+
+export async function updateWorkoutMetaDataJson(
+  prisma: PrismaClient,
+  workoutId: string,
+) {
+  /// TODO: get the full workout object here or pass it? Probably pass it as most updates are caused by updates to non workout objects.
+
+  const workout: FullWorkoutDataType | null = await prisma.workout.findUnique({
+    where: { id: workoutId },
+    include: {
+      WorkoutGoals: true,
+      WorkoutTags: true,
+      WorkoutSections: {
+        include: {
+          WorkoutSectionType: true,
+          WorkoutSets: {
+            include: {
+              WorkoutMoves: {
+                include: {
+                  Equipment: true,
+                  Move: {
+                    include: {
+                      RequiredEquipments: true,
+                      BodyAreaMoveScores: {
+                        include: {
+                          BodyArea: true,
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  })
+
+  if (!workout) {
+    throw Error(
+      `Unable to find workout with id ${workoutId}. The meta data was not updated!`,
+    )
+  }
+
+  let dataAsSets = {
+    workoutGoals: new Set<string>(workout.WorkoutGoals.map((g) => g.id)),
+    workoutSectionTypes: new Set<string>(),
+    equipment: new Set<string>(),
+    moves: new Set<string>(),
+    bodyAreas: new Set<string>(),
+  }
+
+  workout.WorkoutSections.forEach((workoutSection) => {
+    // workoutSectionTypes
+    dataAsSets.workoutSectionTypes.add(workoutSection.workoutSectionTypeId)
+
+    workoutSection.WorkoutSets.forEach((workoutSet) => {
+      workoutSet.WorkoutMoves.forEach((workoutMove) => {
+        // moves
+        dataAsSets.moves.add(workoutMove.moveId)
+        // equipment
+        if (workoutMove.equipmentId) {
+          // selected
+          dataAsSets.equipment.add(workoutMove.equipmentId)
+        }
+        workoutMove.Move.RequiredEquipments.forEach((e) => {
+          // required
+          dataAsSets.equipment.add(e.id)
+        })
+        // bodyAreas
+        workoutMove.Move.BodyAreaMoveScores.forEach((bams) => {
+          dataAsSets.bodyAreas.add(bams.bodyAreaId)
+        })
+      })
+    })
+  })
+
+  const metaData = {
+    workoutGoals: Array.from(dataAsSets.workoutGoals),
+    workoutSectionTypes: Array.from(dataAsSets.workoutSectionTypes),
+    equipment: Array.from(dataAsSets.equipment),
+    moves: Array.from(dataAsSets.moves),
+    bodyAreas: Array.from(dataAsSets.bodyAreas),
+  }
+
+  await prisma.workout.update({
+    where: { id: workout.id },
+    data: {
+      metaData: metaData,
+    },
+  })
 }

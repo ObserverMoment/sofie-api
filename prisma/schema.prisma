@@ -2,7 +2,8 @@
 // SDL first example: https://github.com/prisma/prisma-examples/tree/prisma2/javascript/graphql-sdl-first
 // Migrations: https://github.com/prisma/migrate
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["filterJson"]
 }
 
 datasource db {
@@ -262,6 +263,9 @@ model Workout {
   userId                 String
   name                   String
   description            String?
+  // Meta data document used for search and filter functionality and ultimately for ranking algorithm implementation.
+  // { workoutGoals: [ID], moves: [ID], bodyAreas: [ID] }
+  metaData               Json?
   introVideoUri          String?
   introVideoThumbUri     String?
   introAudioUri          String?

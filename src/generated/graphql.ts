@@ -1043,7 +1043,7 @@ export type Query = {
 
 
 export type QueryUserLoggedWorkoutsArgs = {
-  first?: Maybe<Scalars['Int']>;
+  take?: Maybe<Scalars['Int']>;
 };
 
 
@@ -1104,6 +1104,13 @@ export type QueryUserBenchmarkByIdArgs = {
 
 export type QueryUserPublicProfileByUserIdArgs = {
   userId: Scalars['ID'];
+};
+
+
+export type QueryPublicWorkoutsArgs = {
+  take?: Maybe<Scalars['Int']>;
+  cursor?: Maybe<Scalars['ID']>;
+  filters?: Maybe<WorkoutFiltersInput>;
 };
 
 
@@ -1523,6 +1530,20 @@ export type Workout = {
   WorkoutSections: Array<WorkoutSection>;
 };
 
+export type WorkoutFiltersInput = {
+  difficultyLevel?: Maybe<DifficultyLevel>;
+  hasClassVideo?: Maybe<Scalars['Boolean']>;
+  maxLength?: Maybe<Scalars['Int']>;
+  minLength?: Maybe<Scalars['Int']>;
+  workoutSectionTypes: Array<Scalars['ID']>;
+  workoutGoals: Array<Scalars['ID']>;
+  bodyweightOnly?: Maybe<Scalars['Boolean']>;
+  availableEquipments: Array<Scalars['ID']>;
+  requiredMoves: Array<Scalars['ID']>;
+  excludedMoves: Array<Scalars['ID']>;
+  targetedBodyAreas: Array<Scalars['ID']>;
+};
+
 export type WorkoutGoal = {
   __typename?: 'WorkoutGoal';
   id: Scalars['ID'];
@@ -1891,6 +1912,7 @@ export type ResolversTypes = ResolversObject<{
   UserPublicProfile: ResolverTypeWrapper<UserPublicProfile>;
   UserSummary: ResolverTypeWrapper<UserSummary>;
   Workout: ResolverTypeWrapper<Workout>;
+  WorkoutFiltersInput: WorkoutFiltersInput;
   WorkoutGoal: ResolverTypeWrapper<WorkoutGoal>;
   WorkoutMove: ResolverTypeWrapper<WorkoutMove>;
   WorkoutMoveRepType: WorkoutMoveRepType;
@@ -2003,6 +2025,7 @@ export type ResolversParentTypes = ResolversObject<{
   UserPublicProfile: UserPublicProfile;
   UserSummary: UserSummary;
   Workout: Workout;
+  WorkoutFiltersInput: WorkoutFiltersInput;
   WorkoutGoal: WorkoutGoal;
   WorkoutMove: WorkoutMove;
   WorkoutMoveSummary: WorkoutMoveSummary;
@@ -2306,7 +2329,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   userBenchmarkById?: Resolver<ResolversTypes['UserBenchmark'], ParentType, ContextType, RequireFields<QueryUserBenchmarkByIdArgs, 'id'>>;
   userPublicProfiles?: Resolver<Maybe<Array<ResolversTypes['UserPublicProfile']>>, ParentType, ContextType>;
   userPublicProfileByUserId?: Resolver<ResolversTypes['UserPublicProfile'], ParentType, ContextType, RequireFields<QueryUserPublicProfileByUserIdArgs, 'userId'>>;
-  publicWorkouts?: Resolver<Array<ResolversTypes['Workout']>, ParentType, ContextType>;
+  publicWorkouts?: Resolver<Array<ResolversTypes['Workout']>, ParentType, ContextType, RequireFields<QueryPublicWorkoutsArgs, never>>;
   userWorkouts?: Resolver<Array<ResolversTypes['Workout']>, ParentType, ContextType>;
   workoutById?: Resolver<ResolversTypes['Workout'], ParentType, ContextType, RequireFields<QueryWorkoutByIdArgs, 'id'>>;
   publicWorkoutPrograms?: Resolver<Array<ResolversTypes['WorkoutProgram']>, ParentType, ContextType>;

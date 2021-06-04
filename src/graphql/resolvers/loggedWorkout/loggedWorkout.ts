@@ -16,10 +16,9 @@ import { AccessScopeError, checkUserOwnsObject } from '../../utils'
 //// Queries ////
 export const userLoggedWorkouts = async (
   r: any,
-  { first }: QueryUserLoggedWorkoutsArgs,
+  { take }: QueryUserLoggedWorkoutsArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  const take = first ? { take: first } : null
   const loggedWorkouts = await prisma.loggedWorkout.findMany({
     where: {
       User: { id: authedUserId },
@@ -27,7 +26,7 @@ export const userLoggedWorkouts = async (
     orderBy: {
       completedOn: 'desc',
     },
-    ...take,
+    take: take ?? 50,
     select,
   })
   return loggedWorkouts as LoggedWorkout[]

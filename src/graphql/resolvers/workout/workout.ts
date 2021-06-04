@@ -5,6 +5,7 @@ import {
   MutationMakeCopyWorkoutByIdArgs,
   MutationSoftDeleteWorkoutByIdArgs,
   MutationUpdateWorkoutArgs,
+  QueryPublicWorkoutsArgs,
   QueryWorkoutByIdArgs,
   Workout,
 } from '../../../generated/graphql'
@@ -14,17 +15,39 @@ import {
   deleteFiles,
 } from '../../../uploadcare/index'
 import { Prisma } from '@prisma/client'
+import {
+  formatWorkoutFiltersInput,
+  formatWorkoutSectionFiltersInput,
+} from './utils'
 
 //// Queries ////
+/// https://www.prisma.io/docs/concepts/components/prisma-client/pagination
 export const publicWorkouts = async (
   r: any,
-  a: any,
+  { filters, take, cursor }: QueryPublicWorkoutsArgs,
   { select, prisma }: Context,
 ) => {
   const publicWorkouts = await prisma.workout.findMany({
-    where: { contentAccessScope: 'PUBLIC' },
+    where: {
+      contentAccessScope: 'PUBLIC',
+      AND: filters ? formatWorkoutFiltersInput(filters) : [],
+      WorkoutSections: filters
+        ? formatWorkoutSectionFiltersInput(filters)
+        : undefined,
+    },
+    take: take ?? 50,
+    skip: cursor ? 1 : 0,
+    orderBy: {
+      id: 'desc',
+    },
+    cursor: cursor
+      ? {
+          id: cursor,
+        }
+      : undefined,
     select,
   })
+
   return publicWorkouts as Workout[]
 }
 

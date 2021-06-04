@@ -13,7 +13,7 @@ export default gql`
     workoutGoals: [WorkoutGoal!]!
     workoutSectionTypes: [WorkoutSectionType!]!
     #### Logged Workouts ####
-    userLoggedWorkouts(first: Int): [LoggedWorkout!]!
+    userLoggedWorkouts(take: Int): [LoggedWorkout!]!
     loggedWorkoutById(id: ID!): LoggedWorkout!
     #### Moves ####
     standardMoves: [Move!]!
@@ -43,7 +43,11 @@ export default gql`
     userPublicProfiles: [UserPublicProfile!]
     userPublicProfileByUserId(userId: ID!): UserPublicProfile!
     #### Workouts ####
-    publicWorkouts: [Workout!]!
+    publicWorkouts(
+      take: Int
+      cursor: ID
+      filters: WorkoutFiltersInput
+    ): [Workout!]!
     userWorkouts: [Workout!]!
     workoutById(id: ID!): Workout!
     #### Workout Programs and Enrolments ####
