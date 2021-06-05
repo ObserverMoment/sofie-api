@@ -15,6 +15,10 @@ import {
   checkAndReorderObjects,
   reorderItemsForInsertDelete,
 } from '../../utils'
+import {
+  updateWorkoutMetaData,
+  updateWorkoutMetaDataFromWorkoutMove,
+} from './utils'
 
 export const createWorkoutMove = async (
   r: any,
@@ -64,6 +68,10 @@ export const createWorkoutMove = async (
   })
 
   if (workoutMove) {
+    await updateWorkoutMetaDataFromWorkoutMove(
+      prisma,
+      (workoutMove as WorkoutMove).id,
+    )
     return workoutMove as WorkoutMove
   } else {
     throw new ApolloError('createWorkoutMove: There was an issue.')
@@ -166,6 +174,13 @@ export const updateWorkoutMove = async (
   })
 
   if (updated) {
+    /// If the move has been changed then the meta data needs to be re-generated.
+    if (data.Move) {
+      await updateWorkoutMetaDataFromWorkoutMove(
+        prisma,
+        (updated as WorkoutMove).id,
+      )
+    }
     return updated as WorkoutMove
   } else {
     throw new ApolloError('updateWorkoutMove: There was an issue.')
@@ -181,7 +196,17 @@ export const deleteWorkoutMoveById = async (
 
   const deleted = await prisma.workoutMove.delete({
     where: { id },
-    select: { id: true, sortPosition: true, workoutSetId: true },
+    select: {
+      id: true,
+      sortPosition: true,
+      workoutSetId: true,
+      /// Need the workoutId to be able to call the update workout meta data json method.
+      WorkoutSet: {
+        select: {
+          WorkoutSection: { select: { workoutId: true } },
+        },
+      },
+    },
   })
 
   if (deleted) {
@@ -194,6 +219,11 @@ export const deleteWorkoutMoveById = async (
       objectType: 'workoutMove',
       prisma: prisma,
     })
+
+    await updateWorkoutMetaData(
+      prisma,
+      deleted.WorkoutSet.WorkoutSection.workoutId,
+    )
 
     return deleted.id
   } else {

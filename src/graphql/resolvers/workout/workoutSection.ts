@@ -18,6 +18,7 @@ import {
   checkWorkoutSectionMediaForDeletion,
   deleteFiles,
 } from '../../../uploadcare/index'
+import { updateWorkoutMetaData } from './utils'
 
 export const createWorkoutSection = async (
   r: any,
@@ -72,10 +73,8 @@ export const updateWorkoutSection = async (
   { authedUserId, select, prisma }: Context,
 ) => {
   await checkUserOwnsObject(data.id, 'workoutSection', authedUserId, prisma)
-  const mediaFileUrisForDeletion: string[] = await checkWorkoutSectionMediaForDeletion(
-    prisma,
-    data,
-  )
+  const mediaFileUrisForDeletion: string[] =
+    await checkWorkoutSectionMediaForDeletion(prisma, data)
 
   const updated = await prisma.workoutSection.update({
     where: {
@@ -191,6 +190,9 @@ export const deleteWorkoutSectionById = async (
       ].filter((x) => x) as string[]
 
       await deleteFiles(forDeletion)
+
+      await updateWorkoutMetaData(prisma, sectionForDeletion.workoutId)
+
       return sectionForDeletion.id
     } else {
       throw new ApolloError('deleteWorkoutSectionById: There was an issue.')
@@ -203,13 +205,14 @@ export const reorderWorkoutSections = async (
   { data }: MutationReorderWorkoutSectionsArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  const updated: WorkoutSection[] = await checkAndReorderObjects<WorkoutSection>(
-    data,
-    'workoutSection',
-    authedUserId,
-    prisma,
-    select,
-  )
+  const updated: WorkoutSection[] =
+    await checkAndReorderObjects<WorkoutSection>(
+      data,
+      'workoutSection',
+      authedUserId,
+      prisma,
+      select,
+    )
 
   if (updated) {
     return updated.map((u) => ({

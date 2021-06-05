@@ -18,6 +18,7 @@ import { Prisma } from '@prisma/client'
 import {
   formatWorkoutFiltersInput,
   formatWorkoutSectionFiltersInput,
+  updateWorkoutMetaData,
 } from './utils'
 
 //// Queries ////
@@ -111,6 +112,7 @@ export const createWorkout = async (
   })
 
   if (workout) {
+    await updateWorkoutMetaData(prisma, (workout as Workout).id)
     return workout as Workout
   } else {
     throw new ApolloError('createWorkout: There was an issue.')
@@ -139,12 +141,16 @@ export const updateWorkout = async (
       // Note: You should not pass 'null' to a relationship field. It will be parsed as 'no input' and ignored.
       // To remove all related items of this type pass an empty array.
       // https://www.prisma.io/docs/concepts/components/prisma-client/relation-queries#disconnect-all-related-records
-      WorkoutGoals: {
-        set: data.WorkoutGoals ? data.WorkoutGoals : undefined,
-      },
-      WorkoutTags: {
-        set: data.WorkoutTags ? data.WorkoutTags : undefined,
-      },
+      WorkoutGoals: Object.hasOwnProperty('WorkoutGoals')
+        ? {
+            set: data.WorkoutGoals != null ? data.WorkoutGoals : undefined,
+          }
+        : undefined,
+      WorkoutTags: Object.hasOwnProperty('WorkoutTags')
+        ? {
+            set: data.WorkoutTags != null ? data.WorkoutTags : undefined,
+          }
+        : undefined,
     },
     select,
   })
@@ -152,6 +158,9 @@ export const updateWorkout = async (
   if (updated) {
     if (mediaFileUrisForDeletion.length > 0) {
       await deleteFiles(mediaFileUrisForDeletion)
+    }
+    if (Object.hasOwnProperty('WorkoutGoals')) {
+      await updateWorkoutMetaData(prisma, (updated as Workout).id)
     }
     return updated as Workout
   } else {
@@ -229,6 +238,8 @@ export const duplicateWorkoutById = async (
       description: original.description,
       difficultyLevel: original.difficultyLevel,
       contentAccessScope: 'PRIVATE',
+      metaData: original.metaData,
+      lengthMinutes: original.lengthMinutes,
       User: {
         connect: { id: authedUserId },
       },

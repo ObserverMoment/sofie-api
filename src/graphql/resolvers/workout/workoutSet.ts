@@ -24,6 +24,7 @@ import {
 import { Context } from '../../..'
 import { ApolloError } from 'apollo-server-express'
 import { PrismaPromise } from '@prisma/client'
+import { updateWorkoutMetaData } from './utils'
 
 export const createWorkoutSet = async (
   r: any,
@@ -183,6 +184,8 @@ export const deleteWorkoutSetById = async (
       userId: true,
       sortPosition: true,
       workoutSectionId: true,
+      /// Need the workoutId to be able to call the update workout meta data json method.
+      WorkoutSection: { select: { workoutId: true } },
       IntervalBuyIn: {
         select: {
           id: true,
@@ -243,6 +246,11 @@ export const deleteWorkoutSetById = async (
         objectType: 'workoutSet',
         prisma: prisma,
       })
+
+      await updateWorkoutMetaData(
+        prisma,
+        workoutSetForDeletion.WorkoutSection.workoutId,
+      )
 
       return deletedSet.id
     } else {
@@ -356,15 +364,14 @@ export const deleteWorkoutSetIntervalBuyInById = async (
   { id }: MutationDeleteWorkoutSetIntervalBuyInByIdArgs,
   { authedUserId, prisma }: Context,
 ) => {
-  const intervalBuyInForDeletion = await prisma.workoutSetIntervalBuyIn.findUnique(
-    {
+  const intervalBuyInForDeletion =
+    await prisma.workoutSetIntervalBuyIn.findUnique({
       where: { id },
       select: {
         userId: true,
         workoutMoveId: true,
       },
-    },
-  )
+    })
 
   if (!intervalBuyInForDeletion) {
     throw new ApolloError(
