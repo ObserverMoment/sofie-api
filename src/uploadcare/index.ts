@@ -1,24 +1,14 @@
 import fetch from 'node-fetch'
 import crypto from 'crypto'
+import { PrismaClient } from '@prisma/client'
 import {
-  Workout,
-  LoggedWorkout,
-  User,
-  WorkoutSection,
-  PrismaClient,
-} from '@prisma/client'
-import {
-  WorkoutProgram,
-  Move,
   UpdateUserInput,
   UpdateWorkoutSectionInput,
-  UpdateLoggedWorkoutInput,
-  UpdateWorkoutProgramInput,
+  UpdateWorkoutPlanInput,
   UpdateMoveInput,
   UpdateWorkoutInput,
   UpdateUserBenchmarkEntryInput,
 } from '../generated/graphql'
-import { UserBenchmarkEntry } from '../../prisma/generated/backupPrisma'
 import { AccessScopeError } from '../graphql/utils'
 
 const uploadcareApiUBaseUri = 'https://api.uploadcare.com'
@@ -186,15 +176,15 @@ export async function checkWorkoutSectionMediaForDeletion(
   }
 }
 
-/** Checks if there are any media (hosted) files being changed in the workoutProgramData
+/** Checks if there are any media (hosted) files being changed in the workoutPlanData
  * Returns an array of fileIds (strings) which should be deleted once the main transaction is successful.
  */
-export async function checkWorkoutProgramMediaForDeletion(
+export async function checkWorkoutPlanMediaForDeletion(
   prisma: PrismaClient,
-  data: UpdateWorkoutProgramInput,
+  data: UpdateWorkoutPlanInput,
 ): Promise<string[]> {
-  // Get the old workoutProgram data first.
-  const oldWorkoutProgram = await prisma.workoutProgram.findUnique({
+  // Get the old workoutPlan data first.
+  const oldWorkoutPlan = await prisma.workoutPlan.findUnique({
     where: {
       id: data.id,
     },
@@ -206,15 +196,13 @@ export async function checkWorkoutProgramMediaForDeletion(
     },
   })
 
-  if (!oldWorkoutProgram) {
+  if (!oldWorkoutPlan) {
     throw new AccessScopeError(
-      'checkWorkoutProgramMediaForDeletion: Unable to find object to check',
+      'checkWorkoutPlanMediaForDeletion: Unable to find object to check',
     )
   } else {
-    const fileIdsForDeletion: string[] = Object.keys(oldWorkoutProgram)
-      .map((key: string) =>
-        getFileIdForDeleteOrNull(oldWorkoutProgram, data, key),
-      )
+    const fileIdsForDeletion: string[] = Object.keys(oldWorkoutPlan)
+      .map((key: string) => getFileIdForDeleteOrNull(oldWorkoutPlan, data, key))
       .filter((x) => !!x) as string[]
 
     return fileIdsForDeletion

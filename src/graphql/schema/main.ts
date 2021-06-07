@@ -27,8 +27,8 @@ export default gql`
     #### Text Search ####
     textSearchWorkouts(text: String!): [Workout!]
     textSearchWorkoutNames(text: String!): [TextSearchResult!]
-    textSearchWorkoutPrograms(text: String!): [WorkoutProgram!]
-    textSearchWorkoutProgramNames(text: String!): [TextSearchResult!]
+    textSearchWorkoutPlans(text: String!): [WorkoutPlan!]
+    textSearchWorkoutPlanNames(text: String!): [TextSearchResult!]
     textSearchUserPublicProfiles(text: String!): [UserPublicProfile!]
     textSearchUserPublicNames(text: String!): [TextSearchResult!]
     #### User ####
@@ -51,12 +51,10 @@ export default gql`
     userWorkouts: [Workout!]!
     workoutById(id: ID!): Workout!
     #### Workout Programs and Enrolments ####
-    publicWorkoutPrograms: [WorkoutProgram!]!
-    workoutProgramById(id: ID!): WorkoutProgram!
-    userWorkoutPrograms: [WorkoutProgram!]!
-    userWorkoutProgramEnrolments(
-      workoutProgramId: ID!
-    ): [WorkoutProgramEnrolment!]
+    publicWorkoutPlans: [WorkoutPlan!]!
+    workoutPlanById(id: ID!): WorkoutPlan!
+    userWorkoutPlans: [WorkoutPlan!]!
+    userWorkoutPlanEnrolments(workoutPlanId: ID!): [WorkoutPlanEnrolment!]
   }
 
   type Mutation {
@@ -205,30 +203,38 @@ export default gql`
     ): [SortPositionUpdated!]!
     #########################
     #### Workout Program ####
-    createWorkoutProgram(data: CreateWorkoutProgramInput!): WorkoutProgram!
-    updateWorkoutProgram(data: UpdateWorkoutProgramInput!): WorkoutProgram!
-    softDeleteWorkoutProgramById(id: ID!): ID!
-    #### Workout Program Workout ####
-    createWorkoutProgramWorkout(
-      data: CreateWorkoutProgramWorkoutInput!
-    ): WorkoutProgramWorkout!
-    updateWorkoutProgramWorkout(
-      data: UpdateWorkoutProgramWorkoutInput!
-    ): WorkoutProgramWorkout!
-    deleteWorkoutProgramWorkoutById(id: ID!): ID!
+    createWorkoutPlan(data: CreateWorkoutPlanInput!): WorkoutPlan!
+    updateWorkoutPlan(data: UpdateWorkoutPlanInput!): WorkoutPlan!
+    softDeleteWorkoutPlanById(id: ID!): ID!
+    #### Workout Plan Day ####
+    createWorkoutPlanDay(data: CreateWorkoutPlanDayInput!): WorkoutPlanDay!
+    updateWorkoutPlanDay(data: UpdateWorkoutPlanDayInput!): WorkoutPlanDay!
+    deleteWorkoutPlanDayById(id: ID!): ID!
+    #### Workout Plan Day ####
+    createWorkoutPlanDayWorkout(
+      data: CreateWorkoutPlanDayWorkoutInput!
+    ): WorkoutPlanDayWorkout!
+    updateWorkoutPlanDayWorkout(
+      data: UpdateWorkoutPlanDayWorkoutInput!
+    ): WorkoutPlanDayWorkout!
+    deleteWorkoutPlanDayWorkoutById(id: ID!): ID!
+    reorderWorkoutPlanDayWorkouts(
+      data: [UpdateSortPositionInput!]!
+    ): [SortPositionUpdated!]!
     #### Workout Program Enrolment ####
-    createWorkoutProgramEnrolment(
-      workoutProgramId: ID!
-    ): WorkoutProgramEnrolment!
-    deleteWorkoutProgramEnrolmentById(id: ID!): ID!
+    createWorkoutPlanEnrolment(workoutPlanId: ID!): WorkoutPlanEnrolment!
+    updateWorkoutPlanEnrolment(
+      data: UpdateWorkoutPlanEnrolmentInput!
+    ): WorkoutPlanEnrolment!
+    deleteWorkoutPlanEnrolmentById(id: ID!): ID!
     #### Workout Program Review ####
-    createWorkoutProgramReview(
-      data: CreateWorkoutProgramReviewInput!
-    ): WorkoutProgramReview!
-    updateWorkoutProgramReview(
-      data: UpdateWorkoutProgramReviewInput!
-    ): WorkoutProgramReview!
-    deleteWorkoutProgramReviewById(id: ID!): ID!
+    createWorkoutPlanReview(
+      data: CreateWorkoutPlanReviewInput!
+    ): WorkoutPlanReview!
+    updateWorkoutPlanReview(
+      data: UpdateWorkoutPlanReviewInput!
+    ): WorkoutPlanReview!
+    deleteWorkoutPlanReviewById(id: ID!): ID!
   }
 
   type SortPositionUpdated {

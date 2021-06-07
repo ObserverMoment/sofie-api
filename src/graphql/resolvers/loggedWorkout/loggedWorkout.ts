@@ -52,7 +52,7 @@ export const loggedWorkoutById = async (
 
     return loggedWorkout as LoggedWorkout
   } else {
-    throw new ApolloError('loggedWorkoutProgramById: There was an issue.')
+    throw new ApolloError('loggedWorkoutPlanById: There was an issue.')
   }
 }
 
@@ -121,18 +121,6 @@ export const createLoggedWorkout = async (
             connect: data.GymProfile,
           }
         : undefined,
-      // Connect to the enrolment (single instance of a user being enrolled in a plan)
-      // And to the specific session (via workoutProgramWorkout) within the program.
-      WorkoutProgramEnrolment: data.WorkoutProgramEnrolment
-        ? {
-            connect: data.WorkoutProgramEnrolment,
-          }
-        : undefined,
-      WorkoutProgramWorkout: data.WorkoutProgramWorkout
-        ? {
-            connect: data.WorkoutProgramWorkout,
-          }
-        : undefined,
     },
     select,
   })
@@ -145,7 +133,7 @@ export const createLoggedWorkout = async (
 }
 
 /// Does not do any relation connecting
-/// ScheduledWorkout, WorkoutProgramEnrolment or WorkoutProgramWorkout
+/// ScheduledWorkout, WorkoutPlanEnrolment or WorkoutPlanWorkout
 export const updateLoggedWorkout = async (
   r: any,
   { data }: MutationUpdateLoggedWorkoutArgs,

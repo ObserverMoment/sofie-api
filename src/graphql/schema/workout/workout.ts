@@ -3,10 +3,7 @@ import { gql } from 'apollo-server-express'
 export default gql`
   type Workout {
     id: ID!
-    # Ideally thiw would be required but needs to be nullable for now until this is resolved
-    # So that Artemis type generation => DateTime coercers work.
-    # https://github.com/comigor/artemis/issues/293
-    createdAt: DateTime
+    createdAt: DateTime!
     User: UserSummary!
     archived: Boolean!
     name: String!
@@ -54,7 +51,6 @@ export default gql`
 
   type WorkoutTag {
     id: ID!
-    User: User!
     tag: String!
   }
 

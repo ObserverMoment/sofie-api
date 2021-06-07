@@ -82,8 +82,8 @@ import {
 import {
   textSearchWorkouts,
   textSearchWorkoutNames,
-  textSearchWorkoutPrograms,
-  textSearchWorkoutProgramNames,
+  textSearchWorkoutPlans,
+  textSearchWorkoutPlanNames,
   textSearchUserPublicProfiles,
   textSearchUserPublicNames,
 } from './textSearch'
@@ -149,22 +149,27 @@ import {
 } from './workout/workoutMove'
 
 import {
-  publicWorkoutPrograms,
-  userWorkoutPrograms,
-  workoutProgramById,
-  createWorkoutProgram,
-  updateWorkoutProgram,
-  softDeleteWorkoutProgramById,
-  createWorkoutProgramWorkout,
-  updateWorkoutProgramWorkout,
-  deleteWorkoutProgramWorkoutById,
-  userWorkoutProgramEnrolments,
-  createWorkoutProgramEnrolment,
-  deleteWorkoutProgramEnrolmentById,
-  createWorkoutProgramReview,
-  updateWorkoutProgramReview,
-  deleteWorkoutProgramReviewById,
-} from './workoutProgram'
+  publicWorkoutPlans,
+  userWorkoutPlans,
+  workoutPlanById,
+  createWorkoutPlan,
+  updateWorkoutPlan,
+  softDeleteWorkoutPlanById,
+  createWorkoutPlanDay,
+  updateWorkoutPlanDay,
+  deleteWorkoutPlanDayById,
+  createWorkoutPlanDayWorkout,
+  updateWorkoutPlanDayWorkout,
+  deleteWorkoutPlanDayWorkoutById,
+  reorderWorkoutPlanDayWorkouts,
+  userWorkoutPlanEnrolments,
+  createWorkoutPlanEnrolment,
+  updateWorkoutPlanEnrolment,
+  deleteWorkoutPlanEnrolmentById,
+  createWorkoutPlanReview,
+  updateWorkoutPlanReview,
+  deleteWorkoutPlanReviewById,
+} from './workoutPlan'
 
 import { GraphQLScalarType } from 'graphql'
 import GraphQLJSON from 'graphql-type-json'
@@ -212,8 +217,8 @@ const resolvers: Resolvers = {
     //// Text Search ////
     textSearchWorkouts,
     textSearchWorkoutNames,
-    textSearchWorkoutPrograms,
-    textSearchWorkoutProgramNames,
+    textSearchWorkoutPlans,
+    textSearchWorkoutPlanNames,
     textSearchUserPublicProfiles,
     textSearchUserPublicNames,
     //// User ////
@@ -230,11 +235,11 @@ const resolvers: Resolvers = {
     publicWorkouts,
     userWorkouts,
     workoutById,
-    //// WorkoutPrograms ////
-    publicWorkoutPrograms,
-    userWorkoutPrograms,
-    workoutProgramById,
-    userWorkoutProgramEnrolments,
+    //// WorkoutPlans ////
+    publicWorkoutPlans,
+    userWorkoutPlans,
+    workoutPlanById,
+    userWorkoutPlanEnrolments,
   },
   Mutation: {
     ///////////////////
@@ -337,20 +342,26 @@ const resolvers: Resolvers = {
     duplicateWorkoutMoveById,
     deleteWorkoutMoveById,
     reorderWorkoutMoves,
-    /////////////////////////
-    //// Workout Program ////
-    /////////////////////////
-    createWorkoutProgram,
-    updateWorkoutProgram,
-    softDeleteWorkoutProgramById,
-    createWorkoutProgramWorkout,
-    updateWorkoutProgramWorkout,
-    deleteWorkoutProgramWorkoutById,
-    createWorkoutProgramEnrolment,
-    deleteWorkoutProgramEnrolmentById,
-    createWorkoutProgramReview,
-    updateWorkoutProgramReview,
-    deleteWorkoutProgramReviewById,
+    //////////////////////
+    //// Workout Plan ////
+    //////////////////////
+    createWorkoutPlan,
+    updateWorkoutPlan,
+    softDeleteWorkoutPlanById,
+    createWorkoutPlanDay,
+    updateWorkoutPlanDay,
+    deleteWorkoutPlanDayById,
+    createWorkoutPlanDayWorkout,
+    updateWorkoutPlanDayWorkout,
+    deleteWorkoutPlanDayWorkoutById,
+    reorderWorkoutPlanDayWorkouts,
+    //// User specifc ////
+    createWorkoutPlanEnrolment,
+    updateWorkoutPlanEnrolment,
+    deleteWorkoutPlanEnrolmentById,
+    createWorkoutPlanReview,
+    updateWorkoutPlanReview,
+    deleteWorkoutPlanReviewById,
   },
 }
 

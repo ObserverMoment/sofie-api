@@ -6,47 +6,29 @@ import { gql } from 'apollo-server-express'
 export default gql`
   type WorkoutSummary {
     id: ID!
-    # Ideally thiw would be required but needs to be nullable for now until this is resolved
-    # So that Artemis type generation => DateTime coercers work.
-    # https://github.com/comigor/artemis/issues/293
-    createdAt: DateTime
-    User: UserSummary
+    createdAt: DateTime!
+    creatorId: ID!
+    creatorName: String!
+    creatorAvatarUri: String
     name: String!
     description: String
-    introVideoUri: String
-    introVideoThumbUri: String
-    introAudioUri: String
-    coverImageUri: String
-    difficultyLevel: DifficultyLevel!
     contentAccessScope: ContentAccessScope!
-    WorkoutGoals: [WorkoutGoal!]!
-    WorkoutTags: [WorkoutTag!]!
+    lengthMinutes: Int
+    difficultyLevel: DifficultyLevel!
+    WorkoutGoals: [String!]!
+    WorkoutTags: [String!]!
     WorkoutSections: [WorkoutSectionSummary!]!
+    Moves: [String!]!
+    Equipments: [String!]!
   }
 
   type WorkoutSectionSummary {
-    id: ID!
     name: String
     timecap: Int
     sortPosition: Int!
-    WorkoutSectionType: WorkoutSectionType!
-    WorkoutSets: [WorkoutSetSummary!]!
-  }
-
-  type WorkoutSetSummary {
-    id: ID!
-    WorkoutMoves: [WorkoutMoveSummary!]!
-  }
-
-  type WorkoutMoveSummary {
-    id: ID!
-    Equipment: Equipment
-    Move: MoveSummary!
-  }
-
-  type MoveSummary {
-    id: ID!
-    name: String!
-    RequiredEquipments: [Equipment!]!
+    classVideoUri: String
+    classVideoThumbUri: String
+    classAudioUri: String
+    WorkoutSectionType: String!
   }
 `

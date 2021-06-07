@@ -13,7 +13,7 @@ import userSchema from './user'
 import userBenchmarkSchema from './userBenchmark'
 import workoutSchema from './workout/workout'
 import workoutMoveSchema from './workout/workoutMove'
-import workoutProgramSchema from './workoutProgram'
+import workoutPlanSchema from './workoutPlan'
 import workoutSectionSchema from './workout/workoutSection'
 import workoutSetSchema from './workout/workoutSet'
 import workoutSummarySchema from './workout/workoutSummary'
@@ -33,7 +33,7 @@ const typeDefs = mergeTypeDefs([
   userBenchmarkSchema,
   workoutSchema,
   workoutMoveSchema,
-  workoutProgramSchema,
+  workoutPlanSchema,
   workoutSectionSchema,
   workoutSetSchema,
   workoutSummarySchema,

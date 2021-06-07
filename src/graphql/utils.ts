@@ -11,6 +11,7 @@ export class AccessScopeError extends ApolloError {
 }
 
 /// Must match the prisma model names as per prisma[modelName].findUnique()
+/// i.e. be camelCase.
 export type ContentObjectType =
   | 'gymProfile'
   | 'loggedWorkout'
@@ -29,9 +30,11 @@ export type ContentObjectType =
   | 'workoutSetIntervalBuyIn'
   | 'workoutSetGenerator'
   | 'workoutMove'
-  | 'workoutProgram'
-  | 'workoutProgramEnrolment'
-  | 'workoutProgramReview'
+  | 'workoutPlan'
+  | 'workoutPlanDay'
+  | 'workoutPlanDayWorkout'
+  | 'workoutPlanEnrolment'
+  | 'workoutPlanReview'
   | 'userBenchmark'
   | 'userBenchmarkEntry'
 
@@ -173,32 +176,5 @@ export function checkIsAdmin(userType: ContextUserType) {
     throw new AccessScopeError(
       'Only admins can access this data of functionality.',
     )
-  }
-}
-
-/// Given a WorkoutProgramWorkout instance - does the authed user have access to it.
-// I.e. Do they own the parent.
-export async function checkUserOwnsParentWorkoutProgram(
-  workoutProgramWorkoutId: string,
-  authedUserId: string,
-  prisma: PrismaClient,
-) {
-  const workoutProgramWorkout = await prisma.workoutProgramWorkout.findUnique({
-    where: { id: workoutProgramWorkoutId },
-    select: {
-      WorkoutProgram: {
-        select: {
-          userId: true,
-        },
-      },
-    },
-  })
-
-  if (
-    !workoutProgramWorkout ||
-    (workoutProgramWorkout &&
-      workoutProgramWorkout.WorkoutProgram.userId !== authedUserId)
-  ) {
-    throw new AccessScopeError()
   }
 }

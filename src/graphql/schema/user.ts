@@ -72,13 +72,13 @@ export default gql`
     displayName: String
     CustomMoves: [Move!]
     Workouts: [Workout!]
-    WorkoutPrograms: [WorkoutProgram!]
+    WorkoutPlans: [WorkoutPlan!]
   }
 
   type UserPrivateProfile {
     LoggedWorkouts: [LoggedWorkout!]
     Workouts: [Workout!]
-    WorkoutPrograms: [WorkoutProgram!]
-    WorkoutProgramEnrolments: [WorkoutProgramEnrolment!]
+    WorkoutPlans: [WorkoutPlan!]
+    WorkoutPlanEnrolments: [WorkoutPlanEnrolment!]
   }
 `

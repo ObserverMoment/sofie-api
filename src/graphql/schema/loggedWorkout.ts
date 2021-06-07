@@ -11,8 +11,6 @@ export default gql`
     Workout: Workout!
     ScheduledWorkout: ScheduledWorkout
     GymProfile: GymProfile
-    WorkoutProgramWorkout: WorkoutProgramWorkout
-    WorkoutProgramEnrolment: WorkoutProgramWorkout
   }
 
   # roundTimesMs shape - for each section round number.
@@ -69,8 +67,6 @@ export default gql`
     Workout: ConnectRelationInput
     ScheduledWorkout: ConnectRelationInput
     GymProfile: ConnectRelationInput
-    WorkoutProgramWorkout: ConnectRelationInput
-    WorkoutProgramEnrolment: ConnectRelationInput
   }
 
   input CreateLoggedWorkoutSectionInLoggedWorkoutInput {
