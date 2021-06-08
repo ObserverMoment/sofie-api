@@ -30,6 +30,10 @@ export default gql`
     id: ID!
     displayName: String!
     avatarUri: String
+    userProfileScope: UserProfileScope!
+    tagline: String
+    countryCode: String
+    townCity: String
   }
 
   # Only used for the currently logged in user to update themselves - so ID not required.

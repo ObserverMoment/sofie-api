@@ -1540,6 +1540,10 @@ export type UserSummary = {
   id: Scalars['ID'];
   displayName: Scalars['String'];
   avatarUri?: Maybe<Scalars['String']>;
+  userProfileScope: UserProfileScope;
+  tagline?: Maybe<Scalars['String']>;
+  countryCode?: Maybe<Scalars['String']>;
+  townCity?: Maybe<Scalars['String']>;
 };
 
 export type Workout = {
@@ -2479,6 +2483,10 @@ export type UserSummaryResolvers<ContextType = any, ParentType extends Resolvers
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   displayName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   avatarUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  userProfileScope?: Resolver<ResolversTypes['UserProfileScope'], ParentType, ContextType>;
+  tagline?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  countryCode?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  townCity?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
