@@ -266,6 +266,7 @@ export type CreateWorkoutPlanDayWorkoutInput = {
 
 export type CreateWorkoutPlanInput = {
   name: Scalars['String'];
+  lengthWeeks: Scalars['Int'];
   contentAccessScope: ContentAccessScope;
 };
 
@@ -1386,11 +1387,13 @@ export type UpdateWorkoutPlanInput = {
   archived?: Maybe<Scalars['Boolean']>;
   name?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
+  lengthWeeks?: Maybe<Scalars['Int']>;
   coverImageUri?: Maybe<Scalars['String']>;
   introVideoUri?: Maybe<Scalars['String']>;
   introVideoThumbUri?: Maybe<Scalars['String']>;
   introAudioUri?: Maybe<Scalars['String']>;
   contentAccessScope?: Maybe<ContentAccessScope>;
+  WorkoutTags?: Maybe<Array<ConnectRelationInput>>;
 };
 
 export type UpdateWorkoutPlanReviewInput = {
@@ -1578,6 +1581,7 @@ export type WorkoutGoal = {
   id: Scalars['ID'];
   name: Scalars['String'];
   description: Scalars['String'];
+  hexColor: Scalars['String'];
 };
 
 export type WorkoutMove = {
@@ -1607,6 +1611,7 @@ export type WorkoutPlan = {
   archived: Scalars['Boolean'];
   name: Scalars['String'];
   description?: Maybe<Scalars['String']>;
+  lengthWeeks: Scalars['Int'];
   coverImageUri?: Maybe<Scalars['String']>;
   introVideoUri?: Maybe<Scalars['String']>;
   introVideoThumbUri?: Maybe<Scalars['String']>;
@@ -1616,6 +1621,7 @@ export type WorkoutPlan = {
   Enrolments: Array<WorkoutPlanEnrolment>;
   WorkoutPlanDays: Array<WorkoutPlanDay>;
   WorkoutPlanReviews: Array<WorkoutPlanReview>;
+  WorkoutTags: Array<WorkoutTag>;
 };
 
 export type WorkoutPlanDay = {
@@ -1639,7 +1645,7 @@ export type WorkoutPlanEnrolment = {
   id: Scalars['ID'];
   startDate: Scalars['DateTime'];
   completedPlanDayWorkoutIds: Array<Scalars['String']>;
-  User: User;
+  User: UserSummary;
   WorkoutPlan: WorkoutPlan;
 };
 
@@ -1649,7 +1655,7 @@ export type WorkoutPlanReview = {
   createdAt: Scalars['DateTime'];
   score: Scalars['Float'];
   comment?: Maybe<Scalars['String']>;
-  User: User;
+  User: UserSummary;
 };
 
 export type WorkoutSection = {
@@ -2500,6 +2506,7 @@ export type WorkoutGoalResolvers<ContextType = any, ParentType extends Resolvers
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  hexColor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -2523,6 +2530,7 @@ export type WorkoutPlanResolvers<ContextType = any, ParentType extends Resolvers
   archived?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  lengthWeeks?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   coverImageUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   introVideoUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   introVideoThumbUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -2532,6 +2540,7 @@ export type WorkoutPlanResolvers<ContextType = any, ParentType extends Resolvers
   Enrolments?: Resolver<Array<ResolversTypes['WorkoutPlanEnrolment']>, ParentType, ContextType>;
   WorkoutPlanDays?: Resolver<Array<ResolversTypes['WorkoutPlanDay']>, ParentType, ContextType>;
   WorkoutPlanReviews?: Resolver<Array<ResolversTypes['WorkoutPlanReview']>, ParentType, ContextType>;
+  WorkoutTags?: Resolver<Array<ResolversTypes['WorkoutTag']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -2555,7 +2564,7 @@ export type WorkoutPlanEnrolmentResolvers<ContextType = any, ParentType extends 
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   startDate?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   completedPlanDayWorkoutIds?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
-  User?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  User?: Resolver<ResolversTypes['UserSummary'], ParentType, ContextType>;
   WorkoutPlan?: Resolver<ResolversTypes['WorkoutPlan'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
@@ -2565,7 +2574,7 @@ export type WorkoutPlanReviewResolvers<ContextType = any, ParentType extends Res
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   score?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   comment?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  User?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  User?: Resolver<ResolversTypes['UserSummary'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 

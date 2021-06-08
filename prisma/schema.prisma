@@ -96,6 +96,7 @@ model WorkoutGoal {
   createdAt   DateTime  @default(now())
   name        String
   description String
+  hexColor    String
   Workouts    Workout[]
 }
 
@@ -285,13 +286,15 @@ model Workout {
   WorkoutPlanDayWorkout WorkoutPlanDayWorkout[]
 }
 
+/// Used on both workouts and workout plans + maybe others (events, challenges) in the future. Free text tag for the user to tag their content.
 model WorkoutTag {
-  id        String    @id @default(uuid())
-  createdAt DateTime  @default(now())
-  User      User      @relation(fields: [userId], references: [id])
-  userId    String
-  tag       String
-  Workouts  Workout[]
+  id           String        @id @default(uuid())
+  createdAt    DateTime      @default(now())
+  User         User          @relation(fields: [userId], references: [id])
+  userId       String
+  tag          String
+  Workouts     Workout[]
+  WorkoutPlans WorkoutPlan[]
 }
 
 model WorkoutSection {
@@ -401,6 +404,7 @@ model WorkoutPlan {
   archived             Boolean                @default(false)
   name                 String
   description          String?
+  lengthWeeks          Int                    @default(1)
   coverImageUri        String?
   introVideoUri        String?
   introVideoThumbUri   String?
@@ -408,6 +412,7 @@ model WorkoutPlan {
   contentAccessScope   ContentAccessScope     @default(PRIVATE)
   Enrolments           WorkoutPlanEnrolment[]
   WorkoutPlanReviews   WorkoutPlanReview[]
+  WorkoutTags          WorkoutTag[]
   UserCollections      UserCollection[]
   FeaturedWorkoutPlans FeaturedWorkoutPlan[]
   WorkoutPlanDays      WorkoutPlanDay[]

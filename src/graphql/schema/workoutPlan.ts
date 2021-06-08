@@ -7,6 +7,7 @@ export default gql`
     archived: Boolean!
     name: String!
     description: String
+    lengthWeeks: Int!
     coverImageUri: String
     introVideoUri: String
     introVideoThumbUri: String
@@ -16,11 +17,13 @@ export default gql`
     Enrolments: [WorkoutPlanEnrolment!]!
     WorkoutPlanDays: [WorkoutPlanDay!]!
     WorkoutPlanReviews: [WorkoutPlanReview!]!
+    WorkoutTags: [WorkoutTag!]!
   }
 
   # Just creates the basic required fields to make a fresh, empty plan in the DB ready for CRUDing.
   input CreateWorkoutPlanInput {
     name: String!
+    lengthWeeks: Int!
     contentAccessScope: ContentAccessScope!
   }
 
@@ -29,11 +32,13 @@ export default gql`
     archived: Boolean
     name: String
     description: String
+    lengthWeeks: Int
     coverImageUri: String
     introVideoUri: String
     introVideoThumbUri: String
     introAudioUri: String
     contentAccessScope: ContentAccessScope
+    WorkoutTags: [ConnectRelationInput!]
   }
 
   type WorkoutPlanDay {
@@ -81,7 +86,7 @@ export default gql`
     id: ID!
     startDate: DateTime!
     completedPlanDayWorkoutIds: [String!]!
-    User: User!
+    User: UserSummary!
     WorkoutPlan: WorkoutPlan!
   }
 
@@ -96,7 +101,7 @@ export default gql`
     createdAt: DateTime!
     score: Float!
     comment: String
-    User: User!
+    User: UserSummary!
   }
 
   input CreateWorkoutPlanReviewInput {

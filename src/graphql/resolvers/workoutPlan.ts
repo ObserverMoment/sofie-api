@@ -56,8 +56,6 @@ export const userWorkoutPlans = async (
     select,
   })
 
-  console.log(workoutPlans)
-
   return workoutPlans as WorkoutPlan[]
 }
 
@@ -144,8 +142,15 @@ export const updateWorkoutPlan = async (
     data: {
       ...data,
       name: data.name || undefined,
+      lengthWeeks: data.lengthWeeks || undefined,
       archived: data.archived || undefined,
       contentAccessScope: data.contentAccessScope || undefined,
+      /// Pass an empty array to unset / disconnect all tags.
+      WorkoutTags: Object.hasOwnProperty('WorkoutTags')
+        ? {
+            set: data.WorkoutTags != null ? data.WorkoutTags : undefined,
+          }
+        : undefined,
     },
     select,
   })

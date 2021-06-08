@@ -47,6 +47,7 @@ export default gql`
     id: ID!
     name: String!
     description: String!
+    hexColor: String!
   }
 
   type WorkoutTag {
