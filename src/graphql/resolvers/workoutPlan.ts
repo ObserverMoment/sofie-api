@@ -146,7 +146,7 @@ export const updateWorkoutPlan = async (
       archived: data.archived || undefined,
       contentAccessScope: data.contentAccessScope || undefined,
       /// Pass an empty array to unset / disconnect all tags.
-      WorkoutTags: Object.hasOwnProperty('WorkoutTags')
+      WorkoutTags: data.hasOwnProperty('WorkoutTags')
         ? {
             set: data.WorkoutTags != null ? data.WorkoutTags : undefined,
           }
@@ -407,7 +407,7 @@ export const updateWorkoutPlanEnrolment = async (
     where: { id: data.id },
     data: {
       ...data,
-      completedPlanDayWorkoutIds: Object.hasOwnProperty(
+      completedPlanDayWorkoutIds: data.hasOwnProperty(
         'completedPlanDayWorkoutIds',
       )
         ? {

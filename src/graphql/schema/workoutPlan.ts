@@ -81,7 +81,6 @@ export default gql`
     Workout: ConnectRelationInput
   }
 
-  ## User specifc plan models - enrolment and reviews are created by the user accessing the content. All other models are created by the owner / creator.
   type WorkoutPlanEnrolment {
     id: ID!
     startDate: DateTime!
