@@ -201,16 +201,24 @@ export default gql`
     reorderWorkoutMoves(
       data: [UpdateSortPositionInput!]!
     ): [SortPositionUpdated!]!
-    #########################
-    #### Workout Program ####
+    ######################
+    #### Workout Plan ####
     createWorkoutPlan(data: CreateWorkoutPlanInput!): WorkoutPlan!
     updateWorkoutPlan(data: UpdateWorkoutPlanInput!): WorkoutPlan!
+    moveWorkoutPlanDayToAnotherDay(
+      data: MoveWorkoutPlanDayToAnotherDayInput!
+    ): WorkoutPlanDay!
+    copyWorkoutPlanDayToAnotherDay(
+      data: CopyWorkoutPlanDayToAnotherDayInput!
+    ): WorkoutPlanDay!
     softDeleteWorkoutPlanById(id: ID!): ID!
     #### Workout Plan Day ####
-    createWorkoutPlanDay(data: CreateWorkoutPlanDayInput!): WorkoutPlanDay!
+    createWorkoutPlanDayWithWorkout(
+      data: CreateWorkoutPlanDayWithWorkoutInput!
+    ): WorkoutPlanDay!
     updateWorkoutPlanDay(data: UpdateWorkoutPlanDayInput!): WorkoutPlanDay!
     deleteWorkoutPlanDayById(id: ID!): ID!
-    #### Workout Plan Day ####
+    #### Workout Plan Day Workout ####
     createWorkoutPlanDayWorkout(
       data: CreateWorkoutPlanDayWorkoutInput!
     ): WorkoutPlanDayWorkout!
@@ -221,13 +229,13 @@ export default gql`
     reorderWorkoutPlanDayWorkouts(
       data: [UpdateSortPositionInput!]!
     ): [SortPositionUpdated!]!
-    #### Workout Program Enrolment ####
+    #### Workout Plan Enrolment ####
     createWorkoutPlanEnrolment(workoutPlanId: ID!): WorkoutPlanEnrolment!
     updateWorkoutPlanEnrolment(
       data: UpdateWorkoutPlanEnrolmentInput!
     ): WorkoutPlanEnrolment!
     deleteWorkoutPlanEnrolmentById(id: ID!): ID!
-    #### Workout Program Review ####
+    #### Workout Plan Review ####
     createWorkoutPlanReview(
       data: CreateWorkoutPlanReviewInput!
     ): WorkoutPlanReview!

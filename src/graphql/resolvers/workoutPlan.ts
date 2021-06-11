@@ -15,7 +15,6 @@ import {
   WorkoutPlanReview,
   QueryWorkoutPlanByIdArgs,
   WorkoutPlanDay,
-  MutationCreateWorkoutPlanDayArgs,
   MutationUpdateWorkoutPlanDayArgs,
   MutationDeleteWorkoutPlanDayByIdArgs,
   MutationCreateWorkoutPlanDayWorkoutArgs,
@@ -25,6 +24,9 @@ import {
   MutationReorderWorkoutPlanDayWorkoutsArgs,
   SortPositionUpdated,
   MutationUpdateWorkoutPlanEnrolmentArgs,
+  MutationCreateWorkoutPlanDayWithWorkoutArgs,
+  MutationMoveWorkoutPlanDayToAnotherDayArgs,
+  MutationCopyWorkoutPlanDayToAnotherDayArgs,
 } from '../../generated/graphql'
 import { checkWorkoutPlanMediaForDeletion, deleteFiles } from '../../uploadcare'
 import {
@@ -186,9 +188,9 @@ export const softDeleteWorkoutPlanById = async (
 }
 
 //// Workout Program Days ////
-export const createWorkoutPlanDay = async (
+export const createWorkoutPlanDayWithWorkout = async (
   r: any,
-  { data }: MutationCreateWorkoutPlanDayArgs,
+  { data }: MutationCreateWorkoutPlanDayWithWorkoutArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
   await checkUserOwnsObject(
@@ -200,10 +202,19 @@ export const createWorkoutPlanDay = async (
 
   const workoutPlanDay = await prisma.workoutPlanDay.create({
     data: {
-      ...data,
+      dayNumber: data.dayNumber,
       User: { connect: { id: authedUserId } },
       WorkoutPlan: {
         connect: data.WorkoutPlan,
+      },
+      WorkoutPlanDayWorkouts: {
+        create: [
+          {
+            sortPosition: 0,
+            Workout: { connect: data.Workout },
+            User: { connect: { id: authedUserId } },
+          },
+        ],
       },
     },
     select,
@@ -212,7 +223,9 @@ export const createWorkoutPlanDay = async (
   if (workoutPlanDay) {
     return workoutPlanDay as WorkoutPlanDay
   } else {
-    throw new ApolloError('createWorkoutPlanDay: There was an issue.')
+    throw new ApolloError(
+      'createWorkoutPlanDayWithWorkout: There was an issue.',
+    )
   }
 }
 
@@ -236,6 +249,145 @@ export const updateWorkoutPlanDay = async (
     return updated as WorkoutPlanDay
   } else {
     throw new ApolloError('updateWorkoutPlanDay: There was an issue.')
+  }
+}
+
+export const moveWorkoutPlanDayToAnotherDay = async (
+  r: any,
+  { data }: MutationMoveWorkoutPlanDayToAnotherDayArgs,
+  { authedUserId, select, prisma }: Context,
+) => {
+  await checkUserOwnsObject(data.id, 'workoutPlanDay', authedUserId, prisma)
+
+  // Check if the moveTo day has already been assigned. If it has then delete the plan day that has been assigned to it.
+  const previousData = await prisma.workoutPlanDay.findFirst({
+    where: {
+      dayNumber: data.moveToDay,
+    },
+    select: {
+      id: true,
+    },
+  })
+
+  let updatedResult
+
+  const updateOp = prisma.workoutPlanDay.update({
+    where: { id: data.id },
+    data: {
+      dayNumber: data.moveToDay,
+    },
+    select,
+  })
+
+  if (previousData != null) {
+    const deletePrevPlanDayWorkouts = prisma.workoutPlanDayWorkout.deleteMany({
+      where: { WorkoutPlanDay: { id: previousData.id } },
+    })
+
+    const deletePrevPlanDay = prisma.workoutPlanDay.delete({
+      where: { id: previousData.id },
+    })
+
+    const [_, __, updated] = await prisma.$transaction([
+      deletePrevPlanDayWorkouts,
+      deletePrevPlanDay,
+      updateOp,
+    ])
+    updatedResult = updated
+  } else {
+    updatedResult = await updateOp
+  }
+
+  if (updatedResult) {
+    return updatedResult as WorkoutPlanDay
+  } else {
+    throw new ApolloError('moveWorkoutPlanDayToAnotherDay: There was an issue.')
+  }
+}
+
+export const copyWorkoutPlanDayToAnotherDay = async (
+  r: any,
+  { data }: MutationCopyWorkoutPlanDayToAnotherDayArgs,
+  { authedUserId, select, prisma }: Context,
+) => {
+  await checkUserOwnsObject(data.id, 'workoutPlanDay', authedUserId, prisma)
+
+  const dataToCopy = await prisma.workoutPlanDay.findUnique({
+    where: { id: data.id },
+    select: {
+      note: true,
+      workoutPlanId: true,
+      WorkoutPlanDayWorkouts: {
+        select: {
+          note: true,
+          sortPosition: true,
+          workoutId: true,
+        },
+      },
+    },
+  })
+
+  if (!dataToCopy) {
+    throw new ApolloError(
+      'moveWorkoutPlanDayToAnotherDay: Unable to find the original WorkoutPlanDay to make a copy of it.',
+    )
+  }
+
+  // Check if the copyTo day has already been assigned. If it has then delete the plan day that has been assigned to it.
+  const previousData = await prisma.workoutPlanDay.findFirst({
+    where: {
+      dayNumber: data.copyToDay,
+    },
+    select: {
+      id: true,
+    },
+  })
+
+  let updatedResult
+
+  const createOp = prisma.workoutPlanDay.create({
+    data: {
+      dayNumber: data.copyToDay,
+      note: dataToCopy.note,
+      User: { connect: { id: authedUserId } },
+      WorkoutPlan: {
+        connect: { id: dataToCopy.workoutPlanId },
+      },
+      WorkoutPlanDayWorkouts: {
+        create: dataToCopy.WorkoutPlanDayWorkouts.map((wData) => ({
+          note: wData.note,
+          sortPosition: wData.sortPosition,
+          Workout: { connect: { id: wData.workoutId } },
+          User: { connect: { id: authedUserId } },
+        })),
+      },
+    },
+    select,
+  })
+
+  if (previousData != null) {
+    const deletePrevPlanDayWorkouts = prisma.workoutPlanDayWorkout.deleteMany({
+      where: { WorkoutPlanDay: { id: previousData.id } },
+    })
+
+    const deletePrevPlanDay = prisma.workoutPlanDay.delete({
+      where: { id: previousData.id },
+    })
+
+    const [_, __, updated] = await prisma.$transaction([
+      deletePrevPlanDayWorkouts,
+      deletePrevPlanDay,
+      createOp,
+    ])
+    updatedResult = updated
+  } else {
+    updatedResult = await createOp
+  }
+
+  if (updatedResult) {
+    return updatedResult as WorkoutPlanDay
+  } else {
+    throw new ApolloError('copyWorkoutPlanDayToAnotherDay: There was an issue.')
   }
 }
 

@@ -48,15 +48,30 @@ export default gql`
     WorkoutPlanDayWorkouts: [WorkoutPlanDayWorkout!]!
   }
 
-  input CreateWorkoutPlanDayInput {
+  # When creating a new WorkoutPlanDay you start by adding a workout.
+  # We create the WorkoutPlanDay and connect to the workout in a single op.
+  input CreateWorkoutPlanDayWithWorkoutInput {
     dayNumber: Int!
     WorkoutPlan: ConnectRelationInput!
+    Workout: ConnectRelationInput!
   }
 
   input UpdateWorkoutPlanDayInput {
     id: ID!
     note: String
     dayNumber: Int
+  }
+
+  # This resolver will first delete any WorkoutPlanDay that is currently assigned to [moveToDay] via the dayNumber field.
+  input MoveWorkoutPlanDayToAnotherDayInput {
+    id: ID!
+    moveToDay: Int!
+  }
+
+  # This resolver will first delete any WorkoutPlanDay that is currently assigned to [copyToDay] via the dayNumber field.
+  input CopyWorkoutPlanDayToAnotherDayInput {
+    id: ID!
+    copyToDay: Int!
   }
 
   type WorkoutPlanDayWorkout {
