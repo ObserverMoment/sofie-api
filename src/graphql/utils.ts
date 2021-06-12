@@ -1,4 +1,3 @@
-import { PrismaClient } from '@prisma/client'
 import { ApolloError } from 'apollo-server-errors'
 import { ContextUserType } from '..'
 

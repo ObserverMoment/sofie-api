@@ -14,10 +14,16 @@ export default gql`
     introAudioUri: String
     contentAccessScope: ContentAccessScope!
     User: UserSummary!
-    Enrolments: [WorkoutPlanEnrolment!]!
+    Enrolments: [WorkoutPlanEnrolmentSummary!]!
     WorkoutPlanDays: [WorkoutPlanDay!]!
     WorkoutPlanReviews: [WorkoutPlanReview!]!
     WorkoutTags: [WorkoutTag!]!
+  }
+
+  # For displaying participants.
+  type WorkoutPlanEnrolmentSummary {
+    id: ID!
+    User: UserSummary!
   }
 
   # Just creates the basic required fields to make a fresh, empty plan in the DB ready for CRUDing.

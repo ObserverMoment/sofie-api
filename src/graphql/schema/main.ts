@@ -54,7 +54,7 @@ export default gql`
     publicWorkoutPlans: [WorkoutPlan!]!
     workoutPlanById(id: ID!): WorkoutPlan!
     userWorkoutPlans: [WorkoutPlan!]!
-    userWorkoutPlanEnrolments(workoutPlanId: ID!): [WorkoutPlanEnrolment!]
+    userWorkoutPlanEnrolments: [WorkoutPlanEnrolment!]!
   }
 
   type Mutation {
@@ -217,7 +217,7 @@ export default gql`
       data: CreateWorkoutPlanDayWithWorkoutInput!
     ): WorkoutPlanDay!
     updateWorkoutPlanDay(data: UpdateWorkoutPlanDayInput!): WorkoutPlanDay!
-    deleteWorkoutPlanDayById(id: ID!): ID!
+    deleteWorkoutPlanDaysById(ids: [ID!]!): [ID!]!
     #### Workout Plan Day Workout ####
     createWorkoutPlanDayWorkout(
       data: CreateWorkoutPlanDayWorkoutInput!

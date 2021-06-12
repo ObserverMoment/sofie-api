@@ -9,14 +9,12 @@ import {
   MutationDeleteWorkoutPlanReviewByIdArgs,
   MutationUpdateWorkoutPlanArgs,
   MutationUpdateWorkoutPlanReviewArgs,
-  QueryUserWorkoutPlanEnrolmentsArgs,
   WorkoutPlan,
   WorkoutPlanEnrolment,
   WorkoutPlanReview,
   QueryWorkoutPlanByIdArgs,
   WorkoutPlanDay,
   MutationUpdateWorkoutPlanDayArgs,
-  MutationDeleteWorkoutPlanDayByIdArgs,
   MutationCreateWorkoutPlanDayWorkoutArgs,
   WorkoutPlanDayWorkout,
   MutationUpdateWorkoutPlanDayWorkoutArgs,
@@ -27,6 +25,7 @@ import {
   MutationCreateWorkoutPlanDayWithWorkoutArgs,
   MutationMoveWorkoutPlanDayToAnotherDayArgs,
   MutationCopyWorkoutPlanDayToAnotherDayArgs,
+  MutationDeleteWorkoutPlanDaysByIdArgs,
 } from '../../generated/graphql'
 import { checkWorkoutPlanMediaForDeletion, deleteFiles } from '../../uploadcare'
 import {
@@ -88,17 +87,15 @@ export const workoutPlanById = async (
   }
 }
 
-// Gets all a users enrolments for a given WorkoutPlan.
-// Users can enrol in a plan multiple times if they want.
+// Gets all a users workout plan enrolments.
 export const userWorkoutPlanEnrolments = async (
   r: any,
-  { workoutPlanId }: QueryUserWorkoutPlanEnrolmentsArgs,
+  a: any,
   { authedUserId, prisma, select }: Context,
 ) => {
   const enrolments = await prisma.workoutPlanEnrolment.findMany({
     where: {
       userId: authedUserId,
-      WorkoutPlan: { id: workoutPlanId },
     },
     select,
   })
@@ -145,7 +142,10 @@ export const updateWorkoutPlan = async (
       ...data,
       name: data.name || undefined,
       lengthWeeks: data.lengthWeeks || undefined,
-      archived: data.archived || undefined,
+      archived:
+        data.hasOwnProperty('archived') && data.archived != null
+          ? data.archived
+          : undefined,
       contentAccessScope: data.contentAccessScope || undefined,
       /// Pass an empty array to unset / disconnect all tags.
       WorkoutTags: data.hasOwnProperty('WorkoutTags')
@@ -391,22 +391,36 @@ export const copyWorkoutPlanDayToAnotherDay = async (
   }
 }
 
-export const deleteWorkoutPlanDayById = async (
+/// Allows deleting multiple (or one) WorkoutPlanDay at once.
+// Functionality originally built so that the client can reduce the length of a WorkoutPlan and easily delete all the removed days in a single call.
+export const deleteWorkoutPlanDaysById = async (
   r: any,
-  { id }: MutationDeleteWorkoutPlanDayByIdArgs,
+  { ids }: MutationDeleteWorkoutPlanDaysByIdArgs,
   { authedUserId, prisma }: Context,
 ) => {
-  await checkUserOwnsObject(id, 'workoutPlanDay', authedUserId, prisma)
+  await Promise.all(
+    ids.map(async (id) => {
+      await checkUserOwnsObject(id, 'workoutPlanDay', authedUserId, prisma)
+    }),
+  )
 
-  const deleted = await prisma.workoutPlanDay.delete({
-    where: { id },
-    select: { id: true },
+  const deletePlanDayWorkouts = prisma.workoutPlanDayWorkout.deleteMany({
+    where: { workoutPlanDayId: { in: ids } },
   })
 
-  if (deleted) {
-    return deleted.id
+  const deletePlanDay = prisma.workoutPlanDay.deleteMany({
+    where: { id: { in: ids } },
+  })
+
+  const [_, deleted] = await prisma.$transaction([
+    deletePlanDayWorkouts,
+    deletePlanDay,
+  ])
+
+  if (deleted.count == ids.length) {
+    return ids
   } else {
-    throw new ApolloError('deleteWorkoutPlanDayById: There was an issue.')
+    throw new ApolloError('deleteWorkoutPlanDaysById: There was an issue.')
   }
 }
 
@@ -429,6 +443,9 @@ export const createWorkoutPlanDayWorkout = async (
       User: { connect: { id: authedUserId } },
       WorkoutPlanDay: {
         connect: data.WorkoutPlanDay,
+      },
+      Workout: {
+        connect: data.Workout,
       },
     },
     select,
