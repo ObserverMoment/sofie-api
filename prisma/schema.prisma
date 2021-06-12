@@ -448,8 +448,9 @@ model WorkoutPlanEnrolment {
   id                         String      @id @default(uuid())
   createdAt                  DateTime    @default(now())
   startDate                  DateTime    @default(now())
-  // Scalar list of the workouts [via WorkoutPlanDayWorkout] from the plan that the user has completed.
+  // Scalar list of the WorkoutPlanDayWorkouts from the plan that the user has completed.
   // Can be cleared if the user wants to restart / reset the plan.
+  // Or toggled by updating the list.
   completedPlanDayWorkoutIds String[]
   WorkoutPlan                WorkoutPlan @relation(fields: [workoutPlanId], references: [id])
   workoutPlanId              String

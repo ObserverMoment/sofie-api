@@ -26,6 +26,7 @@ import {
   MutationMoveWorkoutPlanDayToAnotherDayArgs,
   MutationCopyWorkoutPlanDayToAnotherDayArgs,
   MutationDeleteWorkoutPlanDaysByIdArgs,
+  QueryUserWorkoutPlanEnrolmentByIdArgs,
 } from '../../generated/graphql'
 import { checkWorkoutPlanMediaForDeletion, deleteFiles } from '../../uploadcare'
 import {
@@ -100,6 +101,30 @@ export const userWorkoutPlanEnrolments = async (
     select,
   })
   return enrolments as WorkoutPlanEnrolment[]
+}
+
+export const userWorkoutPlanEnrolmentById = async (
+  r: any,
+  { id }: QueryUserWorkoutPlanEnrolmentByIdArgs,
+  { authedUserId, prisma, select }: Context,
+) => {
+  const enrolment = await prisma.workoutPlanEnrolment.findUnique({
+    where: { id },
+    select: {
+      ...select,
+      userId: true,
+    },
+  })
+
+  if (enrolment) {
+    // Check that the user has access.
+    if ((enrolment as any).userId !== authedUserId) {
+      throw new AccessScopeError()
+    }
+    return enrolment as WorkoutPlanEnrolment
+  } else {
+    throw new ApolloError('userWorkoutPlanEnrolmentById: There was an issue.')
+  }
 }
 
 //// Mutations ////

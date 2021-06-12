@@ -1080,6 +1080,7 @@ export type Query = {
   workoutPlanById: WorkoutPlan;
   userWorkoutPlans: Array<WorkoutPlan>;
   userWorkoutPlanEnrolments: Array<WorkoutPlanEnrolment>;
+  userWorkoutPlanEnrolmentById: WorkoutPlanEnrolment;
 };
 
 
@@ -1161,6 +1162,11 @@ export type QueryWorkoutByIdArgs = {
 
 
 export type QueryWorkoutPlanByIdArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type QueryUserWorkoutPlanEnrolmentByIdArgs = {
   id: Scalars['ID'];
 };
 
@@ -2401,6 +2407,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   workoutPlanById?: Resolver<ResolversTypes['WorkoutPlan'], ParentType, ContextType, RequireFields<QueryWorkoutPlanByIdArgs, 'id'>>;
   userWorkoutPlans?: Resolver<Array<ResolversTypes['WorkoutPlan']>, ParentType, ContextType>;
   userWorkoutPlanEnrolments?: Resolver<Array<ResolversTypes['WorkoutPlanEnrolment']>, ParentType, ContextType>;
+  userWorkoutPlanEnrolmentById?: Resolver<ResolversTypes['WorkoutPlanEnrolment'], ParentType, ContextType, RequireFields<QueryUserWorkoutPlanEnrolmentByIdArgs, 'id'>>;
 }>;
 
 export type ScheduledWorkoutResolvers<ContextType = any, ParentType extends ResolversParentTypes['ScheduledWorkout'] = ResolversParentTypes['ScheduledWorkout']> = ResolversObject<{

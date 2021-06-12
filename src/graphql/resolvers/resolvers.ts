@@ -165,6 +165,7 @@ import {
   deleteWorkoutPlanDayWorkoutById,
   reorderWorkoutPlanDayWorkouts,
   userWorkoutPlanEnrolments,
+  userWorkoutPlanEnrolmentById,
   createWorkoutPlanEnrolment,
   updateWorkoutPlanEnrolment,
   deleteWorkoutPlanEnrolmentById,
@@ -242,6 +243,7 @@ const resolvers: Resolvers = {
     userWorkoutPlans,
     workoutPlanById,
     userWorkoutPlanEnrolments,
+    userWorkoutPlanEnrolmentById,
   },
   Mutation: {
     ///////////////////

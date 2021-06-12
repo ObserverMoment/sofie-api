@@ -55,6 +55,7 @@ export default gql`
     workoutPlanById(id: ID!): WorkoutPlan!
     userWorkoutPlans: [WorkoutPlan!]!
     userWorkoutPlanEnrolments: [WorkoutPlanEnrolment!]!
+    userWorkoutPlanEnrolmentById(id: ID!): WorkoutPlanEnrolment!
   }
 
   type Mutation {
