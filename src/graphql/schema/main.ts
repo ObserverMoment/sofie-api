@@ -39,6 +39,9 @@ export default gql`
     #### UserBenchmark ####
     userBenchmarks(first: Int): [UserBenchmark!]!
     userBenchmarkById(id: ID!): UserBenchmark!
+    #### UserCollection ####
+    userCollections: [UserCollection!]!
+    userCollectionById(id: ID!): UserCollection!
     #### User Public Profiles ####
     userPublicProfiles: [UserPublicProfile!]
     userPublicProfileByUserId(userId: ID!): UserPublicProfile!
@@ -158,6 +161,20 @@ export default gql`
       data: UpdateUserBenchmarkEntryInput!
     ): UserBenchmarkEntry!
     deleteUserBenchmarkEntryById(id: ID!): ID!
+    #### User Collection ####
+    createUserCollection(data: CreateUserCollectionInput!): UserCollection!
+    updateUserCollection(data: UpdateUserCollectionInput!): UserCollection!
+    deleteUserCollectionById(id: ID!): ID!
+    addWorkoutToCollection(data: AddWorkoutToCollectionInput!): UserCollection!
+    removeWorkoutFromCollection(
+      data: RemoveWorkoutFromCollectionInput!
+    ): UserCollection!
+    addWorkoutPlanToCollection(
+      data: AddWorkoutPlanToCollectionInput!
+    ): UserCollection!
+    removeWorkoutPlanFromCollection(
+      data: RemoveWorkoutPlanFromCollectionInput!
+    ): UserCollection!
     #################
     #### Workout ####
     makeCopyWorkoutById(id: ID!): Workout! # Note: Media should not be copied

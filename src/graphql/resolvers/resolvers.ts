@@ -110,6 +110,18 @@ import {
 } from './userBenchmark'
 
 import {
+  userCollections,
+  userCollectionById,
+  createUserCollection,
+  updateUserCollection,
+  deleteUserCollectionById,
+  addWorkoutToCollection,
+  removeWorkoutFromCollection,
+  addWorkoutPlanToCollection,
+  removeWorkoutPlanFromCollection,
+} from './userCollection'
+
+import {
   publicWorkouts,
   userWorkouts,
   workoutById,
@@ -234,6 +246,9 @@ const resolvers: Resolvers = {
     /// User Benchmarks ////
     userBenchmarks,
     userBenchmarkById,
+    /// User Collections ////
+    userCollections,
+    userCollectionById,
     //// Workouts ////
     publicWorkouts,
     userWorkouts,
@@ -316,6 +331,16 @@ const resolvers: Resolvers = {
     createUserBenchmarkEntry,
     updateUserBenchmarkEntry,
     deleteUserBenchmarkEntryById,
+    ////////////////////////
+    //// User Collection ////
+    ////////////////////////
+    createUserCollection,
+    updateUserCollection,
+    deleteUserCollectionById,
+    addWorkoutToCollection,
+    removeWorkoutFromCollection,
+    addWorkoutPlanToCollection,
+    removeWorkoutPlanFromCollection,
     /////////////////
     //// Workout ////
     /////////////////
@@ -361,7 +386,7 @@ const resolvers: Resolvers = {
     updateWorkoutPlanDayWorkout,
     deleteWorkoutPlanDayWorkoutById,
     reorderWorkoutPlanDayWorkouts,
-    //// User specifc ////
+    //// User Specific ////
     createWorkoutPlanEnrolment,
     updateWorkoutPlanEnrolment,
     deleteWorkoutPlanEnrolmentById,

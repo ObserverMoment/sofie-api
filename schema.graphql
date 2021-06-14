@@ -3,6 +3,16 @@ schema {
   mutation: Mutation
 }
 
+input AddWorkoutPlanToCollectionInput {
+  id: ID!
+  WorkoutPlan: ConnectRelationInput!
+}
+
+input AddWorkoutToCollectionInput {
+  id: ID!
+  Workout: ConnectRelationInput!
+}
+
 """Enums"""
 enum BenchmarkType {
   MAXLOAD
@@ -228,6 +238,11 @@ input CreateUserBenchmarkInput {
   Move: ConnectRelationInput!
 }
 
+input CreateUserCollectionInput {
+  name: String!
+  description: String
+}
+
 input CreateWorkoutInput {
   name: String!
   difficultyLevel: DifficultyLevel!
@@ -269,7 +284,7 @@ input CreateWorkoutPlanInput {
 input CreateWorkoutPlanReviewInput {
   score: Float!
   comment: String
-  WorkoutPlan: ID!
+  WorkoutPlan: ConnectRelationInput!
 }
 
 input CreateWorkoutSectionInput {
@@ -496,6 +511,13 @@ type Mutation {
   createUserBenchmarkEntry(data: CreateUserBenchmarkEntryInput!): UserBenchmarkEntry!
   updateUserBenchmarkEntry(data: UpdateUserBenchmarkEntryInput!): UserBenchmarkEntry!
   deleteUserBenchmarkEntryById(id: ID!): ID!
+  createUserCollection(data: CreateUserCollectionInput!): UserCollection!
+  updateUserCollection(data: UpdateUserCollectionInput!): UserCollection!
+  deleteUserCollectionById(id: ID!): ID!
+  addWorkoutToCollection(data: AddWorkoutToCollectionInput!): UserCollection!
+  removeWorkoutFromCollection(data: RemoveWorkoutFromCollectionInput!): UserCollection!
+  addWorkoutPlanToCollection(data: AddWorkoutPlanToCollectionInput!): UserCollection!
+  removeWorkoutPlanFromCollection(data: RemoveWorkoutPlanFromCollectionInput!): UserCollection!
   makeCopyWorkoutById(id: ID!): Workout!
   createWorkout(data: CreateWorkoutInput!): Workout!
   updateWorkout(data: UpdateWorkoutInput!): Workout!
@@ -609,6 +631,8 @@ type Query {
   userWorkoutTags: [WorkoutTag!]!
   userBenchmarks(first: Int): [UserBenchmark!]!
   userBenchmarkById(id: ID!): UserBenchmark!
+  userCollections: [UserCollection!]!
+  userCollectionById(id: ID!): UserCollection!
   userPublicProfiles: [UserPublicProfile!]
   userPublicProfileByUserId(userId: ID!): UserPublicProfile!
   publicWorkouts(take: Int, cursor: ID, filters: WorkoutFiltersInput): [Workout!]!
@@ -619,6 +643,16 @@ type Query {
   userWorkoutPlans: [WorkoutPlan!]!
   userWorkoutPlanEnrolments: [WorkoutPlanEnrolment!]!
   userWorkoutPlanEnrolmentById(id: ID!): WorkoutPlanEnrolment!
+}
+
+input RemoveWorkoutFromCollectionInput {
+  id: ID!
+  Workout: ConnectRelationInput!
+}
+
+input RemoveWorkoutPlanFromCollectionInput {
+  id: ID!
+  WorkoutPlan: ConnectRelationInput!
 }
 
 type ScheduledWorkout {
@@ -784,6 +818,12 @@ input UpdateUserBenchmarkInput {
   benchmarkType: BenchmarkType!
   Equipment: ConnectRelationInput
   Move: ConnectRelationInput
+}
+
+input UpdateUserCollectionInput {
+  id: ID!
+  name: String
+  description: String
 }
 
 input UpdateUserInput {
@@ -970,6 +1010,15 @@ type UserBenchmarkEntry {
   note: String
   videoUri: String
   videoThumbUri: String
+}
+
+type UserCollection {
+  id: ID!
+  createdAt: DateTime!
+  name: String!
+  description: String
+  Workouts: [Workout!]!
+  WorkoutPlans: [WorkoutPlan!]!
 }
 
 type UserPrivateProfile {

@@ -36,6 +36,7 @@ export type ContentObjectType =
   | 'workoutPlanReview'
   | 'userBenchmark'
   | 'userBenchmarkEntry'
+  | 'userCollection'
 
 /// Checks that a user has access to a single object in the database.
 /// Checks for ownership so cannot use this cor checking, for example, access to group scoped content.

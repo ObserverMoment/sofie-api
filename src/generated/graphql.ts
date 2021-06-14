@@ -16,6 +16,16 @@ export type Scalars = {
   JSON: any;
 };
 
+export type AddWorkoutPlanToCollectionInput = {
+  id: Scalars['ID'];
+  WorkoutPlan: ConnectRelationInput;
+};
+
+export type AddWorkoutToCollectionInput = {
+  id: Scalars['ID'];
+  Workout: ConnectRelationInput;
+};
+
 /** Enums */
 export type BenchmarkType =
   | 'MAXLOAD'
@@ -238,6 +248,11 @@ export type CreateUserBenchmarkInput = {
   Move: ConnectRelationInput;
 };
 
+export type CreateUserCollectionInput = {
+  name: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+};
+
 export type CreateWorkoutInput = {
   name: Scalars['String'];
   difficultyLevel: DifficultyLevel;
@@ -279,7 +294,7 @@ export type CreateWorkoutPlanInput = {
 export type CreateWorkoutPlanReviewInput = {
   score: Scalars['Float'];
   comment?: Maybe<Scalars['String']>;
-  WorkoutPlan: Scalars['ID'];
+  WorkoutPlan: ConnectRelationInput;
 };
 
 export type CreateWorkoutSectionInput = {
@@ -508,6 +523,13 @@ export type Mutation = {
   createUserBenchmarkEntry: UserBenchmarkEntry;
   updateUserBenchmarkEntry: UserBenchmarkEntry;
   deleteUserBenchmarkEntryById: Scalars['ID'];
+  createUserCollection: UserCollection;
+  updateUserCollection: UserCollection;
+  deleteUserCollectionById: Scalars['ID'];
+  addWorkoutToCollection: UserCollection;
+  removeWorkoutFromCollection: UserCollection;
+  addWorkoutPlanToCollection: UserCollection;
+  removeWorkoutPlanFromCollection: UserCollection;
   makeCopyWorkoutById: Workout;
   createWorkout: Workout;
   updateWorkout: Workout;
@@ -781,6 +803,41 @@ export type MutationUpdateUserBenchmarkEntryArgs = {
 
 export type MutationDeleteUserBenchmarkEntryByIdArgs = {
   id: Scalars['ID'];
+};
+
+
+export type MutationCreateUserCollectionArgs = {
+  data: CreateUserCollectionInput;
+};
+
+
+export type MutationUpdateUserCollectionArgs = {
+  data: UpdateUserCollectionInput;
+};
+
+
+export type MutationDeleteUserCollectionByIdArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationAddWorkoutToCollectionArgs = {
+  data: AddWorkoutToCollectionInput;
+};
+
+
+export type MutationRemoveWorkoutFromCollectionArgs = {
+  data: RemoveWorkoutFromCollectionInput;
+};
+
+
+export type MutationAddWorkoutPlanToCollectionArgs = {
+  data: AddWorkoutPlanToCollectionInput;
+};
+
+
+export type MutationRemoveWorkoutPlanFromCollectionArgs = {
+  data: RemoveWorkoutPlanFromCollectionInput;
 };
 
 
@@ -1071,6 +1128,8 @@ export type Query = {
   userWorkoutTags: Array<WorkoutTag>;
   userBenchmarks: Array<UserBenchmark>;
   userBenchmarkById: UserBenchmark;
+  userCollections: Array<UserCollection>;
+  userCollectionById: UserCollection;
   userPublicProfiles?: Maybe<Array<UserPublicProfile>>;
   userPublicProfileByUserId: UserPublicProfile;
   publicWorkouts: Array<Workout>;
@@ -1144,6 +1203,11 @@ export type QueryUserBenchmarkByIdArgs = {
 };
 
 
+export type QueryUserCollectionByIdArgs = {
+  id: Scalars['ID'];
+};
+
+
 export type QueryUserPublicProfileByUserIdArgs = {
   userId: Scalars['ID'];
 };
@@ -1168,6 +1232,16 @@ export type QueryWorkoutPlanByIdArgs = {
 
 export type QueryUserWorkoutPlanEnrolmentByIdArgs = {
   id: Scalars['ID'];
+};
+
+export type RemoveWorkoutFromCollectionInput = {
+  id: Scalars['ID'];
+  Workout: ConnectRelationInput;
+};
+
+export type RemoveWorkoutPlanFromCollectionInput = {
+  id: Scalars['ID'];
+  WorkoutPlan: ConnectRelationInput;
 };
 
 export type ScheduledWorkout = {
@@ -1335,6 +1409,12 @@ export type UpdateUserBenchmarkInput = {
   benchmarkType: BenchmarkType;
   Equipment?: Maybe<ConnectRelationInput>;
   Move?: Maybe<ConnectRelationInput>;
+};
+
+export type UpdateUserCollectionInput = {
+  id: Scalars['ID'];
+  name?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
 };
 
 export type UpdateUserInput = {
@@ -1524,6 +1604,16 @@ export type UserBenchmarkEntry = {
   note?: Maybe<Scalars['String']>;
   videoUri?: Maybe<Scalars['String']>;
   videoThumbUri?: Maybe<Scalars['String']>;
+};
+
+export type UserCollection = {
+  __typename?: 'UserCollection';
+  id: Scalars['ID'];
+  createdAt: Scalars['DateTime'];
+  name: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+  Workouts: Array<Workout>;
+  WorkoutPlans: Array<WorkoutPlan>;
 };
 
 export type UserPrivateProfile = {
@@ -1876,9 +1966,11 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
+  AddWorkoutPlanToCollectionInput: AddWorkoutPlanToCollectionInput;
+  ID: ResolverTypeWrapper<Scalars['ID']>;
+  AddWorkoutToCollectionInput: AddWorkoutToCollectionInput;
   BenchmarkType: BenchmarkType;
   BodyArea: ResolverTypeWrapper<BodyArea>;
-  ID: ResolverTypeWrapper<Scalars['ID']>;
   String: ResolverTypeWrapper<Scalars['String']>;
   BodyAreaFrontBack: BodyAreaFrontBack;
   BodyAreaMoveScore: ResolverTypeWrapper<BodyAreaMoveScore>;
@@ -1908,6 +2000,7 @@ export type ResolversTypes = ResolversObject<{
   CreateScheduledWorkoutInput: CreateScheduledWorkoutInput;
   CreateUserBenchmarkEntryInput: CreateUserBenchmarkEntryInput;
   CreateUserBenchmarkInput: CreateUserBenchmarkInput;
+  CreateUserCollectionInput: CreateUserCollectionInput;
   CreateWorkoutInput: CreateWorkoutInput;
   CreateWorkoutMoveInput: CreateWorkoutMoveInput;
   CreateWorkoutPlanDayWithWorkoutInput: CreateWorkoutPlanDayWithWorkoutInput;
@@ -1941,6 +2034,8 @@ export type ResolversTypes = ResolversObject<{
   ProgressJournalGoal: ResolverTypeWrapper<ProgressJournalGoal>;
   ProgressJournalGoalTag: ResolverTypeWrapper<ProgressJournalGoalTag>;
   Query: ResolverTypeWrapper<{}>;
+  RemoveWorkoutFromCollectionInput: RemoveWorkoutFromCollectionInput;
+  RemoveWorkoutPlanFromCollectionInput: RemoveWorkoutPlanFromCollectionInput;
   ScheduledWorkout: ResolverTypeWrapper<ScheduledWorkout>;
   SortPositionUpdated: ResolverTypeWrapper<SortPositionUpdated>;
   TextSearchResult: ResolverTypeWrapper<TextSearchResult>;
@@ -1960,6 +2055,7 @@ export type ResolversTypes = ResolversObject<{
   UpdateSortPositionInput: UpdateSortPositionInput;
   UpdateUserBenchmarkEntryInput: UpdateUserBenchmarkEntryInput;
   UpdateUserBenchmarkInput: UpdateUserBenchmarkInput;
+  UpdateUserCollectionInput: UpdateUserCollectionInput;
   UpdateUserInput: UpdateUserInput;
   UpdateWorkoutInput: UpdateWorkoutInput;
   UpdateWorkoutMoveInput: UpdateWorkoutMoveInput;
@@ -1976,6 +2072,7 @@ export type ResolversTypes = ResolversObject<{
   User: ResolverTypeWrapper<User>;
   UserBenchmark: ResolverTypeWrapper<UserBenchmark>;
   UserBenchmarkEntry: ResolverTypeWrapper<UserBenchmarkEntry>;
+  UserCollection: ResolverTypeWrapper<UserCollection>;
   UserPrivateProfile: ResolverTypeWrapper<UserPrivateProfile>;
   UserProfileScope: UserProfileScope;
   UserPublicProfile: ResolverTypeWrapper<UserPublicProfile>;
@@ -2005,8 +2102,10 @@ export type ResolversTypes = ResolversObject<{
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
-  BodyArea: BodyArea;
+  AddWorkoutPlanToCollectionInput: AddWorkoutPlanToCollectionInput;
   ID: Scalars['ID'];
+  AddWorkoutToCollectionInput: AddWorkoutToCollectionInput;
+  BodyArea: BodyArea;
   String: Scalars['String'];
   BodyAreaMoveScore: BodyAreaMoveScore;
   Int: Scalars['Int'];
@@ -2032,6 +2131,7 @@ export type ResolversParentTypes = ResolversObject<{
   CreateScheduledWorkoutInput: CreateScheduledWorkoutInput;
   CreateUserBenchmarkEntryInput: CreateUserBenchmarkEntryInput;
   CreateUserBenchmarkInput: CreateUserBenchmarkInput;
+  CreateUserCollectionInput: CreateUserCollectionInput;
   CreateWorkoutInput: CreateWorkoutInput;
   CreateWorkoutMoveInput: CreateWorkoutMoveInput;
   CreateWorkoutPlanDayWithWorkoutInput: CreateWorkoutPlanDayWithWorkoutInput;
@@ -2060,6 +2160,8 @@ export type ResolversParentTypes = ResolversObject<{
   ProgressJournalGoal: ProgressJournalGoal;
   ProgressJournalGoalTag: ProgressJournalGoalTag;
   Query: {};
+  RemoveWorkoutFromCollectionInput: RemoveWorkoutFromCollectionInput;
+  RemoveWorkoutPlanFromCollectionInput: RemoveWorkoutPlanFromCollectionInput;
   ScheduledWorkout: ScheduledWorkout;
   SortPositionUpdated: SortPositionUpdated;
   TextSearchResult: TextSearchResult;
@@ -2078,6 +2180,7 @@ export type ResolversParentTypes = ResolversObject<{
   UpdateSortPositionInput: UpdateSortPositionInput;
   UpdateUserBenchmarkEntryInput: UpdateUserBenchmarkEntryInput;
   UpdateUserBenchmarkInput: UpdateUserBenchmarkInput;
+  UpdateUserCollectionInput: UpdateUserCollectionInput;
   UpdateUserInput: UpdateUserInput;
   UpdateWorkoutInput: UpdateWorkoutInput;
   UpdateWorkoutMoveInput: UpdateWorkoutMoveInput;
@@ -2094,6 +2197,7 @@ export type ResolversParentTypes = ResolversObject<{
   User: User;
   UserBenchmark: UserBenchmark;
   UserBenchmarkEntry: UserBenchmarkEntry;
+  UserCollection: UserCollection;
   UserPrivateProfile: UserPrivateProfile;
   UserPublicProfile: UserPublicProfile;
   UserSummary: UserSummary;
@@ -2281,6 +2385,13 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createUserBenchmarkEntry?: Resolver<ResolversTypes['UserBenchmarkEntry'], ParentType, ContextType, RequireFields<MutationCreateUserBenchmarkEntryArgs, 'data'>>;
   updateUserBenchmarkEntry?: Resolver<ResolversTypes['UserBenchmarkEntry'], ParentType, ContextType, RequireFields<MutationUpdateUserBenchmarkEntryArgs, 'data'>>;
   deleteUserBenchmarkEntryById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteUserBenchmarkEntryByIdArgs, 'id'>>;
+  createUserCollection?: Resolver<ResolversTypes['UserCollection'], ParentType, ContextType, RequireFields<MutationCreateUserCollectionArgs, 'data'>>;
+  updateUserCollection?: Resolver<ResolversTypes['UserCollection'], ParentType, ContextType, RequireFields<MutationUpdateUserCollectionArgs, 'data'>>;
+  deleteUserCollectionById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteUserCollectionByIdArgs, 'id'>>;
+  addWorkoutToCollection?: Resolver<ResolversTypes['UserCollection'], ParentType, ContextType, RequireFields<MutationAddWorkoutToCollectionArgs, 'data'>>;
+  removeWorkoutFromCollection?: Resolver<ResolversTypes['UserCollection'], ParentType, ContextType, RequireFields<MutationRemoveWorkoutFromCollectionArgs, 'data'>>;
+  addWorkoutPlanToCollection?: Resolver<ResolversTypes['UserCollection'], ParentType, ContextType, RequireFields<MutationAddWorkoutPlanToCollectionArgs, 'data'>>;
+  removeWorkoutPlanFromCollection?: Resolver<ResolversTypes['UserCollection'], ParentType, ContextType, RequireFields<MutationRemoveWorkoutPlanFromCollectionArgs, 'data'>>;
   makeCopyWorkoutById?: Resolver<ResolversTypes['Workout'], ParentType, ContextType, RequireFields<MutationMakeCopyWorkoutByIdArgs, 'id'>>;
   createWorkout?: Resolver<ResolversTypes['Workout'], ParentType, ContextType, RequireFields<MutationCreateWorkoutArgs, 'data'>>;
   updateWorkout?: Resolver<ResolversTypes['Workout'], ParentType, ContextType, RequireFields<MutationUpdateWorkoutArgs, 'data'>>;
@@ -2398,6 +2509,8 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   userWorkoutTags?: Resolver<Array<ResolversTypes['WorkoutTag']>, ParentType, ContextType>;
   userBenchmarks?: Resolver<Array<ResolversTypes['UserBenchmark']>, ParentType, ContextType, RequireFields<QueryUserBenchmarksArgs, never>>;
   userBenchmarkById?: Resolver<ResolversTypes['UserBenchmark'], ParentType, ContextType, RequireFields<QueryUserBenchmarkByIdArgs, 'id'>>;
+  userCollections?: Resolver<Array<ResolversTypes['UserCollection']>, ParentType, ContextType>;
+  userCollectionById?: Resolver<ResolversTypes['UserCollection'], ParentType, ContextType, RequireFields<QueryUserCollectionByIdArgs, 'id'>>;
   userPublicProfiles?: Resolver<Maybe<Array<ResolversTypes['UserPublicProfile']>>, ParentType, ContextType>;
   userPublicProfileByUserId?: Resolver<ResolversTypes['UserPublicProfile'], ParentType, ContextType, RequireFields<QueryUserPublicProfileByUserIdArgs, 'userId'>>;
   publicWorkouts?: Resolver<Array<ResolversTypes['Workout']>, ParentType, ContextType, RequireFields<QueryPublicWorkoutsArgs, never>>;
@@ -2486,6 +2599,16 @@ export type UserBenchmarkEntryResolvers<ContextType = any, ParentType extends Re
   note?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   videoUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   videoThumbUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type UserCollectionResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserCollection'] = ResolversParentTypes['UserCollection']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  Workouts?: Resolver<Array<ResolversTypes['Workout']>, ParentType, ContextType>;
+  WorkoutPlans?: Resolver<Array<ResolversTypes['WorkoutPlan']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -2751,6 +2874,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   User?: UserResolvers<ContextType>;
   UserBenchmark?: UserBenchmarkResolvers<ContextType>;
   UserBenchmarkEntry?: UserBenchmarkEntryResolvers<ContextType>;
+  UserCollection?: UserCollectionResolvers<ContextType>;
   UserPrivateProfile?: UserPrivateProfileResolvers<ContextType>;
   UserPublicProfile?: UserPublicProfileResolvers<ContextType>;
   UserSummary?: UserSummaryResolvers<ContextType>;

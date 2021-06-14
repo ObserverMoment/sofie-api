@@ -127,7 +127,7 @@ export default gql`
   input CreateWorkoutPlanReviewInput {
     score: Float!
     comment: String
-    WorkoutPlan: ID!
+    WorkoutPlan: ConnectRelationInput!
   }
 
   input UpdateWorkoutPlanReviewInput {

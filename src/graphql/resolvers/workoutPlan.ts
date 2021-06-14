@@ -654,7 +654,7 @@ export const createWorkoutPlanReview = async (
         connect: { id: authedUserId },
       },
       WorkoutPlan: {
-        connect: { id: data.WorkoutPlan },
+        connect: data.WorkoutPlan,
       },
     },
     select,
