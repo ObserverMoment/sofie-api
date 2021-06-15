@@ -10,7 +10,7 @@ import moveSchema from './move'
 import progressJournal from './progressJournal'
 import scheduledWorkoutSchema from './scheduledWorkout'
 import userBenchmarkSchema from './userBenchmark'
-import userCollectionSchema from './userCollection'
+import collectionSchema from './collection'
 import userSchema from './user'
 import workoutSchema from './workout/workout'
 import workoutMoveSchema from './workout/workoutMove'
@@ -21,6 +21,7 @@ import workoutSummarySchema from './workout/workoutSummary'
 
 const typeDefs = mergeTypeDefs([
   bodyAreaSchema,
+  collectionSchema,
   enumSchema,
   equipmentSchema,
   filterInputs,
@@ -31,7 +32,6 @@ const typeDefs = mergeTypeDefs([
   progressJournal,
   scheduledWorkoutSchema,
   userBenchmarkSchema,
-  userCollectionSchema,
   userSchema,
   workoutSchema,
   workoutMoveSchema,

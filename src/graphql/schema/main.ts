@@ -40,8 +40,8 @@ export default gql`
     userBenchmarks(first: Int): [UserBenchmark!]!
     userBenchmarkById(id: ID!): UserBenchmark!
     #### UserCollection ####
-    userCollections: [UserCollection!]!
-    userCollectionById(id: ID!): UserCollection!
+    userCollections: [Collection!]!
+    userCollectionById(id: ID!): Collection!
     #### User Public Profiles ####
     userPublicProfiles: [UserPublicProfile!]
     userPublicProfileByUserId(userId: ID!): UserPublicProfile!
@@ -162,19 +162,19 @@ export default gql`
     ): UserBenchmarkEntry!
     deleteUserBenchmarkEntryById(id: ID!): ID!
     #### User Collection ####
-    createUserCollection(data: CreateUserCollectionInput!): UserCollection!
-    updateUserCollection(data: UpdateUserCollectionInput!): UserCollection!
-    deleteUserCollectionById(id: ID!): ID!
-    addWorkoutToCollection(data: AddWorkoutToCollectionInput!): UserCollection!
+    createCollection(data: CreateCollectionInput!): Collection!
+    updateCollection(data: UpdateCollectionInput!): Collection!
+    deleteCollectionById(id: ID!): ID!
+    addWorkoutToCollection(data: AddWorkoutToCollectionInput!): Collection!
     removeWorkoutFromCollection(
       data: RemoveWorkoutFromCollectionInput!
-    ): UserCollection!
+    ): Collection!
     addWorkoutPlanToCollection(
       data: AddWorkoutPlanToCollectionInput!
-    ): UserCollection!
+    ): Collection!
     removeWorkoutPlanFromCollection(
       data: RemoveWorkoutPlanFromCollectionInput!
-    ): UserCollection!
+    ): Collection!
     #################
     #### Workout ####
     makeCopyWorkoutById(id: ID!): Workout! # Note: Media should not be copied

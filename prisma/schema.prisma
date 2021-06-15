@@ -114,6 +114,17 @@ model WorkoutSectionType {
 ///////////////////////////////////////
 //// User and User Related ////////////
 ///////////////////////////////////////
+model Collection {
+  id           String        @id @default(uuid())
+  createdAt    DateTime      @default(now())
+  User         User          @relation(fields: [userId], references: [id])
+  userId       String
+  name         String
+  description  String?
+  Workouts     Workout[]
+  WorkoutPlans WorkoutPlan[]
+}
+
 model GymProfile {
   id                String             @id @default(uuid())
   createdAt         DateTime           @default(now())
@@ -170,7 +181,6 @@ model User {
   ScheduledWorkouts       ScheduledWorkout[]
   LoggedWorkouts          LoggedWorkout[]
   GymProfiles             GymProfile[]
-  Collections             UserCollection[]
   ProgressJournals        ProgressJournal[]
   ProgressJournalGoalTags ProgressJournalGoalTag[]
   LoggedWorkoutSections   LoggedWorkoutSection[]
@@ -192,17 +202,7 @@ model User {
   WorkoutPlanDayWorkouts  WorkoutPlanDayWorkout[]
   WorkoutPlanEnrolments   WorkoutPlanEnrolment[]
   WorkoutPlanReviews      WorkoutPlanReview[]
-}
-
-model UserCollection {
-  id           String        @id @default(uuid())
-  createdAt    DateTime      @default(now())
-  User         User          @relation(fields: [userId], references: [id])
-  userId       String
-  name         String
-  description  String?
-  Workouts     Workout[]
-  WorkoutPlans WorkoutPlan[]
+  Collections             Collection[]
 }
 
 // One or more benchmarks grouped together. For example the class deadlift / press squat moves could be grouped together here.
@@ -280,10 +280,10 @@ model Workout {
   LoggedWorkouts        LoggedWorkout[]
   ScheduledWorkouts     ScheduledWorkout[]
   WorkoutGoals          WorkoutGoal[]
-  UserCollections       UserCollection[]
   WorkoutTags           WorkoutTag[]
   FeaturedWorkouts      FeaturedWorkout[]
   WorkoutPlanDayWorkout WorkoutPlanDayWorkout[]
+  Collections           Collection[]
 }
 
 /// Used on both workouts and workout plans + maybe others (events, challenges) in the future. Free text tag for the user to tag their content.
@@ -413,9 +413,9 @@ model WorkoutPlan {
   Enrolments           WorkoutPlanEnrolment[]
   WorkoutPlanReviews   WorkoutPlanReview[]
   WorkoutTags          WorkoutTag[]
-  UserCollections      UserCollection[]
   FeaturedWorkoutPlans FeaturedWorkoutPlan[]
   WorkoutPlanDays      WorkoutPlanDay[]
+  Collections          Collection[]
 }
 
 model WorkoutPlanDay {

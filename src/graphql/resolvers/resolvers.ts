@@ -112,14 +112,14 @@ import {
 import {
   userCollections,
   userCollectionById,
-  createUserCollection,
-  updateUserCollection,
-  deleteUserCollectionById,
+  createCollection,
+  updateCollection,
+  deleteCollectionById,
   addWorkoutToCollection,
   removeWorkoutFromCollection,
   addWorkoutPlanToCollection,
   removeWorkoutPlanFromCollection,
-} from './userCollection'
+} from './collection'
 
 import {
   publicWorkouts,
@@ -334,9 +334,9 @@ const resolvers: Resolvers = {
     ////////////////////////
     //// User Collection ////
     ////////////////////////
-    createUserCollection,
-    updateUserCollection,
-    deleteUserCollectionById,
+    createCollection,
+    updateCollection,
+    deleteCollectionById,
     addWorkoutToCollection,
     removeWorkoutFromCollection,
     addWorkoutPlanToCollection,

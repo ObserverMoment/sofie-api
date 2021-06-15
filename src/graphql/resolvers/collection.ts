@@ -1,15 +1,15 @@
 import { ApolloError } from 'apollo-server-express'
 import { Context } from '../..'
 import {
+  Collection,
   MutationAddWorkoutPlanToCollectionArgs,
   MutationAddWorkoutToCollectionArgs,
-  MutationCreateUserCollectionArgs,
-  MutationDeleteUserCollectionByIdArgs,
+  MutationCreateCollectionArgs,
+  MutationDeleteCollectionByIdArgs,
   MutationRemoveWorkoutFromCollectionArgs,
   MutationRemoveWorkoutPlanFromCollectionArgs,
-  MutationUpdateUserCollectionArgs,
+  MutationUpdateCollectionArgs,
   QueryUserCollectionByIdArgs,
-  UserCollection,
 } from '../../generated/graphql'
 import { checkUserOwnsObject } from '../utils'
 
@@ -19,13 +19,13 @@ export const userCollections = async (
   a: any,
   { authedUserId, select, prisma }: Context,
 ) => {
-  const userCollections = await prisma.userCollection.findMany({
+  const collections = await prisma.collection.findMany({
     where: {
       userId: authedUserId,
     },
     select,
   })
-  return userCollections as UserCollection[]
+  return collections as Collection[]
 }
 
 export const userCollectionById = async (
@@ -33,23 +33,23 @@ export const userCollectionById = async (
   { id }: QueryUserCollectionByIdArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  const userCollection = await prisma.userCollection.findFirst({
+  const collection = await prisma.collection.findFirst({
     where: {
       id: id,
       userId: authedUserId,
     },
     select,
   })
-  return userCollection as UserCollection
+  return collection as Collection
 }
 
 //// Mutations ////
-export const createUserCollection = async (
+export const createCollection = async (
   r: any,
-  { data }: MutationCreateUserCollectionArgs,
+  { data }: MutationCreateCollectionArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  const userCollection = await prisma.userCollection.create({
+  const collection = await prisma.collection.create({
     data: {
       ...data,
       User: {
@@ -59,21 +59,21 @@ export const createUserCollection = async (
     select,
   })
 
-  if (userCollection) {
-    return userCollection as UserCollection
+  if (collection) {
+    return collection as Collection
   } else {
-    throw new ApolloError('createUserCollection: There was an issue.')
+    throw new ApolloError('createCollection: There was an issue.')
   }
 }
 
-export const updateUserCollection = async (
+export const updateCollection = async (
   r: any,
-  { data }: MutationUpdateUserCollectionArgs,
+  { data }: MutationUpdateCollectionArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  await checkUserOwnsObject(data.id, 'userCollection', authedUserId, prisma)
+  await checkUserOwnsObject(data.id, 'collection', authedUserId, prisma)
 
-  const updated = await prisma.userCollection.update({
+  const updated = await prisma.collection.update({
     where: { id: data.id },
     data: {
       ...data,
@@ -83,20 +83,20 @@ export const updateUserCollection = async (
   })
 
   if (updated) {
-    return updated as UserCollection
+    return updated as Collection
   } else {
-    throw new ApolloError('updateUserCollection: There was an issue.')
+    throw new ApolloError('updateCollection: There was an issue.')
   }
 }
 
-export const deleteUserCollectionById = async (
+export const deleteCollectionById = async (
   r: any,
-  { id }: MutationDeleteUserCollectionByIdArgs,
+  { id }: MutationDeleteCollectionByIdArgs,
   { authedUserId, prisma }: Context,
 ) => {
-  await checkUserOwnsObject(id, 'userCollection', authedUserId, prisma)
+  await checkUserOwnsObject(id, 'collection', authedUserId, prisma)
 
-  const deleted = await prisma.userCollection.delete({
+  const deleted = await prisma.collection.delete({
     where: { id },
     select: {
       id: true,
@@ -106,7 +106,7 @@ export const deleteUserCollectionById = async (
   if (deleted) {
     return deleted.id
   } else {
-    throw new ApolloError('deleteUserCollectionById: There was an issue.')
+    throw new ApolloError('deleteCollectionById: There was an issue.')
   }
 }
 
@@ -115,10 +115,15 @@ export const addWorkoutToCollection = async (
   { data }: MutationAddWorkoutToCollectionArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  await checkUserOwnsObject(data.id, 'userCollection', authedUserId, prisma)
+  await checkUserOwnsObject(
+    data.collectionId,
+    'collection',
+    authedUserId,
+    prisma,
+  )
 
-  const updated = await prisma.userCollection.update({
-    where: { id: data.id },
+  const updated = await prisma.collection.update({
+    where: { id: data.collectionId },
     data: {
       Workouts: {
         connect: data.Workout,
@@ -128,7 +133,7 @@ export const addWorkoutToCollection = async (
   })
 
   if (updated) {
-    return updated as UserCollection
+    return updated as Collection
   } else {
     throw new ApolloError('addWorkoutToCollection: There was an issue.')
   }
@@ -139,10 +144,15 @@ export const removeWorkoutFromCollection = async (
   { data }: MutationRemoveWorkoutFromCollectionArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  await checkUserOwnsObject(data.id, 'userCollection', authedUserId, prisma)
+  await checkUserOwnsObject(
+    data.collectionId,
+    'collection',
+    authedUserId,
+    prisma,
+  )
 
-  const updated = await prisma.userCollection.update({
-    where: { id: data.id },
+  const updated = await prisma.collection.update({
+    where: { id: data.collectionId },
     data: {
       Workouts: {
         disconnect: data.Workout,
@@ -152,7 +162,7 @@ export const removeWorkoutFromCollection = async (
   })
 
   if (updated) {
-    return updated as UserCollection
+    return updated as Collection
   } else {
     throw new ApolloError('removeWorkoutFromCollection: There was an issue.')
   }
@@ -163,10 +173,15 @@ export const addWorkoutPlanToCollection = async (
   { data }: MutationAddWorkoutPlanToCollectionArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  await checkUserOwnsObject(data.id, 'userCollection', authedUserId, prisma)
+  await checkUserOwnsObject(
+    data.collectionId,
+    'collection',
+    authedUserId,
+    prisma,
+  )
 
-  const updated = await prisma.userCollection.update({
-    where: { id: data.id },
+  const updated = await prisma.collection.update({
+    where: { id: data.collectionId },
     data: {
       WorkoutPlans: {
         connect: data.WorkoutPlan,
@@ -176,7 +191,7 @@ export const addWorkoutPlanToCollection = async (
   })
 
   if (updated) {
-    return updated as UserCollection
+    return updated as Collection
   } else {
     throw new ApolloError('addWorkoutPlanToCollection: There was an issue.')
   }
@@ -187,10 +202,15 @@ export const removeWorkoutPlanFromCollection = async (
   { data }: MutationRemoveWorkoutPlanFromCollectionArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  await checkUserOwnsObject(data.id, 'userCollection', authedUserId, prisma)
+  await checkUserOwnsObject(
+    data.collectionId,
+    'collection',
+    authedUserId,
+    prisma,
+  )
 
-  const updated = await prisma.userCollection.update({
-    where: { id: data.id },
+  const updated = await prisma.collection.update({
+    where: { id: data.collectionId },
     data: {
       WorkoutPlans: {
         disconnect: data.WorkoutPlan,
@@ -200,7 +220,7 @@ export const removeWorkoutPlanFromCollection = async (
   })
 
   if (updated) {
-    return updated as UserCollection
+    return updated as Collection
   } else {
     throw new ApolloError(
       'removeWorkoutPlanFromCollection: There was an issue.',

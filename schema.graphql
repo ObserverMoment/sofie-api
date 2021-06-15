@@ -4,12 +4,12 @@ schema {
 }
 
 input AddWorkoutPlanToCollectionInput {
-  id: ID!
+  collectionId: ID!
   WorkoutPlan: ConnectRelationInput!
 }
 
 input AddWorkoutToCollectionInput {
-  id: ID!
+  collectionId: ID!
   Workout: ConnectRelationInput!
 }
 
@@ -57,6 +57,16 @@ enum BodyweightUnit {
   LB
 }
 
+type Collection {
+  id: ID!
+  createdAt: DateTime!
+  User: UserSummary!
+  name: String!
+  description: String
+  Workouts: [Workout!]!
+  WorkoutPlans: [WorkoutPlan!]!
+}
+
 input ConnectRelationInput {
   id: ID!
 }
@@ -70,6 +80,11 @@ enum ContentAccessScope {
 input CopyWorkoutPlanDayToAnotherDayInput {
   id: ID!
   copyToDay: Int!
+}
+
+input CreateCollectionInput {
+  name: String!
+  description: String
 }
 
 input CreateEquipmentInput {
@@ -236,11 +251,6 @@ input CreateUserBenchmarkInput {
   benchmarkType: BenchmarkType!
   Equipment: ConnectRelationInput
   Move: ConnectRelationInput!
-}
-
-input CreateUserCollectionInput {
-  name: String!
-  description: String
 }
 
 input CreateWorkoutInput {
@@ -511,13 +521,13 @@ type Mutation {
   createUserBenchmarkEntry(data: CreateUserBenchmarkEntryInput!): UserBenchmarkEntry!
   updateUserBenchmarkEntry(data: UpdateUserBenchmarkEntryInput!): UserBenchmarkEntry!
   deleteUserBenchmarkEntryById(id: ID!): ID!
-  createUserCollection(data: CreateUserCollectionInput!): UserCollection!
-  updateUserCollection(data: UpdateUserCollectionInput!): UserCollection!
-  deleteUserCollectionById(id: ID!): ID!
-  addWorkoutToCollection(data: AddWorkoutToCollectionInput!): UserCollection!
-  removeWorkoutFromCollection(data: RemoveWorkoutFromCollectionInput!): UserCollection!
-  addWorkoutPlanToCollection(data: AddWorkoutPlanToCollectionInput!): UserCollection!
-  removeWorkoutPlanFromCollection(data: RemoveWorkoutPlanFromCollectionInput!): UserCollection!
+  createCollection(data: CreateCollectionInput!): Collection!
+  updateCollection(data: UpdateCollectionInput!): Collection!
+  deleteCollectionById(id: ID!): ID!
+  addWorkoutToCollection(data: AddWorkoutToCollectionInput!): Collection!
+  removeWorkoutFromCollection(data: RemoveWorkoutFromCollectionInput!): Collection!
+  addWorkoutPlanToCollection(data: AddWorkoutPlanToCollectionInput!): Collection!
+  removeWorkoutPlanFromCollection(data: RemoveWorkoutPlanFromCollectionInput!): Collection!
   makeCopyWorkoutById(id: ID!): Workout!
   createWorkout(data: CreateWorkoutInput!): Workout!
   updateWorkout(data: UpdateWorkoutInput!): Workout!
@@ -631,8 +641,8 @@ type Query {
   userWorkoutTags: [WorkoutTag!]!
   userBenchmarks(first: Int): [UserBenchmark!]!
   userBenchmarkById(id: ID!): UserBenchmark!
-  userCollections: [UserCollection!]!
-  userCollectionById(id: ID!): UserCollection!
+  userCollections: [Collection!]!
+  userCollectionById(id: ID!): Collection!
   userPublicProfiles: [UserPublicProfile!]
   userPublicProfileByUserId(userId: ID!): UserPublicProfile!
   publicWorkouts(take: Int, cursor: ID, filters: WorkoutFiltersInput): [Workout!]!
@@ -646,12 +656,12 @@ type Query {
 }
 
 input RemoveWorkoutFromCollectionInput {
-  id: ID!
+  collectionId: ID!
   Workout: ConnectRelationInput!
 }
 
 input RemoveWorkoutPlanFromCollectionInput {
-  id: ID!
+  collectionId: ID!
   WorkoutPlan: ConnectRelationInput!
 }
 
@@ -679,6 +689,12 @@ enum TimeUnit {
   HOURS
   MINUTES
   SECONDS
+}
+
+input UpdateCollectionInput {
+  id: ID!
+  name: String
+  description: String
 }
 
 input UpdateEquipmentInput {
@@ -818,12 +834,6 @@ input UpdateUserBenchmarkInput {
   benchmarkType: BenchmarkType!
   Equipment: ConnectRelationInput
   Move: ConnectRelationInput
-}
-
-input UpdateUserCollectionInput {
-  id: ID!
-  name: String
-  description: String
 }
 
 input UpdateUserInput {
@@ -1010,15 +1020,6 @@ type UserBenchmarkEntry {
   note: String
   videoUri: String
   videoThumbUri: String
-}
-
-type UserCollection {
-  id: ID!
-  createdAt: DateTime!
-  name: String!
-  description: String
-  Workouts: [Workout!]!
-  WorkoutPlans: [WorkoutPlan!]!
 }
 
 type UserPrivateProfile {

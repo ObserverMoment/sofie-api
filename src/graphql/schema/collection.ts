@@ -1,42 +1,44 @@
 import { gql } from 'apollo-server-express'
 
 export default gql`
-  type UserCollection {
+  type Collection {
     id: ID!
     createdAt: DateTime!
+    User: UserSummary!
     name: String!
     description: String
     Workouts: [Workout!]!
     WorkoutPlans: [WorkoutPlan!]!
   }
 
-  input CreateUserCollectionInput {
+  input CreateCollectionInput {
     name: String!
     description: String
   }
 
-  input UpdateUserCollectionInput {
+  input UpdateCollectionInput {
     id: ID!
     name: String
     description: String
   }
 
   input AddWorkoutToCollectionInput {
-    id: ID! # Collection ID
+    collectionId: ID!
     Workout: ConnectRelationInput!
   }
+
   input RemoveWorkoutFromCollectionInput {
-    id: ID! # Collection ID
+    collectionId: ID!
     Workout: ConnectRelationInput!
   }
 
   input AddWorkoutPlanToCollectionInput {
-    id: ID! # Collection ID
+    collectionId: ID!
     WorkoutPlan: ConnectRelationInput!
   }
 
   input RemoveWorkoutPlanFromCollectionInput {
-    id: ID! # Collection ID
+    collectionId: ID!
     WorkoutPlan: ConnectRelationInput!
   }
 `
