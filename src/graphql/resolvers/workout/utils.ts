@@ -23,7 +23,15 @@ export function formatWorkoutSectionFiltersInput(filters: WorkoutFiltersInput) {
   return {
     some: {
       AND: [
-        filters.hasClassVideo
+        /// hasClassVideo and hasClassAudio can both be null (ignore), true (require) or false (exclude)
+        filters.hasOwnProperty('hasClassVideo') &&
+        filters.hasClassVideo === true
+          ? {
+              classVideoUri: { not: null },
+            }
+          : {},
+        filters.hasOwnProperty('hasClassAudio') &&
+        filters.hasClassAudio === true
           ? {
               classVideoUri: { not: null },
             }
@@ -35,7 +43,24 @@ export function formatWorkoutSectionFiltersInput(filters: WorkoutFiltersInput) {
           : {},
       ],
     },
-    every: formatWorkoutSetsFilters(filters),
+    every: {
+      AND: [
+        /// hasClassVideo and hasClassAudio can both be null (ignore), true (require) or false (exclude)
+        filters.hasOwnProperty('hasClassVideo') &&
+        filters.hasClassVideo === false
+          ? {
+              classVideoUri: { equals: null },
+            }
+          : {},
+        filters.hasOwnProperty('hasClassAudio') &&
+        filters.hasClassAudio === false
+          ? {
+              classVideoUri: { equals: null },
+            }
+          : {},
+        formatWorkoutSetsFilters(filters),
+      ],
+    },
   }
 }
 

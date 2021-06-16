@@ -1693,6 +1693,7 @@ export type Workout = {
 export type WorkoutFiltersInput = {
   difficultyLevel?: Maybe<DifficultyLevel>;
   hasClassVideo?: Maybe<Scalars['Boolean']>;
+  hasClassAudio?: Maybe<Scalars['Boolean']>;
   maxLength?: Maybe<Scalars['Int']>;
   minLength?: Maybe<Scalars['Int']>;
   workoutSectionTypes: Array<Scalars['ID']>;
