@@ -4,12 +4,15 @@ import {
   MutationCreateWorkoutTagArgs,
   MutationUpdateUserArgs,
   QueryCheckUniqueDisplayNameArgs,
-  QueryUserPublicProfileByUserIdArgs,
+  QueryUserPublicProfileByIdArgs,
+  QueryUserPublicProfilesArgs,
   User,
   UserPublicProfile,
+  UserPublicProfileSummary,
   WorkoutTag,
 } from '../../generated/graphql'
 import { checkUserMediaForDeletion, deleteFiles } from '../../uploadcare'
+import { AccessScopeError } from '../utils'
 
 //// Queries ////
 export const checkUniqueDisplayName = async (
@@ -40,37 +43,84 @@ export const authedUser = async (
   }
 }
 
-// Get a single user profile, based on the user id must be public.
-export const userPublicProfileByUserId = async (
-  r: any,
-  { userId }: QueryUserPublicProfileByUserIdArgs,
-  { select, prisma }: Context,
-) => {
-  const user = await prisma.user.findFirst({
-    where: { id: userId, userProfileScope: 'PUBLIC' },
-    select,
-  })
-
-  if (user) {
-    return user as UserPublicProfile
-  } else {
-    throw new ApolloError('userPublicProfileByUserId: There was an issue.')
-  }
-}
-
 // Public profiles of any users who have set their profiles to public.
 export const userPublicProfiles = async (
   r: any,
-  a: any,
-  { select, prisma }: Context,
+  { take, cursor }: QueryUserPublicProfilesArgs,
+  { prisma }: Context,
 ) => {
   const publicUsers = await prisma.user.findMany({
     where: {
       userProfileScope: 'PUBLIC',
     },
-    select,
+    take: take ?? 50,
+    skip: cursor ? 1 : 0,
+    orderBy: {
+      id: 'desc',
+    },
+    cursor: cursor
+      ? {
+          id: cursor,
+        }
+      : undefined,
+    select: {
+      id: true,
+      avatarUri: true,
+      tagline: true,
+      townCity: true,
+      countryCode: true,
+      displayName: true,
+      Workouts: {
+        select: { id: true },
+        where: { contentAccessScope: 'PUBLIC' },
+      },
+      WorkoutPlans: {
+        select: { id: true },
+        where: { contentAccessScope: 'PUBLIC' },
+      },
+    },
   })
-  return publicUsers as UserPublicProfile[]
+
+  const publicProfileSummaries = publicUsers.map((u) => ({
+    id: u.id,
+    avatarUri: u.avatarUri,
+    tagline: u.tagline,
+    townCity: u.townCity,
+    countryCode: u.countryCode,
+    displayName: u.displayName,
+    numberPublicWorkouts: u.Workouts.length,
+    numberPublicPlans: u.WorkoutPlans.length,
+  }))
+
+  return publicProfileSummaries as UserPublicProfileSummary[]
+}
+
+// Get a single user profile, based on the user id must be public.
+export const userPublicProfileById = async (
+  r: any,
+  { userId }: QueryUserPublicProfileByIdArgs,
+  { select, prisma }: Context,
+) => {
+  const user = await prisma.user.findFirst({
+    where: { id: userId, userProfileScope: 'PUBLIC' },
+    select: {
+      ...select,
+      Workouts: {
+        ...select.Workouts,
+        where: { contentAccessScope: 'PUBLIC' },
+      },
+      WorkoutPlans: {
+        ...select.WorkoutPlans,
+        where: { contentAccessScope: 'PUBLIC' },
+      },
+    },
+  })
+
+  if (user) {
+    return user as UserPublicProfile
+  } else {
+    throw new AccessScopeError('userPublicProfileById: There was an issue.')
+  }
 }
 
 //// Mutations ////

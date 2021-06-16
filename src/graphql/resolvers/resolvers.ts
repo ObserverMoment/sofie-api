@@ -91,7 +91,7 @@ import {
 import {
   checkUniqueDisplayName,
   authedUser,
-  userPublicProfileByUserId,
+  userPublicProfileById,
   userPublicProfiles,
   updateUser,
   userWorkoutTags,
@@ -240,7 +240,7 @@ const resolvers: Resolvers = {
     authedUser,
     checkUniqueDisplayName,
     gymProfiles,
-    userPublicProfileByUserId,
+    userPublicProfileById,
     userPublicProfiles,
     userWorkoutTags,
     /// User Benchmarks ////

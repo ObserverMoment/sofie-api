@@ -21,10 +21,9 @@ import { checkUserOwnsObject } from '../utils'
 //// Queries ////
 export const userBenchmarks = async (
   r: any,
-  { first }: QueryUserBenchmarksArgs,
+  { take }: QueryUserBenchmarksArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  const take = first ? { take: first } : null
   const userBenchmarks = await prisma.userBenchmark.findMany({
     where: {
       userId: authedUserId,
@@ -32,7 +31,7 @@ export const userBenchmarks = async (
     orderBy: {
       lastEntryAt: 'desc',
     },
-    ...take,
+    take: take ?? undefined,
     select,
   })
   return userBenchmarks as UserBenchmark[]

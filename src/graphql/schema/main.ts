@@ -37,19 +37,19 @@ export default gql`
     gymProfiles: [GymProfile!]!
     userWorkoutTags: [WorkoutTag!]!
     #### UserBenchmark ####
-    userBenchmarks(first: Int): [UserBenchmark!]!
+    userBenchmarks(take: Int): [UserBenchmark!]!
     userBenchmarkById(id: ID!): UserBenchmark!
     #### UserCollection ####
     userCollections: [Collection!]!
     userCollectionById(id: ID!): Collection!
     #### User Public Profiles ####
-    userPublicProfiles: [UserPublicProfile!]
-    userPublicProfileByUserId(userId: ID!): UserPublicProfile!
+    userPublicProfiles(cursor: ID, take: Int): [UserPublicProfileSummary!]!
+    userPublicProfileById(userId: ID!): UserPublicProfile!
     #### Workouts ####
     publicWorkouts(
-      take: Int
       cursor: ID
       filters: WorkoutFiltersInput
+      take: Int
     ): [Workout!]!
     userWorkouts: [Workout!]!
     workoutById(id: ID!): Workout!

@@ -73,16 +73,19 @@ export default gql`
     snapUrl: String
     linkedinUrl: String
     countryCode: String
-    displayName: String
-    CustomMoves: [Move!]
-    Workouts: [Workout!]
-    WorkoutPlans: [WorkoutPlan!]
+    displayName: String!
+    Workouts: [Workout!]!
+    WorkoutPlans: [WorkoutPlan!]!
   }
 
-  type UserPrivateProfile {
-    LoggedWorkouts: [LoggedWorkout!]
-    Workouts: [Workout!]
-    WorkoutPlans: [WorkoutPlan!]
-    WorkoutPlanEnrolments: [WorkoutPlanEnrolment!]
+  type UserPublicProfileSummary {
+    id: ID!
+    avatarUri: String
+    tagline: String
+    townCity: String
+    countryCode: String
+    displayName: String!
+    numberPublicWorkouts: Int!
+    numberPublicPlans: Int!
   }
 `
