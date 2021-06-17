@@ -15,6 +15,13 @@ export function formatWorkoutFiltersInput(filters: WorkoutFiltersInput) {
     {
       lengthMinutes: filters.maxLength ? { lte: filters.maxLength } : {},
     },
+    filters.workoutGoals.length > 0
+      ? {
+          WorkoutGoals: {
+            some: { id: { in: filters.workoutGoals } },
+          },
+        }
+      : {},
     ...formatMetaDataFilter(filters),
   ]
 }
@@ -134,15 +141,6 @@ export function formatWorkoutSetsFilters(filters: WorkoutFiltersInput) {
 export function formatMetaDataFilter(filters: WorkoutFiltersInput) {
   const result = []
 
-  if (filters.workoutGoals.length) {
-    result.push({
-      metaData: {
-        path: ['workoutGoals'],
-        array_contains: filters.workoutGoals,
-      },
-    })
-  }
-
   if (filters.requiredMoves.length) {
     result.push({
       metaData: {
@@ -246,7 +244,6 @@ export async function updateWorkoutMetaData(
     await prisma.workout.findUnique({
       where: { id: workoutId },
       include: {
-        WorkoutGoals: true,
         WorkoutSections: {
           include: {
             WorkoutSets: {
@@ -278,7 +275,6 @@ export async function updateWorkoutMetaData(
   }
 
   let dataAsSets = {
-    workoutGoals: new Set<string>(workout.WorkoutGoals.map((g) => g.id)),
     moves: new Set<string>(),
     bodyAreas: new Set<string>(),
   }
@@ -297,7 +293,6 @@ export async function updateWorkoutMetaData(
   })
 
   const metaData = {
-    workoutGoals: Array.from(dataAsSets.workoutGoals),
     moves: Array.from(dataAsSets.moves),
     bodyAreas: Array.from(dataAsSets.bodyAreas),
   }

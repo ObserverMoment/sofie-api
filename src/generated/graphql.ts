@@ -298,7 +298,6 @@ export type CreateWorkoutPlanDayWorkoutInput = {
 
 export type CreateWorkoutPlanInput = {
   name: Scalars['String'];
-  lengthWeeks: Scalars['Int'];
   contentAccessScope: ContentAccessScope;
 };
 
@@ -528,6 +527,8 @@ export type Mutation = {
   deleteScheduledWorkoutById: Scalars['ID'];
   updateUser: User;
   createWorkoutTag: WorkoutTag;
+  updateWorkoutTag: WorkoutTag;
+  deleteWorkoutTagById: Scalars['ID'];
   createUserBenchmark: UserBenchmark;
   updateUserBenchmark: UserBenchmark;
   deleteUserBenchmarkById: Scalars['ID'];
@@ -784,6 +785,16 @@ export type MutationUpdateUserArgs = {
 
 export type MutationCreateWorkoutTagArgs = {
   data: CreateWorkoutTagInput;
+};
+
+
+export type MutationUpdateWorkoutTagArgs = {
+  data: UpdateWorkoutTagInput;
+};
+
+
+export type MutationDeleteWorkoutTagByIdArgs = {
+  id: Scalars['ID'];
 };
 
 
@@ -1509,6 +1520,7 @@ export type UpdateWorkoutPlanInput = {
   name?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   lengthWeeks?: Maybe<Scalars['Int']>;
+  daysPerWeek?: Maybe<Scalars['Int']>;
   coverImageUri?: Maybe<Scalars['String']>;
   introVideoUri?: Maybe<Scalars['String']>;
   introVideoThumbUri?: Maybe<Scalars['String']>;
@@ -1741,6 +1753,7 @@ export type WorkoutPlan = {
   name: Scalars['String'];
   description?: Maybe<Scalars['String']>;
   lengthWeeks: Scalars['Int'];
+  daysPerWeek: Scalars['Int'];
   coverImageUri?: Maybe<Scalars['String']>;
   introVideoUri?: Maybe<Scalars['String']>;
   introVideoThumbUri?: Maybe<Scalars['String']>;
@@ -2401,6 +2414,8 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   deleteScheduledWorkoutById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteScheduledWorkoutByIdArgs, 'id'>>;
   updateUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationUpdateUserArgs, 'data'>>;
   createWorkoutTag?: Resolver<ResolversTypes['WorkoutTag'], ParentType, ContextType, RequireFields<MutationCreateWorkoutTagArgs, 'data'>>;
+  updateWorkoutTag?: Resolver<ResolversTypes['WorkoutTag'], ParentType, ContextType, RequireFields<MutationUpdateWorkoutTagArgs, 'data'>>;
+  deleteWorkoutTagById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteWorkoutTagByIdArgs, 'id'>>;
   createUserBenchmark?: Resolver<ResolversTypes['UserBenchmark'], ParentType, ContextType, RequireFields<MutationCreateUserBenchmarkArgs, 'data'>>;
   updateUserBenchmark?: Resolver<ResolversTypes['UserBenchmark'], ParentType, ContextType, RequireFields<MutationUpdateUserBenchmarkArgs, 'data'>>;
   deleteUserBenchmarkById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteUserBenchmarkByIdArgs, 'id'>>;
@@ -2716,6 +2731,7 @@ export type WorkoutPlanResolvers<ContextType = any, ParentType extends Resolvers
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   lengthWeeks?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  daysPerWeek?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   coverImageUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   introVideoUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   introVideoThumbUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;

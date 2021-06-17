@@ -150,6 +150,8 @@ export default gql`
     #### User ####
     updateUser(data: UpdateUserInput!): User!
     createWorkoutTag(data: CreateWorkoutTagInput!): WorkoutTag!
+    updateWorkoutTag(data: UpdateWorkoutTagInput!): WorkoutTag!
+    deleteWorkoutTagById(id: ID!): ID!
     #### User Benchmark ####
     createUserBenchmark(data: CreateUserBenchmarkInput!): UserBenchmark!
     updateUserBenchmark(data: UpdateUserBenchmarkInput!): UserBenchmark!

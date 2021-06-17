@@ -8,6 +8,7 @@ export default gql`
     name: String!
     description: String
     lengthWeeks: Int!
+    daysPerWeek: Int!
     coverImageUri: String
     introVideoUri: String
     introVideoThumbUri: String
@@ -29,7 +30,6 @@ export default gql`
   # Just creates the basic required fields to make a fresh, empty plan in the DB ready for CRUDing.
   input CreateWorkoutPlanInput {
     name: String!
-    lengthWeeks: Int!
     contentAccessScope: ContentAccessScope!
   }
 
@@ -39,6 +39,7 @@ export default gql`
     name: String
     description: String
     lengthWeeks: Int
+    daysPerWeek: Int
     coverImageUri: String
     introVideoUri: String
     introVideoThumbUri: String

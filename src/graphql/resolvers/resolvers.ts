@@ -96,6 +96,8 @@ import {
   updateUser,
   userWorkoutTags,
   createWorkoutTag,
+  updateWorkoutTag,
+  deleteWorkoutTagById,
 } from './user'
 
 import {
@@ -322,6 +324,8 @@ const resolvers: Resolvers = {
     //////////////
     updateUser,
     createWorkoutTag,
+    updateWorkoutTag,
+    deleteWorkoutTagById,
     ////////////////////////
     //// User Benchmark ////
     ////////////////////////

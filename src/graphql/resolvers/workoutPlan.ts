@@ -167,6 +167,7 @@ export const updateWorkoutPlan = async (
       ...data,
       name: data.name || undefined,
       lengthWeeks: data.lengthWeeks || undefined,
+      daysPerWeek: data.daysPerWeek || undefined,
       archived:
         data.hasOwnProperty('archived') && data.archived != null
           ? data.archived

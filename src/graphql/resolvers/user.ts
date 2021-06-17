@@ -2,7 +2,9 @@ import { ApolloError } from 'apollo-server-express'
 import { Context } from '../..'
 import {
   MutationCreateWorkoutTagArgs,
+  MutationDeleteWorkoutTagByIdArgs,
   MutationUpdateUserArgs,
+  MutationUpdateWorkoutTagArgs,
   QueryCheckUniqueDisplayNameArgs,
   QueryUserPublicProfileByIdArgs,
   QueryUserPublicProfilesArgs,
@@ -12,7 +14,7 @@ import {
   WorkoutTag,
 } from '../../generated/graphql'
 import { checkUserMediaForDeletion, deleteFiles } from '../../uploadcare'
-import { AccessScopeError } from '../utils'
+import { AccessScopeError, checkUserOwnsObject } from '../utils'
 
 //// Queries ////
 export const checkUniqueDisplayName = async (
@@ -186,5 +188,51 @@ export const createWorkoutTag = async (
     },
     select,
   })
-  return workoutTag as WorkoutTag
+
+  if (workoutTag) {
+    return workoutTag as WorkoutTag
+  } else {
+    throw new ApolloError('createWorkoutTag: There was an issue.')
+  }
+}
+
+export const updateWorkoutTag = async (
+  r: any,
+  { data }: MutationUpdateWorkoutTagArgs,
+  { authedUserId, select, prisma }: Context,
+) => {
+  await checkUserOwnsObject(data.id, 'workoutTag', authedUserId, prisma)
+
+  const updated = await prisma.workoutTag.update({
+    where: { id: data.id },
+    data,
+    select,
+  })
+
+  if (updated) {
+    return updated as WorkoutTag
+  } else {
+    throw new ApolloError('updateWorkoutTag: There was an issue.')
+  }
+}
+
+export const deleteWorkoutTagById = async (
+  r: any,
+  { id }: MutationDeleteWorkoutTagByIdArgs,
+  { authedUserId, prisma }: Context,
+) => {
+  await checkUserOwnsObject(id, 'workoutTag', authedUserId, prisma)
+
+  const deleted = await prisma.workoutTag.delete({
+    where: { id },
+    select: {
+      id: true,
+    },
+  })
+
+  if (deleted) {
+    return deleted.id
+  } else {
+    throw new ApolloError('deleteWorkoutTagById: There was an issue.')
+  }
 }

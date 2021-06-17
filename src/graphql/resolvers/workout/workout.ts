@@ -141,12 +141,12 @@ export const updateWorkout = async (
       // Note: You should not pass 'null' to a relationship field. It will be parsed as 'no input' and ignored.
       // To remove all related items of this type pass an empty array.
       // https://www.prisma.io/docs/concepts/components/prisma-client/relation-queries#disconnect-all-related-records
-      WorkoutGoals: Object.hasOwnProperty('WorkoutGoals')
+      WorkoutGoals: data.hasOwnProperty('WorkoutGoals')
         ? {
             set: data.WorkoutGoals != null ? data.WorkoutGoals : undefined,
           }
         : undefined,
-      WorkoutTags: Object.hasOwnProperty('WorkoutTags')
+      WorkoutTags: data.hasOwnProperty('WorkoutTags')
         ? {
             set: data.WorkoutTags != null ? data.WorkoutTags : undefined,
           }
@@ -159,7 +159,7 @@ export const updateWorkout = async (
     if (mediaFileUrisForDeletion.length > 0) {
       await deleteFiles(mediaFileUrisForDeletion)
     }
-    if (Object.hasOwnProperty('WorkoutGoals')) {
+    if (data.hasOwnProperty('WorkoutGoals')) {
       await updateWorkoutMetaData(prisma, (updated as Workout).id)
     }
     return updated as Workout

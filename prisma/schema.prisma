@@ -265,8 +265,8 @@ model Workout {
   userId                String
   name                  String
   description           String?
-  // Meta data document used for search and filter functionality and ultimately for ranking algorithm implementation.
-  // { workoutGoals: [ID], moves: [ID], bodyAreas: [ID] }
+  // Meta data document used for search and filter functionality and (possibly) for ranking algorithm implementation. May end up storing these meta data documents in a specialised document store.
+  // { moves: [ID], bodyAreas: [ID] }
   metaData              Json?
   introVideoUri         String?
   introVideoThumbUri    String?
@@ -404,7 +404,8 @@ model WorkoutPlan {
   archived             Boolean                @default(false)
   name                 String
   description          String?
-  lengthWeeks          Int                    @default(1)
+  lengthWeeks          Int                    @default(2)
+  daysPerWeek          Int                    @default(3)
   coverImageUri        String?
   introVideoUri        String?
   introVideoThumbUri   String?

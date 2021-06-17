@@ -35,6 +35,7 @@ export type ContentObjectType =
   | 'workoutPlanDayWorkout'
   | 'workoutPlanEnrolment'
   | 'workoutPlanReview'
+  | 'workoutTag'
   | 'userBenchmark'
   | 'userBenchmarkEntry'
 
