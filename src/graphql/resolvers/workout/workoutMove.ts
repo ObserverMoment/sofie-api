@@ -52,7 +52,7 @@ export const createWorkoutMove = async (
       distanceUnit: data.distanceUnit || undefined,
       loadUnit: data.loadUnit || undefined,
       // Necessary extra check because 0 is falsey in js.
-      loadAmount: data.loadAmount != null ? data.loadAmount : undefined,
+      loadAmount: data.loadAmount !== null ? data.loadAmount : undefined,
       timeUnit: data.timeUnit || undefined,
       sortPosition: data.sortPosition,
       User: {
@@ -160,7 +160,7 @@ export const updateWorkoutMove = async (
       loadUnit: data.loadUnit || undefined,
       timeUnit: data.timeUnit || undefined,
       // Necessary extra check because 0 is falsey in js.
-      loadAmount: data.loadAmount != null ? data.loadAmount : undefined,
+      loadAmount: data.loadAmount !== null ? data.loadAmount : undefined,
       Move: data.Move ? { connect: data.Move } : undefined,
       // Equipment can be null - i.e no equipment, so it can only be ignored if not present in the data object.
       // passing null should disconnect any connected Equipment.

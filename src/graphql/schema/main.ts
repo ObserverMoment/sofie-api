@@ -54,7 +54,11 @@ export default gql`
     userWorkouts: [Workout!]!
     workoutById(id: ID!): Workout!
     #### Workout Programs and Enrolments ####
-    publicWorkoutPlans: [WorkoutPlan!]!
+    publicWorkoutPlans(
+      cursor: ID
+      filters: WorkoutPlanFiltersInput
+      take: Int
+    ): [WorkoutPlan!]!
     workoutPlanById(id: ID!): WorkoutPlan!
     userWorkoutPlans: [WorkoutPlan!]!
     userWorkoutPlanEnrolments: [WorkoutPlanEnrolment!]!

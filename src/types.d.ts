@@ -8,8 +8,10 @@ export type WorkoutMetaDataPayload = Prisma.WorkoutGetPayload<{
           include: {
             WorkoutMoves: {
               include: {
+                Equipment: true
                 Move: {
                   include: {
+                    RequiredEquipments: true
                     BodyAreaMoveScores: {
                       include: {
                         BodyArea: true

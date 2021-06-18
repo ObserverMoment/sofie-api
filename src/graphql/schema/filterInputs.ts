@@ -17,4 +17,12 @@ export default gql`
     excludedMoves: [ID!]!
     targetedBodyAreas: [ID!]!
   }
+
+  input WorkoutPlanFiltersInput {
+    difficultyLevel: DifficultyLevel
+    lengthWeeks: Int
+    daysPerWeek: Int
+    workoutGoals: [ID!]!
+    bodyweightOnly: Boolean
+  }
 `

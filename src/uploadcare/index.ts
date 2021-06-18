@@ -62,7 +62,7 @@ function getFileIdForDeleteOrNull(
   newData: any,
   key: string,
 ): string | null {
-  return oldData[key] != null &&
+  return oldData[key] !== null &&
     newData.hasOwnProperty(key) &&
     newData[key] !== oldData[key]
     ? oldData[key]

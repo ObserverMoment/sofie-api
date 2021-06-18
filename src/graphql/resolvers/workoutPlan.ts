@@ -27,6 +27,8 @@ import {
   MutationCopyWorkoutPlanDayToAnotherDayArgs,
   MutationDeleteWorkoutPlanDaysByIdArgs,
   QueryUserWorkoutPlanEnrolmentByIdArgs,
+  QueryPublicWorkoutPlansArgs,
+  WorkoutPlanFiltersInput,
 } from '../../generated/graphql'
 import { checkWorkoutPlanMediaForDeletion, deleteFiles } from '../../uploadcare'
 import {
@@ -38,13 +40,28 @@ import {
 //// Queries ////
 export const publicWorkoutPlans = async (
   r: any,
-  a: any,
+  { filters, take, cursor }: QueryPublicWorkoutPlansArgs,
   { prisma, select }: Context,
 ) => {
   const workoutPlans = await prisma.workoutPlan.findMany({
-    where: { contentAccessScope: 'PUBLIC', archived: false },
+    where: {
+      contentAccessScope: 'PUBLIC',
+      archived: false,
+      AND: filters ? formatWorkoutPlanFiltersInput(filters) : [],
+    },
+    take: take ?? 50,
+    skip: cursor ? 1 : 0,
+    orderBy: {
+      id: 'desc',
+    },
+    cursor: cursor
+      ? {
+          id: cursor,
+        }
+      : undefined,
     select,
   })
+
   return workoutPlans as WorkoutPlan[]
 }
 
@@ -169,14 +186,14 @@ export const updateWorkoutPlan = async (
       lengthWeeks: data.lengthWeeks || undefined,
       daysPerWeek: data.daysPerWeek || undefined,
       archived:
-        data.hasOwnProperty('archived') && data.archived != null
+        data.hasOwnProperty('archived') && data.archived !== null
           ? data.archived
           : undefined,
       contentAccessScope: data.contentAccessScope || undefined,
       /// Pass an empty array to unset / disconnect all tags.
       WorkoutTags: data.hasOwnProperty('WorkoutTags')
         ? {
-            set: data.WorkoutTags != null ? data.WorkoutTags : undefined,
+            set: data.WorkoutTags !== null ? data.WorkoutTags : undefined,
           }
         : undefined,
     },
@@ -305,7 +322,7 @@ export const moveWorkoutPlanDayToAnotherDay = async (
     select,
   })
 
-  if (previousData != null) {
+  if (previousData !== null) {
     const deletePrevPlanDayWorkouts = prisma.workoutPlanDayWorkout.deleteMany({
       where: { WorkoutPlanDay: { id: previousData.id } },
     })
@@ -391,7 +408,7 @@ export const copyWorkoutPlanDayToAnotherDay = async (
     select,
   })
 
-  if (previousData != null) {
+  if (previousData !== null) {
     const deletePrevPlanDayWorkouts = prisma.workoutPlanDayWorkout.deleteMany({
       where: { WorkoutPlanDay: { id: previousData.id } },
     })
@@ -708,4 +725,71 @@ export const deleteWorkoutPlanReviewById = async (
   } else {
     throw new ApolloError('deleteWorkoutPlanReviewById: There was an issue.')
   }
+}
+
+/// Format Filters Input
+export function formatWorkoutPlanFiltersInput(
+  filters: WorkoutPlanFiltersInput,
+) {
+  return [
+    {
+      lengthWeeks: filters.lengthWeeks ? { equals: filters.lengthWeeks } : {},
+    },
+    {
+      daysPerWeek: filters.daysPerWeek ? { equals: filters.daysPerWeek } : {},
+    },
+    /// Workout filters
+    filters.difficultyLevel
+      ? {
+          WorkoutPlanDays: {
+            some: {
+              WorkoutPlanDayWorkouts: {
+                some: {
+                  Workout: {
+                    difficultyLevel: {
+                      equals: filters.difficultyLevel,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        }
+      : {},
+    filters.workoutGoals.length > 0
+      ? {
+          WorkoutPlanDays: {
+            some: {
+              WorkoutPlanDayWorkouts: {
+                some: {
+                  Workout: {
+                    WorkoutGoals: {
+                      some: { id: { in: filters.workoutGoals } },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        }
+      : {},
+    filters.bodyweightOnly !== null
+      ? {
+          WorkoutPlanDays: {
+            some: {
+              WorkoutPlanDayWorkouts: {
+                some: {
+                  Workout: {
+                    metaData: {
+                      path: ['bodyweightOnly'],
+                      equals: filters.bodyweightOnly,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        }
+      : {},
+  ]
 }

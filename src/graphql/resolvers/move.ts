@@ -256,7 +256,7 @@ function validateBodyAreaMoveScoresInput(
     (acum, b) => acum + b.score,
     0,
   )
-  if (totalBodyAreaScores != 100) {
+  if (totalBodyAreaScores !== 100) {
     throw new ApolloError(
       `BodyAreaMoveScores must sum to a total of 100 points for any given Move being created or updated. You tried to submit this move with a total of ${totalBodyAreaScores}.`,
     )

@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client'
+import { Prisma, PrismaClient } from '@prisma/client'
 import { WorkoutFiltersInput } from '../../../generated/graphql'
 import { WorkoutMetaDataPayload } from '../../../types'
 
@@ -78,29 +78,8 @@ export function formatWorkoutSetsFilters(filters: WorkoutFiltersInput) {
     ? { id: { notIn: filters.excludedMoves } }
     : {}
 
-  if (filters.bodyweightOnly) {
-    /// Ensure that required equipments is empty and that Equipment is either null or equal to bodyweightId
-    return {
-      WorkoutSets: {
-        every: {
-          WorkoutMoves: {
-            every: {
-              Move: {
-                ...excludedMoves,
-                RequiredEquipments: {
-                  every: { id: { in: [] } },
-                },
-              },
-              OR: [
-                { equipmentId: { equals: null } },
-                { equipmentId: { equals: kBodyweightEquipmentId } },
-              ],
-            },
-          },
-        },
-      },
-    }
-  } else if (filters.availableEquipments.length) {
+  // filters.bodyweightOnly is handled in the meta data filters.
+  if (!filters.bodyweightOnly && filters.availableEquipments?.length) {
     return {
       WorkoutSets: {
         every: {
@@ -141,6 +120,19 @@ export function formatWorkoutSetsFilters(filters: WorkoutFiltersInput) {
 export function formatMetaDataFilter(filters: WorkoutFiltersInput) {
   const result = []
 
+  // bodyweightOnly can be null (ignore), true or false (must match booleans).
+  if (
+    filters.hasOwnProperty('bodyweightOnly') &&
+    filters.bodyweightOnly !== null
+  ) {
+    result.push({
+      metaData: {
+        path: ['bodyweightOnly'],
+        equals: filters.bodyweightOnly,
+      },
+    })
+  }
+
   if (filters.requiredMoves.length) {
     result.push({
       metaData: {
@@ -174,13 +166,13 @@ export async function updateWorkoutMetaDataFromWorkoutSection(
     },
   })
 
-  if (data?.Workout.id == null) {
+  if (data?.Workout.id === null) {
     throw Error(
       '[updateWorkoutMetaDataJsonFromWorkoutSection] could not find parent workout. The meta data was not updated',
     )
   }
 
-  await updateWorkoutMetaData(prisma, data.Workout.id)
+  await updateWorkoutMetaData(prisma, data!.Workout.id)
 }
 
 export async function updateWorkoutMetaDataFromWorkoutSet(
@@ -198,13 +190,13 @@ export async function updateWorkoutMetaDataFromWorkoutSet(
     },
   })
 
-  if (data?.WorkoutSection.Workout.id == null) {
+  if (data?.WorkoutSection.Workout.id === null) {
     throw Error(
       '[updateWorkoutMetaDataJsonFromWorkoutSet] could not find parent workout. The meta data was not updated',
     )
   }
 
-  await updateWorkoutMetaData(prisma, data.WorkoutSection.Workout.id)
+  await updateWorkoutMetaData(prisma, data!.WorkoutSection.Workout.id)
 }
 
 export async function updateWorkoutMetaDataFromWorkoutMove(
@@ -226,13 +218,16 @@ export async function updateWorkoutMetaDataFromWorkoutMove(
     },
   })
 
-  if (data?.WorkoutSet.WorkoutSection.Workout.id == null) {
+  if (data?.WorkoutSet.WorkoutSection.Workout.id === null) {
     throw Error(
       '[updateWorkoutMetaDataJsonFromWorkoutMove] could not find parent workout. The meta data was not updated',
     )
   }
 
-  await updateWorkoutMetaData(prisma, data.WorkoutSet.WorkoutSection.Workout.id)
+  await updateWorkoutMetaData(
+    prisma,
+    data!.WorkoutSet.WorkoutSection.Workout.id,
+  )
 }
 
 /// Updates a workouts meta data based on its current state.
@@ -250,8 +245,10 @@ export async function updateWorkoutMetaData(
               include: {
                 WorkoutMoves: {
                   include: {
+                    Equipment: true,
                     Move: {
                       include: {
+                        RequiredEquipments: true,
                         BodyAreaMoveScores: {
                           include: {
                             BodyArea: true,
@@ -279,9 +276,19 @@ export async function updateWorkoutMetaData(
     bodyAreas: new Set<string>(),
   }
 
+  let requiresEquipment = false
+
   workout.WorkoutSections.forEach((workoutSection) => {
     workoutSection.WorkoutSets.forEach((workoutSet) => {
       workoutSet.WorkoutMoves.forEach((workoutMove) => {
+        // Equipment check
+        if (
+          workoutMove.Move.RequiredEquipments.length > 0 ||
+          (workoutMove.Equipment !== null &&
+            workoutMove.Equipment.id !== kBodyweightEquipmentId)
+        ) {
+          requiresEquipment = true
+        }
         // moves
         dataAsSets.moves.add(workoutMove.moveId)
         // bodyAreas
@@ -293,14 +300,17 @@ export async function updateWorkoutMetaData(
   })
 
   const metaData = {
+    bodyweightOnly: !requiresEquipment,
     moves: Array.from(dataAsSets.moves),
     bodyAreas: Array.from(dataAsSets.bodyAreas),
   }
 
+  const data: Prisma.WorkoutUpdateInput = {
+    metaData: metaData,
+  }
+
   await prisma.workout.update({
     where: { id: workout.id },
-    data: {
-      metaData: metaData,
-    },
+    data,
   })
 }

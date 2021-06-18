@@ -215,8 +215,8 @@ export const updateProgressJournalEntry = async (
       )
 
     if (
-      progressJournalEntry.voiceNoteUri != null &&
-      progressJournalEntry.voiceNoteUri != data.voiceNoteUri
+      progressJournalEntry.voiceNoteUri !== null &&
+      progressJournalEntry.voiceNoteUri !== data.voiceNoteUri
     ) {
       mediaUrisFordeletion.push(progressJournalEntry.voiceNoteUri)
     }

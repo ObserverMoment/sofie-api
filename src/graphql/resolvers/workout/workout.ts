@@ -31,6 +31,7 @@ export const publicWorkouts = async (
   const publicWorkouts = await prisma.workout.findMany({
     where: {
       contentAccessScope: 'PUBLIC',
+      archived: false,
       AND: filters ? formatWorkoutFiltersInput(filters) : [],
       WorkoutSections: filters
         ? formatWorkoutSectionFiltersInput(filters)
@@ -134,7 +135,7 @@ export const updateWorkout = async (
     where: { id: data.id },
     data: {
       ...data,
-      archived: data.archived != null ? data.archived : undefined,
+      archived: data.archived !== null ? data.archived : undefined,
       name: data.name || undefined,
       difficultyLevel: data.difficultyLevel || undefined,
       contentAccessScope: data.contentAccessScope || undefined,
@@ -143,12 +144,12 @@ export const updateWorkout = async (
       // https://www.prisma.io/docs/concepts/components/prisma-client/relation-queries#disconnect-all-related-records
       WorkoutGoals: data.hasOwnProperty('WorkoutGoals')
         ? {
-            set: data.WorkoutGoals != null ? data.WorkoutGoals : undefined,
+            set: data.WorkoutGoals !== null ? data.WorkoutGoals : undefined,
           }
         : undefined,
       WorkoutTags: data.hasOwnProperty('WorkoutTags')
         ? {
-            set: data.WorkoutTags != null ? data.WorkoutTags : undefined,
+            set: data.WorkoutTags !== null ? data.WorkoutTags : undefined,
           }
         : undefined,
     },
