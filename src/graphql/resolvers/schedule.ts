@@ -39,6 +39,16 @@ export const createScheduledWorkout = async (
             connect: data.GymProfile,
           }
         : undefined,
+      WorkoutPlanEnrolment: data.WorkoutPlanEnrolment
+        ? {
+            connect: data.WorkoutPlanEnrolment,
+          }
+        : undefined,
+      WorkoutPlanDayWorkout: data.WorkoutPlanDayWorkout
+        ? {
+            connect: data.WorkoutPlanDayWorkout,
+          }
+        : undefined,
       User: {
         connect: { id: authedUserId },
       },
@@ -74,6 +84,16 @@ export const updateScheduledWorkout = async (
       GymProfile: data.hasOwnProperty('GymProfile')
         ? data.GymProfile
           ? { connect: data.GymProfile }
+          : { disconnect: true }
+        : undefined,
+      WorkoutPlanEnrolment: data.hasOwnProperty('WorkoutPlanEnrolment')
+        ? data.WorkoutPlanEnrolment
+          ? { connect: data.WorkoutPlanEnrolment }
+          : { disconnect: true }
+        : undefined,
+      WorkoutPlanDayWorkout: data.hasOwnProperty('WorkoutPlanDayWorkout')
+        ? data.WorkoutPlanDayWorkout
+          ? { connect: data.WorkoutPlanDayWorkout }
           : { disconnect: true }
         : undefined,
       LoggedWorkout: data.LoggedWorkout

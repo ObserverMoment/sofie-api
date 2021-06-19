@@ -138,18 +138,22 @@ model GymProfile {
 }
 
 model ScheduledWorkout {
-  id              String         @id @default(uuid())
-  createdAt       DateTime       @default(now())
-  User            User           @relation(fields: [userId], references: [id])
-  userId          String
-  note            String?
-  scheduledAt     DateTime       @default(now())
-  Workout         Workout?       @relation(fields: [workoutId], references: [id])
-  workoutId       String?
-  LoggedWorkout   LoggedWorkout? @relation(fields: [loggedWorkoutId], references: [id])
-  loggedWorkoutId String?
-  GymProfile      GymProfile?    @relation(fields: [gymProfileId], references: [id])
-  gymProfileId    String?
+  id                      String                 @id @default(uuid())
+  createdAt               DateTime               @default(now())
+  User                    User                   @relation(fields: [userId], references: [id])
+  userId                  String
+  note                    String?
+  scheduledAt             DateTime               @default(now())
+  GymProfile              GymProfile?            @relation(fields: [gymProfileId], references: [id])
+  gymProfileId            String?
+  LoggedWorkout           LoggedWorkout?         @relation(fields: [loggedWorkoutId], references: [id])
+  loggedWorkoutId         String?
+  Workout                 Workout?               @relation(fields: [workoutId], references: [id])
+  workoutId               String?
+  WorkoutPlanEnrolment    WorkoutPlanEnrolment?  @relation(fields: [workoutPlanEnrolmentId], references: [id])
+  workoutPlanEnrolmentId  String?
+  WorkoutPlanDayWorkout   WorkoutPlanDayWorkout? @relation(fields: [workoutPlanDayWorkoutId], references: [id])
+  workoutPlanDayWorkoutId String?
 }
 
 // Height in cms / weight in kgs
@@ -432,31 +436,33 @@ model WorkoutPlanDay {
 }
 
 model WorkoutPlanDayWorkout {
-  id               String         @id @default(uuid())
-  createdAt        DateTime       @default(now())
-  User             User           @relation(fields: [userId], references: [id])
-  userId           String
-  note             String?
-  sortPosition     Int
-  Workout          Workout        @relation(fields: [workoutId], references: [id])
-  workoutId        String
-  WorkoutPlanDay   WorkoutPlanDay @relation(fields: [workoutPlanDayId], references: [id])
-  workoutPlanDayId String
+  id                String             @id @default(uuid())
+  createdAt         DateTime           @default(now())
+  User              User               @relation(fields: [userId], references: [id])
+  userId            String
+  note              String?
+  sortPosition      Int
+  Workout           Workout            @relation(fields: [workoutId], references: [id])
+  workoutId         String
+  WorkoutPlanDay    WorkoutPlanDay     @relation(fields: [workoutPlanDayId], references: [id])
+  workoutPlanDayId  String
+  ScheduledWorkouts ScheduledWorkout[]
 }
 
 // A single user enrolled in a plan.
 model WorkoutPlanEnrolment {
-  id                         String      @id @default(uuid())
-  createdAt                  DateTime    @default(now())
-  startDate                  DateTime    @default(now())
+  id                         String             @id @default(uuid())
+  createdAt                  DateTime           @default(now())
+  startDate                  DateTime           @default(now())
   // Scalar list of the WorkoutPlanDayWorkouts from the plan that the user has completed.
   // Can be cleared if the user wants to restart / reset the plan.
   // Or toggled by updating the list.
   completedPlanDayWorkoutIds String[]
-  WorkoutPlan                WorkoutPlan @relation(fields: [workoutPlanId], references: [id])
+  WorkoutPlan                WorkoutPlan        @relation(fields: [workoutPlanId], references: [id])
   workoutPlanId              String
-  User                       User        @relation(fields: [userId], references: [id])
+  User                       User               @relation(fields: [userId], references: [id])
   userId                     String
+  ScheduledWorkouts          ScheduledWorkout[]
 }
 
 model WorkoutPlanReview {
@@ -474,19 +480,20 @@ model WorkoutPlanReview {
 ///// Logged Workout Related Models and Children /////////
 //////////////////////////////////////////////////////////
 model LoggedWorkout {
-  id                    String                 @id @default(uuid())
-  createdAt             DateTime               @default(now())
-  completedOn           DateTime
-  User                  User                   @relation(fields: [userId], references: [id])
-  userId                String
-  name                  String
-  note                  String?
-  LoggedWorkoutSections LoggedWorkoutSection[]
-  Workout               Workout?               @relation(fields: [workoutId], references: [id])
-  workoutId             String?
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  completedOn DateTime
+  User        User     @relation(fields: [userId], references: [id])
+  userId      String
+  name        String
+  note        String?
+
   GymProfile            GymProfile?            @relation(fields: [gymProfileId], references: [id])
   gymProfileId          String?
+  LoggedWorkoutSections LoggedWorkoutSection[]
   ScheduledWorkout      ScheduledWorkout?
+  Workout               Workout?               @relation(fields: [workoutId], references: [id])
+  workoutId             String?
 }
 
 model LoggedWorkoutSection {

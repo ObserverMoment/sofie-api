@@ -239,6 +239,8 @@ export type CreateScheduledWorkoutInput = {
   note?: Maybe<Scalars['String']>;
   Workout: ConnectRelationInput;
   GymProfile?: Maybe<ConnectRelationInput>;
+  WorkoutPlanEnrolment?: Maybe<ConnectRelationInput>;
+  WorkoutPlanDayWorkout?: Maybe<ConnectRelationInput>;
 };
 
 export type CreateUserBenchmarkEntryInput = {
@@ -1288,6 +1290,8 @@ export type ScheduledWorkout = {
   Workout?: Maybe<Workout>;
   LoggedWorkout?: Maybe<LoggedWorkout>;
   GymProfile?: Maybe<GymProfile>;
+  workoutPlanEnrolmentId?: Maybe<Scalars['ID']>;
+  workoutPlanDayWorkoutId?: Maybe<Scalars['ID']>;
 };
 
 export type SortPositionUpdated = {
@@ -1421,6 +1425,8 @@ export type UpdateScheduledWorkoutInput = {
   Workout?: Maybe<ConnectRelationInput>;
   LoggedWorkout?: Maybe<ConnectRelationInput>;
   GymProfile?: Maybe<ConnectRelationInput>;
+  WorkoutPlanEnrolment?: Maybe<ConnectRelationInput>;
+  WorkoutPlanDayWorkout?: Maybe<ConnectRelationInput>;
 };
 
 export type UpdateSortPositionInput = {
@@ -2585,6 +2591,8 @@ export type ScheduledWorkoutResolvers<ContextType = any, ParentType extends Reso
   Workout?: Resolver<Maybe<ResolversTypes['Workout']>, ParentType, ContextType>;
   LoggedWorkout?: Resolver<Maybe<ResolversTypes['LoggedWorkout']>, ParentType, ContextType>;
   GymProfile?: Resolver<Maybe<ResolversTypes['GymProfile']>, ParentType, ContextType>;
+  workoutPlanEnrolmentId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  workoutPlanDayWorkoutId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
