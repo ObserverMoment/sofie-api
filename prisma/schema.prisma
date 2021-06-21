@@ -285,9 +285,9 @@ model Workout {
   ScheduledWorkouts     ScheduledWorkout[]
   WorkoutGoals          WorkoutGoal[]
   WorkoutTags           WorkoutTag[]
-  FeaturedWorkouts      FeaturedWorkout[]
   WorkoutPlanDayWorkout WorkoutPlanDayWorkout[]
   Collections           Collection[]
+  DiscoverWorkouts      DiscoverWorkout[]
 }
 
 /// Used on both workouts and workout plans + maybe others (events, challenges) in the future. Free text tag for the user to tag their content.
@@ -418,9 +418,9 @@ model WorkoutPlan {
   Enrolments           WorkoutPlanEnrolment[]
   WorkoutPlanReviews   WorkoutPlanReview[]
   WorkoutTags          WorkoutTag[]
-  FeaturedWorkoutPlans FeaturedWorkoutPlan[]
   WorkoutPlanDays      WorkoutPlanDay[]
   Collections          Collection[]
+  DiscoverWorkoutPlans DiscoverWorkoutPlan[]
 }
 
 model WorkoutPlanDay {
@@ -612,40 +612,36 @@ model ProgressJournalGoalTag {
 ////////////////////////////////////////////////////
 ///// Discover and Recents Related Models //////////
 ////////////////////////////////////////////////////
-model FeaturedWorkout {
-  id                        String                  @id @default(uuid())
-  createdAt                 DateTime                @default(now())
-  Workout                   Workout                 @relation(fields: [workoutId], references: [id])
-  workoutId                 String
-  FeaturedWorkoutCategory   FeaturedWorkoutCategory @relation(fields: [featuredWorkoutCategoryId], references: [id])
-  featuredWorkoutCategoryId String
-}
 
-model FeaturedWorkoutCategory {
-  id               String            @id @default(uuid())
-  createdAt        DateTime          @default(now())
-  name             String
-  description      String
-  coverImageUri    String?
-  FeaturedWorkouts FeaturedWorkout[]
-}
-
-model FeaturedWorkoutPlan {
-  id                            String                      @id @default(uuid())
-  createdAt                     DateTime                    @default(now())
-  WorkoutPlan                   WorkoutPlan                 @relation(fields: [workoutPlanId], references: [id])
-  workoutPlanId                 String
-  FeaturedWorkoutPlanCategory   FeaturedWorkoutPlanCategory @relation(fields: [featuredWorkoutPlanCategoryId], references: [id])
-  featuredWorkoutPlanCategoryId String
-}
-
-model FeaturedWorkoutPlanCategory {
+/// Client can make a call such as discoverCategoryById(id) to get back everything from the category to display it. i.e. when clicking a DiscoverCategory banner.
+model DiscoverCategory {
   id                   String                @id @default(uuid())
   createdAt            DateTime              @default(now())
+  active               Boolean
   name                 String
+  tagline              String
   description          String
   coverImageUri        String?
-  FeaturedWorkoutPlans FeaturedWorkoutPlan[]
+  DiscoverWorkouts     DiscoverWorkout[]
+  DiscoverWorkoutPlans DiscoverWorkoutPlan[]
+}
+
+model DiscoverWorkout {
+  id                 String           @id @default(uuid())
+  createdAt          DateTime         @default(now())
+  Workout            Workout          @relation(fields: [workoutId], references: [id])
+  workoutId          String
+  DiscoverCategory   DiscoverCategory @relation(fields: [discoverCategoryId], references: [id])
+  discoverCategoryId String
+}
+
+model DiscoverWorkoutPlan {
+  id                 String           @id @default(uuid())
+  createdAt          DateTime         @default(now())
+  WorkoutPlan        WorkoutPlan      @relation(fields: [workoutPlanId], references: [id])
+  workoutPlanId      String
+  DiscoverCategory   DiscoverCategory @relation(fields: [discoverCategoryId], references: [id])
+  discoverCategoryId String
 }
 
 //////////////////////////////////
