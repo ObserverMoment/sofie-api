@@ -153,7 +153,7 @@ export type CreateLoggedWorkoutSectionInLoggedWorkoutInput = {
   sortPosition: Scalars['Int'];
   roundsCompleted: Scalars['Int'];
   timeTakenMs?: Maybe<Scalars['Int']>;
-  roundTimesMs?: Maybe<Scalars['JSON']>;
+  lapTimesMs?: Maybe<Scalars['JSON']>;
   repScore?: Maybe<Scalars['Int']>;
   timecap?: Maybe<Scalars['Int']>;
   WorkoutSectionType: ConnectRelationInput;
@@ -166,7 +166,7 @@ export type CreateLoggedWorkoutSectionInput = {
   sortPosition: Scalars['Int'];
   roundsCompleted: Scalars['Int'];
   timeTakenMs?: Maybe<Scalars['Int']>;
-  roundTimesMs?: Maybe<Scalars['JSON']>;
+  lapTimesMs?: Maybe<Scalars['JSON']>;
   repScore?: Maybe<Scalars['Int']>;
   timecap?: Maybe<Scalars['Int']>;
   WorkoutSectionType: ConnectRelationInput;
@@ -432,7 +432,7 @@ export type LoggedWorkoutSection = {
   timecap?: Maybe<Scalars['Int']>;
   roundsCompleted: Scalars['Int'];
   timeTakenMs?: Maybe<Scalars['Int']>;
-  roundTimesMs: Scalars['JSON'];
+  lapTimesMs: Scalars['JSON'];
   repScore?: Maybe<Scalars['Int']>;
   note?: Maybe<Scalars['String']>;
   WorkoutSectionType: WorkoutSectionType;
@@ -1356,7 +1356,7 @@ export type UpdateLoggedWorkoutSectionInput = {
   name?: Maybe<Scalars['String']>;
   roundsCompleted?: Maybe<Scalars['Int']>;
   timeTakenMs?: Maybe<Scalars['Int']>;
-  roundTimesMs?: Maybe<Scalars['JSON']>;
+  lapTimesMs?: Maybe<Scalars['JSON']>;
   timecap?: Maybe<Scalars['Int']>;
   repScore?: Maybe<Scalars['Int']>;
   note?: Maybe<Scalars['String']>;
@@ -2353,7 +2353,7 @@ export type LoggedWorkoutSectionResolvers<ContextType = any, ParentType extends 
   timecap?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   roundsCompleted?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   timeTakenMs?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  roundTimesMs?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>;
+  lapTimesMs?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>;
   repScore?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   note?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   WorkoutSectionType?: Resolver<ResolversTypes['WorkoutSectionType'], ParentType, ContextType>;

@@ -506,10 +506,12 @@ model LoggedWorkoutSection {
   timecap              Int? // Seconds - original timecap on the section
   sortPosition         Int
   roundsCompleted      Int                @default(1)
-  timeTakenMs          Int? // Total time taken - useful for scoring fortime workouts and adding a duration to free session workouts where laptimes can be overkill.
-  // { sectionRoundIndex: { time: roundTimeMs , setId: { setRoundNumber: ms, setRoundNumber: ms }} }
-  roundTimesMs         Json               @default("{}") // Milliseconds. 
-  repScore             Int? // Score for AMRAP and Last Standing types workouts where your score submission is the number of reps you completed.
+  // Total time taken - useful for scoring fortime workouts and adding a duration to free session workouts where laptimes can be overkill.
+  timeTakenMs          Int?
+  // JsonArray validated before entering the DB via yup
+  // see lib/jsonValidation.ts for shape.
+  lapTimesMs           Json               @default("{}") // Milliseconds. 
+  repScore             Int? // Score for AMRAP and Last Standing type workouts where your score submission is the number of reps you completed.
   LoggedWorkoutSets    LoggedWorkoutSet[]
   LoggedWorkout        LoggedWorkout      @relation(fields: [loggedWorkoutId], references: [id])
   loggedWorkoutId      String

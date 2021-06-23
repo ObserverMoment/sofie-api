@@ -13,13 +13,7 @@ export default gql`
     GymProfile: GymProfile
   }
 
-  # roundTimesMs shape - for each section round number.
-  # { sectionRoundNumber: {
-  #   time: roundTimeMs,
-  #   setId: { setRoundNumber: setTimeMs, setRoundNumber: setTimeMs },
-  #   setId: { setRoundNumber: setTimeMs, setRoundNumber: setTimeMs }
-  #  }
-  # }
+  # For lapTimesMs shape - see lib/jsonValidation.ts
   type LoggedWorkoutSection {
     id: ID!
     name: String
@@ -27,7 +21,7 @@ export default gql`
     timecap: Int
     roundsCompleted: Int!
     timeTakenMs: Int
-    roundTimesMs: JSON!
+    lapTimesMs: JSON!
     repScore: Int
     note: String
     WorkoutSectionType: WorkoutSectionType!
@@ -75,7 +69,7 @@ export default gql`
     sortPosition: Int!
     roundsCompleted: Int!
     timeTakenMs: Int
-    roundTimesMs: JSON
+    lapTimesMs: JSON
     repScore: Int
     timecap: Int
     WorkoutSectionType: ConnectRelationInput!
@@ -111,7 +105,7 @@ export default gql`
     sortPosition: Int!
     roundsCompleted: Int!
     timeTakenMs: Int
-    roundTimesMs: JSON
+    lapTimesMs: JSON
     repScore: Int
     timecap: Int
     WorkoutSectionType: ConnectRelationInput!
@@ -154,7 +148,7 @@ export default gql`
     name: String
     roundsCompleted: Int
     timeTakenMs: Int
-    roundTimesMs: JSON
+    lapTimesMs: JSON
     timecap: Int
     repScore: Int
     note: String

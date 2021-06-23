@@ -7,6 +7,7 @@ import {
   MutationReorderLoggedWorkoutSectionsArgs,
   MutationUpdateLoggedWorkoutSectionArgs,
 } from '../../../generated/graphql'
+import { validateWorkoutSectionLapTimesMs } from '../../../lib/jsonValidation'
 import {
   AccessScopeError,
   checkAndReorderObjects,
@@ -26,6 +27,15 @@ export const createLoggedWorkoutSection = async (
     authedUserId,
     prisma,
   )
+
+  if (
+    data.lapTimesMs != null &&
+    !validateWorkoutSectionLapTimesMs(data.lapTimesMs)
+  ) {
+    throw new Error(
+      'createLoggedWorkoutSection.validateWorkoutSectionLapTimesMs: Invalid JSON input shape.',
+    )
+  }
 
   const loggedWorkoutSection = await prisma.loggedWorkoutSection.create({
     data: {
@@ -61,6 +71,16 @@ export const updateLoggedWorkoutSection = async (
     authedUserId,
     prisma,
   )
+
+  if (
+    data.lapTimesMs != null &&
+    !validateWorkoutSectionLapTimesMs(data.lapTimesMs)
+  ) {
+    throw new Error(
+      'updateLoggedWorkoutSection.validateWorkoutSectionLapTimesMs: Invalid JSON input shape.',
+    )
+  }
+
   const updated = await prisma.loggedWorkoutSection.update({
     where: {
       id: data.id,

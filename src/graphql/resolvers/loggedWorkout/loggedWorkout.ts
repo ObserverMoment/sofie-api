@@ -11,6 +11,7 @@ import {
   QueryLoggedWorkoutByIdArgs,
   QueryUserLoggedWorkoutsArgs,
 } from '../../../generated/graphql'
+import { validateWorkoutSectionLapTimesMs } from '../../../lib/jsonValidation'
 import { AccessScopeError, checkUserOwnsObject } from '../../utils'
 
 //// Queries ////
@@ -222,9 +223,18 @@ export const deleteLoggedWorkoutById = async (
  * LoggedWorkoutMove Validation
  */
 function validateCreateLoggedWorkoutInput(data: CreateLoggedWorkoutInput) {
-  // Check all logged workout moves for valid inputs
   for (const section of data.LoggedWorkoutSections) {
+    // Ensure any laptimes data is in the correct format.
+    if (
+      section.lapTimesMs != null &&
+      !validateWorkoutSectionLapTimesMs(section.lapTimesMs)
+    ) {
+      throw new Error(
+        'validateCreateLoggedWorkoutInput.validateWorkoutSectionLapTimesMs: Invalid JSON input shape.',
+      )
+    }
     for (const set of section.LoggedWorkoutSets) {
+      // Check all logged workout moves for valid inputs
       for (const workoutMove of set.LoggedWorkoutMoves) {
         validateLoggedWorkoutMoveInput(workoutMove)
       }

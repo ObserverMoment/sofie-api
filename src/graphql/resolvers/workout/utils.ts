@@ -1,5 +1,6 @@
 import { Prisma, PrismaClient } from '@prisma/client'
 import { WorkoutFiltersInput } from '../../../generated/graphql'
+import { validateWorkoutMetaData } from '../../../lib/jsonValidation'
 import { WorkoutMetaDataPayload } from '../../../types'
 
 export function formatWorkoutFiltersInput(filters: WorkoutFiltersInput) {
@@ -79,6 +80,7 @@ export function formatWorkoutSetsFilters(filters: WorkoutFiltersInput) {
     : {}
 
   // filters.bodyweightOnly is handled in the meta data filters.
+  // !filters.bodyweightOnly is handled here.
   if (!filters.bodyweightOnly && filters.availableEquipments?.length) {
     return {
       WorkoutSets: {
@@ -303,6 +305,14 @@ export async function updateWorkoutMetaData(
     bodyweightOnly: !requiresEquipment,
     moves: Array.from(dataAsSets.moves),
     bodyAreas: Array.from(dataAsSets.bodyAreas),
+  }
+
+  const valid = validateWorkoutMetaData(metaData)
+  if (!valid) {
+    console.log(metaData)
+    throw new Error(
+      'An invalid meta data object was generated so the meta data was not saved.',
+    )
   }
 
   const data: Prisma.WorkoutUpdateInput = {

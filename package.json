@@ -30,6 +30,7 @@
     "graphql-middleware": "^6.0.10",
     "graphql-parse-resolve-info": "^4.11.0",
     "graphql-type-json": "^0.3.2",
+    "joi": "^17.4.0",
     "node-fetch": "^2.6.1"
   },
   "devDependencies": {
