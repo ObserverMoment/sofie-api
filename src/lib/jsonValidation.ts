@@ -26,17 +26,18 @@ export interface WorkoutSectionLapTimes {
   [roundNumber: number]: {
     lapTimeMs?: number
     setLapTimesMs: {
-      [setId: string]: number
+      // Set index is the sort position
+      [setIndex: number]: number
     }
   }
 }
 
 const WorkoutSectionLapTimesSchema = Joi.object().pattern(
-  Joi.string(),
+  Joi.number().integer(),
   Joi.object({
     lapTimeMs: Joi.number().integer().optional(),
     setLapTimesMs: Joi.object()
-      .pattern(Joi.string(), Joi.number().integer())
+      .pattern(Joi.number().integer(), Joi.number().integer())
       .optional(),
   }).or('lapTimeMs', 'setLapTimesMs'),
 )
