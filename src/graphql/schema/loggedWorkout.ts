@@ -19,7 +19,6 @@ export default gql`
     name: String
     sortPosition: Int!
     timecap: Int
-    roundsCompleted: Int!
     timeTakenMs: Int
     lapTimesMs: JSON!
     repScore: Int
@@ -32,6 +31,7 @@ export default gql`
   type LoggedWorkoutSet {
     id: ID!
     note: String
+    roundNumber: Int!
     sortPosition: Int!
     roundsCompleted: Int!
     duration: Int
@@ -41,7 +41,6 @@ export default gql`
   type LoggedWorkoutMove {
     id: ID!
     sortPosition: Int!
-    note: String
     repType: WorkoutMoveRepType!
     reps: Float!
     distanceUnit: DistanceUnit!
@@ -67,7 +66,6 @@ export default gql`
     name: String
     note: String
     sortPosition: Int!
-    roundsCompleted: Int!
     timeTakenMs: Int
     lapTimesMs: JSON
     repScore: Int
@@ -79,6 +77,7 @@ export default gql`
   input CreateLoggedWorkoutSetInLoggedSectionInput {
     sortPosition: Int!
     note: String
+    roundNumber: Int!
     roundsCompleted: Int!
     duration: Int
     LoggedWorkoutMoves: [CreateLoggedWorkoutMoveInLoggedSetInput!]!
@@ -86,7 +85,6 @@ export default gql`
 
   input CreateLoggedWorkoutMoveInLoggedSetInput {
     sortPosition: Int!
-    note: String
     repType: WorkoutMoveRepType!
     reps: Float!
     distanceUnit: DistanceUnit
@@ -103,7 +101,6 @@ export default gql`
     name: String
     note: String
     sortPosition: Int!
-    roundsCompleted: Int!
     timeTakenMs: Int
     lapTimesMs: JSON
     repScore: Int
@@ -113,6 +110,7 @@ export default gql`
   }
 
   input CreateLoggedWorkoutSetInput {
+    roundNumber: Int!
     sortPosition: Int!
     note: String
     roundsCompleted: Int!
@@ -122,7 +120,6 @@ export default gql`
 
   input CreateLoggedWorkoutMoveInput {
     sortPosition: Int!
-    note: String
     repType: WorkoutMoveRepType!
     reps: Float!
     distanceUnit: DistanceUnit
@@ -146,7 +143,6 @@ export default gql`
   input UpdateLoggedWorkoutSectionInput {
     id: ID!
     name: String
-    roundsCompleted: Int
     timeTakenMs: Int
     lapTimesMs: JSON
     timecap: Int
@@ -163,7 +159,6 @@ export default gql`
 
   input UpdateLoggedWorkoutMoveInput {
     id: ID!
-    note: String
     reps: Float
     distanceUnit: DistanceUnit
     loadAmount: Float

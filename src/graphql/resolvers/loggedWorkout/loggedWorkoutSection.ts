@@ -85,10 +85,7 @@ export const updateLoggedWorkoutSection = async (
     where: {
       id: data.id,
     },
-    data: {
-      ...data,
-      roundsCompleted: data.roundsCompleted || undefined,
-    },
+    data,
     select,
   })
 
