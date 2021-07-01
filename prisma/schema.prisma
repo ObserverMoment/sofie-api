@@ -309,6 +309,7 @@ model WorkoutSection {
   userId               String
   name                 String?
   note                 String?
+  // This field should always be one for AMRAP, Tabata, LastStanding and Free Session.
   rounds               Int                @default(1)
   timecap              Int? // Seconds. To finish ALL rounds of the section. i.e. the whole 'workout' as described.
   sortPosition         Int
@@ -524,10 +525,10 @@ model LoggedWorkoutSet {
   User                   User                 @relation(fields: [userId], references: [id])
   userId                 String
   note                   String?
-  roundNumber            Int                  @default(1) // Which round of the section.
+  roundNumber            Int // Which round of the section.
   sortPosition           Int // Within the section.
   duration               Int? // Seconds - Used in EMOM and HIIT circuit workouts to determine how long to do the moves for. Copied across from WorkoutSet.duration
-  roundsCompleted        Int                  @default(1)
+  roundsCompleted        Int                  @default(1) // Of the set
   LoggedWorkoutMoves     LoggedWorkoutMove[]
   LoggedWorkoutSection   LoggedWorkoutSection @relation(fields: [loggedWorkoutSectionId], references: [id])
   loggedWorkoutSectionId String
