@@ -1,6 +1,12 @@
 import { Resolvers } from '../../generated/graphql'
 
 import {
+  discoverFeatured,
+  discoverWorkoutCategories,
+  discoverWorkoutPlanCategories,
+} from './discover'
+
+import {
   gymProfiles,
   createGymProfile,
   updateGymProfile,
@@ -219,6 +225,10 @@ const resolvers: Resolvers = {
     moveTypes,
     workoutGoals,
     workoutSectionTypes,
+    ///// Discover ////
+    discoverFeatured,
+    discoverWorkoutCategories,
+    discoverWorkoutPlanCategories,
     //// Progress Journal ////
     userProgressJournals,
     progressJournalGoalTags,

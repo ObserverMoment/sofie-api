@@ -12,6 +12,10 @@ export default gql`
     moveTypes: [MoveType!]!
     workoutGoals: [WorkoutGoal!]!
     workoutSectionTypes: [WorkoutSectionType!]!
+    #### Discover Pages and Types ####
+    discoverFeatured: [DiscoverFeatured!]!
+    discoverWorkoutCategories: [DiscoverWorkoutCategory!]!
+    discoverWorkoutPlanCategories: [DiscoverWorkoutPlanCategory!]!
     #### Logged Workouts ####
     userLoggedWorkouts(take: Int): [LoggedWorkout!]!
     loggedWorkoutById(id: ID!): LoggedWorkout!

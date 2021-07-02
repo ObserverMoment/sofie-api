@@ -360,6 +360,57 @@ export type DifficultyLevel =
   | 'ADVANCED'
   | 'ELITE';
 
+export type DiscoverFeatured = {
+  __typename?: 'DiscoverFeatured';
+  id: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  tag: Scalars['String'];
+  name: Scalars['String'];
+  tagline: Scalars['String'];
+  description: Scalars['String'];
+  coverImageUri: Scalars['String'];
+};
+
+export type DiscoverWorkout = {
+  __typename?: 'DiscoverWorkout';
+  id: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  Workout: Workout;
+  DiscoverWorkoutCategory: DiscoverWorkoutCategory;
+};
+
+export type DiscoverWorkoutCategory = {
+  __typename?: 'DiscoverWorkoutCategory';
+  id: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  active: Scalars['Boolean'];
+  name: Scalars['String'];
+  tagline: Scalars['String'];
+  description: Scalars['String'];
+  coverImageUri: Scalars['String'];
+  DiscoverWorkouts: Array<DiscoverWorkout>;
+};
+
+export type DiscoverWorkoutPlan = {
+  __typename?: 'DiscoverWorkoutPlan';
+  id: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  WorkoutPlan: WorkoutPlan;
+  DiscoverWorkoutPlanCategory: DiscoverWorkoutPlanCategory;
+};
+
+export type DiscoverWorkoutPlanCategory = {
+  __typename?: 'DiscoverWorkoutPlanCategory';
+  id: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  active: Scalars['Boolean'];
+  name: Scalars['String'];
+  tagline: Scalars['String'];
+  description: Scalars['String'];
+  coverImageUri: Scalars['String'];
+  DiscoverWorkoutPlans: Array<DiscoverWorkoutPlan>;
+};
+
 export type DistanceUnit =
   | 'METRES'
   | 'KILOMETRES'
@@ -1129,6 +1180,9 @@ export type Query = {
   moveTypes: Array<MoveType>;
   workoutGoals: Array<WorkoutGoal>;
   workoutSectionTypes: Array<WorkoutSectionType>;
+  discoverFeatured: Array<DiscoverFeatured>;
+  discoverWorkoutCategories: Array<DiscoverWorkoutCategory>;
+  discoverWorkoutPlanCategories: Array<DiscoverWorkoutPlanCategory>;
   userLoggedWorkouts: Array<LoggedWorkout>;
   loggedWorkoutById: LoggedWorkout;
   standardMoves: Array<Move>;
@@ -2055,6 +2109,11 @@ export type ResolversTypes = ResolversObject<{
   CreateWorkoutTagInput: CreateWorkoutTagInput;
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
   DifficultyLevel: DifficultyLevel;
+  DiscoverFeatured: ResolverTypeWrapper<DiscoverFeatured>;
+  DiscoverWorkout: ResolverTypeWrapper<DiscoverWorkout>;
+  DiscoverWorkoutCategory: ResolverTypeWrapper<DiscoverWorkoutCategory>;
+  DiscoverWorkoutPlan: ResolverTypeWrapper<DiscoverWorkoutPlan>;
+  DiscoverWorkoutPlanCategory: ResolverTypeWrapper<DiscoverWorkoutPlanCategory>;
   DistanceUnit: DistanceUnit;
   Equipment: ResolverTypeWrapper<Equipment>;
   Gender: Gender;
@@ -2186,6 +2245,11 @@ export type ResolversParentTypes = ResolversObject<{
   CreateWorkoutSetIntervalBuyInInput: CreateWorkoutSetIntervalBuyInInput;
   CreateWorkoutTagInput: CreateWorkoutTagInput;
   DateTime: Scalars['DateTime'];
+  DiscoverFeatured: DiscoverFeatured;
+  DiscoverWorkout: DiscoverWorkout;
+  DiscoverWorkoutCategory: DiscoverWorkoutCategory;
+  DiscoverWorkoutPlan: DiscoverWorkoutPlan;
+  DiscoverWorkoutPlanCategory: DiscoverWorkoutPlanCategory;
   Equipment: Equipment;
   GymProfile: GymProfile;
   JSON: Scalars['JSON'];
@@ -2293,6 +2357,57 @@ export type CollectionResolvers<ContextType = any, ParentType extends ResolversP
 export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {
   name: 'DateTime';
 }
+
+export type DiscoverFeaturedResolvers<ContextType = any, ParentType extends ResolversParentTypes['DiscoverFeatured'] = ResolversParentTypes['DiscoverFeatured']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  tag?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  tagline?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  coverImageUri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type DiscoverWorkoutResolvers<ContextType = any, ParentType extends ResolversParentTypes['DiscoverWorkout'] = ResolversParentTypes['DiscoverWorkout']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  Workout?: Resolver<ResolversTypes['Workout'], ParentType, ContextType>;
+  DiscoverWorkoutCategory?: Resolver<ResolversTypes['DiscoverWorkoutCategory'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type DiscoverWorkoutCategoryResolvers<ContextType = any, ParentType extends ResolversParentTypes['DiscoverWorkoutCategory'] = ResolversParentTypes['DiscoverWorkoutCategory']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  active?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  tagline?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  coverImageUri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  DiscoverWorkouts?: Resolver<Array<ResolversTypes['DiscoverWorkout']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type DiscoverWorkoutPlanResolvers<ContextType = any, ParentType extends ResolversParentTypes['DiscoverWorkoutPlan'] = ResolversParentTypes['DiscoverWorkoutPlan']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  WorkoutPlan?: Resolver<ResolversTypes['WorkoutPlan'], ParentType, ContextType>;
+  DiscoverWorkoutPlanCategory?: Resolver<ResolversTypes['DiscoverWorkoutPlanCategory'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type DiscoverWorkoutPlanCategoryResolvers<ContextType = any, ParentType extends ResolversParentTypes['DiscoverWorkoutPlanCategory'] = ResolversParentTypes['DiscoverWorkoutPlanCategory']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  active?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  tagline?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  coverImageUri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  DiscoverWorkoutPlans?: Resolver<Array<ResolversTypes['DiscoverWorkoutPlan']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
 
 export type EquipmentResolvers<ContextType = any, ParentType extends ResolversParentTypes['Equipment'] = ResolversParentTypes['Equipment']> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
@@ -2543,6 +2658,9 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   moveTypes?: Resolver<Array<ResolversTypes['MoveType']>, ParentType, ContextType>;
   workoutGoals?: Resolver<Array<ResolversTypes['WorkoutGoal']>, ParentType, ContextType>;
   workoutSectionTypes?: Resolver<Array<ResolversTypes['WorkoutSectionType']>, ParentType, ContextType>;
+  discoverFeatured?: Resolver<Array<ResolversTypes['DiscoverFeatured']>, ParentType, ContextType>;
+  discoverWorkoutCategories?: Resolver<Array<ResolversTypes['DiscoverWorkoutCategory']>, ParentType, ContextType>;
+  discoverWorkoutPlanCategories?: Resolver<Array<ResolversTypes['DiscoverWorkoutPlanCategory']>, ParentType, ContextType>;
   userLoggedWorkouts?: Resolver<Array<ResolversTypes['LoggedWorkout']>, ParentType, ContextType, RequireFields<QueryUserLoggedWorkoutsArgs, never>>;
   loggedWorkoutById?: Resolver<ResolversTypes['LoggedWorkout'], ParentType, ContextType, RequireFields<QueryLoggedWorkoutByIdArgs, 'id'>>;
   standardMoves?: Resolver<Array<ResolversTypes['Move']>, ParentType, ContextType>;
@@ -2904,6 +3022,11 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   BodyAreaMoveScore?: BodyAreaMoveScoreResolvers<ContextType>;
   Collection?: CollectionResolvers<ContextType>;
   DateTime?: GraphQLScalarType;
+  DiscoverFeatured?: DiscoverFeaturedResolvers<ContextType>;
+  DiscoverWorkout?: DiscoverWorkoutResolvers<ContextType>;
+  DiscoverWorkoutCategory?: DiscoverWorkoutCategoryResolvers<ContextType>;
+  DiscoverWorkoutPlan?: DiscoverWorkoutPlanResolvers<ContextType>;
+  DiscoverWorkoutPlanCategory?: DiscoverWorkoutPlanCategoryResolvers<ContextType>;
   Equipment?: EquipmentResolvers<ContextType>;
   GymProfile?: GymProfileResolvers<ContextType>;
   JSON?: GraphQLScalarType;

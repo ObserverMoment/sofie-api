@@ -611,39 +611,59 @@ model ProgressJournalGoalTag {
   ProgressJournalGoals ProgressJournalGoal[]
 }
 
-////////////////////////////////////////////////////
-///// Discover and Recents Related Models //////////
-////////////////////////////////////////////////////
+//////////////////////////////////////////////
+///// Discover Pages Related Models //////////
+//////////////////////////////////////////////
 
 /// Client can make a call such as discoverCategoryById(id) to get back everything from the category to display it. i.e. when clicking a DiscoverCategory banner.
-model DiscoverCategory {
+model DiscoverFeatured {
+  id            String   @id @default(uuid())
+  createdAt     DateTime @default(now())
+  tag           String
+  name          String
+  tagline       String
+  description   String
+  coverImageUri String
+}
+
+model DiscoverWorkoutCategory {
+  id               String            @id @default(uuid())
+  createdAt        DateTime          @default(now())
+  active           Boolean
+  name             String
+  tagline          String
+  description      String
+  coverImageUri    String
+  DiscoverWorkouts DiscoverWorkout[]
+}
+
+model DiscoverWorkout {
+  id                        String                  @id @default(uuid())
+  createdAt                 DateTime                @default(now())
+  Workout                   Workout                 @relation(fields: [workoutId], references: [id])
+  workoutId                 String
+  DiscoverWorkoutCategory   DiscoverWorkoutCategory @relation(fields: [discoverWorkoutCategoryId], references: [id])
+  discoverWorkoutCategoryId String
+}
+
+model DiscoverWorkoutPlanCategory {
   id                   String                @id @default(uuid())
   createdAt            DateTime              @default(now())
   active               Boolean
   name                 String
   tagline              String
   description          String
-  coverImageUri        String?
-  DiscoverWorkouts     DiscoverWorkout[]
+  coverImageUri        String
   DiscoverWorkoutPlans DiscoverWorkoutPlan[]
 }
 
-model DiscoverWorkout {
-  id                 String           @id @default(uuid())
-  createdAt          DateTime         @default(now())
-  Workout            Workout          @relation(fields: [workoutId], references: [id])
-  workoutId          String
-  DiscoverCategory   DiscoverCategory @relation(fields: [discoverCategoryId], references: [id])
-  discoverCategoryId String
-}
-
 model DiscoverWorkoutPlan {
-  id                 String           @id @default(uuid())
-  createdAt          DateTime         @default(now())
-  WorkoutPlan        WorkoutPlan      @relation(fields: [workoutPlanId], references: [id])
-  workoutPlanId      String
-  DiscoverCategory   DiscoverCategory @relation(fields: [discoverCategoryId], references: [id])
-  discoverCategoryId String
+  id                            String                      @id @default(uuid())
+  createdAt                     DateTime                    @default(now())
+  WorkoutPlan                   WorkoutPlan                 @relation(fields: [workoutPlanId], references: [id])
+  workoutPlanId                 String
+  DiscoverWorkoutPlanCategory   DiscoverWorkoutPlanCategory @relation(fields: [discoverWorkoutPlanCategoryId], references: [id])
+  discoverWorkoutPlanCategoryId String
 }
 
 //////////////////////////////////
