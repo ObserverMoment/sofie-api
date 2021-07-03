@@ -5,25 +5,31 @@ export default gql`
     id: ID!
     createdAt: DateTime!
     scheduledAt: DateTime!
-    notes: String
-    workoutId: ID!
-    loggedWorkoutId: ID
-    gymProfileId: ID
+    note: String
+    Workout: Workout
+    LoggedWorkout: LoggedWorkout
+    GymProfile: GymProfile
+    workoutPlanEnrolmentId: ID
+    workoutPlanDayWorkoutId: ID
   }
 
   input CreateScheduledWorkoutInput {
     scheduledAt: DateTime!
-    notes: String
-    workout: ID!
-    gymProfile: ID
+    note: String
+    Workout: ConnectRelationInput!
+    GymProfile: ConnectRelationInput
+    WorkoutPlanEnrolment: ConnectRelationInput
+    WorkoutPlanDayWorkout: ConnectRelationInput
   }
 
   input UpdateScheduledWorkoutInput {
     id: ID!
     scheduledAt: DateTime
-    notes: String
-    workout: ID
-    loggedWorkout: ID
-    gymProfile: ID
+    note: String
+    Workout: ConnectRelationInput
+    LoggedWorkout: ConnectRelationInput
+    GymProfile: ConnectRelationInput
+    WorkoutPlanEnrolment: ConnectRelationInput
+    WorkoutPlanDayWorkout: ConnectRelationInput
   }
 `

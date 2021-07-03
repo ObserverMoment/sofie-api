@@ -3,13 +3,12 @@ import { gql } from 'apollo-server-express'
 export default gql`
   """
   Enums
-  enums
   """
-  enum AccessScopeType {
-    PRIVATE
-    PUBLIC
-    PAID
-    OFFICIAL
+  enum BenchmarkType {
+    MAXLOAD
+    FASTESTTIME
+    UNBROKENREPS
+    UNBROKENTIME
   }
 
   enum BodyAreaFrontBack {
@@ -24,11 +23,23 @@ export default gql`
     UPPER
   }
 
+  enum BodyweightUnit {
+    KG
+    LB
+  }
+
+  enum ContentAccessScope {
+    PRIVATE
+    PUBLIC
+    GROUP
+  }
+
   enum DifficultyLevel {
-    ONE
-    TWO
-    THREE
-    FOUR
+    LIGHT
+    CHALLENGING
+    INTERMEDIATE
+    ADVANCED
+    ELITE
   }
 
   enum DistanceUnit {
@@ -37,16 +48,19 @@ export default gql`
     YARDS
     MILES
   }
+
   enum Gender {
     MALE
     FEMALE
-    UNSPECIFIED
+    NONBINARY
+    NONE
   }
 
   enum LoadUnit {
     KG
     LB
     BODYWEIGHTPERCENT
+    PERCENTMAX
   }
 
   """
@@ -58,22 +72,10 @@ export default gql`
     CUSTOM
   }
 
-  enum MoveType {
-    GENERAL
-    CARDIO
-    YOGAFLEX
-    BARRE
-    PILATES
-  }
-
-  enum ThemePreference {
-    DARK
-    LIGHT
-  }
-
-  enum UnitSystem {
-    IMPERIAL
-    METRIC
+  enum TimeUnit {
+    HOURS
+    MINUTES
+    SECONDS
   }
 
   enum WorkoutMoveRepType {
@@ -83,37 +85,20 @@ export default gql`
     TIME
   }
 
-  """
-  AMREPS in reps
-  TIME in seconds
-  LOAD in kgs
-  EMON in reps
-  """
-  enum WorkoutScoreType {
-    AMREPS
-    FORTIME
-    FORLOAD
+  enum WorkoutSetGeneratorTarget {
+    REPS
+    LOAD
+  }
+
+  enum WorkoutSetGeneratorType {
+    LADDERUP
+    LADDERDOWN
+    PYRAMIDUP
+    PYRAMIDDOWN
   }
 
   enum UserProfileScope {
     PRIVATE
     PUBLIC
-  }
-
-  """
-  For generating rules which can adjust rep and load over the course of a workout
-  """
-  enum RuleAction {
-    INCREASE
-    DECREASE
-    MULTIPLY
-  }
-
-  """
-  For generating rules which can adjust rep and load over the course of a workout
-  """
-  enum RuleTarget {
-    REPS
-    LOAD
   }
 `

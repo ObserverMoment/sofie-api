@@ -1,80 +1,170 @@
 import { gql } from 'apollo-server-express'
 
 export default gql`
+  #### Types / Return Values - Full Structure Retrievable ####
   type LoggedWorkout {
     id: ID!
+    completedOn: DateTime!
     name: String!
-    summary: String
-    description: String
-    completedOn: DateTime!
-    notes: String
-    videoUrl: String
-    videoThumbUrl: String
-    imageUrl: String
-    duration: Int
-    workoutType: WorkoutType!
-    difficultyLevel: Int!
-    gymProfile: GymProfile
-    """
-    In a loggedWorkout, when you are doing rounds of a section, each round gets entered as a separate section - with its own time log.
-    """
-    workoutSections: [WorkoutSection!]!
-    originalWorkoutId: String
-    workoutProgramWorkout: WorkoutProgramWorkout
-    scheduledWorkout: ScheduledWorkout
+    note: String
+    LoggedWorkoutSections: [LoggedWorkoutSection!]!
+    Workout: Workout!
+    ScheduledWorkout: ScheduledWorkout
+    GymProfile: GymProfile
   }
 
+  # For lapTimesMs shape - see lib/jsonValidation.ts
+  type LoggedWorkoutSection {
+    id: ID!
+    name: String
+    sortPosition: Int!
+    timecap: Int
+    timeTakenMs: Int
+    lapTimesMs: JSON!
+    repScore: Int
+    note: String
+    WorkoutSectionType: WorkoutSectionType!
+    LoggedWorkoutSets: [LoggedWorkoutSet!]!
+    LoggedWorkout: LoggedWorkout!
+  }
+
+  type LoggedWorkoutSet {
+    id: ID!
+    note: String
+    roundNumber: Int!
+    sortPosition: Int!
+    roundsCompleted: Int!
+    duration: Int
+    LoggedWorkoutMoves: [LoggedWorkoutMove!]!
+  }
+
+  type LoggedWorkoutMove {
+    id: ID!
+    sortPosition: Int!
+    repType: WorkoutMoveRepType!
+    reps: Float!
+    distanceUnit: DistanceUnit!
+    loadAmount: Float
+    loadUnit: LoadUnit!
+    timeUnit: TimeUnit!
+    Move: Move!
+    Equipment: Equipment
+  }
+
+  #### Create Inputs - Full Structure Passed When Creating ####
   input CreateLoggedWorkoutInput {
-    name: String
-    summary: String
-    description: String
     completedOn: DateTime!
-    notes: String
-    videoUrl: String
-    videoThumbUrl: String
-    imageUrl: String
-    duration: Int
-    workoutType: ID!
-    gymProfile: ID
-    workoutSections: [CreateWorkoutSectionInput!]!
-    originalWorkout: ID!
-    workoutProgramEnrolment: ID
-    workoutProgramWorkout: ID
-    scheduledWorkout: ID
+    name: String!
+    note: String
+    LoggedWorkoutSections: [CreateLoggedWorkoutSectionInLoggedWorkoutInput!]!
+    Workout: ConnectRelationInput
+    ScheduledWorkout: ConnectRelationInput
+    GymProfile: ConnectRelationInput
   }
 
-  input DeepUpdateLoggedWorkoutInput {
-    id: ID!
+  input CreateLoggedWorkoutSectionInLoggedWorkoutInput {
     name: String
-    summary: String
-    description: String
-    completedOn: DateTime
-    notes: String
-    videoUrl: String
-    videoThumbUrl: String
-    imageUrl: String
-    duration: Int
-    gymProfile: ID
-    workoutSections: [CreateWorkoutSectionInput!]!
-    workoutProgramEnrolment: ID
-    workoutProgramWorkout: ID
-    scheduledWorkout: ID
+    note: String
+    sortPosition: Int!
+    timeTakenMs: Int
+    lapTimesMs: JSON
+    repScore: Int
+    timecap: Int
+    WorkoutSectionType: ConnectRelationInput!
+    LoggedWorkoutSets: [CreateLoggedWorkoutSetInLoggedSectionInput!]!
   }
 
-  input ShallowUpdateLoggedWorkoutInput {
+  input CreateLoggedWorkoutSetInLoggedSectionInput {
+    sortPosition: Int!
+    note: String
+    roundNumber: Int!
+    roundsCompleted: Int!
+    duration: Int
+    LoggedWorkoutMoves: [CreateLoggedWorkoutMoveInLoggedSetInput!]!
+  }
+
+  input CreateLoggedWorkoutMoveInLoggedSetInput {
+    sortPosition: Int!
+    repType: WorkoutMoveRepType!
+    reps: Float!
+    distanceUnit: DistanceUnit
+    loadAmount: Float
+    loadUnit: LoadUnit
+    timeUnit: TimeUnit
+    Move: ConnectRelationInput!
+    Equipment: ConnectRelationInput
+  }
+
+  #### Used when editing a logged workout that already exists ####
+  #### Create and attach to parent ####
+  input CreateLoggedWorkoutSectionInput {
+    name: String
+    note: String
+    sortPosition: Int!
+    timeTakenMs: Int
+    lapTimesMs: JSON
+    repScore: Int
+    timecap: Int
+    WorkoutSectionType: ConnectRelationInput!
+    LoggedWorkout: ConnectRelationInput!
+  }
+
+  input CreateLoggedWorkoutSetInput {
+    roundNumber: Int!
+    sortPosition: Int!
+    note: String
+    roundsCompleted: Int!
+    duration: Int
+    LoggedWorkoutSection: ConnectRelationInput!
+  }
+
+  input CreateLoggedWorkoutMoveInput {
+    sortPosition: Int!
+    repType: WorkoutMoveRepType!
+    reps: Float!
+    distanceUnit: DistanceUnit
+    loadAmount: Float
+    loadUnit: LoadUnit
+    timeUnit: TimeUnit
+    Move: ConnectRelationInput!
+    Equipment: ConnectRelationInput
+    LoggedWorkoutSet: ConnectRelationInput!
+  }
+
+  #### Update Inputs - Updates are made atomically at each level. (Non nested) ####
+  input UpdateLoggedWorkoutInput {
+    id: ID!
+    completedOn: DateTime
+    name: String
+    note: String
+    GymProfile: ConnectRelationInput
+  }
+
+  input UpdateLoggedWorkoutSectionInput {
     id: ID!
     name: String
-    summary: String
-    description: String
-    completedOn: DateTime
-    notes: String
-    videoUrl: String
-    videoThumbUrl: String
-    imageUrl: String
+    timeTakenMs: Int
+    lapTimesMs: JSON
+    timecap: Int
+    repScore: Int
+    note: String
+  }
+
+  input UpdateLoggedWorkoutSetInput {
+    id: ID!
+    note: String
     duration: Int
-    gymProfile: ID
-    workoutProgramEnrolment: ID
-    workoutProgramWorkout: ID
-    scheduledWorkout: ID
+    roundsCompleted: Int
+  }
+
+  input UpdateLoggedWorkoutMoveInput {
+    id: ID!
+    reps: Float
+    distanceUnit: DistanceUnit
+    loadAmount: Float
+    loadUnit: LoadUnit
+    timeUnit: TimeUnit
+    Move: ConnectRelationInput
+    Equipment: ConnectRelationInput
   }
 `

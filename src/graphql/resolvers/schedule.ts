@@ -1,98 +1,132 @@
-import { ScheduledWorkout } from '@prisma/client'
+import { ApolloError } from 'apollo-server-express'
 import { Context } from '../..'
 
 import {
-  MutationScheduleWorkoutArgs,
-  MutationUnscheduleWorkoutArgs,
+  MutationCreateScheduledWorkoutArgs,
+  MutationDeleteScheduledWorkoutByIdArgs,
   MutationUpdateScheduledWorkoutArgs,
-  QueryScheduledWorkoutsArgs,
+  ScheduledWorkout,
 } from '../../generated/graphql'
+import { checkUserOwnsObject } from '../utils'
 
-//// Queries
-const scheduledWorkouts = async (
+//// Queries ////
+export const userScheduledWorkouts = async (
   r: any,
-  { authedUserId }: QueryScheduledWorkoutsArgs,
-  { select, prisma }: Context,
-) =>
-  prisma.scheduledWorkout.findMany({
-    where: {
-      user: { id: authedUserId },
-    },
+  a: any,
+  { authedUserId, select, prisma }: Context,
+) => {
+  const scheduledWorkouts = await prisma.scheduledWorkout.findMany({
+    where: { userId: authedUserId },
     select,
   })
+  return scheduledWorkouts as ScheduledWorkout[]
+}
 
-//// Mutations
-const scheduleWorkout = async (
+//// Mutations ////
+export const createScheduledWorkout = async (
   r: any,
-  { authedUserId, data }: MutationScheduleWorkoutArgs,
-  { select, prisma }: Context,
-) =>
-  prisma.scheduledWorkout.create({
+  { data }: MutationCreateScheduledWorkoutArgs,
+  { authedUserId, select, prisma }: Context,
+) => {
+  const scheduledWorkout = await prisma.scheduledWorkout.create({
     data: {
       ...data,
-      workout: data.workout
+      Workout: {
+        connect: data.Workout,
+      },
+      GymProfile: data.GymProfile
         ? {
-            connect: { id: data.workout },
+            connect: data.GymProfile,
           }
         : undefined,
-      gymProfile: data.gymProfile
+      WorkoutPlanEnrolment: data.WorkoutPlanEnrolment
         ? {
-            connect: { id: data.gymProfile },
+            connect: data.WorkoutPlanEnrolment,
           }
         : undefined,
-      user: {
+      WorkoutPlanDayWorkout: data.WorkoutPlanDayWorkout
+        ? {
+            connect: data.WorkoutPlanDayWorkout,
+          }
+        : undefined,
+      User: {
         connect: { id: authedUserId },
       },
     },
     select,
   })
 
-const unscheduleWorkout = async (
-  r: any,
-  { authedUserId, scheduledWorkoutId }: MutationUnscheduleWorkoutArgs,
-  { prisma }: Context,
-) => {
-  const deleted: ScheduledWorkout = await prisma.scheduledWorkout.delete({
-    where: {
-      id: scheduledWorkoutId,
-    },
-  })
-  return deleted.id
+  if (scheduledWorkout) {
+    return scheduledWorkout as ScheduledWorkout
+  } else {
+    throw new ApolloError('createScheduledWorkout: There was an issue.')
+  }
 }
 
-const updateScheduledWorkout = async (
+export const updateScheduledWorkout = async (
   r: any,
-  { authedUserId, data }: MutationUpdateScheduledWorkoutArgs,
-  { select, prisma }: Context,
-) =>
-  prisma.scheduledWorkout.update({
-    where: {
-      id: data.id,
-    },
+  { data }: MutationUpdateScheduledWorkoutArgs,
+  { authedUserId, select, prisma }: Context,
+) => {
+  await checkUserOwnsObject(data.id, 'scheduledWorkout', authedUserId, prisma)
+
+  const updated = await prisma.scheduledWorkout.update({
+    where: { id: data.id },
     data: {
       ...data,
-      workout: data.workout
+      Workout: data.Workout
         ? {
-            connect: { id: data.workout },
+            connect: data.Workout,
           }
         : undefined,
-      gymProfile: data.gymProfile
-        ? {
-            connect: { id: data.gymProfile },
-          }
+      // GymProfile can be null, so it can only be ignored if not present in the data object.
+      // passing null should disconnect a connected GymProfile.
+      GymProfile: data.hasOwnProperty('GymProfile')
+        ? data.GymProfile
+          ? { connect: data.GymProfile }
+          : { disconnect: true }
         : undefined,
-      loggedWorkout: data.loggedWorkout
+      WorkoutPlanEnrolment: data.hasOwnProperty('WorkoutPlanEnrolment')
+        ? data.WorkoutPlanEnrolment
+          ? { connect: data.WorkoutPlanEnrolment }
+          : { disconnect: true }
+        : undefined,
+      WorkoutPlanDayWorkout: data.hasOwnProperty('WorkoutPlanDayWorkout')
+        ? data.WorkoutPlanDayWorkout
+          ? { connect: data.WorkoutPlanDayWorkout }
+          : { disconnect: true }
+        : undefined,
+      LoggedWorkout: data.LoggedWorkout
         ? {
-            connect: { id: data.loggedWorkout },
+            connect: data.LoggedWorkout,
           }
         : undefined,
     },
     select,
   })
 
-export {
-  scheduledWorkouts,
-  scheduleWorkout,
-  unscheduleWorkout,
-  updateScheduledWorkout,
+  if (updated) {
+    return updated as ScheduledWorkout
+  } else {
+    throw new ApolloError('updateScheduledWorkout: There was an issue.')
+  }
+}
+
+export const deleteScheduledWorkoutById = async (
+  r: any,
+  { id }: MutationDeleteScheduledWorkoutByIdArgs,
+  { authedUserId, prisma }: Context,
+) => {
+  await checkUserOwnsObject(id, 'scheduledWorkout', authedUserId, prisma)
+
+  const deleted = await prisma.scheduledWorkout.delete({
+    where: { id },
+    select: { id: true },
+  })
+
+  if (deleted) {
+    return deleted.id
+  } else {
+    throw new ApolloError('deleteScheduledWorkoutById: There was an issue.')
+  }
 }

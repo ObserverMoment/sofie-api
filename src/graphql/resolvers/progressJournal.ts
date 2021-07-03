@@ -1,10 +1,4 @@
-import {
-  prismaVersion,
-  ProgressJournal,
-  ProgressJournalEntry,
-  ProgressJournalGoal,
-  ProgressJournalGoalTag,
-} from '@prisma/client'
+import { ApolloError } from 'apollo-server-express'
 import { Context } from '../..'
 import {
   MutationCreateProgressJournalArgs,
@@ -19,286 +13,422 @@ import {
   MutationUpdateProgressJournalEntryArgs,
   MutationUpdateProgressJournalGoalArgs,
   MutationUpdateProgressJournalGoalTagArgs,
-  QueryProgressJournalGoalTagsArgs,
-  QueryProgressJournalsArgs,
+  ProgressJournal,
+  ProgressJournalEntry,
+  ProgressJournalGoal,
+  ProgressJournalGoalTag,
+  QueryProgressJournalByIdArgs,
 } from '../../generated/graphql'
 import { deleteFiles } from '../../uploadcare'
+import { AccessScopeError, checkUserOwnsObject } from '../utils'
 
 //// Queries ////
-/// Get all users specific progress journals.
-const progressJournals = async (
+export const userProgressJournals = async (
   r: any,
-  { authedUserId }: QueryProgressJournalsArgs,
-  { select, prisma }: Context,
-) =>
-  prisma.progressJournal.findMany({
+  a: any,
+  { authedUserId, select, prisma }: Context,
+) => {
+  const progressJournals = await prisma.progressJournal.findMany({
     where: {
-      user: { id: authedUserId },
+      userId: authedUserId,
     },
     select,
   })
+  return progressJournals as ProgressJournal[]
+}
 
-/// Get all users specific progress journal tags.
-const progressJournalGoalTags = async (
+/// Get all user specific progress journal tags.
+/// These tags can be used across journals to add general tags to goals
+/// E.g. Lose weight, reduce stress levels etc.
+export const progressJournalGoalTags = async (
   r: any,
-  { authedUserId }: QueryProgressJournalGoalTagsArgs,
-  { select, prisma }: Context,
-) =>
-  prisma.progressJournalGoalTag.findMany({
+  a: any,
+  { authedUserId, select, prisma }: Context,
+) => {
+  const progressJournalGoalTags = await prisma.progressJournalGoalTag.findMany({
     where: {
-      user: { id: authedUserId },
+      userId: authedUserId,
     },
     select,
   })
+  return progressJournalGoalTags as ProgressJournalGoalTag[]
+}
+
+export const progressJournalById = async (
+  r: any,
+  { id }: QueryProgressJournalByIdArgs,
+  { authedUserId, select, prisma }: Context,
+) => {
+  const progressJournal = await prisma.progressJournal.findFirst({
+    where: {
+      id: id,
+      userId: authedUserId,
+    },
+    select,
+  })
+  return progressJournal as ProgressJournal
+}
 
 //// Mutations ////
 //// ProgressJournal ////
-const createProgressJournal = async (
+export const createProgressJournal = async (
   r: any,
-  { authedUserId, data }: MutationCreateProgressJournalArgs,
-  { select, prisma }: Context,
-) =>
-  prisma.progressJournal.create({
+  { data }: MutationCreateProgressJournalArgs,
+  { authedUserId, select, prisma }: Context,
+) => {
+  const progressJournal = await prisma.progressJournal.create({
     data: {
       ...data,
-      user: {
+      User: {
         connect: { id: authedUserId },
       },
     },
     select,
   })
 
-const updateProgressJournal = async (
-  r: any,
-  { authedUserId, data }: MutationUpdateProgressJournalArgs,
-  { select, prisma }: Context,
-) =>
-  prisma.progressJournal.update({
-    where: { id: data.id },
-    data,
-    select,
-  })
-
-const deleteProgressJournalById = async (
-  r: any,
-  { authedUserId, progressJournalId }: MutationDeleteProgressJournalByIdArgs,
-  { prisma }: Context,
-) => {
-  // 1. Get all progressJournalEntry.progressPhotoUrls.
-  const progressJournalEntries: ProgressJournalEntry[] = await prisma.progressJournal.findMany(
-    {
-      where: {
-        progressJournal: {
-          id: progressJournalId,
-        },
-      },
-    },
-  )
-  const allProgressPhotosIdsForDeletion: string[] = progressJournalEntries.reduce(
-    (acum, next) => [...acum, ...next.progressPhotoUrls],
-    [] as string[],
-  )
-  // 2. Delete the progress journal and all of its children (children first).
-  // Cascade delete reliant descendants with https://paljs.com/plugins/delete/
-  await prisma.onDelete({
-    model: 'ProgressJournal',
-    where: { id: progressJournalId },
-    deleteParent: false, // If false, just the descendants will be deleted.
-  })
-
-  // Delete workout and get back uploaded media related files.
-  const deletedProgressJournal: ProgressJournal = await prisma.progressJournal.delete(
-    {
-      where: { id: progressJournalId },
-    },
-  )
-  // 3. Delete all the media from uploadcare.
-  if (deletedProgressJournal) {
-    await deleteFiles(allProgressPhotosIdsForDeletion)
+  if (progressJournal) {
+    return progressJournal as ProgressJournal
+  } else {
+    throw new ApolloError('createProgressJournal: There was an issue.')
   }
-  // 4. return the deleted ID
-  return deletedProgressJournal.id
 }
 
-//// ProgressJournalGoal ////
-const createProgressJournalGoal = async (
+export const updateProgressJournal = async (
   r: any,
-  { authedUserId, data }: MutationCreateProgressJournalGoalArgs,
-  { select, prisma }: Context,
-) =>
-  prisma.progressJournalGoal.create({
-    data: {
-      ...data,
-      progressJournalGoalTags: {
-        set: data.progressJournalGoalTags
-          ? data.progressJournalGoalTags.map((id) => ({ id }))
-          : [],
-      },
-      progressJournal: {
-        connect: { id: data.progressJournal },
-      },
-    },
-    select,
-  })
-
-const updateProgressJournalGoal = async (
-  r: any,
-  { authedUserId, data }: MutationUpdateProgressJournalGoalArgs,
-  { select, prisma }: Context,
-) =>
-  prisma.progressJournalGoal.update({
-    where: { id: data.id },
-    ...data,
-    progressJournalGoalTags: {
-      set: data.progressJournalGoalTags
-        ? data.progressJournalGoalTags.map((id) => ({ id }))
-        : [],
-    },
-    select,
-  })
-
-const deleteProgressJournalGoalById = async (
-  r: any,
-  {
-    authedUserId,
-    progressJournalGoalId,
-  }: MutationDeleteProgressJournalGoalByIdArgs,
-  { prisma }: Context,
+  { data }: MutationUpdateProgressJournalArgs,
+  { authedUserId, select, prisma }: Context,
 ) => {
-  const deletedProgressJournalGoal: ProgressJournalGoal = await prisma.progressJournalGoal.delete(
-    {
-      where: { id: progressJournalGoalId },
+  await checkUserOwnsObject(data.id, 'progressJournal', authedUserId, prisma)
+  const updated = await prisma.progressJournal.update({
+    where: { id: data.id },
+    data: {
+      name: data.name || undefined,
+      description: data.description || undefined,
     },
-  )
-  return deletedProgressJournalGoal.id
+    select,
+  })
+
+  if (updated) {
+    return updated as ProgressJournal
+  } else {
+    throw new ApolloError('updateProgressJournal: There was an issue.')
+  }
 }
 
-//// ProgressJournalGoalTags ////
-const createProgressJournalGoalTag = async (
+export const deleteProgressJournalById = async (
   r: any,
-  { authedUserId, data }: MutationCreateProgressJournalGoalTagArgs,
-  { select, prisma }: Context,
-) =>
-  prisma.progressJournalGoalTag.create({
-    data: {
-      ...data,
-      user: {
-        connect: { id: data.user },
-      },
-    },
-    select,
-  })
-
-const updateProgressJournalGoalTag = async (
-  r: any,
-  { authedUserId, data }: MutationUpdateProgressJournalGoalTagArgs,
-  { select, prisma }: Context,
-) =>
-  prisma.progressJournalGoalTag.update({
-    where: { id: data.id },
-    data,
-    select,
-  })
-
-const deleteProgressJournalGoalTagById = async (
-  r: any,
-  {
-    authedUserId,
-    progressJournalGoalTagId,
-  }: MutationDeleteProgressJournalGoalTagByIdArgs,
-  { prisma }: Context,
+  { id }: MutationDeleteProgressJournalByIdArgs,
+  { authedUserId, prisma }: Context,
 ) => {
-  const deletedProgressJournalGoalTag: ProgressJournalGoalTag = await prisma.progressJournalGoalTag.delete(
-    {
-      where: { id: progressJournalGoalTagId },
+  await checkUserOwnsObject(id, 'progressJournal', authedUserId, prisma)
+  // Get all progressJournalEntry.progressPhotoUris. Once transaction is successful - delete them from uploadcare.
+  const progressJournalEntries = await prisma.progressJournalEntry.findMany({
+    where: {
+      progressJournalId: id,
     },
+    select: {
+      progressPhotoUris: true,
+    },
+  })
+
+  const progressPhotoIdsForDeletion: string[] = progressJournalEntries.flatMap(
+    ({ progressPhotoUris }) => [...progressPhotoUris],
   )
-  return deletedProgressJournalGoalTag.id
+
+  const ops = [
+    prisma.progressJournalEntry.deleteMany({
+      where: { progressJournalId: id },
+    }),
+    prisma.progressJournalGoal.deleteMany({ where: { progressJournalId: id } }),
+    prisma.progressJournal.delete({ where: { id } }),
+  ]
+
+  const [_, __, deleted] = await prisma.$transaction(ops)
+
+  if (deleted) {
+    if (progressPhotoIdsForDeletion && progressPhotoIdsForDeletion.length > 0) {
+      await deleteFiles(progressPhotoIdsForDeletion)
+    }
+    return id
+  } else {
+    throw new ApolloError('deleteProgressJournalById: There was an issue.')
+  }
 }
 
 //// ProgressJournalEntry ////
-const createProgressJournalEntry = async (
+export const createProgressJournalEntry = async (
   r: any,
-  { authedUserId, data }: MutationCreateProgressJournalEntryArgs,
-  { select, prisma }: Context,
-) =>
-  prisma.progressJournalEntry.create({
+  { data }: MutationCreateProgressJournalEntryArgs,
+  { authedUserId, select, prisma }: Context,
+) => {
+  await checkUserOwnsObject(
+    data.ProgressJournal.id,
+    'progressJournal',
+    authedUserId,
+    prisma,
+  )
+
+  const progressJournalEntry = await prisma.progressJournalEntry.create({
     data: {
       ...data,
-      progressJournal: {
-        connect: { id: data.progressJournal },
+      bodyweightUnit: data.bodyweightUnit || undefined,
+      User: { connect: { id: authedUserId } },
+      progressPhotoUris: data.progressPhotoUris || undefined,
+      ProgressJournal: {
+        connect: data.ProgressJournal,
       },
     },
     select,
   })
 
-const updateProgressJournalEntry = async (
-  r: any,
-  { authedUserId, data }: MutationUpdateProgressJournalEntryArgs,
-  { select, prisma }: Context,
-) => {
-  // Check for any old photos.
-  const oldProgressJournalEntry: ProgressJournalEntry = await prisma.progressJournalEntry.findUnique(
-    {
-      where: { id: data.id },
-      select: {
-        progressPhotoUrls: true,
-      },
-    },
-  )
-  // Compare with the new array of photo urls and delete any that have been removed.
-  const photoIdsForDeletion: string[] = oldProgressJournalEntry.progressPhotoUrls.filter(
-    (url) => !data.progressPhotoUrls || !data.progressPhotoUrls.includes(url),
-  )
-
-  if (photoIdsForDeletion.length > 0) {
-    await deleteFiles(photoIdsForDeletion)
+  if (progressJournalEntry) {
+    return progressJournalEntry as ProgressJournalEntry
+  } else {
+    throw new ApolloError('createProgressJournalEntry: There was an issue.')
   }
+}
 
-  return prisma.progressJournalEntry.update({
+export const updateProgressJournalEntry = async (
+  r: any,
+  { data }: MutationUpdateProgressJournalEntryArgs,
+  { authedUserId, select, prisma }: Context,
+) => {
+  // Check for any old photos. NOTE: Not using /uploadcare/index - check{object}MediaForDeletion style method because progressJournalEntry.progressPhotoUris is a scalar array and the above works for key value pairs.
+  const progressJournalEntry = await prisma.progressJournalEntry.findUnique({
     where: { id: data.id },
-    data,
-    select,
+    select: {
+      userId: true,
+      voiceNoteUri: true,
+      progressPhotoUris: true,
+    },
   })
+
+  if (!progressJournalEntry || progressJournalEntry.userId !== authedUserId) {
+    throw new AccessScopeError()
+  } else {
+    // Compare with the new array of photo uris and the voiceNoteUri and delete any that have been removed.
+    // Delete from uploadcare after the API update has completed.
+    const mediaUrisFordeletion: string[] =
+      progressJournalEntry.progressPhotoUris.filter(
+        (uri) =>
+          data.progressPhotoUris && !data.progressPhotoUris.includes(uri),
+      )
+
+    if (
+      progressJournalEntry.voiceNoteUri !== null &&
+      progressJournalEntry.voiceNoteUri !== data.voiceNoteUri
+    ) {
+      mediaUrisFordeletion.push(progressJournalEntry.voiceNoteUri)
+    }
+
+    const updated = await prisma.progressJournalEntry.update({
+      where: { id: data.id },
+      data: {
+        ...data,
+        bodyweightUnit: data.bodyweightUnit || undefined,
+        progressPhotoUris: data.progressPhotoUris || undefined,
+      },
+      select,
+    })
+
+    if (updated) {
+      if (mediaUrisFordeletion.length > 0) {
+        await deleteFiles(mediaUrisFordeletion)
+      }
+      return updated as ProgressJournalEntry
+    } else {
+      throw new ApolloError('updateProgressJournalEntry: There was an issue.')
+    }
+  }
 }
 
-const deleteProgressJournalEntryById = async (
+export const deleteProgressJournalEntryById = async (
   r: any,
-  {
-    authedUserId,
-    progressJournalEntryId,
-  }: MutationDeleteProgressJournalEntryByIdArgs,
-  { prisma }: Context,
+  { id }: MutationDeleteProgressJournalEntryByIdArgs,
+  { authedUserId, prisma }: Context,
 ) => {
-  const deletedJournalEntry: ProgressJournalEntry = await prisma.progressJournalEntry.delete(
-    {
-      where: { id: progressJournalEntryId },
-      select: {
-        progressPhotoUrls: true,
-      },
+  await checkUserOwnsObject(id, 'progressJournalEntry', authedUserId, prisma)
+
+  const deleted = await prisma.progressJournalEntry.delete({
+    where: { id },
+    select: {
+      id: true,
+      progressPhotoUris: true,
     },
+  })
+
+  if (deleted) {
+    if (deleted.progressPhotoUris.length > 0) {
+      await deleteFiles(deleted.progressPhotoUris)
+    }
+    return deleted.id
+  } else {
+    throw new ApolloError('deleteProgressJournalEntryById: There was an issue.')
+  }
+}
+
+//// ProgressJournalGoal ////
+export const createProgressJournalGoal = async (
+  r: any,
+  { data }: MutationCreateProgressJournalGoalArgs,
+  { authedUserId, select, prisma }: Context,
+) => {
+  await checkUserOwnsObject(
+    data.ProgressJournal.id,
+    'progressJournal',
+    authedUserId,
+    prisma,
   )
 
-  if (deletedJournalEntry.progressPhotoUrls.length > 0) {
-    await deleteFiles(deletedJournalEntry.progressPhotoUrls)
-  }
+  const progressJournalGoal = await prisma.progressJournalGoal.create({
+    data: {
+      ...data,
+      ProgressJournalGoalTags: data.ProgressJournalGoalTags
+        ? {
+            connect: data.ProgressJournalGoalTags,
+          }
+        : undefined,
+      User: {
+        connect: { id: authedUserId },
+      },
+      ProgressJournal: {
+        connect: data.ProgressJournal,
+      },
+    },
+    select,
+  })
 
-  return deletedJournalEntry.id
+  if (progressJournalGoal) {
+    return progressJournalGoal as ProgressJournalGoal
+  } else {
+    throw new ApolloError('createProgressJournalGoal: There was an issue.')
+  }
 }
 
-export {
-  progressJournals,
-  progressJournalGoalTags,
-  createProgressJournal,
-  updateProgressJournal,
-  deleteProgressJournalById,
-  createProgressJournalGoal,
-  updateProgressJournalGoal,
-  deleteProgressJournalGoalById,
-  createProgressJournalGoalTag,
-  updateProgressJournalGoalTag,
-  deleteProgressJournalGoalTagById,
-  createProgressJournalEntry,
-  updateProgressJournalEntry,
-  deleteProgressJournalEntryById,
+export const updateProgressJournalGoal = async (
+  r: any,
+  { data }: MutationUpdateProgressJournalGoalArgs,
+  { authedUserId, select, prisma }: Context,
+) => {
+  await checkUserOwnsObject(
+    data.id,
+    'progressJournalGoal',
+    authedUserId,
+    prisma,
+  )
+
+  const updated = await prisma.progressJournalGoal.update({
+    where: { id: data.id },
+    data: {
+      ...data,
+      name: data.name || undefined,
+      ProgressJournalGoalTags: {
+        // Note: You should not pass 'null' to a relationship field. It will be parsed as 'no input' and ignored.
+        // To remove all related items of this type pass an empty array.
+        // https://www.prisma.io/docs/concepts/components/prisma-client/relation-queries#disconnect-all-related-records
+        set: data.ProgressJournalGoalTags
+          ? data.ProgressJournalGoalTags
+          : undefined,
+      },
+    },
+    select,
+  })
+
+  if (updated) {
+    return updated as ProgressJournalGoal
+  } else {
+    throw new ApolloError('updateProgressJournalGoal: There was an issue.')
+  }
+}
+
+export const deleteProgressJournalGoalById = async (
+  r: any,
+  { id }: MutationDeleteProgressJournalGoalByIdArgs,
+  { authedUserId, prisma }: Context,
+) => {
+  await checkUserOwnsObject(id, 'progressJournalGoal', authedUserId, prisma)
+  const deleted = await prisma.progressJournalGoal.delete({
+    where: { id },
+    select: { id: true },
+  })
+
+  if (deleted) {
+    return deleted.id
+  } else {
+    throw new ApolloError('deleteProgressJournalGoalById: There was an issue.')
+  }
+}
+
+//// ProgressJournalGoalTags ////
+export const createProgressJournalGoalTag = async (
+  r: any,
+  { data }: MutationCreateProgressJournalGoalTagArgs,
+  { authedUserId, select, prisma }: Context,
+) => {
+  const progressJournalGoalTag = await prisma.progressJournalGoalTag.create({
+    data: {
+      ...data,
+      User: {
+        connect: { id: authedUserId },
+      },
+    },
+    select,
+  })
+
+  if (progressJournalGoalTag) {
+    return progressJournalGoalTag as ProgressJournalGoalTag
+  } else {
+    throw new ApolloError('createProgressJournalGoalTag: There was an issue.')
+  }
+}
+
+export const updateProgressJournalGoalTag = async (
+  r: any,
+  { data }: MutationUpdateProgressJournalGoalTagArgs,
+  { authedUserId, select, prisma }: Context,
+) => {
+  await checkUserOwnsObject(
+    data.id,
+    'progressJournalGoalTag',
+    authedUserId,
+    prisma,
+  )
+
+  const updated = await prisma.progressJournalGoalTag.update({
+    where: { id: data.id },
+    data: {
+      ...data,
+      tag: data.tag || undefined,
+      hexColor: data.hexColor || undefined,
+    },
+    select,
+  })
+
+  if (updated) {
+    return updated as ProgressJournalGoalTag
+  } else {
+    throw new ApolloError('updateProgressJournalGoalTag: There was an issue.')
+  }
+}
+
+// Deletes one or many tags.
+export const deleteProgressJournalGoalTagById = async (
+  r: any,
+  { id }: MutationDeleteProgressJournalGoalTagByIdArgs,
+  { authedUserId, prisma }: Context,
+) => {
+  await checkUserOwnsObject(id, 'progressJournalGoalTag', authedUserId, prisma)
+
+  const deleted = await prisma.progressJournalGoalTag.delete({
+    where: { id },
+    select: { id: true },
+  })
+
+  if (deleted) {
+    return deleted.id
+  } else {
+    throw new ApolloError(
+      'deleteProgressJournalGoalTagById: There was an issue.',
+    )
+  }
 }

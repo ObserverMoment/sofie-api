@@ -1,21 +1,17 @@
 import fetch from 'node-fetch'
 import crypto from 'crypto'
-import { Workout, PrismaClient, LoggedWorkout, User } from '@prisma/client'
+import { PrismaClient } from '@prisma/client'
 import {
-  ShallowUpdateWorkoutInput,
-  DeepUpdateWorkoutInput,
-  ShallowUpdateLoggedWorkoutInput,
-  DeepUpdateLoggedWorkoutInput,
-  ShallowUpdateWorkoutProgramInput,
-  DeepUpdateWorkoutProgramInput,
-  WorkoutProgram,
-  Move,
-  ShallowUpdateMoveInput,
-  DeepUpdateMoveInput,
   UpdateUserInput,
+  UpdateWorkoutSectionInput,
+  UpdateWorkoutPlanInput,
+  UpdateMoveInput,
+  UpdateWorkoutInput,
+  UpdateUserBenchmarkEntryInput,
 } from '../generated/graphql'
+import { AccessScopeError } from '../graphql/utils'
 
-const uploadcareApiUBaseUrl = 'https://api.uploadcare.com'
+const uploadcareApiUBaseUri = 'https://api.uploadcare.com'
 
 // https://github.com/RexMorgan/uploadcare-node/blob/master/lib/main.js
 // https://uploadcare.com/docs/rest_api/requests_auth/
@@ -52,248 +48,226 @@ function prepareHeaders(verb: string, path: string, requestBody: any = '') {
 
 export async function deleteFiles(fileIds: string[]): Promise<boolean> {
   const requestBody = JSON.stringify(fileIds)
-  const res = await fetch(`${uploadcareApiUBaseUrl}/files/storage/`, {
+  const res = await fetch(`${uploadcareApiUBaseUri}/files/storage/`, {
     method: 'DELETE',
-    body: requestBody,
     headers: prepareHeaders('DELETE', '/files/storage/', requestBody),
+    body: requestBody,
   })
   const json = await res.json()
   return json.status == 'ok'
+}
+
+function getFileIdForDeleteOrNull(
+  oldData: any,
+  newData: any,
+  key: string,
+): string | null {
+  return oldData[key] !== null &&
+    newData.hasOwnProperty(key) &&
+    newData[key] !== oldData[key]
+    ? oldData[key]
+    : null
 }
 
 /** Checks if there are any media (hosted) files being changed.
  * Returns an array of fileIds (strings) which should be deleted.
  */
 export async function checkUserMediaForDeletion(
-  prisma: any,
-  userId: string,
+  prisma: PrismaClient,
+  authedUserId: string,
   data: UpdateUserInput,
-): Promise<string[] | null> {
+): Promise<string[]> {
   // Get the original move media file info.
   // Then once update transaction is complete you can check to see if media should be deleted.
-  const oldUser: User = await prisma.user.findUnique({
+  const oldUser = await prisma.user.findUnique({
     where: {
-      id: userId,
+      id: authedUserId,
     },
     select: {
-      avatarUrl: true,
-      coverImageUrl: true,
-      introVideoUrl: true,
-      introVideoThumbUrl: true,
+      avatarUri: true,
+      introVideoUri: true,
+      introVideoThumbUri: true,
     },
   })
 
-  const fileIdsForDeletion: string[] = []
+  if (!oldUser) {
+    throw new AccessScopeError(
+      'checkUserMediaForDeletion: Unable to find object to check',
+    )
+  } else {
+    const fileIdsForDeletion: string[] = Object.keys(oldUser)
+      .map((key: string) => getFileIdForDeleteOrNull(oldUser, data, key))
+      .filter((x) => !!x) as string[]
 
-  if (
-    oldUser.avatarUrl != null &&
-    data.hasOwnProperty('avatarUrl') &&
-    data.avatarUrl != oldUser.avatarUrl
-  ) {
-    fileIdsForDeletion.push(oldUser.avatarUrl)
+    return fileIdsForDeletion
   }
-  if (
-    oldUser.coverImageUrl != null &&
-    data.hasOwnProperty('coverImageUrl') &&
-    data.coverImageUrl != oldUser.coverImageUrl
-  ) {
-    fileIdsForDeletion.push(oldUser.coverImageUrl)
-  }
-  if (
-    oldUser.introVideoUrl != null &&
-    data.hasOwnProperty('introVideoUrl') &&
-    data.introVideoUrl != oldUser.introVideoUrl
-  ) {
-    fileIdsForDeletion.push(oldUser.introVideoUrl)
-  }
-  if (
-    oldUser.introVideoThumbUrl != null &&
-    data.hasOwnProperty('introVideoThumbUrl') &&
-    data.introVideoThumbUrl != oldUser.introVideoThumbUrl
-  ) {
-    fileIdsForDeletion.push(oldUser.introVideoThumbUrl)
-  }
-
-  console.log(fileIdsForDeletion)
-
-  return fileIdsForDeletion.length > 0 ? fileIdsForDeletion : null
 }
 
 /** Checks if there are any media (hosted) files being changed.
  * Returns an array of fileIds (strings) which should be deleted.
  */
 export async function checkWorkoutMediaForDeletion(
-  prisma: any,
-  workoutData: ShallowUpdateWorkoutInput | DeepUpdateWorkoutInput,
-): Promise<string[] | null> {
+  prisma: PrismaClient,
+  data: UpdateWorkoutInput,
+): Promise<string[]> {
   // Get the old workout data first.
-  const oldWorkout: Workout = await prisma.workout.findUnique({
+  const oldWorkout = await prisma.workout.findUnique({
     where: {
-      id: workoutData.id,
+      id: data.id,
     },
     select: {
-      imageUrl: true,
-      demoVideoUrl: true,
-      demoVideoThumbUrl: true,
+      coverImageUri: true,
+      introAudioUri: true,
+      introVideoUri: true,
+      introVideoThumbUri: true,
     },
   })
-  const fileIdsForDeletion: string[] = []
-  // If previous workout has media url (not null), and new workoutData has sent a media url, and the new media url and the old media url are different, then the old url should be deleted.
-  if (
-    oldWorkout.imageUrl != null &&
-    workoutData.hasOwnProperty('imageUrl') &&
-    workoutData.imageUrl != oldWorkout.imageUrl
-  ) {
-    fileIdsForDeletion.push(oldWorkout.imageUrl)
+
+  if (!oldWorkout) {
+    throw new AccessScopeError(
+      'checkWorkoutMediaForDeletion: Unable to find object to check',
+    )
+  } else {
+    const fileIdsForDeletion: string[] = Object.keys(oldWorkout)
+      .map((key: string) => getFileIdForDeleteOrNull(oldWorkout, data, key))
+      .filter((x) => !!x) as string[]
+
+    return fileIdsForDeletion
   }
-  if (
-    oldWorkout.demoVideoUrl != null &&
-    workoutData.hasOwnProperty('demoVideoUrl') &&
-    workoutData.demoVideoUrl != oldWorkout.demoVideoUrl
-  ) {
-    fileIdsForDeletion.push(oldWorkout.demoVideoUrl)
-  }
-  if (
-    oldWorkout.demoVideoThumbUrl != null &&
-    workoutData.hasOwnProperty('demoVideoThumbUrl') &&
-    workoutData.demoVideoThumbUrl != oldWorkout.demoVideoThumbUrl
-  ) {
-    fileIdsForDeletion.push(oldWorkout.demoVideoThumbUrl)
-  }
-  return fileIdsForDeletion.length > 0 ? fileIdsForDeletion : null
 }
 
-/** Checks if there are any media (hosted) files being changed in the loggedWorkouData
- * Returns an array of fileIds (strings) which should be deleted once the main transaction is successful.
+/** Checks if there are any media (hosted) files being changed.
+ * Returns an array of fileIds (strings) which should be deleted.
  */
-export async function checkLoggedWorkoutMediaForDeletion(
-  prisma: any,
-  loggedWorkoutData:
-    | ShallowUpdateLoggedWorkoutInput
-    | DeepUpdateLoggedWorkoutInput,
-): Promise<string[] | null> {
-  // Get the old loggedWorkout data first.
-  const oldLoggedWorkout: LoggedWorkout = await prisma.loggedWorkout.findUnique(
-    {
-      where: {
-        id: loggedWorkoutData.id,
-      },
-      select: {
-        imageUrl: true,
-        videoUrl: true,
-        videoThumbUrl: true,
-      },
+export async function checkWorkoutSectionMediaForDeletion(
+  prisma: PrismaClient,
+  data: UpdateWorkoutSectionInput,
+): Promise<string[]> {
+  // Get the old workout section data first.
+  const oldWorkoutSection = await prisma.workoutSection.findUnique({
+    where: {
+      id: data.id,
     },
-  )
-  const fileIdsForDeletion: string[] = []
-  // If previous workout has media url (not null), and new workoutData has sent a media url, and the new media url and the old media url are different, then the old url should be deleted.
-  if (
-    oldLoggedWorkout.imageUrl != null &&
-    loggedWorkoutData.hasOwnProperty('imageUrl') &&
-    loggedWorkoutData.imageUrl != oldLoggedWorkout.imageUrl
-  ) {
-    fileIdsForDeletion.push(oldLoggedWorkout.imageUrl)
+    select: {
+      introVideoUri: true,
+      introVideoThumbUri: true,
+      introAudioUri: true,
+      classVideoUri: true,
+      classVideoThumbUri: true,
+      classAudioUri: true,
+      outroVideoUri: true,
+      outroVideoThumbUri: true,
+      outroAudioUri: true,
+    },
+  })
+
+  if (!oldWorkoutSection) {
+    throw new AccessScopeError(
+      'checkWorkoutSectionMediaForDeletion: Unable to find object to check',
+    )
+  } else {
+    const fileIdsForDeletion: string[] = Object.keys(oldWorkoutSection)
+      .map((key: string) =>
+        getFileIdForDeleteOrNull(oldWorkoutSection, data, key),
+      )
+      .filter((x) => !!x) as string[]
+
+    return fileIdsForDeletion
   }
-  if (
-    oldLoggedWorkout.videoUrl != null &&
-    loggedWorkoutData.hasOwnProperty('videoUrl') &&
-    loggedWorkoutData.videoUrl != oldLoggedWorkout.videoUrl
-  ) {
-    fileIdsForDeletion.push(oldLoggedWorkout.videoUrl)
-  }
-  if (
-    oldLoggedWorkout.videoThumbUrl != null &&
-    loggedWorkoutData.hasOwnProperty('videoThumbUrl') &&
-    loggedWorkoutData.videoThumbUrl != oldLoggedWorkout.videoThumbUrl
-  ) {
-    fileIdsForDeletion.push(oldLoggedWorkout.videoThumbUrl)
-  }
-  return fileIdsForDeletion.length > 0 ? fileIdsForDeletion : null
 }
 
-/** Checks if there are any media (hosted) files being changed in the workoutProgramData
+/** Checks if there are any media (hosted) files being changed in the workoutPlanData
  * Returns an array of fileIds (strings) which should be deleted once the main transaction is successful.
  */
-export async function checkWorkoutProgramMediaForDeletion(
-  prisma: any,
-  workoutProgramData:
-    | ShallowUpdateWorkoutProgramInput
-    | DeepUpdateWorkoutProgramInput,
-): Promise<string[] | null> {
-  // Get the old workoutProgram data first.
-  const oldWorkoutProgram: WorkoutProgram = await prisma.workoutProgram.findUnique(
-    {
-      where: {
-        id: workoutProgramData.id,
-      },
-      select: {
-        imageUrl: true,
-        videoUrl: true,
-        videoThumbUrl: true,
-      },
+export async function checkWorkoutPlanMediaForDeletion(
+  prisma: PrismaClient,
+  data: UpdateWorkoutPlanInput,
+): Promise<string[]> {
+  // Get the old workoutPlan data first.
+  const oldWorkoutPlan = await prisma.workoutPlan.findUnique({
+    where: {
+      id: data.id,
     },
-  )
-  const fileIdsForDeletion: string[] = []
-  // If previous workout has media url (not null), and new workoutData has sent a media url, and the new media url and the old media url are different, then the old url should be deleted once the main transaction is successful.
-  if (
-    oldWorkoutProgram.imageUrl != null &&
-    workoutProgramData.hasOwnProperty('imageUrl') &&
-    workoutProgramData.imageUrl != oldWorkoutProgram.imageUrl
-  ) {
-    fileIdsForDeletion.push(oldWorkoutProgram.imageUrl)
+    select: {
+      coverImageUri: true,
+      introAudioUri: true,
+      introVideoUri: true,
+      introVideoThumbUri: true,
+    },
+  })
+
+  if (!oldWorkoutPlan) {
+    throw new AccessScopeError(
+      'checkWorkoutPlanMediaForDeletion: Unable to find object to check',
+    )
+  } else {
+    const fileIdsForDeletion: string[] = Object.keys(oldWorkoutPlan)
+      .map((key: string) => getFileIdForDeleteOrNull(oldWorkoutPlan, data, key))
+      .filter((x) => !!x) as string[]
+
+    return fileIdsForDeletion
   }
-  if (
-    oldWorkoutProgram.videoUrl != null &&
-    workoutProgramData.hasOwnProperty('videoUrl') &&
-    workoutProgramData.videoUrl != oldWorkoutProgram.videoUrl
-  ) {
-    fileIdsForDeletion.push(oldWorkoutProgram.videoUrl)
-  }
-  if (
-    oldWorkoutProgram.videoThumbUrl != null &&
-    workoutProgramData.hasOwnProperty('videoThumbUrl') &&
-    workoutProgramData.videoThumbUrl != oldWorkoutProgram.videoThumbUrl
-  ) {
-    fileIdsForDeletion.push(oldWorkoutProgram.videoThumbUrl)
-  }
-  return fileIdsForDeletion.length > 0 ? fileIdsForDeletion : null
 }
 
 /** Checks if there are any media (hosted) files being changed in the updated move data
  * Returns an array of fileIds (strings) which should be deleted once the main transaction is successful.
  */
 export async function checkMoveMediaForDeletion(
-  prisma: any,
-  data: ShallowUpdateMoveInput | DeepUpdateMoveInput,
-): Promise<string[] | null> {
-  // Get the original move media file info.
-  // Then once update transaction is complete you can check to see if media should be deleted.
-  const oldMove: Move = await prisma.move.findUnique({
+  prisma: PrismaClient,
+  data: UpdateMoveInput,
+): Promise<string[]> {
+  const oldMove = await prisma.move.findUnique({
     where: {
       id: data.id,
     },
     select: {
-      demoVideoUrl: true,
-      demoVideoThumbUrl: true,
+      demoVideoUri: true,
+      demoVideoThumbUri: true,
     },
   })
 
-  const fileIdsForDeletion: string[] = []
+  if (!oldMove) {
+    throw new AccessScopeError(
+      'checkMoveMediaForDeletion: Unable to find object to check',
+    )
+  } else {
+    const fileIdsForDeletion: string[] = Object.keys(oldMove)
+      .map((key: string) => getFileIdForDeleteOrNull(oldMove, data, key))
+      .filter((x) => !!x) as string[]
 
-  if (
-    oldMove.demoVideoUrl != null &&
-    data.hasOwnProperty('demoVideoUrl') &&
-    data.demoVideoUrl != oldMove.demoVideoUrl
-  ) {
-    fileIdsForDeletion.push(oldMove.demoVideoUrl)
+    return fileIdsForDeletion
   }
-  if (
-    oldMove.demoVideoThumbUrl != null &&
-    data.hasOwnProperty('demoVideoThumbUrl') &&
-    data.demoVideoThumbUrl != oldMove.demoVideoThumbUrl
-  ) {
-    fileIdsForDeletion.push(oldMove.demoVideoThumbUrl)
-  }
+}
 
-  return fileIdsForDeletion.length > 0 ? fileIdsForDeletion : null
+/** Checks if there are any media (hosted) files being changed.
+ * Returns an array of fileIds (strings) which should be deleted.
+ */
+export async function checkUserBenchmarkEntryMediaForDeletion(
+  prisma: PrismaClient,
+  data: UpdateUserBenchmarkEntryInput,
+): Promise<string[]> {
+  // Get the old data first.
+  const oldBenchmarkEntry = await prisma.userBenchmarkEntry.findUnique({
+    where: {
+      id: data.id,
+    },
+    select: {
+      videoUri: true,
+      videoThumbUri: true,
+    },
+  })
+
+  if (!oldBenchmarkEntry) {
+    throw new AccessScopeError(
+      'checkUserBenchmarkEntryMediaForDeletion: Unable to find object to check',
+    )
+  } else {
+    const fileIdsForDeletion: string[] = Object.keys(oldBenchmarkEntry)
+      .map((key: string) =>
+        getFileIdForDeleteOrNull(oldBenchmarkEntry, data, key),
+      )
+      .filter((x) => !!x) as string[]
+
+    return fileIdsForDeletion
+  }
 }

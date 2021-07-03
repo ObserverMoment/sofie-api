@@ -4,14 +4,13 @@ export default gql`
   type User {
     id: ID!
     userProfileScope: UserProfileScope!
-    avatarUrl: String
-    introVideoUrl: String
-    introVideoThumbUrl: String
-    coverImageUrl: String
+    avatarUri: String
+    introVideoUri: String
+    introVideoThumbUri: String
     bio: String
     tagline: String
     birthdate: DateTime
-    city: String
+    townCity: String
     countryCode: String
     displayName: String
     instagramUrl: String
@@ -21,26 +20,32 @@ export default gql`
     linkedinUrl: String
     firstname: String
     lastname: String
-    themePreference: ThemePreference!
     gender: Gender
     hasOnboarded: Boolean!
-    height: Float
-    weight: Float
-    unitSystem: UnitSystem
-    gymProfiles: [GymProfile!]
-    moveProfiles: [MoveProfile!]
+    GymProfiles: [GymProfile!]
+    ProgressJournalGoalTags: [ProgressJournalGoalTag!]
   }
 
+  type UserSummary {
+    id: ID!
+    displayName: String!
+    avatarUri: String
+    userProfileScope: UserProfileScope!
+    tagline: String
+    countryCode: String
+    townCity: String
+  }
+
+  # Only used for the currently logged in user to update themselves - so ID not required.
   input UpdateUserInput {
     userProfileScope: UserProfileScope
-    avatarUrl: String
-    introVideoUrl: String
-    introVideoThumbUrl: String
-    coverImageUrl: String
+    avatarUri: String
+    introVideoUri: String
+    introVideoThumbUri: String
     bio: String
     tagline: String
     birthdate: DateTime
-    city: String
+    townCity: String
     countryCode: String
     displayName: String
     instagramUrl: String
@@ -49,40 +54,38 @@ export default gql`
     snapUrl: String
     linkedinUrl: String
     firstname: String
-    themePreference: ThemePreference
     gender: Gender
-    gymBox: String
     hasOnboarded: Boolean
-    height: Float
     lastname: String
-    unitSystem: UnitSystem
-    weight: Float
   }
 
   type UserPublicProfile {
     id: ID!
-    avatarUrl: String
-    introVideoUrl: String
-    introVideoThumbUrl: String
-    coverImageUrl: String
+    avatarUri: String
+    introVideoUri: String
+    introVideoThumbUri: String
     bio: String
     tagline: String
+    townCity: String
     instagramUrl: String
     tiktokUrl: String
     youtubeUrl: String
     snapUrl: String
     linkedinUrl: String
     countryCode: String
-    displayName: String
-    customMoves: [Move!]
-    workouts: [Workout!]
-    workoutPrograms: [WorkoutProgram!]
+    displayName: String!
+    Workouts: [Workout!]!
+    WorkoutPlans: [WorkoutPlan!]!
   }
 
-  type UserPrivateProfile {
-    loggedWorkouts: [LoggedWorkout!]
-    workouts: [Workout!]
-    workoutPrograms: [WorkoutProgram!]
-    workoutProgramEnrolments: [WorkoutProgramEnrolment!]
+  type UserPublicProfileSummary {
+    id: ID!
+    avatarUri: String
+    tagline: String
+    townCity: String
+    countryCode: String
+    displayName: String!
+    numberPublicWorkouts: Int!
+    numberPublicPlans: Int!
   }
 `
