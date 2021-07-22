@@ -31,9 +31,8 @@ export default gql`
     bodyweightUnit: BodyweightUnit!
     moodScore: Float
     energyScore: Float
-    stressScore: Float
+    confidenceScore: Float
     motivationScore: Float
-    progressPhotoUris: [String!]!
     ProgressJournal: ProgressJournal!
   }
 
@@ -45,9 +44,8 @@ export default gql`
     bodyweightUnit: BodyweightUnit
     moodScore: Float
     energyScore: Float
-    stressScore: Float
+    confidenceScore: Float
     motivationScore: Float
-    progressPhotoUris: [String!]!
     ProgressJournal: ConnectRelationInput!
   }
 
@@ -60,9 +58,8 @@ export default gql`
     bodyweightUnit: BodyweightUnit
     moodScore: Float
     energyScore: Float
-    stressScore: Float
+    confidenceScore: Float
     motivationScore: Float
-    progressPhotoUris: [String!]!
   }
 
   type ProgressJournalGoal {

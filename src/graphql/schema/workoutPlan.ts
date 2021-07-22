@@ -95,7 +95,7 @@ export default gql`
     Workout: ConnectRelationInput!
   }
 
-  # Sort position should be updated via the dedicated object reordering resolver.
+  # Note: Sort position should be updated via the dedicated object reordering resolver.
   input UpdateWorkoutPlanDayWorkoutInput {
     id: ID!
     note: String

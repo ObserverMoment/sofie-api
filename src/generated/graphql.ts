@@ -208,9 +208,8 @@ export type CreateProgressJournalEntryInput = {
   bodyweightUnit?: Maybe<BodyweightUnit>;
   moodScore?: Maybe<Scalars['Float']>;
   energyScore?: Maybe<Scalars['Float']>;
-  stressScore?: Maybe<Scalars['Float']>;
+  confidenceScore?: Maybe<Scalars['Float']>;
   motivationScore?: Maybe<Scalars['Float']>;
-  progressPhotoUris: Array<Scalars['String']>;
   ProgressJournal: ConnectRelationInput;
 };
 
@@ -238,7 +237,6 @@ export type CreateScheduledWorkoutInput = {
   Workout: ConnectRelationInput;
   GymProfile?: Maybe<ConnectRelationInput>;
   WorkoutPlanEnrolment?: Maybe<ConnectRelationInput>;
-  WorkoutPlanDayWorkout?: Maybe<ConnectRelationInput>;
 };
 
 export type CreateUserBenchmarkEntryInput = {
@@ -1147,9 +1145,8 @@ export type ProgressJournalEntry = {
   bodyweightUnit: BodyweightUnit;
   moodScore?: Maybe<Scalars['Float']>;
   energyScore?: Maybe<Scalars['Float']>;
-  stressScore?: Maybe<Scalars['Float']>;
+  confidenceScore?: Maybe<Scalars['Float']>;
   motivationScore?: Maybe<Scalars['Float']>;
-  progressPhotoUris: Array<Scalars['String']>;
   ProgressJournal: ProgressJournal;
 };
 
@@ -1338,11 +1335,10 @@ export type ScheduledWorkout = {
   createdAt: Scalars['DateTime'];
   scheduledAt: Scalars['DateTime'];
   note?: Maybe<Scalars['String']>;
-  Workout?: Maybe<Workout>;
-  LoggedWorkout?: Maybe<LoggedWorkout>;
-  GymProfile?: Maybe<GymProfile>;
+  loggedWorkoutId?: Maybe<Scalars['ID']>;
   workoutPlanEnrolmentId?: Maybe<Scalars['ID']>;
-  workoutPlanDayWorkoutId?: Maybe<Scalars['ID']>;
+  GymProfile?: Maybe<GymProfile>;
+  Workout?: Maybe<Workout>;
 };
 
 export type SortPositionUpdated = {
@@ -1441,9 +1437,8 @@ export type UpdateProgressJournalEntryInput = {
   bodyweightUnit?: Maybe<BodyweightUnit>;
   moodScore?: Maybe<Scalars['Float']>;
   energyScore?: Maybe<Scalars['Float']>;
-  stressScore?: Maybe<Scalars['Float']>;
+  confidenceScore?: Maybe<Scalars['Float']>;
   motivationScore?: Maybe<Scalars['Float']>;
-  progressPhotoUris: Array<Scalars['String']>;
 };
 
 export type UpdateProgressJournalGoalInput = {
@@ -1475,7 +1470,6 @@ export type UpdateScheduledWorkoutInput = {
   LoggedWorkout?: Maybe<ConnectRelationInput>;
   GymProfile?: Maybe<ConnectRelationInput>;
   WorkoutPlanEnrolment?: Maybe<ConnectRelationInput>;
-  WorkoutPlanDayWorkout?: Maybe<ConnectRelationInput>;
 };
 
 export type UpdateSortPositionInput = {
@@ -2625,9 +2619,8 @@ export type ProgressJournalEntryResolvers<ContextType = any, ParentType extends 
   bodyweightUnit?: Resolver<ResolversTypes['BodyweightUnit'], ParentType, ContextType>;
   moodScore?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   energyScore?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  stressScore?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  confidenceScore?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   motivationScore?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  progressPhotoUris?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   ProgressJournal?: Resolver<ResolversTypes['ProgressJournal'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
@@ -2700,11 +2693,10 @@ export type ScheduledWorkoutResolvers<ContextType = any, ParentType extends Reso
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   scheduledAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   note?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  Workout?: Resolver<Maybe<ResolversTypes['Workout']>, ParentType, ContextType>;
-  LoggedWorkout?: Resolver<Maybe<ResolversTypes['LoggedWorkout']>, ParentType, ContextType>;
-  GymProfile?: Resolver<Maybe<ResolversTypes['GymProfile']>, ParentType, ContextType>;
+  loggedWorkoutId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   workoutPlanEnrolmentId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
-  workoutPlanDayWorkoutId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  GymProfile?: Resolver<Maybe<ResolversTypes['GymProfile']>, ParentType, ContextType>;
+  Workout?: Resolver<Maybe<ResolversTypes['Workout']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 

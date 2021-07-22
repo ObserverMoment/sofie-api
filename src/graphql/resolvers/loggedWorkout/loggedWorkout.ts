@@ -65,6 +65,7 @@ export const createLoggedWorkout = async (
   { authedUserId, select, prisma }: Context,
 ) => {
   validateCreateLoggedWorkoutInput(data)
+
   const loggedWorkout = await prisma.loggedWorkout.create({
     data: {
       ...data,
