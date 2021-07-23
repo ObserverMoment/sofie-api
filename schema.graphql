@@ -55,7 +55,7 @@ enum BodyAreaUpperLower {
 type BodyTransformationPhoto {
   id: ID!
   createdAt: DateTime!
-  submittedDate: DateTime!
+  takenOnDate: DateTime!
   bodyweight: Float
   note: String
   photoUri: String!
@@ -91,8 +91,8 @@ input CopyWorkoutPlanDayToAnotherDayInput {
   copyToDay: Int!
 }
 
-input CreateBodyTransformationPhoto {
-  submittedDate: DateTime!
+input CreateBodyTransformationPhotoInput {
+  takenOnDate: DateTime!
   bodyweight: Float
   note: String
   photoUri: String!
@@ -541,9 +541,9 @@ type Mutation {
   createProgressJournal(data: CreateProgressJournalInput!): ProgressJournal!
   updateProgressJournal(data: UpdateProgressJournalInput!): ProgressJournal!
   deleteProgressJournalById(id: ID!): ID!
-  createBodyTransformationPhoto(data: CreateBodyTransformationPhoto!): BodyTransformationPhoto!
-  updateBodyTransformationPhoto(data: UpdateBodyTransformationPhoto!): BodyTransformationPhoto!
-  deleteBodyTransformationPhotoById(id: ID!): ID!
+  createBodyTransformationPhotos(data: [CreateBodyTransformationPhotoInput!]!): [BodyTransformationPhoto!]!
+  updateBodyTransformationPhoto(data: UpdateBodyTransformationPhotoInput!): BodyTransformationPhoto!
+  deleteBodyTransformationPhotosById(ids: [ID!]!): [ID!]!
   createProgressJournalEntry(data: CreateProgressJournalEntryInput!): ProgressJournalEntry!
   updateProgressJournalEntry(data: UpdateProgressJournalEntryInput!): ProgressJournalEntry!
   deleteProgressJournalEntryById(id: ID!): ID!
@@ -758,9 +758,9 @@ enum TimeUnit {
   SECONDS
 }
 
-input UpdateBodyTransformationPhoto {
+input UpdateBodyTransformationPhotoInput {
   id: ID!
-  submittedDate: DateTime
+  takenOnDate: DateTime
   bodyweight: Float
   note: String
   photoUri: String

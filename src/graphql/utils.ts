@@ -12,6 +12,7 @@ export class AccessScopeError extends ApolloError {
 /// Must match the prisma model names as per prisma[modelName].findUnique()
 /// i.e. be camelCase.
 export type ContentObjectType =
+  | 'bodyTransformationPhoto'
   | 'collection'
   | 'gymProfile'
   | 'loggedWorkout'

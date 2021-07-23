@@ -83,13 +83,13 @@ export default gql`
     updateProgressJournal(data: UpdateProgressJournalInput!): ProgressJournal!
     deleteProgressJournalById(id: ID!): ID!
     #### Progress Journal Entry ####
-    createBodyTransformationPhoto(
-      data: CreateBodyTransformationPhoto!
-    ): BodyTransformationPhoto!
+    createBodyTransformationPhotos(
+      data: [CreateBodyTransformationPhotoInput!]!
+    ): [BodyTransformationPhoto!]!
     updateBodyTransformationPhoto(
-      data: UpdateBodyTransformationPhoto!
+      data: UpdateBodyTransformationPhotoInput!
     ): BodyTransformationPhoto!
-    deleteBodyTransformationPhotoById(id: ID!): ID!
+    deleteBodyTransformationPhotosById(ids: [ID!]!): [ID!]!
     createProgressJournalEntry(
       data: CreateProgressJournalEntryInput!
     ): ProgressJournalEntry!

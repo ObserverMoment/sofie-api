@@ -557,14 +557,14 @@ model LoggedWorkoutMove {
 ////// Progress Journal Related ////////////////
 ////////////////////////////////////////////////
 model BodyTransformationPhoto {
-  id            String   @id @default(uuid())
-  createdAt     DateTime @default(now())
-  submittedDate DateTime @default(now())
-  bodyweight    Float?
-  note          String?
-  photoUri      String
-  User          User     @relation(fields: [userId], references: [id])
-  userId        String
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  takenOnDate DateTime @default(now())
+  bodyweight  Float?
+  note        String?
+  photoUri    String
+  User        User     @relation(fields: [userId], references: [id])
+  userId      String
 }
 
 model ProgressJournal {

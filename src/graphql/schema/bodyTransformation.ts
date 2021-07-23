@@ -4,23 +4,23 @@ export default gql`
   type BodyTransformationPhoto {
     id: ID!
     createdAt: DateTime!
-    submittedDate: DateTime!
+    takenOnDate: DateTime!
     bodyweight: Float
     note: String
     photoUri: String!
   }
   # No user needed as a User can only upload photos for their own account.
   # So logged in user id is used.
-  input CreateBodyTransformationPhoto {
-    submittedDate: DateTime!
+  input CreateBodyTransformationPhotoInput {
+    takenOnDate: DateTime!
     bodyweight: Float
     note: String
     photoUri: String!
   }
 
-  input UpdateBodyTransformationPhoto {
+  input UpdateBodyTransformationPhotoInput {
     id: ID!
-    submittedDate: DateTime
+    takenOnDate: DateTime
     bodyweight: Float
     note: String
     photoUri: String

@@ -2,10 +2,12 @@ import { ApolloError } from 'apollo-server-express'
 import { Context } from '../..'
 import {
   BodyTransformationPhoto,
-  MutationCreateBodyTransformationPhotoArgs,
+  MutationCreateBodyTransformationPhotosArgs,
+  MutationDeleteBodyTransformationPhotosByIdArgs,
   MutationUpdateBodyTransformationPhotoArgs,
 } from '../../generated/graphql'
-import { checkUserOwnsObject } from '../utils'
+import { deleteFiles } from '../../uploadcare'
+import { checkUserAccessScopeMulti, checkUserOwnsObject } from '../utils'
 
 //// Queries ////
 export const bodyTransformationPhotos = async (
@@ -23,26 +25,29 @@ export const bodyTransformationPhotos = async (
 }
 
 //// Mutations ////
-/// TODO: Should be able to create multiple photos at once
 export const createBodyTransformationPhotos = async (
   r: any,
-  { data }: MutationCreateBodyTransformationPhotoArgs,
+  { data }: MutationCreateBodyTransformationPhotosArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  const photo = await prisma.bodyTransformationPhoto.create({
-    data: {
-      ...data,
-      User: {
-        connect: { id: authedUserId },
+  const ops = data.map((d) =>
+    prisma.bodyTransformationPhoto.create({
+      data: {
+        ...d,
+        User: {
+          connect: { id: authedUserId },
+        },
       },
-    },
-    select,
-  })
+      select,
+    }),
+  )
 
-  if (photo) {
-    return photo as BodyTransformationPhoto
+  const photos = await prisma.$transaction(ops)
+
+  if (photos && photos.length > 0) {
+    return photos as BodyTransformationPhoto[]
   } else {
-    throw new ApolloError('createBodyTransformationPhoto: There was an issue.')
+    throw new ApolloError('createBodyTransformationPhotos: There was an issue.')
   }
 }
 
@@ -58,44 +63,75 @@ export const updateBodyTransformationPhoto = async (
     prisma,
   )
 
-  /// TODO: Check for media changes.
+  let mediaFileUriForDeletion: string | null = null
+
+  if (data.photoUri) {
+    // Check for media changes.
+    const oldPhoto = await prisma.bodyTransformationPhoto.findUnique({
+      where: {
+        id: data.id,
+      },
+      select: {
+        photoUri: true,
+      },
+    })
+
+    if (oldPhoto?.photoUri && data.photoUri !== oldPhoto!.photoUri) {
+      mediaFileUriForDeletion = oldPhoto!.photoUri
+    }
+  }
 
   const updated = await prisma.bodyTransformationPhoto.update({
     where: { id: data.id },
     data: {
       ...data,
-      name: data.name || undefined,
+      photoUri: data.photoUri || undefined,
     },
     select,
   })
 
   if (updated) {
-    return updated as Collection
+    if (mediaFileUriForDeletion) {
+      deleteFiles([mediaFileUriForDeletion])
+    }
+    return updated as BodyTransformationPhoto
   } else {
-    throw new ApolloError('updateCollection: There was an issue.')
+    throw new ApolloError('updateBodyTransformationPhoto: There was an issue.')
   }
 }
 
-/// TODO: Should be able to delete multiple photos at once
 export const deleteBodyTransformationPhotosById = async (
   r: any,
-  { id }: MutationDeleteCollectionByIdArgs,
+  { ids }: MutationDeleteBodyTransformationPhotosByIdArgs,
   { authedUserId, prisma }: Context,
 ) => {
-  await checkUserOwnsObject(id, 'collection', authedUserId, prisma)
+  // This call and the call below (photosForDeletion) could be combined...
+  await checkUserAccessScopeMulti(
+    ids,
+    'bodyTransformationPhoto',
+    authedUserId,
+    prisma,
+  )
 
-  const deleted = await prisma.collection.delete({
-    where: { id },
+  const photosForDeletion = await prisma.bodyTransformationPhoto.findMany({
+    where: { id: { in: ids } },
     select: {
-      id: true,
+      photoUri: true,
     },
   })
 
-  /// TODO: Delete
+  const mediaFileUrisForDeletion = photosForDeletion.map((p) => p.photoUri)
 
-  if (deleted) {
-    return deleted.id
+  const deleted = await prisma.bodyTransformationPhoto.deleteMany({
+    where: { id: { in: ids } },
+  })
+
+  if (deleted.count === ids.length) {
+    deleteFiles(mediaFileUrisForDeletion)
+    return ids
   } else {
-    throw new ApolloError('deleteCollectionById: There was an issue.')
+    throw new ApolloError(
+      'deleteBodyTransformationPhotosById: There was an issue.',
+    )
   }
 }
