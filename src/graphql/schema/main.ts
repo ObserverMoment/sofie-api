@@ -23,6 +23,7 @@ export default gql`
     standardMoves: [Move!]!
     userCustomMoves: [Move!]!
     #### Progress Journal ####
+    bodyTransformationPhotos: [BodyTransformationPhoto!]!
     userProgressJournals: [ProgressJournal!]!
     progressJournalById(id: ID!): ProgressJournal!
     progressJournalGoalTags: [ProgressJournalGoalTag!]!
@@ -82,6 +83,13 @@ export default gql`
     updateProgressJournal(data: UpdateProgressJournalInput!): ProgressJournal!
     deleteProgressJournalById(id: ID!): ID!
     #### Progress Journal Entry ####
+    createBodyTransformationPhoto(
+      data: CreateBodyTransformationPhoto!
+    ): BodyTransformationPhoto!
+    updateBodyTransformationPhoto(
+      data: UpdateBodyTransformationPhoto!
+    ): BodyTransformationPhoto!
+    deleteBodyTransformationPhotoById(id: ID!): ID!
     createProgressJournalEntry(
       data: CreateProgressJournalEntryInput!
     ): ProgressJournalEntry!

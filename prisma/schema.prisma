@@ -156,55 +156,56 @@ model ScheduledWorkout {
 
 // Height in cms / weight in kgs
 model User {
-  id                      String                    @id @default(uuid())
-  firebaseUid             String                    @unique
-  createdAt               DateTime                  @default(now())
-  hasOnboarded            Boolean                   @default(false)
-  userProfileScope        UserProfileScope          @default(PRIVATE)
-  avatarUri               String?
-  introVideoUri           String?
-  introVideoThumbUri      String?
-  displayName             String?                   @unique
-  firstname               String?
-  lastname                String?
-  bio                     String?
-  tagline                 String?
-  birthdate               DateTime?
-  gender                  Gender?                   @default(NONE)
-  townCity                String?
-  countryCode             String?
-  instagramUrl            String?
-  tiktokUrl               String?
-  youtubeUrl              String?
-  snapUrl                 String?
-  linkedinUrl             String?
-  CustomMoves             Move[]
-  Workouts                Workout[]
-  ScheduledWorkouts       ScheduledWorkout[]
-  LoggedWorkouts          LoggedWorkout[]
-  GymProfiles             GymProfile[]
-  ProgressJournals        ProgressJournal[]
-  ProgressJournalGoalTags ProgressJournalGoalTag[]
-  LoggedWorkoutSections   LoggedWorkoutSection[]
-  LoggedWorkoutSets       LoggedWorkoutSet[]
-  LoggedWorkoutMoves      LoggedWorkoutMove[]
-  ProgressJournalGoals    ProgressJournalGoal[]
-  ProgressJournalEntrys   ProgressJournalEntry[]
-  WorkoutSections         WorkoutSection[]
-  WorkoutSets             WorkoutSet[]
-  WorkoutMoves            WorkoutMove[]
-  WorkoutSetGenerators    WorkoutSetGenerator[]
-  WorkoutSetIntervalBuyIn WorkoutSetIntervalBuyIn[]
-  WorkoutTag              WorkoutTag[]
-  UserBenchmarkGroups     UserBenchmarkGroup[]
-  UserBenchmarks          UserBenchmark[]
-  UserBenchmarkEntries    UserBenchmarkEntry[]
-  WorkoutPlans            WorkoutPlan[]
-  WorkoutPlanDays         WorkoutPlanDay[]
-  WorkoutPlanDayWorkouts  WorkoutPlanDayWorkout[]
-  WorkoutPlanEnrolments   WorkoutPlanEnrolment[]
-  WorkoutPlanReviews      WorkoutPlanReview[]
-  Collections             Collection[]
+  id                       String                    @id @default(uuid())
+  firebaseUid              String                    @unique
+  createdAt                DateTime                  @default(now())
+  hasOnboarded             Boolean                   @default(false)
+  userProfileScope         UserProfileScope          @default(PRIVATE)
+  avatarUri                String?
+  introVideoUri            String?
+  introVideoThumbUri       String?
+  displayName              String?                   @unique
+  firstname                String?
+  lastname                 String?
+  bio                      String?
+  tagline                  String?
+  birthdate                DateTime?
+  gender                   Gender?                   @default(NONE)
+  townCity                 String?
+  countryCode              String?
+  instagramUrl             String?
+  tiktokUrl                String?
+  youtubeUrl               String?
+  snapUrl                  String?
+  linkedinUrl              String?
+  CustomMoves              Move[]
+  Workouts                 Workout[]
+  ScheduledWorkouts        ScheduledWorkout[]
+  LoggedWorkouts           LoggedWorkout[]
+  GymProfiles              GymProfile[]
+  ProgressJournals         ProgressJournal[]
+  ProgressJournalGoalTags  ProgressJournalGoalTag[]
+  LoggedWorkoutSections    LoggedWorkoutSection[]
+  LoggedWorkoutSets        LoggedWorkoutSet[]
+  LoggedWorkoutMoves       LoggedWorkoutMove[]
+  ProgressJournalGoals     ProgressJournalGoal[]
+  ProgressJournalEntrys    ProgressJournalEntry[]
+  WorkoutSections          WorkoutSection[]
+  WorkoutSets              WorkoutSet[]
+  WorkoutMoves             WorkoutMove[]
+  WorkoutSetGenerators     WorkoutSetGenerator[]
+  WorkoutSetIntervalBuyIn  WorkoutSetIntervalBuyIn[]
+  WorkoutTag               WorkoutTag[]
+  UserBenchmarkGroups      UserBenchmarkGroup[]
+  UserBenchmarks           UserBenchmark[]
+  UserBenchmarkEntries     UserBenchmarkEntry[]
+  WorkoutPlans             WorkoutPlan[]
+  WorkoutPlanDays          WorkoutPlanDay[]
+  WorkoutPlanDayWorkouts   WorkoutPlanDayWorkout[]
+  WorkoutPlanEnrolments    WorkoutPlanEnrolment[]
+  WorkoutPlanReviews       WorkoutPlanReview[]
+  Collections              Collection[]
+  BodyTransformationPhotos BodyTransformationPhoto[]
 }
 
 // One or more benchmarks grouped together. For example the class deadlift / press squat moves could be grouped together here.
@@ -555,6 +556,17 @@ model LoggedWorkoutMove {
 ////////////////////////////////////////////////
 ////// Progress Journal Related ////////////////
 ////////////////////////////////////////////////
+model BodyTransformationPhoto {
+  id            String   @id @default(uuid())
+  createdAt     DateTime @default(now())
+  submittedDate DateTime @default(now())
+  bodyweight    Float?
+  note          String?
+  photoUri      String
+  User          User     @relation(fields: [userId], references: [id])
+  userId        String
+}
+
 model ProgressJournal {
   id                     String                 @id @default(uuid())
   createdAt              DateTime               @default(now())

@@ -64,6 +64,16 @@ export type BodyAreaUpperLower =
   | 'LOWER'
   | 'UPPER';
 
+export type BodyTransformationPhoto = {
+  __typename?: 'BodyTransformationPhoto';
+  id: Scalars['ID'];
+  createdAt: Scalars['DateTime'];
+  submittedDate: Scalars['DateTime'];
+  bodyweight?: Maybe<Scalars['Float']>;
+  note?: Maybe<Scalars['String']>;
+  photoUri: Scalars['String'];
+};
+
 export type BodyweightUnit =
   | 'KG'
   | 'LB';
@@ -91,6 +101,13 @@ export type ContentAccessScope =
 export type CopyWorkoutPlanDayToAnotherDayInput = {
   id: Scalars['ID'];
   copyToDay: Scalars['Int'];
+};
+
+export type CreateBodyTransformationPhoto = {
+  submittedDate: Scalars['DateTime'];
+  bodyweight?: Maybe<Scalars['Float']>;
+  note?: Maybe<Scalars['String']>;
+  photoUri: Scalars['String'];
 };
 
 export type CreateCollectionInput = {
@@ -543,6 +560,9 @@ export type Mutation = {
   createProgressJournal: ProgressJournal;
   updateProgressJournal: ProgressJournal;
   deleteProgressJournalById: Scalars['ID'];
+  createBodyTransformationPhoto: BodyTransformationPhoto;
+  updateBodyTransformationPhoto: BodyTransformationPhoto;
+  deleteBodyTransformationPhotoById: Scalars['ID'];
   createProgressJournalEntry: ProgressJournalEntry;
   updateProgressJournalEntry: ProgressJournalEntry;
   deleteProgressJournalEntryById: Scalars['ID'];
@@ -672,6 +692,21 @@ export type MutationUpdateProgressJournalArgs = {
 
 
 export type MutationDeleteProgressJournalByIdArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationCreateBodyTransformationPhotoArgs = {
+  data: CreateBodyTransformationPhoto;
+};
+
+
+export type MutationUpdateBodyTransformationPhotoArgs = {
+  data: UpdateBodyTransformationPhoto;
+};
+
+
+export type MutationDeleteBodyTransformationPhotoByIdArgs = {
   id: Scalars['ID'];
 };
 
@@ -1184,6 +1219,7 @@ export type Query = {
   loggedWorkoutById: LoggedWorkout;
   standardMoves: Array<Move>;
   userCustomMoves: Array<Move>;
+  bodyTransformationPhotos: Array<BodyTransformationPhoto>;
   userProgressJournals: Array<ProgressJournal>;
   progressJournalById: ProgressJournal;
   progressJournalGoalTags: Array<ProgressJournalGoalTag>;
@@ -1357,6 +1393,14 @@ export type TimeUnit =
   | 'HOURS'
   | 'MINUTES'
   | 'SECONDS';
+
+export type UpdateBodyTransformationPhoto = {
+  id: Scalars['ID'];
+  submittedDate?: Maybe<Scalars['DateTime']>;
+  bodyweight?: Maybe<Scalars['Float']>;
+  note?: Maybe<Scalars['String']>;
+  photoUri?: Maybe<Scalars['String']>;
+};
 
 export type UpdateCollectionInput = {
   id: Scalars['ID'];
@@ -2066,11 +2110,13 @@ export type ResolversTypes = ResolversObject<{
   BodyAreaMoveScoreInput: BodyAreaMoveScoreInput;
   Float: ResolverTypeWrapper<Scalars['Float']>;
   BodyAreaUpperLower: BodyAreaUpperLower;
+  BodyTransformationPhoto: ResolverTypeWrapper<BodyTransformationPhoto>;
   BodyweightUnit: BodyweightUnit;
   Collection: ResolverTypeWrapper<Collection>;
   ConnectRelationInput: ConnectRelationInput;
   ContentAccessScope: ContentAccessScope;
   CopyWorkoutPlanDayToAnotherDayInput: CopyWorkoutPlanDayToAnotherDayInput;
+  CreateBodyTransformationPhoto: CreateBodyTransformationPhoto;
   CreateCollectionInput: CreateCollectionInput;
   CreateEquipmentInput: CreateEquipmentInput;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
@@ -2134,6 +2180,7 @@ export type ResolversTypes = ResolversObject<{
   SortPositionUpdated: ResolverTypeWrapper<SortPositionUpdated>;
   TextSearchResult: ResolverTypeWrapper<TextSearchResult>;
   TimeUnit: TimeUnit;
+  UpdateBodyTransformationPhoto: UpdateBodyTransformationPhoto;
   UpdateCollectionInput: UpdateCollectionInput;
   UpdateEquipmentInput: UpdateEquipmentInput;
   UpdateGymProfileInput: UpdateGymProfileInput;
@@ -2205,9 +2252,11 @@ export type ResolversParentTypes = ResolversObject<{
   Int: Scalars['Int'];
   BodyAreaMoveScoreInput: BodyAreaMoveScoreInput;
   Float: Scalars['Float'];
+  BodyTransformationPhoto: BodyTransformationPhoto;
   Collection: Collection;
   ConnectRelationInput: ConnectRelationInput;
   CopyWorkoutPlanDayToAnotherDayInput: CopyWorkoutPlanDayToAnotherDayInput;
+  CreateBodyTransformationPhoto: CreateBodyTransformationPhoto;
   CreateCollectionInput: CreateCollectionInput;
   CreateEquipmentInput: CreateEquipmentInput;
   Boolean: Scalars['Boolean'];
@@ -2265,6 +2314,7 @@ export type ResolversParentTypes = ResolversObject<{
   ScheduledWorkout: ScheduledWorkout;
   SortPositionUpdated: SortPositionUpdated;
   TextSearchResult: TextSearchResult;
+  UpdateBodyTransformationPhoto: UpdateBodyTransformationPhoto;
   UpdateCollectionInput: UpdateCollectionInput;
   UpdateEquipmentInput: UpdateEquipmentInput;
   UpdateGymProfileInput: UpdateGymProfileInput;
@@ -2334,6 +2384,16 @@ export type BodyAreaMoveScoreResolvers<ContextType = any, ParentType extends Res
   Move?: Resolver<ResolversTypes['Move'], ParentType, ContextType>;
   BodyArea?: Resolver<ResolversTypes['BodyArea'], ParentType, ContextType>;
   score?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type BodyTransformationPhotoResolvers<ContextType = any, ParentType extends ResolversParentTypes['BodyTransformationPhoto'] = ResolversParentTypes['BodyTransformationPhoto']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  submittedDate?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  bodyweight?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  note?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  photoUri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -2508,6 +2568,9 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createProgressJournal?: Resolver<ResolversTypes['ProgressJournal'], ParentType, ContextType, RequireFields<MutationCreateProgressJournalArgs, 'data'>>;
   updateProgressJournal?: Resolver<ResolversTypes['ProgressJournal'], ParentType, ContextType, RequireFields<MutationUpdateProgressJournalArgs, 'data'>>;
   deleteProgressJournalById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteProgressJournalByIdArgs, 'id'>>;
+  createBodyTransformationPhoto?: Resolver<ResolversTypes['BodyTransformationPhoto'], ParentType, ContextType, RequireFields<MutationCreateBodyTransformationPhotoArgs, 'data'>>;
+  updateBodyTransformationPhoto?: Resolver<ResolversTypes['BodyTransformationPhoto'], ParentType, ContextType, RequireFields<MutationUpdateBodyTransformationPhotoArgs, 'data'>>;
+  deleteBodyTransformationPhotoById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteBodyTransformationPhotoByIdArgs, 'id'>>;
   createProgressJournalEntry?: Resolver<ResolversTypes['ProgressJournalEntry'], ParentType, ContextType, RequireFields<MutationCreateProgressJournalEntryArgs, 'data'>>;
   updateProgressJournalEntry?: Resolver<ResolversTypes['ProgressJournalEntry'], ParentType, ContextType, RequireFields<MutationUpdateProgressJournalEntryArgs, 'data'>>;
   deleteProgressJournalEntryById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteProgressJournalEntryByIdArgs, 'id'>>;
@@ -2658,6 +2721,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   loggedWorkoutById?: Resolver<ResolversTypes['LoggedWorkout'], ParentType, ContextType, RequireFields<QueryLoggedWorkoutByIdArgs, 'id'>>;
   standardMoves?: Resolver<Array<ResolversTypes['Move']>, ParentType, ContextType>;
   userCustomMoves?: Resolver<Array<ResolversTypes['Move']>, ParentType, ContextType>;
+  bodyTransformationPhotos?: Resolver<Array<ResolversTypes['BodyTransformationPhoto']>, ParentType, ContextType>;
   userProgressJournals?: Resolver<Array<ResolversTypes['ProgressJournal']>, ParentType, ContextType>;
   progressJournalById?: Resolver<ResolversTypes['ProgressJournal'], ParentType, ContextType, RequireFields<QueryProgressJournalByIdArgs, 'id'>>;
   progressJournalGoalTags?: Resolver<Array<ResolversTypes['ProgressJournalGoalTag']>, ParentType, ContextType>;
@@ -3012,6 +3076,7 @@ export type WorkoutTagResolvers<ContextType = any, ParentType extends ResolversP
 export type Resolvers<ContextType = any> = ResolversObject<{
   BodyArea?: BodyAreaResolvers<ContextType>;
   BodyAreaMoveScore?: BodyAreaMoveScoreResolvers<ContextType>;
+  BodyTransformationPhoto?: BodyTransformationPhotoResolvers<ContextType>;
   Collection?: CollectionResolvers<ContextType>;
   DateTime?: GraphQLScalarType;
   DiscoverFeatured?: DiscoverFeaturedResolvers<ContextType>;
