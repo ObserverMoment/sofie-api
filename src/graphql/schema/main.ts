@@ -44,6 +44,7 @@ export default gql`
     #### UserBenchmark ####
     userBenchmarks(take: Int): [UserBenchmark!]!
     userBenchmarkById(id: ID!): UserBenchmark!
+    userBenchmarkTags: [UserBenchmarkTag!]!
     #### UserCollection ####
     userCollections: [Collection!]!
     userCollectionById(id: ID!): Collection!
@@ -179,6 +180,14 @@ export default gql`
       data: UpdateUserBenchmarkEntryInput!
     ): UserBenchmarkEntry!
     deleteUserBenchmarkEntryById(id: ID!): ID!
+    #### User Benchmark Tag ####
+    createUserBenchmarkTag(
+      data: CreateUserBenchmarkTagInput!
+    ): UserBenchmarkTag!
+    updateUserBenchmarkTag(
+      data: UpdateUserBenchmarkTagInput!
+    ): UserBenchmarkTag!
+    deleteUserBenchmarkTagById(id: ID!): ID!
     #### User Collection ####
     createCollection(data: CreateCollectionInput!): Collection!
     updateCollection(data: UpdateCollectionInput!): Collection!

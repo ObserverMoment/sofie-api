@@ -7,45 +7,30 @@ export default gql`
     lastEntryAt: DateTime!
     name: String!
     description: String
-    reps: Float
-    repType: WorkoutMoveRepType!
-    load: Float
-    loadUnit: LoadUnit!
-    timeUnit: TimeUnit!
-    distanceUnit: DistanceUnit!
+    equipmentInfo: String
     benchmarkType: BenchmarkType!
-    Equipment: Equipment
-    Move: Move!
+    loadUnit: LoadUnit!
     UserBenchmarkEntries: [UserBenchmarkEntry!]!
+    UserBenchmarkTags: [UserBenchmarkTag!]!
   }
 
   input CreateUserBenchmarkInput {
     name: String!
     description: String
-    reps: Float
-    repType: WorkoutMoveRepType
-    load: Float
-    loadUnit: LoadUnit
-    timeUnit: TimeUnit
-    distanceUnit: DistanceUnit
+    equipmentInfo: String
     benchmarkType: BenchmarkType!
-    Equipment: ConnectRelationInput
-    Move: ConnectRelationInput!
+    loadUnit: LoadUnit
+    UserBenchmarkTags: [ConnectRelationInput!]
   }
 
   input UpdateUserBenchmarkInput {
     id: String!
     name: String
     description: String
-    reps: Float
-    repType: WorkoutMoveRepType
-    load: Float
-    loadUnit: LoadUnit
-    timeUnit: TimeUnit
-    distanceUnit: DistanceUnit
+    equipmentInfo: String
     benchmarkType: BenchmarkType!
-    Equipment: ConnectRelationInput
-    Move: ConnectRelationInput
+    loadUnit: LoadUnit
+    UserBenchmarkTags: [ConnectRelationInput!]
   }
 
   type UserBenchmarkEntry {
@@ -74,5 +59,22 @@ export default gql`
     note: String
     videoUri: String
     videoThumbUri: String
+  }
+
+  type UserBenchmarkTag {
+    id: ID!
+    name: String!
+    description: String
+  }
+
+  input CreateUserBenchmarkTagInput {
+    name: String!
+    description: String
+  }
+
+  input UpdateUserBenchmarkTagInput {
+    id: ID!
+    name: String
+    description: String
   }
 `

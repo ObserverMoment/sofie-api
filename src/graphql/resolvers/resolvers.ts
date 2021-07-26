@@ -116,12 +116,16 @@ import {
 import {
   userBenchmarks,
   userBenchmarkById,
+  userBenchmarkTags,
   createUserBenchmark,
   updateUserBenchmark,
   deleteUserBenchmarkById,
   createUserBenchmarkEntry,
   updateUserBenchmarkEntry,
   deleteUserBenchmarkEntryById,
+  createUserBenchmarkTag,
+  updateUserBenchmarkTag,
+  deleteUserBenchmarkTagById,
 } from './userBenchmark'
 
 import {
@@ -266,6 +270,7 @@ const resolvers: Resolvers = {
     /// User Benchmarks ////
     userBenchmarks,
     userBenchmarkById,
+    userBenchmarkTags,
     /// User Collections ////
     userCollections,
     userCollectionById,
@@ -356,6 +361,9 @@ const resolvers: Resolvers = {
     createUserBenchmarkEntry,
     updateUserBenchmarkEntry,
     deleteUserBenchmarkEntryById,
+    createUserBenchmarkTag,
+    updateUserBenchmarkTag,
+    deleteUserBenchmarkTagById,
     ////////////////////////
     //// User Collection ////
     ////////////////////////

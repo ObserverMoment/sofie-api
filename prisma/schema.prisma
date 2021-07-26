@@ -54,7 +54,6 @@ model Equipment {
   GymProfiles        GymProfile[]
   WorkoutMoves       WorkoutMove[]
   LoggedWorkoutMoves LoggedWorkoutMove[]
-  UserBenchmarks     UserBenchmark[]
 }
 
 model Move {
@@ -78,7 +77,6 @@ model Move {
   WorkoutMoves         WorkoutMove[]
   BodyAreaMoveScores   BodyAreaMoveScore[]
   LoggedWorkoutMoves   LoggedWorkoutMove[]
-  UserBenchmarks       UserBenchmark[]
 }
 
 // General, Cardio, Barre, Yoga etc
@@ -196,7 +194,7 @@ model User {
   WorkoutSetGenerators     WorkoutSetGenerator[]
   WorkoutSetIntervalBuyIn  WorkoutSetIntervalBuyIn[]
   WorkoutTag               WorkoutTag[]
-  UserBenchmarkGroups      UserBenchmarkGroup[]
+  UserBenchmarkTags        UserBenchmarkTag[]
   UserBenchmarks           UserBenchmark[]
   UserBenchmarkEntries     UserBenchmarkEntry[]
   WorkoutPlans             WorkoutPlan[]
@@ -209,7 +207,7 @@ model User {
 }
 
 // One or more benchmarks grouped together. For example the class deadlift / press squat moves could be grouped together here.
-model UserBenchmarkGroup {
+model UserBenchmarkTag {
   id             String          @id @default(uuid())
   createdAt      DateTime        @default(now())
   User           User            @relation(fields: [userId], references: [id])
@@ -228,19 +226,11 @@ model UserBenchmark {
   userId               String
   name                 String
   description          String?
-  reps                 Float?
-  repType              WorkoutMoveRepType   @default(REPS)
-  load                 Float?
-  loadUnit             LoadUnit             @default(KG)
-  distanceUnit         DistanceUnit         @default(METRES)
-  timeUnit             TimeUnit             @default(SECONDS)
-  Equipment            Equipment?           @relation(fields: [equipmentId], references: [id])
-  equipmentId          String?
-  Move                 Move                 @relation(fields: [moveId], references: [id])
-  moveId               String
+  equipmentInfo        String?
   benchmarkType        BenchmarkType        @default(MAXLOAD)
+  loadUnit             LoadUnit             @default(KG)
   UserBenchmarkEntries UserBenchmarkEntry[]
-  UserBenchmarkGroups  UserBenchmarkGroup[]
+  UserBenchmarkTags    UserBenchmarkTag[]
 }
 
 model UserBenchmarkEntry {
@@ -678,6 +668,7 @@ model DiscoverWorkoutPlan {
 //// ENUMS ///////////////////////
 //////////////////////////////////
 enum BenchmarkType {
+  AMRAP
   MAXLOAD
   FASTESTTIME
   UNBROKENREPS

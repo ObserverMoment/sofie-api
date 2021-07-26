@@ -5,6 +5,7 @@ export default gql`
   Enums
   """
   enum BenchmarkType {
+    AMRAP
     MAXLOAD
     FASTESTTIME
     UNBROKENREPS
