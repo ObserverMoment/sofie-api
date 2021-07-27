@@ -54,7 +54,7 @@ export default gql`
     MALE
     FEMALE
     NONBINARY
-    NONE
+    PNTS
   }
 
   enum LoadUnit {

@@ -11,7 +11,6 @@ import {
   MutationUpdateUserBenchmarkEntryArgs,
   MutationUpdateUserBenchmarkTagArgs,
   QueryUserBenchmarkByIdArgs,
-  QueryUserBenchmarksArgs,
   UserBenchmark,
   UserBenchmarkEntry,
   UserBenchmarkTag,
@@ -23,19 +22,16 @@ import {
 import { checkUserOwnsObject } from '../utils'
 
 //// Queries ////
+/// Aka 'Personal Bests' ///
 export const userBenchmarks = async (
   r: any,
-  { take }: QueryUserBenchmarksArgs,
+  a: any,
   { authedUserId, select, prisma }: Context,
 ) => {
   const userBenchmarks = await prisma.userBenchmark.findMany({
     where: {
       userId: authedUserId,
     },
-    orderBy: {
-      lastEntryAt: 'desc',
-    },
-    take: take ?? undefined,
     select,
   })
   return userBenchmarks as UserBenchmark[]
@@ -79,6 +75,7 @@ export const createUserBenchmark = async (
   const userBenchmark = await prisma.userBenchmark.create({
     data: {
       ...data,
+      loadUnit: data.loadUnit || undefined,
       UserBenchmarkTags: data.UserBenchmarkTags
         ? {
             connect: data.UserBenchmarkTags,
@@ -110,6 +107,7 @@ export const updateUserBenchmark = async (
     data: {
       ...data,
       name: data.name || undefined,
+      loadUnit: data.loadUnit || undefined,
       UserBenchmarkTags: {
         // Note: You should not pass 'null' to a relationship field. It will be parsed as 'no input' and ignored.
         // To remove all related items of this type pass an empty array.

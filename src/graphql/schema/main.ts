@@ -41,8 +41,8 @@ export default gql`
     checkUniqueDisplayName(displayName: String!): Boolean!
     gymProfiles: [GymProfile!]!
     userWorkoutTags: [WorkoutTag!]!
-    #### UserBenchmark ####
-    userBenchmarks(take: Int): [UserBenchmark!]!
+    #### UserBenchmark (aka Personal Best) ####
+    userBenchmarks: [UserBenchmark!]!
     userBenchmarkById(id: ID!): UserBenchmark!
     userBenchmarkTags: [UserBenchmarkTag!]!
     #### UserCollection ####

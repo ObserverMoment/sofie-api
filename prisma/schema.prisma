@@ -168,7 +168,7 @@ model User {
   bio                      String?
   tagline                  String?
   birthdate                DateTime?
-  gender                   Gender?                   @default(NONE)
+  gender                   Gender?                   @default(PNTS)
   townCity                 String?
   countryCode              String?
   instagramUrl             String?
@@ -717,7 +717,7 @@ enum Gender {
   MALE
   FEMALE
   NONBINARY
-  NONE
+  PNTS
 }
 
 enum HeightUnit {

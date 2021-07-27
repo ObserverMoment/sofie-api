@@ -445,7 +445,7 @@ export type Gender =
   | 'MALE'
   | 'FEMALE'
   | 'NONBINARY'
-  | 'NONE';
+  | 'PNTS';
 
 export type GymProfile = {
   __typename?: 'GymProfile';
@@ -1318,11 +1318,6 @@ export type QueryTextSearchUserPublicNamesArgs = {
 
 export type QueryCheckUniqueDisplayNameArgs = {
   displayName: Scalars['String'];
-};
-
-
-export type QueryUserBenchmarksArgs = {
-  take?: Maybe<Scalars['Int']>;
 };
 
 
@@ -2768,7 +2763,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   checkUniqueDisplayName?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryCheckUniqueDisplayNameArgs, 'displayName'>>;
   gymProfiles?: Resolver<Array<ResolversTypes['GymProfile']>, ParentType, ContextType>;
   userWorkoutTags?: Resolver<Array<ResolversTypes['WorkoutTag']>, ParentType, ContextType>;
-  userBenchmarks?: Resolver<Array<ResolversTypes['UserBenchmark']>, ParentType, ContextType, RequireFields<QueryUserBenchmarksArgs, never>>;
+  userBenchmarks?: Resolver<Array<ResolversTypes['UserBenchmark']>, ParentType, ContextType>;
   userBenchmarkById?: Resolver<ResolversTypes['UserBenchmark'], ParentType, ContextType, RequireFields<QueryUserBenchmarkByIdArgs, 'id'>>;
   userBenchmarkTags?: Resolver<Array<ResolversTypes['UserBenchmarkTag']>, ParentType, ContextType>;
   userCollections?: Resolver<Array<ResolversTypes['Collection']>, ParentType, ContextType>;
