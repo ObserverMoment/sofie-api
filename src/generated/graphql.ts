@@ -247,6 +247,7 @@ export type CreateProgressJournalGoalTagInput = {
 export type CreateProgressJournalInput = {
   name: Scalars['String'];
   description?: Maybe<Scalars['String']>;
+  coverImageUri?: Maybe<Scalars['String']>;
 };
 
 export type CreateScheduledWorkoutInput = {
@@ -1185,6 +1186,7 @@ export type ProgressJournal = {
   createdAt: Scalars['DateTime'];
   name: Scalars['String'];
   description?: Maybe<Scalars['String']>;
+  coverImageUri?: Maybe<Scalars['String']>;
   ProgressJournalEntries: Array<ProgressJournalEntry>;
   ProgressJournalGoals: Array<ProgressJournalGoal>;
 };
@@ -1519,6 +1521,7 @@ export type UpdateProgressJournalInput = {
   id: Scalars['ID'];
   name?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
+  coverImageUri?: Maybe<Scalars['String']>;
 };
 
 export type UpdateScheduledWorkoutInput = {
@@ -2695,6 +2698,7 @@ export type ProgressJournalResolvers<ContextType = any, ParentType extends Resol
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  coverImageUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   ProgressJournalEntries?: Resolver<Array<ResolversTypes['ProgressJournalEntry']>, ParentType, ContextType>;
   ProgressJournalGoals?: Resolver<Array<ResolversTypes['ProgressJournalGoal']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;

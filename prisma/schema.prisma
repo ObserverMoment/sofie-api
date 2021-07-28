@@ -564,6 +564,7 @@ model ProgressJournal {
   userId                 String
   name                   String
   description            String?
+  coverImageUri          String?
   ProgressJournalEntries ProgressJournalEntry[]
   ProgressJournalGoals   ProgressJournalGoal[]
 }

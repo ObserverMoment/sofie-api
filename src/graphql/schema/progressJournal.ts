@@ -6,6 +6,7 @@ export default gql`
     createdAt: DateTime!
     name: String!
     description: String
+    coverImageUri: String
     ProgressJournalEntries: [ProgressJournalEntry!]!
     ProgressJournalGoals: [ProgressJournalGoal!]!
   }
@@ -13,12 +14,14 @@ export default gql`
   input CreateProgressJournalInput {
     name: String!
     description: String
+    coverImageUri: String
   }
 
   input UpdateProgressJournalInput {
     id: ID!
     name: String
     description: String
+    coverImageUri: String
   }
 
   type ProgressJournalEntry {

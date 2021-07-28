@@ -104,6 +104,7 @@ export const updateProgressJournal = async (
     data: {
       name: data.name || undefined,
       description: data.description || undefined,
+      coverImageUri: data.coverImageUri || undefined,
     },
     select,
   })
