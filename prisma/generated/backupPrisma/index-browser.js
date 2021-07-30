@@ -11,12 +11,12 @@ const Prisma = {}
 exports.Prisma = Prisma
 
 /**
- * Prisma Client JS version: 2.17.0
- * Query Engine version: 3c463ebd78b1d21d8fdacdd27899e280cf686223
+ * Prisma Client JS version: 2.28.0
+ * Query Engine version: 89facabd0366f63911d089156a7a70125bfbcd27
  */
 Prisma.prismaVersion = {
-  client: "2.17.0",
-  engine: "3c463ebd78b1d21d8fdacdd27899e280cf686223"
+  client: "2.28.0",
+  engine: "89facabd0366f63911d089156a7a70125bfbcd27"
 }
 
 Prisma.PrismaClientKnownRequestError = () => {
@@ -102,58 +102,19 @@ exports.Prisma.EquipmentScalarFieldEnum = makeEnum({
   loadAdjustable: 'loadAdjustable'
 });
 
-exports.Prisma.GymProfileScalarFieldEnum = makeEnum({
-  id: 'id',
-  createdAt: 'createdAt',
-  userId: 'userId',
-  name: 'name',
-  description: 'description',
-  postcode: 'postcode',
-  bodyweightOnly: 'bodyweightOnly'
-});
-
-exports.Prisma.LoggedWorkoutScalarFieldEnum = makeEnum({
-  id: 'id',
-  name: 'name',
-  summary: 'summary',
-  description: 'description',
-  createdAt: 'createdAt',
-  completedOn: 'completedOn',
-  completedById: 'completedById',
-  notes: 'notes',
-  videoUrl: 'videoUrl',
-  videoThumbUrl: 'videoThumbUrl',
-  imageUrl: 'imageUrl',
-  duration: 'duration',
-  workoutTypeId: 'workoutTypeId',
-  originalWorkoutId: 'originalWorkoutId',
-  scheduledWorkoutId: 'scheduledWorkoutId',
-  gymProfileId: 'gymProfileId',
-  workoutProgramEnrolmentId: 'workoutProgramEnrolmentId',
-  workoutProgramWorkoutId: 'workoutProgramWorkoutId'
-});
-
 exports.Prisma.MoveScalarFieldEnum = makeEnum({
   id: 'id',
   createdAt: 'createdAt',
   archived: 'archived',
-  createdById: 'createdById',
+  userId: 'userId',
   scope: 'scope',
   name: 'name',
   searchTerms: 'searchTerms',
   description: 'description',
-  demoVideoUrl: 'demoVideoUrl',
-  demoVideoThumbUrl: 'demoVideoThumbUrl',
-  moveTypeId: 'moveTypeId',
-  validRepTypes: 'validRepTypes'
-});
-
-exports.Prisma.MoveProfileScalarFieldEnum = makeEnum({
-  id: 'id',
-  createdAt: 'createdAt',
-  userId: 'userId',
-  name: 'name',
-  description: 'description'
+  demoVideoUri: 'demoVideoUri',
+  demoVideoThumbUri: 'demoVideoThumbUri',
+  validRepTypes: 'validRepTypes',
+  moveTypeId: 'moveTypeId'
 });
 
 exports.Prisma.MoveTypeScalarFieldEnum = makeEnum({
@@ -161,7 +122,318 @@ exports.Prisma.MoveTypeScalarFieldEnum = makeEnum({
   createdAt: 'createdAt',
   name: 'name',
   description: 'description',
-  imageUrl: 'imageUrl'
+  imageUri: 'imageUri'
+});
+
+exports.Prisma.WorkoutGoalScalarFieldEnum = makeEnum({
+  id: 'id',
+  createdAt: 'createdAt',
+  name: 'name',
+  description: 'description',
+  hexColor: 'hexColor'
+});
+
+exports.Prisma.WorkoutSectionTypeScalarFieldEnum = makeEnum({
+  id: 'id',
+  createdAt: 'createdAt',
+  name: 'name',
+  subtitle: 'subtitle',
+  description: 'description',
+  validRepTypes: 'validRepTypes'
+});
+
+exports.Prisma.CollectionScalarFieldEnum = makeEnum({
+  id: 'id',
+  createdAt: 'createdAt',
+  userId: 'userId',
+  name: 'name',
+  description: 'description'
+});
+
+exports.Prisma.GymProfileScalarFieldEnum = makeEnum({
+  id: 'id',
+  createdAt: 'createdAt',
+  userId: 'userId',
+  name: 'name',
+  description: 'description'
+});
+
+exports.Prisma.ScheduledWorkoutScalarFieldEnum = makeEnum({
+  id: 'id',
+  createdAt: 'createdAt',
+  userId: 'userId',
+  note: 'note',
+  scheduledAt: 'scheduledAt',
+  gymProfileId: 'gymProfileId',
+  loggedWorkoutId: 'loggedWorkoutId',
+  workoutId: 'workoutId',
+  workoutPlanEnrolmentId: 'workoutPlanEnrolmentId',
+  workoutPlanDayWorkoutId: 'workoutPlanDayWorkoutId'
+});
+
+exports.Prisma.UserScalarFieldEnum = makeEnum({
+  id: 'id',
+  firebaseUid: 'firebaseUid',
+  createdAt: 'createdAt',
+  hasOnboarded: 'hasOnboarded',
+  userProfileScope: 'userProfileScope',
+  avatarUri: 'avatarUri',
+  introVideoUri: 'introVideoUri',
+  introVideoThumbUri: 'introVideoThumbUri',
+  displayName: 'displayName',
+  firstname: 'firstname',
+  lastname: 'lastname',
+  bio: 'bio',
+  tagline: 'tagline',
+  birthdate: 'birthdate',
+  gender: 'gender',
+  townCity: 'townCity',
+  countryCode: 'countryCode',
+  instagramUrl: 'instagramUrl',
+  tiktokUrl: 'tiktokUrl',
+  youtubeUrl: 'youtubeUrl',
+  snapUrl: 'snapUrl',
+  linkedinUrl: 'linkedinUrl'
+});
+
+exports.Prisma.UserBenchmarkGroupScalarFieldEnum = makeEnum({
+  id: 'id',
+  createdAt: 'createdAt',
+  userId: 'userId',
+  name: 'name',
+  description: 'description'
+});
+
+exports.Prisma.UserBenchmarkScalarFieldEnum = makeEnum({
+  id: 'id',
+  createdAt: 'createdAt',
+  lastEntryAt: 'lastEntryAt',
+  userId: 'userId',
+  name: 'name',
+  description: 'description',
+  reps: 'reps',
+  repType: 'repType',
+  load: 'load',
+  loadUnit: 'loadUnit',
+  distanceUnit: 'distanceUnit',
+  timeUnit: 'timeUnit',
+  equipmentId: 'equipmentId',
+  moveId: 'moveId',
+  benchmarkType: 'benchmarkType'
+});
+
+exports.Prisma.UserBenchmarkEntryScalarFieldEnum = makeEnum({
+  id: 'id',
+  createdAt: 'createdAt',
+  userId: 'userId',
+  completedOn: 'completedOn',
+  score: 'score',
+  note: 'note',
+  videoUri: 'videoUri',
+  videoThumbUri: 'videoThumbUri',
+  userBenchmarkId: 'userBenchmarkId'
+});
+
+exports.Prisma.WorkoutScalarFieldEnum = makeEnum({
+  id: 'id',
+  createdAt: 'createdAt',
+  archived: 'archived',
+  userId: 'userId',
+  name: 'name',
+  description: 'description',
+  metaData: 'metaData',
+  introVideoUri: 'introVideoUri',
+  introVideoThumbUri: 'introVideoThumbUri',
+  introAudioUri: 'introAudioUri',
+  coverImageUri: 'coverImageUri',
+  lengthMinutes: 'lengthMinutes',
+  difficultyLevel: 'difficultyLevel',
+  contentAccessScope: 'contentAccessScope'
+});
+
+exports.Prisma.WorkoutTagScalarFieldEnum = makeEnum({
+  id: 'id',
+  createdAt: 'createdAt',
+  userId: 'userId',
+  tag: 'tag'
+});
+
+exports.Prisma.WorkoutSectionScalarFieldEnum = makeEnum({
+  id: 'id',
+  createdAt: 'createdAt',
+  archived: 'archived',
+  userId: 'userId',
+  name: 'name',
+  note: 'note',
+  rounds: 'rounds',
+  timecap: 'timecap',
+  sortPosition: 'sortPosition',
+  introVideoUri: 'introVideoUri',
+  introVideoThumbUri: 'introVideoThumbUri',
+  introAudioUri: 'introAudioUri',
+  classVideoUri: 'classVideoUri',
+  classVideoThumbUri: 'classVideoThumbUri',
+  classAudioUri: 'classAudioUri',
+  outroVideoUri: 'outroVideoUri',
+  outroVideoThumbUri: 'outroVideoThumbUri',
+  outroAudioUri: 'outroAudioUri',
+  workoutId: 'workoutId',
+  workoutSectionTypeId: 'workoutSectionTypeId'
+});
+
+exports.Prisma.WorkoutSetScalarFieldEnum = makeEnum({
+  id: 'id',
+  createdAt: 'createdAt',
+  userId: 'userId',
+  sortPosition: 'sortPosition',
+  rounds: 'rounds',
+  duration: 'duration',
+  workoutSectionId: 'workoutSectionId'
+});
+
+exports.Prisma.WorkoutSetIntervalBuyInScalarFieldEnum = makeEnum({
+  id: 'id',
+  createdAt: 'createdAt',
+  userId: 'userId',
+  interval: 'interval',
+  workoutMoveId: 'workoutMoveId',
+  workoutSetId: 'workoutSetId'
+});
+
+exports.Prisma.WorkoutSetGeneratorScalarFieldEnum = makeEnum({
+  id: 'id',
+  createdAt: 'createdAt',
+  userId: 'userId',
+  type: 'type',
+  workoutMoveIndex: 'workoutMoveIndex',
+  target: 'target',
+  roundFrequency: 'roundFrequency',
+  adjustAmount: 'adjustAmount',
+  workoutSetId: 'workoutSetId'
+});
+
+exports.Prisma.WorkoutMoveScalarFieldEnum = makeEnum({
+  id: 'id',
+  createdAt: 'createdAt',
+  userId: 'userId',
+  sortPosition: 'sortPosition',
+  repType: 'repType',
+  reps: 'reps',
+  distanceUnit: 'distanceUnit',
+  timeUnit: 'timeUnit',
+  loadAmount: 'loadAmount',
+  loadUnit: 'loadUnit',
+  moveId: 'moveId',
+  equipmentId: 'equipmentId',
+  workoutSetId: 'workoutSetId'
+});
+
+exports.Prisma.WorkoutPlanScalarFieldEnum = makeEnum({
+  id: 'id',
+  createdAt: 'createdAt',
+  userId: 'userId',
+  archived: 'archived',
+  name: 'name',
+  description: 'description',
+  lengthWeeks: 'lengthWeeks',
+  daysPerWeek: 'daysPerWeek',
+  coverImageUri: 'coverImageUri',
+  introVideoUri: 'introVideoUri',
+  introVideoThumbUri: 'introVideoThumbUri',
+  introAudioUri: 'introAudioUri',
+  contentAccessScope: 'contentAccessScope'
+});
+
+exports.Prisma.WorkoutPlanDayScalarFieldEnum = makeEnum({
+  id: 'id',
+  createdAt: 'createdAt',
+  userId: 'userId',
+  note: 'note',
+  dayNumber: 'dayNumber',
+  workoutPlanId: 'workoutPlanId'
+});
+
+exports.Prisma.WorkoutPlanDayWorkoutScalarFieldEnum = makeEnum({
+  id: 'id',
+  createdAt: 'createdAt',
+  userId: 'userId',
+  note: 'note',
+  sortPosition: 'sortPosition',
+  workoutId: 'workoutId',
+  workoutPlanDayId: 'workoutPlanDayId'
+});
+
+exports.Prisma.WorkoutPlanEnrolmentScalarFieldEnum = makeEnum({
+  id: 'id',
+  createdAt: 'createdAt',
+  startDate: 'startDate',
+  completedPlanDayWorkoutIds: 'completedPlanDayWorkoutIds',
+  workoutPlanId: 'workoutPlanId',
+  userId: 'userId'
+});
+
+exports.Prisma.WorkoutPlanReviewScalarFieldEnum = makeEnum({
+  id: 'id',
+  createdAt: 'createdAt',
+  userId: 'userId',
+  score: 'score',
+  comment: 'comment',
+  workoutPlanId: 'workoutPlanId'
+});
+
+exports.Prisma.LoggedWorkoutScalarFieldEnum = makeEnum({
+  id: 'id',
+  createdAt: 'createdAt',
+  completedOn: 'completedOn',
+  userId: 'userId',
+  name: 'name',
+  note: 'note',
+  gymProfileId: 'gymProfileId',
+  workoutId: 'workoutId'
+});
+
+exports.Prisma.LoggedWorkoutSectionScalarFieldEnum = makeEnum({
+  id: 'id',
+  createdAt: 'createdAt',
+  userId: 'userId',
+  name: 'name',
+  note: 'note',
+  timecap: 'timecap',
+  sortPosition: 'sortPosition',
+  timeTakenMs: 'timeTakenMs',
+  lapTimesMs: 'lapTimesMs',
+  repScore: 'repScore',
+  loggedWorkoutId: 'loggedWorkoutId',
+  workoutSectionTypeId: 'workoutSectionTypeId'
+});
+
+exports.Prisma.LoggedWorkoutSetScalarFieldEnum = makeEnum({
+  id: 'id',
+  createdAt: 'createdAt',
+  userId: 'userId',
+  note: 'note',
+  roundNumber: 'roundNumber',
+  sortPosition: 'sortPosition',
+  duration: 'duration',
+  roundsCompleted: 'roundsCompleted',
+  loggedWorkoutSectionId: 'loggedWorkoutSectionId'
+});
+
+exports.Prisma.LoggedWorkoutMoveScalarFieldEnum = makeEnum({
+  id: 'id',
+  createdAt: 'createdAt',
+  userId: 'userId',
+  sortPosition: 'sortPosition',
+  repType: 'repType',
+  reps: 'reps',
+  distance: 'distance',
+  distanceUnit: 'distanceUnit',
+  loadAmount: 'loadAmount',
+  loadUnit: 'loadUnit',
+  timeUnit: 'timeUnit',
+  moveId: 'moveId',
+  equipmentId: 'equipmentId',
+  loggedWorkoutSetId: 'loggedWorkoutSetId'
 });
 
 exports.Prisma.ProgressJournalScalarFieldEnum = makeEnum({
@@ -175,20 +447,23 @@ exports.Prisma.ProgressJournalScalarFieldEnum = makeEnum({
 exports.Prisma.ProgressJournalEntryScalarFieldEnum = makeEnum({
   id: 'id',
   createdAt: 'createdAt',
-  notes: 'notes',
-  voiceNoteUrl: 'voiceNoteUrl',
+  userId: 'userId',
+  note: 'note',
+  voiceNoteUri: 'voiceNoteUri',
   bodyweight: 'bodyweight',
+  bodyweightUnit: 'bodyweightUnit',
   moodScore: 'moodScore',
   energyScore: 'energyScore',
   stressScore: 'stressScore',
   motivationScore: 'motivationScore',
-  progressPhotoUrls: 'progressPhotoUrls',
+  progressPhotoUris: 'progressPhotoUris',
   progressJournalId: 'progressJournalId'
 });
 
 exports.Prisma.ProgressJournalGoalScalarFieldEnum = makeEnum({
   id: 'id',
   createdAt: 'createdAt',
+  userId: 'userId',
   name: 'name',
   description: 'description',
   deadline: 'deadline',
@@ -204,189 +479,48 @@ exports.Prisma.ProgressJournalGoalTagScalarFieldEnum = makeEnum({
   userId: 'userId'
 });
 
-exports.Prisma.ScheduledWorkoutScalarFieldEnum = makeEnum({
+exports.Prisma.DiscoverFeaturedScalarFieldEnum = makeEnum({
   id: 'id',
   createdAt: 'createdAt',
-  userId: 'userId',
-  notes: 'notes',
-  scheduledAt: 'scheduledAt',
-  workoutId: 'workoutId',
-  loggedWorkoutId: 'loggedWorkoutId',
-  gymProfileId: 'gymProfileId'
-});
-
-exports.Prisma.TrainerAccountScalarFieldEnum = makeEnum({
-  id: 'id',
-  createdAt: 'createdAt',
-  userId: 'userId'
-});
-
-exports.Prisma.UserScalarFieldEnum = makeEnum({
-  id: 'id',
-  firebaseUid: 'firebaseUid',
-  createdAt: 'createdAt',
-  hasOnboarded: 'hasOnboarded',
-  userProfileScope: 'userProfileScope',
-  avatarUrl: 'avatarUrl',
-  introVideoUrl: 'introVideoUrl',
-  introVideoThumbUrl: 'introVideoThumbUrl',
-  coverImageUrl: 'coverImageUrl',
-  displayName: 'displayName',
-  firstname: 'firstname',
-  lastname: 'lastname',
-  themePreference: 'themePreference',
-  bio: 'bio',
+  tag: 'tag',
+  name: 'name',
   tagline: 'tagline',
-  birthdate: 'birthdate',
-  gender: 'gender',
-  height: 'height',
-  weight: 'weight',
-  townCity: 'townCity',
-  countryCode: 'countryCode',
-  instagramUrl: 'instagramUrl',
-  tiktokUrl: 'tiktokUrl',
-  youtubeUrl: 'youtubeUrl',
-  snapUrl: 'snapUrl',
-  linkedinUrl: 'linkedinUrl',
-  unitSystem: 'unitSystem'
-});
-
-exports.Prisma.UserBenchmarkScalarFieldEnum = makeEnum({
-  id: 'id',
-  createdAt: 'createdAt',
-  createdById: 'createdById',
-  name: 'name',
   description: 'description',
-  reps: 'reps',
-  repType: 'repType',
-  load: 'load',
-  loadUnit: 'loadUnit',
-  distanceUnit: 'distanceUnit',
-  scoreType: 'scoreType',
-  moveId: 'moveId'
+  coverImageUri: 'coverImageUri'
 });
 
-exports.Prisma.UserBenchmarkEntryScalarFieldEnum = makeEnum({
+exports.Prisma.DiscoverWorkoutCategoryScalarFieldEnum = makeEnum({
   id: 'id',
   createdAt: 'createdAt',
-  score: 'score',
-  notes: 'notes',
-  videoUrl: 'videoUrl',
-  imageUrl: 'imageUrl',
-  userBenchmarkId: 'userBenchmarkId'
-});
-
-exports.Prisma.UserCollectionScalarFieldEnum = makeEnum({
-  id: 'id',
-  createdAt: 'createdAt',
-  userId: 'userId',
+  active: 'active',
   name: 'name',
-  description: 'description'
-});
-
-exports.Prisma.WorkoutScalarFieldEnum = makeEnum({
-  id: 'id',
-  createdAt: 'createdAt',
-  createdById: 'createdById',
-  name: 'name',
-  summary: 'summary',
+  tagline: 'tagline',
   description: 'description',
-  demoVideoUrl: 'demoVideoUrl',
-  demoVideoThumbUrl: 'demoVideoThumbUrl',
-  youtubeVideoUrl: 'youtubeVideoUrl',
-  spotifyAudio: 'spotifyAudio',
-  imageUrl: 'imageUrl',
-  timecap: 'timecap',
-  builderData: 'builderData',
-  difficultyLevel: 'difficultyLevel',
-  scope: 'scope',
-  workoutTypeId: 'workoutTypeId'
+  coverImageUri: 'coverImageUri'
 });
 
-exports.Prisma.WorkoutGoalScalarFieldEnum = makeEnum({
+exports.Prisma.DiscoverWorkoutScalarFieldEnum = makeEnum({
   id: 'id',
   createdAt: 'createdAt',
-  name: 'name',
-  description: 'description',
-  placeholderImageUrl: 'placeholderImageUrl'
-});
-
-exports.Prisma.WorkoutMoveScalarFieldEnum = makeEnum({
-  id: 'id',
-  createdAt: 'createdAt',
-  sortPosition: 'sortPosition',
-  repType: 'repType',
-  reps: 'reps',
-  distanceUnit: 'distanceUnit',
-  loadAmount: 'loadAmount',
-  loadUnit: 'loadUnit',
-  duration: 'duration',
-  description: 'description',
-  notes: 'notes',
-  moveId: 'moveId',
-  selectedEquipmentId: 'selectedEquipmentId',
-  workoutSectionId: 'workoutSectionId'
-});
-
-exports.Prisma.WorkoutProgramScalarFieldEnum = makeEnum({
-  id: 'id',
-  createdAt: 'createdAt',
-  name: 'name',
-  description: 'description',
-  imageUrl: 'imageUrl',
-  videoUrl: 'videoUrl',
-  videoThumbUrl: 'videoThumbUrl',
-  youtubeVideoUrl: 'youtubeVideoUrl',
-  scope: 'scope',
-  createdById: 'createdById'
-});
-
-exports.Prisma.WorkoutProgramEnrolmentScalarFieldEnum = makeEnum({
-  id: 'id',
-  createdAt: 'createdAt',
-  startDate: 'startDate',
-  workoutProgramId: 'workoutProgramId',
-  userId: 'userId'
-});
-
-exports.Prisma.WorkoutProgramReviewScalarFieldEnum = makeEnum({
-  id: 'id',
-  createdAt: 'createdAt',
-  score: 'score',
-  comment: 'comment',
-  workoutProgramId: 'workoutProgramId',
-  userId: 'userId'
-});
-
-exports.Prisma.WorkoutProgramWorkoutScalarFieldEnum = makeEnum({
-  id: 'id',
-  createdAt: 'createdAt',
-  dayNumber: 'dayNumber',
-  notes: 'notes',
-  workoutProgramId: 'workoutProgramId',
-  workoutId: 'workoutId'
-});
-
-exports.Prisma.WorkoutSectionScalarFieldEnum = makeEnum({
-  id: 'id',
-  createdAt: 'createdAt',
-  sortPosition: 'sortPosition',
-  notes: 'notes',
-  timecap: 'timecap',
-  duration: 'duration',
-  rounds: 'rounds',
   workoutId: 'workoutId',
-  loggedWorkoutId: 'loggedWorkoutId'
+  discoverWorkoutCategoryId: 'discoverWorkoutCategoryId'
 });
 
-exports.Prisma.WorkoutTypeScalarFieldEnum = makeEnum({
+exports.Prisma.DiscoverWorkoutPlanCategoryScalarFieldEnum = makeEnum({
   id: 'id',
   createdAt: 'createdAt',
+  active: 'active',
   name: 'name',
-  subtitle: 'subtitle',
+  tagline: 'tagline',
   description: 'description',
-  placeholderImageUrl: 'placeholderImageUrl',
-  scoreType: 'scoreType'
+  coverImageUri: 'coverImageUri'
+});
+
+exports.Prisma.DiscoverWorkoutPlanScalarFieldEnum = makeEnum({
+  id: 'id',
+  createdAt: 'createdAt',
+  workoutPlanId: 'workoutPlanId',
+  discoverWorkoutPlanCategoryId: 'discoverWorkoutPlanCategoryId'
 });
 
 exports.Prisma.SortOrder = makeEnum({
@@ -427,26 +561,18 @@ exports.UserProfileScope = makeEnum({
   PUBLIC: 'PUBLIC'
 });
 
-exports.ThemePreference = makeEnum({
-  DARK: 'DARK',
-  LIGHT: 'LIGHT'
-});
-
 exports.Gender = makeEnum({
   MALE: 'MALE',
   FEMALE: 'FEMALE',
-  UNSPECIFIED: 'UNSPECIFIED'
-});
-
-exports.UnitSystem = makeEnum({
-  IMPERIAL: 'IMPERIAL',
-  METRIC: 'METRIC'
+  NONBINARY: 'NONBINARY',
+  NONE: 'NONE'
 });
 
 exports.LoadUnit = makeEnum({
   KG: 'KG',
   LB: 'LB',
-  BODYWEIGHTPERCENT: 'BODYWEIGHTPERCENT'
+  BODYWEIGHTPERCENT: 'BODYWEIGHTPERCENT',
+  PERCENTMAX: 'PERCENTMAX'
 });
 
 exports.DistanceUnit = makeEnum({
@@ -456,23 +582,48 @@ exports.DistanceUnit = makeEnum({
   MILES: 'MILES'
 });
 
-exports.BenchmarkScoreType = makeEnum({
-  LOAD: 'LOAD',
-  REPS: 'REPS',
-  TIME: 'TIME'
+exports.TimeUnit = makeEnum({
+  HOURS: 'HOURS',
+  MINUTES: 'MINUTES',
+  SECONDS: 'SECONDS'
+});
+
+exports.BenchmarkType = makeEnum({
+  MAXLOAD: 'MAXLOAD',
+  FASTESTTIME: 'FASTESTTIME',
+  UNBROKENREPS: 'UNBROKENREPS',
+  UNBROKENTIME: 'UNBROKENTIME'
+});
+
+exports.DifficultyLevel = makeEnum({
+  LIGHT: 'LIGHT',
+  CHALLENGING: 'CHALLENGING',
+  INTERMEDIATE: 'INTERMEDIATE',
+  ADVANCED: 'ADVANCED',
+  ELITE: 'ELITE'
 });
 
 exports.ContentAccessScope = makeEnum({
-  OFFICIAL: 'OFFICIAL',
   PUBLIC: 'PUBLIC',
   GROUP: 'GROUP',
   PRIVATE: 'PRIVATE'
 });
 
-exports.WorkoutScoreType = makeEnum({
-  AMREPS: 'AMREPS',
-  FORTIME: 'FORTIME',
-  FORLOAD: 'FORLOAD'
+exports.WorkoutSetGeneratorType = makeEnum({
+  LADDERUP: 'LADDERUP',
+  LADDERDOWN: 'LADDERDOWN',
+  PYRAMIDUP: 'PYRAMIDUP',
+  PYRAMIDDOWN: 'PYRAMIDDOWN'
+});
+
+exports.WorkoutSetGeneratorTarget = makeEnum({
+  REPS: 'REPS',
+  LOAD: 'LOAD'
+});
+
+exports.BodyweightUnit = makeEnum({
+  KG: 'KG',
+  LB: 'LB'
 });
 
 exports.Prisma.ModelName = makeEnum({
@@ -480,30 +631,42 @@ exports.Prisma.ModelName = makeEnum({
   BodyArea: 'BodyArea',
   BodyAreaMoveScore: 'BodyAreaMoveScore',
   Equipment: 'Equipment',
-  GymProfile: 'GymProfile',
-  LoggedWorkout: 'LoggedWorkout',
   Move: 'Move',
-  MoveProfile: 'MoveProfile',
   MoveType: 'MoveType',
+  WorkoutGoal: 'WorkoutGoal',
+  WorkoutSectionType: 'WorkoutSectionType',
+  Collection: 'Collection',
+  GymProfile: 'GymProfile',
+  ScheduledWorkout: 'ScheduledWorkout',
+  User: 'User',
+  UserBenchmarkGroup: 'UserBenchmarkGroup',
+  UserBenchmark: 'UserBenchmark',
+  UserBenchmarkEntry: 'UserBenchmarkEntry',
+  Workout: 'Workout',
+  WorkoutTag: 'WorkoutTag',
+  WorkoutSection: 'WorkoutSection',
+  WorkoutSet: 'WorkoutSet',
+  WorkoutSetIntervalBuyIn: 'WorkoutSetIntervalBuyIn',
+  WorkoutSetGenerator: 'WorkoutSetGenerator',
+  WorkoutMove: 'WorkoutMove',
+  WorkoutPlan: 'WorkoutPlan',
+  WorkoutPlanDay: 'WorkoutPlanDay',
+  WorkoutPlanDayWorkout: 'WorkoutPlanDayWorkout',
+  WorkoutPlanEnrolment: 'WorkoutPlanEnrolment',
+  WorkoutPlanReview: 'WorkoutPlanReview',
+  LoggedWorkout: 'LoggedWorkout',
+  LoggedWorkoutSection: 'LoggedWorkoutSection',
+  LoggedWorkoutSet: 'LoggedWorkoutSet',
+  LoggedWorkoutMove: 'LoggedWorkoutMove',
   ProgressJournal: 'ProgressJournal',
   ProgressJournalEntry: 'ProgressJournalEntry',
   ProgressJournalGoal: 'ProgressJournalGoal',
   ProgressJournalGoalTag: 'ProgressJournalGoalTag',
-  ScheduledWorkout: 'ScheduledWorkout',
-  TrainerAccount: 'TrainerAccount',
-  User: 'User',
-  UserBenchmark: 'UserBenchmark',
-  UserBenchmarkEntry: 'UserBenchmarkEntry',
-  UserCollection: 'UserCollection',
-  Workout: 'Workout',
-  WorkoutGoal: 'WorkoutGoal',
-  WorkoutMove: 'WorkoutMove',
-  WorkoutProgram: 'WorkoutProgram',
-  WorkoutProgramEnrolment: 'WorkoutProgramEnrolment',
-  WorkoutProgramReview: 'WorkoutProgramReview',
-  WorkoutProgramWorkout: 'WorkoutProgramWorkout',
-  WorkoutSection: 'WorkoutSection',
-  WorkoutType: 'WorkoutType'
+  DiscoverFeatured: 'DiscoverFeatured',
+  DiscoverWorkoutCategory: 'DiscoverWorkoutCategory',
+  DiscoverWorkout: 'DiscoverWorkout',
+  DiscoverWorkoutPlanCategory: 'DiscoverWorkoutPlanCategory',
+  DiscoverWorkoutPlan: 'DiscoverWorkoutPlan'
 });
 
 /**
@@ -513,7 +676,7 @@ class PrismaClient {
   constructor() {
     throw new Error(
       `PrismaClient is unable to be run in the browser.
-In case this error is unexpected for you, please report it in https://github.com/prisma/prisma-client-js/issues`,
+In case this error is unexpected for you, please report it in https://github.com/prisma/prisma/issues`,
     )
   }
 }
