@@ -6,6 +6,8 @@ export default gql`
     createdAt: DateTime!
     name: String!
     description: String
+    coverImageUri: String
+    bodyweightUnit: BodyweightUnit!
     ProgressJournalEntries: [ProgressJournalEntry!]!
     ProgressJournalGoals: [ProgressJournalGoal!]!
   }
@@ -13,12 +15,16 @@ export default gql`
   input CreateProgressJournalInput {
     name: String!
     description: String
+    coverImageUri: String
+    bodyweightUnit: BodyweightUnit
   }
 
   input UpdateProgressJournalInput {
     id: ID!
     name: String
     description: String
+    coverImageUri: String
+    bodyweightUnit: BodyweightUnit
   }
 
   type ProgressJournalEntry {
@@ -28,12 +34,10 @@ export default gql`
     voiceNoteUri: String
     # Always save in KGs
     bodyweight: Float
-    bodyweightUnit: BodyweightUnit!
     moodScore: Float
     energyScore: Float
-    stressScore: Float
+    confidenceScore: Float
     motivationScore: Float
-    progressPhotoUris: [String!]!
     ProgressJournal: ProgressJournal!
   }
 
@@ -42,12 +46,10 @@ export default gql`
     voiceNoteUri: String
     # Always save in KGs
     bodyweight: Float
-    bodyweightUnit: BodyweightUnit
     moodScore: Float
     energyScore: Float
-    stressScore: Float
+    confidenceScore: Float
     motivationScore: Float
-    progressPhotoUris: [String!]!
     ProgressJournal: ConnectRelationInput!
   }
 
@@ -57,12 +59,10 @@ export default gql`
     voiceNoteUri: String
     # Always save in KGs
     bodyweight: Float
-    bodyweightUnit: BodyweightUnit
     moodScore: Float
     energyScore: Float
-    stressScore: Float
+    confidenceScore: Float
     motivationScore: Float
-    progressPhotoUris: [String!]!
   }
 
   type ProgressJournalGoal {

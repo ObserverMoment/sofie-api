@@ -147,6 +147,7 @@ export const updateUser = async (
       ...data,
       userProfileScope: data.userProfileScope || undefined,
       hasOnboarded: data.hasOnboarded || undefined,
+      gender: data.gender || undefined,
     },
     select,
   })

@@ -54,7 +54,6 @@ model Equipment {
   GymProfiles        GymProfile[]
   WorkoutMoves       WorkoutMove[]
   LoggedWorkoutMoves LoggedWorkoutMove[]
-  UserBenchmarks     UserBenchmark[]
 }
 
 model Move {
@@ -78,7 +77,6 @@ model Move {
   WorkoutMoves         WorkoutMove[]
   BodyAreaMoveScores   BodyAreaMoveScore[]
   LoggedWorkoutMoves   LoggedWorkoutMove[]
-  UserBenchmarks       UserBenchmark[]
 }
 
 // General, Cardio, Barre, Yoga etc
@@ -138,79 +136,78 @@ model GymProfile {
 }
 
 model ScheduledWorkout {
-  id                      String                 @id @default(uuid())
-  createdAt               DateTime               @default(now())
-  User                    User                   @relation(fields: [userId], references: [id])
-  userId                  String
-  note                    String?
-  scheduledAt             DateTime               @default(now())
-  GymProfile              GymProfile?            @relation(fields: [gymProfileId], references: [id])
-  gymProfileId            String?
-  LoggedWorkout           LoggedWorkout?         @relation(fields: [loggedWorkoutId], references: [id])
-  loggedWorkoutId         String?
-  Workout                 Workout?               @relation(fields: [workoutId], references: [id])
-  workoutId               String?
-  WorkoutPlanEnrolment    WorkoutPlanEnrolment?  @relation(fields: [workoutPlanEnrolmentId], references: [id])
-  workoutPlanEnrolmentId  String?
-  WorkoutPlanDayWorkout   WorkoutPlanDayWorkout? @relation(fields: [workoutPlanDayWorkoutId], references: [id])
-  workoutPlanDayWorkoutId String?
+  id                     String                @id @default(uuid())
+  createdAt              DateTime              @default(now())
+  User                   User                  @relation(fields: [userId], references: [id])
+  userId                 String
+  note                   String?
+  scheduledAt            DateTime              @default(now())
+  GymProfile             GymProfile?           @relation(fields: [gymProfileId], references: [id])
+  gymProfileId           String?
+  LoggedWorkout          LoggedWorkout?        @relation(fields: [loggedWorkoutId], references: [id])
+  loggedWorkoutId        String?
+  Workout                Workout?              @relation(fields: [workoutId], references: [id])
+  workoutId              String?
+  WorkoutPlanEnrolment   WorkoutPlanEnrolment? @relation(fields: [workoutPlanEnrolmentId], references: [id])
+  workoutPlanEnrolmentId String?
 }
 
 // Height in cms / weight in kgs
 model User {
-  id                      String                    @id @default(uuid())
-  firebaseUid             String                    @unique
-  createdAt               DateTime                  @default(now())
-  hasOnboarded            Boolean                   @default(false)
-  userProfileScope        UserProfileScope          @default(PRIVATE)
-  avatarUri               String?
-  introVideoUri           String?
-  introVideoThumbUri      String?
-  displayName             String?                   @unique
-  firstname               String?
-  lastname                String?
-  bio                     String?
-  tagline                 String?
-  birthdate               DateTime?
-  gender                  Gender?                   @default(NONE)
-  townCity                String?
-  countryCode             String?
-  instagramUrl            String?
-  tiktokUrl               String?
-  youtubeUrl              String?
-  snapUrl                 String?
-  linkedinUrl             String?
-  CustomMoves             Move[]
-  Workouts                Workout[]
-  ScheduledWorkouts       ScheduledWorkout[]
-  LoggedWorkouts          LoggedWorkout[]
-  GymProfiles             GymProfile[]
-  ProgressJournals        ProgressJournal[]
-  ProgressJournalGoalTags ProgressJournalGoalTag[]
-  LoggedWorkoutSections   LoggedWorkoutSection[]
-  LoggedWorkoutSets       LoggedWorkoutSet[]
-  LoggedWorkoutMoves      LoggedWorkoutMove[]
-  ProgressJournalGoals    ProgressJournalGoal[]
-  ProgressJournalEntrys   ProgressJournalEntry[]
-  WorkoutSections         WorkoutSection[]
-  WorkoutSets             WorkoutSet[]
-  WorkoutMoves            WorkoutMove[]
-  WorkoutSetGenerators    WorkoutSetGenerator[]
-  WorkoutSetIntervalBuyIn WorkoutSetIntervalBuyIn[]
-  WorkoutTag              WorkoutTag[]
-  UserBenchmarkGroups     UserBenchmarkGroup[]
-  UserBenchmarks          UserBenchmark[]
-  UserBenchmarkEntries    UserBenchmarkEntry[]
-  WorkoutPlans            WorkoutPlan[]
-  WorkoutPlanDays         WorkoutPlanDay[]
-  WorkoutPlanDayWorkouts  WorkoutPlanDayWorkout[]
-  WorkoutPlanEnrolments   WorkoutPlanEnrolment[]
-  WorkoutPlanReviews      WorkoutPlanReview[]
-  Collections             Collection[]
+  id                       String                    @id @default(uuid())
+  firebaseUid              String                    @unique
+  createdAt                DateTime                  @default(now())
+  hasOnboarded             Boolean                   @default(false)
+  userProfileScope         UserProfileScope          @default(PRIVATE)
+  avatarUri                String?
+  introVideoUri            String?
+  introVideoThumbUri       String?
+  displayName              String?                   @unique
+  firstname                String?
+  lastname                 String?
+  bio                      String?
+  tagline                  String?
+  birthdate                DateTime?
+  gender                   Gender                    @default(PNTS)
+  townCity                 String?
+  countryCode              String?
+  instagramUrl             String?
+  tiktokUrl                String?
+  youtubeUrl               String?
+  snapUrl                  String?
+  linkedinUrl              String?
+  CustomMoves              Move[]
+  Workouts                 Workout[]
+  ScheduledWorkouts        ScheduledWorkout[]
+  LoggedWorkouts           LoggedWorkout[]
+  GymProfiles              GymProfile[]
+  ProgressJournals         ProgressJournal[]
+  ProgressJournalGoalTags  ProgressJournalGoalTag[]
+  LoggedWorkoutSections    LoggedWorkoutSection[]
+  LoggedWorkoutSets        LoggedWorkoutSet[]
+  LoggedWorkoutMoves       LoggedWorkoutMove[]
+  ProgressJournalGoals     ProgressJournalGoal[]
+  ProgressJournalEntrys    ProgressJournalEntry[]
+  WorkoutSections          WorkoutSection[]
+  WorkoutSets              WorkoutSet[]
+  WorkoutMoves             WorkoutMove[]
+  WorkoutSetGenerators     WorkoutSetGenerator[]
+  WorkoutSetIntervalBuyIn  WorkoutSetIntervalBuyIn[]
+  WorkoutTag               WorkoutTag[]
+  UserBenchmarkTags        UserBenchmarkTag[]
+  UserBenchmarks           UserBenchmark[]
+  UserBenchmarkEntries     UserBenchmarkEntry[]
+  WorkoutPlans             WorkoutPlan[]
+  WorkoutPlanDays          WorkoutPlanDay[]
+  WorkoutPlanDayWorkouts   WorkoutPlanDayWorkout[]
+  WorkoutPlanEnrolments    WorkoutPlanEnrolment[]
+  WorkoutPlanReviews       WorkoutPlanReview[]
+  Collections              Collection[]
+  BodyTransformationPhotos BodyTransformationPhoto[]
 }
 
 // One or more benchmarks grouped together. For example the class deadlift / press squat moves could be grouped together here.
-model UserBenchmarkGroup {
+model UserBenchmarkTag {
   id             String          @id @default(uuid())
   createdAt      DateTime        @default(now())
   User           User            @relation(fields: [userId], references: [id])
@@ -229,19 +226,11 @@ model UserBenchmark {
   userId               String
   name                 String
   description          String?
-  reps                 Float?
-  repType              WorkoutMoveRepType   @default(REPS)
-  load                 Float?
-  loadUnit             LoadUnit             @default(KG)
-  distanceUnit         DistanceUnit         @default(METRES)
-  timeUnit             TimeUnit             @default(SECONDS)
-  Equipment            Equipment?           @relation(fields: [equipmentId], references: [id])
-  equipmentId          String?
-  Move                 Move                 @relation(fields: [moveId], references: [id])
-  moveId               String
+  equipmentInfo        String?
   benchmarkType        BenchmarkType        @default(MAXLOAD)
+  loadUnit             LoadUnit             @default(KG)
   UserBenchmarkEntries UserBenchmarkEntry[]
-  UserBenchmarkGroups  UserBenchmarkGroup[]
+  UserBenchmarkTags    UserBenchmarkTag[]
 }
 
 model UserBenchmarkEntry {
@@ -437,17 +426,16 @@ model WorkoutPlanDay {
 }
 
 model WorkoutPlanDayWorkout {
-  id                String             @id @default(uuid())
-  createdAt         DateTime           @default(now())
-  User              User               @relation(fields: [userId], references: [id])
-  userId            String
-  note              String?
-  sortPosition      Int
-  Workout           Workout            @relation(fields: [workoutId], references: [id])
-  workoutId         String
-  WorkoutPlanDay    WorkoutPlanDay     @relation(fields: [workoutPlanDayId], references: [id])
-  workoutPlanDayId  String
-  ScheduledWorkouts ScheduledWorkout[]
+  id               String         @id @default(uuid())
+  createdAt        DateTime       @default(now())
+  User             User           @relation(fields: [userId], references: [id])
+  userId           String
+  note             String?
+  sortPosition     Int
+  Workout          Workout        @relation(fields: [workoutId], references: [id])
+  workoutId        String
+  WorkoutPlanDay   WorkoutPlanDay @relation(fields: [workoutPlanDayId], references: [id])
+  workoutPlanDayId String
 }
 
 // A single user enrolled in a plan.
@@ -558,6 +546,17 @@ model LoggedWorkoutMove {
 ////////////////////////////////////////////////
 ////// Progress Journal Related ////////////////
 ////////////////////////////////////////////////
+model BodyTransformationPhoto {
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  takenOnDate DateTime @default(now())
+  bodyweight  Float?
+  note        String?
+  photoUri    String
+  User        User     @relation(fields: [userId], references: [id])
+  userId      String
+}
+
 model ProgressJournal {
   id                     String                 @id @default(uuid())
   createdAt              DateTime               @default(now())
@@ -565,6 +564,8 @@ model ProgressJournal {
   userId                 String
   name                   String
   description            String?
+  coverImageUri          String?
+  bodyweightUnit         BodyweightUnit         @default(KG)
   ProgressJournalEntries ProgressJournalEntry[]
   ProgressJournalGoals   ProgressJournalGoal[]
 }
@@ -577,12 +578,10 @@ model ProgressJournalEntry {
   note              String?
   voiceNoteUri      String?
   bodyweight        Float?
-  bodyweightUnit    BodyweightUnit  @default(KG)
   moodScore         Float?
   energyScore       Float?
-  stressScore       Float?
+  confidenceScore   Float?
   motivationScore   Float?
-  progressPhotoUris String[]
   ProgressJournal   ProgressJournal @relation(fields: [progressJournalId], references: [id])
   progressJournalId String
 }
@@ -670,6 +669,7 @@ model DiscoverWorkoutPlan {
 //// ENUMS ///////////////////////
 //////////////////////////////////
 enum BenchmarkType {
+  AMRAP
   MAXLOAD
   FASTESTTIME
   UNBROKENREPS
@@ -718,7 +718,7 @@ enum Gender {
   MALE
   FEMALE
   NONBINARY
-  NONE
+  PNTS
 }
 
 enum HeightUnit {

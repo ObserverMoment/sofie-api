@@ -79,6 +79,7 @@ export const createProgressJournal = async (
   const progressJournal = await prisma.progressJournal.create({
     data: {
       ...data,
+      bodyweightUnit: data.bodyweightUnit || undefined,
       User: {
         connect: { id: authedUserId },
       },
@@ -104,6 +105,8 @@ export const updateProgressJournal = async (
     data: {
       name: data.name || undefined,
       description: data.description || undefined,
+      coverImageUri: data.coverImageUri || undefined,
+      bodyweightUnit: data.bodyweightUnit || undefined,
     },
     select,
   })
@@ -121,19 +124,6 @@ export const deleteProgressJournalById = async (
   { authedUserId, prisma }: Context,
 ) => {
   await checkUserOwnsObject(id, 'progressJournal', authedUserId, prisma)
-  // Get all progressJournalEntry.progressPhotoUris. Once transaction is successful - delete them from uploadcare.
-  const progressJournalEntries = await prisma.progressJournalEntry.findMany({
-    where: {
-      progressJournalId: id,
-    },
-    select: {
-      progressPhotoUris: true,
-    },
-  })
-
-  const progressPhotoIdsForDeletion: string[] = progressJournalEntries.flatMap(
-    ({ progressPhotoUris }) => [...progressPhotoUris],
-  )
 
   const ops = [
     prisma.progressJournalEntry.deleteMany({
@@ -146,9 +136,6 @@ export const deleteProgressJournalById = async (
   const [_, __, deleted] = await prisma.$transaction(ops)
 
   if (deleted) {
-    if (progressPhotoIdsForDeletion && progressPhotoIdsForDeletion.length > 0) {
-      await deleteFiles(progressPhotoIdsForDeletion)
-    }
     return id
   } else {
     throw new ApolloError('deleteProgressJournalById: There was an issue.')
@@ -171,9 +158,7 @@ export const createProgressJournalEntry = async (
   const progressJournalEntry = await prisma.progressJournalEntry.create({
     data: {
       ...data,
-      bodyweightUnit: data.bodyweightUnit || undefined,
       User: { connect: { id: authedUserId } },
-      progressPhotoUris: data.progressPhotoUris || undefined,
       ProgressJournal: {
         connect: data.ProgressJournal,
       },
@@ -199,20 +184,13 @@ export const updateProgressJournalEntry = async (
     select: {
       userId: true,
       voiceNoteUri: true,
-      progressPhotoUris: true,
     },
   })
 
   if (!progressJournalEntry || progressJournalEntry.userId !== authedUserId) {
     throw new AccessScopeError()
   } else {
-    // Compare with the new array of photo uris and the voiceNoteUri and delete any that have been removed.
-    // Delete from uploadcare after the API update has completed.
-    const mediaUrisFordeletion: string[] =
-      progressJournalEntry.progressPhotoUris.filter(
-        (uri) =>
-          data.progressPhotoUris && !data.progressPhotoUris.includes(uri),
-      )
+    const mediaUrisFordeletion: string[] = []
 
     if (
       progressJournalEntry.voiceNoteUri !== null &&
@@ -223,11 +201,7 @@ export const updateProgressJournalEntry = async (
 
     const updated = await prisma.progressJournalEntry.update({
       where: { id: data.id },
-      data: {
-        ...data,
-        bodyweightUnit: data.bodyweightUnit || undefined,
-        progressPhotoUris: data.progressPhotoUris || undefined,
-      },
+      data,
       select,
     })
 
@@ -253,14 +227,10 @@ export const deleteProgressJournalEntryById = async (
     where: { id },
     select: {
       id: true,
-      progressPhotoUris: true,
     },
   })
 
   if (deleted) {
-    if (deleted.progressPhotoUris.length > 0) {
-      await deleteFiles(deleted.progressPhotoUris)
-    }
     return deleted.id
   } else {
     throw new ApolloError('deleteProgressJournalEntryById: There was an issue.')

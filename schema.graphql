@@ -15,6 +15,7 @@ input AddWorkoutToCollectionInput {
 
 """Enums"""
 enum BenchmarkType {
+  AMRAP
   MAXLOAD
   FASTESTTIME
   UNBROKENREPS
@@ -52,6 +53,15 @@ enum BodyAreaUpperLower {
   UPPER
 }
 
+type BodyTransformationPhoto {
+  id: ID!
+  createdAt: DateTime!
+  takenOnDate: DateTime!
+  bodyweight: Float
+  note: String
+  photoUri: String!
+}
+
 enum BodyweightUnit {
   KG
   LB
@@ -80,6 +90,13 @@ enum ContentAccessScope {
 input CopyWorkoutPlanDayToAnotherDayInput {
   id: ID!
   copyToDay: Int!
+}
+
+input CreateBodyTransformationPhotoInput {
+  takenOnDate: DateTime!
+  bodyweight: Float
+  note: String
+  photoUri: String!
 }
 
 input CreateCollectionInput {
@@ -194,12 +211,10 @@ input CreateProgressJournalEntryInput {
   note: String
   voiceNoteUri: String
   bodyweight: Float
-  bodyweightUnit: BodyweightUnit
   moodScore: Float
   energyScore: Float
-  stressScore: Float
+  confidenceScore: Float
   motivationScore: Float
-  progressPhotoUris: [String!]!
   ProgressJournal: ConnectRelationInput!
 }
 
@@ -219,6 +234,8 @@ input CreateProgressJournalGoalTagInput {
 input CreateProgressJournalInput {
   name: String!
   description: String
+  coverImageUri: String
+  bodyweightUnit: BodyweightUnit
 }
 
 input CreateScheduledWorkoutInput {
@@ -227,7 +244,6 @@ input CreateScheduledWorkoutInput {
   Workout: ConnectRelationInput!
   GymProfile: ConnectRelationInput
   WorkoutPlanEnrolment: ConnectRelationInput
-  WorkoutPlanDayWorkout: ConnectRelationInput
 }
 
 input CreateUserBenchmarkEntryInput {
@@ -242,15 +258,15 @@ input CreateUserBenchmarkEntryInput {
 input CreateUserBenchmarkInput {
   name: String!
   description: String
-  reps: Float
-  repType: WorkoutMoveRepType
-  load: Float
-  loadUnit: LoadUnit
-  timeUnit: TimeUnit
-  distanceUnit: DistanceUnit
+  equipmentInfo: String
   benchmarkType: BenchmarkType!
-  Equipment: ConnectRelationInput
-  Move: ConnectRelationInput!
+  loadUnit: LoadUnit
+  UserBenchmarkTags: [ConnectRelationInput!]
+}
+
+input CreateUserBenchmarkTagInput {
+  name: String!
+  description: String
 }
 
 input CreateWorkoutInput {
@@ -415,7 +431,7 @@ enum Gender {
   MALE
   FEMALE
   NONBINARY
-  NONE
+  PNTS
 }
 
 type GymProfile {
@@ -527,6 +543,9 @@ type Mutation {
   createProgressJournal(data: CreateProgressJournalInput!): ProgressJournal!
   updateProgressJournal(data: UpdateProgressJournalInput!): ProgressJournal!
   deleteProgressJournalById(id: ID!): ID!
+  createBodyTransformationPhotos(data: [CreateBodyTransformationPhotoInput!]!): [BodyTransformationPhoto!]!
+  updateBodyTransformationPhoto(data: UpdateBodyTransformationPhotoInput!): BodyTransformationPhoto!
+  deleteBodyTransformationPhotosById(ids: [ID!]!): [ID!]!
   createProgressJournalEntry(data: CreateProgressJournalEntryInput!): ProgressJournalEntry!
   updateProgressJournalEntry(data: UpdateProgressJournalEntryInput!): ProgressJournalEntry!
   deleteProgressJournalEntryById(id: ID!): ID!
@@ -567,6 +586,9 @@ type Mutation {
   createUserBenchmarkEntry(data: CreateUserBenchmarkEntryInput!): UserBenchmarkEntry!
   updateUserBenchmarkEntry(data: UpdateUserBenchmarkEntryInput!): UserBenchmarkEntry!
   deleteUserBenchmarkEntryById(id: ID!): ID!
+  createUserBenchmarkTag(data: CreateUserBenchmarkTagInput!): UserBenchmarkTag!
+  updateUserBenchmarkTag(data: UpdateUserBenchmarkTagInput!): UserBenchmarkTag!
+  deleteUserBenchmarkTagById(id: ID!): ID!
   createCollection(data: CreateCollectionInput!): Collection!
   updateCollection(data: UpdateCollectionInput!): Collection!
   deleteCollectionById(id: ID!): ID!
@@ -624,6 +646,8 @@ type ProgressJournal {
   createdAt: DateTime!
   name: String!
   description: String
+  coverImageUri: String
+  bodyweightUnit: BodyweightUnit!
   ProgressJournalEntries: [ProgressJournalEntry!]!
   ProgressJournalGoals: [ProgressJournalGoal!]!
 }
@@ -634,12 +658,10 @@ type ProgressJournalEntry {
   note: String
   voiceNoteUri: String
   bodyweight: Float
-  bodyweightUnit: BodyweightUnit!
   moodScore: Float
   energyScore: Float
-  stressScore: Float
+  confidenceScore: Float
   motivationScore: Float
-  progressPhotoUris: [String!]!
   ProgressJournal: ProgressJournal!
 }
 
@@ -674,6 +696,7 @@ type Query {
   loggedWorkoutById(id: ID!): LoggedWorkout!
   standardMoves: [Move!]!
   userCustomMoves: [Move!]!
+  bodyTransformationPhotos: [BodyTransformationPhoto!]!
   userProgressJournals: [ProgressJournal!]!
   progressJournalById(id: ID!): ProgressJournal!
   progressJournalGoalTags: [ProgressJournalGoalTag!]!
@@ -688,8 +711,9 @@ type Query {
   checkUniqueDisplayName(displayName: String!): Boolean!
   gymProfiles: [GymProfile!]!
   userWorkoutTags: [WorkoutTag!]!
-  userBenchmarks(take: Int): [UserBenchmark!]!
+  userBenchmarks: [UserBenchmark!]!
   userBenchmarkById(id: ID!): UserBenchmark!
+  userBenchmarkTags: [UserBenchmarkTag!]!
   userCollections: [Collection!]!
   userCollectionById(id: ID!): Collection!
   userPublicProfiles(cursor: ID, take: Int): [UserPublicProfileSummary!]!
@@ -719,11 +743,10 @@ type ScheduledWorkout {
   createdAt: DateTime!
   scheduledAt: DateTime!
   note: String
-  Workout: Workout
-  LoggedWorkout: LoggedWorkout
-  GymProfile: GymProfile
+  loggedWorkoutId: ID
   workoutPlanEnrolmentId: ID
-  workoutPlanDayWorkoutId: ID
+  GymProfile: GymProfile
+  Workout: Workout
 }
 
 type SortPositionUpdated {
@@ -740,6 +763,14 @@ enum TimeUnit {
   HOURS
   MINUTES
   SECONDS
+}
+
+input UpdateBodyTransformationPhotoInput {
+  id: ID!
+  takenOnDate: DateTime
+  bodyweight: Float
+  note: String
+  photoUri: String
 }
 
 input UpdateCollectionInput {
@@ -818,12 +849,10 @@ input UpdateProgressJournalEntryInput {
   note: String
   voiceNoteUri: String
   bodyweight: Float
-  bodyweightUnit: BodyweightUnit
   moodScore: Float
   energyScore: Float
-  stressScore: Float
+  confidenceScore: Float
   motivationScore: Float
-  progressPhotoUris: [String!]!
 }
 
 input UpdateProgressJournalGoalInput {
@@ -845,6 +874,8 @@ input UpdateProgressJournalInput {
   id: ID!
   name: String
   description: String
+  coverImageUri: String
+  bodyweightUnit: BodyweightUnit
 }
 
 input UpdateScheduledWorkoutInput {
@@ -855,7 +886,6 @@ input UpdateScheduledWorkoutInput {
   LoggedWorkout: ConnectRelationInput
   GymProfile: ConnectRelationInput
   WorkoutPlanEnrolment: ConnectRelationInput
-  WorkoutPlanDayWorkout: ConnectRelationInput
 }
 
 input UpdateSortPositionInput {
@@ -876,15 +906,16 @@ input UpdateUserBenchmarkInput {
   id: String!
   name: String
   description: String
-  reps: Float
-  repType: WorkoutMoveRepType
-  load: Float
-  loadUnit: LoadUnit
-  timeUnit: TimeUnit
-  distanceUnit: DistanceUnit
+  equipmentInfo: String
   benchmarkType: BenchmarkType!
-  Equipment: ConnectRelationInput
-  Move: ConnectRelationInput
+  loadUnit: LoadUnit
+  UserBenchmarkTags: [ConnectRelationInput!]
+}
+
+input UpdateUserBenchmarkTagInput {
+  id: ID!
+  name: String
+  description: String
 }
 
 input UpdateUserInput {
@@ -1040,7 +1071,7 @@ type User {
   linkedinUrl: String
   firstname: String
   lastname: String
-  gender: Gender
+  gender: Gender!
   hasOnboarded: Boolean!
   GymProfiles: [GymProfile!]
   ProgressJournalGoalTags: [ProgressJournalGoalTag!]
@@ -1052,16 +1083,11 @@ type UserBenchmark {
   lastEntryAt: DateTime!
   name: String!
   description: String
-  reps: Float
-  repType: WorkoutMoveRepType!
-  load: Float
-  loadUnit: LoadUnit!
-  timeUnit: TimeUnit!
-  distanceUnit: DistanceUnit!
+  equipmentInfo: String
   benchmarkType: BenchmarkType!
-  Equipment: Equipment
-  Move: Move!
+  loadUnit: LoadUnit!
   UserBenchmarkEntries: [UserBenchmarkEntry!]!
+  UserBenchmarkTags: [UserBenchmarkTag!]!
 }
 
 type UserBenchmarkEntry {
@@ -1072,6 +1098,12 @@ type UserBenchmarkEntry {
   note: String
   videoUri: String
   videoThumbUri: String
+}
+
+type UserBenchmarkTag {
+  id: ID!
+  name: String!
+  description: String
 }
 
 enum UserProfileScope {

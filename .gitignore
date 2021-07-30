@@ -10,6 +10,8 @@ lerna-debug.log*
 ./datasets
 
 # SpotMe data backups
+prisma/schema_staging_backups/
+prisma/generated/backupPrisma/
 databackups/
 seeders/
 

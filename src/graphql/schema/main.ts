@@ -23,6 +23,7 @@ export default gql`
     standardMoves: [Move!]!
     userCustomMoves: [Move!]!
     #### Progress Journal ####
+    bodyTransformationPhotos: [BodyTransformationPhoto!]!
     userProgressJournals: [ProgressJournal!]!
     progressJournalById(id: ID!): ProgressJournal!
     progressJournalGoalTags: [ProgressJournalGoalTag!]!
@@ -40,9 +41,10 @@ export default gql`
     checkUniqueDisplayName(displayName: String!): Boolean!
     gymProfiles: [GymProfile!]!
     userWorkoutTags: [WorkoutTag!]!
-    #### UserBenchmark ####
-    userBenchmarks(take: Int): [UserBenchmark!]!
+    #### UserBenchmark (aka Personal Best) ####
+    userBenchmarks: [UserBenchmark!]!
     userBenchmarkById(id: ID!): UserBenchmark!
+    userBenchmarkTags: [UserBenchmarkTag!]!
     #### UserCollection ####
     userCollections: [Collection!]!
     userCollectionById(id: ID!): Collection!
@@ -82,6 +84,13 @@ export default gql`
     updateProgressJournal(data: UpdateProgressJournalInput!): ProgressJournal!
     deleteProgressJournalById(id: ID!): ID!
     #### Progress Journal Entry ####
+    createBodyTransformationPhotos(
+      data: [CreateBodyTransformationPhotoInput!]!
+    ): [BodyTransformationPhoto!]!
+    updateBodyTransformationPhoto(
+      data: UpdateBodyTransformationPhotoInput!
+    ): BodyTransformationPhoto!
+    deleteBodyTransformationPhotosById(ids: [ID!]!): [ID!]!
     createProgressJournalEntry(
       data: CreateProgressJournalEntryInput!
     ): ProgressJournalEntry!
@@ -171,6 +180,14 @@ export default gql`
       data: UpdateUserBenchmarkEntryInput!
     ): UserBenchmarkEntry!
     deleteUserBenchmarkEntryById(id: ID!): ID!
+    #### User Benchmark Tag ####
+    createUserBenchmarkTag(
+      data: CreateUserBenchmarkTagInput!
+    ): UserBenchmarkTag!
+    updateUserBenchmarkTag(
+      data: UpdateUserBenchmarkTagInput!
+    ): UserBenchmarkTag!
+    deleteUserBenchmarkTagById(id: ID!): ID!
     #### User Collection ####
     createCollection(data: CreateCollectionInput!): Collection!
     updateCollection(data: UpdateCollectionInput!): Collection!

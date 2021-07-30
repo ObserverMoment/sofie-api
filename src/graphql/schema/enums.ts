@@ -5,6 +5,7 @@ export default gql`
   Enums
   """
   enum BenchmarkType {
+    AMRAP
     MAXLOAD
     FASTESTTIME
     UNBROKENREPS
@@ -53,7 +54,7 @@ export default gql`
     MALE
     FEMALE
     NONBINARY
-    NONE
+    PNTS
   }
 
   enum LoadUnit {

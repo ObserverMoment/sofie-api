@@ -1,6 +1,13 @@
 import { Resolvers } from '../../generated/graphql'
 
 import {
+  bodyTransformationPhotos,
+  createBodyTransformationPhotos,
+  updateBodyTransformationPhoto,
+  deleteBodyTransformationPhotosById,
+} from './bodyTransformation'
+
+import {
   discoverFeatured,
   discoverWorkoutCategories,
   discoverWorkoutPlanCategories,
@@ -109,12 +116,16 @@ import {
 import {
   userBenchmarks,
   userBenchmarkById,
+  userBenchmarkTags,
   createUserBenchmark,
   updateUserBenchmark,
   deleteUserBenchmarkById,
   createUserBenchmarkEntry,
   updateUserBenchmarkEntry,
   deleteUserBenchmarkEntryById,
+  createUserBenchmarkTag,
+  updateUserBenchmarkTag,
+  deleteUserBenchmarkTagById,
 } from './userBenchmark'
 
 import {
@@ -230,6 +241,7 @@ const resolvers: Resolvers = {
     discoverWorkoutCategories,
     discoverWorkoutPlanCategories,
     //// Progress Journal ////
+    bodyTransformationPhotos,
     userProgressJournals,
     progressJournalGoalTags,
     progressJournalById,
@@ -258,6 +270,7 @@ const resolvers: Resolvers = {
     /// User Benchmarks ////
     userBenchmarks,
     userBenchmarkById,
+    userBenchmarkTags,
     /// User Collections ////
     userCollections,
     userCollectionById,
@@ -287,6 +300,9 @@ const resolvers: Resolvers = {
     //////////////////////////
     //// Progress Journal ////
     //////////////////////////
+    createBodyTransformationPhotos,
+    updateBodyTransformationPhoto,
+    deleteBodyTransformationPhotosById,
     createProgressJournal,
     updateProgressJournal,
     deleteProgressJournalById,
@@ -345,6 +361,9 @@ const resolvers: Resolvers = {
     createUserBenchmarkEntry,
     updateUserBenchmarkEntry,
     deleteUserBenchmarkEntryById,
+    createUserBenchmarkTag,
+    updateUserBenchmarkTag,
+    deleteUserBenchmarkTagById,
     ////////////////////////
     //// User Collection ////
     ////////////////////////
