@@ -168,7 +168,7 @@ model User {
   bio                      String?
   tagline                  String?
   birthdate                DateTime?
-  gender                   Gender?                   @default(PNTS)
+  gender                   Gender                    @default(PNTS)
   townCity                 String?
   countryCode              String?
   instagramUrl             String?
@@ -565,6 +565,7 @@ model ProgressJournal {
   name                   String
   description            String?
   coverImageUri          String?
+  bodyweightUnit         BodyweightUnit         @default(KG)
   ProgressJournalEntries ProgressJournalEntry[]
   ProgressJournalGoals   ProgressJournalGoal[]
 }
@@ -577,7 +578,6 @@ model ProgressJournalEntry {
   note              String?
   voiceNoteUri      String?
   bodyweight        Float?
-  bodyweightUnit    BodyweightUnit  @default(KG)
   moodScore         Float?
   energyScore       Float?
   confidenceScore   Float?

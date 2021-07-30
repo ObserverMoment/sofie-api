@@ -223,7 +223,6 @@ export type CreateProgressJournalEntryInput = {
   note?: Maybe<Scalars['String']>;
   voiceNoteUri?: Maybe<Scalars['String']>;
   bodyweight?: Maybe<Scalars['Float']>;
-  bodyweightUnit?: Maybe<BodyweightUnit>;
   moodScore?: Maybe<Scalars['Float']>;
   energyScore?: Maybe<Scalars['Float']>;
   confidenceScore?: Maybe<Scalars['Float']>;
@@ -248,6 +247,7 @@ export type CreateProgressJournalInput = {
   name: Scalars['String'];
   description?: Maybe<Scalars['String']>;
   coverImageUri?: Maybe<Scalars['String']>;
+  bodyweightUnit?: Maybe<BodyweightUnit>;
 };
 
 export type CreateScheduledWorkoutInput = {
@@ -1187,6 +1187,7 @@ export type ProgressJournal = {
   name: Scalars['String'];
   description?: Maybe<Scalars['String']>;
   coverImageUri?: Maybe<Scalars['String']>;
+  bodyweightUnit: BodyweightUnit;
   ProgressJournalEntries: Array<ProgressJournalEntry>;
   ProgressJournalGoals: Array<ProgressJournalGoal>;
 };
@@ -1198,7 +1199,6 @@ export type ProgressJournalEntry = {
   note?: Maybe<Scalars['String']>;
   voiceNoteUri?: Maybe<Scalars['String']>;
   bodyweight?: Maybe<Scalars['Float']>;
-  bodyweightUnit: BodyweightUnit;
   moodScore?: Maybe<Scalars['Float']>;
   energyScore?: Maybe<Scalars['Float']>;
   confidenceScore?: Maybe<Scalars['Float']>;
@@ -1495,7 +1495,6 @@ export type UpdateProgressJournalEntryInput = {
   note?: Maybe<Scalars['String']>;
   voiceNoteUri?: Maybe<Scalars['String']>;
   bodyweight?: Maybe<Scalars['Float']>;
-  bodyweightUnit?: Maybe<BodyweightUnit>;
   moodScore?: Maybe<Scalars['Float']>;
   energyScore?: Maybe<Scalars['Float']>;
   confidenceScore?: Maybe<Scalars['Float']>;
@@ -1522,6 +1521,7 @@ export type UpdateProgressJournalInput = {
   name?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   coverImageUri?: Maybe<Scalars['String']>;
+  bodyweightUnit?: Maybe<BodyweightUnit>;
 };
 
 export type UpdateScheduledWorkoutInput = {
@@ -1718,7 +1718,7 @@ export type User = {
   linkedinUrl?: Maybe<Scalars['String']>;
   firstname?: Maybe<Scalars['String']>;
   lastname?: Maybe<Scalars['String']>;
-  gender?: Maybe<Gender>;
+  gender: Gender;
   hasOnboarded: Scalars['Boolean'];
   GymProfiles?: Maybe<Array<GymProfile>>;
   ProgressJournalGoalTags?: Maybe<Array<ProgressJournalGoalTag>>;
@@ -2699,6 +2699,7 @@ export type ProgressJournalResolvers<ContextType = any, ParentType extends Resol
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   coverImageUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  bodyweightUnit?: Resolver<ResolversTypes['BodyweightUnit'], ParentType, ContextType>;
   ProgressJournalEntries?: Resolver<Array<ResolversTypes['ProgressJournalEntry']>, ParentType, ContextType>;
   ProgressJournalGoals?: Resolver<Array<ResolversTypes['ProgressJournalGoal']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -2710,7 +2711,6 @@ export type ProgressJournalEntryResolvers<ContextType = any, ParentType extends 
   note?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   voiceNoteUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   bodyweight?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  bodyweightUnit?: Resolver<ResolversTypes['BodyweightUnit'], ParentType, ContextType>;
   moodScore?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   energyScore?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   confidenceScore?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -2827,7 +2827,7 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   linkedinUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   firstname?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   lastname?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  gender?: Resolver<Maybe<ResolversTypes['Gender']>, ParentType, ContextType>;
+  gender?: Resolver<ResolversTypes['Gender'], ParentType, ContextType>;
   hasOnboarded?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   GymProfiles?: Resolver<Maybe<Array<ResolversTypes['GymProfile']>>, ParentType, ContextType>;
   ProgressJournalGoalTags?: Resolver<Maybe<Array<ResolversTypes['ProgressJournalGoalTag']>>, ParentType, ContextType>;

@@ -20,7 +20,7 @@ export default gql`
     linkedinUrl: String
     firstname: String
     lastname: String
-    gender: Gender
+    gender: Gender!
     hasOnboarded: Boolean!
     GymProfiles: [GymProfile!]
     ProgressJournalGoalTags: [ProgressJournalGoalTag!]
