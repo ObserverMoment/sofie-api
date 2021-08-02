@@ -30,7 +30,6 @@ async function startExpressApolloServer() {
   const prisma = new PrismaClient({
     log: ['info', 'query', 'warn', 'error'],
     errorFormat: 'pretty',
-  })
 
   const selectMiddleware = async (
     resolve: any,
