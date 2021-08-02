@@ -92,7 +92,7 @@ export const workoutById = async (
     }
     return workout as Workout
   } else {
-    throw new ApolloError('workoutProgramById: There was an issue.')
+    throw new ApolloError('workoutById: There was an issue.')
   }
 }
 
