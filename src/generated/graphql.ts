@@ -96,8 +96,7 @@ export type ConnectRelationInput = {
 
 export type ContentAccessScope =
   | 'PRIVATE'
-  | 'PUBLIC'
-  | 'GROUP';
+  | 'PUBLIC';
 
 export type CopyWorkoutPlanDayToAnotherDayInput = {
   id: Scalars['ID'];
