@@ -84,7 +84,6 @@ input ConnectRelationInput {
 enum ContentAccessScope {
   PRIVATE
   PUBLIC
-  GROUP
 }
 
 input CopyWorkoutPlanDayToAnotherDayInput {

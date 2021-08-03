@@ -32,7 +32,6 @@ export default gql`
   enum ContentAccessScope {
     PRIVATE
     PUBLIC
-    GROUP
   }
 
   enum DifficultyLevel {
