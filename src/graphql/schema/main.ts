@@ -12,6 +12,8 @@ export default gql`
     moveTypes: [MoveType!]!
     workoutGoals: [WorkoutGoal!]!
     workoutSectionTypes: [WorkoutSectionType!]!
+    #### Clubs ####
+    userClubs: [Club!]!
     #### Discover Pages and Types ####
     discoverFeatured: [DiscoverFeatured!]!
     discoverWorkoutCategories: [DiscoverWorkoutCategory!]!

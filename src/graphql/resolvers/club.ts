@@ -1,0 +1,21 @@
+import { Context } from '../..'
+import { Club } from '../../generated/graphql'
+
+//// Queries ////
+export const userClubs = async (
+  r: any,
+  a: any,
+  { authedUserId, select, prisma }: Context,
+) => {
+  const clubs = await prisma.club.findMany({
+    where: {
+      OR: [
+        { Owner: { id: authedUserId } },
+        { Admins: { some: { id: authedUserId } } },
+        { Members: { some: { id: authedUserId } } },
+      ],
+    },
+    select,
+  })
+  return clubs as Club[]
+}

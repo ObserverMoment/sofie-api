@@ -7,6 +7,8 @@ import {
   deleteBodyTransformationPhotosById,
 } from './bodyTransformation'
 
+import { userClubs } from './club'
+
 import {
   discoverFeatured,
   discoverWorkoutCategories,
@@ -236,6 +238,8 @@ const resolvers: Resolvers = {
     moveTypes,
     workoutGoals,
     workoutSectionTypes,
+    ///// Clubs ////
+    userClubs,
     ///// Discover ////
     discoverFeatured,
     discoverWorkoutCategories,
