@@ -13,7 +13,7 @@ import { AccessScopeError, checkUserOwnsObject } from '../../utils'
 import {
   checkWorkoutMediaForDeletion,
   deleteFiles,
-} from '../../../uploadcare/index'
+} from '../../../lib/uploadcare'
 import { Prisma } from '@prisma/client'
 import {
   formatWorkoutFiltersInput,

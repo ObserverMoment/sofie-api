@@ -17,7 +17,7 @@ import {
 import {
   checkWorkoutSectionMediaForDeletion,
   deleteFiles,
-} from '../../../uploadcare/index'
+} from '../../../lib/uploadcare'
 import { updateWorkoutMetaData } from './utils'
 
 export const createWorkoutSection = async (

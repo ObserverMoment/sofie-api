@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client'
+import { getUserChatToken } from '../lib/getStream'
 import validateToken from './validateToken'
 
 export default async function (req: any, res: any, prisma: PrismaClient) {
@@ -24,7 +25,13 @@ export default async function (req: any, res: any, prisma: PrismaClient) {
           error: 'We could not find a user associated with this firebase Uid.',
         })
       } else {
-        res.status(200).json(user)
+        // Get the user token associated with this new user.
+        const streamChatToken = getUserChatToken(user.id)
+
+        res.status(200).json({
+          ...user,
+          streamChatToken,
+        })
       }
     }
   } catch (e) {

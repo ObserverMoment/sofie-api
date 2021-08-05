@@ -474,6 +474,21 @@ export type GymProfile = {
 };
 
 
+export type JoinClubRequest = {
+  __typename?: 'JoinClubRequest';
+  id: Scalars['ID'];
+  createdAt: Scalars['DateTime'];
+  RequestBy: UserSummary;
+  status: JoinClubRequestStatus;
+  respondedAt?: Maybe<Scalars['DateTime']>;
+  ResponseBy?: Maybe<UserSummary>;
+};
+
+export type JoinClubRequestStatus =
+  | 'PENDING'
+  | 'ACCEPTED'
+  | 'REJECTED';
+
 export type LoadUnit =
   | 'KG'
   | 'LB'
@@ -2205,6 +2220,8 @@ export type ResolversTypes = ResolversObject<{
   Gender: Gender;
   GymProfile: ResolverTypeWrapper<GymProfile>;
   JSON: ResolverTypeWrapper<Scalars['JSON']>;
+  JoinClubRequest: ResolverTypeWrapper<JoinClubRequest>;
+  JoinClubRequestStatus: JoinClubRequestStatus;
   LoadUnit: LoadUnit;
   LoggedWorkout: ResolverTypeWrapper<LoggedWorkout>;
   LoggedWorkoutMove: ResolverTypeWrapper<LoggedWorkoutMove>;
@@ -2346,6 +2363,7 @@ export type ResolversParentTypes = ResolversObject<{
   Equipment: Equipment;
   GymProfile: GymProfile;
   JSON: Scalars['JSON'];
+  JoinClubRequest: JoinClubRequest;
   LoggedWorkout: LoggedWorkout;
   LoggedWorkoutMove: LoggedWorkoutMove;
   LoggedWorkoutSection: LoggedWorkoutSection;
@@ -2552,6 +2570,16 @@ export type GymProfileResolvers<ContextType = any, ParentType extends ResolversP
 export interface JsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['JSON'], any> {
   name: 'JSON';
 }
+
+export type JoinClubRequestResolvers<ContextType = any, ParentType extends ResolversParentTypes['JoinClubRequest'] = ResolversParentTypes['JoinClubRequest']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  RequestBy?: Resolver<ResolversTypes['UserSummary'], ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['JoinClubRequestStatus'], ParentType, ContextType>;
+  respondedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  ResponseBy?: Resolver<Maybe<ResolversTypes['UserSummary']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
 
 export type LoggedWorkoutResolvers<ContextType = any, ParentType extends ResolversParentTypes['LoggedWorkout'] = ResolversParentTypes['LoggedWorkout']> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
@@ -3166,6 +3194,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   Equipment?: EquipmentResolvers<ContextType>;
   GymProfile?: GymProfileResolvers<ContextType>;
   JSON?: GraphQLScalarType;
+  JoinClubRequest?: JoinClubRequestResolvers<ContextType>;
   LoggedWorkout?: LoggedWorkoutResolvers<ContextType>;
   LoggedWorkoutMove?: LoggedWorkoutMoveResolvers<ContextType>;
   LoggedWorkoutSection?: LoggedWorkoutSectionResolvers<ContextType>;

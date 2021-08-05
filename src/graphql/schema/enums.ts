@@ -56,6 +56,12 @@ export default gql`
     PNTS
   }
 
+  enum JoinClubRequestStatus {
+    PENDING
+    ACCEPTED
+    REJECTED
+  }
+
   enum LoadUnit {
     KG
     LB

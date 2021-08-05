@@ -19,7 +19,7 @@ import {
   ProgressJournalGoalTag,
   QueryProgressJournalByIdArgs,
 } from '../../generated/graphql'
-import { deleteFiles } from '../../uploadcare'
+import { deleteFiles } from '../../lib/uploadcare'
 import { AccessScopeError, checkUserOwnsObject } from '../utils'
 
 //// Queries ////

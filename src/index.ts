@@ -12,11 +12,13 @@ import { PrismaSelect } from '@paljs/plugins'
 import { makeExecutableSchema } from 'graphql-tools'
 import { GraphQLResolveInfo } from 'graphql'
 import { firebaseVerifyToken } from './lib/firebaseAdmin'
+import { initGetStreamClient } from './lib/getStream'
 import registerNewUser from './restApi/registerNewUser'
 import currentUser from './restApi/currentUser'
 
 require('dotenv').config()
 
+initGetStreamClient()
 const app = express()
 
 export type ContextUserType = 'ADMIN' | 'USER'

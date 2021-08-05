@@ -30,7 +30,10 @@ import {
   QueryPublicWorkoutPlansArgs,
   WorkoutPlanFiltersInput,
 } from '../../generated/graphql'
-import { checkWorkoutPlanMediaForDeletion, deleteFiles } from '../../uploadcare'
+import {
+  checkWorkoutPlanMediaForDeletion,
+  deleteFiles,
+} from '../../lib/uploadcare'
 import {
   AccessScopeError,
   checkAndReorderObjects,

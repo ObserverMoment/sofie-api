@@ -17,4 +17,15 @@ export default gql`
     Workouts: [Workout!]!
     WorkoutPlans: [WorkoutPlan!]!
   }
+
+  type JoinClubRequest {
+    id: ID!
+    createdAt: DateTime!
+    # The applicant.
+    RequestBy: UserSummary!
+    status: JoinClubRequestStatus!
+    respondedAt: DateTime
+    # Owner or admin of the group.
+    ResponseBy: UserSummary
+  }
 `

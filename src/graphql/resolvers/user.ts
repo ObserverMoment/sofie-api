@@ -13,7 +13,7 @@ import {
   UserPublicProfileSummary,
   WorkoutTag,
 } from '../../generated/graphql'
-import { checkUserMediaForDeletion, deleteFiles } from '../../uploadcare'
+import { checkUserMediaForDeletion, deleteFiles } from '../../lib/uploadcare'
 import { AccessScopeError, checkUserOwnsObject } from '../utils'
 
 //// Queries ////

@@ -14,7 +14,7 @@ import {
   MutationUpdateMoveArgs,
   BodyAreaMoveScoreInput,
 } from '../../generated/graphql'
-import { checkMoveMediaForDeletion, deleteFiles } from '../../uploadcare'
+import { checkMoveMediaForDeletion, deleteFiles } from '../../lib/uploadcare'
 import { AccessScopeError, checkUserOwnsObject } from '../utils'
 
 //// Queries ////

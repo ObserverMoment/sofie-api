@@ -18,7 +18,7 @@ import {
 import {
   checkUserBenchmarkEntryMediaForDeletion,
   deleteFiles,
-} from '../../uploadcare'
+} from '../../lib/uploadcare'
 import { checkUserOwnsObject } from '../utils'
 
 //// Queries ////

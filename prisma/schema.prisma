@@ -207,6 +207,8 @@ model User {
   ClubsWhereOwner          Club[]                    @relation("owner")
   ClubsWhereAdmin          Club[]                    @relation("admin")
   ClubsWhereMember         Club[]                    @relation("member")
+  JoinClubRequest          JoinClubRequest[]         @relation("requester")
+  JoinClubResponse         JoinClubRequest[]         @relation("responder")
 }
 
 // One or more benchmarks grouped together. For example the class deadlift / press squat moves could be grouped together here.
@@ -269,6 +271,19 @@ model Club {
   Members            User[]        @relation("member")
   Workouts           Workout[]
   WorkoutPlans       WorkoutPlan[]
+}
+
+model JoinClubRequest {
+  id           String                @id @default(uuid())
+  createdAt    DateTime              @default(now())
+  // The applicant.
+  RequestBy    User                  @relation("requester", fields: [requestById], references: [id])
+  requestById  String
+  status       JoinClubRequestStatus @default(PENDING)
+  respondedAt  DateTime?
+  // Owner or admin of the group.
+  ResponseBy   User                  @relation("responder", fields: [responseById], references: [id])
+  responseById String
 }
 
 ////////////////////////////////////////////////////
@@ -748,6 +763,12 @@ enum Gender {
 enum HeightUnit {
   CM
   IN
+}
+
+enum JoinClubRequestStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
 }
 
 enum LoadUnit {

@@ -6,7 +6,7 @@ import {
   MutationDeleteBodyTransformationPhotosByIdArgs,
   MutationUpdateBodyTransformationPhotoArgs,
 } from '../../generated/graphql'
-import { deleteFiles } from '../../uploadcare'
+import { deleteFiles } from '../../lib/uploadcare'
 import { checkUserAccessScopeMulti, checkUserOwnsObject } from '../utils'
 
 //// Queries ////
