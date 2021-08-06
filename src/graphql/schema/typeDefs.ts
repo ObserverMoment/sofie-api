@@ -1,6 +1,8 @@
 import { mergeTypeDefs } from '@graphql-tools/merge'
 import bodyAreaSchema from './bodyArea'
 import bodyTransformation from './bodyTransformation'
+import club from './club'
+import collectionSchema from './collection'
 import discoverSchema from './discover'
 import enumSchema from './enums'
 import equipmentSchema from './equipment'
@@ -12,7 +14,6 @@ import moveSchema from './move'
 import progressJournal from './progressJournal'
 import scheduledWorkoutSchema from './scheduledWorkout'
 import userBenchmarkSchema from './userBenchmark'
-import collectionSchema from './collection'
 import userSchema from './user'
 import workoutSchema from './workout/workout'
 import workoutMoveSchema from './workout/workoutMove'
@@ -24,8 +25,9 @@ import workoutSummarySchema from './workout/workoutSummary'
 const typeDefs = mergeTypeDefs([
   bodyAreaSchema,
   bodyTransformation,
-  discoverSchema,
+  club,
   collectionSchema,
+  discoverSchema,
   enumSchema,
   equipmentSchema,
   filterInputs,

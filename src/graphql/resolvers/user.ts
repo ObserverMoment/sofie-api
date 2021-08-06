@@ -13,7 +13,11 @@ import {
   UserPublicProfileSummary,
   WorkoutTag,
 } from '../../generated/graphql'
-import { checkUserMediaForDeletion, deleteFiles } from '../../uploadcare'
+import {
+  streamFieldsRequiringUpdate,
+  updateGetStreamFields,
+} from '../../lib/getStream'
+import { checkUserMediaForDeletion, deleteFiles } from '../../lib/uploadcare'
 import { AccessScopeError, checkUserOwnsObject } from '../utils'
 
 //// Queries ////
@@ -139,6 +143,12 @@ export const updateUser = async (
     data,
   )
 
+  const streamFieldsToUpdate: string[] = await streamFieldsRequiringUpdate(
+    prisma,
+    authedUserId,
+    data,
+  )
+
   const updated = await prisma.user.update({
     where: {
       id: authedUserId,
@@ -155,6 +165,9 @@ export const updateUser = async (
   if (updated) {
     if (fileUrisForDeletion && fileUrisForDeletion.length > 0) {
       await deleteFiles(fileUrisForDeletion)
+    }
+    if (streamFieldsToUpdate.length > 0) {
+      await updateGetStreamFields(authedUserId, streamFieldsToUpdate, data)
     }
     return updated as User
   } else {

@@ -1,4 +1,5 @@
 import { PrismaClient } from '.prisma/client'
+import { createStreamChatUser, getUserChatToken } from '../lib/getStream'
 import validateToken from './validateToken'
 
 export default async function (req: any, res: any, prisma: PrismaClient) {
@@ -30,13 +31,24 @@ export default async function (req: any, res: any, prisma: PrismaClient) {
             hasOnboarded: true,
           },
         })
+
         if (!user) {
           res.status(500).json({
             error:
               "Something went wrong that shouldn't have. We could not create a new user, sorry.",
           })
         }
-        res.json(user)
+
+        // Create a new user for GetStreamChat services.
+        await createStreamChatUser(user.id)
+
+        // Get the user token associated with this new user.
+        const streamChatToken = getUserChatToken(user.id)
+
+        res.json({
+          ...user,
+          streamChatToken,
+        })
       }
     }
   } catch (e) {

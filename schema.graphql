@@ -67,6 +67,23 @@ enum BodyweightUnit {
   LB
 }
 
+type Club {
+  id: ID!
+  createdAt: DateTime!
+  Owner: UserSummary!
+  Admins: [UserSummary!]!
+  Members: [UserSummary!]!
+  name: String!
+  description: String
+  location: String
+  coverImageUri: String
+  introVideoUri: String
+  introVideoThumbUri: String
+  introAudioUri: String
+  Workouts: [Workout!]!
+  WorkoutPlans: [WorkoutPlan!]!
+}
+
 type Collection {
   id: ID!
   createdAt: DateTime!
@@ -442,6 +459,21 @@ type GymProfile {
 
 scalar JSON
 
+type JoinClubRequest {
+  id: ID!
+  createdAt: DateTime!
+  RequestBy: UserSummary!
+  status: JoinClubRequestStatus!
+  respondedAt: DateTime
+  ResponseBy: UserSummary
+}
+
+enum JoinClubRequestStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
 enum LoadUnit {
   KG
   LB
@@ -688,6 +720,7 @@ type Query {
   moveTypes: [MoveType!]!
   workoutGoals: [WorkoutGoal!]!
   workoutSectionTypes: [WorkoutSectionType!]!
+  userClubs: [Club!]!
   discoverFeatured: [DiscoverFeatured!]!
   discoverWorkoutCategories: [DiscoverWorkoutCategory!]!
   discoverWorkoutPlanCategories: [DiscoverWorkoutPlanCategory!]!

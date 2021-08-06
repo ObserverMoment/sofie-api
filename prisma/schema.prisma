@@ -204,6 +204,11 @@ model User {
   WorkoutPlanReviews       WorkoutPlanReview[]
   Collections              Collection[]
   BodyTransformationPhotos BodyTransformationPhoto[]
+  ClubsWhereOwner          Club[]                    @relation("owner")
+  ClubsWhereAdmin          Club[]                    @relation("admin")
+  ClubsWhereMember         Club[]                    @relation("member")
+  JoinClubRequest          JoinClubRequest[]         @relation("requester")
+  JoinClubResponse         JoinClubRequest[]         @relation("responder")
 }
 
 // One or more benchmarks grouped together. For example the class deadlift / press squat moves could be grouped together here.
@@ -248,6 +253,40 @@ model UserBenchmarkEntry {
 }
 
 ////////////////////////////////////////////////////
+///// Club Related Models and Children //////////
+////////////////////////////////////////////////////
+model Club {
+  id                 String        @id @default(uuid())
+  createdAt          DateTime      @default(now())
+  name               String
+  description        String?
+  location           String?
+  coverImageUri      String?
+  introVideoUri      String?
+  introVideoThumbUri String?
+  introAudioUri      String?
+  Owner              User          @relation("owner", fields: [userId], references: [id])
+  userId             String
+  Admins             User[]        @relation("admin")
+  Members            User[]        @relation("member")
+  Workouts           Workout[]
+  WorkoutPlans       WorkoutPlan[]
+}
+
+model JoinClubRequest {
+  id           String                @id @default(uuid())
+  createdAt    DateTime              @default(now())
+  // The applicant.
+  RequestBy    User                  @relation("requester", fields: [requestById], references: [id])
+  requestById  String
+  status       JoinClubRequestStatus @default(PENDING)
+  respondedAt  DateTime?
+  // Owner or admin of the group.
+  ResponseBy   User                  @relation("responder", fields: [responseById], references: [id])
+  responseById String
+}
+
+////////////////////////////////////////////////////
 ///// Workout Related Models and Children //////////
 ////////////////////////////////////////////////////
 model Workout {
@@ -277,6 +316,7 @@ model Workout {
   WorkoutPlanDayWorkout WorkoutPlanDayWorkout[]
   Collections           Collection[]
   DiscoverWorkouts      DiscoverWorkout[]
+  Clubs                 Club[]
 }
 
 /// Used on both workouts and workout plans + maybe others (events, challenges) in the future. Free text tag for the user to tag their content.
@@ -411,6 +451,7 @@ model WorkoutPlan {
   WorkoutPlanDays      WorkoutPlanDay[]
   Collections          Collection[]
   DiscoverWorkoutPlans DiscoverWorkoutPlan[]
+  Clubs                Club[]
 }
 
 model WorkoutPlanDay {
@@ -469,14 +510,13 @@ model WorkoutPlanReview {
 ///// Logged Workout Related Models and Children /////////
 //////////////////////////////////////////////////////////
 model LoggedWorkout {
-  id          String   @id @default(uuid())
-  createdAt   DateTime @default(now())
-  completedOn DateTime
-  User        User     @relation(fields: [userId], references: [id])
-  userId      String
-  name        String
-  note        String?
-
+  id                    String                 @id @default(uuid())
+  createdAt             DateTime               @default(now())
+  completedOn           DateTime
+  User                  User                   @relation(fields: [userId], references: [id])
+  userId                String
+  name                  String
+  note                  String?
   GymProfile            GymProfile?            @relation(fields: [gymProfileId], references: [id])
   gymProfileId          String?
   LoggedWorkoutSections LoggedWorkoutSection[]
@@ -723,6 +763,12 @@ enum Gender {
 enum HeightUnit {
   CM
   IN
+}
+
+enum JoinClubRequestStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
 }
 
 enum LoadUnit {

@@ -79,6 +79,24 @@ export type BodyweightUnit =
   | 'KG'
   | 'LB';
 
+export type Club = {
+  __typename?: 'Club';
+  id: Scalars['ID'];
+  createdAt: Scalars['DateTime'];
+  Owner: UserSummary;
+  Admins: Array<UserSummary>;
+  Members: Array<UserSummary>;
+  name: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+  location?: Maybe<Scalars['String']>;
+  coverImageUri?: Maybe<Scalars['String']>;
+  introVideoUri?: Maybe<Scalars['String']>;
+  introVideoThumbUri?: Maybe<Scalars['String']>;
+  introAudioUri?: Maybe<Scalars['String']>;
+  Workouts: Array<Workout>;
+  WorkoutPlans: Array<WorkoutPlan>;
+};
+
 export type Collection = {
   __typename?: 'Collection';
   id: Scalars['ID'];
@@ -455,6 +473,21 @@ export type GymProfile = {
   Equipments: Array<Equipment>;
 };
 
+
+export type JoinClubRequest = {
+  __typename?: 'JoinClubRequest';
+  id: Scalars['ID'];
+  createdAt: Scalars['DateTime'];
+  RequestBy: UserSummary;
+  status: JoinClubRequestStatus;
+  respondedAt?: Maybe<Scalars['DateTime']>;
+  ResponseBy?: Maybe<UserSummary>;
+};
+
+export type JoinClubRequestStatus =
+  | 'PENDING'
+  | 'ACCEPTED'
+  | 'REJECTED';
 
 export type LoadUnit =
   | 'KG'
@@ -1232,6 +1265,7 @@ export type Query = {
   moveTypes: Array<MoveType>;
   workoutGoals: Array<WorkoutGoal>;
   workoutSectionTypes: Array<WorkoutSectionType>;
+  userClubs: Array<Club>;
   discoverFeatured: Array<DiscoverFeatured>;
   discoverWorkoutCategories: Array<DiscoverWorkoutCategory>;
   discoverWorkoutPlanCategories: Array<DiscoverWorkoutPlanCategory>;
@@ -2137,6 +2171,7 @@ export type ResolversTypes = ResolversObject<{
   BodyAreaUpperLower: BodyAreaUpperLower;
   BodyTransformationPhoto: ResolverTypeWrapper<BodyTransformationPhoto>;
   BodyweightUnit: BodyweightUnit;
+  Club: ResolverTypeWrapper<Club>;
   Collection: ResolverTypeWrapper<Collection>;
   ConnectRelationInput: ConnectRelationInput;
   ContentAccessScope: ContentAccessScope;
@@ -2185,6 +2220,8 @@ export type ResolversTypes = ResolversObject<{
   Gender: Gender;
   GymProfile: ResolverTypeWrapper<GymProfile>;
   JSON: ResolverTypeWrapper<Scalars['JSON']>;
+  JoinClubRequest: ResolverTypeWrapper<JoinClubRequest>;
+  JoinClubRequestStatus: JoinClubRequestStatus;
   LoadUnit: LoadUnit;
   LoggedWorkout: ResolverTypeWrapper<LoggedWorkout>;
   LoggedWorkoutMove: ResolverTypeWrapper<LoggedWorkoutMove>;
@@ -2281,6 +2318,7 @@ export type ResolversParentTypes = ResolversObject<{
   BodyAreaMoveScoreInput: BodyAreaMoveScoreInput;
   Float: Scalars['Float'];
   BodyTransformationPhoto: BodyTransformationPhoto;
+  Club: Club;
   Collection: Collection;
   ConnectRelationInput: ConnectRelationInput;
   CopyWorkoutPlanDayToAnotherDayInput: CopyWorkoutPlanDayToAnotherDayInput;
@@ -2325,6 +2363,7 @@ export type ResolversParentTypes = ResolversObject<{
   Equipment: Equipment;
   GymProfile: GymProfile;
   JSON: Scalars['JSON'];
+  JoinClubRequest: JoinClubRequest;
   LoggedWorkout: LoggedWorkout;
   LoggedWorkoutMove: LoggedWorkoutMove;
   LoggedWorkoutSection: LoggedWorkoutSection;
@@ -2428,6 +2467,24 @@ export type BodyTransformationPhotoResolvers<ContextType = any, ParentType exten
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type ClubResolvers<ContextType = any, ParentType extends ResolversParentTypes['Club'] = ResolversParentTypes['Club']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  Owner?: Resolver<ResolversTypes['UserSummary'], ParentType, ContextType>;
+  Admins?: Resolver<Array<ResolversTypes['UserSummary']>, ParentType, ContextType>;
+  Members?: Resolver<Array<ResolversTypes['UserSummary']>, ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  location?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  coverImageUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  introVideoUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  introVideoThumbUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  introAudioUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  Workouts?: Resolver<Array<ResolversTypes['Workout']>, ParentType, ContextType>;
+  WorkoutPlans?: Resolver<Array<ResolversTypes['WorkoutPlan']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type CollectionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Collection'] = ResolversParentTypes['Collection']> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
@@ -2513,6 +2570,16 @@ export type GymProfileResolvers<ContextType = any, ParentType extends ResolversP
 export interface JsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['JSON'], any> {
   name: 'JSON';
 }
+
+export type JoinClubRequestResolvers<ContextType = any, ParentType extends ResolversParentTypes['JoinClubRequest'] = ResolversParentTypes['JoinClubRequest']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  RequestBy?: Resolver<ResolversTypes['UserSummary'], ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['JoinClubRequestStatus'], ParentType, ContextType>;
+  respondedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  ResponseBy?: Resolver<Maybe<ResolversTypes['UserSummary']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
 
 export type LoggedWorkoutResolvers<ContextType = any, ParentType extends ResolversParentTypes['LoggedWorkout'] = ResolversParentTypes['LoggedWorkout']> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
@@ -2749,6 +2816,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   moveTypes?: Resolver<Array<ResolversTypes['MoveType']>, ParentType, ContextType>;
   workoutGoals?: Resolver<Array<ResolversTypes['WorkoutGoal']>, ParentType, ContextType>;
   workoutSectionTypes?: Resolver<Array<ResolversTypes['WorkoutSectionType']>, ParentType, ContextType>;
+  userClubs?: Resolver<Array<ResolversTypes['Club']>, ParentType, ContextType>;
   discoverFeatured?: Resolver<Array<ResolversTypes['DiscoverFeatured']>, ParentType, ContextType>;
   discoverWorkoutCategories?: Resolver<Array<ResolversTypes['DiscoverWorkoutCategory']>, ParentType, ContextType>;
   discoverWorkoutPlanCategories?: Resolver<Array<ResolversTypes['DiscoverWorkoutPlanCategory']>, ParentType, ContextType>;
@@ -3115,6 +3183,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   BodyArea?: BodyAreaResolvers<ContextType>;
   BodyAreaMoveScore?: BodyAreaMoveScoreResolvers<ContextType>;
   BodyTransformationPhoto?: BodyTransformationPhotoResolvers<ContextType>;
+  Club?: ClubResolvers<ContextType>;
   Collection?: CollectionResolvers<ContextType>;
   DateTime?: GraphQLScalarType;
   DiscoverFeatured?: DiscoverFeaturedResolvers<ContextType>;
@@ -3125,6 +3194,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   Equipment?: EquipmentResolvers<ContextType>;
   GymProfile?: GymProfileResolvers<ContextType>;
   JSON?: GraphQLScalarType;
+  JoinClubRequest?: JoinClubRequestResolvers<ContextType>;
   LoggedWorkout?: LoggedWorkoutResolvers<ContextType>;
   LoggedWorkoutMove?: LoggedWorkoutMoveResolvers<ContextType>;
   LoggedWorkoutSection?: LoggedWorkoutSectionResolvers<ContextType>;
