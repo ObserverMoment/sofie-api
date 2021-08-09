@@ -1,5 +1,5 @@
 import { Context } from '../..'
-import { Club } from '../../generated/graphql'
+import { Club, QueryClubByIdArgs } from '../../generated/graphql'
 
 //// Queries ////
 export const userClubs = async (
@@ -18,4 +18,16 @@ export const userClubs = async (
     select,
   })
   return clubs as Club[]
+}
+
+export const clubById = async (
+  r: any,
+  { id }: QueryClubByIdArgs,
+  { authedUserId, select, prisma }: Context,
+) => {
+  const club = await prisma.club.findUnique({
+    where: { id },
+    select,
+  })
+  return club as Club
 }

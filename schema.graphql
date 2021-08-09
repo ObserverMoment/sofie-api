@@ -721,6 +721,7 @@ type Query {
   workoutGoals: [WorkoutGoal!]!
   workoutSectionTypes: [WorkoutSectionType!]!
   userClubs: [Club!]!
+  clubById(id: ID!): Club!
   discoverFeatured: [DiscoverFeatured!]!
   discoverWorkoutCategories: [DiscoverWorkoutCategory!]!
   discoverWorkoutPlanCategories: [DiscoverWorkoutPlanCategory!]!

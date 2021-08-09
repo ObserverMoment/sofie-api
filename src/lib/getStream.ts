@@ -91,9 +91,11 @@ export async function updateGetStreamFields(
     return acum
   }, {} as any)
 
-  await streamChatClient!.upsertUser({
+  await streamChatClient!.partialUpdateUser({
     id: authedUserId,
-    ...obj,
+    set: {
+      ...obj,
+    },
   })
 }
 

@@ -14,6 +14,7 @@ export default gql`
     workoutSectionTypes: [WorkoutSectionType!]!
     #### Clubs ####
     userClubs: [Club!]!
+    clubById(id: ID!): Club!
     #### Discover Pages and Types ####
     discoverFeatured: [DiscoverFeatured!]!
     discoverWorkoutCategories: [DiscoverWorkoutCategory!]!

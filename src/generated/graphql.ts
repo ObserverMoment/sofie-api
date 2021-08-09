@@ -1266,6 +1266,7 @@ export type Query = {
   workoutGoals: Array<WorkoutGoal>;
   workoutSectionTypes: Array<WorkoutSectionType>;
   userClubs: Array<Club>;
+  clubById: Club;
   discoverFeatured: Array<DiscoverFeatured>;
   discoverWorkoutCategories: Array<DiscoverWorkoutCategory>;
   discoverWorkoutPlanCategories: Array<DiscoverWorkoutPlanCategory>;
@@ -1303,6 +1304,11 @@ export type Query = {
   userWorkoutPlans: Array<WorkoutPlan>;
   userWorkoutPlanEnrolments: Array<WorkoutPlanEnrolment>;
   userWorkoutPlanEnrolmentById: WorkoutPlanEnrolment;
+};
+
+
+export type QueryClubByIdArgs = {
+  id: Scalars['ID'];
 };
 
 
@@ -2817,6 +2823,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   workoutGoals?: Resolver<Array<ResolversTypes['WorkoutGoal']>, ParentType, ContextType>;
   workoutSectionTypes?: Resolver<Array<ResolversTypes['WorkoutSectionType']>, ParentType, ContextType>;
   userClubs?: Resolver<Array<ResolversTypes['Club']>, ParentType, ContextType>;
+  clubById?: Resolver<ResolversTypes['Club'], ParentType, ContextType, RequireFields<QueryClubByIdArgs, 'id'>>;
   discoverFeatured?: Resolver<Array<ResolversTypes['DiscoverFeatured']>, ParentType, ContextType>;
   discoverWorkoutCategories?: Resolver<Array<ResolversTypes['DiscoverWorkoutCategory']>, ParentType, ContextType>;
   discoverWorkoutPlanCategories?: Resolver<Array<ResolversTypes['DiscoverWorkoutPlanCategory']>, ParentType, ContextType>;
