@@ -128,6 +128,12 @@ export type CreateBodyTransformationPhotoInput = {
   photoUri: Scalars['String'];
 };
 
+export type CreateClubInput = {
+  name: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+  location?: Maybe<Scalars['String']>;
+};
+
 export type CreateCollectionInput = {
   name: Scalars['String'];
   description?: Maybe<Scalars['String']>;
@@ -586,6 +592,8 @@ export type MoveWorkoutPlanDayToAnotherDayInput = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  createClub: Club;
+  updateClub: Club;
   createEquipment?: Maybe<Equipment>;
   updateEquipment?: Maybe<Equipment>;
   createGymProfile: GymProfile;
@@ -690,6 +698,16 @@ export type Mutation = {
   createWorkoutPlanReview: WorkoutPlanReview;
   updateWorkoutPlanReview: WorkoutPlanReview;
   deleteWorkoutPlanReviewById: Scalars['ID'];
+};
+
+
+export type MutationCreateClubArgs = {
+  data: CreateClubInput;
+};
+
+
+export type MutationUpdateClubArgs = {
+  data: UpdateClubInput;
 };
 
 
@@ -1458,6 +1476,17 @@ export type UpdateBodyTransformationPhotoInput = {
   photoUri?: Maybe<Scalars['String']>;
 };
 
+export type UpdateClubInput = {
+  id: Scalars['ID'];
+  name?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  location?: Maybe<Scalars['String']>;
+  coverImageUri?: Maybe<Scalars['String']>;
+  introVideoUri?: Maybe<Scalars['String']>;
+  introVideoThumbUri?: Maybe<Scalars['String']>;
+  introAudioUri?: Maybe<Scalars['String']>;
+};
+
 export type UpdateCollectionInput = {
   id: Scalars['ID'];
   name?: Maybe<Scalars['String']>;
@@ -2183,6 +2212,7 @@ export type ResolversTypes = ResolversObject<{
   ContentAccessScope: ContentAccessScope;
   CopyWorkoutPlanDayToAnotherDayInput: CopyWorkoutPlanDayToAnotherDayInput;
   CreateBodyTransformationPhotoInput: CreateBodyTransformationPhotoInput;
+  CreateClubInput: CreateClubInput;
   CreateCollectionInput: CreateCollectionInput;
   CreateEquipmentInput: CreateEquipmentInput;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
@@ -2250,6 +2280,7 @@ export type ResolversTypes = ResolversObject<{
   TextSearchResult: ResolverTypeWrapper<TextSearchResult>;
   TimeUnit: TimeUnit;
   UpdateBodyTransformationPhotoInput: UpdateBodyTransformationPhotoInput;
+  UpdateClubInput: UpdateClubInput;
   UpdateCollectionInput: UpdateCollectionInput;
   UpdateEquipmentInput: UpdateEquipmentInput;
   UpdateGymProfileInput: UpdateGymProfileInput;
@@ -2329,6 +2360,7 @@ export type ResolversParentTypes = ResolversObject<{
   ConnectRelationInput: ConnectRelationInput;
   CopyWorkoutPlanDayToAnotherDayInput: CopyWorkoutPlanDayToAnotherDayInput;
   CreateBodyTransformationPhotoInput: CreateBodyTransformationPhotoInput;
+  CreateClubInput: CreateClubInput;
   CreateCollectionInput: CreateCollectionInput;
   CreateEquipmentInput: CreateEquipmentInput;
   Boolean: Scalars['Boolean'];
@@ -2389,6 +2421,7 @@ export type ResolversParentTypes = ResolversObject<{
   SortPositionUpdated: SortPositionUpdated;
   TextSearchResult: TextSearchResult;
   UpdateBodyTransformationPhotoInput: UpdateBodyTransformationPhotoInput;
+  UpdateClubInput: UpdateClubInput;
   UpdateCollectionInput: UpdateCollectionInput;
   UpdateEquipmentInput: UpdateEquipmentInput;
   UpdateGymProfileInput: UpdateGymProfileInput;
@@ -2664,6 +2697,8 @@ export type MoveTypeResolvers<ContextType = any, ParentType extends ResolversPar
 }>;
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
+  createClub?: Resolver<ResolversTypes['Club'], ParentType, ContextType, RequireFields<MutationCreateClubArgs, 'data'>>;
+  updateClub?: Resolver<ResolversTypes['Club'], ParentType, ContextType, RequireFields<MutationUpdateClubArgs, 'data'>>;
   createEquipment?: Resolver<Maybe<ResolversTypes['Equipment']>, ParentType, ContextType, RequireFields<MutationCreateEquipmentArgs, 'data'>>;
   updateEquipment?: Resolver<Maybe<ResolversTypes['Equipment']>, ParentType, ContextType, RequireFields<MutationUpdateEquipmentArgs, 'data'>>;
   createGymProfile?: Resolver<ResolversTypes['GymProfile'], ParentType, ContextType, RequireFields<MutationCreateGymProfileArgs, 'data'>>;

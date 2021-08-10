@@ -75,6 +75,9 @@ export default gql`
   }
 
   type Mutation {
+    #### Club ####
+    createClub(data: CreateClubInput!): Club!
+    updateClub(data: UpdateClubInput!): Club!
     #### Equipment ####
     createEquipment(data: CreateEquipmentInput!): Equipment
     updateEquipment(data: UpdateEquipmentInput!): Equipment

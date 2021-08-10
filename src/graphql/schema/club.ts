@@ -18,6 +18,23 @@ export default gql`
     WorkoutPlans: [WorkoutPlan!]!
   }
 
+  input CreateClubInput {
+    name: String!
+    description: String
+    location: String
+  }
+
+  input UpdateClubInput {
+    id: ID!
+    name: String
+    description: String
+    location: String
+    coverImageUri: String
+    introVideoUri: String
+    introVideoThumbUri: String
+    introAudioUri: String
+  }
+
   type JoinClubRequest {
     id: ID!
     createdAt: DateTime!
