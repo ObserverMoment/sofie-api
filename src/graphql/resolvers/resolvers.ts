@@ -7,7 +7,16 @@ import {
   deleteBodyTransformationPhotosById,
 } from './bodyTransformation'
 
-import { userClubs, clubById, createClub, updateClub } from './club'
+import {
+  userClubs,
+  clubById,
+  createClub,
+  updateClub,
+  deleteClubById,
+  createClubInviteToken,
+  updateClubInviteToken,
+  deleteClubInviteTokenById,
+} from './club'
 
 import {
   discoverFeatured,
@@ -291,11 +300,15 @@ const resolvers: Resolvers = {
     userWorkoutPlanEnrolmentById,
   },
   Mutation: {
-    ///////////////////
-    //// Club ////
-    ///////////////////
+    ///////////////
+    //// Club /////
+    ///////////////
     createClub,
     updateClub,
+    deleteClubById,
+    createClubInviteToken,
+    updateClubInviteToken,
+    deleteClubInviteTokenById,
     ///////////////////
     //// Equipment ////
     ///////////////////

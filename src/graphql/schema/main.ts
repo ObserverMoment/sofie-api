@@ -78,6 +78,10 @@ export default gql`
     #### Club ####
     createClub(data: CreateClubInput!): Club!
     updateClub(data: UpdateClubInput!): Club!
+    deleteClubById(id: ID!): ID!
+    createClubInviteToken(data: CreateClubInviteTokenInput!): ClubInviteToken!
+    updateClubInviteToken(data: UpdateClubInviteTokenInput!): ClubInviteToken!
+    deleteClubInviteTokenById(id: ID!): ID!
     #### Equipment ####
     createEquipment(data: CreateEquipmentInput!): Equipment
     updateEquipment(data: UpdateEquipmentInput!): Equipment

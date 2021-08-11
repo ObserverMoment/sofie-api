@@ -16,9 +16,19 @@ export type Scalars = {
   JSON: any;
 };
 
+export type AddWorkoutPlanToClubInput = {
+  id: Scalars['ID'];
+  WorkoutPlan: ConnectRelationInput;
+};
+
 export type AddWorkoutPlanToCollectionInput = {
   collectionId: Scalars['ID'];
   WorkoutPlan: ConnectRelationInput;
+};
+
+export type AddWorkoutToClubInput = {
+  id: Scalars['ID'];
+  Workout: ConnectRelationInput;
 };
 
 export type AddWorkoutToCollectionInput = {
@@ -95,6 +105,21 @@ export type Club = {
   introAudioUri?: Maybe<Scalars['String']>;
   Workouts: Array<Workout>;
   WorkoutPlans: Array<WorkoutPlan>;
+  ClubInviteTokens: Array<ClubInviteToken>;
+  JoinClubInvites: Array<JoinClubInvite>;
+  JoinClubRequests: Array<JoinClubRequest>;
+};
+
+export type ClubInviteToken = {
+  __typename?: 'ClubInviteToken';
+  id: Scalars['ID'];
+  createdAt: Scalars['DateTime'];
+  active: Scalars['Boolean'];
+  inviteLimit: Scalars['Int'];
+  invitesUsed: Scalars['Int'];
+  token: Scalars['String'];
+  Creator: UserSummary;
+  joinedUserIds: Array<Scalars['String']>;
 };
 
 export type Collection = {
@@ -134,6 +159,13 @@ export type CreateClubInput = {
   location?: Maybe<Scalars['String']>;
 };
 
+export type CreateClubInviteTokenInput = {
+  token?: Maybe<Scalars['String']>;
+  inviteLimit: Scalars['Int'];
+  Creator: ConnectRelationInput;
+  Club: ConnectRelationInput;
+};
+
 export type CreateCollectionInput = {
   name: Scalars['String'];
   description?: Maybe<Scalars['String']>;
@@ -149,6 +181,17 @@ export type CreateGymProfileInput = {
   name: Scalars['String'];
   description?: Maybe<Scalars['String']>;
   Equipments?: Maybe<Array<ConnectRelationInput>>;
+};
+
+export type CreateJoinClubInviteInput = {
+  Club: ConnectRelationInput;
+  Sender: ConnectRelationInput;
+  Invited: ConnectRelationInput;
+};
+
+export type CreateJoinClubRequestInput = {
+  Club: ConnectRelationInput;
+  Applicant: ConnectRelationInput;
 };
 
 export type CreateLoggedWorkoutInput = {
@@ -480,14 +523,25 @@ export type GymProfile = {
 };
 
 
+export type JoinClubInvite = {
+  __typename?: 'JoinClubInvite';
+  id: Scalars['ID'];
+  createdAt: Scalars['DateTime'];
+  Sender: UserSummary;
+  Invited: UserSummary;
+  Responder: UserSummary;
+  status: JoinClubRequestStatus;
+  respondedAt?: Maybe<Scalars['DateTime']>;
+};
+
 export type JoinClubRequest = {
   __typename?: 'JoinClubRequest';
   id: Scalars['ID'];
   createdAt: Scalars['DateTime'];
-  RequestBy: UserSummary;
+  Applicant: UserSummary;
   status: JoinClubRequestStatus;
+  Responder?: Maybe<UserSummary>;
   respondedAt?: Maybe<Scalars['DateTime']>;
-  ResponseBy?: Maybe<UserSummary>;
 };
 
 export type JoinClubRequestStatus =
@@ -594,6 +648,10 @@ export type Mutation = {
   __typename?: 'Mutation';
   createClub: Club;
   updateClub: Club;
+  deleteClubById: Scalars['ID'];
+  createClubInviteToken: ClubInviteToken;
+  updateClubInviteToken: ClubInviteToken;
+  deleteClubInviteTokenById: Scalars['ID'];
   createEquipment?: Maybe<Equipment>;
   updateEquipment?: Maybe<Equipment>;
   createGymProfile: GymProfile;
@@ -708,6 +766,26 @@ export type MutationCreateClubArgs = {
 
 export type MutationUpdateClubArgs = {
   data: UpdateClubInput;
+};
+
+
+export type MutationDeleteClubByIdArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationCreateClubInviteTokenArgs = {
+  data: CreateClubInviteTokenInput;
+};
+
+
+export type MutationUpdateClubInviteTokenArgs = {
+  data: UpdateClubInviteTokenInput;
+};
+
+
+export type MutationDeleteClubInviteTokenByIdArgs = {
+  id: Scalars['ID'];
 };
 
 
@@ -1429,9 +1507,19 @@ export type QueryUserWorkoutPlanEnrolmentByIdArgs = {
   id: Scalars['ID'];
 };
 
+export type RemoveWorkoutFromClubInput = {
+  id: Scalars['ID'];
+  Workout: ConnectRelationInput;
+};
+
 export type RemoveWorkoutFromCollectionInput = {
   collectionId: Scalars['ID'];
   Workout: ConnectRelationInput;
+};
+
+export type RemoveWorkoutPlanFromClubInput = {
+  id: Scalars['ID'];
+  WorkoutPlan: ConnectRelationInput;
 };
 
 export type RemoveWorkoutPlanFromCollectionInput = {
@@ -1487,6 +1575,12 @@ export type UpdateClubInput = {
   introAudioUri?: Maybe<Scalars['String']>;
 };
 
+export type UpdateClubInviteTokenInput = {
+  id: Scalars['ID'];
+  inviteLimit?: Maybe<Scalars['Int']>;
+  active?: Maybe<Scalars['Boolean']>;
+};
+
 export type UpdateCollectionInput = {
   id: Scalars['ID'];
   name?: Maybe<Scalars['String']>;
@@ -1505,6 +1599,18 @@ export type UpdateGymProfileInput = {
   name?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   Equipments?: Maybe<Array<ConnectRelationInput>>;
+};
+
+export type UpdateJoinClubInviteInput = {
+  id: Scalars['ID'];
+  Responder: ConnectRelationInput;
+  status: JoinClubRequestStatus;
+};
+
+export type UpdateJoinClubRequestInput = {
+  id: Scalars['ID'];
+  Responder: ConnectRelationInput;
+  status: JoinClubRequestStatus;
 };
 
 export type UpdateLoggedWorkoutInput = {
@@ -2192,8 +2298,10 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
-  AddWorkoutPlanToCollectionInput: AddWorkoutPlanToCollectionInput;
+  AddWorkoutPlanToClubInput: AddWorkoutPlanToClubInput;
   ID: ResolverTypeWrapper<Scalars['ID']>;
+  AddWorkoutPlanToCollectionInput: AddWorkoutPlanToCollectionInput;
+  AddWorkoutToClubInput: AddWorkoutToClubInput;
   AddWorkoutToCollectionInput: AddWorkoutToCollectionInput;
   BenchmarkType: BenchmarkType;
   BodyArea: ResolverTypeWrapper<BodyArea>;
@@ -2207,16 +2315,20 @@ export type ResolversTypes = ResolversObject<{
   BodyTransformationPhoto: ResolverTypeWrapper<BodyTransformationPhoto>;
   BodyweightUnit: BodyweightUnit;
   Club: ResolverTypeWrapper<Club>;
+  ClubInviteToken: ResolverTypeWrapper<ClubInviteToken>;
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Collection: ResolverTypeWrapper<Collection>;
   ConnectRelationInput: ConnectRelationInput;
   ContentAccessScope: ContentAccessScope;
   CopyWorkoutPlanDayToAnotherDayInput: CopyWorkoutPlanDayToAnotherDayInput;
   CreateBodyTransformationPhotoInput: CreateBodyTransformationPhotoInput;
   CreateClubInput: CreateClubInput;
+  CreateClubInviteTokenInput: CreateClubInviteTokenInput;
   CreateCollectionInput: CreateCollectionInput;
   CreateEquipmentInput: CreateEquipmentInput;
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   CreateGymProfileInput: CreateGymProfileInput;
+  CreateJoinClubInviteInput: CreateJoinClubInviteInput;
+  CreateJoinClubRequestInput: CreateJoinClubRequestInput;
   CreateLoggedWorkoutInput: CreateLoggedWorkoutInput;
   CreateLoggedWorkoutMoveInLoggedSetInput: CreateLoggedWorkoutMoveInLoggedSetInput;
   CreateLoggedWorkoutMoveInput: CreateLoggedWorkoutMoveInput;
@@ -2256,6 +2368,7 @@ export type ResolversTypes = ResolversObject<{
   Gender: Gender;
   GymProfile: ResolverTypeWrapper<GymProfile>;
   JSON: ResolverTypeWrapper<Scalars['JSON']>;
+  JoinClubInvite: ResolverTypeWrapper<JoinClubInvite>;
   JoinClubRequest: ResolverTypeWrapper<JoinClubRequest>;
   JoinClubRequestStatus: JoinClubRequestStatus;
   LoadUnit: LoadUnit;
@@ -2273,7 +2386,9 @@ export type ResolversTypes = ResolversObject<{
   ProgressJournalGoal: ResolverTypeWrapper<ProgressJournalGoal>;
   ProgressJournalGoalTag: ResolverTypeWrapper<ProgressJournalGoalTag>;
   Query: ResolverTypeWrapper<{}>;
+  RemoveWorkoutFromClubInput: RemoveWorkoutFromClubInput;
   RemoveWorkoutFromCollectionInput: RemoveWorkoutFromCollectionInput;
+  RemoveWorkoutPlanFromClubInput: RemoveWorkoutPlanFromClubInput;
   RemoveWorkoutPlanFromCollectionInput: RemoveWorkoutPlanFromCollectionInput;
   ScheduledWorkout: ResolverTypeWrapper<ScheduledWorkout>;
   SortPositionUpdated: ResolverTypeWrapper<SortPositionUpdated>;
@@ -2281,9 +2396,12 @@ export type ResolversTypes = ResolversObject<{
   TimeUnit: TimeUnit;
   UpdateBodyTransformationPhotoInput: UpdateBodyTransformationPhotoInput;
   UpdateClubInput: UpdateClubInput;
+  UpdateClubInviteTokenInput: UpdateClubInviteTokenInput;
   UpdateCollectionInput: UpdateCollectionInput;
   UpdateEquipmentInput: UpdateEquipmentInput;
   UpdateGymProfileInput: UpdateGymProfileInput;
+  UpdateJoinClubInviteInput: UpdateJoinClubInviteInput;
+  UpdateJoinClubRequestInput: UpdateJoinClubRequestInput;
   UpdateLoggedWorkoutInput: UpdateLoggedWorkoutInput;
   UpdateLoggedWorkoutMoveInput: UpdateLoggedWorkoutMoveInput;
   UpdateLoggedWorkoutSectionInput: UpdateLoggedWorkoutSectionInput;
@@ -2345,8 +2463,10 @@ export type ResolversTypes = ResolversObject<{
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
-  AddWorkoutPlanToCollectionInput: AddWorkoutPlanToCollectionInput;
+  AddWorkoutPlanToClubInput: AddWorkoutPlanToClubInput;
   ID: Scalars['ID'];
+  AddWorkoutPlanToCollectionInput: AddWorkoutPlanToCollectionInput;
+  AddWorkoutToClubInput: AddWorkoutToClubInput;
   AddWorkoutToCollectionInput: AddWorkoutToCollectionInput;
   BodyArea: BodyArea;
   String: Scalars['String'];
@@ -2356,15 +2476,19 @@ export type ResolversParentTypes = ResolversObject<{
   Float: Scalars['Float'];
   BodyTransformationPhoto: BodyTransformationPhoto;
   Club: Club;
+  ClubInviteToken: ClubInviteToken;
+  Boolean: Scalars['Boolean'];
   Collection: Collection;
   ConnectRelationInput: ConnectRelationInput;
   CopyWorkoutPlanDayToAnotherDayInput: CopyWorkoutPlanDayToAnotherDayInput;
   CreateBodyTransformationPhotoInput: CreateBodyTransformationPhotoInput;
   CreateClubInput: CreateClubInput;
+  CreateClubInviteTokenInput: CreateClubInviteTokenInput;
   CreateCollectionInput: CreateCollectionInput;
   CreateEquipmentInput: CreateEquipmentInput;
-  Boolean: Scalars['Boolean'];
   CreateGymProfileInput: CreateGymProfileInput;
+  CreateJoinClubInviteInput: CreateJoinClubInviteInput;
+  CreateJoinClubRequestInput: CreateJoinClubRequestInput;
   CreateLoggedWorkoutInput: CreateLoggedWorkoutInput;
   CreateLoggedWorkoutMoveInLoggedSetInput: CreateLoggedWorkoutMoveInLoggedSetInput;
   CreateLoggedWorkoutMoveInput: CreateLoggedWorkoutMoveInput;
@@ -2401,6 +2525,7 @@ export type ResolversParentTypes = ResolversObject<{
   Equipment: Equipment;
   GymProfile: GymProfile;
   JSON: Scalars['JSON'];
+  JoinClubInvite: JoinClubInvite;
   JoinClubRequest: JoinClubRequest;
   LoggedWorkout: LoggedWorkout;
   LoggedWorkoutMove: LoggedWorkoutMove;
@@ -2415,16 +2540,21 @@ export type ResolversParentTypes = ResolversObject<{
   ProgressJournalGoal: ProgressJournalGoal;
   ProgressJournalGoalTag: ProgressJournalGoalTag;
   Query: {};
+  RemoveWorkoutFromClubInput: RemoveWorkoutFromClubInput;
   RemoveWorkoutFromCollectionInput: RemoveWorkoutFromCollectionInput;
+  RemoveWorkoutPlanFromClubInput: RemoveWorkoutPlanFromClubInput;
   RemoveWorkoutPlanFromCollectionInput: RemoveWorkoutPlanFromCollectionInput;
   ScheduledWorkout: ScheduledWorkout;
   SortPositionUpdated: SortPositionUpdated;
   TextSearchResult: TextSearchResult;
   UpdateBodyTransformationPhotoInput: UpdateBodyTransformationPhotoInput;
   UpdateClubInput: UpdateClubInput;
+  UpdateClubInviteTokenInput: UpdateClubInviteTokenInput;
   UpdateCollectionInput: UpdateCollectionInput;
   UpdateEquipmentInput: UpdateEquipmentInput;
   UpdateGymProfileInput: UpdateGymProfileInput;
+  UpdateJoinClubInviteInput: UpdateJoinClubInviteInput;
+  UpdateJoinClubRequestInput: UpdateJoinClubRequestInput;
   UpdateLoggedWorkoutInput: UpdateLoggedWorkoutInput;
   UpdateLoggedWorkoutMoveInput: UpdateLoggedWorkoutMoveInput;
   UpdateLoggedWorkoutSectionInput: UpdateLoggedWorkoutSectionInput;
@@ -2521,6 +2651,21 @@ export type ClubResolvers<ContextType = any, ParentType extends ResolversParentT
   introAudioUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   Workouts?: Resolver<Array<ResolversTypes['Workout']>, ParentType, ContextType>;
   WorkoutPlans?: Resolver<Array<ResolversTypes['WorkoutPlan']>, ParentType, ContextType>;
+  ClubInviteTokens?: Resolver<Array<ResolversTypes['ClubInviteToken']>, ParentType, ContextType>;
+  JoinClubInvites?: Resolver<Array<ResolversTypes['JoinClubInvite']>, ParentType, ContextType>;
+  JoinClubRequests?: Resolver<Array<ResolversTypes['JoinClubRequest']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type ClubInviteTokenResolvers<ContextType = any, ParentType extends ResolversParentTypes['ClubInviteToken'] = ResolversParentTypes['ClubInviteToken']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  active?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  inviteLimit?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  invitesUsed?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  token?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  Creator?: Resolver<ResolversTypes['UserSummary'], ParentType, ContextType>;
+  joinedUserIds?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -2610,13 +2755,24 @@ export interface JsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
   name: 'JSON';
 }
 
+export type JoinClubInviteResolvers<ContextType = any, ParentType extends ResolversParentTypes['JoinClubInvite'] = ResolversParentTypes['JoinClubInvite']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  Sender?: Resolver<ResolversTypes['UserSummary'], ParentType, ContextType>;
+  Invited?: Resolver<ResolversTypes['UserSummary'], ParentType, ContextType>;
+  Responder?: Resolver<ResolversTypes['UserSummary'], ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['JoinClubRequestStatus'], ParentType, ContextType>;
+  respondedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type JoinClubRequestResolvers<ContextType = any, ParentType extends ResolversParentTypes['JoinClubRequest'] = ResolversParentTypes['JoinClubRequest']> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  RequestBy?: Resolver<ResolversTypes['UserSummary'], ParentType, ContextType>;
+  Applicant?: Resolver<ResolversTypes['UserSummary'], ParentType, ContextType>;
   status?: Resolver<ResolversTypes['JoinClubRequestStatus'], ParentType, ContextType>;
+  Responder?: Resolver<Maybe<ResolversTypes['UserSummary']>, ParentType, ContextType>;
   respondedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
-  ResponseBy?: Resolver<Maybe<ResolversTypes['UserSummary']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -2699,6 +2855,10 @@ export type MoveTypeResolvers<ContextType = any, ParentType extends ResolversPar
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
   createClub?: Resolver<ResolversTypes['Club'], ParentType, ContextType, RequireFields<MutationCreateClubArgs, 'data'>>;
   updateClub?: Resolver<ResolversTypes['Club'], ParentType, ContextType, RequireFields<MutationUpdateClubArgs, 'data'>>;
+  deleteClubById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteClubByIdArgs, 'id'>>;
+  createClubInviteToken?: Resolver<ResolversTypes['ClubInviteToken'], ParentType, ContextType, RequireFields<MutationCreateClubInviteTokenArgs, 'data'>>;
+  updateClubInviteToken?: Resolver<ResolversTypes['ClubInviteToken'], ParentType, ContextType, RequireFields<MutationUpdateClubInviteTokenArgs, 'data'>>;
+  deleteClubInviteTokenById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteClubInviteTokenByIdArgs, 'id'>>;
   createEquipment?: Resolver<Maybe<ResolversTypes['Equipment']>, ParentType, ContextType, RequireFields<MutationCreateEquipmentArgs, 'data'>>;
   updateEquipment?: Resolver<Maybe<ResolversTypes['Equipment']>, ParentType, ContextType, RequireFields<MutationUpdateEquipmentArgs, 'data'>>;
   createGymProfile?: Resolver<ResolversTypes['GymProfile'], ParentType, ContextType, RequireFields<MutationCreateGymProfileArgs, 'data'>>;
@@ -3226,6 +3386,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   BodyAreaMoveScore?: BodyAreaMoveScoreResolvers<ContextType>;
   BodyTransformationPhoto?: BodyTransformationPhotoResolvers<ContextType>;
   Club?: ClubResolvers<ContextType>;
+  ClubInviteToken?: ClubInviteTokenResolvers<ContextType>;
   Collection?: CollectionResolvers<ContextType>;
   DateTime?: GraphQLScalarType;
   DiscoverFeatured?: DiscoverFeaturedResolvers<ContextType>;
@@ -3236,6 +3397,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   Equipment?: EquipmentResolvers<ContextType>;
   GymProfile?: GymProfileResolvers<ContextType>;
   JSON?: GraphQLScalarType;
+  JoinClubInvite?: JoinClubInviteResolvers<ContextType>;
   JoinClubRequest?: JoinClubRequestResolvers<ContextType>;
   LoggedWorkout?: LoggedWorkoutResolvers<ContextType>;
   LoggedWorkoutMove?: LoggedWorkoutMoveResolvers<ContextType>;

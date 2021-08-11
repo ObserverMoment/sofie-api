@@ -16,6 +16,10 @@ export default gql`
     introAudioUri: String
     Workouts: [Workout!]!
     WorkoutPlans: [WorkoutPlan!]!
+    # Data should be viewable by admins and owners of groups only.
+    ClubInviteTokens: [ClubInviteToken!]!
+    JoinClubInvites: [JoinClubInvite!]!
+    JoinClubRequests: [JoinClubRequest!]!
   }
 
   input CreateClubInput {
@@ -35,14 +39,103 @@ export default gql`
     introAudioUri: String
   }
 
+  input AddWorkoutToClubInput {
+    id: ID!
+    Workout: ConnectRelationInput!
+  }
+
+  input RemoveWorkoutFromClubInput {
+    id: ID!
+    Workout: ConnectRelationInput!
+  }
+
+  input AddWorkoutPlanToClubInput {
+    id: ID!
+    WorkoutPlan: ConnectRelationInput!
+  }
+
+  input RemoveWorkoutPlanFromClubInput {
+    id: ID!
+    WorkoutPlan: ConnectRelationInput!
+  }
+
+  #### JoinClubInvite ####
+  # From club to user.
+  type JoinClubInvite {
+    id: ID!
+    createdAt: DateTime!
+    # Owner or admin of the club.
+    Sender: UserSummary!
+    # The user being invited
+    Invited: UserSummary!
+    # Owner or admin who accepts / rejects.
+    Responder: UserSummary!
+    status: JoinClubRequestStatus!
+    respondedAt: DateTime
+  }
+
+  input CreateJoinClubInviteInput {
+    Club: ConnectRelationInput!
+    Sender: ConnectRelationInput!
+    Invited: ConnectRelationInput!
+  }
+
+  input UpdateJoinClubInviteInput {
+    id: ID!
+    Responder: ConnectRelationInput!
+    status: JoinClubRequestStatus!
+  }
+
+  #### ClubInviteToken ####
+  type ClubInviteToken {
+    id: ID!
+    createdAt: DateTime!
+    active: Boolean!
+    # How many times can this token be used.
+    # 0 means unlimited.
+    inviteLimit: Int!
+    # Only updated by the sever when user joins via this token.
+    invitesUsed: Int!
+    token: String!
+    # Owner or admin of the group.
+    Creator: UserSummary!
+    # Only updated by the sever when user joins via this token.
+    joinedUserIds: [String!]!
+  }
+
+  input CreateClubInviteTokenInput {
+    token: String # Optional, if null will be auto generated as random uuid
+    inviteLimit: Int!
+    Creator: ConnectRelationInput!
+    Club: ConnectRelationInput!
+  }
+
+  input UpdateClubInviteTokenInput {
+    id: ID!
+    inviteLimit: Int
+    active: Boolean
+  }
+
+  #### JoinClubRequest ####
+  # From user to club.
   type JoinClubRequest {
     id: ID!
     createdAt: DateTime!
-    # The applicant.
-    RequestBy: UserSummary!
+    Applicant: UserSummary!
     status: JoinClubRequestStatus!
-    respondedAt: DateTime
     # Owner or admin of the group.
-    ResponseBy: UserSummary
+    Responder: UserSummary
+    respondedAt: DateTime
+  }
+
+  input CreateJoinClubRequestInput {
+    Club: ConnectRelationInput!
+    Applicant: ConnectRelationInput!
+  }
+
+  input UpdateJoinClubRequestInput {
+    id: ID!
+    Responder: ConnectRelationInput!
+    status: JoinClubRequestStatus!
   }
 `

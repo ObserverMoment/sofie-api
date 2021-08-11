@@ -207,9 +207,12 @@ model User {
   ClubsWhereOwner          Club[]                    @relation("owner")
   ClubsWhereAdmin          Club[]                    @relation("admin")
   ClubsWhereMember         Club[]                    @relation("member")
-  JoinClubRequest          JoinClubRequest[]         @relation("applicant")
-  JoinClubResponse         JoinClubRequest[]         @relation("responder")
-  JoinClubInvite           JoinClubInvite[]          @relation("invited")
+  JoinClubRequestsSent     JoinClubRequest[]         @relation("applicant")
+  JoinClubResponsesSent    JoinClubRequest[]         @relation("request_responder")
+  ClubInvitesSent          JoinClubInvite[]          @relation("sender")
+  ClubInvitesReceived      JoinClubInvite[]          @relation("invited")
+  ClubInvitesResponded     JoinClubInvite[]          @relation("invite_responder")
+  ClubInviteTokens         ClubInviteToken[]
 }
 
 // One or more benchmarks grouped together. For example the class deadlift / press squat moves could be grouped together here.
@@ -274,35 +277,55 @@ model Club {
   JoinClubInvites    JoinClubInvite[]
   Workouts           Workout[]
   WorkoutPlans       WorkoutPlan[]
+  ClubInviteTokens   ClubInviteToken[]
+}
+
+model ClubInviteToken {
+  id            String   @id @default(uuid())
+  createdAt     DateTime @default(now())
+  active        Boolean
+  // How many times can this token be used.
+  // 0 means unlimited.
+  inviteLimit   Int      @default(0)
+  invitesUsed   Int
+  token         String
+  // Owner or admin of the group.
+  Creator       User     @relation(fields: [creatorId], references: [id])
+  creatorId     String
+  Club          Club     @relation(fields: [clubId], references: [id])
+  clubId        String
+  joinedUserIds String[]
 }
 
 /// When a user requests to join a club.
 model JoinClubRequest {
-  id           String                @id @default(uuid())
-  createdAt    DateTime              @default(now())
-  // The applicant.
-  Applicant    User                  @relation("applicant", fields: [applicantId], references: [id])
-  applicantId  String
-  status       JoinClubRequestStatus @default(PENDING)
-  respondedAt  DateTime?
+  id          String                @id @default(uuid())
+  createdAt   DateTime              @default(now())
+  Applicant   User                  @relation("applicant", fields: [applicantId], references: [id])
+  applicantId String
+  status      JoinClubRequestStatus @default(PENDING)
   // Owner or admin of the group.
-  ResponseBy   User                  @relation("responder", fields: [responseById], references: [id])
-  responseById String
-  Club         Club?                 @relation(fields: [clubId], references: [id])
-  clubId       String?
+  Responder   User?                 @relation("request_responder", fields: [responderId], references: [id])
+  responderId String?
+  respondedAt DateTime?
+  Club        Club                  @relation(fields: [clubId], references: [id])
+  clubId      String
 }
 
 /// When the owner or an admin invites a user to join a club.
 model JoinClubInvite {
   id          String                @id @default(uuid())
   createdAt   DateTime              @default(now())
-  // The applicant.
+  Sender      User                  @relation("sender", fields: [senderId], references: [id])
+  senderId    String
   Invited     User                  @relation("invited", fields: [invitedId], references: [id])
   invitedId   String
   status      JoinClubRequestStatus @default(PENDING)
+  Responder   User?                 @relation("invite_responder", fields: [responderId], references: [id])
+  responderId String?
   respondedAt DateTime?
-  Club        Club?                 @relation(fields: [clubId], references: [id])
-  clubId      String?
+  Club        Club                  @relation(fields: [clubId], references: [id])
+  clubId      String
 }
 
 ////////////////////////////////////////////////////

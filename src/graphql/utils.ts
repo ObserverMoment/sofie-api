@@ -13,7 +13,6 @@ export class AccessScopeError extends ApolloError {
 /// i.e. be camelCase.
 export type ContentObjectType =
   | 'bodyTransformationPhoto'
-  | 'club'
   | 'collection'
   | 'gymProfile'
   | 'loggedWorkout'
