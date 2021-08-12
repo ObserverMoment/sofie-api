@@ -1,50 +1,52 @@
 import { mergeTypeDefs } from '@graphql-tools/merge'
-import bodyAreaSchema from './bodyArea'
+import bodyArea from './bodyArea'
 import bodyTransformation from './bodyTransformation'
 import club from './club'
-import collectionSchema from './collection'
-import discoverSchema from './discover'
-import enumSchema from './enums'
-import equipmentSchema from './equipment'
+import collection from './collection'
+import discover from './discover'
+import enums from './enums'
+import equipment from './equipment'
 import filterInputs from './filterInputs'
 import gymProfile from './gymProfile'
-import loggedWorkoutSchema from './loggedWorkout'
-import mainSchema from './main'
-import moveSchema from './move'
+import invites from './invites'
+import loggedWorkout from './loggedWorkout'
+import main from './main'
+import move from './move'
 import progressJournal from './progressJournal'
-import scheduledWorkoutSchema from './scheduledWorkout'
-import userBenchmarkSchema from './userBenchmark'
-import userSchema from './user'
-import workoutSchema from './workout/workout'
-import workoutMoveSchema from './workout/workoutMove'
-import workoutPlanSchema from './workoutPlan'
-import workoutSectionSchema from './workout/workoutSection'
-import workoutSetSchema from './workout/workoutSet'
-import workoutSummarySchema from './workout/workoutSummary'
+import scheduledWorkout from './scheduledWorkout'
+import userBenchmark from './userBenchmark'
+import user from './user'
+import workout from './workout/workout'
+import workoutMove from './workout/workoutMove'
+import workoutPlan from './workoutPlan'
+import workoutSection from './workout/workoutSection'
+import workoutSet from './workout/workoutSet'
+import workoutSummary from './workout/workoutSummary'
 
 const typeDefs = mergeTypeDefs([
-  bodyAreaSchema,
+  bodyArea,
   bodyTransformation,
   club,
-  collectionSchema,
-  discoverSchema,
-  enumSchema,
-  equipmentSchema,
+  collection,
+  discover,
+  enums,
+  equipment,
   filterInputs,
   gymProfile,
-  loggedWorkoutSchema,
-  mainSchema,
-  moveSchema,
+  invites,
+  loggedWorkout,
+  main,
+  move,
   progressJournal,
-  scheduledWorkoutSchema,
-  userBenchmarkSchema,
-  userSchema,
-  workoutSchema,
-  workoutMoveSchema,
-  workoutPlanSchema,
-  workoutSectionSchema,
-  workoutSetSchema,
-  workoutSummarySchema,
+  scheduledWorkout,
+  userBenchmark,
+  user,
+  workout,
+  workoutMove,
+  workoutPlan,
+  workoutSection,
+  workoutSet,
+  workoutSummary,
 ])
 
 export default typeDefs

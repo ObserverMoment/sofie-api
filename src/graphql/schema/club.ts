@@ -88,30 +88,30 @@ export default gql`
 
   #### ClubInviteToken ####
   type ClubInviteToken {
-    id: ID!
+    id: ID! # Use the unique ID string as the 'token' string.
     createdAt: DateTime!
     active: Boolean!
+    name: String!
     # How many times can this token be used.
     # 0 means unlimited.
     inviteLimit: Int!
     # Only updated by the sever when user joins via this token.
     invitesUsed: Int!
-    token: String!
     # Owner or admin of the group.
-    Creator: UserSummary!
+    User: UserSummary!
     # Only updated by the sever when user joins via this token.
     joinedUserIds: [String!]!
   }
 
   input CreateClubInviteTokenInput {
-    token: String # Optional, if null will be auto generated as random uuid
+    name: String!
     inviteLimit: Int!
-    Creator: ConnectRelationInput!
     Club: ConnectRelationInput!
   }
 
   input UpdateClubInviteTokenInput {
     id: ID!
+    name: String
     inviteLimit: Int
     active: Boolean
   }

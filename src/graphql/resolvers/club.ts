@@ -1,6 +1,5 @@
 import { PrismaClient } from '@prisma/client'
 import { ApolloError } from 'apollo-server-express'
-import { v4 as uuidv4 } from 'uuid'
 import { Context } from '../..'
 import {
   Club,
@@ -75,7 +74,7 @@ export const updateClub = async (
   { data }: MutationUpdateClubArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  await checkUserIsOwnerOrAdmin(data.id, authedUserId, prisma)
+  await checkUserIsOwnerOrAdminOfClub(data.id, authedUserId, prisma)
 
   // Check if any media files need to be updated. Only delete files from the server after the rest of the transaction is complete.
   const fileIdsForDeletion: string[] | null = await checkClubMediaForDeletion(
@@ -107,7 +106,7 @@ export const deleteClubById = async (
   { id }: MutationDeleteClubByIdArgs,
   { authedUserId, prisma }: Context,
 ) => {
-  await checkUserIsOwnerOrAdmin(id, authedUserId, prisma)
+  await checkUserIsOwnerOrAdminOfClub(id, authedUserId, prisma)
 
   const deleted = await prisma.club.delete({
     where: { id },
@@ -129,15 +128,17 @@ export const createClubInviteToken = async (
   { data }: MutationCreateClubInviteTokenArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  await checkUserIsOwnerOrAdmin(data.Club.id, authedUserId, prisma)
+  await checkUserIsOwnerOrAdminOfClub(data.Club.id, authedUserId, prisma)
 
   const clubInviteToken = await prisma.clubInviteToken.create({
     data: {
       ...data,
       active: true,
       invitesUsed: 0,
-      token: data.token || uuidv4(),
-      Creator: {
+      Club: {
+        connect: data.Club,
+      },
+      User: {
         connect: { id: authedUserId },
       },
     },
@@ -156,12 +157,18 @@ export const updateClubInviteToken = async (
   { data }: MutationUpdateClubInviteTokenArgs,
   { select, authedUserId, prisma }: Context,
 ) => {
-  await checkUserIsOwnerOrAdmin(data.id, authedUserId, prisma)
+  await checkUserIsOwnerOrAdmin(
+    data.id,
+    'clubInviteToken',
+    authedUserId,
+    prisma,
+  )
 
   const updated = await prisma.clubInviteToken.update({
     where: { id: data.id },
     data: {
       ...data,
+      name: data.name || undefined,
       active: data.active || undefined,
       inviteLimit: data.inviteLimit || undefined,
     },
@@ -180,20 +187,7 @@ export const deleteClubInviteTokenById = async (
   { id }: MutationDeleteClubInviteTokenByIdArgs,
   { authedUserId, prisma }: Context,
 ) => {
-  const forDeletion = await prisma.clubInviteToken.findUnique({
-    where: { id },
-    select: {
-      clubId: true,
-    },
-  })
-
-  if (!forDeletion) {
-    throw new ApolloError(
-      'deleteClubInviteTokenById: Could not find the parent club of this invite token.',
-    )
-  }
-
-  await checkUserIsOwnerOrAdmin(forDeletion.clubId, authedUserId, prisma)
+  await checkUserIsOwnerOrAdmin(id, 'clubInviteToken', authedUserId, prisma)
 
   const deleted = await prisma.clubInviteToken.delete({
     where: { id },
@@ -210,16 +204,46 @@ export const deleteClubInviteTokenById = async (
 }
 
 //// Check that a user if either the owner or an admin of a club ////
-//// Non-standard vs most other DB objects which only have a single User connected. ////
+//// Non-standard vs most other DB objects which only have a single User connected with CRUD access. ////
 //// Club can have one Owner and many Admins ////
-export async function checkUserIsOwnerOrAdmin(
+async function checkUserIsOwnerOrAdmin(
   objectId: string,
+  objectType: 'club' | 'clubInviteToken',
   authedUserId: string,
   prisma: PrismaClient,
 ): Promise<void> {
+  if (objectType === 'club') {
+    await checkUserIsOwnerOrAdminOfClub(objectId, authedUserId, prisma)
+  } else {
+    const tokenForDeletion = await prisma.clubInviteToken.findUnique({
+      where: { id: objectId },
+      select: {
+        clubId: true,
+      },
+    })
+
+    if (!tokenForDeletion || !tokenForDeletion.clubId) {
+      throw new ApolloError(
+        'checkUserIsOwnerOrAdmin: Could not retrieve the parent club of this invite token.',
+      )
+    }
+
+    await checkUserIsOwnerOrAdminOfClub(
+      tokenForDeletion.clubId,
+      authedUserId,
+      prisma,
+    )
+  }
+}
+
+async function checkUserIsOwnerOrAdminOfClub(
+  clubId: string,
+  authedUserId: string,
+  prisma: PrismaClient,
+) {
   const obj = await prisma.club.findFirst({
     where: {
-      id: objectId,
+      id: clubId,
       OR: [
         { Owner: { id: authedUserId } },
         { Admins: { some: { id: authedUserId } } },

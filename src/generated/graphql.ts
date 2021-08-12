@@ -89,6 +89,8 @@ export type BodyweightUnit =
   | 'KG'
   | 'LB';
 
+export type CheckClubInviteTokenResult = ClubInviteTokenData | InviteTokenError;
+
 export type Club = {
   __typename?: 'Club';
   id: Scalars['ID'];
@@ -115,11 +117,17 @@ export type ClubInviteToken = {
   id: Scalars['ID'];
   createdAt: Scalars['DateTime'];
   active: Scalars['Boolean'];
+  name: Scalars['String'];
   inviteLimit: Scalars['Int'];
   invitesUsed: Scalars['Int'];
-  token: Scalars['String'];
-  Creator: UserSummary;
+  User: UserSummary;
   joinedUserIds: Array<Scalars['String']>;
+};
+
+export type ClubInviteTokenData = {
+  __typename?: 'ClubInviteTokenData';
+  token: Scalars['String'];
+  Club: Club;
 };
 
 export type Collection = {
@@ -160,9 +168,8 @@ export type CreateClubInput = {
 };
 
 export type CreateClubInviteTokenInput = {
-  token?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
   inviteLimit: Scalars['Int'];
-  Creator: ConnectRelationInput;
   Club: ConnectRelationInput;
 };
 
@@ -520,6 +527,11 @@ export type GymProfile = {
   name: Scalars['String'];
   description?: Maybe<Scalars['String']>;
   Equipments: Array<Equipment>;
+};
+
+export type InviteTokenError = {
+  __typename?: 'InviteTokenError';
+  message: Scalars['String'];
 };
 
 
@@ -1366,6 +1378,7 @@ export type Query = {
   discoverFeatured: Array<DiscoverFeatured>;
   discoverWorkoutCategories: Array<DiscoverWorkoutCategory>;
   discoverWorkoutPlanCategories: Array<DiscoverWorkoutPlanCategory>;
+  checkClubInviteToken: CheckClubInviteTokenResult;
   userLoggedWorkouts: Array<LoggedWorkout>;
   loggedWorkoutById: LoggedWorkout;
   standardMoves: Array<Move>;
@@ -1404,6 +1417,11 @@ export type Query = {
 
 
 export type QueryClubByIdArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type QueryCheckClubInviteTokenArgs = {
   id: Scalars['ID'];
 };
 
@@ -1577,6 +1595,7 @@ export type UpdateClubInput = {
 
 export type UpdateClubInviteTokenInput = {
   id: Scalars['ID'];
+  name?: Maybe<Scalars['String']>;
   inviteLimit?: Maybe<Scalars['Int']>;
   active?: Maybe<Scalars['Boolean']>;
 };
@@ -2314,9 +2333,11 @@ export type ResolversTypes = ResolversObject<{
   BodyAreaUpperLower: BodyAreaUpperLower;
   BodyTransformationPhoto: ResolverTypeWrapper<BodyTransformationPhoto>;
   BodyweightUnit: BodyweightUnit;
+  CheckClubInviteTokenResult: ResolversTypes['ClubInviteTokenData'] | ResolversTypes['InviteTokenError'];
   Club: ResolverTypeWrapper<Club>;
   ClubInviteToken: ResolverTypeWrapper<ClubInviteToken>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  ClubInviteTokenData: ResolverTypeWrapper<ClubInviteTokenData>;
   Collection: ResolverTypeWrapper<Collection>;
   ConnectRelationInput: ConnectRelationInput;
   ContentAccessScope: ContentAccessScope;
@@ -2367,6 +2388,7 @@ export type ResolversTypes = ResolversObject<{
   Equipment: ResolverTypeWrapper<Equipment>;
   Gender: Gender;
   GymProfile: ResolverTypeWrapper<GymProfile>;
+  InviteTokenError: ResolverTypeWrapper<InviteTokenError>;
   JSON: ResolverTypeWrapper<Scalars['JSON']>;
   JoinClubInvite: ResolverTypeWrapper<JoinClubInvite>;
   JoinClubRequest: ResolverTypeWrapper<JoinClubRequest>;
@@ -2475,9 +2497,11 @@ export type ResolversParentTypes = ResolversObject<{
   BodyAreaMoveScoreInput: BodyAreaMoveScoreInput;
   Float: Scalars['Float'];
   BodyTransformationPhoto: BodyTransformationPhoto;
+  CheckClubInviteTokenResult: ResolversParentTypes['ClubInviteTokenData'] | ResolversParentTypes['InviteTokenError'];
   Club: Club;
   ClubInviteToken: ClubInviteToken;
   Boolean: Scalars['Boolean'];
+  ClubInviteTokenData: ClubInviteTokenData;
   Collection: Collection;
   ConnectRelationInput: ConnectRelationInput;
   CopyWorkoutPlanDayToAnotherDayInput: CopyWorkoutPlanDayToAnotherDayInput;
@@ -2524,6 +2548,7 @@ export type ResolversParentTypes = ResolversObject<{
   DiscoverWorkoutPlanCategory: DiscoverWorkoutPlanCategory;
   Equipment: Equipment;
   GymProfile: GymProfile;
+  InviteTokenError: InviteTokenError;
   JSON: Scalars['JSON'];
   JoinClubInvite: JoinClubInvite;
   JoinClubRequest: JoinClubRequest;
@@ -2636,6 +2661,10 @@ export type BodyTransformationPhotoResolvers<ContextType = any, ParentType exten
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type CheckClubInviteTokenResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['CheckClubInviteTokenResult'] = ResolversParentTypes['CheckClubInviteTokenResult']> = ResolversObject<{
+  __resolveType: TypeResolveFn<'ClubInviteTokenData' | 'InviteTokenError', ParentType, ContextType>;
+}>;
+
 export type ClubResolvers<ContextType = any, ParentType extends ResolversParentTypes['Club'] = ResolversParentTypes['Club']> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
@@ -2661,11 +2690,17 @@ export type ClubInviteTokenResolvers<ContextType = any, ParentType extends Resol
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   active?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   inviteLimit?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   invitesUsed?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  token?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  Creator?: Resolver<ResolversTypes['UserSummary'], ParentType, ContextType>;
+  User?: Resolver<ResolversTypes['UserSummary'], ParentType, ContextType>;
   joinedUserIds?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type ClubInviteTokenDataResolvers<ContextType = any, ParentType extends ResolversParentTypes['ClubInviteTokenData'] = ResolversParentTypes['ClubInviteTokenData']> = ResolversObject<{
+  token?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  Club?: Resolver<ResolversTypes['Club'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -2748,6 +2783,11 @@ export type GymProfileResolvers<ContextType = any, ParentType extends ResolversP
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   Equipments?: Resolver<Array<ResolversTypes['Equipment']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type InviteTokenErrorResolvers<ContextType = any, ParentType extends ResolversParentTypes['InviteTokenError'] = ResolversParentTypes['InviteTokenError']> = ResolversObject<{
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -3022,6 +3062,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   discoverFeatured?: Resolver<Array<ResolversTypes['DiscoverFeatured']>, ParentType, ContextType>;
   discoverWorkoutCategories?: Resolver<Array<ResolversTypes['DiscoverWorkoutCategory']>, ParentType, ContextType>;
   discoverWorkoutPlanCategories?: Resolver<Array<ResolversTypes['DiscoverWorkoutPlanCategory']>, ParentType, ContextType>;
+  checkClubInviteToken?: Resolver<ResolversTypes['CheckClubInviteTokenResult'], ParentType, ContextType, RequireFields<QueryCheckClubInviteTokenArgs, 'id'>>;
   userLoggedWorkouts?: Resolver<Array<ResolversTypes['LoggedWorkout']>, ParentType, ContextType, RequireFields<QueryUserLoggedWorkoutsArgs, never>>;
   loggedWorkoutById?: Resolver<ResolversTypes['LoggedWorkout'], ParentType, ContextType, RequireFields<QueryLoggedWorkoutByIdArgs, 'id'>>;
   standardMoves?: Resolver<Array<ResolversTypes['Move']>, ParentType, ContextType>;
@@ -3385,8 +3426,10 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   BodyArea?: BodyAreaResolvers<ContextType>;
   BodyAreaMoveScore?: BodyAreaMoveScoreResolvers<ContextType>;
   BodyTransformationPhoto?: BodyTransformationPhotoResolvers<ContextType>;
+  CheckClubInviteTokenResult?: CheckClubInviteTokenResultResolvers<ContextType>;
   Club?: ClubResolvers<ContextType>;
   ClubInviteToken?: ClubInviteTokenResolvers<ContextType>;
+  ClubInviteTokenData?: ClubInviteTokenDataResolvers<ContextType>;
   Collection?: CollectionResolvers<ContextType>;
   DateTime?: GraphQLScalarType;
   DiscoverFeatured?: DiscoverFeaturedResolvers<ContextType>;
@@ -3396,6 +3439,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   DiscoverWorkoutPlanCategory?: DiscoverWorkoutPlanCategoryResolvers<ContextType>;
   Equipment?: EquipmentResolvers<ContextType>;
   GymProfile?: GymProfileResolvers<ContextType>;
+  InviteTokenError?: InviteTokenErrorResolvers<ContextType>;
   JSON?: GraphQLScalarType;
   JoinClubInvite?: JoinClubInviteResolvers<ContextType>;
   JoinClubRequest?: JoinClubRequestResolvers<ContextType>;

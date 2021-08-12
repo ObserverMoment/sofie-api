@@ -19,6 +19,8 @@ export default gql`
     discoverFeatured: [DiscoverFeatured!]!
     discoverWorkoutCategories: [DiscoverWorkoutCategory!]!
     discoverWorkoutPlanCategories: [DiscoverWorkoutPlanCategory!]!
+    #### Invite Tokens ####
+    checkClubInviteToken(id: ID!): CheckClubInviteTokenResult!
     #### Logged Workouts ####
     userLoggedWorkouts(take: Int): [LoggedWorkout!]!
     loggedWorkoutById(id: ID!): LoggedWorkout!

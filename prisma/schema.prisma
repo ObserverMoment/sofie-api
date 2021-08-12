@@ -284,14 +284,14 @@ model ClubInviteToken {
   id            String   @id @default(uuid())
   createdAt     DateTime @default(now())
   active        Boolean
+  name          String
   // How many times can this token be used.
   // 0 means unlimited.
   inviteLimit   Int      @default(0)
   invitesUsed   Int
-  token         String
   // Owner or admin of the group.
-  Creator       User     @relation(fields: [creatorId], references: [id])
-  creatorId     String
+  User          User     @relation(fields: [userId], references: [id])
+  userId        String
   Club          Club     @relation(fields: [clubId], references: [id])
   clubId        String
   joinedUserIds String[]

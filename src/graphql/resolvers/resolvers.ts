@@ -1,4 +1,8 @@
-import { Resolvers } from '../../generated/graphql'
+import {
+  ClubInviteTokenData,
+  InviteTokenError,
+  Resolvers,
+} from '../../generated/graphql'
 
 import {
   bodyTransformationPhotos,
@@ -151,6 +155,8 @@ import {
   removeWorkoutPlanFromCollection,
 } from './collection'
 
+import { checkClubInviteToken } from './invites'
+
 import {
   publicWorkouts,
   userWorkouts,
@@ -239,6 +245,19 @@ const resolvers: Resolvers = {
       return null
     },
   }),
+  // Resolve Types or Unions
+  // https://www.apollographql.com/docs/apollo-server/schema/unions-interfaces/
+  CheckClubInviteTokenResult: {
+    __resolveType: (obj, context, info) => {
+      if ((obj as ClubInviteTokenData).token) {
+        return 'ClubInviteTokenData'
+      }
+      if ((obj as InviteTokenError).message) {
+        return 'InviteTokenError'
+      }
+      return null // GraphQLError is thrown
+    },
+  },
   Query: {
     validateToken: () => true, // Empty Resolver - call it and it will throw auth error if token is not valid / expired or if an associated user does not exist in the database.
     //// Core Data ////
@@ -254,6 +273,8 @@ const resolvers: Resolvers = {
     discoverFeatured,
     discoverWorkoutCategories,
     discoverWorkoutPlanCategories,
+    ///// Invites ////
+    checkClubInviteToken,
     //// Progress Journal ////
     bodyTransformationPhotos,
     userProgressJournals,
