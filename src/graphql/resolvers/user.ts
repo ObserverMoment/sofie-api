@@ -15,7 +15,8 @@ import {
 } from '../../generated/graphql'
 import {
   streamFieldsRequiringUpdate,
-  updateGetStreamFields,
+  updateGetStreamChatFields,
+  updateGetStreamFeedFields,
 } from '../../lib/getStream'
 import { checkUserMediaForDeletion, deleteFiles } from '../../lib/uploadcare'
 import { AccessScopeError, checkUserOwnsObject } from '../utils'
@@ -167,7 +168,8 @@ export const updateUser = async (
       await deleteFiles(fileUrisForDeletion)
     }
     if (streamFieldsToUpdate.length > 0) {
-      await updateGetStreamFields(authedUserId, streamFieldsToUpdate, data)
+      await updateGetStreamChatFields(authedUserId, streamFieldsToUpdate, data)
+      await updateGetStreamFeedFields(authedUserId, streamFieldsToUpdate, data)
     }
     return updated as User
   } else {

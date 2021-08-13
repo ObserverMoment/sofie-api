@@ -26,6 +26,7 @@
     "apollo-server-express": "^2.25.2",
     "dotenv": "^10.0.0",
     "firebase-admin": "^9.10.0",
+    "getstream": "^7.2.10",
     "graphql-config": "^3.3.0",
     "graphql-middleware": "^6.0.10",
     "graphql-parse-resolve-info": "^4.12.0",

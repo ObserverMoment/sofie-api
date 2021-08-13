@@ -1,5 +1,10 @@
 import { PrismaClient } from '.prisma/client'
-import { createStreamChatUser, getUserChatToken } from '../lib/getStream'
+import {
+  createStreamChatUser,
+  createStreamFeedUser,
+  getUserChatToken,
+  getUserFeedToken,
+} from '../lib/getStream'
 import validateToken from './validateToken'
 
 export default async function (req: any, res: any, prisma: PrismaClient) {
@@ -11,7 +16,7 @@ export default async function (req: any, res: any, prisma: PrismaClient) {
         .status(401)
         .json({ error: 'The access token you provided was not valid.' })
     } else {
-      // Check the user does not already have this firebase UID
+      // Check a user does not already have this firebase UID
       const oldUser = await prisma.user.findUnique({
         where: { firebaseUid: decodedToken.uid },
       })
@@ -45,9 +50,16 @@ export default async function (req: any, res: any, prisma: PrismaClient) {
         // Get the user token associated with this new user.
         const streamChatToken = getUserChatToken(user.id)
 
+        // Create a new user for GetStream Feeds services.
+        await createStreamFeedUser(user.id)
+
+        // Get the user token associated with this new user.
+        const streamFeedToken = getUserFeedToken(user.id)
+
         res.json({
           ...user,
           streamChatToken,
+          streamFeedToken,
         })
       }
     }
