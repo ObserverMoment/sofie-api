@@ -46,6 +46,9 @@ export default gql`
     checkUniqueDisplayName(displayName: String!): Boolean!
     gymProfiles: [GymProfile!]!
     userWorkoutTags: [WorkoutTag!]!
+    #### User Avatars ####
+    userAvatars(ids: [ID!]!): [UserAvatarData!]!
+    userAvatarById(id: ID!): UserAvatarData!
     #### UserBenchmark (aka Personal Best) ####
     userBenchmarks: [UserBenchmark!]!
     userBenchmarkById(id: ID!): UserBenchmark!

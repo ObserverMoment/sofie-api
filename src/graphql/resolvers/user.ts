@@ -6,18 +6,16 @@ import {
   MutationUpdateUserArgs,
   MutationUpdateWorkoutTagArgs,
   QueryCheckUniqueDisplayNameArgs,
+  QueryUserAvatarByIdArgs,
+  QueryUserAvatarsArgs,
   QueryUserPublicProfileByIdArgs,
   QueryUserPublicProfilesArgs,
   User,
+  UserAvatarData,
   UserPublicProfile,
   UserPublicProfileSummary,
   WorkoutTag,
 } from '../../generated/graphql'
-import {
-  streamFieldsRequiringUpdate,
-  updateGetStreamChatFields,
-  updateGetStreamFeedFields,
-} from '../../lib/getStream'
 import { checkUserMediaForDeletion, deleteFiles } from '../../lib/uploadcare'
 import { AccessScopeError, checkUserOwnsObject } from '../utils'
 
@@ -47,6 +45,42 @@ export const authedUser = async (
     return user as User
   } else {
     throw new ApolloError('authedUser: There was an issue.')
+  }
+}
+
+/// The minimum info needed to display a user avatar.
+/// avatarUri + displayName.
+export const userAvatars = async (
+  r: any,
+  { ids }: QueryUserAvatarsArgs,
+  { select, prisma }: Context,
+) => {
+  const userAvatars = await prisma.user.findMany({
+    where: { id: { in: ids } },
+    select,
+  })
+
+  if (userAvatars) {
+    return userAvatars as UserAvatarData[]
+  } else {
+    throw new ApolloError('userAvatars: There was an issue.')
+  }
+}
+
+export const userAvatarById = async (
+  r: any,
+  { id }: QueryUserAvatarByIdArgs,
+  { select, prisma }: Context,
+) => {
+  const userAvatar = await prisma.user.findUnique({
+    where: { id },
+    select,
+  })
+
+  if (userAvatar) {
+    return userAvatar as UserAvatarData
+  } else {
+    throw new ApolloError('userAvatarById: There was an issue.')
   }
 }
 
@@ -144,12 +178,6 @@ export const updateUser = async (
     data,
   )
 
-  const streamFieldsToUpdate: string[] = await streamFieldsRequiringUpdate(
-    prisma,
-    authedUserId,
-    data,
-  )
-
   const updated = await prisma.user.update({
     where: {
       id: authedUserId,
@@ -166,10 +194,6 @@ export const updateUser = async (
   if (updated) {
     if (fileUrisForDeletion && fileUrisForDeletion.length > 0) {
       await deleteFiles(fileUrisForDeletion)
-    }
-    if (streamFieldsToUpdate.length > 0) {
-      await updateGetStreamChatFields(authedUserId, streamFieldsToUpdate, data)
-      await updateGetStreamFeedFields(authedUserId, streamFieldsToUpdate, data)
     }
     return updated as User
   } else {

@@ -119,6 +119,8 @@ import {
 import {
   checkUniqueDisplayName,
   authedUser,
+  userAvatars,
+  userAvatarById,
   userPublicProfileById,
   userPublicProfiles,
   updateUser,
@@ -302,6 +304,9 @@ const resolvers: Resolvers = {
     userPublicProfileById,
     userPublicProfiles,
     userWorkoutTags,
+    //// User Avatars ////
+    userAvatars,
+    userAvatarById,
     /// User Benchmarks ////
     userBenchmarks,
     userBenchmarkById,

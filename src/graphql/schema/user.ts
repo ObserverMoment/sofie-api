@@ -26,9 +26,15 @@ export default gql`
     ProgressJournalGoalTags: [ProgressJournalGoalTag!]
   }
 
+  type UserAvatarData {
+    id: ID!
+    displayName: String
+    avatarUri: String
+  }
+
   type UserSummary {
     id: ID!
-    displayName: String!
+    displayName: String
     avatarUri: String
     userProfileScope: UserProfileScope!
     tagline: String
@@ -73,7 +79,7 @@ export default gql`
     snapUrl: String
     linkedinUrl: String
     countryCode: String
-    displayName: String!
+    displayName: String
     Workouts: [Workout!]!
     WorkoutPlans: [WorkoutPlan!]!
   }
@@ -84,7 +90,7 @@ export default gql`
     tagline: String
     townCity: String
     countryCode: String
-    displayName: String!
+    displayName: String
     numberPublicWorkouts: Int!
     numberPublicPlans: Int!
   }
