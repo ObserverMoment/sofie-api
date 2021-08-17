@@ -14,6 +14,7 @@ import main from './main'
 import move from './move'
 import progressJournal from './progressJournal'
 import scheduledWorkout from './scheduledWorkout'
+import timelineFeed from './timelineFeed'
 import userBenchmark from './userBenchmark'
 import user from './user'
 import workout from './workout/workout'
@@ -39,6 +40,7 @@ const typeDefs = mergeTypeDefs([
   move,
   progressJournal,
   scheduledWorkout,
+  timelineFeed,
   userBenchmark,
   user,
   workout,

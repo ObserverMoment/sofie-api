@@ -815,6 +815,7 @@ type Query {
   textSearchWorkoutPlanNames(text: String!): [TextSearchResult!]
   textSearchUserPublicProfiles(text: String!): [UserPublicProfile!]
   textSearchUserPublicNames(text: String!): [TextSearchResult!]
+  timelinePostsData(posts: [TimelinePostDataRequestInput!]!): [TimelinePostData!]!
   authedUser: User!
   checkUniqueDisplayName(displayName: String!): Boolean!
   gymProfiles: [GymProfile!]!
@@ -883,6 +884,31 @@ enum TimeUnit {
   HOURS
   MINUTES
   SECONDS
+}
+
+type TimelinePostData {
+  userId: ID!
+  userDisplayName: String
+  userAvatarUri: String
+  objectId: ID!
+  objectType: TimelinePostType!
+  title: String!
+  audioUri: String
+  imageUri: String
+  videoUri: String
+  videoThumbUri: String
+}
+
+input TimelinePostDataRequestInput {
+  userId: ID!
+  objectId: ID!
+  objectType: TimelinePostType!
+}
+
+enum TimelinePostType {
+  WORKOUT
+  WORKOUTPLAN
+  USERPROFILE
 }
 
 input UpdateBodyTransformationPhotoInput {

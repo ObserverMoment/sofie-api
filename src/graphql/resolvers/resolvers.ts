@@ -116,6 +116,8 @@ import {
   textSearchUserPublicNames,
 } from './textSearch'
 
+import { timelinePostsData } from './timelineFeed'
+
 import {
   checkUniqueDisplayName,
   authedUser,
@@ -297,6 +299,8 @@ const resolvers: Resolvers = {
     textSearchWorkoutPlanNames,
     textSearchUserPublicProfiles,
     textSearchUserPublicNames,
+    //// Timeline Feed ////
+    timelinePostsData,
     //// User ////
     authedUser,
     checkUniqueDisplayName,

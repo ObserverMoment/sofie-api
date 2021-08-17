@@ -41,6 +41,11 @@ export default gql`
     textSearchWorkoutPlanNames(text: String!): [TextSearchResult!]
     textSearchUserPublicProfiles(text: String!): [UserPublicProfile!]
     textSearchUserPublicNames(text: String!): [TextSearchResult!]
+    #### Timeline Feed ####
+    # Gets DB objects referenced in getStream activities (posts) and maps fields to those required for displaying in a timeline or feed #
+    timelinePostsData(
+      posts: [TimelinePostDataRequestInput!]!
+    ): [TimelinePostData!]!
     #### User ####
     authedUser: User!
     checkUniqueDisplayName(displayName: String!): Boolean!

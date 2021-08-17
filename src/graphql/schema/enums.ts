@@ -78,6 +78,12 @@ export default gql`
     CUSTOM
   }
 
+  enum TimelinePostType {
+    WORKOUT
+    WORKOUTPLAN
+    USERPROFILE
+  }
+
   enum TimeUnit {
     HOURS
     MINUTES
