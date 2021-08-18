@@ -1595,7 +1595,7 @@ export type TimeUnit =
 export type TimelinePostData = {
   __typename?: 'TimelinePostData';
   userId: Scalars['ID'];
-  userDisplayName?: Maybe<Scalars['String']>;
+  userDisplayName: Scalars['String'];
   userAvatarUri?: Maybe<Scalars['String']>;
   objectId: Scalars['ID'];
   objectType: TimelinePostType;
@@ -1946,7 +1946,7 @@ export type User = {
   birthdate?: Maybe<Scalars['DateTime']>;
   townCity?: Maybe<Scalars['String']>;
   countryCode?: Maybe<Scalars['String']>;
-  displayName?: Maybe<Scalars['String']>;
+  displayName: Scalars['String'];
   instagramUrl?: Maybe<Scalars['String']>;
   tiktokUrl?: Maybe<Scalars['String']>;
   youtubeUrl?: Maybe<Scalars['String']>;
@@ -1963,7 +1963,7 @@ export type User = {
 export type UserAvatarData = {
   __typename?: 'UserAvatarData';
   id: Scalars['ID'];
-  displayName?: Maybe<Scalars['String']>;
+  displayName: Scalars['String'];
   avatarUri?: Maybe<Scalars['String']>;
 };
 
@@ -2018,7 +2018,7 @@ export type UserPublicProfile = {
   snapUrl?: Maybe<Scalars['String']>;
   linkedinUrl?: Maybe<Scalars['String']>;
   countryCode?: Maybe<Scalars['String']>;
-  displayName?: Maybe<Scalars['String']>;
+  displayName: Scalars['String'];
   Workouts: Array<Workout>;
   WorkoutPlans: Array<WorkoutPlan>;
 };
@@ -2030,7 +2030,7 @@ export type UserPublicProfileSummary = {
   tagline?: Maybe<Scalars['String']>;
   townCity?: Maybe<Scalars['String']>;
   countryCode?: Maybe<Scalars['String']>;
-  displayName?: Maybe<Scalars['String']>;
+  displayName: Scalars['String'];
   numberPublicWorkouts: Scalars['Int'];
   numberPublicPlans: Scalars['Int'];
 };
@@ -2038,7 +2038,7 @@ export type UserPublicProfileSummary = {
 export type UserSummary = {
   __typename?: 'UserSummary';
   id: Scalars['ID'];
-  displayName?: Maybe<Scalars['String']>;
+  displayName: Scalars['String'];
   avatarUri?: Maybe<Scalars['String']>;
   userProfileScope: UserProfileScope;
   tagline?: Maybe<Scalars['String']>;
@@ -3185,7 +3185,7 @@ export type TextSearchResultResolvers<ContextType = any, ParentType extends Reso
 
 export type TimelinePostDataResolvers<ContextType = any, ParentType extends ResolversParentTypes['TimelinePostData'] = ResolversParentTypes['TimelinePostData']> = ResolversObject<{
   userId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  userDisplayName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  userDisplayName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   userAvatarUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   objectId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   objectType?: Resolver<ResolversTypes['TimelinePostType'], ParentType, ContextType>;
@@ -3208,7 +3208,7 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   birthdate?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   townCity?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   countryCode?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  displayName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  displayName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   instagramUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   tiktokUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   youtubeUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -3225,7 +3225,7 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
 
 export type UserAvatarDataResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserAvatarData'] = ResolversParentTypes['UserAvatarData']> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  displayName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  displayName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   avatarUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
@@ -3276,7 +3276,7 @@ export type UserPublicProfileResolvers<ContextType = any, ParentType extends Res
   snapUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   linkedinUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   countryCode?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  displayName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  displayName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   Workouts?: Resolver<Array<ResolversTypes['Workout']>, ParentType, ContextType>;
   WorkoutPlans?: Resolver<Array<ResolversTypes['WorkoutPlan']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -3288,7 +3288,7 @@ export type UserPublicProfileSummaryResolvers<ContextType = any, ParentType exte
   tagline?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   townCity?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   countryCode?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  displayName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  displayName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   numberPublicWorkouts?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   numberPublicPlans?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -3296,7 +3296,7 @@ export type UserPublicProfileSummaryResolvers<ContextType = any, ParentType exte
 
 export type UserSummaryResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserSummary'] = ResolversParentTypes['UserSummary']> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  displayName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  displayName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   avatarUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   userProfileScope?: Resolver<ResolversTypes['UserProfileScope'], ParentType, ContextType>;
   tagline?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;

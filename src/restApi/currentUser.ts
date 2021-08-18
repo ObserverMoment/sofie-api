@@ -1,5 +1,10 @@
 import { PrismaClient } from '@prisma/client'
-import { getUserChatToken, getUserFeedToken } from '../lib/getStream'
+import {
+  createStreamChatUser,
+  createStreamFeedUser,
+  getUserChatToken,
+  getUserFeedToken,
+} from '../lib/getStream'
 import validateToken from './validateToken'
 
 export default async function (req: any, res: any, prisma: PrismaClient) {

@@ -162,7 +162,7 @@ model User {
   avatarUri                String?
   introVideoUri            String?
   introVideoThumbUri       String?
-  displayName              String?                   @unique
+  displayName              String                    @unique @default(cuid())
   firstname                String?
   lastname                 String?
   bio                      String?

@@ -4,7 +4,7 @@ export default gql`
   # Minimal object data required for displaying a post in a user timeline / feed.
   type TimelinePostData {
     userId: ID!
-    userDisplayName: String
+    userDisplayName: String!
     userAvatarUri: String
     # The id and the type of the referenced DB object.
     objectId: ID!
