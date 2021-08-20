@@ -44,7 +44,7 @@ export default gql`
     #### Timeline Feed ####
     # Gets DB objects referenced in getStream activities (posts) and maps fields to those required for displaying in a timeline or feed #
     timelinePostsData(
-      posts: [TimelinePostDataRequestInput!]!
+      postDataRequests: [TimelinePostDataRequestInput!]!
     ): [TimelinePostData!]!
     #### User ####
     authedUser: User!

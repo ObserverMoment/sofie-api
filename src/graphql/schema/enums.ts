@@ -81,7 +81,6 @@ export default gql`
   enum TimelinePostType {
     WORKOUT
     WORKOUTPLAN
-    USERPROFILE
   }
 
   enum TimeUnit {

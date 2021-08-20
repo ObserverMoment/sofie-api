@@ -1475,7 +1475,7 @@ export type QueryTextSearchUserPublicNamesArgs = {
 
 
 export type QueryTimelinePostsDataArgs = {
-  posts: Array<TimelinePostDataRequestInput>;
+  postDataRequests: Array<TimelinePostDataRequestInput>;
 };
 
 
@@ -1594,28 +1594,38 @@ export type TimeUnit =
 
 export type TimelinePostData = {
   __typename?: 'TimelinePostData';
-  userId: Scalars['ID'];
-  userDisplayName: Scalars['String'];
-  userAvatarUri?: Maybe<Scalars['String']>;
-  objectId: Scalars['ID'];
-  objectType: TimelinePostType;
-  title: Scalars['String'];
-  audioUri?: Maybe<Scalars['String']>;
-  imageUri?: Maybe<Scalars['String']>;
-  videoUri?: Maybe<Scalars['String']>;
-  videoThumbUri?: Maybe<Scalars['String']>;
+  poster: TimelinePostDataUser;
+  creator: TimelinePostDataUser;
+  object: TimelinePostDataObject;
+};
+
+export type TimelinePostDataObject = {
+  __typename?: 'TimelinePostDataObject';
+  id: Scalars['ID'];
+  type: TimelinePostType;
+  name: Scalars['String'];
+  introAudioUri?: Maybe<Scalars['String']>;
+  coverImageUri?: Maybe<Scalars['String']>;
+  introVideoUri?: Maybe<Scalars['String']>;
+  introVideoThumbUri?: Maybe<Scalars['String']>;
 };
 
 export type TimelinePostDataRequestInput = {
-  userId: Scalars['ID'];
+  posterId: Scalars['ID'];
   objectId: Scalars['ID'];
   objectType: TimelinePostType;
+};
+
+export type TimelinePostDataUser = {
+  __typename?: 'TimelinePostDataUser';
+  id: Scalars['ID'];
+  displayName: Scalars['String'];
+  avatarUri?: Maybe<Scalars['String']>;
 };
 
 export type TimelinePostType =
   | 'WORKOUT'
-  | 'WORKOUTPLAN'
-  | 'USERPROFILE';
+  | 'WORKOUTPLAN';
 
 export type UpdateBodyTransformationPhotoInput = {
   id: Scalars['ID'];
@@ -2467,7 +2477,9 @@ export type ResolversTypes = ResolversObject<{
   TextSearchResult: ResolverTypeWrapper<TextSearchResult>;
   TimeUnit: TimeUnit;
   TimelinePostData: ResolverTypeWrapper<TimelinePostData>;
+  TimelinePostDataObject: ResolverTypeWrapper<TimelinePostDataObject>;
   TimelinePostDataRequestInput: TimelinePostDataRequestInput;
+  TimelinePostDataUser: ResolverTypeWrapper<TimelinePostDataUser>;
   TimelinePostType: TimelinePostType;
   UpdateBodyTransformationPhotoInput: UpdateBodyTransformationPhotoInput;
   UpdateClubInput: UpdateClubInput;
@@ -2627,7 +2639,9 @@ export type ResolversParentTypes = ResolversObject<{
   SortPositionUpdated: SortPositionUpdated;
   TextSearchResult: TextSearchResult;
   TimelinePostData: TimelinePostData;
+  TimelinePostDataObject: TimelinePostDataObject;
   TimelinePostDataRequestInput: TimelinePostDataRequestInput;
+  TimelinePostDataUser: TimelinePostDataUser;
   UpdateBodyTransformationPhotoInput: UpdateBodyTransformationPhotoInput;
   UpdateClubInput: UpdateClubInput;
   UpdateClubInviteTokenInput: UpdateClubInviteTokenInput;
@@ -3135,7 +3149,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   textSearchWorkoutPlanNames?: Resolver<Maybe<Array<ResolversTypes['TextSearchResult']>>, ParentType, ContextType, RequireFields<QueryTextSearchWorkoutPlanNamesArgs, 'text'>>;
   textSearchUserPublicProfiles?: Resolver<Maybe<Array<ResolversTypes['UserPublicProfile']>>, ParentType, ContextType, RequireFields<QueryTextSearchUserPublicProfilesArgs, 'text'>>;
   textSearchUserPublicNames?: Resolver<Maybe<Array<ResolversTypes['TextSearchResult']>>, ParentType, ContextType, RequireFields<QueryTextSearchUserPublicNamesArgs, 'text'>>;
-  timelinePostsData?: Resolver<Array<ResolversTypes['TimelinePostData']>, ParentType, ContextType, RequireFields<QueryTimelinePostsDataArgs, 'posts'>>;
+  timelinePostsData?: Resolver<Array<ResolversTypes['TimelinePostData']>, ParentType, ContextType, RequireFields<QueryTimelinePostsDataArgs, 'postDataRequests'>>;
   authedUser?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   checkUniqueDisplayName?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryCheckUniqueDisplayNameArgs, 'displayName'>>;
   gymProfiles?: Resolver<Array<ResolversTypes['GymProfile']>, ParentType, ContextType>;
@@ -3184,16 +3198,27 @@ export type TextSearchResultResolvers<ContextType = any, ParentType extends Reso
 }>;
 
 export type TimelinePostDataResolvers<ContextType = any, ParentType extends ResolversParentTypes['TimelinePostData'] = ResolversParentTypes['TimelinePostData']> = ResolversObject<{
-  userId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  userDisplayName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  userAvatarUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  objectId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  objectType?: Resolver<ResolversTypes['TimelinePostType'], ParentType, ContextType>;
-  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  audioUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  imageUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  videoUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  videoThumbUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  poster?: Resolver<ResolversTypes['TimelinePostDataUser'], ParentType, ContextType>;
+  creator?: Resolver<ResolversTypes['TimelinePostDataUser'], ParentType, ContextType>;
+  object?: Resolver<ResolversTypes['TimelinePostDataObject'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type TimelinePostDataObjectResolvers<ContextType = any, ParentType extends ResolversParentTypes['TimelinePostDataObject'] = ResolversParentTypes['TimelinePostDataObject']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  type?: Resolver<ResolversTypes['TimelinePostType'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  introAudioUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  coverImageUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  introVideoUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  introVideoThumbUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type TimelinePostDataUserResolvers<ContextType = any, ParentType extends ResolversParentTypes['TimelinePostDataUser'] = ResolversParentTypes['TimelinePostDataUser']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  displayName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  avatarUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -3540,6 +3565,8 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   SortPositionUpdated?: SortPositionUpdatedResolvers<ContextType>;
   TextSearchResult?: TextSearchResultResolvers<ContextType>;
   TimelinePostData?: TimelinePostDataResolvers<ContextType>;
+  TimelinePostDataObject?: TimelinePostDataObjectResolvers<ContextType>;
+  TimelinePostDataUser?: TimelinePostDataUserResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
   UserAvatarData?: UserAvatarDataResolvers<ContextType>;
   UserBenchmark?: UserBenchmarkResolvers<ContextType>;
