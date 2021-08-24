@@ -3,7 +3,7 @@
 // Migrations: https://github.com/prisma/migrate
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["filterJson"]
+  previewFeatures = ["filterJson", "referentialActions"]
 }
 
 datasource db {
@@ -292,7 +292,7 @@ model ClubInviteToken {
   // Owner or admin of the group.
   User          User     @relation(fields: [userId], references: [id])
   userId        String
-  Club          Club     @relation(fields: [clubId], references: [id])
+  Club          Club     @relation(fields: [clubId], references: [id], onDelete: Cascade)
   clubId        String
   joinedUserIds String[]
 }
@@ -308,7 +308,7 @@ model JoinClubRequest {
   Responder   User?                 @relation("request_responder", fields: [responderId], references: [id])
   responderId String?
   respondedAt DateTime?
-  Club        Club                  @relation(fields: [clubId], references: [id])
+  Club        Club                  @relation(fields: [clubId], references: [id], onDelete: Cascade)
   clubId      String
 }
 
@@ -324,7 +324,7 @@ model JoinClubInvite {
   Responder   User?                 @relation("invite_responder", fields: [responderId], references: [id])
   responderId String?
   respondedAt DateTime?
-  Club        Club                  @relation(fields: [clubId], references: [id])
+  Club        Club                  @relation(fields: [clubId], references: [id], onDelete: Cascade)
   clubId      String
 }
 

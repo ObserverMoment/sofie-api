@@ -20,6 +20,7 @@ import {
   createClubInviteToken,
   updateClubInviteToken,
   deleteClubInviteTokenById,
+  addUserToClubViaInviteToken,
 } from './club'
 
 import {
@@ -339,6 +340,7 @@ const resolvers: Resolvers = {
     createClubInviteToken,
     updateClubInviteToken,
     deleteClubInviteTokenById,
+    addUserToClubViaInviteToken,
     ///////////////////
     //// Equipment ////
     ///////////////////

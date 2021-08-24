@@ -4,6 +4,7 @@ import { Context } from '../..'
 import {
   Club,
   ClubInviteToken,
+  MutationAddUserToClubViaInviteTokenArgs,
   MutationCreateClubArgs,
   MutationCreateClubInviteTokenArgs,
   MutationDeleteClubByIdArgs,
@@ -12,6 +13,11 @@ import {
   MutationUpdateClubInviteTokenArgs,
   QueryClubByIdArgs,
 } from '../../generated/graphql'
+import {
+  addStreamUserToClubMemberChat,
+  createStreamClubMemberChat,
+  deleteStreamClubMemberChat,
+} from '../../lib/getStream'
 import { checkClubMediaForDeletion, deleteFiles } from '../../lib/uploadcare'
 import { AccessScopeError } from '../utils'
 
@@ -63,6 +69,7 @@ export const createClub = async (
   })
 
   if (club) {
+    await createStreamClubMemberChat((club as Club).id, authedUserId)
     return club as Club
   } else {
     throw new ApolloError('createClub: There was an issue.')
@@ -116,6 +123,7 @@ export const deleteClubById = async (
   })
 
   if (deleted) {
+    await deleteStreamClubMemberChat(deleted.id)
     return deleted.id
   } else {
     throw new ApolloError('deleteClubById: There was an issue.')
@@ -200,6 +208,72 @@ export const deleteClubInviteTokenById = async (
     return deleted.id
   } else {
     throw new ApolloError('deleteClubInviteTokenById: There was an issue.')
+  }
+}
+
+///// Manage Members and Admins /////
+///// ClubInviteToken //////
+// The validity of the token should have already been checked //
+export const addUserToClubViaInviteToken = async (
+  r: any,
+  { userId, clubInviteTokenId }: MutationAddUserToClubViaInviteTokenArgs,
+  { select, prisma }: Context,
+) => {
+  // Get the token info and associated club ID.
+  const clubInviteToken = await prisma.clubInviteToken.findUnique({
+    where: { id: clubInviteTokenId },
+    select: {
+      clubId: true,
+      inviteLimit: true,
+      invitesUsed: true,
+    },
+  })
+
+  // These checks are the same as in ./invites.ts! (consider abstracting)
+  // Except they throw an ApolloError instead of returning an InviteTokenError
+  if (!clubInviteToken) {
+    // Token not found
+    throw new ApolloError('addUserToClubViaInviteToken: Invite code not found.')
+  }
+
+  if (
+    clubInviteToken!.inviteLimit !== 0 &&
+    clubInviteToken!.invitesUsed >= clubInviteToken!.inviteLimit
+  ) {
+    // Token has maxed out
+    throw new ApolloError(
+      'addUserToClubViaInviteToken: This invite code has expired.',
+    )
+  }
+
+  const updateClub = prisma.club.update({
+    where: { id: clubInviteToken.clubId },
+    data: {
+      Members: {
+        connect: { id: userId },
+      },
+    },
+    select,
+  })
+
+  const updateTokenInvitesUsed = prisma.clubInviteToken.update({
+    where: { id: clubInviteTokenId },
+    data: {
+      invitesUsed: clubInviteToken!.invitesUsed + 1,
+    },
+  })
+
+  const [updatedClub, _] = await prisma.$transaction([
+    updateClub,
+    updateTokenInvitesUsed,
+  ])
+
+  if (updatedClub) {
+    /// Add the new member to the GetStream chat group.
+    await addStreamUserToClubMemberChat((updatedClub as Club).id, userId)
+    return updatedClub as Club
+  } else {
+    throw new ApolloError('addUserToClubViaInviteToken: There was an issue.')
   }
 }
 

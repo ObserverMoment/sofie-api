@@ -6,10 +6,11 @@ import {
   QueryCheckClubInviteTokenArgs,
 } from '../../generated/graphql'
 
+/// Note: The ID is the token
 export const checkClubInviteToken = async (
   r: any,
   { id }: QueryCheckClubInviteTokenArgs,
-  { authedUserId, select, prisma }: Context,
+  { select, prisma }: Context,
 ) => {
   /// Check that the token is valid and that is has not maxed out.
   const clubInviteToken = await prisma.clubInviteToken.findUnique({

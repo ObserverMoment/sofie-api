@@ -20,6 +20,7 @@ export default gql`
     discoverWorkoutCategories: [DiscoverWorkoutCategory!]!
     discoverWorkoutPlanCategories: [DiscoverWorkoutPlanCategory!]!
     #### Invite Tokens ####
+    # The ID is the token string, we pass it to check that it is valid #
     checkClubInviteToken(id: ID!): CheckClubInviteTokenResult!
     #### Logged Workouts ####
     userLoggedWorkouts(take: Int): [LoggedWorkout!]!
@@ -92,6 +93,7 @@ export default gql`
     createClubInviteToken(data: CreateClubInviteTokenInput!): ClubInviteToken!
     updateClubInviteToken(data: UpdateClubInviteTokenInput!): ClubInviteToken!
     deleteClubInviteTokenById(id: ID!): ID!
+    addUserToClubViaInviteToken(userId: ID!, clubInviteTokenId: ID!): Club!
     #### Equipment ####
     createEquipment(data: CreateEquipmentInput!): Equipment
     updateEquipment(data: UpdateEquipmentInput!): Equipment
