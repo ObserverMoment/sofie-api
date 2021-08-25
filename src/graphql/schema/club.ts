@@ -96,11 +96,10 @@ export default gql`
     # 0 means unlimited.
     inviteLimit: Int!
     # Only updated by the sever when user joins via this token.
-    invitesUsed: Int!
+    # Compare this length with inviteLimit to check for expiry.
+    joinedUserIds: [String!]!
     # Owner or admin of the group.
     User: UserSummary!
-    # Only updated by the sever when user joins via this token.
-    joinedUserIds: [String!]!
   }
 
   input CreateClubInviteTokenInput {

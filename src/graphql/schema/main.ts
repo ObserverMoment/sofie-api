@@ -93,7 +93,9 @@ export default gql`
     createClubInviteToken(data: CreateClubInviteTokenInput!): ClubInviteToken!
     updateClubInviteToken(data: UpdateClubInviteTokenInput!): ClubInviteToken!
     deleteClubInviteTokenById(id: ID!): ID!
+    #### Club Member Management ####
     addUserToClubViaInviteToken(userId: ID!, clubInviteTokenId: ID!): Club!
+    removeUserFromClub(userToRemoveId: ID!, clubId: ID!): Club!
     #### Equipment ####
     createEquipment(data: CreateEquipmentInput!): Equipment
     updateEquipment(data: UpdateEquipmentInput!): Equipment

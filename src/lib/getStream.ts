@@ -5,6 +5,7 @@ export let streamFeedClient: StreamClient | null = null
 export let streamChatClient: StreamChat | null = null
 
 const CLUB_MEMBERS_CHAT_CHANNEL_NAME = 'club_members'
+const CLUB_MEMBERS_FEED_NAME = 'club_members_feed'
 
 /// Call this when booting app. Sets up clients for chat and feeds.
 export function initGetStreamClients() {
@@ -63,6 +64,27 @@ export function getUserFeedToken(userId: string): string {
       throw Error('streamFeedClient not initialized')
     }
     return streamFeedClient!.createUserToken(userId)
+  } catch (e) {
+    console.log(e)
+    throw new Error(e)
+  }
+}
+
+/// Run this when you create a new club.
+export async function createStreamClubMemberFeed(
+  clubId: string,
+  creatorId: string,
+) {
+  try {
+    if (!streamFeedClient) {
+      throw Error('streamFeedClient not initialized')
+    }
+    // Create the new feed.
+    await streamFeedClient.feed(CLUB_MEMBERS_FEED_NAME, clubId).addActivity({
+      actor: `SU:${creatorId}`,
+      object: 'Created',
+      verb: 'club-post',
+    })
   } catch (e) {
     console.log(e)
     throw new Error(e)

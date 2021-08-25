@@ -143,7 +143,7 @@ export const userPublicProfileById = async (
   { select, prisma }: Context,
 ) => {
   const user = await prisma.user.findFirst({
-    where: { id: userId, userProfileScope: 'PUBLIC' },
+    where: { id: userId },
     select: {
       ...select,
       Workouts: {

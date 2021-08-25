@@ -288,13 +288,13 @@ model ClubInviteToken {
   // How many times can this token be used.
   // 0 means unlimited.
   inviteLimit   Int      @default(0)
-  invitesUsed   Int
+  // Add each joining user id to this list and compare its length vs invite limit to check expiry.
+  joinedUserIds String[]
   // Owner or admin of the group.
   User          User     @relation(fields: [userId], references: [id])
   userId        String
   Club          Club     @relation(fields: [clubId], references: [id], onDelete: Cascade)
   clubId        String
-  joinedUserIds String[]
 }
 
 /// When a user requests to join a club.

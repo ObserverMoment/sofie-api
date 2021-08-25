@@ -9,6 +9,7 @@ import {
   MutationCreateClubInviteTokenArgs,
   MutationDeleteClubByIdArgs,
   MutationDeleteClubInviteTokenByIdArgs,
+  MutationRemoveUserFromClubArgs,
   MutationUpdateClubArgs,
   MutationUpdateClubInviteTokenArgs,
   QueryClubByIdArgs,
@@ -17,8 +18,10 @@ import {
   addStreamUserToClubMemberChat,
   createStreamClubMemberChat,
   deleteStreamClubMemberChat,
+  removeStreamUserFromClubMemberChat,
 } from '../../lib/getStream'
 import { checkClubMediaForDeletion, deleteFiles } from '../../lib/uploadcare'
+import { ClubWithMemberIdsPayload } from '../../types'
 import { AccessScopeError } from '../utils'
 
 //// Queries ////
@@ -142,7 +145,6 @@ export const createClubInviteToken = async (
     data: {
       ...data,
       active: true,
-      invitesUsed: 0,
       Club: {
         connect: data.Club,
       },
@@ -225,7 +227,7 @@ export const addUserToClubViaInviteToken = async (
     select: {
       clubId: true,
       inviteLimit: true,
-      invitesUsed: true,
+      joinedUserIds: true,
     },
   })
 
@@ -238,7 +240,7 @@ export const addUserToClubViaInviteToken = async (
 
   if (
     clubInviteToken!.inviteLimit !== 0 &&
-    clubInviteToken!.invitesUsed >= clubInviteToken!.inviteLimit
+    clubInviteToken!.joinedUserIds.length >= clubInviteToken!.inviteLimit
   ) {
     // Token has maxed out
     throw new ApolloError(
@@ -259,7 +261,9 @@ export const addUserToClubViaInviteToken = async (
   const updateTokenInvitesUsed = prisma.clubInviteToken.update({
     where: { id: clubInviteTokenId },
     data: {
-      invitesUsed: clubInviteToken!.invitesUsed + 1,
+      joinedUserIds: {
+        set: [...clubInviteToken!.joinedUserIds, userId],
+      },
     },
   })
 
@@ -277,6 +281,152 @@ export const addUserToClubViaInviteToken = async (
   }
 }
 
+export const removeUserFromClub = async (
+  r: any,
+  { userToRemoveId, clubId }: MutationRemoveUserFromClubArgs,
+  { authedUserId, select, prisma }: Context,
+) => {
+  let result = await checkIfAllowedToRemoveUser(
+    authedUserId,
+    userToRemoveId,
+    clubId,
+    prisma,
+  )
+
+  if (!result.allowed) {
+    throw new ApolloError(
+      `checkIfAllowedToRemoveUser: You are not allowed to remove this user from this club. Reason: ${result.message}`,
+    )
+  }
+
+  const disconnect = { disconnect: { id: userToRemoveId } }
+
+  const updatedClub = await prisma.club.update({
+    where: { id: clubId },
+    data: {
+      Admins: result.memberType === 'ADMIN' ? disconnect : undefined,
+      Members: result.memberType === 'MEMBER' ? disconnect : undefined,
+    },
+    select,
+  })
+
+  if (updatedClub) {
+    /// Remove the member to the GetStream chat group.
+    await removeStreamUserFromClubMemberChat(
+      (updatedClub as Club).id,
+      userToRemoveId,
+    )
+    return updatedClub as Club
+  } else {
+    throw new ApolloError('removeUserFromClub: There was an issue.')
+  }
+}
+
+// You can only remove a user type with a lower value that yourself as the authed user.
+type ClubMemberType = 'OWNER' | 'ADMIN' | 'MEMBER' | 'NONE'
+const memberTypeScoreMap: { [key in ClubMemberType]: number } = {
+  OWNER: 3,
+  ADMIN: 2,
+  MEMBER: 1,
+  NONE: 0,
+}
+
+interface CheckIfAllowedToRemoveUserResult {
+  allowed: boolean
+  memberType: ClubMemberType
+  message?: string
+}
+
+async function checkIfAllowedToRemoveUser(
+  authedUserId: string,
+  userToRemoveId: string,
+  clubId: string,
+  prisma: PrismaClient,
+): Promise<CheckIfAllowedToRemoveUserResult> {
+  const club = await prisma.club.findUnique({
+    where: { id: clubId },
+    select: {
+      Owner: {
+        select: { id: true },
+      },
+      Admins: {
+        select: { id: true },
+      },
+      Members: {
+        select: { id: true },
+      },
+    },
+  })
+
+  if (!club) {
+    throw new ApolloError(
+      'checkIfAllowedToRemoveUser: Could not retrieve the club you are trying to remove from.',
+    )
+  }
+
+  const authedUserType: ClubMemberType = getUserClubMemberType(
+    club,
+    authedUserId,
+  )
+
+  const typeOfUserToRemove: ClubMemberType = getUserClubMemberType(
+    club,
+    userToRemoveId,
+  )
+
+  // The user can remove themselves, this is always allowed.
+  if (userToRemoveId === authedUserId) {
+    return {
+      allowed: true,
+      memberType: typeOfUserToRemove,
+    }
+  }
+
+  if (typeOfUserToRemove === 'OWNER') {
+    return {
+      allowed: false,
+      memberType: typeOfUserToRemove,
+      message:
+        'checkIfAllowedToRemoveUser: You cannot remove an owner from the club. The club would need to be deleted or another owner would need to be assigned.',
+    }
+  }
+
+  if (typeOfUserToRemove === 'NONE') {
+    throw new ApolloError(
+      'checkIfAllowedToRemoveUser: Could not find the user you are trying to remove in the club that you have specified.',
+    )
+  }
+
+  if (
+    memberTypeScoreMap[authedUserType] <= memberTypeScoreMap[typeOfUserToRemove]
+  ) {
+    return {
+      allowed: false,
+      memberType: typeOfUserToRemove,
+      message:
+        'checkIfAllowedToRemoveUser: The authed user can only remove other users with a lower access level type than themselves.',
+    }
+  }
+
+  return {
+    allowed: true,
+    memberType: typeOfUserToRemove,
+  }
+}
+
+function getUserClubMemberType(
+  club: ClubWithMemberIdsPayload,
+  userId: string,
+): ClubMemberType {
+  return club!.Owner.id === userId
+    ? 'OWNER'
+    : club!.Admins.some((a) => a.id === userId)
+    ? 'ADMIN'
+    : club!.Members.some((m) => m.id === userId)
+    ? 'MEMBER'
+    : 'NONE'
+}
+
 //// Check that a user if either the owner or an admin of a club ////
 //// Non-standard vs most other DB objects which only have a single User connected with CRUD access. ////
 //// Club can have one Owner and many Admins ////
@@ -289,24 +439,20 @@ async function checkUserIsOwnerOrAdmin(
   if (objectType === 'club') {
     await checkUserIsOwnerOrAdminOfClub(objectId, authedUserId, prisma)
   } else {
-    const tokenForDeletion = await prisma.clubInviteToken.findUnique({
+    const token = await prisma.clubInviteToken.findUnique({
       where: { id: objectId },
       select: {
         clubId: true,
       },
     })
 
-    if (!tokenForDeletion || !tokenForDeletion.clubId) {
+    if (!token || !token.clubId) {
       throw new ApolloError(
         'checkUserIsOwnerOrAdmin: Could not retrieve the parent club of this invite token.',
       )
     }
 
-    await checkUserIsOwnerOrAdminOfClub(
-      tokenForDeletion.clubId,
-      authedUserId,
-      prisma,
-    )
+    await checkUserIsOwnerOrAdminOfClub(token.clubId, authedUserId, prisma)
   }
 }
 

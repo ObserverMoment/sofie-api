@@ -119,9 +119,8 @@ export type ClubInviteToken = {
   active: Scalars['Boolean'];
   name: Scalars['String'];
   inviteLimit: Scalars['Int'];
-  invitesUsed: Scalars['Int'];
-  User: UserSummary;
   joinedUserIds: Array<Scalars['String']>;
+  User: UserSummary;
 };
 
 export type ClubInviteTokenData = {
@@ -665,6 +664,7 @@ export type Mutation = {
   updateClubInviteToken: ClubInviteToken;
   deleteClubInviteTokenById: Scalars['ID'];
   addUserToClubViaInviteToken: Club;
+  removeUserFromClub: Club;
   createEquipment?: Maybe<Equipment>;
   updateEquipment?: Maybe<Equipment>;
   createGymProfile: GymProfile;
@@ -805,6 +805,12 @@ export type MutationDeleteClubInviteTokenByIdArgs = {
 export type MutationAddUserToClubViaInviteTokenArgs = {
   userId: Scalars['ID'];
   clubInviteTokenId: Scalars['ID'];
+};
+
+
+export type MutationRemoveUserFromClubArgs = {
+  userToRemoveId: Scalars['ID'];
+  clubId: Scalars['ID'];
 };
 
 
@@ -2770,9 +2776,8 @@ export type ClubInviteTokenResolvers<ContextType = any, ParentType extends Resol
   active?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   inviteLimit?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  invitesUsed?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  User?: Resolver<ResolversTypes['UserSummary'], ParentType, ContextType>;
   joinedUserIds?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
+  User?: Resolver<ResolversTypes['UserSummary'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -2978,6 +2983,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   updateClubInviteToken?: Resolver<ResolversTypes['ClubInviteToken'], ParentType, ContextType, RequireFields<MutationUpdateClubInviteTokenArgs, 'data'>>;
   deleteClubInviteTokenById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteClubInviteTokenByIdArgs, 'id'>>;
   addUserToClubViaInviteToken?: Resolver<ResolversTypes['Club'], ParentType, ContextType, RequireFields<MutationAddUserToClubViaInviteTokenArgs, 'userId' | 'clubInviteTokenId'>>;
+  removeUserFromClub?: Resolver<ResolversTypes['Club'], ParentType, ContextType, RequireFields<MutationRemoveUserFromClubArgs, 'userToRemoveId' | 'clubId'>>;
   createEquipment?: Resolver<Maybe<ResolversTypes['Equipment']>, ParentType, ContextType, RequireFields<MutationCreateEquipmentArgs, 'data'>>;
   updateEquipment?: Resolver<Maybe<ResolversTypes['Equipment']>, ParentType, ContextType, RequireFields<MutationUpdateEquipmentArgs, 'data'>>;
   createGymProfile?: Resolver<ResolversTypes['GymProfile'], ParentType, ContextType, RequireFields<MutationCreateGymProfileArgs, 'data'>>;

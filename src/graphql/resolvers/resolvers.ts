@@ -21,6 +21,7 @@ import {
   updateClubInviteToken,
   deleteClubInviteTokenById,
   addUserToClubViaInviteToken,
+  removeUserFromClub,
 } from './club'
 
 import {
@@ -340,14 +341,18 @@ const resolvers: Resolvers = {
     createClubInviteToken,
     updateClubInviteToken,
     deleteClubInviteTokenById,
+    ///////////////////////
+    //// Club Members /////
+    //////////////////////
     addUserToClubViaInviteToken,
+    removeUserFromClub,
     ///////////////////
     //// Equipment ////
     ///////////////////
     createEquipment,
     updateEquipment,
     //////////////////////////
-    //// Gym Profile ////
+    //// Gym Profile /////////
     //////////////////////////
     createGymProfile,
     updateGymProfile,

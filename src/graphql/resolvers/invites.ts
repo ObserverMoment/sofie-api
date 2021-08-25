@@ -18,7 +18,7 @@ export const checkClubInviteToken = async (
     select: {
       id: true,
       inviteLimit: true,
-      invitesUsed: true,
+      joinedUserIds: true,
       clubId: true,
     },
   })
@@ -32,7 +32,7 @@ export const checkClubInviteToken = async (
 
   if (
     clubInviteToken!.inviteLimit !== 0 &&
-    clubInviteToken!.invitesUsed >= clubInviteToken!.inviteLimit
+    clubInviteToken!.joinedUserIds.length >= clubInviteToken!.inviteLimit
   ) {
     /// Token has maxed out
     return {
