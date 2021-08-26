@@ -9,6 +9,8 @@ import {
   MutationCreateClubInviteTokenArgs,
   MutationDeleteClubByIdArgs,
   MutationDeleteClubInviteTokenByIdArgs,
+  MutationGiveMemberAdminStatusArgs,
+  MutationRemoveMemberAdminStatusArgs,
   MutationRemoveUserFromClubArgs,
   MutationUpdateClubArgs,
   MutationUpdateClubInviteTokenArgs,
@@ -281,6 +283,60 @@ export const addUserToClubViaInviteToken = async (
   }
 }
 
+export const giveMemberAdminStatus = async (
+  r: any,
+  { userId, clubId }: MutationGiveMemberAdminStatusArgs,
+  { authedUserId, select, prisma }: Context,
+) => {
+  await checkUserIsOwnerOfClub(clubId, authedUserId, prisma)
+
+  const updatedClub = await prisma.club.update({
+    where: { id: clubId },
+    data: {
+      Admins: {
+        connect: { id: userId },
+      },
+      Members: {
+        disconnect: { id: userId },
+      },
+    },
+    select,
+  })
+
+  if (updatedClub) {
+    return updatedClub as Club
+  } else {
+    throw new ApolloError('giveMemberAdminStatus: There was an issue.')
+  }
+}
+
+export const removeMemberAdminStatus = async (
+  r: any,
+  { userId, clubId }: MutationRemoveMemberAdminStatusArgs,
+  { authedUserId, select, prisma }: Context,
+) => {
+  await checkUserIsOwnerOfClub(clubId, authedUserId, prisma)
+
+  const updatedClub = await prisma.club.update({
+    where: { id: clubId },
+    data: {
+      Admins: {
+        disconnect: { id: userId },
+      },
+      Members: {
+        connect: { id: userId },
+      },
+    },
+    select,
+  })
+
+  if (updatedClub) {
+    return updatedClub as Club
+  } else {
+    throw new ApolloError('removeMemberAdminStatus: There was an issue.')
+  }
+}
+
 export const removeUserFromClub = async (
   r: any,
   { userToRemoveId, clubId }: MutationRemoveUserFromClubArgs,
@@ -456,6 +512,22 @@ async function checkUserIsOwnerOrAdmin(
   }
 }
 
+async function checkUserIsOwnerOfClub(
+  clubId: string,
+  authedUserId: string,
+  prisma: PrismaClient,
+) {
+  const obj = await prisma.club.findFirst({
+    where: {
+      id: clubId,
+      Owner: { id: authedUserId },
+    },
+  })
+  if (!obj || obj.userId !== authedUserId) {
+    throw new AccessScopeError('User is not owner: checkUserIsOwnerOfClub')
+  }
+}
+
 async function checkUserIsOwnerOrAdminOfClub(
   clubId: string,
   authedUserId: string,
@@ -471,6 +543,8 @@ async function checkUserIsOwnerOrAdminOfClub(
     },
   })
   if (!obj || obj.userId !== authedUserId) {
-    throw new AccessScopeError()
+    throw new AccessScopeError(
+      'User is not owner or admin: checkUserIsOwnerOrAdminOfClub',
+    )
   }
 }

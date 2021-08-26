@@ -663,6 +663,8 @@ export type Mutation = {
   createClubInviteToken: ClubInviteToken;
   updateClubInviteToken: ClubInviteToken;
   deleteClubInviteTokenById: Scalars['ID'];
+  giveMemberAdminStatus: Club;
+  removeMemberAdminStatus: Club;
   addUserToClubViaInviteToken: Club;
   removeUserFromClub: Club;
   createEquipment?: Maybe<Equipment>;
@@ -799,6 +801,18 @@ export type MutationUpdateClubInviteTokenArgs = {
 
 export type MutationDeleteClubInviteTokenByIdArgs = {
   id: Scalars['ID'];
+};
+
+
+export type MutationGiveMemberAdminStatusArgs = {
+  userId: Scalars['ID'];
+  clubId: Scalars['ID'];
+};
+
+
+export type MutationRemoveMemberAdminStatusArgs = {
+  userId: Scalars['ID'];
+  clubId: Scalars['ID'];
 };
 
 
@@ -2982,6 +2996,8 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createClubInviteToken?: Resolver<ResolversTypes['ClubInviteToken'], ParentType, ContextType, RequireFields<MutationCreateClubInviteTokenArgs, 'data'>>;
   updateClubInviteToken?: Resolver<ResolversTypes['ClubInviteToken'], ParentType, ContextType, RequireFields<MutationUpdateClubInviteTokenArgs, 'data'>>;
   deleteClubInviteTokenById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteClubInviteTokenByIdArgs, 'id'>>;
+  giveMemberAdminStatus?: Resolver<ResolversTypes['Club'], ParentType, ContextType, RequireFields<MutationGiveMemberAdminStatusArgs, 'userId' | 'clubId'>>;
+  removeMemberAdminStatus?: Resolver<ResolversTypes['Club'], ParentType, ContextType, RequireFields<MutationRemoveMemberAdminStatusArgs, 'userId' | 'clubId'>>;
   addUserToClubViaInviteToken?: Resolver<ResolversTypes['Club'], ParentType, ContextType, RequireFields<MutationAddUserToClubViaInviteTokenArgs, 'userId' | 'clubInviteTokenId'>>;
   removeUserFromClub?: Resolver<ResolversTypes['Club'], ParentType, ContextType, RequireFields<MutationRemoveUserFromClubArgs, 'userToRemoveId' | 'clubId'>>;
   createEquipment?: Resolver<Maybe<ResolversTypes['Equipment']>, ParentType, ContextType, RequireFields<MutationCreateEquipmentArgs, 'data'>>;

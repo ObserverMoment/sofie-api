@@ -94,6 +94,8 @@ export default gql`
     updateClubInviteToken(data: UpdateClubInviteTokenInput!): ClubInviteToken!
     deleteClubInviteTokenById(id: ID!): ID!
     #### Club Member Management ####
+    giveMemberAdminStatus(userId: ID!, clubId: ID!): Club!
+    removeMemberAdminStatus(userId: ID!, clubId: ID!): Club!
     addUserToClubViaInviteToken(userId: ID!, clubInviteTokenId: ID!): Club!
     removeUserFromClub(userToRemoveId: ID!, clubId: ID!): Club!
     #### Equipment ####
