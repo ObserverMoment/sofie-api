@@ -542,7 +542,7 @@ async function checkUserIsOwnerOrAdminOfClub(
       ],
     },
   })
-  if (!obj || obj.userId !== authedUserId) {
+  if (!obj) {
     throw new AccessScopeError(
       'User is not owner or admin: checkUserIsOwnerOrAdminOfClub',
     )
