@@ -1,11 +1,27 @@
 import { StreamChat } from 'stream-chat'
-import { connect, StreamClient } from 'getstream'
+import {
+  connect,
+  FlatActivity,
+  FlatActivityEnriched,
+  StreamClient,
+} from 'getstream'
+import {
+  TimelinePostDataRequestInput,
+  TimelinePostType,
+} from '../generated/graphql'
 
 export let streamFeedClient: StreamClient | null = null
 export let streamChatClient: StreamChat | null = null
 
 const CLUB_MEMBERS_CHAT_CHANNEL_NAME = 'club_members'
+// Club members feeds are private for club members only and CRUD for these is handled on the server to ensure data security.
 const CLUB_MEMBERS_FEED_NAME = 'club_members_feed'
+
+// Users post to their own feeds. Other users can follow these feeds via their timelines.
+const USER_FEED_NAME = 'user_feed'
+// Timelines follow feeds and they are what users view when they see their timleine.
+const USER_TIMELINE_FEED_NAME = 'user_timeline'
+const USER_NOTIFICATION_NAME = 'user_notification'
 
 /// Call this when booting app. Sets up clients for chat and feeds.
 export function initGetStreamClients() {
@@ -85,6 +101,121 @@ export async function createStreamClubMemberFeed(
       object: 'Created',
       verb: 'club-post',
     })
+  } catch (e) {
+    console.log(e)
+    throw new Error(e)
+  }
+}
+
+type FollowActionType = 'FOLLOW' | 'UNFOLLOW'
+
+export async function toggleFollowClubMembersFeed(
+  clubId: string,
+  authedUserId: string,
+  action: FollowActionType,
+) {
+  try {
+    if (!streamFeedClient) {
+      throw Error('streamFeedClient not initialized')
+    }
+
+    const userTimeline = streamFeedClient.feed(
+      USER_TIMELINE_FEED_NAME,
+      authedUserId,
+    )
+
+    if (action == 'FOLLOW') {
+      await userTimeline.follow(CLUB_MEMBERS_FEED_NAME, clubId)
+    } else {
+      await userTimeline.unfollow(CLUB_MEMBERS_FEED_NAME, clubId, {
+        // Err on the side of caution re. club feed data.
+        keepHistory: false,
+      })
+    }
+  } catch (e) {
+    console.log(e)
+    throw new Error(e)
+  }
+}
+
+export async function createStreamClubMembersFeedActivity(
+  clubId: string,
+  authedUserId: string,
+  {
+    object,
+    caption,
+    tags,
+  }: { verb: string; object: string; caption?: string; tags: string[] },
+) {
+  try {
+    if (!streamFeedClient) {
+      throw Error('streamFeedClient not initialized')
+    }
+    // Create the new activity.
+    return await streamFeedClient
+      .feed(CLUB_MEMBERS_FEED_NAME, clubId)
+      .addActivity({
+        actor: `SU:${authedUserId}`,
+        verb: 'club-post',
+        object: object,
+        caption: caption,
+        tags: tags,
+      })
+  } catch (e) {
+    console.log(e)
+    throw new Error(e)
+  }
+}
+
+interface ActivityData {
+  activityId: string
+  postedAt: Date
+  caption?: string
+  tags: string[]
+  dataRequestInput: TimelinePostDataRequestInput
+}
+
+export async function getStreamClubMembersFeedActivities(
+  clubId: string,
+  limit: number,
+  offset: number,
+): Promise<ActivityData[]> {
+  try {
+    if (!streamFeedClient) {
+      throw Error('streamFeedClient not initialized')
+    }
+
+    // Create the new feed.
+    const response = await streamFeedClient
+      .feed(CLUB_MEMBERS_FEED_NAME, clubId)
+      .get({
+        limit: limit,
+        offset: offset,
+      })
+
+    // Data from the activity that we want to extract as well as the ids of objects that we need to get from the database.
+    // Note that [TimelinePostType] is a graphql schema enum and is therefore CAPITALIZED.
+    // We should send already capitalized like [WORKOUT:6c35a392-19cd-4b13-bb7b-a45e643fc697]
+    // This is an extra check...
+    const activityData: ActivityData[] =
+      // Should be a [FlatActivity[]] but we need to index into custom fields
+      // So set as [any] for now.
+      (response.results as any[]).map((a: any) => ({
+        activityId: a.id,
+        postedAt: new Date(a.time),
+        caption: a['caption'],
+        tags: a['tags'],
+        dataRequestInput: {
+          activityId: a.id,
+          posterId: (a.actor as string).split(':')[1],
+          objectId: (a.object as string).split(':')[1],
+          objectType: (a.object as string)
+            .split(':')[0]
+            .toUpperCase() as TimelinePostType,
+        },
+      }))
+
+    return activityData
   } catch (e) {
     console.log(e)
     throw new Error(e)

@@ -15,6 +15,7 @@ import {
   userClubs,
   clubSummaries,
   clubById,
+  clubMembersFeedPosts,
   createClub,
   updateClub,
   deleteClubById,
@@ -279,6 +280,7 @@ const resolvers: Resolvers = {
     clubSummaries,
     userClubs,
     clubById,
+    clubMembersFeedPosts,
     ///// Discover ////
     discoverFeatured,
     discoverWorkoutCategories,
@@ -306,6 +308,7 @@ const resolvers: Resolvers = {
     textSearchUserPublicProfiles,
     textSearchUserPublicNames,
     //// Timeline Feed ////
+    // The data associated with Activities and required to display posts //
     timelinePostsData,
     //// User ////
     authedUser,

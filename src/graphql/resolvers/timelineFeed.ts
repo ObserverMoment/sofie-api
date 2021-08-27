@@ -1,14 +1,15 @@
-import { Prisma, PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@prisma/client'
 import { ApolloError } from 'apollo-server-express'
 import { Context } from '../..'
 import {
   QueryTimelinePostsDataArgs,
-  TimelinePostData,
+  TimelinePostDataRequestInput,
+  TimelinePostObjectData,
   TimelinePostType,
 } from '../../generated/graphql'
 
 /// The object and the creator of the object.
-interface TimelinePostObjectData {
+interface ObjectAndCreatorData {
   creator: {
     id: string
     displayName: string
@@ -60,7 +61,16 @@ export const timelinePostsData = async (
   r: any,
   { postDataRequests }: QueryTimelinePostsDataArgs,
   { prisma }: Context,
-): Promise<TimelinePostData[]> => {
+): Promise<TimelinePostObjectData[]> => {
+  // Delegated as this process is also used but other resolvers.
+  // ClubMembersFeedPosts uses this.
+  return await timelinePostDataFromInputRequests(postDataRequests, prisma)
+}
+
+export async function timelinePostDataFromInputRequests(
+  postDataRequests: TimelinePostDataRequestInput[],
+  prisma: PrismaClient,
+): Promise<TimelinePostObjectData[]> {
   /// All the user data required for the batch (post creators and object creators)
   const uniquePosterIds: string[] = [
     ...postDataRequests.reduce((unique, next) => {
@@ -101,43 +111,46 @@ export const timelinePostsData = async (
     }),
   )
 
-  const objectsFlat: TimelinePostObjectData[] = objects.flat()
+  const objectsFlat: ObjectAndCreatorData[] = objects.flat()
 
-  const responses: TimelinePostData[] = postDataRequests.map((request) => {
-    /// TODO: Need to handle when poster, creator or object cannot be found. Or if fields are missing.
-    /// Currently just casting to non nullable an assuming this won't happen.
-    const poster = posters.find((p) => p.id === request.posterId)
-    const object = objectsFlat.find((o) => o.id === request.objectId)
-    return {
-      poster: {
-        id: poster!.id,
-        displayName: poster!.displayName,
-        avatarUri: poster?.avatarUri,
-      },
-      creator: {
-        id: object!.creator!.id,
-        displayName: object!.creator!.displayName,
-        avatarUri: object!.creator?.avatarUri,
-      },
-      object: {
-        id: object!.id,
-        type: object!.type,
-        name: object!.name,
-        introAudioUri: object?.introAudioUri || undefined,
-        coverImageUri: object?.coverImageUri || undefined,
-        introVideoUri: object?.introVideoUri || undefined,
-        introVideoThumbUri: object?.introVideoThumbUri || undefined,
-      },
-    }
-  })
+  const responses: TimelinePostObjectData[] = postDataRequests.map(
+    (request) => {
+      /// TODO: Need to handle when poster, creator or object cannot be found. Or if fields are missing.
+      /// Currently just casting to non nullable and assuming this won't happen.
+      const poster = posters.find((p) => p.id === request.posterId)
+      const object = objectsFlat.find((o) => o.id === request.objectId)
+      return {
+        activityId: request.activityId,
+        poster: {
+          id: poster!.id,
+          displayName: poster!.displayName,
+          avatarUri: poster?.avatarUri,
+        },
+        creator: {
+          id: object!.creator!.id,
+          displayName: object!.creator!.displayName,
+          avatarUri: object!.creator?.avatarUri,
+        },
+        object: {
+          id: object!.id,
+          type: object!.type,
+          name: object!.name,
+          introAudioUri: object?.introAudioUri || undefined,
+          coverImageUri: object?.coverImageUri || undefined,
+          introVideoUri: object?.introVideoUri || undefined,
+          introVideoThumbUri: object?.introVideoThumbUri || undefined,
+        },
+      }
+    },
+  )
 
-  return responses as TimelinePostData[]
+  return responses as TimelinePostObjectData[]
 }
 
 async function workoutPostsData(
   ids: string[],
   prisma: PrismaClient,
-): Promise<TimelinePostObjectData[]> {
+): Promise<ObjectAndCreatorData[]> {
   const responses = await prisma.workout.findMany({
     where: { id: { in: ids } },
     select: selectFields,
@@ -155,7 +168,7 @@ async function workoutPostsData(
 async function workoutPlanPostsData(
   ids: string[],
   prisma: PrismaClient,
-): Promise<TimelinePostObjectData[]> {
+): Promise<ObjectAndCreatorData[]> {
   const responses = await prisma.workoutPlan.findMany({
     where: { id: { in: ids } },
     select: selectFields,

@@ -17,6 +17,11 @@ export default gql`
     clubSummaries(ids: [ID!]!): [ClubPublicSummary!]!
     userClubs: [Club!]!
     clubById(id: ID!): Club!
+    clubMembersFeedPosts(
+      clubId: ID!
+      limit: Int!
+      offset: Int!
+    ): [TimelinePostFullData!]!
     #### Discover Pages and Types ####
     discoverFeatured: [DiscoverFeatured!]!
     discoverWorkoutCategories: [DiscoverWorkoutCategory!]!
@@ -48,7 +53,7 @@ export default gql`
     # Gets DB objects referenced in getStream activities (posts) and maps fields to those required for displaying in a timeline or feed #
     timelinePostsData(
       postDataRequests: [TimelinePostDataRequestInput!]!
-    ): [TimelinePostData!]!
+    ): [TimelinePostObjectData!]!
     #### User ####
     authedUser: User!
     checkUniqueDisplayName(displayName: String!): Boolean!
