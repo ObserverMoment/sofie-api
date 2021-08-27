@@ -13,6 +13,8 @@ export default gql`
     workoutGoals: [WorkoutGoal!]!
     workoutSectionTypes: [WorkoutSectionType!]!
     #### Clubs ####
+    # Public club summary data for use displaying chat previews and other lists.
+    clubSummaries(ids: [ID!]!): [ClubPublicSummary!]!
     userClubs: [Club!]!
     clubById(id: ID!): Club!
     #### Discover Pages and Types ####

@@ -4,6 +4,7 @@ import { Context } from '../..'
 import {
   Club,
   ClubInviteToken,
+  ClubPublicSummary,
   MutationAddUserToClubViaInviteTokenArgs,
   MutationCreateClubArgs,
   MutationCreateClubInviteTokenArgs,
@@ -45,11 +46,26 @@ export const userClubs = async (
   return clubs as Club[]
 }
 
+/// Just the bare minumum data such as name and cover image.
+/// Only public data should be serialized here.
+export const clubSummaries = async (
+  r: any,
+  { ids }: any,
+  { select, prisma }: Context,
+) => {
+  const clubs = await prisma.club.findMany({
+    where: { id: { in: ids } },
+    select,
+  })
+  return clubs as ClubPublicSummary[]
+}
+
 export const clubById = async (
   r: any,
   { id }: QueryClubByIdArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
+  await checkUserIsMemberOfClub(id, authedUserId, prisma)
   const club = await prisma.club.findUnique({
     where: { id },
     select,
@@ -522,6 +538,9 @@ async function checkUserIsOwnerOfClub(
       id: clubId,
       Owner: { id: authedUserId },
     },
+    select: {
+      userId: true,
+    },
   })
   if (!obj || obj.userId !== authedUserId) {
     throw new AccessScopeError('User is not owner: checkUserIsOwnerOfClub')
@@ -541,10 +560,35 @@ async function checkUserIsOwnerOrAdminOfClub(
         { Admins: { some: { id: authedUserId } } },
       ],
     },
+    select: { id: true },
   })
   if (!obj) {
     throw new AccessScopeError(
       'User is not owner or admin: checkUserIsOwnerOrAdminOfClub',
+    )
+  }
+}
+
+async function checkUserIsMemberOfClub(
+  clubId: string,
+  authedUserId: string,
+  prisma: PrismaClient,
+) {
+  const obj = await prisma.club.findFirst({
+    where: {
+      id: clubId,
+      OR: [
+        { Owner: { id: authedUserId } },
+        { Admins: { some: { id: authedUserId } } },
+        { Members: { some: { id: authedUserId } } },
+      ],
+    },
+    select: { id: true },
+  })
+
+  if (!obj) {
+    throw new AccessScopeError(
+      'User is not a member of this club: checkUserIsMemberOfClub',
     )
   }
 }

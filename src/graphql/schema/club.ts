@@ -22,6 +22,12 @@ export default gql`
     JoinClubRequests: [JoinClubRequest!]!
   }
 
+  type ClubPublicSummary {
+    id: ID!
+    name: String!
+    coverImageUri: String
+  }
+
   input CreateClubInput {
     name: String!
     description: String
