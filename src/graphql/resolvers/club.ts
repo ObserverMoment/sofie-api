@@ -16,21 +16,17 @@ import {
   MutationUpdateClubArgs,
   MutationUpdateClubInviteTokenArgs,
   QueryClubByIdArgs,
-  QueryClubMembersFeedPostsArgs,
   QueryClubSummariesArgs,
-  TimelinePostFullData,
 } from '../../generated/graphql'
 import {
   addStreamUserToClubMemberChat,
   createStreamClubMemberChat,
   deleteStreamClubMemberChat,
-  getStreamClubMembersFeedActivities,
   removeStreamUserFromClubMemberChat,
 } from '../../lib/getStream'
 import { checkClubMediaForDeletion, deleteFiles } from '../../lib/uploadcare'
 import { ClubWithMemberIdsPayload } from '../../types'
 import { AccessScopeError } from '../utils'
-import { timelinePostDataFromInputRequests } from './timelineFeed'
 
 //// Queries ////
 export const userClubs = async (
@@ -76,45 +72,6 @@ export const clubById = async (
     select,
   })
   return club as Club
-}
-
-// Calls Stream.io to get the activities.
-// Then does the work necessary to collect the data needed to display as a timeline.
-export const clubMembersFeedPosts = async (
-  r: any,
-  { clubId, limit, offset }: QueryClubMembersFeedPostsArgs,
-  { authedUserId, prisma }: Context,
-) => {
-  await checkUserIsMemberOfClub(clubId, authedUserId, prisma)
-
-  const activityData = await getStreamClubMembersFeedActivities(
-    clubId,
-    limit,
-    offset,
-  )
-
-  const postsObjectData = await timelinePostDataFromInputRequests(
-    activityData.map((ad) => ad.dataRequestInput),
-    prisma,
-  )
-
-  const postsWithFullData = activityData.map((ad) => {
-    const objectData = postsObjectData.find(
-      (o) => o.activityId === ad.activityId,
-    )!
-
-    return {
-      activityId: ad.activityId,
-      postedAt: ad.postedAt,
-      caption: ad.caption,
-      tags: ad.tags,
-      poster: objectData.poster,
-      creator: objectData.creator,
-      object: objectData.object,
-    }
-  })
-
-  return postsWithFullData as TimelinePostFullData[]
 }
 
 //// Mutations ////
@@ -546,7 +503,7 @@ function getUserClubMemberType(
 //// Check that a user if either the owner or an admin of a club ////
 //// Non-standard vs most other DB objects which only have a single User connected with CRUD access. ////
 //// Club can have one Owner and many Admins ////
-async function checkUserIsOwnerOrAdmin(
+export async function checkUserIsOwnerOrAdmin(
   objectId: string,
   objectType: 'club' | 'clubInviteToken',
   authedUserId: string,
@@ -572,7 +529,7 @@ async function checkUserIsOwnerOrAdmin(
   }
 }
 
-async function checkUserIsOwnerOfClub(
+export async function checkUserIsOwnerOfClub(
   clubId: string,
   authedUserId: string,
   prisma: PrismaClient,
@@ -591,7 +548,7 @@ async function checkUserIsOwnerOfClub(
   }
 }
 
-async function checkUserIsOwnerOrAdminOfClub(
+export async function checkUserIsOwnerOrAdminOfClub(
   clubId: string,
   authedUserId: string,
   prisma: PrismaClient,
@@ -613,7 +570,7 @@ async function checkUserIsOwnerOrAdminOfClub(
   }
 }
 
-async function checkUserIsMemberOfClub(
+export async function checkUserIsMemberOfClub(
   clubId: string,
   authedUserId: string,
   prisma: PrismaClient,

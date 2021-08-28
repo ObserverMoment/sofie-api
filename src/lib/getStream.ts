@@ -1,14 +1,11 @@
 import { StreamChat } from 'stream-chat'
-import {
-  connect,
-  FlatActivity,
-  FlatActivityEnriched,
-  StreamClient,
-} from 'getstream'
+import { connect, StreamClient } from 'getstream'
 import {
   TimelinePostDataRequestInput,
   TimelinePostType,
 } from '../generated/graphql'
+import { PrismaClient } from '@prisma/client'
+import { checkUserIsOwnerOrAdminOfClub } from '../graphql/resolvers/club'
 
 export let streamFeedClient: StreamClient | null = null
 export let streamChatClient: StreamChat | null = null
@@ -86,27 +83,6 @@ export function getUserFeedToken(userId: string): string {
   }
 }
 
-/// Run this when you create a new club.
-export async function createStreamClubMemberFeed(
-  clubId: string,
-  creatorId: string,
-) {
-  try {
-    if (!streamFeedClient) {
-      throw Error('streamFeedClient not initialized')
-    }
-    // Create the new feed.
-    await streamFeedClient.feed(CLUB_MEMBERS_FEED_NAME, clubId).addActivity({
-      actor: `SU:${creatorId}`,
-      object: 'Created',
-      verb: 'club-post',
-    })
-  } catch (e) {
-    console.log(e)
-    throw new Error(e)
-  }
-}
-
 type FollowActionType = 'FOLLOW' | 'UNFOLLOW'
 
 export async function toggleFollowClubMembersFeed(
@@ -145,34 +121,47 @@ export async function createStreamClubMembersFeedActivity(
     object,
     caption,
     tags,
-  }: { verb: string; object: string; caption?: string; tags: string[] },
-) {
+  }: { object: string; caption?: string; tags?: string[] },
+): Promise<ActivityData> {
   try {
     if (!streamFeedClient) {
       throw Error('streamFeedClient not initialized')
     }
     // Create the new activity.
-    return await streamFeedClient
+    const activity = await streamFeedClient
       .feed(CLUB_MEMBERS_FEED_NAME, clubId)
       .addActivity({
         actor: `SU:${authedUserId}`,
         verb: 'club-post',
         object: object,
+        foreign_id: clubId,
         caption: caption,
         tags: tags,
       })
+
+    const activityData: ActivityData =
+      // Should be a [FlatActivity[]] but we need to index into custom fields
+      // So set as [any] for now.
+      {
+        activityId: activity.id,
+        postedAt: new Date(activity.time),
+        caption: (activity as any)['caption'],
+        tags: (activity as any)['tags'],
+        dataRequestInput: {
+          activityId: activity.id,
+          posterId: (activity.actor as string).split(':')[1],
+          objectId: (activity.object as string).split(':')[1],
+          objectType: (activity.object as string)
+            .split(':')[0]
+            .toUpperCase() as TimelinePostType,
+        },
+      }
+    // Includes the fields we need to populate the objects from the DB before returning to client.
+    return activityData
   } catch (e) {
     console.log(e)
     throw new Error(e)
   }
-}
-
-interface ActivityData {
-  activityId: string
-  postedAt: Date
-  caption?: string
-  tags: string[]
-  dataRequestInput: TimelinePostDataRequestInput
 }
 
 export async function getStreamClubMembersFeedActivities(
@@ -185,7 +174,6 @@ export async function getStreamClubMembersFeedActivities(
       throw Error('streamFeedClient not initialized')
     }
 
-    // Create the new feed.
     const response = await streamFeedClient
       .feed(CLUB_MEMBERS_FEED_NAME, clubId)
       .get({
@@ -222,24 +210,47 @@ export async function getStreamClubMembersFeedActivities(
   }
 }
 
-////// NOTE: No longer syncing this data in GetStream. Request it from our own API when needed.
-/// If the user updates their displayName or their avatarUri then we need to update the associated user on getStream feeds. Their ID on getStream will match the ID is the database.
-// export async function updateGetStreamFeedFields(
-//   userId: string,
-//   fieldsToUpdate: string[],
-//   data: any, // UpdateUserInput - cast as any so can index in by string.
-// ) {
-//   if (!streamFeedClient) {
-//     throw Error('streamFeedClient not initialized')
-//   }
+export async function deleteStreamClubPostActivity(
+  authedUserId: string,
+  activityId: string,
+  prisma: PrismaClient,
+) {
+  try {
+    if (!streamFeedClient) {
+      throw Error('streamFeedClient not initialized')
+    }
 
-//   const obj = fieldsToUpdate.reduce((acum, next) => {
-//     acum[next] = data[next]
-//     return acum
-//   }, {} as any)
+    const activity = (
+      await streamFeedClient.getActivities({ ids: [activityId] })
+    ).results[0]
 
-//   await streamFeedClient!.user(userId).update(obj)
-// }
+    const clubId = activity.foreign_id as string
+
+    // Club ID should always be saved as the foreign_id of these posts.
+    await checkUserIsOwnerOrAdminOfClub(clubId, authedUserId, prisma)
+
+    const deleted = await streamFeedClient
+      .feed(CLUB_MEMBERS_FEED_NAME, clubId)
+      .removeActivity(activityId)
+
+    if (!deleted.removed) {
+      throw Error('There was a problem deleting this activity.')
+    }
+
+    return deleted.removed
+  } catch (e) {
+    console.log(e)
+    throw new Error(e)
+  }
+}
+
+interface ActivityData {
+  activityId: string
+  postedAt: Date
+  caption?: string
+  tags: string[]
+  dataRequestInput: TimelinePostDataRequestInput
+}
 
 //////////////////////
 /////// Chat /////////
@@ -336,30 +347,6 @@ export async function removeStreamUserFromClubMemberChat(
   }
 }
 
-////// NOTE: No longer syncing this data in GetStream. Request it from our own API when needed.
-/// If the user updates their displayName or their avatarUri then we need to update the associated user on getStream chat. Their ID on getStream will match the ID is the database.
-// export async function updateGetStreamChatFields(
-//   userId: string,
-//   fieldsToUpdate: string[],
-//   data: any, // UpdateUserInput - cast as any so can index in by string.
-// ) {
-//   if (!streamChatClient) {
-//     throw Error('streamChatClient not initialized')
-//   }
-
-//   const obj = fieldsToUpdate.reduce((acum, next) => {
-//     acum[next] = data[next]
-//     return acum
-//   }, {} as any)
-
-//   await streamChatClient!.partialUpdateUser({
-//     id: userId,
-//     set: {
-//       ...obj,
-//     },
-//   })
-// }
-
 /**
  * For GetStream chat - used on the client as an access token for the logged in user.
  * @param  {string} userId - the SpotMe database User ID.
@@ -375,42 +362,3 @@ export function getUserChatToken(userId: string): string {
     throw new Error(e)
   }
 }
-
-////// NOTE: No longer syncing this data in GetStream. Request it from our own API when needed.
-////// Utils - For both Chat and Feeds ///////
-// export async function streamFieldsRequiringUpdate(
-//   prisma: PrismaClient,
-//   userId: string,
-//   data: UpdateUserInput,
-// ): Promise<string[]> {
-//   const oldUser = await prisma.user.findUnique({
-//     where: { id: userId },
-//     select: {
-//       displayName: true,
-//       avatarUri: true,
-//     },
-//   })
-
-//   if (!oldUser) {
-//     throw new AccessScopeError(
-//       'streamFieldsRequiringUpdate: Unable to find object to check',
-//     )
-//   } else {
-//     let fieldsRequiringUpdate = []
-
-//     if (
-//       data.hasOwnProperty('displayName') &&
-//       data['displayName'] !== oldUser.displayName
-//     ) {
-//       fieldsRequiringUpdate.push('displayName')
-//     }
-//     if (
-//       data.hasOwnProperty('avatarUri') &&
-//       data['avatarUri'] !== oldUser.avatarUri
-//     ) {
-//       fieldsRequiringUpdate.push('avatarUri')
-//     }
-
-//     return fieldsRequiringUpdate
-//   }
-// }

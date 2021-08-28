@@ -17,11 +17,6 @@ export default gql`
     clubSummaries(ids: [ID!]!): [ClubPublicSummary!]!
     userClubs: [Club!]!
     clubById(id: ID!): Club!
-    clubMembersFeedPosts(
-      clubId: ID!
-      limit: Int!
-      offset: Int!
-    ): [TimelinePostFullData!]!
     #### Discover Pages and Types ####
     discoverFeatured: [DiscoverFeatured!]!
     discoverWorkoutCategories: [DiscoverWorkoutCategory!]!
@@ -54,6 +49,11 @@ export default gql`
     timelinePostsData(
       postDataRequests: [TimelinePostDataRequestInput!]!
     ): [TimelinePostObjectData!]!
+    clubMembersFeedPosts(
+      clubId: ID!
+      limit: Int!
+      offset: Int!
+    ): [TimelinePostFullData!]!
     #### User ####
     authedUser: User!
     checkUniqueDisplayName(displayName: String!): Boolean!
@@ -105,6 +105,11 @@ export default gql`
     removeMemberAdminStatus(userId: ID!, clubId: ID!): Club!
     addUserToClubViaInviteToken(userId: ID!, clubInviteTokenId: ID!): Club!
     removeUserFromClub(userToRemoveId: ID!, clubId: ID!): Club!
+    #### Club Timeline Post ####
+    createClubTimelinePost(
+      data: CreateClubTimelinePostInput!
+    ): TimelinePostFullData!
+    deleteClubTimelinePost(activityId: ID!): ID! # The Stream activity ID.
     #### Equipment ####
     createEquipment(data: CreateEquipmentInput!): Equipment
     updateEquipment(data: UpdateEquipmentInput!): Equipment

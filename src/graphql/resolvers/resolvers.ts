@@ -15,7 +15,6 @@ import {
   userClubs,
   clubSummaries,
   clubById,
-  clubMembersFeedPosts,
   createClub,
   updateClub,
   deleteClubById,
@@ -122,7 +121,12 @@ import {
   textSearchUserPublicNames,
 } from './textSearch'
 
-import { timelinePostsData } from './timelineFeed'
+import {
+  createClubTimelinePost,
+  deleteClubTimelinePost,
+  timelinePostsData,
+  clubMembersFeedPosts,
+} from './timelineFeed'
 
 import {
   checkUniqueDisplayName,
@@ -350,11 +354,16 @@ const resolvers: Resolvers = {
     deleteClubInviteTokenById,
     ///////////////////////
     //// Club Members /////
-    //////////////////////
+    ///////////////////////
     giveMemberAdminStatus,
     removeMemberAdminStatus,
     addUserToClubViaInviteToken,
     removeUserFromClub,
+    ///////////////////////
+    //// Club Timeline ////
+    ///////////////////////
+    createClubTimelinePost,
+    deleteClubTimelinePost,
     ///////////////////
     //// Equipment ////
     ///////////////////

@@ -2,61 +2,115 @@ import { PrismaClient } from '@prisma/client'
 import { ApolloError } from 'apollo-server-express'
 import { Context } from '../..'
 import {
+  MutationCreateClubTimelinePostArgs,
+  MutationDeleteClubTimelinePostArgs,
+  QueryClubMembersFeedPostsArgs,
   QueryTimelinePostsDataArgs,
   TimelinePostDataRequestInput,
+  TimelinePostFullData,
   TimelinePostObjectData,
   TimelinePostType,
 } from '../../generated/graphql'
+import {
+  createStreamClubMembersFeedActivity,
+  deleteStreamClubPostActivity,
+  getStreamClubMembersFeedActivities,
+} from '../../lib/getStream'
+import { checkUserIsMemberOfClub } from './club'
 
-/// The object and the creator of the object.
-interface ObjectAndCreatorData {
-  creator: {
-    id: string
-    displayName: string
-    avatarUri?: string
-  }
-  id: string
-  type: TimelinePostType
-  name: string
-  coverImageUri?: string
-  introAudioUri?: string
-  introVideoUri?: string
-  introVideoThumbUri?: string
-}
-
-const selectFields = {
-  id: true,
-  name: true,
-  coverImageUri: true,
-  introAudioUri: true,
-  introVideoUri: true,
-  introVideoThumbUri: true,
-  User: {
-    select: {
-      id: true,
-      displayName: true,
-      avatarUri: true,
+//// Club Timeline Post Mutations ////
+export const createClubTimelinePost = async (
+  r: any,
+  { data }: MutationCreateClubTimelinePostArgs,
+  { authedUserId, prisma }: Context,
+) => {
+  const activityData = await createStreamClubMembersFeedActivity(
+    data.clubId,
+    authedUserId,
+    {
+      object: data.object,
+      caption: data.caption || undefined,
+      tags: data.tags || undefined,
     },
-  },
-}
+  )
 
-function mapResponseToObjectType(r: any, type: TimelinePostType) {
+  const postObjectData = (
+    await timelinePostDataFromInputRequests(
+      [activityData.dataRequestInput],
+      prisma,
+    )
+  )[0]
+
   return {
-    creator: {
-      id: r.User.id,
-      displayName: r.User.displayName,
-      avatarUri: r.User.avatarUri || undefined,
-    },
-    id: r.id,
-    type: type,
-    name: r.name,
-    introAudioUri: r.introAudioUri || undefined,
-    coverImageUri: r.coverImageUri || undefined,
-    introVideoUri: r.introVideoUri || undefined,
-    introVideoThumbUri: r.introVideoThumbUri || undefined,
+    activityId: activityData.activityId,
+    postedAt: activityData.postedAt,
+    caption: activityData.caption,
+    tags: activityData.tags,
+    poster: postObjectData.poster,
+    creator: postObjectData.creator,
+    object: postObjectData.object,
+  } as TimelinePostFullData
+}
+
+export const deleteClubTimelinePost = async (
+  r: any,
+  { activityId }: MutationDeleteClubTimelinePostArgs,
+  { authedUserId, prisma }: Context,
+) => {
+  const deleted = await deleteStreamClubPostActivity(
+    authedUserId,
+    activityId,
+    prisma,
+  )
+
+  if (deleted) {
+    return deleted
+  } else {
+    throw new ApolloError('deleteClubTimelinePost: There was an issue.')
   }
 }
 
+//// Queries ////
+// Calls Stream.io to get the activities.
+// Then does the work necessary to collect the data needed to display as a timeline.
+export const clubMembersFeedPosts = async (
+  r: any,
+  { clubId, limit, offset }: QueryClubMembersFeedPostsArgs,
+  { authedUserId, prisma }: Context,
+) => {
+  await checkUserIsMemberOfClub(clubId, authedUserId, prisma)
+
+  const activityData = await getStreamClubMembersFeedActivities(
+    clubId,
+    limit,
+    offset,
+  )
+
+  const postsObjectData = await timelinePostDataFromInputRequests(
+    activityData.map((ad) => ad.dataRequestInput),
+    prisma,
+  )
+
+  const postsWithFullData = activityData.map((ad) => {
+    const objectData = postsObjectData.find(
+      (o) => o.activityId === ad.activityId,
+    )!
+
+    return {
+      activityId: ad.activityId,
+      postedAt: ad.postedAt,
+      caption: ad.caption,
+      tags: ad.tags,
+      poster: objectData.poster,
+      creator: objectData.creator,
+      object: objectData.object,
+    }
+  })
+
+  return postsWithFullData as TimelinePostFullData[]
+}
+
+/// For non club posts (global user posts)
 export const timelinePostsData = async (
   r: any,
   { postDataRequests }: QueryTimelinePostsDataArgs,
@@ -181,4 +235,53 @@ async function workoutPlanPostsData(
   }
 
   return responses.map((r) => mapResponseToObjectType(r, 'WORKOUTPLAN'))
+}
+
+function mapResponseToObjectType(r: any, type: TimelinePostType) {
+  return {
+    creator: {
+      id: r.User.id,
+      displayName: r.User.displayName,
+      avatarUri: r.User.avatarUri || undefined,
+    },
+    id: r.id,
+    type: type,
+    name: r.name,
+    introAudioUri: r.introAudioUri || undefined,
+    coverImageUri: r.coverImageUri || undefined,
+    introVideoUri: r.introVideoUri || undefined,
+    introVideoThumbUri: r.introVideoThumbUri || undefined,
+  }
+}
+
+/// The object and the creator of the object.
+interface ObjectAndCreatorData {
+  creator: {
+    id: string
+    displayName: string
+    avatarUri?: string
+  }
+  id: string
+  type: TimelinePostType
+  name: string
+  coverImageUri?: string
+  introAudioUri?: string
+  introVideoUri?: string
+  introVideoThumbUri?: string
+}
+
+const selectFields = {
+  id: true,
+  name: true,
+  coverImageUri: true,
+  introAudioUri: true,
+  introVideoUri: true,
+  introVideoThumbUri: true,
+  User: {
+    select: {
+      id: true,
+      displayName: true,
+      avatarUri: true,
+    },
+  },
 }

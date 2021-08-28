@@ -53,4 +53,12 @@ export default gql`
     # The database object type that is being referenced by the getstream activity (post).
     objectType: TimelinePostType!
   }
+
+  # The inputs necessary to create a stream activity.
+  input CreateClubTimelinePostInput {
+    clubId: String!
+    object: String! # Workout:{id} etc
+    caption: String
+    tags: [String!]
+  }
 `

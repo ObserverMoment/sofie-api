@@ -179,6 +179,13 @@ export type CreateClubInviteTokenInput = {
   Club: ConnectRelationInput;
 };
 
+export type CreateClubTimelinePostInput = {
+  clubId: Scalars['String'];
+  object: Scalars['String'];
+  caption?: Maybe<Scalars['String']>;
+  tags?: Maybe<Array<Scalars['String']>>;
+};
+
 export type CreateCollectionInput = {
   name: Scalars['String'];
   description?: Maybe<Scalars['String']>;
@@ -674,6 +681,8 @@ export type Mutation = {
   removeMemberAdminStatus: Club;
   addUserToClubViaInviteToken: Club;
   removeUserFromClub: Club;
+  createClubTimelinePost: TimelinePostFullData;
+  deleteClubTimelinePost: Scalars['ID'];
   createEquipment?: Maybe<Equipment>;
   updateEquipment?: Maybe<Equipment>;
   createGymProfile: GymProfile;
@@ -832,6 +841,16 @@ export type MutationAddUserToClubViaInviteTokenArgs = {
 export type MutationRemoveUserFromClubArgs = {
   userToRemoveId: Scalars['ID'];
   clubId: Scalars['ID'];
+};
+
+
+export type MutationCreateClubTimelinePostArgs = {
+  data: CreateClubTimelinePostInput;
+};
+
+
+export type MutationDeleteClubTimelinePostArgs = {
+  activityId: Scalars['ID'];
 };
 
 
@@ -1410,7 +1429,6 @@ export type Query = {
   clubSummaries: Array<ClubPublicSummary>;
   userClubs: Array<Club>;
   clubById: Club;
-  clubMembersFeedPosts: Array<TimelinePostFullData>;
   discoverFeatured: Array<DiscoverFeatured>;
   discoverWorkoutCategories: Array<DiscoverWorkoutCategory>;
   discoverWorkoutPlanCategories: Array<DiscoverWorkoutPlanCategory>;
@@ -1431,6 +1449,7 @@ export type Query = {
   textSearchUserPublicProfiles?: Maybe<Array<UserPublicProfile>>;
   textSearchUserPublicNames?: Maybe<Array<TextSearchResult>>;
   timelinePostsData: Array<TimelinePostObjectData>;
+  clubMembersFeedPosts: Array<TimelinePostFullData>;
   authedUser: User;
   checkUniqueDisplayName: Scalars['Boolean'];
   gymProfiles: Array<GymProfile>;
@@ -1462,13 +1481,6 @@ export type QueryClubSummariesArgs = {
 
 export type QueryClubByIdArgs = {
   id: Scalars['ID'];
-};
-
-
-export type QueryClubMembersFeedPostsArgs = {
-  clubId: Scalars['ID'];
-  limit: Scalars['Int'];
-  offset: Scalars['Int'];
 };
 
 
@@ -1524,6 +1536,13 @@ export type QueryTextSearchUserPublicNamesArgs = {
 
 export type QueryTimelinePostsDataArgs = {
   postDataRequests: Array<TimelinePostDataRequestInput>;
+};
+
+
+export type QueryClubMembersFeedPostsArgs = {
+  clubId: Scalars['ID'];
+  limit: Scalars['Int'];
+  offset: Scalars['Int'];
 };
 
 
@@ -2467,6 +2486,7 @@ export type ResolversTypes = ResolversObject<{
   CreateBodyTransformationPhotoInput: CreateBodyTransformationPhotoInput;
   CreateClubInput: CreateClubInput;
   CreateClubInviteTokenInput: CreateClubInviteTokenInput;
+  CreateClubTimelinePostInput: CreateClubTimelinePostInput;
   CreateCollectionInput: CreateCollectionInput;
   CreateEquipmentInput: CreateEquipmentInput;
   CreateGymProfileInput: CreateGymProfileInput;
@@ -2638,6 +2658,7 @@ export type ResolversParentTypes = ResolversObject<{
   CreateBodyTransformationPhotoInput: CreateBodyTransformationPhotoInput;
   CreateClubInput: CreateClubInput;
   CreateClubInviteTokenInput: CreateClubInviteTokenInput;
+  CreateClubTimelinePostInput: CreateClubTimelinePostInput;
   CreateCollectionInput: CreateCollectionInput;
   CreateEquipmentInput: CreateEquipmentInput;
   CreateGymProfileInput: CreateGymProfileInput;
@@ -3045,6 +3066,8 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   removeMemberAdminStatus?: Resolver<ResolversTypes['Club'], ParentType, ContextType, RequireFields<MutationRemoveMemberAdminStatusArgs, 'userId' | 'clubId'>>;
   addUserToClubViaInviteToken?: Resolver<ResolversTypes['Club'], ParentType, ContextType, RequireFields<MutationAddUserToClubViaInviteTokenArgs, 'userId' | 'clubInviteTokenId'>>;
   removeUserFromClub?: Resolver<ResolversTypes['Club'], ParentType, ContextType, RequireFields<MutationRemoveUserFromClubArgs, 'userToRemoveId' | 'clubId'>>;
+  createClubTimelinePost?: Resolver<ResolversTypes['TimelinePostFullData'], ParentType, ContextType, RequireFields<MutationCreateClubTimelinePostArgs, 'data'>>;
+  deleteClubTimelinePost?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteClubTimelinePostArgs, 'activityId'>>;
   createEquipment?: Resolver<Maybe<ResolversTypes['Equipment']>, ParentType, ContextType, RequireFields<MutationCreateEquipmentArgs, 'data'>>;
   updateEquipment?: Resolver<Maybe<ResolversTypes['Equipment']>, ParentType, ContextType, RequireFields<MutationUpdateEquipmentArgs, 'data'>>;
   createGymProfile?: Resolver<ResolversTypes['GymProfile'], ParentType, ContextType, RequireFields<MutationCreateGymProfileArgs, 'data'>>;
@@ -3206,7 +3229,6 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   clubSummaries?: Resolver<Array<ResolversTypes['ClubPublicSummary']>, ParentType, ContextType, RequireFields<QueryClubSummariesArgs, 'ids'>>;
   userClubs?: Resolver<Array<ResolversTypes['Club']>, ParentType, ContextType>;
   clubById?: Resolver<ResolversTypes['Club'], ParentType, ContextType, RequireFields<QueryClubByIdArgs, 'id'>>;
-  clubMembersFeedPosts?: Resolver<Array<ResolversTypes['TimelinePostFullData']>, ParentType, ContextType, RequireFields<QueryClubMembersFeedPostsArgs, 'clubId' | 'limit' | 'offset'>>;
   discoverFeatured?: Resolver<Array<ResolversTypes['DiscoverFeatured']>, ParentType, ContextType>;
   discoverWorkoutCategories?: Resolver<Array<ResolversTypes['DiscoverWorkoutCategory']>, ParentType, ContextType>;
   discoverWorkoutPlanCategories?: Resolver<Array<ResolversTypes['DiscoverWorkoutPlanCategory']>, ParentType, ContextType>;
@@ -3227,6 +3249,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   textSearchUserPublicProfiles?: Resolver<Maybe<Array<ResolversTypes['UserPublicProfile']>>, ParentType, ContextType, RequireFields<QueryTextSearchUserPublicProfilesArgs, 'text'>>;
   textSearchUserPublicNames?: Resolver<Maybe<Array<ResolversTypes['TextSearchResult']>>, ParentType, ContextType, RequireFields<QueryTextSearchUserPublicNamesArgs, 'text'>>;
   timelinePostsData?: Resolver<Array<ResolversTypes['TimelinePostObjectData']>, ParentType, ContextType, RequireFields<QueryTimelinePostsDataArgs, 'postDataRequests'>>;
+  clubMembersFeedPosts?: Resolver<Array<ResolversTypes['TimelinePostFullData']>, ParentType, ContextType, RequireFields<QueryClubMembersFeedPostsArgs, 'clubId' | 'limit' | 'offset'>>;
   authedUser?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   checkUniqueDisplayName?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryCheckUniqueDisplayNameArgs, 'displayName'>>;
   gymProfiles?: Resolver<Array<ResolversTypes['GymProfile']>, ParentType, ContextType>;
