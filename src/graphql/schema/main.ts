@@ -13,11 +13,17 @@ export default gql`
     workoutGoals: [WorkoutGoal!]!
     workoutSectionTypes: [WorkoutSectionType!]!
     #### Clubs ####
+    # Public club summary data for use displaying chat previews and other lists.
+    clubSummaries(ids: [ID!]!): [ClubPublicSummary!]!
     userClubs: [Club!]!
+    clubById(id: ID!): Club!
     #### Discover Pages and Types ####
     discoverFeatured: [DiscoverFeatured!]!
     discoverWorkoutCategories: [DiscoverWorkoutCategory!]!
     discoverWorkoutPlanCategories: [DiscoverWorkoutPlanCategory!]!
+    #### Invite Tokens ####
+    # The ID is the token string, we pass it to check that it is valid #
+    checkClubInviteToken(id: ID!): CheckClubInviteTokenResult!
     #### Logged Workouts ####
     userLoggedWorkouts(take: Int): [LoggedWorkout!]!
     loggedWorkoutById(id: ID!): LoggedWorkout!
@@ -38,11 +44,24 @@ export default gql`
     textSearchWorkoutPlanNames(text: String!): [TextSearchResult!]
     textSearchUserPublicProfiles(text: String!): [UserPublicProfile!]
     textSearchUserPublicNames(text: String!): [TextSearchResult!]
+    #### Timeline Feed ####
+    # Gets DB objects referenced in getStream activities (posts) and maps fields to those required for displaying in a timeline or feed #
+    timelinePostsData(
+      postDataRequests: [TimelinePostDataRequestInput!]!
+    ): [TimelinePostObjectData!]!
+    clubMembersFeedPosts(
+      clubId: ID!
+      limit: Int!
+      offset: Int!
+    ): [TimelinePostFullData!]!
     #### User ####
     authedUser: User!
     checkUniqueDisplayName(displayName: String!): Boolean!
     gymProfiles: [GymProfile!]!
     userWorkoutTags: [WorkoutTag!]!
+    #### User Avatars ####
+    userAvatars(ids: [ID!]!): [UserAvatarData!]!
+    userAvatarById(id: ID!): UserAvatarData!
     #### UserBenchmark (aka Personal Best) ####
     userBenchmarks: [UserBenchmark!]!
     userBenchmarkById(id: ID!): UserBenchmark!
@@ -74,6 +93,23 @@ export default gql`
   }
 
   type Mutation {
+    #### Club ####
+    createClub(data: CreateClubInput!): Club!
+    updateClub(data: UpdateClubInput!): Club!
+    deleteClubById(id: ID!): ID!
+    createClubInviteToken(data: CreateClubInviteTokenInput!): ClubInviteToken!
+    updateClubInviteToken(data: UpdateClubInviteTokenInput!): ClubInviteToken!
+    deleteClubInviteTokenById(id: ID!): ID!
+    #### Club Member Management ####
+    giveMemberAdminStatus(userId: ID!, clubId: ID!): Club!
+    removeMemberAdminStatus(userId: ID!, clubId: ID!): Club!
+    addUserToClubViaInviteToken(userId: ID!, clubInviteTokenId: ID!): Club!
+    removeUserFromClub(userToRemoveId: ID!, clubId: ID!): Club!
+    #### Club Timeline Post ####
+    createClubTimelinePost(
+      data: CreateClubTimelinePostInput!
+    ): TimelinePostFullData!
+    deleteClubTimelinePost(activityId: ID!): ID! # The Stream activity ID.
     #### Equipment ####
     createEquipment(data: CreateEquipmentInput!): Equipment
     updateEquipment(data: UpdateEquipmentInput!): Equipment

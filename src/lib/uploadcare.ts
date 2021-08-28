@@ -8,6 +8,7 @@ import {
   UpdateMoveInput,
   UpdateWorkoutInput,
   UpdateUserBenchmarkEntryInput,
+  UpdateClubInput,
 } from '../generated/graphql'
 import { AccessScopeError } from '../graphql/utils'
 
@@ -67,6 +68,39 @@ function getFileIdForDeleteOrNull(
     newData[key] !== oldData[key]
     ? oldData[key]
     : null
+}
+
+/** Checks if there are any media (hosted) files being changed.
+ * Returns an array of fileIds (strings) which should be deleted once the update transaction is complete.
+ */
+export async function checkClubMediaForDeletion(
+  prisma: PrismaClient,
+  data: UpdateClubInput,
+): Promise<string[]> {
+  // Get the old club data first.
+  const oldClub = await prisma.club.findUnique({
+    where: {
+      id: data.id,
+    },
+    select: {
+      introVideoUri: true,
+      introVideoThumbUri: true,
+      introAudioUri: true,
+      coverImageUri: true,
+    },
+  })
+
+  if (!oldClub) {
+    throw new AccessScopeError(
+      'checkClubMediaForDeletion: Unable to find object to check',
+    )
+  } else {
+    const fileIdsForDeletion: string[] = Object.keys(oldClub)
+      .map((key: string) => getFileIdForDeleteOrNull(oldClub, data, key))
+      .filter((x) => !!x) as string[]
+
+    return fileIdsForDeletion
+  }
 }
 
 /** Checks if there are any media (hosted) files being changed.

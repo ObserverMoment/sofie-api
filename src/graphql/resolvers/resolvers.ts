@@ -1,4 +1,8 @@
-import { Resolvers } from '../../generated/graphql'
+import {
+  ClubInviteTokenData,
+  InviteTokenError,
+  Resolvers,
+} from '../../generated/graphql'
 
 import {
   bodyTransformationPhotos,
@@ -7,7 +11,21 @@ import {
   deleteBodyTransformationPhotosById,
 } from './bodyTransformation'
 
-import { userClubs } from './club'
+import {
+  userClubs,
+  clubSummaries,
+  clubById,
+  createClub,
+  updateClub,
+  deleteClubById,
+  createClubInviteToken,
+  updateClubInviteToken,
+  deleteClubInviteTokenById,
+  addUserToClubViaInviteToken,
+  giveMemberAdminStatus,
+  removeMemberAdminStatus,
+  removeUserFromClub,
+} from './club'
 
 import {
   discoverFeatured,
@@ -104,8 +122,17 @@ import {
 } from './textSearch'
 
 import {
+  createClubTimelinePost,
+  deleteClubTimelinePost,
+  timelinePostsData,
+  clubMembersFeedPosts,
+} from './timelineFeed'
+
+import {
   checkUniqueDisplayName,
   authedUser,
+  userAvatars,
+  userAvatarById,
   userPublicProfileById,
   userPublicProfiles,
   updateUser,
@@ -141,6 +168,8 @@ import {
   addWorkoutPlanToCollection,
   removeWorkoutPlanFromCollection,
 } from './collection'
+
+import { checkClubInviteToken } from './invites'
 
 import {
   publicWorkouts,
@@ -230,6 +259,19 @@ const resolvers: Resolvers = {
       return null
     },
   }),
+  // Resolve Types or Unions
+  // https://www.apollographql.com/docs/apollo-server/schema/unions-interfaces/
+  CheckClubInviteTokenResult: {
+    __resolveType: (obj, context, info) => {
+      if ((obj as ClubInviteTokenData).token) {
+        return 'ClubInviteTokenData'
+      }
+      if ((obj as InviteTokenError).message) {
+        return 'InviteTokenError'
+      }
+      return null // GraphQLError is thrown
+    },
+  },
   Query: {
     validateToken: () => true, // Empty Resolver - call it and it will throw auth error if token is not valid / expired or if an associated user does not exist in the database.
     //// Core Data ////
@@ -239,11 +281,16 @@ const resolvers: Resolvers = {
     workoutGoals,
     workoutSectionTypes,
     ///// Clubs ////
+    clubSummaries,
     userClubs,
+    clubById,
+    clubMembersFeedPosts,
     ///// Discover ////
     discoverFeatured,
     discoverWorkoutCategories,
     discoverWorkoutPlanCategories,
+    ///// Invites ////
+    checkClubInviteToken,
     //// Progress Journal ////
     bodyTransformationPhotos,
     userProgressJournals,
@@ -264,6 +311,9 @@ const resolvers: Resolvers = {
     textSearchWorkoutPlanNames,
     textSearchUserPublicProfiles,
     textSearchUserPublicNames,
+    //// Timeline Feed ////
+    // The data associated with Activities and required to display posts //
+    timelinePostsData,
     //// User ////
     authedUser,
     checkUniqueDisplayName,
@@ -271,6 +321,9 @@ const resolvers: Resolvers = {
     userPublicProfileById,
     userPublicProfiles,
     userWorkoutTags,
+    //// User Avatars ////
+    userAvatars,
+    userAvatarById,
     /// User Benchmarks ////
     userBenchmarks,
     userBenchmarkById,
@@ -290,13 +343,34 @@ const resolvers: Resolvers = {
     userWorkoutPlanEnrolmentById,
   },
   Mutation: {
+    ///////////////
+    //// Club /////
+    ///////////////
+    createClub,
+    updateClub,
+    deleteClubById,
+    createClubInviteToken,
+    updateClubInviteToken,
+    deleteClubInviteTokenById,
+    ///////////////////////
+    //// Club Members /////
+    ///////////////////////
+    giveMemberAdminStatus,
+    removeMemberAdminStatus,
+    addUserToClubViaInviteToken,
+    removeUserFromClub,
+    ///////////////////////
+    //// Club Timeline ////
+    ///////////////////////
+    createClubTimelinePost,
+    deleteClubTimelinePost,
     ///////////////////
     //// Equipment ////
     ///////////////////
     createEquipment,
     updateEquipment,
     //////////////////////////
-    //// Gym Profile ////
+    //// Gym Profile /////////
     //////////////////////////
     createGymProfile,
     updateGymProfile,

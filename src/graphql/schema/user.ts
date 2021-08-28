@@ -12,7 +12,7 @@ export default gql`
     birthdate: DateTime
     townCity: String
     countryCode: String
-    displayName: String
+    displayName: String!
     instagramUrl: String
     tiktokUrl: String
     youtubeUrl: String
@@ -24,6 +24,12 @@ export default gql`
     hasOnboarded: Boolean!
     GymProfiles: [GymProfile!]
     ProgressJournalGoalTags: [ProgressJournalGoalTag!]
+  }
+
+  type UserAvatarData {
+    id: ID!
+    displayName: String!
+    avatarUri: String
   }
 
   type UserSummary {

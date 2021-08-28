@@ -3,7 +3,7 @@
 // Migrations: https://github.com/prisma/migrate
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["filterJson"]
+  previewFeatures = ["filterJson", "referentialActions"]
 }
 
 datasource db {
@@ -162,7 +162,7 @@ model User {
   avatarUri                String?
   introVideoUri            String?
   introVideoThumbUri       String?
-  displayName              String?                   @unique
+  displayName              String                    @unique @default(cuid())
   firstname                String?
   lastname                 String?
   bio                      String?
@@ -207,8 +207,12 @@ model User {
   ClubsWhereOwner          Club[]                    @relation("owner")
   ClubsWhereAdmin          Club[]                    @relation("admin")
   ClubsWhereMember         Club[]                    @relation("member")
-  JoinClubRequest          JoinClubRequest[]         @relation("requester")
-  JoinClubResponse         JoinClubRequest[]         @relation("responder")
+  JoinClubRequestsSent     JoinClubRequest[]         @relation("applicant")
+  JoinClubResponsesSent    JoinClubRequest[]         @relation("request_responder")
+  ClubInvitesSent          JoinClubInvite[]          @relation("sender")
+  ClubInvitesReceived      JoinClubInvite[]          @relation("invited")
+  ClubInvitesResponded     JoinClubInvite[]          @relation("invite_responder")
+  ClubInviteTokens         ClubInviteToken[]
 }
 
 // One or more benchmarks grouped together. For example the class deadlift / press squat moves could be grouped together here.
@@ -256,8 +260,8 @@ model UserBenchmarkEntry {
 ///// Club Related Models and Children //////////
 ////////////////////////////////////////////////////
 model Club {
-  id                 String        @id @default(uuid())
-  createdAt          DateTime      @default(now())
+  id                 String            @id @default(uuid())
+  createdAt          DateTime          @default(now())
   name               String
   description        String?
   location           String?
@@ -265,25 +269,63 @@ model Club {
   introVideoUri      String?
   introVideoThumbUri String?
   introAudioUri      String?
-  Owner              User          @relation("owner", fields: [userId], references: [id])
+  Owner              User              @relation("owner", fields: [userId], references: [id])
   userId             String
-  Admins             User[]        @relation("admin")
-  Members            User[]        @relation("member")
+  Admins             User[]            @relation("admin")
+  Members            User[]            @relation("member")
+  JoinClubRequests   JoinClubRequest[]
+  JoinClubInvites    JoinClubInvite[]
   Workouts           Workout[]
   WorkoutPlans       WorkoutPlan[]
+  ClubInviteTokens   ClubInviteToken[]
 }
 
-model JoinClubRequest {
-  id           String                @id @default(uuid())
-  createdAt    DateTime              @default(now())
-  // The applicant.
-  RequestBy    User                  @relation("requester", fields: [requestById], references: [id])
-  requestById  String
-  status       JoinClubRequestStatus @default(PENDING)
-  respondedAt  DateTime?
+model ClubInviteToken {
+  id            String   @id @default(uuid())
+  createdAt     DateTime @default(now())
+  active        Boolean
+  name          String
+  // How many times can this token be used.
+  // 0 means unlimited.
+  inviteLimit   Int      @default(0)
+  // Add each joining user id to this list and compare its length vs invite limit to check expiry.
+  joinedUserIds String[]
   // Owner or admin of the group.
-  ResponseBy   User                  @relation("responder", fields: [responseById], references: [id])
-  responseById String
+  User          User     @relation(fields: [userId], references: [id])
+  userId        String
+  Club          Club     @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  clubId        String
+}
+
+/// When a user requests to join a club.
+model JoinClubRequest {
+  id          String                @id @default(uuid())
+  createdAt   DateTime              @default(now())
+  Applicant   User                  @relation("applicant", fields: [applicantId], references: [id])
+  applicantId String
+  status      JoinClubRequestStatus @default(PENDING)
+  // Owner or admin of the group.
+  Responder   User?                 @relation("request_responder", fields: [responderId], references: [id])
+  responderId String?
+  respondedAt DateTime?
+  Club        Club                  @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  clubId      String
+}
+
+/// When the owner or an admin invites a user to join a club.
+model JoinClubInvite {
+  id          String                @id @default(uuid())
+  createdAt   DateTime              @default(now())
+  Sender      User                  @relation("sender", fields: [senderId], references: [id])
+  senderId    String
+  Invited     User                  @relation("invited", fields: [invitedId], references: [id])
+  invitedId   String
+  status      JoinClubRequestStatus @default(PENDING)
+  Responder   User?                 @relation("invite_responder", fields: [responderId], references: [id])
+  responderId String?
+  respondedAt DateTime?
+  Club        Club                  @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  clubId      String
 }
 
 ////////////////////////////////////////////////////
