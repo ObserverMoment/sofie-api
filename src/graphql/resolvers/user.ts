@@ -113,11 +113,11 @@ export const userPublicProfiles = async (
       displayName: true,
       Workouts: {
         select: { id: true },
-        where: { contentAccessScope: 'PUBLIC' },
+        where: { contentAccessScope: 'PUBLIC', archived: false },
       },
       WorkoutPlans: {
         select: { id: true },
-        where: { contentAccessScope: 'PUBLIC' },
+        where: { contentAccessScope: 'PUBLIC', archived: false },
       },
     },
   })
