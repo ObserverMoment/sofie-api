@@ -192,6 +192,7 @@ export const softDeleteWorkoutById = async (
 // Makes a full copy of the workout and returns it.
 // Adds '- copy' to the name.
 // Does not copy across any media.
+// Does not copy across custom user tags (as they are owned by the user).
 export const duplicateWorkoutById = async (
   r: any,
   { id }: MutationMakeCopyWorkoutByIdArgs,
@@ -246,9 +247,6 @@ export const duplicateWorkoutById = async (
       },
       WorkoutGoals: {
         connect: original.WorkoutGoals.map(({ id }) => ({ id })),
-      },
-      WorkoutTags: {
-        connect: original.WorkoutTags.map(({ id }) => ({ id })),
       },
       WorkoutSections: {
         create: original.WorkoutSections.map((section) => ({
