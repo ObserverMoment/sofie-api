@@ -45,6 +45,8 @@ export const createWorkoutSection = async (
       ...data,
       // Will default to 1 in the DB.
       rounds: data.rounds || undefined,
+      // Will default to 0 in the DB.
+      timecap: data.timecap || undefined,
       User: {
         connect: { id: authedUserId },
       },
@@ -82,7 +84,10 @@ export const updateWorkoutSection = async (
     },
     data: {
       ...data,
+      // Will default to 1 in the DB.
       rounds: data.rounds || undefined,
+      // Will default to 0 in the DB.
+      timecap: data.timecap || undefined,
       // Never update a single section's sort position - use the dedicated re-order resolvers instead..
       sortPosition: undefined,
       WorkoutSectionType: data.WorkoutSectionType

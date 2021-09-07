@@ -382,7 +382,9 @@ model WorkoutSection {
   note                 String?
   // This field should always be one for AMRAP, Tabata, LastStanding and Free Session.
   rounds               Int                @default(1)
-  timecap              Int? // Seconds. To finish ALL rounds of the section. i.e. the whole 'workout' as described.
+  // Seconds. To finish ALL rounds of the section. i.e. the whole 'workout' as described.
+  // Set to zero to ignore. As of Sept 2021, only used on AMRAP.
+  timecap              Int                @default(0)
   sortPosition         Int
   introVideoUri        String? // Will play before workout starts
   introVideoThumbUri   String?

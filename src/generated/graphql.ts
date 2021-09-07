@@ -2274,7 +2274,7 @@ export type WorkoutSection = {
   name?: Maybe<Scalars['String']>;
   note?: Maybe<Scalars['String']>;
   rounds: Scalars['Int'];
-  timecap?: Maybe<Scalars['Int']>;
+  timecap: Scalars['Int'];
   sortPosition: Scalars['Int'];
   introVideoUri?: Maybe<Scalars['String']>;
   introVideoThumbUri?: Maybe<Scalars['String']>;
@@ -3550,7 +3550,7 @@ export type WorkoutSectionResolvers<ContextType = any, ParentType extends Resolv
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   note?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   rounds?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  timecap?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  timecap?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   sortPosition?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   introVideoUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   introVideoThumbUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
