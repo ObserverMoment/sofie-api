@@ -54,6 +54,7 @@ export const createWorkoutSet = async (
     data: {
       ...data,
       rounds: data.rounds || undefined,
+      duration: data.duration || undefined,
       User: {
         connect: { id: authedUserId },
       },
@@ -117,7 +118,7 @@ export const duplicateWorkoutSetById = async (
     data: {
       rounds: original.rounds,
       sortPosition: original.sortPosition + 1,
-      duration: original.duration || undefined,
+      duration: original.duration,
       WorkoutSection: { connect: { id: original.WorkoutSection.id } },
       User: {
         connect: { id: authedUserId },
@@ -160,6 +161,7 @@ export const updateWorkoutSet = async (
     data: {
       ...data,
       rounds: data.rounds || undefined,
+      duration: data.duration || undefined,
     },
     select,
   })

@@ -3,7 +3,7 @@
 // Migrations: https://github.com/prisma/migrate
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["filterJson", "referentialActions"]
+  previewFeatures = ["filterJson"]
 }
 
 datasource db {
@@ -412,7 +412,7 @@ model WorkoutSet {
   // If in Circuit workout, loop around all workoutMoves in this set until duration has elapsed. [WorkoutSetRounds] will be ignored (but should be 1).
   // If in EMOM (non competitive), 'wait' / 'rest' once all workoutMoves have been completed. [WorkoutSetRounds] can be adjusted. E.g. Every 5 minutes do three rounds of these three moves.
   // If in Last Standing (like a competitive EMOM which stops you if you hit a timecap), 'wait', 'rest' once all workoutMoves have been completed. End the workout if duration is reached and all workoutMoves are not completed - different from EMOM which will just move on to the next set. [WorkoutSetRounds] can be adjusted. E.g. Every 5 minutes do three rounds of these three moves.
-  duration         Int? // Seconds
+  duration         Int                      @default(60) // Seconds
   Generators       WorkoutSetGenerator[]
   IntervalBuyIn    WorkoutSetIntervalBuyIn?
   // If there is more than one move then this is a superset

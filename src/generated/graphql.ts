@@ -2316,7 +2316,7 @@ export type WorkoutSet = {
   id: Scalars['ID'];
   sortPosition: Scalars['Int'];
   rounds: Scalars['Int'];
-  duration?: Maybe<Scalars['Int']>;
+  duration: Scalars['Int'];
   WorkoutMoves: Array<WorkoutMove>;
 };
 
@@ -3592,7 +3592,7 @@ export type WorkoutSetResolvers<ContextType = any, ParentType extends ResolversP
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   sortPosition?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   rounds?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  duration?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  duration?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   WorkoutMoves?: Resolver<Array<ResolversTypes['WorkoutMove']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
