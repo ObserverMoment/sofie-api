@@ -1,18 +1,16 @@
 import { ApolloError } from 'apollo-server-express'
 import { Context } from '../../..'
 import {
-  CreateLoggedWorkoutInput,
-  CreateLoggedWorkoutMoveInLoggedSetInput,
-  CreateLoggedWorkoutMoveInput,
   LoggedWorkout,
+  LoggedWorkoutSection,
   MutationCreateLoggedWorkoutArgs,
   MutationDeleteLoggedWorkoutByIdArgs,
   MutationUpdateLoggedWorkoutArgs,
+  MutationUpdateLoggedWorkoutSectionArgs,
   QueryLoggedWorkoutByIdArgs,
   QueryUserLoggedWorkoutsArgs,
 } from '../../../generated/graphql'
-import { validateWorkoutSectionLapTimesMs } from '../../../lib/jsonValidation'
-import { AccessScopeError, checkUserOwnsObject } from '../../utils'
+import { checkUserOwnsObject } from '../../utils'
 
 //// Queries ////
 export const userLoggedWorkouts = async (
@@ -38,34 +36,27 @@ export const loggedWorkoutById = async (
   { id }: QueryLoggedWorkoutByIdArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  const loggedWorkout: any = await prisma.loggedWorkout.findUnique({
+  await checkUserOwnsObject(id, 'loggedWorkout', authedUserId, prisma)
+
+  const loggedWorkout = await prisma.loggedWorkout.findUnique({
     where: { id },
-    select: {
-      ...select,
-      userId: true,
-    },
+    select,
   })
 
   if (loggedWorkout) {
-    if (loggedWorkout.userId !== authedUserId) {
-      throw new AccessScopeError()
-    }
-
     return loggedWorkout as LoggedWorkout
   } else {
-    throw new ApolloError('loggedWorkoutPlanById: There was an issue.')
+    throw new ApolloError('loggedWorkoutById: There was an issue.')
   }
 }
 
 //// Mutations ////
-/// Creates the full structure down to workout moves ////
+/// Nested create the LoggedWorkout and the LoggedWorkoutSections ////
 export const createLoggedWorkout = async (
   r: any,
   { data }: MutationCreateLoggedWorkoutArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  validateCreateLoggedWorkoutInput(data)
-
   const loggedWorkout = await prisma.loggedWorkout.create({
     data: {
       ...data,
@@ -77,34 +68,15 @@ export const createLoggedWorkout = async (
       LoggedWorkoutSections: {
         create: data.LoggedWorkoutSections.map((section) => ({
           ...section,
+          /// Empty array or null will both be ignored as there should never be zero body areas targeted.
+          BodyAreas: section.BodyAreas
+            ? {
+                set: section.BodyAreas,
+              }
+            : undefined,
           User: { connect: { id: authedUserId } },
           WorkoutSectionType: {
             connect: section.WorkoutSectionType,
-          },
-          LoggedWorkoutSets: {
-            create: section.LoggedWorkoutSets
-              ? section.LoggedWorkoutSets.map((set) => ({
-                  ...set,
-                  User: { connect: { id: authedUserId } },
-                  LoggedWorkoutMoves: {
-                    create: set.LoggedWorkoutMoves.map((workoutMove) => ({
-                      ...workoutMove,
-                      distanceUnit: workoutMove.distanceUnit || undefined,
-                      loadUnit: workoutMove.loadUnit || undefined,
-                      timeUnit: workoutMove.timeUnit || undefined,
-                      User: { connect: { id: authedUserId } },
-                      Equipment: workoutMove.Equipment
-                        ? {
-                            connect: workoutMove.Equipment,
-                          }
-                        : undefined,
-                      Move: {
-                        connect: workoutMove.Move,
-                      },
-                    })),
-                  },
-                }))
-              : undefined,
           },
         })),
       },
@@ -134,14 +106,14 @@ export const createLoggedWorkout = async (
   }
 }
 
-/// Does not do any relation connecting
-/// ScheduledWorkout, WorkoutPlanEnrolment or WorkoutPlanWorkout
+/// Does not do any relation connecting / updating for ScheduledWorkout, WorkoutPlanEnrolment or WorkoutPlanWorkout.
 export const updateLoggedWorkout = async (
   r: any,
   { data }: MutationUpdateLoggedWorkoutArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
   await checkUserOwnsObject(data.id, 'loggedWorkout', authedUserId, prisma)
+
   const updated = await prisma.loggedWorkout.update({
     where: {
       id: data.id,
@@ -167,93 +139,56 @@ export const updateLoggedWorkout = async (
   }
 }
 
-//// Deletes the logged workout AND all of its children ////
+//// Deletes the logged workout AND all of its logged workout sections via cascade ////
 export const deleteLoggedWorkoutById = async (
   r: any,
   { id }: MutationDeleteLoggedWorkoutByIdArgs,
   { authedUserId, prisma }: Context,
 ) => {
-  // Get original LoggedWorkout and all its sections.
-  // To check user access, get descendant ids and to get media uris back.
-  const logForDeletion = await prisma.loggedWorkout.findUnique({
-    where: { id },
-    select: {
-      id: true,
-      userId: true,
+  await checkUserOwnsObject(id, 'loggedWorkout', authedUserId, prisma)
+
+  const deleted = await prisma.loggedWorkout.delete({ where: { id } })
+
+  if (deleted) {
+    return deleted.id
+  } else {
+    throw new ApolloError('deleteLoggedWorkoutById: There was an issue.')
+  }
+}
+
+//// Logged Workout Section ////
+export const updateLoggedWorkoutSection = async (
+  r: any,
+  { data }: MutationUpdateLoggedWorkoutSectionArgs,
+  { authedUserId, select, prisma }: Context,
+) => {
+  await checkUserOwnsObject(
+    data.id,
+    'loggedWorkoutSection',
+    authedUserId,
+    prisma,
+  )
+
+  const updated = await prisma.loggedWorkoutSection.update({
+    where: {
+      id: data.id,
     },
+    data: {
+      // ...data
+      workoutSectionData: data.workoutSectionData || undefined,
+      /// Empty array or null will both be ignored as there should never be zero body areas targeted.
+      BodyAreas: data.BodyAreas
+        ? {
+            set: data.BodyAreas,
+          }
+        : undefined,
+    },
+    select,
   })
 
-  if (!logForDeletion || logForDeletion.userId !== authedUserId) {
-    throw new AccessScopeError()
+  if (updated) {
+    return updated as LoggedWorkoutSection
   } else {
-    const sectionsForDeletion = await prisma.loggedWorkoutSection.findMany({
-      where: { loggedWorkoutId: id },
-      select: { id: true },
-    })
-    const sectionIds = sectionsForDeletion.map(({ id }) => id)
-
-    const setsForDeletion = await prisma.loggedWorkoutSet.findMany({
-      where: { loggedWorkoutSectionId: { in: sectionIds } },
-      select: { id: true },
-    })
-    const setIds = setsForDeletion.map(({ id }) => id)
-
-    const ops = [
-      prisma.loggedWorkoutMove.deleteMany({
-        where: { loggedWorkoutSetId: { in: setIds } },
-      }),
-      prisma.loggedWorkoutSet.deleteMany({ where: { id: { in: setIds } } }),
-      prisma.loggedWorkoutSection.deleteMany({
-        where: { id: { in: sectionIds } },
-      }),
-      prisma.loggedWorkout.delete({ where: { id } }),
-    ]
-
-    const [_, __, ___, deleted] = await prisma.$transaction(ops)
-
-    if (deleted) {
-      return logForDeletion.id
-    } else {
-      throw new ApolloError('deleteLoggedWorkoutById: There was an issue.')
-    }
-  }
-}
-
-//// Input validation ////
-/**
- * LoggedWorkoutMove Validation
- */
-function validateCreateLoggedWorkoutInput(data: CreateLoggedWorkoutInput) {
-  for (const section of data.LoggedWorkoutSections) {
-    // Ensure any laptimes data is in the correct format.
-    if (
-      section.lapTimesMs != null &&
-      !validateWorkoutSectionLapTimesMs(section.lapTimesMs)
-    ) {
-      throw new Error(
-        'validateCreateLoggedWorkoutInput.validateWorkoutSectionLapTimesMs: Invalid JSON input shape.',
-      )
-    }
-    for (const set of section.LoggedWorkoutSets) {
-      // Check all logged workout moves for valid inputs
-      for (const workoutMove of set.LoggedWorkoutMoves) {
-        validateLoggedWorkoutMoveInput(workoutMove)
-      }
-    }
-  }
-}
-
-function validateLoggedWorkoutMoveInput(
-  workoutMove:
-    | CreateLoggedWorkoutMoveInput
-    | CreateLoggedWorkoutMoveInLoggedSetInput,
-) {
-  if (
-    (workoutMove.repType === 'DISTANCE' && !workoutMove.distanceUnit) ||
-    (workoutMove.loadAmount && !workoutMove.loadUnit)
-  ) {
-    throw new ApolloError(
-      'Invalid loggedWorkoutMove input: Rep type of DISTANCE requires that distance unit be specified and a non-null loadAmount requires that loadUnit be specified. One of these was missing for one or more of the loggedWorkoutMoves you submitted',
-    )
+    throw new ApolloError('updateLoggedWorkoutSection: There was an issue.')
   }
 }

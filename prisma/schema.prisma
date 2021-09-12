@@ -22,13 +22,14 @@ model Admin {
 //// Global / Core Data / Tags ////////
 ///////////////////////////////////////
 model BodyArea {
-  id                 String              @id @default(uuid())
-  createdAt          DateTime            @default(now())
-  name               String              @unique
-  altNames           String?
-  BodyAreaMoveScores BodyAreaMoveScore[]
-  frontBack          BodyAreaFrontBack   @default(FRONT)
-  upperLower         BodyAreaUpperLower  @default(UPPER)
+  id                    String                 @id @default(uuid())
+  createdAt             DateTime               @default(now())
+  name                  String                 @unique
+  altNames              String?
+  BodyAreaMoveScores    BodyAreaMoveScore[]
+  frontBack             BodyAreaFrontBack      @default(FRONT)
+  upperLower            BodyAreaUpperLower     @default(UPPER)
+  LoggedWorkoutSections LoggedWorkoutSection[]
 }
 
 model BodyAreaMoveScore {
@@ -43,17 +44,16 @@ model BodyAreaMoveScore {
 }
 
 model Equipment {
-  id                 String              @id @default(uuid())
-  createdAt          DateTime            @default(now())
-  name               String              @unique
+  id                 String        @id @default(uuid())
+  createdAt          DateTime      @default(now())
+  name               String        @unique
   altNames           String?
   imageUrl           String?
-  loadAdjustable     Boolean             @default(true)
-  RequiredForMoves   Move[]              @relation("moveToRequiredEquipments", references: [id])
-  SelectableForMoves Move[]              @relation("moveToSelectableEquipments", references: [id])
+  loadAdjustable     Boolean       @default(true)
+  RequiredForMoves   Move[]        @relation("moveToRequiredEquipments", references: [id])
+  SelectableForMoves Move[]        @relation("moveToSelectableEquipments", references: [id])
   GymProfiles        GymProfile[]
   WorkoutMoves       WorkoutMove[]
-  LoggedWorkoutMoves LoggedWorkoutMove[]
 }
 
 model Move {
@@ -76,7 +76,6 @@ model Move {
   SelectableEquipments Equipment[]          @relation("moveToSelectableEquipments", references: [id])
   WorkoutMoves         WorkoutMove[]
   BodyAreaMoveScores   BodyAreaMoveScore[]
-  LoggedWorkoutMoves   LoggedWorkoutMove[]
 }
 
 // General, Cardio, Barre, Yoga etc
@@ -184,8 +183,6 @@ model User {
   ProgressJournals         ProgressJournal[]
   ProgressJournalGoalTags  ProgressJournalGoalTag[]
   LoggedWorkoutSections    LoggedWorkoutSection[]
-  LoggedWorkoutSets        LoggedWorkoutSet[]
-  LoggedWorkoutMoves       LoggedWorkoutMove[]
   ProgressJournalGoals     ProgressJournalGoal[]
   ProgressJournalEntrys    ProgressJournalEntry[]
   WorkoutSections          WorkoutSection[]
@@ -559,6 +556,7 @@ model LoggedWorkout {
   completedOn           DateTime
   User                  User                   @relation(fields: [userId], references: [id])
   userId                String
+  // The workout name.
   name                  String
   note                  String?
   GymProfile            GymProfile?            @relation(fields: [gymProfileId], references: [id])
@@ -574,58 +572,63 @@ model LoggedWorkoutSection {
   createdAt            DateTime           @default(now())
   User                 User               @relation(fields: [userId], references: [id])
   userId               String
+  // The section name.
   name                 String?
   note                 String?
   timecap              Int? // Seconds - original timecap on the section
   sortPosition         Int
   // Total time taken - useful for scoring fortime workouts and adding a duration to free session workouts where laptimes can be overkill.
   timeTakenMs          Int?
+  // Score for AMRAP type workout where your score submission is the number of reps you completed.
+  repScore             Int?
   // JsonArray validated before entering the DB via yup
   // see lib/jsonValidation.ts for shape.
-  lapTimesMs           Json               @default("{}") // Milliseconds. 
-  repScore             Int? // Score for AMRAP and Last Standing type workouts where your score submission is the number of reps you completed.
-  LoggedWorkoutSets    LoggedWorkoutSet[]
-  LoggedWorkout        LoggedWorkout      @relation(fields: [loggedWorkoutId], references: [id])
+  workoutSectionData   Json               @default("{}") // Milliseconds. 
+  BodyAreas            BodyArea[]
+  LoggedWorkout        LoggedWorkout      @relation(fields: [loggedWorkoutId], references: [id], onDelete: Cascade)
   loggedWorkoutId      String
   WorkoutSectionType   WorkoutSectionType @relation(fields: [workoutSectionTypeId], references: [id])
   workoutSectionTypeId String
 }
 
-model LoggedWorkoutSet {
-  id                     String               @id @default(uuid())
-  createdAt              DateTime             @default(now())
-  User                   User                 @relation(fields: [userId], references: [id])
-  userId                 String
-  note                   String?
-  roundNumber            Int // Which round of the section.
-  sortPosition           Int // Within the section.
-  duration               Int? // Seconds - Used in EMOM and HIIT circuit workouts to determine how long to do the moves for. Copied across from WorkoutSet.duration
-  roundsCompleted        Int                  @default(1) // Of the set
-  LoggedWorkoutMoves     LoggedWorkoutMove[]
-  LoggedWorkoutSection   LoggedWorkoutSection @relation(fields: [loggedWorkoutSectionId], references: [id])
-  loggedWorkoutSectionId String
-}
+// model LoggedWorkoutSet {
+//   id                     String               @id @default(uuid())
+//   createdAt              DateTime             @default(now())
+//   User                   User                 @relation(fields: [userId], references: [id])
+//   userId                 String
+//   note                   String?
+//   // TODO: This is no longer needed...!
+//   // Just go back to being 'rounds' and copy straight across from the WorkoutSet
+//   roundNumber            Int // Which round of the section.
+//   sortPosition           Int // Within the section.
+//   duration               Int? // Seconds - Used in EMOM and HIIT circuit workouts to determine how long to do the moves for. Copied across from WorkoutSet.duration
+//   // TODO: This is no longer needed...!
+//   roundsCompleted        Int                  @default(1) // Of the set
+//   LoggedWorkoutMoves     LoggedWorkoutMove[]
+//   LoggedWorkoutSection   LoggedWorkoutSection @relation(fields: [loggedWorkoutSectionId], references: [id])
+//   loggedWorkoutSectionId String
+// }
 
-model LoggedWorkoutMove {
-  id                 String             @id @default(uuid())
-  createdAt          DateTime           @default(now())
-  User               User               @relation(fields: [userId], references: [id])
-  userId             String
-  sortPosition       Int
-  repType            WorkoutMoveRepType
-  reps               Float
-  distance           Float?
-  distanceUnit       DistanceUnit       @default(METRES)
-  loadAmount         Float?
-  loadUnit           LoadUnit           @default(KG)
-  timeUnit           TimeUnit           @default(SECONDS)
-  Move               Move               @relation(fields: [moveId], references: [id])
-  moveId             String
-  Equipment          Equipment?         @relation(fields: [equipmentId], references: [id])
-  equipmentId        String?
-  LoggedWorkoutSet   LoggedWorkoutSet   @relation(fields: [loggedWorkoutSetId], references: [id])
-  loggedWorkoutSetId String
-}
+// model LoggedWorkoutMove {
+//   id                 String             @id @default(uuid())
+//   createdAt          DateTime           @default(now())
+//   User               User               @relation(fields: [userId], references: [id])
+//   userId             String
+//   sortPosition       Int
+//   repType            WorkoutMoveRepType
+//   reps               Float
+//   distance           Float?
+//   distanceUnit       DistanceUnit       @default(METRES)
+//   loadAmount         Float?
+//   loadUnit           LoadUnit           @default(KG)
+//   timeUnit           TimeUnit           @default(SECONDS)
+//   Move               Move               @relation(fields: [moveId], references: [id])
+//   moveId             String
+//   Equipment          Equipment?         @relation(fields: [equipmentId], references: [id])
+//   equipmentId        String?
+//   LoggedWorkoutSet   LoggedWorkoutSet   @relation(fields: [loggedWorkoutSetId], references: [id])
+//   loggedWorkoutSetId String
+// }
 
 ////////////////////////////////////////////////
 ////// Progress Journal Related ////////////////

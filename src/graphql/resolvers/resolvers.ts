@@ -46,28 +46,8 @@ import {
   createLoggedWorkout,
   updateLoggedWorkout,
   deleteLoggedWorkoutById,
-} from './loggedWorkout/loggedWorkout'
-
-import {
-  createLoggedWorkoutSection,
   updateLoggedWorkoutSection,
-  deleteLoggedWorkoutSectionById,
-  reorderLoggedWorkoutSections,
-} from './loggedWorkout/loggedWorkoutSection'
-
-import {
-  createLoggedWorkoutSet,
-  updateLoggedWorkoutSet,
-  deleteLoggedWorkoutSetById,
-  reorderLoggedWorkoutSets,
-} from './loggedWorkout/loggedWorkoutSet'
-
-import {
-  createLoggedWorkoutMove,
-  updateLoggedWorkoutMove,
-  deleteLoggedWorkoutMoveById,
-  reorderLoggedWorkoutMoves,
-} from './loggedWorkout/loggedWorkoutMove'
+} from './loggedWorkout/loggedWorkout'
 
 import {
   standardMoves,
@@ -399,18 +379,7 @@ const resolvers: Resolvers = {
     createLoggedWorkout,
     updateLoggedWorkout,
     deleteLoggedWorkoutById,
-    createLoggedWorkoutSection,
     updateLoggedWorkoutSection,
-    deleteLoggedWorkoutSectionById,
-    createLoggedWorkoutSet,
-    updateLoggedWorkoutSet,
-    deleteLoggedWorkoutSetById,
-    createLoggedWorkoutMove,
-    updateLoggedWorkoutMove,
-    deleteLoggedWorkoutMoveById,
-    reorderLoggedWorkoutSections,
-    reorderLoggedWorkoutSets,
-    reorderLoggedWorkoutMoves,
     //////////////
     //// Move ////
     //////////////
