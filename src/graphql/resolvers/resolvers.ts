@@ -47,7 +47,7 @@ import {
   updateLoggedWorkout,
   deleteLoggedWorkoutById,
   updateLoggedWorkoutSection,
-} from './loggedWorkout/loggedWorkout'
+} from './loggedWorkout'
 
 import {
   standardMoves,

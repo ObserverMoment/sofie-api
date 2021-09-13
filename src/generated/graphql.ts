@@ -222,6 +222,7 @@ export type CreateLoggedWorkoutInput = {
   GymProfile?: Maybe<ConnectRelationInput>;
   ScheduledWorkout?: Maybe<ConnectRelationInput>;
   Workout?: Maybe<ConnectRelationInput>;
+  WorkoutGoals: Array<ConnectRelationInput>;
 };
 
 export type CreateLoggedWorkoutSectionInLoggedWorkoutInput = {
@@ -230,10 +231,11 @@ export type CreateLoggedWorkoutSectionInLoggedWorkoutInput = {
   timecap?: Maybe<Scalars['Int']>;
   sortPosition: Scalars['Int'];
   repScore?: Maybe<Scalars['Int']>;
-  timeTakenMs?: Maybe<Scalars['Int']>;
+  timeTakenSeconds: Scalars['Int'];
   workoutSectionData: WorkoutSectionDataInput;
   WorkoutSectionType: ConnectRelationInput;
   BodyAreas: Array<ConnectRelationInput>;
+  MoveTypes: Array<ConnectRelationInput>;
 };
 
 export type CreateMoveInput = {
@@ -535,6 +537,7 @@ export type LoggedWorkout = {
   LoggedWorkoutSections: Array<LoggedWorkoutSection>;
   ScheduledWorkout?: Maybe<ScheduledWorkout>;
   Workout?: Maybe<Workout>;
+  WorkoutGoals: Array<WorkoutGoal>;
 };
 
 export type LoggedWorkoutSection = {
@@ -544,11 +547,12 @@ export type LoggedWorkoutSection = {
   note?: Maybe<Scalars['String']>;
   timecap?: Maybe<Scalars['Int']>;
   sortPosition: Scalars['Int'];
-  timeTakenMs?: Maybe<Scalars['Int']>;
+  timeTakenSeconds: Scalars['Int'];
   repScore?: Maybe<Scalars['Int']>;
-  workoutSectionData: WorkoutSectionData;
+  workoutSectionData?: Maybe<WorkoutSectionData>;
   BodyAreas: Array<BodyArea>;
   WorkoutSectionType: WorkoutSectionType;
+  MoveTypes: Array<MoveType>;
   LoggedWorkout: LoggedWorkout;
 };
 
@@ -1622,20 +1626,16 @@ export type UpdateJoinClubRequestInput = {
 export type UpdateLoggedWorkoutInput = {
   id: Scalars['ID'];
   completedOn?: Maybe<Scalars['DateTime']>;
-  name?: Maybe<Scalars['String']>;
   note?: Maybe<Scalars['String']>;
   GymProfile?: Maybe<ConnectRelationInput>;
 };
 
 export type UpdateLoggedWorkoutSectionInput = {
   id: Scalars['ID'];
-  name?: Maybe<Scalars['String']>;
   note?: Maybe<Scalars['String']>;
-  timeTakenMs?: Maybe<Scalars['Int']>;
-  timecap?: Maybe<Scalars['Int']>;
+  timeTakenSeconds?: Maybe<Scalars['Int']>;
   repScore?: Maybe<Scalars['Int']>;
   workoutSectionData?: Maybe<WorkoutSectionDataInput>;
-  BodyAreas: Array<ConnectRelationInput>;
 };
 
 export type UpdateMoveInput = {
@@ -2137,25 +2137,25 @@ export type WorkoutSectionDataInput = {
 
 export type WorkoutSectionRoundData = {
   __typename?: 'WorkoutSectionRoundData';
-  timeTakenMs?: Maybe<Scalars['Int']>;
+  timeTakenSeconds: Scalars['Int'];
   sets: Array<WorkoutSectionRoundSetData>;
 };
 
 export type WorkoutSectionRoundDataInput = {
-  timeTakenMs?: Maybe<Scalars['Int']>;
+  timeTakenSeconds: Scalars['Int'];
   sets: Array<WorkoutSectionRoundSetDataInput>;
 };
 
 export type WorkoutSectionRoundSetData = {
   __typename?: 'WorkoutSectionRoundSetData';
-  timeTakenMs?: Maybe<Scalars['Int']>;
+  timeTakenSeconds: Scalars['Int'];
   move: Scalars['String'];
   load?: Maybe<Scalars['String']>;
   quantity: Scalars['String'];
 };
 
 export type WorkoutSectionRoundSetDataInput = {
-  timeTakenMs?: Maybe<Scalars['Int']>;
+  timeTakenSeconds: Scalars['Int'];
   move: Scalars['String'];
   load?: Maybe<Scalars['String']>;
   quantity: Scalars['String'];
@@ -2854,6 +2854,7 @@ export type LoggedWorkoutResolvers<ContextType = any, ParentType extends Resolve
   LoggedWorkoutSections?: Resolver<Array<ResolversTypes['LoggedWorkoutSection']>, ParentType, ContextType>;
   ScheduledWorkout?: Resolver<Maybe<ResolversTypes['ScheduledWorkout']>, ParentType, ContextType>;
   Workout?: Resolver<Maybe<ResolversTypes['Workout']>, ParentType, ContextType>;
+  WorkoutGoals?: Resolver<Array<ResolversTypes['WorkoutGoal']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -2863,11 +2864,12 @@ export type LoggedWorkoutSectionResolvers<ContextType = any, ParentType extends 
   note?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   timecap?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   sortPosition?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  timeTakenMs?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  timeTakenSeconds?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   repScore?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  workoutSectionData?: Resolver<ResolversTypes['WorkoutSectionData'], ParentType, ContextType>;
+  workoutSectionData?: Resolver<Maybe<ResolversTypes['WorkoutSectionData']>, ParentType, ContextType>;
   BodyAreas?: Resolver<Array<ResolversTypes['BodyArea']>, ParentType, ContextType>;
   WorkoutSectionType?: Resolver<ResolversTypes['WorkoutSectionType'], ParentType, ContextType>;
+  MoveTypes?: Resolver<Array<ResolversTypes['MoveType']>, ParentType, ContextType>;
   LoggedWorkout?: Resolver<ResolversTypes['LoggedWorkout'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
@@ -3402,13 +3404,13 @@ export type WorkoutSectionDataResolvers<ContextType = any, ParentType extends Re
 }>;
 
 export type WorkoutSectionRoundDataResolvers<ContextType = any, ParentType extends ResolversParentTypes['WorkoutSectionRoundData'] = ResolversParentTypes['WorkoutSectionRoundData']> = ResolversObject<{
-  timeTakenMs?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  timeTakenSeconds?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   sets?: Resolver<Array<ResolversTypes['WorkoutSectionRoundSetData']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type WorkoutSectionRoundSetDataResolvers<ContextType = any, ParentType extends ResolversParentTypes['WorkoutSectionRoundSetData'] = ResolversParentTypes['WorkoutSectionRoundSetData']> = ResolversObject<{
-  timeTakenMs?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  timeTakenSeconds?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   move?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   load?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   quantity?: Resolver<ResolversTypes['String'], ParentType, ContextType>;

@@ -1,5 +1,5 @@
 import { ApolloError } from 'apollo-server-express'
-import { Context } from '../../..'
+import { Context } from '../..'
 import {
   LoggedWorkout,
   LoggedWorkoutSection,
@@ -9,8 +9,8 @@ import {
   MutationUpdateLoggedWorkoutSectionArgs,
   QueryLoggedWorkoutByIdArgs,
   QueryUserLoggedWorkoutsArgs,
-} from '../../../generated/graphql'
-import { checkUserOwnsObject } from '../../utils'
+} from '../../generated/graphql'
+import { checkUserOwnsObject } from '../utils'
 
 //// Queries ////
 export const userLoggedWorkouts = async (
@@ -65,26 +65,15 @@ export const createLoggedWorkout = async (
           id: authedUserId,
         },
       },
-      LoggedWorkoutSections: {
-        create: data.LoggedWorkoutSections.map((section) => ({
-          ...section,
-          /// Empty array or null will both be ignored as there should never be zero body areas targeted.
-          BodyAreas: section.BodyAreas
-            ? {
-                set: section.BodyAreas,
-              }
-            : undefined,
-          User: { connect: { id: authedUserId } },
-          WorkoutSectionType: {
-            connect: section.WorkoutSectionType,
-          },
-        })),
-      },
+
       Workout: data.Workout
         ? {
             connect: data.Workout,
           }
         : undefined,
+      WorkoutGoals: {
+        connect: data.WorkoutGoals,
+      },
       ScheduledWorkout: data.ScheduledWorkout
         ? {
             connect: data.ScheduledWorkout,
@@ -95,6 +84,21 @@ export const createLoggedWorkout = async (
             connect: data.GymProfile,
           }
         : undefined,
+      LoggedWorkoutSections: {
+        create: data.LoggedWorkoutSections.map((section) => ({
+          ...section,
+          User: { connect: { id: authedUserId } },
+          WorkoutSectionType: {
+            connect: section.WorkoutSectionType,
+          },
+          BodyAreas: {
+            connect: section.BodyAreas,
+          },
+          MoveTypes: {
+            connect: section.MoveTypes,
+          },
+        })),
+      },
     },
     select,
   })
@@ -119,8 +123,6 @@ export const updateLoggedWorkout = async (
       id: data.id,
     },
     data: {
-      ...data,
-      name: data.name || undefined,
       // GymProfile can be null , so it can only be ignored if not present in the data object.
       // passing null should disconnect a connected GymProfile.
       GymProfile: data.hasOwnProperty('GymProfile')
@@ -174,14 +176,9 @@ export const updateLoggedWorkoutSection = async (
       id: data.id,
     },
     data: {
-      // ...data
+      ...data,
+      timeTakenSeconds: data.timeTakenSeconds || undefined,
       workoutSectionData: data.workoutSectionData || undefined,
-      /// Empty array or null will both be ignored as there should never be zero body areas targeted.
-      BodyAreas: data.BodyAreas
-        ? {
-            set: data.BodyAreas,
-          }
-        : undefined,
     },
     select,
   })

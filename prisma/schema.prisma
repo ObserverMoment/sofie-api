@@ -80,21 +80,23 @@ model Move {
 
 // General, Cardio, Barre, Yoga etc
 model MoveType {
-  id          String   @id @default(uuid())
-  createdAt   DateTime @default(now())
-  name        String
-  description String?
-  imageUri    String?
-  Moves       Move[]
+  id                    String                 @id @default(uuid())
+  createdAt             DateTime               @default(now())
+  name                  String
+  description           String?
+  imageUri              String?
+  Moves                 Move[]
+  LoggedWorkoutSections LoggedWorkoutSection[]
 }
 
 model WorkoutGoal {
-  id          String    @id @default(uuid())
-  createdAt   DateTime  @default(now())
-  name        String
-  description String
-  hexColor    String
-  Workouts    Workout[]
+  id             String          @id @default(uuid())
+  createdAt      DateTime        @default(now())
+  name           String
+  description    String
+  hexColor       String
+  Workouts       Workout[]
+  LoggedWorkouts LoggedWorkout[]
 }
 
 model WorkoutSectionType {
@@ -565,6 +567,7 @@ model LoggedWorkout {
   ScheduledWorkout      ScheduledWorkout?
   Workout               Workout?               @relation(fields: [workoutId], references: [id])
   workoutId             String?
+  WorkoutGoals          WorkoutGoal[]
 }
 
 model LoggedWorkoutSection {
@@ -577,16 +580,18 @@ model LoggedWorkoutSection {
   note                 String?
   timecap              Int? // Seconds - original timecap on the section
   sortPosition         Int
-  // Total time taken - useful for scoring fortime workouts and adding a duration to free session workouts where laptimes can be overkill.
+  // Total time taken - user inputted when FreeSession or ForTime. Otherwise auto copied / auto calced.
+  timeTakenSeconds     Int                @default(1800)
+  // @deprecated in favor of timeTakenSeconds.
+  // Remove this once timeTakenSeconds is in place.
   timeTakenMs          Int?
   // Score for AMRAP type workout where your score submission is the number of reps you completed.
   repScore             Int?
-  // JsonArray validated before entering the DB via yup
-  // see lib/jsonValidation.ts for shape.
-  workoutSectionData   Json               @default("{}") // Milliseconds. 
+  workoutSectionData   Json?
   BodyAreas            BodyArea[]
   LoggedWorkout        LoggedWorkout      @relation(fields: [loggedWorkoutId], references: [id], onDelete: Cascade)
   loggedWorkoutId      String
+  MoveTypes            MoveType[]
   WorkoutSectionType   WorkoutSectionType @relation(fields: [workoutSectionTypeId], references: [id])
   workoutSectionTypeId String
 }

@@ -11,6 +11,7 @@ export default gql`
     LoggedWorkoutSections: [LoggedWorkoutSection!]!
     ScheduledWorkout: ScheduledWorkout
     Workout: Workout
+    WorkoutGoals: [WorkoutGoal!]!
   }
 
   type LoggedWorkoutSection {
@@ -19,11 +20,12 @@ export default gql`
     note: String
     timecap: Int
     sortPosition: Int!
-    timeTakenMs: Int
+    timeTakenSeconds: Int!
     repScore: Int
-    workoutSectionData: WorkoutSectionData!
+    workoutSectionData: WorkoutSectionData
     BodyAreas: [BodyArea!]!
     WorkoutSectionType: WorkoutSectionType!
+    MoveTypes: [MoveType!]!
     LoggedWorkout: LoggedWorkout!
   }
 
@@ -36,6 +38,7 @@ export default gql`
     GymProfile: ConnectRelationInput
     ScheduledWorkout: ConnectRelationInput
     Workout: ConnectRelationInput
+    WorkoutGoals: [ConnectRelationInput!]!
   }
 
   input CreateLoggedWorkoutSectionInLoggedWorkoutInput {
@@ -44,30 +47,27 @@ export default gql`
     timecap: Int
     sortPosition: Int!
     repScore: Int
-    timeTakenMs: Int
+    timeTakenSeconds: Int!
     workoutSectionData: WorkoutSectionDataInput!
     WorkoutSectionType: ConnectRelationInput!
     BodyAreas: [ConnectRelationInput!]!
+    MoveTypes: [ConnectRelationInput!]!
   }
 
   #### Update Inputs - Updates are made atomically at each level. (Non nested) ####
   input UpdateLoggedWorkoutInput {
     id: ID!
     completedOn: DateTime
-    name: String
     note: String
     GymProfile: ConnectRelationInput
   }
 
   input UpdateLoggedWorkoutSectionInput {
     id: ID!
-    name: String
     note: String
-    timeTakenMs: Int
-    timecap: Int
+    timeTakenSeconds: Int
     repScore: Int
     workoutSectionData: WorkoutSectionDataInput
-    BodyAreas: [ConnectRelationInput!]!
   }
 
   ######### Structure for JSON type in the database. ###########
@@ -76,12 +76,12 @@ export default gql`
   }
 
   type WorkoutSectionRoundData {
-    timeTakenMs: Int
+    timeTakenSeconds: Int!
     sets: [WorkoutSectionRoundSetData!]!
   }
 
   type WorkoutSectionRoundSetData {
-    timeTakenMs: Int
+    timeTakenSeconds: Int!
     move: String!
     load: String
     quantity: String!
@@ -92,12 +92,12 @@ export default gql`
   }
 
   input WorkoutSectionRoundDataInput {
-    timeTakenMs: Int
+    timeTakenSeconds: Int!
     sets: [WorkoutSectionRoundSetDataInput!]!
   }
 
   input WorkoutSectionRoundSetDataInput {
-    timeTakenMs: Int
+    timeTakenSeconds: Int!
     move: String!
     load: String
     quantity: String!
