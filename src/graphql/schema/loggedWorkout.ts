@@ -22,7 +22,7 @@ export default gql`
     sortPosition: Int!
     timeTakenSeconds: Int!
     repScore: Int
-    workoutSectionData: WorkoutSectionData
+    loggedWorkoutSectionData: LoggedWorkoutSectionData
     BodyAreas: [BodyArea!]!
     WorkoutSectionType: WorkoutSectionType!
     MoveTypes: [MoveType!]!
@@ -48,7 +48,7 @@ export default gql`
     sortPosition: Int!
     repScore: Int
     timeTakenSeconds: Int!
-    workoutSectionData: WorkoutSectionDataInput!
+    loggedWorkoutSectionData: LoggedWorkoutSectionDataInput!
     WorkoutSectionType: ConnectRelationInput!
     BodyAreas: [ConnectRelationInput!]!
     MoveTypes: [ConnectRelationInput!]!
@@ -67,11 +67,11 @@ export default gql`
     note: String
     timeTakenSeconds: Int
     repScore: Int
-    workoutSectionData: WorkoutSectionDataInput
+    loggedWorkoutSectionData: LoggedWorkoutSectionDataInput
   }
 
   ######### Structure for JSON type in the database. ###########
-  type WorkoutSectionData {
+  type LoggedWorkoutSectionData {
     rounds: [WorkoutSectionRoundData!]!
   }
 
@@ -82,12 +82,11 @@ export default gql`
 
   type WorkoutSectionRoundSetData {
     timeTakenSeconds: Int!
-    move: String!
-    load: String
-    quantity: String!
+    # Comma separated list of the moves in the set. Including reps, move name and load.
+    moves: String!
   }
 
-  input WorkoutSectionDataInput {
+  input LoggedWorkoutSectionDataInput {
     rounds: [WorkoutSectionRoundDataInput!]!
   }
 
@@ -98,8 +97,7 @@ export default gql`
 
   input WorkoutSectionRoundSetDataInput {
     timeTakenSeconds: Int!
-    move: String!
-    load: String
-    quantity: String!
+    # Comma separated list of the moves in the set. Including reps, move name and load.
+    moves: String!
   }
 `

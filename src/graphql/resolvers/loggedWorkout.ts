@@ -178,7 +178,7 @@ export const updateLoggedWorkoutSection = async (
     data: {
       ...data,
       timeTakenSeconds: data.timeTakenSeconds || undefined,
-      workoutSectionData: data.workoutSectionData || undefined,
+      loggedWorkoutSectionData: data.loggedWorkoutSectionData || undefined,
     },
     select,
   })

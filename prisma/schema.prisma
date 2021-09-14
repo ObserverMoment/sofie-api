@@ -381,7 +381,7 @@ model WorkoutSection {
   note                 String?
   // This field should always be one for AMRAP, Tabata, LastStanding and Free Session.
   rounds               Int                @default(1)
-  // Seconds. To finish ALL rounds of the section. i.e. the whole 'workout' as described.
+  // Seconds. To finish ALL rounds of the section. i.e. the whole 'section workout' as described.
   // Set to zero to ignore. As of Sept 2021, only used on AMRAP.
   timecap              Int                @default(0)
   sortPosition         Int
@@ -571,29 +571,29 @@ model LoggedWorkout {
 }
 
 model LoggedWorkoutSection {
-  id                   String             @id @default(uuid())
-  createdAt            DateTime           @default(now())
-  User                 User               @relation(fields: [userId], references: [id])
-  userId               String
+  id                       String             @id @default(uuid())
+  createdAt                DateTime           @default(now())
+  User                     User               @relation(fields: [userId], references: [id])
+  userId                   String
   // The section name.
-  name                 String?
-  note                 String?
-  timecap              Int? // Seconds - original timecap on the section
-  sortPosition         Int
+  name                     String?
+  note                     String?
+  timecap                  Int? // Seconds - original timecap on the section
+  sortPosition             Int
   // Total time taken - user inputted when FreeSession or ForTime. Otherwise auto copied / auto calced.
-  timeTakenSeconds     Int                @default(1800)
+  timeTakenSeconds         Int                @default(1800)
   // @deprecated in favor of timeTakenSeconds.
   // Remove this once timeTakenSeconds is in place.
-  timeTakenMs          Int?
+  timeTakenMs              Int?
   // Score for AMRAP type workout where your score submission is the number of reps you completed.
-  repScore             Int?
-  workoutSectionData   Json?
-  BodyAreas            BodyArea[]
-  LoggedWorkout        LoggedWorkout      @relation(fields: [loggedWorkoutId], references: [id], onDelete: Cascade)
-  loggedWorkoutId      String
-  MoveTypes            MoveType[]
-  WorkoutSectionType   WorkoutSectionType @relation(fields: [workoutSectionTypeId], references: [id])
-  workoutSectionTypeId String
+  repScore                 Int?
+  loggedWorkoutSectionData Json?
+  BodyAreas                BodyArea[]
+  LoggedWorkout            LoggedWorkout      @relation(fields: [loggedWorkoutId], references: [id], onDelete: Cascade)
+  loggedWorkoutId          String
+  MoveTypes                MoveType[]
+  WorkoutSectionType       WorkoutSectionType @relation(fields: [workoutSectionTypeId], references: [id])
+  workoutSectionTypeId     String
 }
 
 // model LoggedWorkoutSet {
