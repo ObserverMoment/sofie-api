@@ -41,7 +41,7 @@ export function initGetStreamClients() {
     )
   } catch (e) {
     console.log(e)
-    throw new Error(e)
+    throw new Error(String(e))
   }
 }
 
@@ -63,13 +63,13 @@ export async function createStreamFeedUser(userId: string) {
     await streamFeedClient!.user(userId).create()
   } catch (e) {
     console.log(e)
-    throw new Error(e)
+    throw new Error(String(e))
   }
 }
 
 /**
  * For GetStream activity feeds - used on the client as an access token for the logged in user.
- * @param  {string} userId - the SpotMe database User ID.
+ * @param  {string} userId - the database User ID.
  */
 export function getUserFeedToken(userId: string): string {
   try {
@@ -79,7 +79,7 @@ export function getUserFeedToken(userId: string): string {
     return streamFeedClient!.createUserToken(userId)
   } catch (e) {
     console.log(e)
-    throw new Error(e)
+    throw new Error(String(e))
   }
 }
 
@@ -110,7 +110,7 @@ export async function toggleFollowClubMembersFeed(
     }
   } catch (e) {
     console.log(e)
-    throw new Error(e)
+    throw new Error(String(e))
   }
 }
 
@@ -160,7 +160,7 @@ export async function createStreamClubMembersFeedActivity(
     return activityData
   } catch (e) {
     console.log(e)
-    throw new Error(e)
+    throw new Error(String(e))
   }
 }
 
@@ -206,7 +206,7 @@ export async function getStreamClubMembersFeedActivities(
     return activityData
   } catch (e) {
     console.log(e)
-    throw new Error(e)
+    throw new Error(String(e))
   }
 }
 
@@ -240,7 +240,7 @@ export async function deleteStreamClubPostActivity(
     return deleted.removed
   } catch (e) {
     console.log(e)
-    throw new Error(e)
+    throw new Error(String(e))
   }
 }
 
@@ -265,7 +265,7 @@ export async function createStreamChatUser(userId: string) {
     })
   } catch (e) {
     console.log(e)
-    throw new Error(e)
+    throw new Error(String(e))
   }
 }
 
@@ -292,7 +292,7 @@ export async function createStreamClubMemberChat(
       .addMembers([creatorId])
   } catch (e) {
     console.log(e)
-    throw new Error(e)
+    throw new Error(String(e))
   }
 }
 
@@ -307,7 +307,7 @@ export async function deleteStreamClubMemberChat(clubId: string) {
       .delete()
   } catch (e) {
     console.log(e)
-    throw new Error(e)
+    throw new Error(String(e))
   }
 }
 
@@ -325,7 +325,7 @@ export async function addStreamUserToClubMemberChat(
       .addMembers([userId])
   } catch (e) {
     console.log(e)
-    throw new Error(e)
+    throw new Error(String(e))
   }
 }
 
@@ -343,13 +343,13 @@ export async function removeStreamUserFromClubMemberChat(
       .removeMembers([userId])
   } catch (e) {
     console.log(e)
-    throw new Error(e)
+    throw new Error(String(e))
   }
 }
 
 /**
  * For GetStream chat - used on the client as an access token for the logged in user.
- * @param  {string} userId - the SpotMe database User ID.
+ * @param  {string} userId - the database User ID.
  */
 export function getUserChatToken(userId: string): string {
   try {
@@ -359,6 +359,6 @@ export function getUserChatToken(userId: string): string {
     return streamChatClient!.createToken(userId)
   } catch (e) {
     console.log(e)
-    throw new Error(e)
+    throw new Error(String(e))
   }
 }

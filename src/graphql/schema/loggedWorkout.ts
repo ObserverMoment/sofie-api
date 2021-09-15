@@ -17,8 +17,6 @@ export default gql`
   type LoggedWorkoutSection {
     id: ID!
     name: String
-    note: String
-    timecap: Int
     sortPosition: Int!
     timeTakenSeconds: Int!
     repScore: Int
@@ -43,8 +41,6 @@ export default gql`
 
   input CreateLoggedWorkoutSectionInLoggedWorkoutInput {
     name: String
-    note: String
-    timecap: Int
     sortPosition: Int!
     repScore: Int
     timeTakenSeconds: Int!
@@ -64,7 +60,6 @@ export default gql`
 
   input UpdateLoggedWorkoutSectionInput {
     id: ID!
-    note: String
     timeTakenSeconds: Int
     repScore: Int
     loggedWorkoutSectionData: LoggedWorkoutSectionDataInput

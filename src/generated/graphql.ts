@@ -227,8 +227,6 @@ export type CreateLoggedWorkoutInput = {
 
 export type CreateLoggedWorkoutSectionInLoggedWorkoutInput = {
   name?: Maybe<Scalars['String']>;
-  note?: Maybe<Scalars['String']>;
-  timecap?: Maybe<Scalars['Int']>;
   sortPosition: Scalars['Int'];
   repScore?: Maybe<Scalars['Int']>;
   timeTakenSeconds: Scalars['Int'];
@@ -544,8 +542,6 @@ export type LoggedWorkoutSection = {
   __typename?: 'LoggedWorkoutSection';
   id: Scalars['ID'];
   name?: Maybe<Scalars['String']>;
-  note?: Maybe<Scalars['String']>;
-  timecap?: Maybe<Scalars['Int']>;
   sortPosition: Scalars['Int'];
   timeTakenSeconds: Scalars['Int'];
   repScore?: Maybe<Scalars['Int']>;
@@ -1641,7 +1637,6 @@ export type UpdateLoggedWorkoutInput = {
 
 export type UpdateLoggedWorkoutSectionInput = {
   id: Scalars['ID'];
-  note?: Maybe<Scalars['String']>;
   timeTakenSeconds?: Maybe<Scalars['Int']>;
   repScore?: Maybe<Scalars['Int']>;
   loggedWorkoutSectionData?: Maybe<LoggedWorkoutSectionDataInput>;
@@ -2857,8 +2852,6 @@ export type LoggedWorkoutResolvers<ContextType = any, ParentType extends Resolve
 export type LoggedWorkoutSectionResolvers<ContextType = any, ParentType extends ResolversParentTypes['LoggedWorkoutSection'] = ResolversParentTypes['LoggedWorkoutSection']> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  note?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  timecap?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   sortPosition?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   timeTakenSeconds?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   repScore?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
