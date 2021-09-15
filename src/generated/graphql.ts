@@ -1633,6 +1633,7 @@ export type UpdateLoggedWorkoutInput = {
   completedOn?: Maybe<Scalars['DateTime']>;
   note?: Maybe<Scalars['String']>;
   GymProfile?: Maybe<ConnectRelationInput>;
+  WorkoutGoals: Array<ConnectRelationInput>;
 };
 
 export type UpdateLoggedWorkoutSectionInput = {
@@ -1640,6 +1641,8 @@ export type UpdateLoggedWorkoutSectionInput = {
   timeTakenSeconds?: Maybe<Scalars['Int']>;
   repScore?: Maybe<Scalars['Int']>;
   loggedWorkoutSectionData?: Maybe<LoggedWorkoutSectionDataInput>;
+  BodyAreas: Array<ConnectRelationInput>;
+  MoveTypes: Array<ConnectRelationInput>;
 };
 
 export type UpdateMoveInput = {

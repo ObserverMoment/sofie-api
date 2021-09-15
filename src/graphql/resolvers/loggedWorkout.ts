@@ -91,12 +91,16 @@ export const createLoggedWorkout = async (
           WorkoutSectionType: {
             connect: section.WorkoutSectionType,
           },
-          BodyAreas: {
-            connect: section.BodyAreas,
-          },
-          MoveTypes: {
-            connect: section.MoveTypes,
-          },
+          BodyAreas: section.BodyAreas
+            ? {
+                connect: section.BodyAreas,
+              }
+            : undefined,
+          MoveTypes: section.MoveTypes
+            ? {
+                connect: section.MoveTypes,
+              }
+            : undefined,
         })),
       },
     },
@@ -123,12 +127,16 @@ export const updateLoggedWorkout = async (
       id: data.id,
     },
     data: {
-      // GymProfile can be null , so it can only be ignored if not present in the data object.
+      ...data,
+      // GymProfile can be null, so it can only be ignored if not present in the data object.
       // passing null should disconnect a connected GymProfile.
       GymProfile: data.hasOwnProperty('GymProfile')
         ? data.GymProfile
           ? { connect: data.GymProfile }
           : { disconnect: true }
+        : undefined,
+      WorkoutGoals: data.hasOwnProperty('WorkoutGoals')
+        ? { set: data.WorkoutGoals || [] }
         : undefined,
     },
     select,
@@ -179,6 +187,15 @@ export const updateLoggedWorkoutSection = async (
       ...data,
       timeTakenSeconds: data.timeTakenSeconds || undefined,
       loggedWorkoutSectionData: data.loggedWorkoutSectionData || undefined,
+      // For BodyAreas and MoveTypes.
+      // If present then do not ignore if null or [].
+      // Both null and [] will effectively clear all relations.
+      BodyAreas: data.hasOwnProperty('BodyAreas')
+        ? { set: data.BodyAreas || [] }
+        : undefined,
+      MoveTypes: data.hasOwnProperty('MoveTypes')
+        ? { set: data.MoveTypes || [] }
+        : undefined,
     },
     select,
   })

@@ -56,6 +56,7 @@ export default gql`
     completedOn: DateTime
     note: String
     GymProfile: ConnectRelationInput
+    WorkoutGoals: [ConnectRelationInput!]!
   }
 
   input UpdateLoggedWorkoutSectionInput {
@@ -63,6 +64,8 @@ export default gql`
     timeTakenSeconds: Int
     repScore: Int
     loggedWorkoutSectionData: LoggedWorkoutSectionDataInput
+    BodyAreas: [ConnectRelationInput!]!
+    MoveTypes: [ConnectRelationInput!]!
   }
 
   ######### Structure for JSON type in the database. ###########
