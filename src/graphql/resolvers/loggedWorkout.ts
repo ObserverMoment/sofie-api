@@ -65,7 +65,6 @@ export const createLoggedWorkout = async (
           id: authedUserId,
         },
       },
-
       Workout: data.Workout
         ? {
             connect: data.Workout,
