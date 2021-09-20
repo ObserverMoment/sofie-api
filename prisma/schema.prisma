@@ -579,9 +579,6 @@ model LoggedWorkoutSection {
   sortPosition             Int
   // Total time taken - user inputted when FreeSession or ForTime. Otherwise auto copied / auto calced.
   timeTakenSeconds         Int                @default(1800)
-  // @deprecated in favor of timeTakenSeconds.
-  // Remove this once timeTakenSeconds is in place on staging.
-  timeTakenMs              Int? // @deprecated
   // Score for AMRAP type workout where your score submission is the number of reps you completed.
   repScore                 Int?
   loggedWorkoutSectionData Json?
