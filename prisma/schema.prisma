@@ -3,7 +3,7 @@
 // Migrations: https://github.com/prisma/migrate
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["filterJson", "referentialActions"]
+  previewFeatures = ["filterJson"]
 }
 
 datasource db {
@@ -22,13 +22,14 @@ model Admin {
 //// Global / Core Data / Tags ////////
 ///////////////////////////////////////
 model BodyArea {
-  id                 String              @id @default(uuid())
-  createdAt          DateTime            @default(now())
-  name               String              @unique
-  altNames           String?
-  BodyAreaMoveScores BodyAreaMoveScore[]
-  frontBack          BodyAreaFrontBack   @default(FRONT)
-  upperLower         BodyAreaUpperLower  @default(UPPER)
+  id                    String                 @id @default(uuid())
+  createdAt             DateTime               @default(now())
+  name                  String                 @unique
+  altNames              String?
+  BodyAreaMoveScores    BodyAreaMoveScore[]
+  frontBack             BodyAreaFrontBack      @default(FRONT)
+  upperLower            BodyAreaUpperLower     @default(UPPER)
+  LoggedWorkoutSections LoggedWorkoutSection[]
 }
 
 model BodyAreaMoveScore {
@@ -43,17 +44,15 @@ model BodyAreaMoveScore {
 }
 
 model Equipment {
-  id                 String              @id @default(uuid())
-  createdAt          DateTime            @default(now())
-  name               String              @unique
+  id                 String        @id @default(uuid())
+  createdAt          DateTime      @default(now())
+  name               String        @unique
   altNames           String?
-  imageUrl           String?
-  loadAdjustable     Boolean             @default(true)
-  RequiredForMoves   Move[]              @relation("moveToRequiredEquipments", references: [id])
-  SelectableForMoves Move[]              @relation("moveToSelectableEquipments", references: [id])
+  loadAdjustable     Boolean       @default(true)
+  RequiredForMoves   Move[]        @relation("moveToRequiredEquipments", references: [id])
+  SelectableForMoves Move[]        @relation("moveToSelectableEquipments", references: [id])
   GymProfiles        GymProfile[]
   WorkoutMoves       WorkoutMove[]
-  LoggedWorkoutMoves LoggedWorkoutMove[]
 }
 
 model Move {
@@ -76,26 +75,27 @@ model Move {
   SelectableEquipments Equipment[]          @relation("moveToSelectableEquipments", references: [id])
   WorkoutMoves         WorkoutMove[]
   BodyAreaMoveScores   BodyAreaMoveScore[]
-  LoggedWorkoutMoves   LoggedWorkoutMove[]
 }
 
 // General, Cardio, Barre, Yoga etc
 model MoveType {
-  id          String   @id @default(uuid())
-  createdAt   DateTime @default(now())
-  name        String
-  description String?
-  imageUri    String?
-  Moves       Move[]
+  id                    String                 @id @default(uuid())
+  createdAt             DateTime               @default(now())
+  name                  String
+  description           String?
+  imageUri              String?
+  Moves                 Move[]
+  LoggedWorkoutSections LoggedWorkoutSection[]
 }
 
 model WorkoutGoal {
-  id          String    @id @default(uuid())
-  createdAt   DateTime  @default(now())
-  name        String
-  description String
-  hexColor    String
-  Workouts    Workout[]
+  id             String          @id @default(uuid())
+  createdAt      DateTime        @default(now())
+  name           String
+  description    String
+  hexColor       String
+  Workouts       Workout[]
+  LoggedWorkouts LoggedWorkout[]
 }
 
 model WorkoutSectionType {
@@ -184,8 +184,6 @@ model User {
   ProgressJournals         ProgressJournal[]
   ProgressJournalGoalTags  ProgressJournalGoalTag[]
   LoggedWorkoutSections    LoggedWorkoutSection[]
-  LoggedWorkoutSets        LoggedWorkoutSet[]
-  LoggedWorkoutMoves       LoggedWorkoutMove[]
   ProgressJournalGoals     ProgressJournalGoal[]
   ProgressJournalEntrys    ProgressJournalEntry[]
   WorkoutSections          WorkoutSection[]
@@ -382,7 +380,9 @@ model WorkoutSection {
   note                 String?
   // This field should always be one for AMRAP, Tabata, LastStanding and Free Session.
   rounds               Int                @default(1)
-  timecap              Int? // Seconds. To finish ALL rounds of the section. i.e. the whole 'workout' as described.
+  // Seconds. To finish ALL rounds of the section. i.e. the whole 'section workout' as described.
+  // Set to zero to ignore. As of Sept 2021, only used on AMRAP.
+  timecap              Int                @default(0)
   sortPosition         Int
   introVideoUri        String? // Will play before workout starts
   introVideoThumbUri   String?
@@ -410,7 +410,7 @@ model WorkoutSet {
   // If in Circuit workout, loop around all workoutMoves in this set until duration has elapsed. [WorkoutSetRounds] will be ignored (but should be 1).
   // If in EMOM (non competitive), 'wait' / 'rest' once all workoutMoves have been completed. [WorkoutSetRounds] can be adjusted. E.g. Every 5 minutes do three rounds of these three moves.
   // If in Last Standing (like a competitive EMOM which stops you if you hit a timecap), 'wait', 'rest' once all workoutMoves have been completed. End the workout if duration is reached and all workoutMoves are not completed - different from EMOM which will just move on to the next set. [WorkoutSetRounds] can be adjusted. E.g. Every 5 minutes do three rounds of these three moves.
-  duration         Int? // Seconds
+  duration         Int                      @default(60) // Seconds
   Generators       WorkoutSetGenerator[]
   IntervalBuyIn    WorkoutSetIntervalBuyIn?
   // If there is more than one move then this is a superset
@@ -557,6 +557,7 @@ model LoggedWorkout {
   completedOn           DateTime
   User                  User                   @relation(fields: [userId], references: [id])
   userId                String
+  // The workout name.
   name                  String
   note                  String?
   GymProfile            GymProfile?            @relation(fields: [gymProfileId], references: [id])
@@ -565,64 +566,31 @@ model LoggedWorkout {
   ScheduledWorkout      ScheduledWorkout?
   Workout               Workout?               @relation(fields: [workoutId], references: [id])
   workoutId             String?
+  WorkoutGoals          WorkoutGoal[]
 }
 
 model LoggedWorkoutSection {
-  id                   String             @id @default(uuid())
-  createdAt            DateTime           @default(now())
-  User                 User               @relation(fields: [userId], references: [id])
-  userId               String
-  name                 String?
-  note                 String?
-  timecap              Int? // Seconds - original timecap on the section
-  sortPosition         Int
-  // Total time taken - useful for scoring fortime workouts and adding a duration to free session workouts where laptimes can be overkill.
-  timeTakenMs          Int?
-  // JsonArray validated before entering the DB via yup
-  // see lib/jsonValidation.ts for shape.
-  lapTimesMs           Json               @default("{}") // Milliseconds. 
-  repScore             Int? // Score for AMRAP and Last Standing type workouts where your score submission is the number of reps you completed.
-  LoggedWorkoutSets    LoggedWorkoutSet[]
-  LoggedWorkout        LoggedWorkout      @relation(fields: [loggedWorkoutId], references: [id])
-  loggedWorkoutId      String
-  WorkoutSectionType   WorkoutSectionType @relation(fields: [workoutSectionTypeId], references: [id])
-  workoutSectionTypeId String
-}
-
-model LoggedWorkoutSet {
-  id                     String               @id @default(uuid())
-  createdAt              DateTime             @default(now())
-  User                   User                 @relation(fields: [userId], references: [id])
-  userId                 String
-  note                   String?
-  roundNumber            Int // Which round of the section.
-  sortPosition           Int // Within the section.
-  duration               Int? // Seconds - Used in EMOM and HIIT circuit workouts to determine how long to do the moves for. Copied across from WorkoutSet.duration
-  roundsCompleted        Int                  @default(1) // Of the set
-  LoggedWorkoutMoves     LoggedWorkoutMove[]
-  LoggedWorkoutSection   LoggedWorkoutSection @relation(fields: [loggedWorkoutSectionId], references: [id])
-  loggedWorkoutSectionId String
-}
-
-model LoggedWorkoutMove {
-  id                 String             @id @default(uuid())
-  createdAt          DateTime           @default(now())
-  User               User               @relation(fields: [userId], references: [id])
-  userId             String
-  sortPosition       Int
-  repType            WorkoutMoveRepType
-  reps               Float
-  distance           Float?
-  distanceUnit       DistanceUnit       @default(METRES)
-  loadAmount         Float?
-  loadUnit           LoadUnit           @default(KG)
-  timeUnit           TimeUnit           @default(SECONDS)
-  Move               Move               @relation(fields: [moveId], references: [id])
-  moveId             String
-  Equipment          Equipment?         @relation(fields: [equipmentId], references: [id])
-  equipmentId        String?
-  LoggedWorkoutSet   LoggedWorkoutSet   @relation(fields: [loggedWorkoutSetId], references: [id])
-  loggedWorkoutSetId String
+  id                       String             @id @default(uuid())
+  createdAt                DateTime           @default(now())
+  User                     User               @relation(fields: [userId], references: [id])
+  userId                   String
+  // The section name.
+  name                     String?
+  sortPosition             Int
+  // Total time taken - user inputted when FreeSession or ForTime. Otherwise auto copied / auto calced.
+  timeTakenSeconds         Int                @default(1800)
+  // @deprecated in favor of timeTakenSeconds.
+  // Remove this once timeTakenSeconds is in place on staging.
+  timeTakenMs              Int? // @deprecated
+  // Score for AMRAP type workout where your score submission is the number of reps you completed.
+  repScore                 Int?
+  loggedWorkoutSectionData Json?
+  BodyAreas                BodyArea[]
+  LoggedWorkout            LoggedWorkout      @relation(fields: [loggedWorkoutId], references: [id], onDelete: Cascade)
+  loggedWorkoutId          String
+  MoveTypes                MoveType[]
+  WorkoutSectionType       WorkoutSectionType @relation(fields: [workoutSectionTypeId], references: [id])
+  workoutSectionTypeId     String
 }
 
 ////////////////////////////////////////////////

@@ -22,32 +22,44 @@ export const validateWorkoutMetaData = (input: any): boolean => {
 ///////////////////////////////////////////////////////
 //// LoggedWorkoutSection.lapTimes JSON validation ////
 ///////////////////////////////////////////////////////
-export interface WorkoutSectionLapTimes {
-  [roundNumber: number]: {
-    lapTimeMs?: number
-    setLapTimesMs: {
-      // Set index is the sort position
-      [setIndex: number]: number
-    }
-  }
-}
+// export interface WorkoutSectionData {
+//   rounds: RoundData[]
+// }
 
-const WorkoutSectionLapTimesSchema = Joi.object().pattern(
-  Joi.number().integer(),
-  Joi.object({
-    lapTimeMs: Joi.number().integer().optional(),
-    setLapTimesMs: Joi.object()
-      .pattern(Joi.number().integer(), Joi.number().integer())
-      .optional(),
-  }).or('lapTimeMs', 'setLapTimesMs'),
-)
+// export interface RoundData {
+//   timeTakenMs: number
+//   sets: SetData[]
+// }
 
-export const validateWorkoutSectionLapTimesMs = (input: any): boolean => {
-  const result = WorkoutSectionLapTimesSchema.validate(input)
-  if (result.error) {
-    console.log(result.error)
-    return false
-  } else {
-    return true
-  }
-}
+// export interface SetData {
+//   timeTakenMs: number
+//   move: string
+//   load: string
+//   quantity: string
+// }
+
+// const SetDataSchema = Joi.object({
+//   timeTakenMs: Joi.number().optional(),
+//   move: Joi.string().required(),
+//   load: Joi.string().optional(),
+//   quantity: Joi.string().required(),
+// })
+
+// const RoundDataSchema = Joi.object({
+//   timeTakenMs: Joi.number().optional(),
+//   sets: Joi.array().items(SetDataSchema).required(),
+// })
+
+// const WorkoutSectionDataSchema = Joi.object({
+//   rounds: Joi.array().items(RoundDataSchema).required(),
+// })
+
+// export const validateWorkoutSectionData = (input: any): boolean => {
+//   const result = WorkoutSectionDataSchema.validate(input)
+//   if (result.error) {
+//     console.log(result.error)
+//     return false
+//   } else {
+//     return true
+//   }
+// }

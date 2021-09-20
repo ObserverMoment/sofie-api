@@ -219,76 +219,21 @@ export type CreateLoggedWorkoutInput = {
   name: Scalars['String'];
   note?: Maybe<Scalars['String']>;
   LoggedWorkoutSections: Array<CreateLoggedWorkoutSectionInLoggedWorkoutInput>;
-  Workout?: Maybe<ConnectRelationInput>;
-  ScheduledWorkout?: Maybe<ConnectRelationInput>;
   GymProfile?: Maybe<ConnectRelationInput>;
-};
-
-export type CreateLoggedWorkoutMoveInLoggedSetInput = {
-  sortPosition: Scalars['Int'];
-  repType: WorkoutMoveRepType;
-  reps: Scalars['Float'];
-  distanceUnit?: Maybe<DistanceUnit>;
-  loadAmount?: Maybe<Scalars['Float']>;
-  loadUnit?: Maybe<LoadUnit>;
-  timeUnit?: Maybe<TimeUnit>;
-  Move: ConnectRelationInput;
-  Equipment?: Maybe<ConnectRelationInput>;
-};
-
-export type CreateLoggedWorkoutMoveInput = {
-  sortPosition: Scalars['Int'];
-  repType: WorkoutMoveRepType;
-  reps: Scalars['Float'];
-  distanceUnit?: Maybe<DistanceUnit>;
-  loadAmount?: Maybe<Scalars['Float']>;
-  loadUnit?: Maybe<LoadUnit>;
-  timeUnit?: Maybe<TimeUnit>;
-  Move: ConnectRelationInput;
-  Equipment?: Maybe<ConnectRelationInput>;
-  LoggedWorkoutSet: ConnectRelationInput;
+  ScheduledWorkout?: Maybe<ConnectRelationInput>;
+  Workout?: Maybe<ConnectRelationInput>;
+  WorkoutGoals: Array<ConnectRelationInput>;
 };
 
 export type CreateLoggedWorkoutSectionInLoggedWorkoutInput = {
   name?: Maybe<Scalars['String']>;
-  note?: Maybe<Scalars['String']>;
   sortPosition: Scalars['Int'];
-  timeTakenMs?: Maybe<Scalars['Int']>;
-  lapTimesMs?: Maybe<Scalars['JSON']>;
   repScore?: Maybe<Scalars['Int']>;
-  timecap?: Maybe<Scalars['Int']>;
+  timeTakenSeconds: Scalars['Int'];
+  loggedWorkoutSectionData: LoggedWorkoutSectionDataInput;
   WorkoutSectionType: ConnectRelationInput;
-  LoggedWorkoutSets: Array<CreateLoggedWorkoutSetInLoggedSectionInput>;
-};
-
-export type CreateLoggedWorkoutSectionInput = {
-  name?: Maybe<Scalars['String']>;
-  note?: Maybe<Scalars['String']>;
-  sortPosition: Scalars['Int'];
-  timeTakenMs?: Maybe<Scalars['Int']>;
-  lapTimesMs?: Maybe<Scalars['JSON']>;
-  repScore?: Maybe<Scalars['Int']>;
-  timecap?: Maybe<Scalars['Int']>;
-  WorkoutSectionType: ConnectRelationInput;
-  LoggedWorkout: ConnectRelationInput;
-};
-
-export type CreateLoggedWorkoutSetInLoggedSectionInput = {
-  sortPosition: Scalars['Int'];
-  note?: Maybe<Scalars['String']>;
-  roundNumber: Scalars['Int'];
-  roundsCompleted: Scalars['Int'];
-  duration?: Maybe<Scalars['Int']>;
-  LoggedWorkoutMoves: Array<CreateLoggedWorkoutMoveInLoggedSetInput>;
-};
-
-export type CreateLoggedWorkoutSetInput = {
-  roundNumber: Scalars['Int'];
-  sortPosition: Scalars['Int'];
-  note?: Maybe<Scalars['String']>;
-  roundsCompleted: Scalars['Int'];
-  duration?: Maybe<Scalars['Int']>;
-  LoggedWorkoutSection: ConnectRelationInput;
+  BodyAreas: Array<ConnectRelationInput>;
+  MoveTypes: Array<ConnectRelationInput>;
 };
 
 export type CreateMoveInput = {
@@ -586,24 +531,11 @@ export type LoggedWorkout = {
   completedOn: Scalars['DateTime'];
   name: Scalars['String'];
   note?: Maybe<Scalars['String']>;
-  LoggedWorkoutSections: Array<LoggedWorkoutSection>;
-  Workout: Workout;
-  ScheduledWorkout?: Maybe<ScheduledWorkout>;
   GymProfile?: Maybe<GymProfile>;
-};
-
-export type LoggedWorkoutMove = {
-  __typename?: 'LoggedWorkoutMove';
-  id: Scalars['ID'];
-  sortPosition: Scalars['Int'];
-  repType: WorkoutMoveRepType;
-  reps: Scalars['Float'];
-  distanceUnit: DistanceUnit;
-  loadAmount?: Maybe<Scalars['Float']>;
-  loadUnit: LoadUnit;
-  timeUnit: TimeUnit;
-  Move: Move;
-  Equipment?: Maybe<Equipment>;
+  LoggedWorkoutSections: Array<LoggedWorkoutSection>;
+  ScheduledWorkout?: Maybe<ScheduledWorkout>;
+  Workout?: Maybe<Workout>;
+  WorkoutGoals: Array<WorkoutGoal>;
 };
 
 export type LoggedWorkoutSection = {
@@ -611,25 +543,22 @@ export type LoggedWorkoutSection = {
   id: Scalars['ID'];
   name?: Maybe<Scalars['String']>;
   sortPosition: Scalars['Int'];
-  timecap?: Maybe<Scalars['Int']>;
-  timeTakenMs?: Maybe<Scalars['Int']>;
-  lapTimesMs: Scalars['JSON'];
+  timeTakenSeconds: Scalars['Int'];
   repScore?: Maybe<Scalars['Int']>;
-  note?: Maybe<Scalars['String']>;
+  loggedWorkoutSectionData?: Maybe<LoggedWorkoutSectionData>;
+  BodyAreas: Array<BodyArea>;
   WorkoutSectionType: WorkoutSectionType;
-  LoggedWorkoutSets: Array<LoggedWorkoutSet>;
+  MoveTypes: Array<MoveType>;
   LoggedWorkout: LoggedWorkout;
 };
 
-export type LoggedWorkoutSet = {
-  __typename?: 'LoggedWorkoutSet';
-  id: Scalars['ID'];
-  note?: Maybe<Scalars['String']>;
-  roundNumber: Scalars['Int'];
-  sortPosition: Scalars['Int'];
-  roundsCompleted: Scalars['Int'];
-  duration?: Maybe<Scalars['Int']>;
-  LoggedWorkoutMoves: Array<LoggedWorkoutMove>;
+export type LoggedWorkoutSectionData = {
+  __typename?: 'LoggedWorkoutSectionData';
+  rounds: Array<WorkoutSectionRoundData>;
+};
+
+export type LoggedWorkoutSectionDataInput = {
+  rounds: Array<WorkoutSectionRoundDataInput>;
 };
 
 export type Move = {
@@ -706,18 +635,7 @@ export type Mutation = {
   createLoggedWorkout: LoggedWorkout;
   updateLoggedWorkout: LoggedWorkout;
   deleteLoggedWorkoutById: Scalars['ID'];
-  createLoggedWorkoutSection: LoggedWorkoutSection;
   updateLoggedWorkoutSection: LoggedWorkoutSection;
-  deleteLoggedWorkoutSectionById: Scalars['ID'];
-  reorderLoggedWorkoutSections: Array<LoggedWorkoutSection>;
-  createLoggedWorkoutSet: LoggedWorkoutSet;
-  updateLoggedWorkoutSet: LoggedWorkoutSet;
-  deleteLoggedWorkoutSetById: Scalars['ID'];
-  reorderLoggedWorkoutSets: Array<LoggedWorkoutSet>;
-  createLoggedWorkoutMove: LoggedWorkoutMove;
-  updateLoggedWorkoutMove: LoggedWorkoutMove;
-  deleteLoggedWorkoutMoveById: Scalars['ID'];
-  reorderLoggedWorkoutMoves: Array<LoggedWorkoutMove>;
   createMove: Move;
   updateMove: Move;
   softDeleteMoveById: Scalars['ID'];
@@ -969,63 +887,8 @@ export type MutationDeleteLoggedWorkoutByIdArgs = {
 };
 
 
-export type MutationCreateLoggedWorkoutSectionArgs = {
-  data: CreateLoggedWorkoutSectionInput;
-};
-
-
 export type MutationUpdateLoggedWorkoutSectionArgs = {
   data: UpdateLoggedWorkoutSectionInput;
-};
-
-
-export type MutationDeleteLoggedWorkoutSectionByIdArgs = {
-  id: Scalars['ID'];
-};
-
-
-export type MutationReorderLoggedWorkoutSectionsArgs = {
-  data: Array<UpdateSortPositionInput>;
-};
-
-
-export type MutationCreateLoggedWorkoutSetArgs = {
-  data: CreateLoggedWorkoutSetInput;
-};
-
-
-export type MutationUpdateLoggedWorkoutSetArgs = {
-  data: UpdateLoggedWorkoutSetInput;
-};
-
-
-export type MutationDeleteLoggedWorkoutSetByIdArgs = {
-  id: Scalars['ID'];
-};
-
-
-export type MutationReorderLoggedWorkoutSetsArgs = {
-  data: Array<UpdateSortPositionInput>;
-};
-
-
-export type MutationCreateLoggedWorkoutMoveArgs = {
-  data: CreateLoggedWorkoutMoveInput;
-};
-
-
-export type MutationUpdateLoggedWorkoutMoveArgs = {
-  data: UpdateLoggedWorkoutMoveInput;
-};
-
-
-export type MutationDeleteLoggedWorkoutMoveByIdArgs = {
-  id: Scalars['ID'];
-};
-
-
-export type MutationReorderLoggedWorkoutMovesArgs = {
-  data: Array<UpdateSortPositionInput>;
 };
 
 
@@ -1768,37 +1631,18 @@ export type UpdateJoinClubRequestInput = {
 export type UpdateLoggedWorkoutInput = {
   id: Scalars['ID'];
   completedOn?: Maybe<Scalars['DateTime']>;
-  name?: Maybe<Scalars['String']>;
   note?: Maybe<Scalars['String']>;
   GymProfile?: Maybe<ConnectRelationInput>;
-};
-
-export type UpdateLoggedWorkoutMoveInput = {
-  id: Scalars['ID'];
-  reps?: Maybe<Scalars['Float']>;
-  distanceUnit?: Maybe<DistanceUnit>;
-  loadAmount?: Maybe<Scalars['Float']>;
-  loadUnit?: Maybe<LoadUnit>;
-  timeUnit?: Maybe<TimeUnit>;
-  Move?: Maybe<ConnectRelationInput>;
-  Equipment?: Maybe<ConnectRelationInput>;
+  WorkoutGoals: Array<ConnectRelationInput>;
 };
 
 export type UpdateLoggedWorkoutSectionInput = {
   id: Scalars['ID'];
-  name?: Maybe<Scalars['String']>;
-  timeTakenMs?: Maybe<Scalars['Int']>;
-  lapTimesMs?: Maybe<Scalars['JSON']>;
-  timecap?: Maybe<Scalars['Int']>;
+  timeTakenSeconds?: Maybe<Scalars['Int']>;
   repScore?: Maybe<Scalars['Int']>;
-  note?: Maybe<Scalars['String']>;
-};
-
-export type UpdateLoggedWorkoutSetInput = {
-  id: Scalars['ID'];
-  note?: Maybe<Scalars['String']>;
-  duration?: Maybe<Scalars['Int']>;
-  roundsCompleted?: Maybe<Scalars['Int']>;
+  loggedWorkoutSectionData?: Maybe<LoggedWorkoutSectionDataInput>;
+  BodyAreas: Array<ConnectRelationInput>;
+  MoveTypes: Array<ConnectRelationInput>;
 };
 
 export type UpdateMoveInput = {
@@ -2274,7 +2118,7 @@ export type WorkoutSection = {
   name?: Maybe<Scalars['String']>;
   note?: Maybe<Scalars['String']>;
   rounds: Scalars['Int'];
-  timecap?: Maybe<Scalars['Int']>;
+  timecap: Scalars['Int'];
   sortPosition: Scalars['Int'];
   introVideoUri?: Maybe<Scalars['String']>;
   introVideoThumbUri?: Maybe<Scalars['String']>;
@@ -2287,6 +2131,28 @@ export type WorkoutSection = {
   outroAudioUri?: Maybe<Scalars['String']>;
   WorkoutSectionType: WorkoutSectionType;
   WorkoutSets: Array<WorkoutSet>;
+};
+
+export type WorkoutSectionRoundData = {
+  __typename?: 'WorkoutSectionRoundData';
+  timeTakenSeconds: Scalars['Int'];
+  sets: Array<WorkoutSectionRoundSetData>;
+};
+
+export type WorkoutSectionRoundDataInput = {
+  timeTakenSeconds: Scalars['Int'];
+  sets: Array<WorkoutSectionRoundSetDataInput>;
+};
+
+export type WorkoutSectionRoundSetData = {
+  __typename?: 'WorkoutSectionRoundSetData';
+  timeTakenSeconds: Scalars['Int'];
+  moves: Scalars['String'];
+};
+
+export type WorkoutSectionRoundSetDataInput = {
+  timeTakenSeconds: Scalars['Int'];
+  moves: Scalars['String'];
 };
 
 export type WorkoutSectionSummary = {
@@ -2316,7 +2182,7 @@ export type WorkoutSet = {
   id: Scalars['ID'];
   sortPosition: Scalars['Int'];
   rounds: Scalars['Int'];
-  duration?: Maybe<Scalars['Int']>;
+  duration: Scalars['Int'];
   WorkoutMoves: Array<WorkoutMove>;
 };
 
@@ -2493,12 +2359,7 @@ export type ResolversTypes = ResolversObject<{
   CreateJoinClubInviteInput: CreateJoinClubInviteInput;
   CreateJoinClubRequestInput: CreateJoinClubRequestInput;
   CreateLoggedWorkoutInput: CreateLoggedWorkoutInput;
-  CreateLoggedWorkoutMoveInLoggedSetInput: CreateLoggedWorkoutMoveInLoggedSetInput;
-  CreateLoggedWorkoutMoveInput: CreateLoggedWorkoutMoveInput;
   CreateLoggedWorkoutSectionInLoggedWorkoutInput: CreateLoggedWorkoutSectionInLoggedWorkoutInput;
-  CreateLoggedWorkoutSectionInput: CreateLoggedWorkoutSectionInput;
-  CreateLoggedWorkoutSetInLoggedSectionInput: CreateLoggedWorkoutSetInLoggedSectionInput;
-  CreateLoggedWorkoutSetInput: CreateLoggedWorkoutSetInput;
   CreateMoveInput: CreateMoveInput;
   CreateProgressJournalEntryInput: CreateProgressJournalEntryInput;
   CreateProgressJournalGoalInput: CreateProgressJournalGoalInput;
@@ -2537,9 +2398,9 @@ export type ResolversTypes = ResolversObject<{
   JoinClubRequestStatus: JoinClubRequestStatus;
   LoadUnit: LoadUnit;
   LoggedWorkout: ResolverTypeWrapper<LoggedWorkout>;
-  LoggedWorkoutMove: ResolverTypeWrapper<LoggedWorkoutMove>;
   LoggedWorkoutSection: ResolverTypeWrapper<LoggedWorkoutSection>;
-  LoggedWorkoutSet: ResolverTypeWrapper<LoggedWorkoutSet>;
+  LoggedWorkoutSectionData: ResolverTypeWrapper<LoggedWorkoutSectionData>;
+  LoggedWorkoutSectionDataInput: LoggedWorkoutSectionDataInput;
   Move: ResolverTypeWrapper<Move>;
   MoveScope: MoveScope;
   MoveType: ResolverTypeWrapper<MoveType>;
@@ -2573,9 +2434,7 @@ export type ResolversTypes = ResolversObject<{
   UpdateJoinClubInviteInput: UpdateJoinClubInviteInput;
   UpdateJoinClubRequestInput: UpdateJoinClubRequestInput;
   UpdateLoggedWorkoutInput: UpdateLoggedWorkoutInput;
-  UpdateLoggedWorkoutMoveInput: UpdateLoggedWorkoutMoveInput;
   UpdateLoggedWorkoutSectionInput: UpdateLoggedWorkoutSectionInput;
-  UpdateLoggedWorkoutSetInput: UpdateLoggedWorkoutSetInput;
   UpdateMoveInput: UpdateMoveInput;
   UpdateProgressJournalEntryInput: UpdateProgressJournalEntryInput;
   UpdateProgressJournalGoalInput: UpdateProgressJournalGoalInput;
@@ -2621,6 +2480,10 @@ export type ResolversTypes = ResolversObject<{
   WorkoutPlanFiltersInput: WorkoutPlanFiltersInput;
   WorkoutPlanReview: ResolverTypeWrapper<WorkoutPlanReview>;
   WorkoutSection: ResolverTypeWrapper<WorkoutSection>;
+  WorkoutSectionRoundData: ResolverTypeWrapper<WorkoutSectionRoundData>;
+  WorkoutSectionRoundDataInput: WorkoutSectionRoundDataInput;
+  WorkoutSectionRoundSetData: ResolverTypeWrapper<WorkoutSectionRoundSetData>;
+  WorkoutSectionRoundSetDataInput: WorkoutSectionRoundSetDataInput;
   WorkoutSectionSummary: ResolverTypeWrapper<WorkoutSectionSummary>;
   WorkoutSectionType: ResolverTypeWrapper<WorkoutSectionType>;
   WorkoutSet: ResolverTypeWrapper<WorkoutSet>;
@@ -2665,12 +2528,7 @@ export type ResolversParentTypes = ResolversObject<{
   CreateJoinClubInviteInput: CreateJoinClubInviteInput;
   CreateJoinClubRequestInput: CreateJoinClubRequestInput;
   CreateLoggedWorkoutInput: CreateLoggedWorkoutInput;
-  CreateLoggedWorkoutMoveInLoggedSetInput: CreateLoggedWorkoutMoveInLoggedSetInput;
-  CreateLoggedWorkoutMoveInput: CreateLoggedWorkoutMoveInput;
   CreateLoggedWorkoutSectionInLoggedWorkoutInput: CreateLoggedWorkoutSectionInLoggedWorkoutInput;
-  CreateLoggedWorkoutSectionInput: CreateLoggedWorkoutSectionInput;
-  CreateLoggedWorkoutSetInLoggedSectionInput: CreateLoggedWorkoutSetInLoggedSectionInput;
-  CreateLoggedWorkoutSetInput: CreateLoggedWorkoutSetInput;
   CreateMoveInput: CreateMoveInput;
   CreateProgressJournalEntryInput: CreateProgressJournalEntryInput;
   CreateProgressJournalGoalInput: CreateProgressJournalGoalInput;
@@ -2704,9 +2562,9 @@ export type ResolversParentTypes = ResolversObject<{
   JoinClubInvite: JoinClubInvite;
   JoinClubRequest: JoinClubRequest;
   LoggedWorkout: LoggedWorkout;
-  LoggedWorkoutMove: LoggedWorkoutMove;
   LoggedWorkoutSection: LoggedWorkoutSection;
-  LoggedWorkoutSet: LoggedWorkoutSet;
+  LoggedWorkoutSectionData: LoggedWorkoutSectionData;
+  LoggedWorkoutSectionDataInput: LoggedWorkoutSectionDataInput;
   Move: Move;
   MoveType: MoveType;
   MoveWorkoutPlanDayToAnotherDayInput: MoveWorkoutPlanDayToAnotherDayInput;
@@ -2737,9 +2595,7 @@ export type ResolversParentTypes = ResolversObject<{
   UpdateJoinClubInviteInput: UpdateJoinClubInviteInput;
   UpdateJoinClubRequestInput: UpdateJoinClubRequestInput;
   UpdateLoggedWorkoutInput: UpdateLoggedWorkoutInput;
-  UpdateLoggedWorkoutMoveInput: UpdateLoggedWorkoutMoveInput;
   UpdateLoggedWorkoutSectionInput: UpdateLoggedWorkoutSectionInput;
-  UpdateLoggedWorkoutSetInput: UpdateLoggedWorkoutSetInput;
   UpdateMoveInput: UpdateMoveInput;
   UpdateProgressJournalEntryInput: UpdateProgressJournalEntryInput;
   UpdateProgressJournalGoalInput: UpdateProgressJournalGoalInput;
@@ -2783,6 +2639,10 @@ export type ResolversParentTypes = ResolversObject<{
   WorkoutPlanFiltersInput: WorkoutPlanFiltersInput;
   WorkoutPlanReview: WorkoutPlanReview;
   WorkoutSection: WorkoutSection;
+  WorkoutSectionRoundData: WorkoutSectionRoundData;
+  WorkoutSectionRoundDataInput: WorkoutSectionRoundDataInput;
+  WorkoutSectionRoundSetData: WorkoutSectionRoundSetData;
+  WorkoutSectionRoundSetDataInput: WorkoutSectionRoundSetDataInput;
   WorkoutSectionSummary: WorkoutSectionSummary;
   WorkoutSectionType: WorkoutSectionType;
   WorkoutSet: WorkoutSet;
@@ -2984,24 +2844,11 @@ export type LoggedWorkoutResolvers<ContextType = any, ParentType extends Resolve
   completedOn?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   note?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  LoggedWorkoutSections?: Resolver<Array<ResolversTypes['LoggedWorkoutSection']>, ParentType, ContextType>;
-  Workout?: Resolver<ResolversTypes['Workout'], ParentType, ContextType>;
-  ScheduledWorkout?: Resolver<Maybe<ResolversTypes['ScheduledWorkout']>, ParentType, ContextType>;
   GymProfile?: Resolver<Maybe<ResolversTypes['GymProfile']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type LoggedWorkoutMoveResolvers<ContextType = any, ParentType extends ResolversParentTypes['LoggedWorkoutMove'] = ResolversParentTypes['LoggedWorkoutMove']> = ResolversObject<{
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  sortPosition?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  repType?: Resolver<ResolversTypes['WorkoutMoveRepType'], ParentType, ContextType>;
-  reps?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
-  distanceUnit?: Resolver<ResolversTypes['DistanceUnit'], ParentType, ContextType>;
-  loadAmount?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  loadUnit?: Resolver<ResolversTypes['LoadUnit'], ParentType, ContextType>;
-  timeUnit?: Resolver<ResolversTypes['TimeUnit'], ParentType, ContextType>;
-  Move?: Resolver<ResolversTypes['Move'], ParentType, ContextType>;
-  Equipment?: Resolver<Maybe<ResolversTypes['Equipment']>, ParentType, ContextType>;
+  LoggedWorkoutSections?: Resolver<Array<ResolversTypes['LoggedWorkoutSection']>, ParentType, ContextType>;
+  ScheduledWorkout?: Resolver<Maybe<ResolversTypes['ScheduledWorkout']>, ParentType, ContextType>;
+  Workout?: Resolver<Maybe<ResolversTypes['Workout']>, ParentType, ContextType>;
+  WorkoutGoals?: Resolver<Array<ResolversTypes['WorkoutGoal']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -3009,25 +2856,18 @@ export type LoggedWorkoutSectionResolvers<ContextType = any, ParentType extends 
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   sortPosition?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  timecap?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  timeTakenMs?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  lapTimesMs?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>;
+  timeTakenSeconds?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   repScore?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  note?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  loggedWorkoutSectionData?: Resolver<Maybe<ResolversTypes['LoggedWorkoutSectionData']>, ParentType, ContextType>;
+  BodyAreas?: Resolver<Array<ResolversTypes['BodyArea']>, ParentType, ContextType>;
   WorkoutSectionType?: Resolver<ResolversTypes['WorkoutSectionType'], ParentType, ContextType>;
-  LoggedWorkoutSets?: Resolver<Array<ResolversTypes['LoggedWorkoutSet']>, ParentType, ContextType>;
+  MoveTypes?: Resolver<Array<ResolversTypes['MoveType']>, ParentType, ContextType>;
   LoggedWorkout?: Resolver<ResolversTypes['LoggedWorkout'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export type LoggedWorkoutSetResolvers<ContextType = any, ParentType extends ResolversParentTypes['LoggedWorkoutSet'] = ResolversParentTypes['LoggedWorkoutSet']> = ResolversObject<{
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  note?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  roundNumber?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  sortPosition?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  roundsCompleted?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  duration?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  LoggedWorkoutMoves?: Resolver<Array<ResolversTypes['LoggedWorkoutMove']>, ParentType, ContextType>;
+export type LoggedWorkoutSectionDataResolvers<ContextType = any, ParentType extends ResolversParentTypes['LoggedWorkoutSectionData'] = ResolversParentTypes['LoggedWorkoutSectionData']> = ResolversObject<{
+  rounds?: Resolver<Array<ResolversTypes['WorkoutSectionRoundData']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -3091,18 +2931,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createLoggedWorkout?: Resolver<ResolversTypes['LoggedWorkout'], ParentType, ContextType, RequireFields<MutationCreateLoggedWorkoutArgs, 'data'>>;
   updateLoggedWorkout?: Resolver<ResolversTypes['LoggedWorkout'], ParentType, ContextType, RequireFields<MutationUpdateLoggedWorkoutArgs, 'data'>>;
   deleteLoggedWorkoutById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteLoggedWorkoutByIdArgs, 'id'>>;
-  createLoggedWorkoutSection?: Resolver<ResolversTypes['LoggedWorkoutSection'], ParentType, ContextType, RequireFields<MutationCreateLoggedWorkoutSectionArgs, 'data'>>;
   updateLoggedWorkoutSection?: Resolver<ResolversTypes['LoggedWorkoutSection'], ParentType, ContextType, RequireFields<MutationUpdateLoggedWorkoutSectionArgs, 'data'>>;
-  deleteLoggedWorkoutSectionById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteLoggedWorkoutSectionByIdArgs, 'id'>>;
-  reorderLoggedWorkoutSections?: Resolver<Array<ResolversTypes['LoggedWorkoutSection']>, ParentType, ContextType, RequireFields<MutationReorderLoggedWorkoutSectionsArgs, 'data'>>;
-  createLoggedWorkoutSet?: Resolver<ResolversTypes['LoggedWorkoutSet'], ParentType, ContextType, RequireFields<MutationCreateLoggedWorkoutSetArgs, 'data'>>;
-  updateLoggedWorkoutSet?: Resolver<ResolversTypes['LoggedWorkoutSet'], ParentType, ContextType, RequireFields<MutationUpdateLoggedWorkoutSetArgs, 'data'>>;
-  deleteLoggedWorkoutSetById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteLoggedWorkoutSetByIdArgs, 'id'>>;
-  reorderLoggedWorkoutSets?: Resolver<Array<ResolversTypes['LoggedWorkoutSet']>, ParentType, ContextType, RequireFields<MutationReorderLoggedWorkoutSetsArgs, 'data'>>;
-  createLoggedWorkoutMove?: Resolver<ResolversTypes['LoggedWorkoutMove'], ParentType, ContextType, RequireFields<MutationCreateLoggedWorkoutMoveArgs, 'data'>>;
-  updateLoggedWorkoutMove?: Resolver<ResolversTypes['LoggedWorkoutMove'], ParentType, ContextType, RequireFields<MutationUpdateLoggedWorkoutMoveArgs, 'data'>>;
-  deleteLoggedWorkoutMoveById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteLoggedWorkoutMoveByIdArgs, 'id'>>;
-  reorderLoggedWorkoutMoves?: Resolver<Array<ResolversTypes['LoggedWorkoutMove']>, ParentType, ContextType, RequireFields<MutationReorderLoggedWorkoutMovesArgs, 'data'>>;
   createMove?: Resolver<ResolversTypes['Move'], ParentType, ContextType, RequireFields<MutationCreateMoveArgs, 'data'>>;
   updateMove?: Resolver<ResolversTypes['Move'], ParentType, ContextType, RequireFields<MutationUpdateMoveArgs, 'data'>>;
   softDeleteMoveById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationSoftDeleteMoveByIdArgs, 'id'>>;
@@ -3550,7 +3379,7 @@ export type WorkoutSectionResolvers<ContextType = any, ParentType extends Resolv
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   note?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   rounds?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  timecap?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  timecap?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   sortPosition?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   introVideoUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   introVideoThumbUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -3563,6 +3392,18 @@ export type WorkoutSectionResolvers<ContextType = any, ParentType extends Resolv
   outroAudioUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   WorkoutSectionType?: Resolver<ResolversTypes['WorkoutSectionType'], ParentType, ContextType>;
   WorkoutSets?: Resolver<Array<ResolversTypes['WorkoutSet']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type WorkoutSectionRoundDataResolvers<ContextType = any, ParentType extends ResolversParentTypes['WorkoutSectionRoundData'] = ResolversParentTypes['WorkoutSectionRoundData']> = ResolversObject<{
+  timeTakenSeconds?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  sets?: Resolver<Array<ResolversTypes['WorkoutSectionRoundSetData']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type WorkoutSectionRoundSetDataResolvers<ContextType = any, ParentType extends ResolversParentTypes['WorkoutSectionRoundSetData'] = ResolversParentTypes['WorkoutSectionRoundSetData']> = ResolversObject<{
+  timeTakenSeconds?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  moves?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -3592,7 +3433,7 @@ export type WorkoutSetResolvers<ContextType = any, ParentType extends ResolversP
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   sortPosition?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   rounds?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  duration?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  duration?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   WorkoutMoves?: Resolver<Array<ResolversTypes['WorkoutMove']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
@@ -3663,9 +3504,8 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   JoinClubInvite?: JoinClubInviteResolvers<ContextType>;
   JoinClubRequest?: JoinClubRequestResolvers<ContextType>;
   LoggedWorkout?: LoggedWorkoutResolvers<ContextType>;
-  LoggedWorkoutMove?: LoggedWorkoutMoveResolvers<ContextType>;
   LoggedWorkoutSection?: LoggedWorkoutSectionResolvers<ContextType>;
-  LoggedWorkoutSet?: LoggedWorkoutSetResolvers<ContextType>;
+  LoggedWorkoutSectionData?: LoggedWorkoutSectionDataResolvers<ContextType>;
   Move?: MoveResolvers<ContextType>;
   MoveType?: MoveTypeResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
@@ -3699,6 +3539,8 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   WorkoutPlanEnrolmentSummary?: WorkoutPlanEnrolmentSummaryResolvers<ContextType>;
   WorkoutPlanReview?: WorkoutPlanReviewResolvers<ContextType>;
   WorkoutSection?: WorkoutSectionResolvers<ContextType>;
+  WorkoutSectionRoundData?: WorkoutSectionRoundDataResolvers<ContextType>;
+  WorkoutSectionRoundSetData?: WorkoutSectionRoundSetDataResolvers<ContextType>;
   WorkoutSectionSummary?: WorkoutSectionSummaryResolvers<ContextType>;
   WorkoutSectionType?: WorkoutSectionTypeResolvers<ContextType>;
   WorkoutSet?: WorkoutSetResolvers<ContextType>;

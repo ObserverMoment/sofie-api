@@ -6,7 +6,7 @@ export default gql`
     name: String
     note: String
     rounds: Int!
-    timecap: Int
+    timecap: Int!
     sortPosition: Int!
     introVideoUri: String
     introVideoThumbUri: String

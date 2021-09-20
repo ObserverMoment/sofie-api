@@ -9,7 +9,7 @@ lerna-debug.log*
 # Eaw datasets
 ./datasets
 
-# SpotMe data backups
+# Ddata backups
 prisma/schema_staging_backups/
 prisma/generated/backupPrisma/
 databackups/

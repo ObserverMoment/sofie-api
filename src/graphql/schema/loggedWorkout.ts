@@ -7,164 +7,95 @@ export default gql`
     completedOn: DateTime!
     name: String!
     note: String
-    LoggedWorkoutSections: [LoggedWorkoutSection!]!
-    Workout: Workout!
-    ScheduledWorkout: ScheduledWorkout
     GymProfile: GymProfile
+    LoggedWorkoutSections: [LoggedWorkoutSection!]!
+    ScheduledWorkout: ScheduledWorkout
+    Workout: Workout
+    WorkoutGoals: [WorkoutGoal!]!
   }
 
-  # For lapTimesMs shape - see lib/jsonValidation.ts
   type LoggedWorkoutSection {
     id: ID!
     name: String
     sortPosition: Int!
-    timecap: Int
-    timeTakenMs: Int
-    lapTimesMs: JSON!
+    timeTakenSeconds: Int!
     repScore: Int
-    note: String
+    loggedWorkoutSectionData: LoggedWorkoutSectionData
+    BodyAreas: [BodyArea!]!
     WorkoutSectionType: WorkoutSectionType!
-    LoggedWorkoutSets: [LoggedWorkoutSet!]!
+    MoveTypes: [MoveType!]!
     LoggedWorkout: LoggedWorkout!
   }
 
-  type LoggedWorkoutSet {
-    id: ID!
-    note: String
-    roundNumber: Int!
-    sortPosition: Int!
-    roundsCompleted: Int!
-    duration: Int
-    LoggedWorkoutMoves: [LoggedWorkoutMove!]!
-  }
-
-  type LoggedWorkoutMove {
-    id: ID!
-    sortPosition: Int!
-    repType: WorkoutMoveRepType!
-    reps: Float!
-    distanceUnit: DistanceUnit!
-    loadAmount: Float
-    loadUnit: LoadUnit!
-    timeUnit: TimeUnit!
-    Move: Move!
-    Equipment: Equipment
-  }
-
-  #### Create Inputs - Full Structure Passed When Creating ####
+  #### Create Inputs - Nested create of LoggedWorkout + LoggedWorkoutSections ####
   input CreateLoggedWorkoutInput {
     completedOn: DateTime!
     name: String!
     note: String
     LoggedWorkoutSections: [CreateLoggedWorkoutSectionInLoggedWorkoutInput!]!
-    Workout: ConnectRelationInput
-    ScheduledWorkout: ConnectRelationInput
     GymProfile: ConnectRelationInput
+    ScheduledWorkout: ConnectRelationInput
+    Workout: ConnectRelationInput
+    WorkoutGoals: [ConnectRelationInput!]!
   }
 
   input CreateLoggedWorkoutSectionInLoggedWorkoutInput {
     name: String
-    note: String
     sortPosition: Int!
-    timeTakenMs: Int
-    lapTimesMs: JSON
     repScore: Int
-    timecap: Int
+    timeTakenSeconds: Int!
+    loggedWorkoutSectionData: LoggedWorkoutSectionDataInput!
     WorkoutSectionType: ConnectRelationInput!
-    LoggedWorkoutSets: [CreateLoggedWorkoutSetInLoggedSectionInput!]!
-  }
-
-  input CreateLoggedWorkoutSetInLoggedSectionInput {
-    sortPosition: Int!
-    note: String
-    roundNumber: Int!
-    roundsCompleted: Int!
-    duration: Int
-    LoggedWorkoutMoves: [CreateLoggedWorkoutMoveInLoggedSetInput!]!
-  }
-
-  input CreateLoggedWorkoutMoveInLoggedSetInput {
-    sortPosition: Int!
-    repType: WorkoutMoveRepType!
-    reps: Float!
-    distanceUnit: DistanceUnit
-    loadAmount: Float
-    loadUnit: LoadUnit
-    timeUnit: TimeUnit
-    Move: ConnectRelationInput!
-    Equipment: ConnectRelationInput
-  }
-
-  #### Used when editing a logged workout that already exists ####
-  #### Create and attach to parent ####
-  input CreateLoggedWorkoutSectionInput {
-    name: String
-    note: String
-    sortPosition: Int!
-    timeTakenMs: Int
-    lapTimesMs: JSON
-    repScore: Int
-    timecap: Int
-    WorkoutSectionType: ConnectRelationInput!
-    LoggedWorkout: ConnectRelationInput!
-  }
-
-  input CreateLoggedWorkoutSetInput {
-    roundNumber: Int!
-    sortPosition: Int!
-    note: String
-    roundsCompleted: Int!
-    duration: Int
-    LoggedWorkoutSection: ConnectRelationInput!
-  }
-
-  input CreateLoggedWorkoutMoveInput {
-    sortPosition: Int!
-    repType: WorkoutMoveRepType!
-    reps: Float!
-    distanceUnit: DistanceUnit
-    loadAmount: Float
-    loadUnit: LoadUnit
-    timeUnit: TimeUnit
-    Move: ConnectRelationInput!
-    Equipment: ConnectRelationInput
-    LoggedWorkoutSet: ConnectRelationInput!
+    BodyAreas: [ConnectRelationInput!]!
+    MoveTypes: [ConnectRelationInput!]!
   }
 
   #### Update Inputs - Updates are made atomically at each level. (Non nested) ####
   input UpdateLoggedWorkoutInput {
     id: ID!
     completedOn: DateTime
-    name: String
     note: String
     GymProfile: ConnectRelationInput
+    WorkoutGoals: [ConnectRelationInput!]!
   }
 
   input UpdateLoggedWorkoutSectionInput {
     id: ID!
-    name: String
-    timeTakenMs: Int
-    lapTimesMs: JSON
-    timecap: Int
+    timeTakenSeconds: Int
     repScore: Int
-    note: String
+    loggedWorkoutSectionData: LoggedWorkoutSectionDataInput
+    BodyAreas: [ConnectRelationInput!]!
+    MoveTypes: [ConnectRelationInput!]!
   }
 
-  input UpdateLoggedWorkoutSetInput {
-    id: ID!
-    note: String
-    duration: Int
-    roundsCompleted: Int
+  ######### Structure for JSON type in the database. ###########
+  type LoggedWorkoutSectionData {
+    rounds: [WorkoutSectionRoundData!]!
   }
 
-  input UpdateLoggedWorkoutMoveInput {
-    id: ID!
-    reps: Float
-    distanceUnit: DistanceUnit
-    loadAmount: Float
-    loadUnit: LoadUnit
-    timeUnit: TimeUnit
-    Move: ConnectRelationInput
-    Equipment: ConnectRelationInput
+  type WorkoutSectionRoundData {
+    timeTakenSeconds: Int!
+    sets: [WorkoutSectionRoundSetData!]!
+  }
+
+  type WorkoutSectionRoundSetData {
+    timeTakenSeconds: Int!
+    # Comma separated list of the moves in the set. Including reps, move name and load.
+    moves: String!
+  }
+
+  input LoggedWorkoutSectionDataInput {
+    rounds: [WorkoutSectionRoundDataInput!]!
+  }
+
+  input WorkoutSectionRoundDataInput {
+    timeTakenSeconds: Int!
+    sets: [WorkoutSectionRoundSetDataInput!]!
+  }
+
+  input WorkoutSectionRoundSetDataInput {
+    timeTakenSeconds: Int!
+    # Comma separated list of the moves in the set. Including reps, move name and load.
+    moves: String!
   }
 `
