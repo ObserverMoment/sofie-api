@@ -14,7 +14,7 @@
     "generate": "graphql-codegen --config codegen.yml",
     "studio": "prisma studio --port 5000",
     "dbpush": "prisma db push",
-    "postinstall": "prisma db push && npm run generate && npm run build"
+    "postinstall": "prisma db push --accept-data-loss && npm run generate && npm run build"
   },
   "author": "",
   "license": "ISC",
