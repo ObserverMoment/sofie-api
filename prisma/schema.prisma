@@ -48,7 +48,6 @@ model Equipment {
   createdAt          DateTime      @default(now())
   name               String        @unique
   altNames           String?
-  imageUrl           String?
   loadAdjustable     Boolean       @default(true)
   RequiredForMoves   Move[]        @relation("moveToRequiredEquipments", references: [id])
   SelectableForMoves Move[]        @relation("moveToSelectableEquipments", references: [id])
