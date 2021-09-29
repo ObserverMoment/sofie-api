@@ -65,7 +65,7 @@ const firebaseVerifyToken = async (
       : await usersFirebaseSDK.auth().verifyIdToken(authHeader, true)
   } catch (err) {
     console.error(err)
-    throw new AuthenticationError(err)
+    throw new AuthenticationError(String(err))
   }
 }
 

@@ -386,13 +386,10 @@ model WorkoutSection {
   sortPosition         Int
   introVideoUri        String? // Will play before workout starts
   introVideoThumbUri   String?
-  introAudioUri        String? // Will play before workout starts
+  introAudioUri        String? // Will play before workout starts 
   classVideoUri        String? // Will loop throughout duration of the workout
   classVideoThumbUri   String?
   classAudioUri        String? // Will loop throughout duration of the workout
-  outroVideoUri        String? // Will play at end of workout
-  outroVideoThumbUri   String?
-  outroAudioUri        String? // Will play at end of workout
   Workout              Workout            @relation(fields: [workoutId], references: [id])
   workoutId            String
   WorkoutSectionType   WorkoutSectionType @relation(fields: [workoutSectionTypeId], references: [id])

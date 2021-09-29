@@ -367,9 +367,6 @@ export type CreateWorkoutSectionInput = {
   classVideoUri?: Maybe<Scalars['String']>;
   classVideoThumbUri?: Maybe<Scalars['String']>;
   classAudioUri?: Maybe<Scalars['String']>;
-  outroVideoUri?: Maybe<Scalars['String']>;
-  outroVideoThumbUri?: Maybe<Scalars['String']>;
-  outroAudioUri?: Maybe<Scalars['String']>;
   WorkoutSectionType: ConnectRelationInput;
   Workout: ConnectRelationInput;
 };
@@ -1836,9 +1833,6 @@ export type UpdateWorkoutSectionInput = {
   classVideoUri?: Maybe<Scalars['String']>;
   classVideoThumbUri?: Maybe<Scalars['String']>;
   classAudioUri?: Maybe<Scalars['String']>;
-  outroVideoUri?: Maybe<Scalars['String']>;
-  outroVideoThumbUri?: Maybe<Scalars['String']>;
-  outroAudioUri?: Maybe<Scalars['String']>;
   WorkoutSectionType?: Maybe<ConnectRelationInput>;
 };
 
@@ -2126,9 +2120,6 @@ export type WorkoutSection = {
   classVideoUri?: Maybe<Scalars['String']>;
   classVideoThumbUri?: Maybe<Scalars['String']>;
   classAudioUri?: Maybe<Scalars['String']>;
-  outroVideoUri?: Maybe<Scalars['String']>;
-  outroVideoThumbUri?: Maybe<Scalars['String']>;
-  outroAudioUri?: Maybe<Scalars['String']>;
   WorkoutSectionType: WorkoutSectionType;
   WorkoutSets: Array<WorkoutSet>;
 };
@@ -2146,11 +2137,13 @@ export type WorkoutSectionRoundDataInput = {
 
 export type WorkoutSectionRoundSetData = {
   __typename?: 'WorkoutSectionRoundSetData';
+  rounds: Scalars['Int'];
   timeTakenSeconds: Scalars['Int'];
   moves: Scalars['String'];
 };
 
 export type WorkoutSectionRoundSetDataInput = {
+  rounds: Scalars['Int'];
   timeTakenSeconds: Scalars['Int'];
   moves: Scalars['String'];
 };
@@ -3387,9 +3380,6 @@ export type WorkoutSectionResolvers<ContextType = any, ParentType extends Resolv
   classVideoUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   classVideoThumbUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   classAudioUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  outroVideoUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  outroVideoThumbUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  outroAudioUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   WorkoutSectionType?: Resolver<ResolversTypes['WorkoutSectionType'], ParentType, ContextType>;
   WorkoutSets?: Resolver<Array<ResolversTypes['WorkoutSet']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -3402,6 +3392,7 @@ export type WorkoutSectionRoundDataResolvers<ContextType = any, ParentType exten
 }>;
 
 export type WorkoutSectionRoundSetDataResolvers<ContextType = any, ParentType extends ResolversParentTypes['WorkoutSectionRoundSetData'] = ResolversParentTypes['WorkoutSectionRoundSetData']> = ResolversObject<{
+  rounds?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   timeTakenSeconds?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   moves?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;

@@ -189,9 +189,6 @@ export async function checkWorkoutSectionMediaForDeletion(
       classVideoUri: true,
       classVideoThumbUri: true,
       classAudioUri: true,
-      outroVideoUri: true,
-      outroVideoThumbUri: true,
-      outroAudioUri: true,
     },
   })
 

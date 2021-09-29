@@ -351,9 +351,6 @@ input CreateWorkoutSectionInput {
   classVideoUri: String
   classVideoThumbUri: String
   classAudioUri: String
-  outroVideoUri: String
-  outroVideoThumbUri: String
-  outroAudioUri: String
   WorkoutSectionType: ConnectRelationInput!
   Workout: ConnectRelationInput!
 }
@@ -1136,9 +1133,6 @@ input UpdateWorkoutSectionInput {
   classVideoUri: String
   classVideoThumbUri: String
   classAudioUri: String
-  outroVideoUri: String
-  outroVideoThumbUri: String
-  outroAudioUri: String
   WorkoutSectionType: ConnectRelationInput
 }
 
@@ -1410,9 +1404,6 @@ type WorkoutSection {
   classVideoUri: String
   classVideoThumbUri: String
   classAudioUri: String
-  outroVideoUri: String
-  outroVideoThumbUri: String
-  outroAudioUri: String
   WorkoutSectionType: WorkoutSectionType!
   WorkoutSets: [WorkoutSet!]!
 }
@@ -1428,11 +1419,13 @@ input WorkoutSectionRoundDataInput {
 }
 
 type WorkoutSectionRoundSetData {
+  rounds: Int!
   timeTakenSeconds: Int!
   moves: String!
 }
 
 input WorkoutSectionRoundSetDataInput {
+  rounds: Int!
   timeTakenSeconds: Int!
   moves: String!
 }

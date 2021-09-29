@@ -14,9 +14,6 @@ export default gql`
     classVideoUri: String
     classVideoThumbUri: String
     classAudioUri: String
-    outroVideoUri: String
-    outroVideoThumbUri: String
-    outroAudioUri: String
     WorkoutSectionType: WorkoutSectionType!
     WorkoutSets: [WorkoutSet!]!
   }
@@ -33,9 +30,6 @@ export default gql`
     classVideoUri: String
     classVideoThumbUri: String
     classAudioUri: String
-    outroVideoUri: String
-    outroVideoThumbUri: String
-    outroAudioUri: String
     WorkoutSectionType: ConnectRelationInput!
     Workout: ConnectRelationInput!
   }
@@ -52,9 +46,6 @@ export default gql`
     classVideoUri: String
     classVideoThumbUri: String
     classAudioUri: String
-    outroVideoUri: String
-    outroVideoThumbUri: String
-    outroAudioUri: String
     WorkoutSectionType: ConnectRelationInput
   }
 
