@@ -88,8 +88,8 @@ export default gql`
     ): [WorkoutPlan!]!
     workoutPlanById(id: ID!): WorkoutPlan!
     userWorkoutPlans: [WorkoutPlan!]!
-    userWorkoutPlanEnrolments: [WorkoutPlanEnrolment!]!
-    userWorkoutPlanEnrolmentById(id: ID!): WorkoutPlanEnrolment!
+    enrolledWorkoutPlans: [WorkoutPlan!]!
+    workoutPlanByEnrolmentId(id: ID!): WorkoutPlan!
   }
 
   type Mutation {

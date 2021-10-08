@@ -771,8 +771,8 @@ type Query {
   publicWorkoutPlans(cursor: ID, filters: WorkoutPlanFiltersInput, take: Int): [WorkoutPlan!]!
   workoutPlanById(id: ID!): WorkoutPlan!
   userWorkoutPlans: [WorkoutPlan!]!
-  userWorkoutPlanEnrolments: [WorkoutPlanEnrolment!]!
-  userWorkoutPlanEnrolmentById(id: ID!): WorkoutPlanEnrolment!
+  enrolledWorkoutPlans: [WorkoutPlan!]!
+  workoutPlanByEnrolmentId(id: ID!): WorkoutPlan!
 }
 
 input RemoveWorkoutFromClubInput {
@@ -1342,7 +1342,7 @@ type WorkoutPlan {
   introAudioUri: String
   contentAccessScope: ContentAccessScope!
   User: UserSummary!
-  Enrolments: [WorkoutPlanEnrolmentSummary!]!
+  WorkoutPlanEnrolments: [WorkoutPlanEnrolment!]!
   WorkoutPlanDays: [WorkoutPlanDay!]!
   WorkoutPlanReviews: [WorkoutPlanReview!]!
   WorkoutTags: [WorkoutTag!]!
@@ -1366,12 +1366,6 @@ type WorkoutPlanEnrolment {
   id: ID!
   startDate: DateTime!
   completedPlanDayWorkoutIds: [String!]!
-  User: UserSummary!
-  WorkoutPlan: WorkoutPlan!
-}
-
-type WorkoutPlanEnrolmentSummary {
-  id: ID!
   User: UserSummary!
 }
 
@@ -1430,16 +1424,6 @@ input WorkoutSectionRoundSetDataInput {
   moves: String!
 }
 
-type WorkoutSectionSummary {
-  name: String
-  timecap: Int
-  sortPosition: Int!
-  classVideoUri: String
-  classVideoThumbUri: String
-  classAudioUri: String
-  WorkoutSectionType: String!
-}
-
 type WorkoutSectionType {
   id: ID!
   name: String!
@@ -1484,24 +1468,6 @@ type WorkoutSetIntervalBuyIn {
   id: ID!
   interval: Int!
   WorkoutMove: WorkoutMove!
-}
-
-type WorkoutSummary {
-  id: ID!
-  createdAt: DateTime!
-  creatorId: ID!
-  creatorName: String!
-  creatorAvatarUri: String
-  name: String!
-  description: String
-  contentAccessScope: ContentAccessScope!
-  lengthMinutes: Int
-  difficultyLevel: DifficultyLevel!
-  WorkoutGoals: [String!]!
-  WorkoutTags: [String!]!
-  WorkoutSections: [WorkoutSectionSummary!]!
-  Moves: [String!]!
-  Equipments: [String!]!
 }
 
 type WorkoutTag {

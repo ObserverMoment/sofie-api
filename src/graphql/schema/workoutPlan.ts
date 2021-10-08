@@ -15,16 +15,10 @@ export default gql`
     introAudioUri: String
     contentAccessScope: ContentAccessScope!
     User: UserSummary!
-    Enrolments: [WorkoutPlanEnrolmentSummary!]!
+    WorkoutPlanEnrolments: [WorkoutPlanEnrolment!]!
     WorkoutPlanDays: [WorkoutPlanDay!]!
     WorkoutPlanReviews: [WorkoutPlanReview!]!
     WorkoutTags: [WorkoutTag!]!
-  }
-
-  # For displaying participants.
-  type WorkoutPlanEnrolmentSummary {
-    id: ID!
-    User: UserSummary!
   }
 
   # Just creates the basic required fields to make a fresh, empty plan in the DB ready for CRUDing.
@@ -108,7 +102,6 @@ export default gql`
     startDate: DateTime!
     completedPlanDayWorkoutIds: [String!]!
     User: UserSummary!
-    WorkoutPlan: WorkoutPlan!
   }
 
   input UpdateWorkoutPlanEnrolmentInput {

@@ -470,27 +470,27 @@ model WorkoutMove {
 ///// Workout Plan Related Models /////////
 ///////////////////////////////////////////
 model WorkoutPlan {
-  id                   String                 @id @default(uuid())
-  createdAt            DateTime               @default(now())
-  User                 User                   @relation(fields: [userId], references: [id])
-  userId               String
-  archived             Boolean                @default(false)
-  name                 String
-  description          String?
-  lengthWeeks          Int                    @default(2)
-  daysPerWeek          Int                    @default(3)
-  coverImageUri        String?
-  introVideoUri        String?
-  introVideoThumbUri   String?
-  introAudioUri        String?
-  contentAccessScope   ContentAccessScope     @default(PRIVATE)
-  Enrolments           WorkoutPlanEnrolment[]
-  WorkoutPlanReviews   WorkoutPlanReview[]
-  WorkoutTags          WorkoutTag[]
-  WorkoutPlanDays      WorkoutPlanDay[]
-  Collections          Collection[]
-  DiscoverWorkoutPlans DiscoverWorkoutPlan[]
-  Clubs                Club[]
+  id                    String                 @id @default(uuid())
+  createdAt             DateTime               @default(now())
+  User                  User                   @relation(fields: [userId], references: [id])
+  userId                String
+  archived              Boolean                @default(false)
+  name                  String
+  description           String?
+  lengthWeeks           Int                    @default(2)
+  daysPerWeek           Int                    @default(3)
+  coverImageUri         String?
+  introVideoUri         String?
+  introVideoThumbUri    String?
+  introAudioUri         String?
+  contentAccessScope    ContentAccessScope     @default(PRIVATE)
+  WorkoutPlanEnrolments WorkoutPlanEnrolment[]
+  WorkoutPlanReviews    WorkoutPlanReview[]
+  WorkoutTags           WorkoutTag[]
+  WorkoutPlanDays       WorkoutPlanDay[]
+  Collections           Collection[]
+  DiscoverWorkoutPlans  DiscoverWorkoutPlan[]
+  Clubs                 Club[]
 }
 
 model WorkoutPlanDay {

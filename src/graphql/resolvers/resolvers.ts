@@ -206,8 +206,8 @@ import {
   updateWorkoutPlanDayWorkout,
   deleteWorkoutPlanDayWorkoutById,
   reorderWorkoutPlanDayWorkouts,
-  userWorkoutPlanEnrolments,
-  userWorkoutPlanEnrolmentById,
+  enrolledWorkoutPlans,
+  workoutPlanByEnrolmentId,
   createWorkoutPlanEnrolment,
   updateWorkoutPlanEnrolment,
   deleteWorkoutPlanEnrolmentById,
@@ -319,8 +319,8 @@ const resolvers: Resolvers = {
     publicWorkoutPlans,
     userWorkoutPlans,
     workoutPlanById,
-    userWorkoutPlanEnrolments,
-    userWorkoutPlanEnrolmentById,
+    enrolledWorkoutPlans,
+    workoutPlanByEnrolmentId,
   },
   Mutation: {
     ///////////////
