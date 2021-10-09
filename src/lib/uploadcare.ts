@@ -55,7 +55,7 @@ export async function deleteFiles(fileIds: string[]): Promise<boolean> {
     body: requestBody,
   })
   const json = await res.json()
-  return json.status == 'ok'
+  return (json as any).status == 'ok'
 }
 
 function getFileIdForDeleteOrNull(

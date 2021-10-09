@@ -145,7 +145,7 @@ model ScheduledWorkout {
   GymProfile             GymProfile?           @relation(fields: [gymProfileId], references: [id])
   gymProfileId           String?
   LoggedWorkout          LoggedWorkout?        @relation(fields: [loggedWorkoutId], references: [id])
-  loggedWorkoutId        String?
+  loggedWorkoutId        String?               @unique
   Workout                Workout?              @relation(fields: [workoutId], references: [id])
   workoutId              String?
   WorkoutPlanEnrolment   WorkoutPlanEnrolment? @relation(fields: [workoutPlanEnrolmentId], references: [id])
@@ -258,8 +258,8 @@ model UserBenchmarkEntry {
 ///// Club Related Models and Children //////////
 ////////////////////////////////////////////////////
 model Club {
-  id                 String            @id @default(uuid())
-  createdAt          DateTime          @default(now())
+  id                 String             @id @default(uuid())
+  createdAt          DateTime           @default(now())
   name               String
   description        String?
   location           String?
@@ -267,10 +267,11 @@ model Club {
   introVideoUri      String?
   introVideoThumbUri String?
   introAudioUri      String?
-  Owner              User              @relation("owner", fields: [userId], references: [id])
+  contentAccessScope ContentAccessScope @default(PRIVATE)
+  Owner              User               @relation("owner", fields: [userId], references: [id])
   userId             String
-  Admins             User[]            @relation("admin")
-  Members            User[]            @relation("member")
+  Admins             User[]             @relation("admin")
+  Members            User[]             @relation("member")
   JoinClubRequests   JoinClubRequest[]
   JoinClubInvites    JoinClubInvite[]
   Workouts           Workout[]
@@ -428,7 +429,7 @@ model WorkoutSetIntervalBuyIn {
   WorkoutMove   WorkoutMove @relation(fields: [workoutMoveId], references: [id])
   workoutMoveId String
   WorkoutSet    WorkoutSet  @relation(fields: [workoutSetId], references: [id])
-  workoutSetId  String
+  workoutSetId  String      @unique
 }
 
 model WorkoutSetGenerator {

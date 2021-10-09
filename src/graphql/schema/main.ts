@@ -14,7 +14,9 @@ export default gql`
     workoutSectionTypes: [WorkoutSectionType!]!
     #### Clubs ####
     # Public club summary data for use displaying chat previews and other lists.
-    clubSummaries(ids: [ID!]!): [ClubPublicSummary!]!
+    clubSummariesById(ids: [ID!]!): [ClubPublicSummary!]!
+    # Public club summary data discover and new style lists.
+    publicClubSummaries: [ClubPublicSummary!]!
     userClubs: [Club!]!
     clubById(id: ID!): Club!
     #### Discover Pages and Types ####
@@ -105,6 +107,11 @@ export default gql`
     removeMemberAdminStatus(userId: ID!, clubId: ID!): Club!
     addUserToClubViaInviteToken(userId: ID!, clubInviteTokenId: ID!): Club!
     removeUserFromClub(userToRemoveId: ID!, clubId: ID!): Club!
+    #### Club Content Management ####
+    addWorkoutToClub(workoutId: ID!, clubId: ID!): Club!
+    removeWorkoutFromClub(workoutId: ID!, clubId: ID!): Club!
+    addWorkoutPlanToClub(workoutPlanId: ID!, clubId: ID!): Club!
+    removeWorkoutPlanFromClub(workoutPlanId: ID!, clubId: ID!): Club!
     #### Club Timeline Post ####
     createClubTimelinePost(
       data: CreateClubTimelinePostInput!

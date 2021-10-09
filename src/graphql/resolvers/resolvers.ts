@@ -13,11 +13,15 @@ import {
 
 import {
   userClubs,
-  clubSummaries,
+  publicClubSummaries,
+  clubSummariesById,
   clubById,
   createClub,
   updateClub,
   deleteClubById,
+} from './club/club'
+
+import {
   createClubInviteToken,
   updateClubInviteToken,
   deleteClubInviteTokenById,
@@ -25,7 +29,14 @@ import {
   giveMemberAdminStatus,
   removeMemberAdminStatus,
   removeUserFromClub,
-} from './club'
+} from './club/clubMembers'
+
+import {
+  addWorkoutToClub,
+  removeWorkoutFromClub,
+  addWorkoutPlanToClub,
+  removeWorkoutPlanFromClub,
+} from './club/clubContent'
 
 import {
   discoverFeatured,
@@ -261,7 +272,8 @@ const resolvers: Resolvers = {
     workoutGoals,
     workoutSectionTypes,
     ///// Clubs ////
-    clubSummaries,
+    publicClubSummaries,
+    clubSummariesById,
     userClubs,
     clubById,
     clubMembersFeedPosts,
@@ -339,6 +351,13 @@ const resolvers: Resolvers = {
     removeMemberAdminStatus,
     addUserToClubViaInviteToken,
     removeUserFromClub,
+    ///////////////////////
+    //// Club Content /////
+    ///////////////////////
+    addWorkoutToClub,
+    removeWorkoutFromClub,
+    addWorkoutPlanToClub,
+    removeWorkoutPlanFromClub,
     ///////////////////////
     //// Club Timeline ////
     ///////////////////////

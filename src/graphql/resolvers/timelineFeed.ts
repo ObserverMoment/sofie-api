@@ -16,7 +16,7 @@ import {
   deleteStreamClubPostActivity,
   getStreamClubMembersFeedActivities,
 } from '../../lib/getStream'
-import { checkUserIsMemberOfClub } from './club'
+import { checkUserIsMemberOfClub } from './club/utils'
 
 //// Club Timeline Post Mutations ////
 export const createClubTimelinePost = async (
