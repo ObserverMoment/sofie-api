@@ -27,6 +27,7 @@ export default gql`
     id: ID!
     name: String!
     coverImageUri: String
+    location: String
   }
 
   input CreateClubInput {

@@ -35,6 +35,19 @@ export const userClubs = async (
   return clubs as Club[]
 }
 
+// ClubFinder functionality - filtering and ranking etc.
+export const publicClubs = async (
+  r: any,
+  a: any,
+  { select, prisma }: Context,
+) => {
+  const clubs = await prisma.club.findMany({
+    where: { contentAccessScope: 'PUBLIC' },
+    select,
+  })
+  return clubs as Club[]
+}
+
 /// Just the bare minumum data such as name and cover image.
 /// Only public data should be serialized here.
 export const publicClubSummaries = async (

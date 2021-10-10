@@ -15,7 +15,9 @@ export default gql`
     #### Clubs ####
     # Public club summary data for use displaying chat previews and other lists.
     clubSummariesById(ids: [ID!]!): [ClubPublicSummary!]!
-    # Public club summary data discover and new style lists.
+    # ClubFinder functionality.
+    publicClubs: [Club!]!
+    # Public club summary data - discover page and new style lists.
     publicClubSummaries: [ClubPublicSummary!]!
     userClubs: [Club!]!
     clubById(id: ID!): Club!

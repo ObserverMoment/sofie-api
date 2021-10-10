@@ -134,6 +134,7 @@ export type ClubPublicSummary = {
   __typename?: 'ClubPublicSummary';
   coverImageUri?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
+  location?: Maybe<Scalars['String']>;
   name: Scalars['String'];
 };
 
@@ -1326,6 +1327,7 @@ export type Query = {
   progressJournalById: ProgressJournal;
   progressJournalGoalTags: Array<ProgressJournalGoalTag>;
   publicClubSummaries: Array<ClubPublicSummary>;
+  publicClubs: Array<Club>;
   publicWorkoutPlans: Array<WorkoutPlan>;
   publicWorkouts: Array<Workout>;
   standardMoves: Array<Move>;
@@ -2689,6 +2691,7 @@ export type ClubInviteTokenDataResolvers<ContextType = any, ParentType extends R
 export type ClubPublicSummaryResolvers<ContextType = any, ParentType extends ResolversParentTypes['ClubPublicSummary'] = ResolversParentTypes['ClubPublicSummary']> = ResolversObject<{
   coverImageUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  location?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
@@ -3038,6 +3041,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   progressJournalById?: Resolver<ResolversTypes['ProgressJournal'], ParentType, ContextType, RequireFields<QueryProgressJournalByIdArgs, 'id'>>;
   progressJournalGoalTags?: Resolver<Array<ResolversTypes['ProgressJournalGoalTag']>, ParentType, ContextType>;
   publicClubSummaries?: Resolver<Array<ResolversTypes['ClubPublicSummary']>, ParentType, ContextType>;
+  publicClubs?: Resolver<Array<ResolversTypes['Club']>, ParentType, ContextType>;
   publicWorkoutPlans?: Resolver<Array<ResolversTypes['WorkoutPlan']>, ParentType, ContextType, RequireFields<QueryPublicWorkoutPlansArgs, never>>;
   publicWorkouts?: Resolver<Array<ResolversTypes['Workout']>, ParentType, ContextType, RequireFields<QueryPublicWorkoutsArgs, never>>;
   standardMoves?: Resolver<Array<ResolversTypes['Move']>, ParentType, ContextType>;

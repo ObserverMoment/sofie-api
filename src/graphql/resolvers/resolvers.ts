@@ -13,6 +13,7 @@ import {
 
 import {
   userClubs,
+  publicClubs,
   publicClubSummaries,
   clubSummariesById,
   clubById,
@@ -272,6 +273,7 @@ const resolvers: Resolvers = {
     workoutGoals,
     workoutSectionTypes,
     ///// Clubs ////
+    publicClubs,
     publicClubSummaries,
     clubSummariesById,
     userClubs,

@@ -118,6 +118,7 @@ type ClubInviteTokenData {
 type ClubPublicSummary {
   coverImageUri: String
   id: ID!
+  location: String
   name: String!
 }
 
@@ -746,6 +747,7 @@ type Query {
   progressJournalById(id: ID!): ProgressJournal!
   progressJournalGoalTags: [ProgressJournalGoalTag!]!
   publicClubSummaries: [ClubPublicSummary!]!
+  publicClubs: [Club!]!
   publicWorkoutPlans(cursor: ID, filters: WorkoutPlanFiltersInput, take: Int): [WorkoutPlan!]!
   publicWorkouts(cursor: ID, filters: WorkoutFiltersInput, take: Int): [Workout!]!
   standardMoves: [Move!]!
