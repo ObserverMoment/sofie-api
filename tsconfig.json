@@ -1,23 +1,37 @@
+// {
+//   "$schema": "https://json.schemastore.org/tsconfig",
+//   "display": "Node 14",
+//   "compilerOptions": {
+//     "outDir": "dist",
+
+//     "module": "commonjs",
+//     "target": "ES2018",
+
+//     "moduleResolution": "node",
+//     "strict": true,
+//     "esModuleInterop": true,
+//     "skipLibCheck": true,
+//     "forceConsistentCasingInFileNames": true,
+
+//     // Needed for CommonJS modules
+//     "allowSyntheticDefaultImports": true,
+//     "declaration": true,
+//     "sourceMap": true
+//   },
+//   "compileOnSave": true,
+//   "include": ["src"]
+// }
 {
-  "$schema": "https://json.schemastore.org/tsconfig",
-  "display": "Node 14",
   "compilerOptions": {
+    "module": "CommonJS",
     "outDir": "dist",
-
-    "module": "commonjs",
-    "target": "ES2018",
-
-    "moduleResolution": "node",
+    "sourceMap": true,
     "strict": true,
+    "target": "ESNext",
+    "moduleResolution": "node",
     "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-
-    // Needed for CommonJS modules
     "allowSyntheticDefaultImports": true,
-    "declaration": true,
-    "sourceMap": true
   },
   "compileOnSave": true,
-  "include": ["src"]
+  "include": ["src", "prisma"],  
 }
