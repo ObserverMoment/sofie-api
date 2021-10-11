@@ -152,7 +152,7 @@ async function startApolloServer(
 
   const PORT: number = process.env.PORT ? parseInt(process.env.PORT) : 4000
   httpServer.listen({ port: PORT }, () =>
-    console.log(console.log(`🚀  Server ready at port ${PORT}`)),
+    console.log(`🚀  Server ready at port ${PORT}`),
   )
 }
 
