@@ -5,6 +5,7 @@
   "engines": {
     "node": "14.x"
   },
+  "type": "commonjs",
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
