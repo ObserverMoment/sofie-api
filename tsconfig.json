@@ -1,14 +1,23 @@
 {
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "Node 14",
   "compilerOptions": {
-    "module": "CommonJS",
     "outDir": "dist",
-    "sourceMap": true,
-    "strict": true,
-    "target": "ESNext",
+
+    "module": "commonjs",
+    "target": "ES2018",
+
     "moduleResolution": "node",
+    "strict": true,
     "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+
+    // Needed for CommonJS modules
     "allowSyntheticDefaultImports": true,
+    "declaration": true,
+    "sourceMap": true
   },
   "compileOnSave": true,
-  "include": ["src", "prisma"],  
+  "include": ["src"]
 }
