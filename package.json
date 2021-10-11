@@ -34,11 +34,11 @@
     "stream-chat": "^4.2.0"
   },
   "devDependencies": {
-    "@graphql-codegen/cli": "^2.2.0",
-    "@graphql-codegen/schema-ast": "^2.2.0",
-    "@graphql-codegen/typescript": "2.2.2",
-    "@graphql-codegen/typescript-document-nodes": "2.1.4",
-    "@graphql-codegen/typescript-resolvers": "^2.3.0",
+    "@graphql-codegen/cli": "^1.21.6",
+    "@graphql-codegen/schema-ast": "^1.18.3",
+    "@graphql-codegen/typescript": "1.22.4",
+    "@graphql-codegen/typescript-document-nodes": "1.17.15",
+    "@graphql-codegen/typescript-resolvers": "^1.19.5",
     "@types/uuid": "^8.3.1",
     "@types/node-fetch": "^2.5.12",
     "concurrently": "^6.3.0",
