@@ -11,7 +11,7 @@
     "start": "node dist/index.js",
     "dev": "concurrently \"tsc -w\" \"nodemon dist/index.js\"",
     "debug": "nodemon --inspect dist/index.js",
-    "generate": "graphql-codegen --config codegen.yml",
+    "generate": "DEBUG=1 graphql-codegen --config codegen.yml",
     "studio": "prisma studio --port 5000",
     "dbpush": "prisma db push",
     "postinstall": "prisma db push --accept-data-loss && npm run generate && npm run build"
@@ -19,7 +19,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@graphql-tools/merge": "^6.2.14",
+    "@graphql-tools/merge": "^8.1.2",
     "@paljs/plugins": "^4.0.8",
     "@prisma/client": "^3.2.1",
     "apollo-server-express": "^3.3.0",
