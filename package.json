@@ -14,9 +14,8 @@
     "generate": "DEBUG=1 graphql-codegen --config codegen.yml",
     "studio": "prisma studio --port 5000",
     "dbpush": "prisma db push",
-    "postinstall": "prisma db push --accept-data-loss && npm run generate && npm run build"
+    "heroku-postbuild": "[ $NODE_ENV == sandbox ] ? npm run build : prisma migrate deploy && npm run generate && npm run build"
   },
-  "author": "",
   "license": "ISC",
   "dependencies": {
     "@graphql-tools/merge": "^8.1.2",
