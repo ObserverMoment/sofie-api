@@ -79,6 +79,7 @@ export default gql`
   }
 
   type WorkoutSectionRoundSetData {
+    rounds: Int!
     timeTakenSeconds: Int!
     # Comma separated list of the moves in the set. Including reps, move name and load.
     moves: String!
@@ -94,6 +95,7 @@ export default gql`
   }
 
   input WorkoutSectionRoundSetDataInput {
+    rounds: Int!
     timeTakenSeconds: Int!
     # Comma separated list of the moves in the set. Including reps, move name and load.
     moves: String!

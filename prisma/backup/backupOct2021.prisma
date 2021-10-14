@@ -1,0 +1,739 @@
+// https://github.com/prisma/prisma2
+// SDL first example: https://github.com/prisma/prisma-examples/tree/prisma2/javascript/graphql-sdl-first
+// Migrations: https://github.com/prisma/migrate
+generator client {
+    provider        = "prisma-client-js"
+    previewFeatures = ["filterJson"]
+}
+
+datasource db {
+    provider          = "postgresql"
+    url               = env("DATABASE_URL")
+    // https://www.prisma.io/docs/concepts/components/prisma-migrate/shadow-database#cloud-hosted-shadow-databases-must-be-created-manually
+    shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+model Admin {
+    id          String   @id @default(uuid())
+    firebaseUid String   @unique
+    createdAt   DateTime @default(now())
+    username    String   @unique
+}
+
+///////////////////////////////////////
+//// Global / Core Data / Tags ////////
+///////////////////////////////////////
+model BodyArea {
+    id                    String                 @id @default(uuid())
+    createdAt             DateTime               @default(now())
+    name                  String                 @unique
+    altNames              String?
+    BodyAreaMoveScores    BodyAreaMoveScore[]
+    frontBack             BodyAreaFrontBack      @default(FRONT)
+    upperLower            BodyAreaUpperLower     @default(UPPER)
+    LoggedWorkoutSections LoggedWorkoutSection[]
+}
+
+model BodyAreaMoveScore {
+    createdAt  DateTime @default(now())
+    Move       Move     @relation(fields: [moveId], references: [id])
+    moveId     String
+    BodyArea   BodyArea @relation(fields: [bodyAreaId], references: [id])
+    bodyAreaId String
+    score      Int      @default(1)
+
+    @@id([moveId, bodyAreaId])
+}
+
+model Equipment {
+    id                 String        @id @default(uuid())
+    createdAt          DateTime      @default(now())
+    name               String        @unique
+    altNames           String?
+    loadAdjustable     Boolean       @default(true)
+    RequiredForMoves   Move[]        @relation("moveToRequiredEquipments", references: [id])
+    SelectableForMoves Move[]        @relation("moveToSelectableEquipments", references: [id])
+    GymProfiles        GymProfile[]
+    WorkoutMoves       WorkoutMove[]
+}
+
+model Move {
+    id                   String               @id @default(uuid())
+    createdAt            DateTime             @default(now())
+    archived             Boolean              @default(false)
+    User                 User?                @relation(fields: [userId], references: [id])
+    userId               String?
+    // A user should never be able to create a STANDARD move (aka an official move), only ADMIN.
+    scope                MoveScope            @default(CUSTOM)
+    name                 String
+    searchTerms          String?
+    description          String?
+    demoVideoUri         String?
+    demoVideoThumbUri    String?
+    validRepTypes        WorkoutMoveRepType[]
+    MoveType             MoveType?            @relation(fields: [moveTypeId], references: [id])
+    moveTypeId           String?
+    RequiredEquipments   Equipment[]          @relation("moveToRequiredEquipments", references: [id])
+    SelectableEquipments Equipment[]          @relation("moveToSelectableEquipments", references: [id])
+    WorkoutMoves         WorkoutMove[]
+    BodyAreaMoveScores   BodyAreaMoveScore[]
+}
+
+// General, Cardio, Barre, Yoga etc
+model MoveType {
+    id                    String                 @id @default(uuid())
+    createdAt             DateTime               @default(now())
+    name                  String
+    description           String?
+    imageUri              String?
+    Moves                 Move[]
+    LoggedWorkoutSections LoggedWorkoutSection[]
+}
+
+model WorkoutGoal {
+    id             String          @id @default(uuid())
+    createdAt      DateTime        @default(now())
+    name           String
+    description    String
+    hexColor       String
+    Workouts       Workout[]
+    LoggedWorkouts LoggedWorkout[]
+}
+
+model WorkoutSectionType {
+    id                    String                 @id @default(uuid())
+    createdAt             DateTime               @default(now())
+    name                  String
+    subtitle              String
+    description           String
+    validRepTypes         WorkoutMoveRepType[]
+    WorkoutSections       WorkoutSection[]
+    LoggedWorkoutSections LoggedWorkoutSection[]
+}
+
+///////////////////////////////////////
+//// User and User Related ////////////
+///////////////////////////////////////
+model Collection {
+    id           String        @id @default(uuid())
+    createdAt    DateTime      @default(now())
+    User         User          @relation(fields: [userId], references: [id])
+    userId       String
+    name         String
+    description  String?
+    Workouts     Workout[]
+    WorkoutPlans WorkoutPlan[]
+}
+
+model GymProfile {
+    id                String             @id @default(uuid())
+    createdAt         DateTime           @default(now())
+    User              User               @relation(fields: [userId], references: [id])
+    userId            String
+    name              String
+    description       String?
+    Equipments        Equipment[]
+    ScheduledWorkouts ScheduledWorkout[]
+    LoggedWorkouts    LoggedWorkout[]
+}
+
+model ScheduledWorkout {
+    id                     String                @id @default(uuid())
+    createdAt              DateTime              @default(now())
+    User                   User                  @relation(fields: [userId], references: [id])
+    userId                 String
+    note                   String?
+    scheduledAt            DateTime              @default(now())
+    GymProfile             GymProfile?           @relation(fields: [gymProfileId], references: [id])
+    gymProfileId           String?
+    LoggedWorkout          LoggedWorkout?        @relation(fields: [loggedWorkoutId], references: [id])
+    loggedWorkoutId        String?               @unique
+    Workout                Workout?              @relation(fields: [workoutId], references: [id])
+    workoutId              String?
+    WorkoutPlanEnrolment   WorkoutPlanEnrolment? @relation(fields: [workoutPlanEnrolmentId], references: [id])
+    workoutPlanEnrolmentId String?
+}
+
+// Height in cms / weight in kgs
+model User {
+    id                       String                    @id @default(uuid())
+    firebaseUid              String                    @unique
+    createdAt                DateTime                  @default(now())
+    hasOnboarded             Boolean                   @default(false)
+    userProfileScope         UserProfileScope          @default(PRIVATE)
+    avatarUri                String?
+    introVideoUri            String?
+    introVideoThumbUri       String?
+    displayName              String                    @unique @default(cuid())
+    firstname                String?
+    lastname                 String?
+    bio                      String?
+    tagline                  String?
+    birthdate                DateTime?
+    gender                   Gender                    @default(PNTS)
+    townCity                 String?
+    countryCode              String?
+    instagramUrl             String?
+    tiktokUrl                String?
+    youtubeUrl               String?
+    snapUrl                  String?
+    linkedinUrl              String?
+    CustomMoves              Move[]
+    Workouts                 Workout[]
+    ScheduledWorkouts        ScheduledWorkout[]
+    LoggedWorkouts           LoggedWorkout[]
+    GymProfiles              GymProfile[]
+    ProgressJournals         ProgressJournal[]
+    ProgressJournalGoalTags  ProgressJournalGoalTag[]
+    LoggedWorkoutSections    LoggedWorkoutSection[]
+    ProgressJournalGoals     ProgressJournalGoal[]
+    ProgressJournalEntrys    ProgressJournalEntry[]
+    WorkoutSections          WorkoutSection[]
+    WorkoutSets              WorkoutSet[]
+    WorkoutMoves             WorkoutMove[]
+    WorkoutTag               WorkoutTag[]
+    UserBenchmarkTags        UserBenchmarkTag[]
+    UserBenchmarks           UserBenchmark[]
+    UserBenchmarkEntries     UserBenchmarkEntry[]
+    WorkoutPlans             WorkoutPlan[]
+    WorkoutPlanDays          WorkoutPlanDay[]
+    WorkoutPlanDayWorkouts   WorkoutPlanDayWorkout[]
+    WorkoutPlanEnrolments    WorkoutPlanEnrolment[]
+    WorkoutPlanReviews       WorkoutPlanReview[]
+    Collections              Collection[]
+    BodyTransformationPhotos BodyTransformationPhoto[]
+    ClubsWhereOwner          Club[]                    @relation("owner")
+    ClubsWhereAdmin          Club[]                    @relation("admin")
+    ClubsWhereMember         Club[]                    @relation("member")
+    JoinClubRequestsSent     JoinClubRequest[]         @relation("applicant")
+    JoinClubResponsesSent    JoinClubRequest[]         @relation("request_responder")
+    ClubInvitesSent          JoinClubInvite[]          @relation("sender")
+    ClubInvitesReceived      JoinClubInvite[]          @relation("invited")
+    ClubInvitesResponded     JoinClubInvite[]          @relation("invite_responder")
+    ClubInviteTokens         ClubInviteToken[]
+}
+
+// One or more benchmarks grouped together. For example the class deadlift / press squat moves could be grouped together here.
+model UserBenchmarkTag {
+    id             String          @id @default(uuid())
+    createdAt      DateTime        @default(now())
+    User           User            @relation(fields: [userId], references: [id])
+    userId         String
+    name           String
+    description    String?
+    UserBenchmarks UserBenchmark[]
+}
+
+model UserBenchmark {
+    id                   String               @id @default(uuid())
+    createdAt            DateTime             @default(now())
+    // Date that the user last submitted a score / entry for this benchmark. Must be updated in the UserBenchmarkEntry resolvers whenever one is created or updated.
+    lastEntryAt          DateTime             @default(now())
+    User                 User                 @relation(fields: [userId], references: [id])
+    userId               String
+    name                 String
+    description          String?
+    equipmentInfo        String?
+    benchmarkType        BenchmarkType        @default(MAXLOAD)
+    loadUnit             LoadUnit             @default(KG)
+    UserBenchmarkEntries UserBenchmarkEntry[]
+    UserBenchmarkTags    UserBenchmarkTag[]
+}
+
+model UserBenchmarkEntry {
+    id              String        @id @default(uuid())
+    createdAt       DateTime      @default(now())
+    User            User          @relation(fields: [userId], references: [id])
+    userId          String
+    completedOn     DateTime      @default(now()) // Date of actually doing the benchmark.
+    score           Float // Unit determined by UserBenchmark.benchmarkType
+    note            String?
+    videoUri        String?
+    videoThumbUri   String?
+    UserBenchmark   UserBenchmark @relation(fields: [userBenchmarkId], references: [id])
+    userBenchmarkId String
+}
+
+////////////////////////////////////////////////////
+///// Club Related Models and Children //////////
+////////////////////////////////////////////////////
+model Club {
+    id                 String             @id @default(uuid())
+    createdAt          DateTime           @default(now())
+    name               String
+    description        String?
+    location           String?
+    coverImageUri      String?
+    introVideoUri      String?
+    introVideoThumbUri String?
+    introAudioUri      String?
+    contentAccessScope ContentAccessScope @default(PRIVATE)
+    Owner              User               @relation("owner", fields: [userId], references: [id])
+    userId             String
+    Admins             User[]             @relation("admin")
+    Members            User[]             @relation("member")
+    JoinClubRequests   JoinClubRequest[]
+    JoinClubInvites    JoinClubInvite[]
+    Workouts           Workout[]
+    WorkoutPlans       WorkoutPlan[]
+    ClubInviteTokens   ClubInviteToken[]
+}
+
+model ClubInviteToken {
+    id            String   @id @default(uuid())
+    createdAt     DateTime @default(now())
+    active        Boolean
+    name          String
+    // How many times can this token be used.
+    // 0 means unlimited.
+    inviteLimit   Int      @default(0)
+    // Add each joining user id to this list and compare its length vs invite limit to check expiry.
+    joinedUserIds String[]
+    // Owner or admin of the group.
+    User          User     @relation(fields: [userId], references: [id])
+    userId        String
+    Club          Club     @relation(fields: [clubId], references: [id], onDelete: Cascade)
+    clubId        String
+}
+
+/// When a user requests to join a club.
+model JoinClubRequest {
+    id          String                @id @default(uuid())
+    createdAt   DateTime              @default(now())
+    Applicant   User                  @relation("applicant", fields: [applicantId], references: [id])
+    applicantId String
+    status      JoinClubRequestStatus @default(PENDING)
+    // Owner or admin of the group.
+    Responder   User?                 @relation("request_responder", fields: [responderId], references: [id])
+    responderId String?
+    respondedAt DateTime?
+    Club        Club                  @relation(fields: [clubId], references: [id], onDelete: Cascade)
+    clubId      String
+}
+
+/// When the owner or an admin invites a user to join a club.
+model JoinClubInvite {
+    id          String                @id @default(uuid())
+    createdAt   DateTime              @default(now())
+    Sender      User                  @relation("sender", fields: [senderId], references: [id])
+    senderId    String
+    Invited     User                  @relation("invited", fields: [invitedId], references: [id])
+    invitedId   String
+    status      JoinClubRequestStatus @default(PENDING)
+    Responder   User?                 @relation("invite_responder", fields: [responderId], references: [id])
+    responderId String?
+    respondedAt DateTime?
+    Club        Club                  @relation(fields: [clubId], references: [id], onDelete: Cascade)
+    clubId      String
+}
+
+////////////////////////////////////////////////////
+///// Workout Related Models and Children //////////
+////////////////////////////////////////////////////
+model Workout {
+    id                    String                  @id @default(uuid())
+    createdAt             DateTime                @default(now())
+    archived              Boolean                 @default(false)
+    User                  User                    @relation(fields: [userId], references: [id])
+    userId                String
+    name                  String
+    description           String?
+    // Meta data document used for search and filter functionality and (possibly) for ranking algorithm implementation. May end up storing these meta data documents in a specialised document store.
+    // { bodyweightOnly: bool, moves: [ID], bodyAreas: [ID] }
+    // See ../src/lib/jsonValidation.ts
+    metaData              Json?
+    introVideoUri         String?
+    introVideoThumbUri    String?
+    introAudioUri         String?
+    coverImageUri         String?
+    // Length that the workout should take. User inputted if a non timed workout. Auto calced if all sections are timed.
+    lengthMinutes         Int?
+    difficultyLevel       DifficultyLevel         @default(INTERMEDIATE)
+    contentAccessScope    ContentAccessScope      @default(PRIVATE)
+    WorkoutSections       WorkoutSection[]
+    LoggedWorkouts        LoggedWorkout[]
+    ScheduledWorkouts     ScheduledWorkout[]
+    WorkoutGoals          WorkoutGoal[]
+    WorkoutTags           WorkoutTag[]
+    WorkoutPlanDayWorkout WorkoutPlanDayWorkout[]
+    Collections           Collection[]
+    Clubs                 Club[]
+}
+
+/// Used on both workouts and workout plans + maybe others (events, challenges) in the future. Free text tag for the user to tag their content.
+model WorkoutTag {
+    id           String        @id @default(uuid())
+    createdAt    DateTime      @default(now())
+    User         User          @relation(fields: [userId], references: [id])
+    userId       String
+    tag          String
+    Workouts     Workout[]
+    WorkoutPlans WorkoutPlan[]
+}
+
+model WorkoutSection {
+    id                   String             @id @default(uuid())
+    createdAt            DateTime           @default(now())
+    archived             Boolean            @default(false)
+    User                 User               @relation(fields: [userId], references: [id])
+    userId               String
+    name                 String?
+    note                 String?
+    // This field should always be one for AMRAP, Tabata, LastStanding and Free Session.
+    rounds               Int                @default(1)
+    // Seconds. To finish ALL rounds of the section. i.e. the whole 'section workout' as described.
+    // Set to zero to ignore. As of Sept 2021, only used on AMRAP.
+    timecap              Int                @default(0)
+    sortPosition         Int
+    introVideoUri        String? // Will play before workout starts
+    introVideoThumbUri   String?
+    introAudioUri        String? // Will play before workout starts 
+    classVideoUri        String? // Will loop throughout duration of the workout
+    classVideoThumbUri   String?
+    classAudioUri        String? // Will loop throughout duration of the workout
+    Workout              Workout            @relation(fields: [workoutId], references: [id])
+    workoutId            String
+    WorkoutSectionType   WorkoutSectionType @relation(fields: [workoutSectionTypeId], references: [id])
+    workoutSectionTypeId String
+    WorkoutSets          WorkoutSet[]
+}
+
+model WorkoutSet {
+    id               String         @id @default(uuid())
+    createdAt        DateTime       @default(now())
+    User             User           @relation(fields: [userId], references: [id])
+    userId           String
+    sortPosition     Int
+    // For sets in timed workout sections this should always be 1.
+    rounds           Int            @default(1)
+    // If in Timed workout section, loop around all workoutMoves in this set until duration has elapsed. [WorkoutSet.rounds] will be ignored (but should be 1).
+    duration         Int            @default(60) // Seconds
+    // If there is more than one move then this is a superset
+    // In a superset you do each workoutMove in the array one after another
+    // And then repeat this process {rounds} times
+    WorkoutMoves     WorkoutMove[]
+    WorkoutSection   WorkoutSection @relation(fields: [workoutSectionId], references: [id])
+    workoutSectionId String
+}
+
+model WorkoutMove {
+    id           String             @id @default(uuid())
+    createdAt    DateTime           @default(now())
+    User         User               @relation(fields: [userId], references: [id])
+    userId       String
+    sortPosition Int
+    repType      WorkoutMoveRepType
+    reps         Float
+    distanceUnit DistanceUnit       @default(METRES)
+    timeUnit     TimeUnit           @default(SECONDS)
+    loadAmount   Float              @default(0)
+    loadUnit     LoadUnit           @default(KG)
+    Move         Move               @relation(fields: [moveId], references: [id])
+    moveId       String
+    Equipment    Equipment?         @relation(fields: [equipmentId], references: [id])
+    equipmentId  String?
+    WorkoutSet   WorkoutSet         @relation(fields: [workoutSetId], references: [id])
+    workoutSetId String
+}
+
+///////////////////////////////////////////
+///// Workout Plan Related Models /////////
+///////////////////////////////////////////
+model WorkoutPlan {
+    id                    String                 @id @default(uuid())
+    createdAt             DateTime               @default(now())
+    User                  User                   @relation(fields: [userId], references: [id])
+    userId                String
+    archived              Boolean                @default(false)
+    name                  String
+    description           String?
+    lengthWeeks           Int                    @default(2)
+    daysPerWeek           Int                    @default(3)
+    coverImageUri         String?
+    introVideoUri         String?
+    introVideoThumbUri    String?
+    introAudioUri         String?
+    contentAccessScope    ContentAccessScope     @default(PRIVATE)
+    WorkoutPlanEnrolments WorkoutPlanEnrolment[]
+    WorkoutPlanReviews    WorkoutPlanReview[]
+    WorkoutTags           WorkoutTag[]
+    WorkoutPlanDays       WorkoutPlanDay[]
+    Collections           Collection[]
+    Clubs                 Club[]
+}
+
+model WorkoutPlanDay {
+    id                     String                  @id @default(uuid())
+    createdAt              DateTime                @default(now())
+    User                   User                    @relation(fields: [userId], references: [id])
+    userId                 String
+    note                   String?
+    dayNumber              Int
+    WorkoutPlan            WorkoutPlan             @relation(fields: [workoutPlanId], references: [id])
+    workoutPlanId          String
+    WorkoutPlanDayWorkouts WorkoutPlanDayWorkout[]
+}
+
+model WorkoutPlanDayWorkout {
+    id               String         @id @default(uuid())
+    createdAt        DateTime       @default(now())
+    User             User           @relation(fields: [userId], references: [id])
+    userId           String
+    note             String?
+    sortPosition     Int
+    Workout          Workout        @relation(fields: [workoutId], references: [id])
+    workoutId        String
+    WorkoutPlanDay   WorkoutPlanDay @relation(fields: [workoutPlanDayId], references: [id])
+    workoutPlanDayId String
+}
+
+// A single user enrolled in a plan.
+model WorkoutPlanEnrolment {
+    id                         String             @id @default(uuid())
+    createdAt                  DateTime           @default(now())
+    startDate                  DateTime           @default(now())
+    // Scalar list of the WorkoutPlanDayWorkouts from the plan that the user has completed.
+    // Can be cleared if the user wants to restart / reset the plan.
+    // Or toggled by updating the list.
+    completedPlanDayWorkoutIds String[]
+    WorkoutPlan                WorkoutPlan        @relation(fields: [workoutPlanId], references: [id])
+    workoutPlanId              String
+    User                       User               @relation(fields: [userId], references: [id])
+    userId                     String
+    ScheduledWorkouts          ScheduledWorkout[]
+}
+
+model WorkoutPlanReview {
+    id            String      @id @default(uuid())
+    createdAt     DateTime    @default(now())
+    User          User        @relation(fields: [userId], references: [id])
+    userId        String
+    score         Float
+    comment       String?
+    WorkoutPlan   WorkoutPlan @relation(fields: [workoutPlanId], references: [id])
+    workoutPlanId String
+}
+
+//////////////////////////////////////////////////////////
+///// Logged Workout Related Models and Children /////////
+//////////////////////////////////////////////////////////
+model LoggedWorkout {
+    id                    String                 @id @default(uuid())
+    createdAt             DateTime               @default(now())
+    completedOn           DateTime
+    User                  User                   @relation(fields: [userId], references: [id])
+    userId                String
+    // The workout name.
+    name                  String
+    note                  String?
+    GymProfile            GymProfile?            @relation(fields: [gymProfileId], references: [id])
+    gymProfileId          String?
+    LoggedWorkoutSections LoggedWorkoutSection[]
+    ScheduledWorkout      ScheduledWorkout?
+    Workout               Workout?               @relation(fields: [workoutId], references: [id])
+    workoutId             String?
+    WorkoutGoals          WorkoutGoal[]
+}
+
+model LoggedWorkoutSection {
+    id                       String             @id @default(uuid())
+    createdAt                DateTime           @default(now())
+    User                     User               @relation(fields: [userId], references: [id])
+    userId                   String
+    // The section name.
+    name                     String?
+    sortPosition             Int
+    // Total time taken - user inputted when FreeSession or ForTime. Otherwise auto copied / auto calced.
+    timeTakenSeconds         Int                @default(1800)
+    // Score for AMRAP type workout where your score submission is the number of reps you completed.
+    repScore                 Int?
+    loggedWorkoutSectionData Json?
+    BodyAreas                BodyArea[]
+    LoggedWorkout            LoggedWorkout      @relation(fields: [loggedWorkoutId], references: [id], onDelete: Cascade)
+    loggedWorkoutId          String
+    MoveTypes                MoveType[]
+    WorkoutSectionType       WorkoutSectionType @relation(fields: [workoutSectionTypeId], references: [id])
+    workoutSectionTypeId     String
+}
+
+////////////////////////////////////////////////
+////// Progress Journal Related ////////////////
+////////////////////////////////////////////////
+model BodyTransformationPhoto {
+    id          String   @id @default(uuid())
+    createdAt   DateTime @default(now())
+    takenOnDate DateTime @default(now())
+    bodyweight  Float?
+    note        String?
+    photoUri    String
+    User        User     @relation(fields: [userId], references: [id])
+    userId      String
+}
+
+model ProgressJournal {
+    id                     String                 @id @default(uuid())
+    createdAt              DateTime               @default(now())
+    User                   User                   @relation(fields: [userId], references: [id])
+    userId                 String
+    name                   String
+    description            String?
+    coverImageUri          String?
+    bodyweightUnit         BodyweightUnit         @default(KG)
+    ProgressJournalEntries ProgressJournalEntry[]
+    ProgressJournalGoals   ProgressJournalGoal[]
+}
+
+model ProgressJournalEntry {
+    id                String          @id @default(uuid())
+    createdAt         DateTime        @default(now())
+    User              User            @relation(fields: [userId], references: [id])
+    userId            String
+    note              String?
+    voiceNoteUri      String?
+    bodyweight        Float?
+    moodScore         Float?
+    energyScore       Float?
+    confidenceScore   Float?
+    motivationScore   Float?
+    ProgressJournal   ProgressJournal @relation(fields: [progressJournalId], references: [id])
+    progressJournalId String
+}
+
+model ProgressJournalGoal {
+    id                      String                   @id @default(uuid())
+    createdAt               DateTime                 @default(now())
+    User                    User                     @relation(fields: [userId], references: [id])
+    userId                  String
+    name                    String
+    description             String?
+    deadline                DateTime?
+    completedDate           DateTime?
+    ProgressJournalGoalTags ProgressJournalGoalTag[]
+    ProgressJournal         ProgressJournal          @relation(fields: [progressJournalId], references: [id])
+    progressJournalId       String
+}
+
+model ProgressJournalGoalTag {
+    id                   String                @id @default(uuid())
+    createdAt            DateTime              @default(now())
+    tag                  String
+    hexColor             String
+    User                 User                  @relation(fields: [userId], references: [id])
+    userId               String
+    ProgressJournalGoals ProgressJournalGoal[]
+}
+
+//////////////////////////////////
+//// ENUMS ///////////////////////
+//////////////////////////////////
+enum BenchmarkType {
+    AMRAP
+    MAXLOAD
+    FASTESTTIME
+    UNBROKENREPS
+    UNBROKENTIME
+}
+
+enum BodyAreaFrontBack {
+    BACK
+    FRONT
+    BOTH
+}
+
+enum BodyAreaUpperLower {
+    CORE
+    LOWER
+    UPPER
+}
+
+enum BodyweightUnit {
+    KG
+    LB
+}
+
+enum ContentAccessScope {
+    PUBLIC
+    PRIVATE
+}
+
+enum DifficultyLevel {
+    LIGHT
+    CHALLENGING
+    INTERMEDIATE
+    ADVANCED
+    ELITE
+}
+
+enum DistanceUnit {
+    METRES
+    KILOMETRES
+    YARDS
+    MILES
+}
+
+enum Gender {
+    MALE
+    FEMALE
+    NONBINARY
+    PNTS
+}
+
+enum HeightUnit {
+    CM
+    IN
+}
+
+enum JoinClubRequestStatus {
+    PENDING
+    ACCEPTED
+    REJECTED
+}
+
+enum LoadUnit {
+    KG
+    LB
+    BODYWEIGHTPERCENT
+    PERCENTMAX
+}
+
+// Standard moves are built in / official.
+// Custom moves are created by users.
+enum MoveScope {
+    STANDARD
+    CUSTOM
+}
+
+enum TimeUnit {
+    HOURS
+    MINUTES
+    SECONDS
+}
+
+enum WeightUnit {
+    KG
+    LB
+}
+
+enum WorkoutMoveRepType {
+    REPS
+    CALORIES
+    DISTANCE
+    TIME
+}
+
+enum WorkoutSetGeneratorTarget {
+    REPS
+    LOAD
+}
+
+enum WorkoutSetGeneratorType {
+    LADDERUP
+    LADDERDOWN
+    PYRAMIDUP
+    PYRAMIDDOWN
+}
+
+enum UserProfileScope {
+    PRIVATE
+    PUBLIC
+}

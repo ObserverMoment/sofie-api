@@ -26,9 +26,9 @@ import {
   MutationMoveWorkoutPlanDayToAnotherDayArgs,
   MutationCopyWorkoutPlanDayToAnotherDayArgs,
   MutationDeleteWorkoutPlanDaysByIdArgs,
-  QueryUserWorkoutPlanEnrolmentByIdArgs,
   QueryPublicWorkoutPlansArgs,
   WorkoutPlanFiltersInput,
+  QueryWorkoutPlanByEnrolmentIdArgs,
 } from '../../generated/graphql'
 import {
   checkWorkoutPlanMediaForDeletion,
@@ -108,42 +108,42 @@ export const workoutPlanById = async (
   }
 }
 
-// Gets all a users workout plan enrolments.
-export const userWorkoutPlanEnrolments = async (
+// Gets all plans that a user is enrolled in.
+export const enrolledWorkoutPlans = async (
   r: any,
   a: any,
   { authedUserId, prisma, select }: Context,
 ) => {
-  const enrolments = await prisma.workoutPlanEnrolment.findMany({
+  const workoutPlans = await prisma.workoutPlan.findMany({
     where: {
-      userId: authedUserId,
+      WorkoutPlanEnrolments: {
+        some: { userId: authedUserId },
+      },
     },
     select,
   })
-  return enrolments as WorkoutPlanEnrolment[]
+
+  return workoutPlans as WorkoutPlan[]
 }
 
-export const userWorkoutPlanEnrolmentById = async (
+export const workoutPlanByEnrolmentId = async (
   r: any,
-  { id }: QueryUserWorkoutPlanEnrolmentByIdArgs,
+  { id }: QueryWorkoutPlanByEnrolmentIdArgs,
   { authedUserId, prisma, select }: Context,
 ) => {
-  const enrolment = await prisma.workoutPlanEnrolment.findUnique({
-    where: { id },
-    select: {
-      ...select,
-      userId: true,
+  const workoutPlan = await prisma.workoutPlan.findFirst({
+    where: {
+      WorkoutPlanEnrolments: {
+        some: { id, userId: authedUserId },
+      },
     },
+    select,
   })
 
-  if (enrolment) {
-    // Check that the user has access.
-    if ((enrolment as any).userId !== authedUserId) {
-      throw new AccessScopeError()
-    }
-    return enrolment as WorkoutPlanEnrolment
+  if (workoutPlan) {
+    return workoutPlan as WorkoutPlan
   } else {
-    throw new ApolloError('userWorkoutPlanEnrolmentById: There was an issue.')
+    throw new ApolloError('workoutPlanByEnrolmentId: There was an issue.')
   }
 }
 

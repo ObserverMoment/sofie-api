@@ -17,6 +17,7 @@ export const textSearchWorkouts = async (
   const workouts = await prisma.workout.findMany({
     where: {
       contentAccessScope: 'PUBLIC',
+      archived: false,
       name: {
         contains: text,
         mode: 'insensitive',
@@ -35,6 +36,7 @@ export const textSearchWorkoutNames = async (
   const workouts = await prisma.workout.findMany({
     where: {
       contentAccessScope: 'PUBLIC',
+      archived: false,
       name: {
         contains: text,
         mode: 'insensitive',
@@ -56,6 +58,7 @@ export const textSearchWorkoutPlans = async (
   const workoutPlans = await prisma.workoutPlan.findMany({
     where: {
       contentAccessScope: 'PUBLIC',
+      archived: false,
       name: {
         contains: text,
         mode: 'insensitive',
@@ -74,6 +77,7 @@ export const textSearchWorkoutPlanNames = async (
   const workoutPlans = await prisma.workoutPlan.findMany({
     where: {
       contentAccessScope: 'PUBLIC',
+      archived: false,
       name: {
         contains: text,
         mode: 'insensitive',

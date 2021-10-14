@@ -208,13 +208,7 @@ export const duplicateWorkoutById = async (
         include: {
           WorkoutSets: {
             include: {
-              Generators: true,
               WorkoutMoves: true,
-              IntervalBuyIn: {
-                include: {
-                  WorkoutMove: true,
-                },
-              },
             },
           },
         },
@@ -266,31 +260,9 @@ export const duplicateWorkoutById = async (
               sortPosition: set.sortPosition,
               rounds: set.rounds,
               duration: set.duration,
-              Generators: {
-                create: set.Generators.map((g) => ({
-                  type: g.type,
-                  target: g.target,
-                  workoutMoveIndex: g.workoutMoveIndex,
-                  roundFrequency: g.roundFrequency,
-                  adjustAmount: g.adjustAmount,
-                  User: {
-                    connect: { id: authedUserId },
-                  },
-                })),
-              },
               User: {
                 connect: { id: authedUserId },
               },
-              IntervalBuyIn: set.IntervalBuyIn
-                ? {
-                    create: {
-                      interval: set.IntervalBuyIn.interval,
-                      WorkoutMove: {
-                        connect: { id: set.IntervalBuyIn.workoutMoveId },
-                      },
-                    },
-                  }
-                : undefined,
               WorkoutMoves: {
                 create: set.WorkoutMoves.map((workoutMove) => ({
                   sortPosition: workoutMove.sortPosition,

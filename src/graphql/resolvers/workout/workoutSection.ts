@@ -125,9 +125,6 @@ export const deleteWorkoutSectionById = async (
       classAudioUri: true,
       classVideoUri: true,
       classVideoThumbUri: true,
-      outroAudioUri: true,
-      outroVideoUri: true,
-      outroVideoThumbUri: true,
       workoutId: true,
     },
   })
@@ -177,9 +174,6 @@ export const deleteWorkoutSectionById = async (
         classAudioUri,
         classVideoUri,
         classVideoThumbUri,
-        outroAudioUri,
-        outroVideoUri,
-        outroVideoThumbUri,
       } = sectionForDeletion
 
       const forDeletion = [
@@ -189,9 +183,6 @@ export const deleteWorkoutSectionById = async (
         classAudioUri,
         classVideoUri,
         classVideoThumbUri,
-        outroAudioUri,
-        outroVideoUri,
-        outroVideoThumbUri,
       ].filter((x) => x) as string[]
 
       await deleteFiles(forDeletion)

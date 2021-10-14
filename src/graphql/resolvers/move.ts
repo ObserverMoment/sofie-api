@@ -2,10 +2,6 @@ import { PrismaPromise } from '@prisma/client'
 import { ApolloError } from 'apollo-server-express'
 import { Context, ContextUserType } from '../..'
 import {
-  MoveScope,
-  WorkoutMoveRepType,
-} from '../../../prisma/generated/backupPrisma'
-import {
   CreateMoveInput,
   UpdateMoveInput,
   Move,
@@ -13,6 +9,8 @@ import {
   MutationSoftDeleteMoveByIdArgs,
   MutationUpdateMoveArgs,
   BodyAreaMoveScoreInput,
+  MoveScope,
+  WorkoutMoveRepType,
 } from '../../generated/graphql'
 import { checkMoveMediaForDeletion, deleteFiles } from '../../lib/uploadcare'
 import { AccessScopeError, checkUserOwnsObject } from '../utils'

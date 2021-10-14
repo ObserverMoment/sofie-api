@@ -55,7 +55,7 @@ export async function deleteFiles(fileIds: string[]): Promise<boolean> {
     body: requestBody,
   })
   const json = await res.json()
-  return json.status == 'ok'
+  return (json as any).status == 'ok'
 }
 
 function getFileIdForDeleteOrNull(
@@ -189,9 +189,6 @@ export async function checkWorkoutSectionMediaForDeletion(
       classVideoUri: true,
       classVideoThumbUri: true,
       classAudioUri: true,
-      outroVideoUri: true,
-      outroVideoThumbUri: true,
-      outroAudioUri: true,
     },
   })
 

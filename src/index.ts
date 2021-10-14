@@ -1,25 +1,24 @@
 import express from 'express'
-import {
-  ApolloServer,
-  AuthenticationError,
-  ResolverFn,
-} from 'apollo-server-express'
+import http from 'http'
+import { ApolloServer, AuthenticationError } from 'apollo-server-express'
+import { ApolloServerPluginDrainHttpServer } from 'apollo-server-core'
 import resolvers from './graphql/resolvers/resolvers'
 import typeDefs from './graphql/schema/typeDefs'
 import { applyMiddleware } from 'graphql-middleware'
-import { PrismaClient } from '@prisma/client'
 import { PrismaSelect } from '@paljs/plugins'
-import { makeExecutableSchema } from 'graphql-tools'
-import { GraphQLResolveInfo } from 'graphql'
+import { PrismaClient } from '@prisma/client'
+import { makeExecutableSchema } from '@graphql-tools/schema'
+import { DocumentNode, GraphQLResolveInfo } from 'graphql'
 import { firebaseVerifyToken } from './lib/firebaseAdmin'
 import { initGetStreamClients } from './lib/getStream'
 import registerNewUser from './restApi/registerNewUser'
 import currentUser from './restApi/currentUser'
+import dotenv from 'dotenv'
+import { Resolvers } from './generated/graphql'
 
-require('dotenv').config()
+dotenv.config()
 
 initGetStreamClients()
-const app = express()
 
 export type ContextUserType = 'ADMIN' | 'USER'
 
@@ -37,7 +36,7 @@ const prisma = new PrismaClient({
 })
 
 const selectMiddleware = async (
-  resolve: ResolverFn,
+  resolve: any,
   root: any,
   args: any,
   context: Context,
@@ -52,12 +51,6 @@ const selectMiddleware = async (
   }
   return resolve(root, args, context, info)
 }
-
-let schema = makeExecutableSchema({
-  typeDefs,
-  resolvers,
-  logger: { log: (e) => console.error(e) },
-})
 
 const createAdminContext = async (uid: string) => {
   const admin = await prisma.admin.findUnique({
@@ -95,53 +88,72 @@ const createUserContext = async (uid: string) => {
   }
 }
 
-// https://github.com/prisma-labs/graphqlgen/issues/15
-const server = new ApolloServer({
-  schema: applyMiddleware(schema, selectMiddleware),
-  context: async ({ req }) => {
-    const userType = req.headers['user-type']
-    const authToken = req.headers.authorization
-      ? req.headers.authorization.replace('Bearer ', '')
-      : null
-
-    if (!authToken) {
-      throw new AuthenticationError(
-        'Please provide a valid access token against the header "authorization"',
-      )
-    }
-
-    // decode token function //
-    const decodedToken = await firebaseVerifyToken(
-      authToken,
-      userType as ContextUserType,
-    )
-
-    if (!decodedToken || !decodedToken.uid) {
-      throw new AuthenticationError(
-        'The access token you provided was not valid',
-      )
-    }
-
-    return userType === 'ADMIN'
-      ? createAdminContext(decodedToken.uid)
-      : createUserContext(decodedToken.uid)
-  },
-})
-
-const PORT: number = process.env.PORT ? parseInt(process.env.PORT) : 4000
-
-// RESTful endpoints - used for registration and auth.
-app.post('/api/user/register', (req, res) => registerNewUser(req, res, prisma))
-app.post('/api/user/current', (req, res) => currentUser(req, res, prisma))
-
 // CORS configuration
 const corsOptions = {
   origin: process.env.ADMIN_APP_CLIENT_URL,
   credentials: true,
 }
 
-server.applyMiddleware({ app, cors: corsOptions })
+async function startApolloServer(
+  typeDefs: DocumentNode,
+  resolvers: Resolvers<any>,
+) {
+  const app = express()
+  const httpServer = http.createServer(app)
 
-app.listen(PORT, () => {
-  console.log(`🚀  Server ready at port ${PORT}`)
-})
+  // RESTful Setup // - used for registration and auth.
+  app.post('/api/user/register', (req, res) =>
+    registerNewUser(req, res, prisma),
+  )
+  app.post('/api/user/current', (req, res) => currentUser(req, res, prisma))
+
+  // GraphQL Setup //
+  const schema = makeExecutableSchema({
+    typeDefs,
+    resolvers,
+  })
+
+  // https://github.com/prisma-labs/graphqlgen/issues/15
+  const server = new ApolloServer({
+    schema: applyMiddleware(schema, selectMiddleware),
+    plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
+    context: async ({ req }) => {
+      const userType = req.headers['user-type']
+      const authToken = req.headers.authorization
+        ? req.headers.authorization.replace('Bearer ', '')
+        : null
+
+      if (!authToken) {
+        throw new AuthenticationError(
+          'Please provide a valid access token against the header "authorization"',
+        )
+      }
+
+      // decode token function //
+      const decodedToken = await firebaseVerifyToken(
+        authToken,
+        userType as ContextUserType,
+      )
+
+      if (!decodedToken || !decodedToken.uid) {
+        throw new AuthenticationError(
+          'The access token you provided was not valid',
+        )
+      }
+
+      return userType === 'ADMIN'
+        ? createAdminContext(decodedToken.uid)
+        : createUserContext(decodedToken.uid)
+    },
+  })
+
+  await server.start()
+  server.applyMiddleware({ app, cors: corsOptions })
+
+  const PORT: number = process.env.PORT ? parseInt(process.env.PORT) : 4000
+  httpServer.listen({ port: PORT }, () =>
+    console.log(`🚀  Server ready at port ${PORT}`),
+  )
+}
+
+startApolloServer(typeDefs, resolvers)

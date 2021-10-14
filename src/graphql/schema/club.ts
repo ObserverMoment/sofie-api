@@ -14,6 +14,7 @@ export default gql`
     introVideoUri: String
     introVideoThumbUri: String
     introAudioUri: String
+    contentAccessScope: ContentAccessScope!
     Workouts: [Workout!]!
     WorkoutPlans: [WorkoutPlan!]!
     # Data should be viewable by admins and owners of groups only.
@@ -26,6 +27,7 @@ export default gql`
     id: ID!
     name: String!
     coverImageUri: String
+    location: String
   }
 
   input CreateClubInput {
@@ -43,6 +45,7 @@ export default gql`
     introVideoUri: String
     introVideoThumbUri: String
     introAudioUri: String
+    contentAccessScope: ContentAccessScope
   }
 
   input AddWorkoutToClubInput {

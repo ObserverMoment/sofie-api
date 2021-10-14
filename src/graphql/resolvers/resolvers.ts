@@ -13,11 +13,16 @@ import {
 
 import {
   userClubs,
-  clubSummaries,
+  publicClubs,
+  publicClubSummaries,
+  clubSummariesById,
   clubById,
   createClub,
   updateClub,
   deleteClubById,
+} from './club/club'
+
+import {
   createClubInviteToken,
   updateClubInviteToken,
   deleteClubInviteTokenById,
@@ -25,13 +30,14 @@ import {
   giveMemberAdminStatus,
   removeMemberAdminStatus,
   removeUserFromClub,
-} from './club'
+} from './club/clubMembers'
 
 import {
-  discoverFeatured,
-  discoverWorkoutCategories,
-  discoverWorkoutPlanCategories,
-} from './discover'
+  addWorkoutToClub,
+  removeWorkoutFromClub,
+  addWorkoutPlanToClub,
+  removeWorkoutPlanFromClub,
+} from './club/clubContent'
 
 import {
   gymProfiles,
@@ -173,12 +179,6 @@ import {
   updateWorkoutSet,
   deleteWorkoutSetById,
   duplicateWorkoutSetById,
-  createWorkoutSetIntervalBuyIn,
-  updateWorkoutSetIntervalBuyIn,
-  deleteWorkoutSetIntervalBuyInById,
-  createWorkoutSetGenerator,
-  updateWorkoutSetGenerator,
-  deleteWorkoutSetGeneratorById,
   reorderWorkoutSets,
 } from './workout/workoutSet'
 
@@ -206,8 +206,8 @@ import {
   updateWorkoutPlanDayWorkout,
   deleteWorkoutPlanDayWorkoutById,
   reorderWorkoutPlanDayWorkouts,
-  userWorkoutPlanEnrolments,
-  userWorkoutPlanEnrolmentById,
+  enrolledWorkoutPlans,
+  workoutPlanByEnrolmentId,
   createWorkoutPlanEnrolment,
   updateWorkoutPlanEnrolment,
   deleteWorkoutPlanEnrolmentById,
@@ -261,14 +261,12 @@ const resolvers: Resolvers = {
     workoutGoals,
     workoutSectionTypes,
     ///// Clubs ////
-    clubSummaries,
+    publicClubs,
+    publicClubSummaries,
+    clubSummariesById,
     userClubs,
     clubById,
     clubMembersFeedPosts,
-    ///// Discover ////
-    discoverFeatured,
-    discoverWorkoutCategories,
-    discoverWorkoutPlanCategories,
     ///// Invites ////
     checkClubInviteToken,
     //// Progress Journal ////
@@ -319,8 +317,8 @@ const resolvers: Resolvers = {
     publicWorkoutPlans,
     userWorkoutPlans,
     workoutPlanById,
-    userWorkoutPlanEnrolments,
-    userWorkoutPlanEnrolmentById,
+    enrolledWorkoutPlans,
+    workoutPlanByEnrolmentId,
   },
   Mutation: {
     ///////////////
@@ -339,6 +337,13 @@ const resolvers: Resolvers = {
     removeMemberAdminStatus,
     addUserToClubViaInviteToken,
     removeUserFromClub,
+    ///////////////////////
+    //// Club Content /////
+    ///////////////////////
+    addWorkoutToClub,
+    removeWorkoutFromClub,
+    addWorkoutPlanToClub,
+    removeWorkoutPlanFromClub,
     ///////////////////////
     //// Club Timeline ////
     ///////////////////////
@@ -439,12 +444,6 @@ const resolvers: Resolvers = {
     duplicateWorkoutSetById,
     deleteWorkoutSetById,
     reorderWorkoutSets,
-    createWorkoutSetIntervalBuyIn,
-    updateWorkoutSetIntervalBuyIn,
-    deleteWorkoutSetIntervalBuyInById,
-    createWorkoutSetGenerator,
-    updateWorkoutSetGenerator,
-    deleteWorkoutSetGeneratorById,
     //// Workout Move ////
     createWorkoutMove,
     updateWorkoutMove,

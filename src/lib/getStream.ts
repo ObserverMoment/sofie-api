@@ -5,7 +5,7 @@ import {
   TimelinePostType,
 } from '../generated/graphql'
 import { PrismaClient } from '@prisma/client'
-import { checkUserIsOwnerOrAdminOfClub } from '../graphql/resolvers/club'
+import { checkUserIsOwnerOrAdminOfClub } from '../graphql/resolvers/club/utils'
 
 export let streamFeedClient: StreamClient | null = null
 export let streamChatClient: StreamChat | null = null

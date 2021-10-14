@@ -3,7 +3,6 @@ import bodyArea from './bodyArea'
 import bodyTransformation from './bodyTransformation'
 import club from './club'
 import collection from './collection'
-import discover from './discover'
 import enums from './enums'
 import equipment from './equipment'
 import filterInputs from './filterInputs'
@@ -22,14 +21,12 @@ import workoutMove from './workout/workoutMove'
 import workoutPlan from './workoutPlan'
 import workoutSection from './workout/workoutSection'
 import workoutSet from './workout/workoutSet'
-import workoutSummary from './workout/workoutSummary'
 
 const typeDefs = mergeTypeDefs([
   bodyArea,
   bodyTransformation,
   club,
   collection,
-  discover,
   enums,
   equipment,
   filterInputs,
@@ -48,7 +45,6 @@ const typeDefs = mergeTypeDefs([
   workoutPlan,
   workoutSection,
   workoutSet,
-  workoutSummary,
 ])
 
 export default typeDefs
