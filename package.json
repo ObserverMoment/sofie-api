@@ -7,17 +7,16 @@
     "node": "14.x"
   },
   "scripts": {
+    "heroku-postbuild": "if [ \"$NODE_ENV\" = \"sandbox\" ]; then npm run generate-build; else prisma migrate deploy && npm run generate-build; fi;",
     "build": "tsc",
+    "generate-build": "npm run generate && npm run build",
     "start": "node dist/index.js",
     "dev": "concurrently \"tsc -w\" \"nodemon dist/index.js\"",
     "debug": "nodemon --inspect dist/index.js",
     "generate": "DEBUG=1 graphql-codegen --config codegen.yml",
     "studio": "prisma studio --port 5000",
     "dbpush": "prisma db push",
-    "migrate": "prisma migrate dev",
-    "heroku-postbuild": "if [ \"$NODE_ENV\" = \"sandbox\" ]; then npm run generate-build; else prisma migrate deploy && npm run generate-build; fi;",
-    "generate-build": "npm run generate && npm run build",
-    "test": "if [ \"$NODE_ENV\" = \"sandbox\" ]; then echo 'hello'; else echo 'goodbye'; fi"
+    "migrate": "prisma migrate dev"
   },
   "license": "ISC",
   "dependencies": {
