@@ -13,8 +13,9 @@
     "debug": "nodemon --inspect dist/index.js",
     "generate": "DEBUG=1 graphql-codegen --config codegen.yml",
     "studio": "prisma studio --port 5000",
+    "dbpush": "prisma db push",
     "migrate": "prisma migrate dev",
-    "postinstall": "prisma migrate deploy && npm run generate && npm run build"
+    "postinstall": "[ $NODE_ENV == sandbox ] ? npm run generate && npm run build : prisma migrate deploy && npm run generate && npm run build"
   },
   "license": "ISC",
   "dependencies": {
