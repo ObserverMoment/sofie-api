@@ -7,7 +7,7 @@
     "node": "14.x"
   },
   "scripts": {
-    "heroku-postbuild": "if [ \"$NODE_ENV\" = \"sandbox\" ]; then npm run generate-build; else npm run dbpush && prisma migrate deploy && npm run generate-build; fi;",
+    "heroku-postbuild": "if [ \"$NODE_ENV\" = \"sandbox\" ]; then npm run generate-build; else npm run dbpush --accept-data-loss && prisma migrate deploy && npm run generate-build; fi;",
     "build": "tsc",
     "generate-build": "npm run generate && npm run build",
     "start": "node dist/index.js",
