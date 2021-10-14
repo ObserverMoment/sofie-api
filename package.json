@@ -15,9 +15,9 @@
     "studio": "prisma studio --port 5000",
     "dbpush": "prisma db push",
     "migrate": "prisma migrate dev",
-    "heroku-postbuild": "set NODE_ENV=sandbox && echo $NODE_ENV && if [[ '$NODE_ENV' = 'sandbox' ]]; then npm run generate-build; else prisma migrate deploy && npm run generate-build; fi; -x",
+    "heroku-postbuild": "if [ \"$NODE_ENV\" = \"sandbox\" ]; then npm run generate-build; else prisma migrate deploy && npm run generate-build; fi;",
     "generate-build": "npm run generate && npm run build",
-    "test": "set NODE_ENV=sandbox && echo $NODE_ENV -x"
+    "test": "if [ \"$NODE_ENV\" = \"sandbox\" ]; then echo 'hello'; else echo 'goodbye'; fi"
   },
   "license": "ISC",
   "dependencies": {
