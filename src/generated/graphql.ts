@@ -373,26 +373,11 @@ export type CreateWorkoutSectionInput = {
   timecap?: Maybe<Scalars['Int']>;
 };
 
-export type CreateWorkoutSetGeneratorInput = {
-  WorkoutSet: ConnectRelationInput;
-  adjustAmount: Scalars['Float'];
-  roundFrequency: Scalars['Int'];
-  target: WorkoutSetGeneratorTarget;
-  type: WorkoutSetGeneratorType;
-  workoutMoveIndex: Scalars['Int'];
-};
-
 export type CreateWorkoutSetInput = {
   WorkoutSection: ConnectRelationInput;
   duration?: Maybe<Scalars['Int']>;
   rounds?: Maybe<Scalars['Int']>;
   sortPosition: Scalars['Int'];
-};
-
-export type CreateWorkoutSetIntervalBuyInInput = {
-  WorkoutMove: CreateWorkoutMoveInput;
-  WorkoutSet: ConnectRelationInput;
-  interval: Scalars['Int'];
 };
 
 export type CreateWorkoutTagInput = {
@@ -405,57 +390,6 @@ export type DifficultyLevel =
   | 'ELITE'
   | 'INTERMEDIATE'
   | 'LIGHT';
-
-export type DiscoverFeatured = {
-  __typename?: 'DiscoverFeatured';
-  coverImageUri: Scalars['String'];
-  createdAt: Scalars['DateTime'];
-  description: Scalars['String'];
-  id: Scalars['String'];
-  name: Scalars['String'];
-  tag: Scalars['String'];
-  tagline: Scalars['String'];
-};
-
-export type DiscoverWorkout = {
-  __typename?: 'DiscoverWorkout';
-  DiscoverWorkoutCategory: DiscoverWorkoutCategory;
-  Workout: Workout;
-  createdAt: Scalars['DateTime'];
-  id: Scalars['String'];
-};
-
-export type DiscoverWorkoutCategory = {
-  __typename?: 'DiscoverWorkoutCategory';
-  DiscoverWorkouts: Array<DiscoverWorkout>;
-  active: Scalars['Boolean'];
-  coverImageUri: Scalars['String'];
-  createdAt: Scalars['DateTime'];
-  description: Scalars['String'];
-  id: Scalars['String'];
-  name: Scalars['String'];
-  tagline: Scalars['String'];
-};
-
-export type DiscoverWorkoutPlan = {
-  __typename?: 'DiscoverWorkoutPlan';
-  DiscoverWorkoutPlanCategory: DiscoverWorkoutPlanCategory;
-  WorkoutPlan: WorkoutPlan;
-  createdAt: Scalars['DateTime'];
-  id: Scalars['String'];
-};
-
-export type DiscoverWorkoutPlanCategory = {
-  __typename?: 'DiscoverWorkoutPlanCategory';
-  DiscoverWorkoutPlans: Array<DiscoverWorkoutPlan>;
-  active: Scalars['Boolean'];
-  coverImageUri: Scalars['String'];
-  createdAt: Scalars['DateTime'];
-  description: Scalars['String'];
-  id: Scalars['String'];
-  name: Scalars['String'];
-  tagline: Scalars['String'];
-};
 
 export type DistanceUnit =
   | 'KILOMETRES'
@@ -629,8 +563,6 @@ export type Mutation = {
   createWorkoutPlanReview: WorkoutPlanReview;
   createWorkoutSection: WorkoutSection;
   createWorkoutSet: WorkoutSet;
-  createWorkoutSetGenerator: WorkoutSetGenerator;
-  createWorkoutSetIntervalBuyIn: WorkoutSetIntervalBuyIn;
   createWorkoutTag: WorkoutTag;
   deleteBodyTransformationPhotosById: Array<Scalars['ID']>;
   deleteClubById: Scalars['ID'];
@@ -654,8 +586,6 @@ export type Mutation = {
   deleteWorkoutPlanReviewById: Scalars['ID'];
   deleteWorkoutSectionById: Scalars['ID'];
   deleteWorkoutSetById: Scalars['ID'];
-  deleteWorkoutSetGeneratorById: Scalars['ID'];
-  deleteWorkoutSetIntervalBuyInById: Scalars['ID'];
   deleteWorkoutTagById: Scalars['ID'];
   duplicateWorkoutById: Workout;
   duplicateWorkoutMoveById: WorkoutMove;
@@ -703,8 +633,6 @@ export type Mutation = {
   updateWorkoutPlanReview: WorkoutPlanReview;
   updateWorkoutSection: WorkoutSection;
   updateWorkoutSet: WorkoutSet;
-  updateWorkoutSetGenerator: WorkoutSetGenerator;
-  updateWorkoutSetIntervalBuyIn: WorkoutSetIntervalBuyIn;
   updateWorkoutTag: WorkoutTag;
 };
 
@@ -872,16 +800,6 @@ export type MutationCreateWorkoutSetArgs = {
 };
 
 
-export type MutationCreateWorkoutSetGeneratorArgs = {
-  data: CreateWorkoutSetGeneratorInput;
-};
-
-
-export type MutationCreateWorkoutSetIntervalBuyInArgs = {
-  data: CreateWorkoutSetIntervalBuyInInput;
-};
-
-
 export type MutationCreateWorkoutTagArgs = {
   data: CreateWorkoutTagInput;
 };
@@ -993,16 +911,6 @@ export type MutationDeleteWorkoutSectionByIdArgs = {
 
 
 export type MutationDeleteWorkoutSetByIdArgs = {
-  id: Scalars['ID'];
-};
-
-
-export type MutationDeleteWorkoutSetGeneratorByIdArgs = {
-  id: Scalars['ID'];
-};
-
-
-export type MutationDeleteWorkoutSetIntervalBuyInByIdArgs = {
   id: Scalars['ID'];
 };
 
@@ -1247,16 +1155,6 @@ export type MutationUpdateWorkoutSetArgs = {
 };
 
 
-export type MutationUpdateWorkoutSetGeneratorArgs = {
-  data: UpdateWorkoutSetGeneratorInput;
-};
-
-
-export type MutationUpdateWorkoutSetIntervalBuyInArgs = {
-  data: UpdateWorkoutSetIntervalBuyInInput;
-};
-
-
 export type MutationUpdateWorkoutTagArgs = {
   data: UpdateWorkoutTagInput;
 };
@@ -1316,9 +1214,6 @@ export type Query = {
   clubById: Club;
   clubMembersFeedPosts: Array<TimelinePostFullData>;
   clubSummariesById: Array<ClubPublicSummary>;
-  discoverFeatured: Array<DiscoverFeatured>;
-  discoverWorkoutCategories: Array<DiscoverWorkoutCategory>;
-  discoverWorkoutPlanCategories: Array<DiscoverWorkoutPlanCategory>;
   enrolledWorkoutPlans: Array<WorkoutPlan>;
   equipments: Array<Equipment>;
   gymProfiles: Array<GymProfile>;
@@ -1867,25 +1762,10 @@ export type UpdateWorkoutSectionInput = {
   timecap?: Maybe<Scalars['Int']>;
 };
 
-export type UpdateWorkoutSetGeneratorInput = {
-  adjustAmount?: Maybe<Scalars['Float']>;
-  id: Scalars['ID'];
-  roundFrequency?: Maybe<Scalars['Int']>;
-  target?: Maybe<WorkoutSetGeneratorTarget>;
-  type?: Maybe<WorkoutSetGeneratorType>;
-  workoutMoveIndex?: Maybe<Scalars['Int']>;
-};
-
 export type UpdateWorkoutSetInput = {
   duration?: Maybe<Scalars['Int']>;
   id: Scalars['ID'];
   rounds?: Maybe<Scalars['Int']>;
-};
-
-export type UpdateWorkoutSetIntervalBuyInInput = {
-  WorkoutMove?: Maybe<UpdateWorkoutMoveInput>;
-  id: Scalars['ID'];
-  interval?: Maybe<Scalars['Int']>;
 };
 
 export type UpdateWorkoutTagInput = {
@@ -2192,17 +2072,6 @@ export type WorkoutSet = {
   sortPosition: Scalars['Int'];
 };
 
-export type WorkoutSetGenerator = {
-  __typename?: 'WorkoutSetGenerator';
-  WorkoutSet: WorkoutSet;
-  adjustAmount: Scalars['Float'];
-  id: Scalars['ID'];
-  roundFrequency: Scalars['Int'];
-  target: WorkoutSetGeneratorTarget;
-  type: WorkoutSetGeneratorType;
-  workoutMoveIndex: Scalars['Int'];
-};
-
 export type WorkoutSetGeneratorTarget =
   | 'LOAD'
   | 'REPS';
@@ -2212,13 +2081,6 @@ export type WorkoutSetGeneratorType =
   | 'LADDERUP'
   | 'PYRAMIDDOWN'
   | 'PYRAMIDUP';
-
-export type WorkoutSetIntervalBuyIn = {
-  __typename?: 'WorkoutSetIntervalBuyIn';
-  WorkoutMove: WorkoutMove;
-  id: Scalars['ID'];
-  interval: Scalars['Int'];
-};
 
 export type WorkoutTag = {
   __typename?: 'WorkoutTag';
@@ -2345,17 +2207,10 @@ export type ResolversTypes = ResolversObject<{
   CreateWorkoutPlanInput: CreateWorkoutPlanInput;
   CreateWorkoutPlanReviewInput: CreateWorkoutPlanReviewInput;
   CreateWorkoutSectionInput: CreateWorkoutSectionInput;
-  CreateWorkoutSetGeneratorInput: CreateWorkoutSetGeneratorInput;
   CreateWorkoutSetInput: CreateWorkoutSetInput;
-  CreateWorkoutSetIntervalBuyInInput: CreateWorkoutSetIntervalBuyInInput;
   CreateWorkoutTagInput: CreateWorkoutTagInput;
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
   DifficultyLevel: DifficultyLevel;
-  DiscoverFeatured: ResolverTypeWrapper<DiscoverFeatured>;
-  DiscoverWorkout: ResolverTypeWrapper<DiscoverWorkout>;
-  DiscoverWorkoutCategory: ResolverTypeWrapper<DiscoverWorkoutCategory>;
-  DiscoverWorkoutPlan: ResolverTypeWrapper<DiscoverWorkoutPlan>;
-  DiscoverWorkoutPlanCategory: ResolverTypeWrapper<DiscoverWorkoutPlanCategory>;
   DistanceUnit: DistanceUnit;
   Equipment: ResolverTypeWrapper<Equipment>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
@@ -2427,9 +2282,7 @@ export type ResolversTypes = ResolversObject<{
   UpdateWorkoutPlanInput: UpdateWorkoutPlanInput;
   UpdateWorkoutPlanReviewInput: UpdateWorkoutPlanReviewInput;
   UpdateWorkoutSectionInput: UpdateWorkoutSectionInput;
-  UpdateWorkoutSetGeneratorInput: UpdateWorkoutSetGeneratorInput;
   UpdateWorkoutSetInput: UpdateWorkoutSetInput;
-  UpdateWorkoutSetIntervalBuyInInput: UpdateWorkoutSetIntervalBuyInInput;
   UpdateWorkoutTagInput: UpdateWorkoutTagInput;
   User: ResolverTypeWrapper<User>;
   UserAvatarData: ResolverTypeWrapper<UserAvatarData>;
@@ -2458,10 +2311,8 @@ export type ResolversTypes = ResolversObject<{
   WorkoutSectionRoundSetDataInput: WorkoutSectionRoundSetDataInput;
   WorkoutSectionType: ResolverTypeWrapper<WorkoutSectionType>;
   WorkoutSet: ResolverTypeWrapper<WorkoutSet>;
-  WorkoutSetGenerator: ResolverTypeWrapper<WorkoutSetGenerator>;
   WorkoutSetGeneratorTarget: WorkoutSetGeneratorTarget;
   WorkoutSetGeneratorType: WorkoutSetGeneratorType;
-  WorkoutSetIntervalBuyIn: ResolverTypeWrapper<WorkoutSetIntervalBuyIn>;
   WorkoutTag: ResolverTypeWrapper<WorkoutTag>;
 }>;
 
@@ -2511,16 +2362,9 @@ export type ResolversParentTypes = ResolversObject<{
   CreateWorkoutPlanInput: CreateWorkoutPlanInput;
   CreateWorkoutPlanReviewInput: CreateWorkoutPlanReviewInput;
   CreateWorkoutSectionInput: CreateWorkoutSectionInput;
-  CreateWorkoutSetGeneratorInput: CreateWorkoutSetGeneratorInput;
   CreateWorkoutSetInput: CreateWorkoutSetInput;
-  CreateWorkoutSetIntervalBuyInInput: CreateWorkoutSetIntervalBuyInInput;
   CreateWorkoutTagInput: CreateWorkoutTagInput;
   DateTime: Scalars['DateTime'];
-  DiscoverFeatured: DiscoverFeatured;
-  DiscoverWorkout: DiscoverWorkout;
-  DiscoverWorkoutCategory: DiscoverWorkoutCategory;
-  DiscoverWorkoutPlan: DiscoverWorkoutPlan;
-  DiscoverWorkoutPlanCategory: DiscoverWorkoutPlanCategory;
   Equipment: Equipment;
   Float: Scalars['Float'];
   GymProfile: GymProfile;
@@ -2585,9 +2429,7 @@ export type ResolversParentTypes = ResolversObject<{
   UpdateWorkoutPlanInput: UpdateWorkoutPlanInput;
   UpdateWorkoutPlanReviewInput: UpdateWorkoutPlanReviewInput;
   UpdateWorkoutSectionInput: UpdateWorkoutSectionInput;
-  UpdateWorkoutSetGeneratorInput: UpdateWorkoutSetGeneratorInput;
   UpdateWorkoutSetInput: UpdateWorkoutSetInput;
-  UpdateWorkoutSetIntervalBuyInInput: UpdateWorkoutSetIntervalBuyInInput;
   UpdateWorkoutTagInput: UpdateWorkoutTagInput;
   User: User;
   UserAvatarData: UserAvatarData;
@@ -2614,8 +2456,6 @@ export type ResolversParentTypes = ResolversObject<{
   WorkoutSectionRoundSetDataInput: WorkoutSectionRoundSetDataInput;
   WorkoutSectionType: WorkoutSectionType;
   WorkoutSet: WorkoutSet;
-  WorkoutSetGenerator: WorkoutSetGenerator;
-  WorkoutSetIntervalBuyIn: WorkoutSetIntervalBuyIn;
   WorkoutTag: WorkoutTag;
 }>;
 
@@ -2710,57 +2550,6 @@ export type CollectionResolvers<ContextType = any, ParentType extends ResolversP
 export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {
   name: 'DateTime';
 }
-
-export type DiscoverFeaturedResolvers<ContextType = any, ParentType extends ResolversParentTypes['DiscoverFeatured'] = ResolversParentTypes['DiscoverFeatured']> = ResolversObject<{
-  coverImageUri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  tag?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  tagline?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type DiscoverWorkoutResolvers<ContextType = any, ParentType extends ResolversParentTypes['DiscoverWorkout'] = ResolversParentTypes['DiscoverWorkout']> = ResolversObject<{
-  DiscoverWorkoutCategory?: Resolver<ResolversTypes['DiscoverWorkoutCategory'], ParentType, ContextType>;
-  Workout?: Resolver<ResolversTypes['Workout'], ParentType, ContextType>;
-  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type DiscoverWorkoutCategoryResolvers<ContextType = any, ParentType extends ResolversParentTypes['DiscoverWorkoutCategory'] = ResolversParentTypes['DiscoverWorkoutCategory']> = ResolversObject<{
-  DiscoverWorkouts?: Resolver<Array<ResolversTypes['DiscoverWorkout']>, ParentType, ContextType>;
-  active?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  coverImageUri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  tagline?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type DiscoverWorkoutPlanResolvers<ContextType = any, ParentType extends ResolversParentTypes['DiscoverWorkoutPlan'] = ResolversParentTypes['DiscoverWorkoutPlan']> = ResolversObject<{
-  DiscoverWorkoutPlanCategory?: Resolver<ResolversTypes['DiscoverWorkoutPlanCategory'], ParentType, ContextType>;
-  WorkoutPlan?: Resolver<ResolversTypes['WorkoutPlan'], ParentType, ContextType>;
-  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type DiscoverWorkoutPlanCategoryResolvers<ContextType = any, ParentType extends ResolversParentTypes['DiscoverWorkoutPlanCategory'] = ResolversParentTypes['DiscoverWorkoutPlanCategory']> = ResolversObject<{
-  DiscoverWorkoutPlans?: Resolver<Array<ResolversTypes['DiscoverWorkoutPlan']>, ParentType, ContextType>;
-  active?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  coverImageUri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  tagline?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
 
 export type EquipmentResolvers<ContextType = any, ParentType extends ResolversParentTypes['Equipment'] = ResolversParentTypes['Equipment']> = ResolversObject<{
   altNames?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -2897,8 +2686,6 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createWorkoutPlanReview?: Resolver<ResolversTypes['WorkoutPlanReview'], ParentType, ContextType, RequireFields<MutationCreateWorkoutPlanReviewArgs, 'data'>>;
   createWorkoutSection?: Resolver<ResolversTypes['WorkoutSection'], ParentType, ContextType, RequireFields<MutationCreateWorkoutSectionArgs, 'data'>>;
   createWorkoutSet?: Resolver<ResolversTypes['WorkoutSet'], ParentType, ContextType, RequireFields<MutationCreateWorkoutSetArgs, 'data'>>;
-  createWorkoutSetGenerator?: Resolver<ResolversTypes['WorkoutSetGenerator'], ParentType, ContextType, RequireFields<MutationCreateWorkoutSetGeneratorArgs, 'data'>>;
-  createWorkoutSetIntervalBuyIn?: Resolver<ResolversTypes['WorkoutSetIntervalBuyIn'], ParentType, ContextType, RequireFields<MutationCreateWorkoutSetIntervalBuyInArgs, 'data'>>;
   createWorkoutTag?: Resolver<ResolversTypes['WorkoutTag'], ParentType, ContextType, RequireFields<MutationCreateWorkoutTagArgs, 'data'>>;
   deleteBodyTransformationPhotosById?: Resolver<Array<ResolversTypes['ID']>, ParentType, ContextType, RequireFields<MutationDeleteBodyTransformationPhotosByIdArgs, 'ids'>>;
   deleteClubById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteClubByIdArgs, 'id'>>;
@@ -2922,8 +2709,6 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   deleteWorkoutPlanReviewById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteWorkoutPlanReviewByIdArgs, 'id'>>;
   deleteWorkoutSectionById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteWorkoutSectionByIdArgs, 'id'>>;
   deleteWorkoutSetById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteWorkoutSetByIdArgs, 'id'>>;
-  deleteWorkoutSetGeneratorById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteWorkoutSetGeneratorByIdArgs, 'id'>>;
-  deleteWorkoutSetIntervalBuyInById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteWorkoutSetIntervalBuyInByIdArgs, 'id'>>;
   deleteWorkoutTagById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteWorkoutTagByIdArgs, 'id'>>;
   duplicateWorkoutById?: Resolver<ResolversTypes['Workout'], ParentType, ContextType, RequireFields<MutationDuplicateWorkoutByIdArgs, 'id'>>;
   duplicateWorkoutMoveById?: Resolver<ResolversTypes['WorkoutMove'], ParentType, ContextType, RequireFields<MutationDuplicateWorkoutMoveByIdArgs, 'id'>>;
@@ -2971,8 +2756,6 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   updateWorkoutPlanReview?: Resolver<ResolversTypes['WorkoutPlanReview'], ParentType, ContextType, RequireFields<MutationUpdateWorkoutPlanReviewArgs, 'data'>>;
   updateWorkoutSection?: Resolver<ResolversTypes['WorkoutSection'], ParentType, ContextType, RequireFields<MutationUpdateWorkoutSectionArgs, 'data'>>;
   updateWorkoutSet?: Resolver<ResolversTypes['WorkoutSet'], ParentType, ContextType, RequireFields<MutationUpdateWorkoutSetArgs, 'data'>>;
-  updateWorkoutSetGenerator?: Resolver<ResolversTypes['WorkoutSetGenerator'], ParentType, ContextType, RequireFields<MutationUpdateWorkoutSetGeneratorArgs, 'data'>>;
-  updateWorkoutSetIntervalBuyIn?: Resolver<ResolversTypes['WorkoutSetIntervalBuyIn'], ParentType, ContextType, RequireFields<MutationUpdateWorkoutSetIntervalBuyInArgs, 'data'>>;
   updateWorkoutTag?: Resolver<ResolversTypes['WorkoutTag'], ParentType, ContextType, RequireFields<MutationUpdateWorkoutTagArgs, 'data'>>;
 }>;
 
@@ -3030,9 +2813,6 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   clubById?: Resolver<ResolversTypes['Club'], ParentType, ContextType, RequireFields<QueryClubByIdArgs, 'id'>>;
   clubMembersFeedPosts?: Resolver<Array<ResolversTypes['TimelinePostFullData']>, ParentType, ContextType, RequireFields<QueryClubMembersFeedPostsArgs, 'clubId' | 'limit' | 'offset'>>;
   clubSummariesById?: Resolver<Array<ResolversTypes['ClubPublicSummary']>, ParentType, ContextType, RequireFields<QueryClubSummariesByIdArgs, 'ids'>>;
-  discoverFeatured?: Resolver<Array<ResolversTypes['DiscoverFeatured']>, ParentType, ContextType>;
-  discoverWorkoutCategories?: Resolver<Array<ResolversTypes['DiscoverWorkoutCategory']>, ParentType, ContextType>;
-  discoverWorkoutPlanCategories?: Resolver<Array<ResolversTypes['DiscoverWorkoutPlanCategory']>, ParentType, ContextType>;
   enrolledWorkoutPlans?: Resolver<Array<ResolversTypes['WorkoutPlan']>, ParentType, ContextType>;
   equipments?: Resolver<Array<ResolversTypes['Equipment']>, ParentType, ContextType>;
   gymProfiles?: Resolver<Array<ResolversTypes['GymProfile']>, ParentType, ContextType>;
@@ -3393,24 +3173,6 @@ export type WorkoutSetResolvers<ContextType = any, ParentType extends ResolversP
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export type WorkoutSetGeneratorResolvers<ContextType = any, ParentType extends ResolversParentTypes['WorkoutSetGenerator'] = ResolversParentTypes['WorkoutSetGenerator']> = ResolversObject<{
-  WorkoutSet?: Resolver<ResolversTypes['WorkoutSet'], ParentType, ContextType>;
-  adjustAmount?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  roundFrequency?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  target?: Resolver<ResolversTypes['WorkoutSetGeneratorTarget'], ParentType, ContextType>;
-  type?: Resolver<ResolversTypes['WorkoutSetGeneratorType'], ParentType, ContextType>;
-  workoutMoveIndex?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type WorkoutSetIntervalBuyInResolvers<ContextType = any, ParentType extends ResolversParentTypes['WorkoutSetIntervalBuyIn'] = ResolversParentTypes['WorkoutSetIntervalBuyIn']> = ResolversObject<{
-  WorkoutMove?: Resolver<ResolversTypes['WorkoutMove'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  interval?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
 export type WorkoutTagResolvers<ContextType = any, ParentType extends ResolversParentTypes['WorkoutTag'] = ResolversParentTypes['WorkoutTag']> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   tag?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -3428,11 +3190,6 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   ClubPublicSummary?: ClubPublicSummaryResolvers<ContextType>;
   Collection?: CollectionResolvers<ContextType>;
   DateTime?: GraphQLScalarType;
-  DiscoverFeatured?: DiscoverFeaturedResolvers<ContextType>;
-  DiscoverWorkout?: DiscoverWorkoutResolvers<ContextType>;
-  DiscoverWorkoutCategory?: DiscoverWorkoutCategoryResolvers<ContextType>;
-  DiscoverWorkoutPlan?: DiscoverWorkoutPlanResolvers<ContextType>;
-  DiscoverWorkoutPlanCategory?: DiscoverWorkoutPlanCategoryResolvers<ContextType>;
   Equipment?: EquipmentResolvers<ContextType>;
   GymProfile?: GymProfileResolvers<ContextType>;
   InviteTokenError?: InviteTokenErrorResolvers<ContextType>;
@@ -3478,8 +3235,6 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   WorkoutSectionRoundSetData?: WorkoutSectionRoundSetDataResolvers<ContextType>;
   WorkoutSectionType?: WorkoutSectionTypeResolvers<ContextType>;
   WorkoutSet?: WorkoutSetResolvers<ContextType>;
-  WorkoutSetGenerator?: WorkoutSetGeneratorResolvers<ContextType>;
-  WorkoutSetIntervalBuyIn?: WorkoutSetIntervalBuyInResolvers<ContextType>;
   WorkoutTag?: WorkoutTagResolvers<ContextType>;
 }>;
 

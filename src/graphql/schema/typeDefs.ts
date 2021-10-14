@@ -3,7 +3,6 @@ import bodyArea from './bodyArea'
 import bodyTransformation from './bodyTransformation'
 import club from './club'
 import collection from './collection'
-import discover from './discover'
 import enums from './enums'
 import equipment from './equipment'
 import filterInputs from './filterInputs'
@@ -28,7 +27,6 @@ const typeDefs = mergeTypeDefs([
   bodyTransformation,
   club,
   collection,
-  discover,
   enums,
   equipment,
   filterInputs,

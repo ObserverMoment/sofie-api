@@ -357,26 +357,11 @@ input CreateWorkoutSectionInput {
   timecap: Int
 }
 
-input CreateWorkoutSetGeneratorInput {
-  WorkoutSet: ConnectRelationInput!
-  adjustAmount: Float!
-  roundFrequency: Int!
-  target: WorkoutSetGeneratorTarget!
-  type: WorkoutSetGeneratorType!
-  workoutMoveIndex: Int!
-}
-
 input CreateWorkoutSetInput {
   WorkoutSection: ConnectRelationInput!
   duration: Int
   rounds: Int
   sortPosition: Int!
-}
-
-input CreateWorkoutSetIntervalBuyInInput {
-  WorkoutMove: CreateWorkoutMoveInput!
-  WorkoutSet: ConnectRelationInput!
-  interval: Int!
 }
 
 input CreateWorkoutTagInput {
@@ -391,52 +376,6 @@ enum DifficultyLevel {
   ELITE
   INTERMEDIATE
   LIGHT
-}
-
-type DiscoverFeatured {
-  coverImageUri: String!
-  createdAt: DateTime!
-  description: String!
-  id: String!
-  name: String!
-  tag: String!
-  tagline: String!
-}
-
-type DiscoverWorkout {
-  DiscoverWorkoutCategory: DiscoverWorkoutCategory!
-  Workout: Workout!
-  createdAt: DateTime!
-  id: String!
-}
-
-type DiscoverWorkoutCategory {
-  DiscoverWorkouts: [DiscoverWorkout!]!
-  active: Boolean!
-  coverImageUri: String!
-  createdAt: DateTime!
-  description: String!
-  id: String!
-  name: String!
-  tagline: String!
-}
-
-type DiscoverWorkoutPlan {
-  DiscoverWorkoutPlanCategory: DiscoverWorkoutPlanCategory!
-  WorkoutPlan: WorkoutPlan!
-  createdAt: DateTime!
-  id: String!
-}
-
-type DiscoverWorkoutPlanCategory {
-  DiscoverWorkoutPlans: [DiscoverWorkoutPlan!]!
-  active: Boolean!
-  coverImageUri: String!
-  createdAt: DateTime!
-  description: String!
-  id: String!
-  name: String!
-  tagline: String!
 }
 
 enum DistanceUnit {
@@ -607,8 +546,6 @@ type Mutation {
   createWorkoutPlanReview(data: CreateWorkoutPlanReviewInput!): WorkoutPlanReview!
   createWorkoutSection(data: CreateWorkoutSectionInput!): WorkoutSection!
   createWorkoutSet(data: CreateWorkoutSetInput!): WorkoutSet!
-  createWorkoutSetGenerator(data: CreateWorkoutSetGeneratorInput!): WorkoutSetGenerator!
-  createWorkoutSetIntervalBuyIn(data: CreateWorkoutSetIntervalBuyInInput!): WorkoutSetIntervalBuyIn!
   createWorkoutTag(data: CreateWorkoutTagInput!): WorkoutTag!
   deleteBodyTransformationPhotosById(ids: [ID!]!): [ID!]!
   deleteClubById(id: ID!): ID!
@@ -632,8 +569,6 @@ type Mutation {
   deleteWorkoutPlanReviewById(id: ID!): ID!
   deleteWorkoutSectionById(id: ID!): ID!
   deleteWorkoutSetById(id: ID!): ID!
-  deleteWorkoutSetGeneratorById(id: ID!): ID!
-  deleteWorkoutSetIntervalBuyInById(id: ID!): ID!
   deleteWorkoutTagById(id: ID!): ID!
   duplicateWorkoutById(id: ID!): Workout!
   duplicateWorkoutMoveById(id: ID!): WorkoutMove!
@@ -681,8 +616,6 @@ type Mutation {
   updateWorkoutPlanReview(data: UpdateWorkoutPlanReviewInput!): WorkoutPlanReview!
   updateWorkoutSection(data: UpdateWorkoutSectionInput!): WorkoutSection!
   updateWorkoutSet(data: UpdateWorkoutSetInput!): WorkoutSet!
-  updateWorkoutSetGenerator(data: UpdateWorkoutSetGeneratorInput!): WorkoutSetGenerator!
-  updateWorkoutSetIntervalBuyIn(data: UpdateWorkoutSetIntervalBuyInInput!): WorkoutSetIntervalBuyIn!
   updateWorkoutTag(data: UpdateWorkoutTagInput!): WorkoutTag!
 }
 
@@ -736,9 +669,6 @@ type Query {
   clubById(id: ID!): Club!
   clubMembersFeedPosts(clubId: ID!, limit: Int!, offset: Int!): [TimelinePostFullData!]!
   clubSummariesById(ids: [ID!]!): [ClubPublicSummary!]!
-  discoverFeatured: [DiscoverFeatured!]!
-  discoverWorkoutCategories: [DiscoverWorkoutCategory!]!
-  discoverWorkoutPlanCategories: [DiscoverWorkoutPlanCategory!]!
   enrolledWorkoutPlans: [WorkoutPlan!]!
   equipments: [Equipment!]!
   gymProfiles: [GymProfile!]!
@@ -1145,25 +1075,10 @@ input UpdateWorkoutSectionInput {
   timecap: Int
 }
 
-input UpdateWorkoutSetGeneratorInput {
-  adjustAmount: Float
-  id: ID!
-  roundFrequency: Int
-  target: WorkoutSetGeneratorTarget
-  type: WorkoutSetGeneratorType
-  workoutMoveIndex: Int
-}
-
 input UpdateWorkoutSetInput {
   duration: Int
   id: ID!
   rounds: Int
-}
-
-input UpdateWorkoutSetIntervalBuyInInput {
-  WorkoutMove: UpdateWorkoutMoveInput
-  id: ID!
-  interval: Int
 }
 
 input UpdateWorkoutTagInput {
@@ -1451,16 +1366,6 @@ type WorkoutSet {
   sortPosition: Int!
 }
 
-type WorkoutSetGenerator {
-  WorkoutSet: WorkoutSet!
-  adjustAmount: Float!
-  id: ID!
-  roundFrequency: Int!
-  target: WorkoutSetGeneratorTarget!
-  type: WorkoutSetGeneratorType!
-  workoutMoveIndex: Int!
-}
-
 enum WorkoutSetGeneratorTarget {
   LOAD
   REPS
@@ -1471,12 +1376,6 @@ enum WorkoutSetGeneratorType {
   LADDERUP
   PYRAMIDDOWN
   PYRAMIDUP
-}
-
-type WorkoutSetIntervalBuyIn {
-  WorkoutMove: WorkoutMove!
-  id: ID!
-  interval: Int!
 }
 
 type WorkoutTag {

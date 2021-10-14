@@ -40,12 +40,6 @@ import {
 } from './club/clubContent'
 
 import {
-  discoverFeatured,
-  discoverWorkoutCategories,
-  discoverWorkoutPlanCategories,
-} from './discover'
-
-import {
   gymProfiles,
   createGymProfile,
   updateGymProfile,
@@ -185,12 +179,6 @@ import {
   updateWorkoutSet,
   deleteWorkoutSetById,
   duplicateWorkoutSetById,
-  createWorkoutSetIntervalBuyIn,
-  updateWorkoutSetIntervalBuyIn,
-  deleteWorkoutSetIntervalBuyInById,
-  createWorkoutSetGenerator,
-  updateWorkoutSetGenerator,
-  deleteWorkoutSetGeneratorById,
   reorderWorkoutSets,
 } from './workout/workoutSet'
 
@@ -279,10 +267,6 @@ const resolvers: Resolvers = {
     userClubs,
     clubById,
     clubMembersFeedPosts,
-    ///// Discover ////
-    discoverFeatured,
-    discoverWorkoutCategories,
-    discoverWorkoutPlanCategories,
     ///// Invites ////
     checkClubInviteToken,
     //// Progress Journal ////
@@ -460,12 +444,6 @@ const resolvers: Resolvers = {
     duplicateWorkoutSetById,
     deleteWorkoutSetById,
     reorderWorkoutSets,
-    createWorkoutSetIntervalBuyIn,
-    updateWorkoutSetIntervalBuyIn,
-    deleteWorkoutSetIntervalBuyInById,
-    createWorkoutSetGenerator,
-    updateWorkoutSetGenerator,
-    deleteWorkoutSetGeneratorById,
     //// Workout Move ////
     createWorkoutMove,
     updateWorkoutMove,

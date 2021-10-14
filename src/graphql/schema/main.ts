@@ -21,10 +21,6 @@ export default gql`
     publicClubSummaries: [ClubPublicSummary!]!
     userClubs: [Club!]!
     clubById(id: ID!): Club!
-    #### Discover Pages and Types ####
-    discoverFeatured: [DiscoverFeatured!]!
-    discoverWorkoutCategories: [DiscoverWorkoutCategory!]!
-    discoverWorkoutPlanCategories: [DiscoverWorkoutPlanCategory!]!
     #### Invite Tokens ####
     # The ID is the token string, we pass it to check that it is valid #
     checkClubInviteToken(id: ID!): CheckClubInviteTokenResult!
@@ -242,20 +238,6 @@ export default gql`
     reorderWorkoutSets(
       data: [UpdateSortPositionInput!]!
     ): [SortPositionUpdated!]!
-    createWorkoutSetIntervalBuyIn(
-      data: CreateWorkoutSetIntervalBuyInInput!
-    ): WorkoutSetIntervalBuyIn!
-    updateWorkoutSetIntervalBuyIn(
-      data: UpdateWorkoutSetIntervalBuyInInput!
-    ): WorkoutSetIntervalBuyIn!
-    deleteWorkoutSetIntervalBuyInById(id: ID!): ID!
-    createWorkoutSetGenerator(
-      data: CreateWorkoutSetGeneratorInput!
-    ): WorkoutSetGenerator!
-    updateWorkoutSetGenerator(
-      data: UpdateWorkoutSetGeneratorInput!
-    ): WorkoutSetGenerator!
-    deleteWorkoutSetGeneratorById(id: ID!): ID!
     #### Workout Move ####
     createWorkoutMove(data: CreateWorkoutMoveInput!): WorkoutMove!
     updateWorkoutMove(data: UpdateWorkoutMoveInput!): WorkoutMove!
