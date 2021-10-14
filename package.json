@@ -7,7 +7,7 @@
     "node": "14.x"
   },
   "scripts": {
-    "heroku-postbuild": "if [ \"$NODE_ENV\" = \"sandbox\" ]; then npm run generate-build; else prisma db push --accept-data-loss && prisma migrate deploy && npm run generate-build; fi;",
+    "heroku-postbuild": "if [ \"$NODE_ENV\" = \"sandbox\" ]; then npm run generate-build; else prisma migrate deploy && npm run generate-build; fi;",
     "build": "tsc",
     "generate-build": "npm run generate && npm run build",
     "start": "node dist/index.js",
@@ -17,7 +17,7 @@
     "studio": "prisma studio --port 5000",
     "dbpush": "prisma db push",
     "migrate": "prisma migrate dev",
-    "resolve": "prisma migrate resolve --applied 20211014140131_initial"
+    "resolve": "prisma migrate resolve --applied xxxxxx"
   },
   "license": "ISC",
   "dependencies": {
