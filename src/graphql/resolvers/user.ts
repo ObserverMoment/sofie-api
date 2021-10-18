@@ -136,23 +136,23 @@ export const userPublicProfiles = async (
   return publicProfileSummaries as UserPublicProfileSummary[]
 }
 
-// Get a single user profile, based on the user id must be public.
+// Get a single user profile, based on the user id - must be public.
 export const userPublicProfileById = async (
   r: any,
   { userId }: QueryUserPublicProfileByIdArgs,
   { select, prisma }: Context,
 ) => {
   const user = await prisma.user.findFirst({
-    where: { id: userId },
+    where: { id: userId, userProfileScope: 'PUBLIC' },
     select: {
       ...select,
       Workouts: {
         ...select.Workouts,
-        where: { contentAccessScope: 'PUBLIC' },
+        where: { contentAccessScope: 'PUBLIC', archived: false },
       },
       WorkoutPlans: {
         ...select.WorkoutPlans,
-        where: { contentAccessScope: 'PUBLIC' },
+        where: { contentAccessScope: 'PUBLIC', archived: false },
       },
     },
   })

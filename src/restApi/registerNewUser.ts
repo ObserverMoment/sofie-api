@@ -22,6 +22,7 @@ export default async function (req: any, res: any, prisma: PrismaClient) {
       })
 
       if (oldUser) {
+        console.log('A user is already associated with this firebase Uid.')
         res.status(400).json({
           error: 'A user is already associated with this firebase Uid.',
         })
@@ -38,6 +39,9 @@ export default async function (req: any, res: any, prisma: PrismaClient) {
         })
 
         if (!user) {
+          console.log(
+            "Something went wrong that shouldn't have. We could not create a new user, sorry.",
+          )
           res.status(500).json({
             error:
               "Something went wrong that shouldn't have. We could not create a new user, sorry.",
