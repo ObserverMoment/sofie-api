@@ -21,6 +21,9 @@ export default async function (req: any, res: any, prisma: PrismaClient) {
       })
 
       if (!user) {
+        console.log(
+          'We could not find a user associated with this firebase Uid.',
+        )
         res.status(400).json({
           error: 'We could not find a user associated with this firebase Uid.',
         })
