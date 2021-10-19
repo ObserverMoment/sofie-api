@@ -29,7 +29,6 @@ export default gql`
 
   input UpdateWorkoutPlanInput {
     id: ID!
-    archived: Boolean
     name: String
     description: String
     lengthWeeks: Int

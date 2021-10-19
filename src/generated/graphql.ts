@@ -498,6 +498,7 @@ export type Move = {
   MoveType: MoveType;
   RequiredEquipments: Array<Equipment>;
   SelectableEquipments: Array<Equipment>;
+  archived: Scalars['Boolean'];
   demoVideoThumbUri?: Maybe<Scalars['String']>;
   demoVideoUri?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
@@ -536,6 +537,9 @@ export type Mutation = {
   addWorkoutPlanToCollection: Collection;
   addWorkoutToClub: Club;
   addWorkoutToCollection: Collection;
+  archiveCustomMoveById: Move;
+  archiveWorkoutById: Workout;
+  archiveWorkoutPlanById: WorkoutPlan;
   copyWorkoutPlanDayToAnotherDay: WorkoutPlanDay;
   createBodyTransformationPhotos: Array<BodyTransformationPhoto>;
   createClub: Club;
@@ -604,8 +608,10 @@ export type Mutation = {
   reorderWorkoutSections: Array<SortPositionUpdated>;
   reorderWorkoutSets: Array<SortPositionUpdated>;
   softDeleteMoveById: Scalars['ID'];
-  softDeleteWorkoutById?: Maybe<Scalars['ID']>;
   softDeleteWorkoutPlanById: Scalars['ID'];
+  unarchiveCustomMoveById: Move;
+  unarchiveWorkoutById: Workout;
+  unarchiveWorkoutPlanById: WorkoutPlan;
   updateBodyTransformationPhoto: BodyTransformationPhoto;
   updateClub: Club;
   updateClubInviteToken: ClubInviteToken;
@@ -662,6 +668,21 @@ export type MutationAddWorkoutToClubArgs = {
 
 export type MutationAddWorkoutToCollectionArgs = {
   data: AddWorkoutToCollectionInput;
+};
+
+
+export type MutationArchiveCustomMoveByIdArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationArchiveWorkoutByIdArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationArchiveWorkoutPlanByIdArgs = {
+  id: Scalars['ID'];
 };
 
 
@@ -1010,12 +1031,22 @@ export type MutationSoftDeleteMoveByIdArgs = {
 };
 
 
-export type MutationSoftDeleteWorkoutByIdArgs = {
+export type MutationSoftDeleteWorkoutPlanByIdArgs = {
   id: Scalars['ID'];
 };
 
 
-export type MutationSoftDeleteWorkoutPlanByIdArgs = {
+export type MutationUnarchiveCustomMoveByIdArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationUnarchiveWorkoutByIdArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationUnarchiveWorkoutPlanByIdArgs = {
   id: Scalars['ID'];
 };
 
@@ -1233,6 +1264,9 @@ export type Query = {
   textSearchWorkoutPlans?: Maybe<Array<WorkoutPlan>>;
   textSearchWorkouts?: Maybe<Array<Workout>>;
   timelinePostsData: Array<TimelinePostObjectData>;
+  userArchivedCustomMoves: Array<Move>;
+  userArchivedWorkoutPlans: Array<WorkoutPlan>;
+  userArchivedWorkouts: Array<Workout>;
   userAvatarById: UserAvatarData;
   userAvatars: Array<UserAvatarData>;
   userBenchmarkById: UserBenchmark;
@@ -1682,7 +1716,6 @@ export type UpdateUserInput = {
 export type UpdateWorkoutInput = {
   WorkoutGoals?: Maybe<Array<ConnectRelationInput>>;
   WorkoutTags?: Maybe<Array<ConnectRelationInput>>;
-  archived?: Maybe<Scalars['Boolean']>;
   contentAccessScope?: Maybe<ContentAccessScope>;
   coverImageUri?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
@@ -1728,7 +1761,6 @@ export type UpdateWorkoutPlanEnrolmentInput = {
 
 export type UpdateWorkoutPlanInput = {
   WorkoutTags?: Maybe<Array<ConnectRelationInput>>;
-  archived?: Maybe<Scalars['Boolean']>;
   contentAccessScope?: Maybe<ContentAccessScope>;
   coverImageUri?: Maybe<Scalars['String']>;
   daysPerWeek?: Maybe<Scalars['Int']>;
@@ -2634,6 +2666,7 @@ export type MoveResolvers<ContextType = any, ParentType extends ResolversParentT
   MoveType?: Resolver<ResolversTypes['MoveType'], ParentType, ContextType>;
   RequiredEquipments?: Resolver<Array<ResolversTypes['Equipment']>, ParentType, ContextType>;
   SelectableEquipments?: Resolver<Array<ResolversTypes['Equipment']>, ParentType, ContextType>;
+  archived?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   demoVideoThumbUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   demoVideoUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -2659,6 +2692,9 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   addWorkoutPlanToCollection?: Resolver<ResolversTypes['Collection'], ParentType, ContextType, RequireFields<MutationAddWorkoutPlanToCollectionArgs, 'data'>>;
   addWorkoutToClub?: Resolver<ResolversTypes['Club'], ParentType, ContextType, RequireFields<MutationAddWorkoutToClubArgs, 'clubId' | 'workoutId'>>;
   addWorkoutToCollection?: Resolver<ResolversTypes['Collection'], ParentType, ContextType, RequireFields<MutationAddWorkoutToCollectionArgs, 'data'>>;
+  archiveCustomMoveById?: Resolver<ResolversTypes['Move'], ParentType, ContextType, RequireFields<MutationArchiveCustomMoveByIdArgs, 'id'>>;
+  archiveWorkoutById?: Resolver<ResolversTypes['Workout'], ParentType, ContextType, RequireFields<MutationArchiveWorkoutByIdArgs, 'id'>>;
+  archiveWorkoutPlanById?: Resolver<ResolversTypes['WorkoutPlan'], ParentType, ContextType, RequireFields<MutationArchiveWorkoutPlanByIdArgs, 'id'>>;
   copyWorkoutPlanDayToAnotherDay?: Resolver<ResolversTypes['WorkoutPlanDay'], ParentType, ContextType, RequireFields<MutationCopyWorkoutPlanDayToAnotherDayArgs, 'data'>>;
   createBodyTransformationPhotos?: Resolver<Array<ResolversTypes['BodyTransformationPhoto']>, ParentType, ContextType, RequireFields<MutationCreateBodyTransformationPhotosArgs, 'data'>>;
   createClub?: Resolver<ResolversTypes['Club'], ParentType, ContextType, RequireFields<MutationCreateClubArgs, 'data'>>;
@@ -2727,8 +2763,10 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   reorderWorkoutSections?: Resolver<Array<ResolversTypes['SortPositionUpdated']>, ParentType, ContextType, RequireFields<MutationReorderWorkoutSectionsArgs, 'data'>>;
   reorderWorkoutSets?: Resolver<Array<ResolversTypes['SortPositionUpdated']>, ParentType, ContextType, RequireFields<MutationReorderWorkoutSetsArgs, 'data'>>;
   softDeleteMoveById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationSoftDeleteMoveByIdArgs, 'id'>>;
-  softDeleteWorkoutById?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType, RequireFields<MutationSoftDeleteWorkoutByIdArgs, 'id'>>;
   softDeleteWorkoutPlanById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationSoftDeleteWorkoutPlanByIdArgs, 'id'>>;
+  unarchiveCustomMoveById?: Resolver<ResolversTypes['Move'], ParentType, ContextType, RequireFields<MutationUnarchiveCustomMoveByIdArgs, 'id'>>;
+  unarchiveWorkoutById?: Resolver<ResolversTypes['Workout'], ParentType, ContextType, RequireFields<MutationUnarchiveWorkoutByIdArgs, 'id'>>;
+  unarchiveWorkoutPlanById?: Resolver<ResolversTypes['WorkoutPlan'], ParentType, ContextType, RequireFields<MutationUnarchiveWorkoutPlanByIdArgs, 'id'>>;
   updateBodyTransformationPhoto?: Resolver<ResolversTypes['BodyTransformationPhoto'], ParentType, ContextType, RequireFields<MutationUpdateBodyTransformationPhotoArgs, 'data'>>;
   updateClub?: Resolver<ResolversTypes['Club'], ParentType, ContextType, RequireFields<MutationUpdateClubArgs, 'data'>>;
   updateClubInviteToken?: Resolver<ResolversTypes['ClubInviteToken'], ParentType, ContextType, RequireFields<MutationUpdateClubInviteTokenArgs, 'data'>>;
@@ -2832,6 +2870,9 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   textSearchWorkoutPlans?: Resolver<Maybe<Array<ResolversTypes['WorkoutPlan']>>, ParentType, ContextType, RequireFields<QueryTextSearchWorkoutPlansArgs, 'text'>>;
   textSearchWorkouts?: Resolver<Maybe<Array<ResolversTypes['Workout']>>, ParentType, ContextType, RequireFields<QueryTextSearchWorkoutsArgs, 'text'>>;
   timelinePostsData?: Resolver<Array<ResolversTypes['TimelinePostObjectData']>, ParentType, ContextType, RequireFields<QueryTimelinePostsDataArgs, 'postDataRequests'>>;
+  userArchivedCustomMoves?: Resolver<Array<ResolversTypes['Move']>, ParentType, ContextType>;
+  userArchivedWorkoutPlans?: Resolver<Array<ResolversTypes['WorkoutPlan']>, ParentType, ContextType>;
+  userArchivedWorkouts?: Resolver<Array<ResolversTypes['Workout']>, ParentType, ContextType>;
   userAvatarById?: Resolver<ResolversTypes['UserAvatarData'], ParentType, ContextType, RequireFields<QueryUserAvatarByIdArgs, 'id'>>;
   userAvatars?: Resolver<Array<ResolversTypes['UserAvatarData']>, ParentType, ContextType, RequireFields<QueryUserAvatarsArgs, 'ids'>>;
   userBenchmarkById?: Resolver<ResolversTypes['UserBenchmark'], ParentType, ContextType, RequireFields<QueryUserBenchmarkByIdArgs, 'id'>>;
