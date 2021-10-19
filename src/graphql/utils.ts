@@ -53,6 +53,9 @@ export async function checkUserOwnsObject(
     where: {
       id: objectId,
     },
+    select: {
+      userId: true,
+    },
   })
   if (!obj || obj.userId !== authedUserId) {
     throw new AccessScopeError()
@@ -70,11 +73,14 @@ export async function checkUserAccessScopeMulti(
     where: {
       id: { in: objectIds },
     },
+    select: {
+      userId: true,
+    },
   })
 
   if (
     items.length !== objectIds.length ||
-    items.some((s: any) => s.userId !== authedUserId)
+    items.some((i: any) => i.userId !== authedUserId)
   ) {
     throw new AccessScopeError()
   }
