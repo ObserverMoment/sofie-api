@@ -4,6 +4,7 @@ export default gql`
   type Move {
     id: ID!
     name: String!
+    archived: Boolean!
     searchTerms: String
     description: String
     demoVideoUri: String

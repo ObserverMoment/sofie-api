@@ -29,7 +29,6 @@ export default gql`
 
   input UpdateWorkoutInput {
     id: ID!
-    archived: Boolean
     name: String
     description: String
     lengthMinutes: Int

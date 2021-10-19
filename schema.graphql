@@ -482,6 +482,7 @@ type Move {
   MoveType: MoveType!
   RequiredEquipments: [Equipment!]!
   SelectableEquipments: [Equipment!]!
+  archived: Boolean!
   demoVideoThumbUri: String
   demoVideoUri: String
   description: String
@@ -519,6 +520,9 @@ type Mutation {
   addWorkoutPlanToCollection(data: AddWorkoutPlanToCollectionInput!): Collection!
   addWorkoutToClub(clubId: ID!, workoutId: ID!): Club!
   addWorkoutToCollection(data: AddWorkoutToCollectionInput!): Collection!
+  archiveCustomMoveById(id: ID!): Move!
+  archiveWorkoutById(id: ID!): Workout!
+  archiveWorkoutPlanById(id: ID!): WorkoutPlan!
   copyWorkoutPlanDayToAnotherDay(data: CopyWorkoutPlanDayToAnotherDayInput!): WorkoutPlanDay!
   createBodyTransformationPhotos(data: [CreateBodyTransformationPhotoInput!]!): [BodyTransformationPhoto!]!
   createClub(data: CreateClubInput!): Club!
@@ -587,8 +591,10 @@ type Mutation {
   reorderWorkoutSections(data: [UpdateSortPositionInput!]!): [SortPositionUpdated!]!
   reorderWorkoutSets(data: [UpdateSortPositionInput!]!): [SortPositionUpdated!]!
   softDeleteMoveById(id: ID!): ID!
-  softDeleteWorkoutById(id: ID!): ID
   softDeleteWorkoutPlanById(id: ID!): ID!
+  unarchiveCustomMoveById(id: ID!): Move!
+  unarchiveWorkoutById(id: ID!): Workout!
+  unarchiveWorkoutPlanById(id: ID!): WorkoutPlan!
   updateBodyTransformationPhoto(data: UpdateBodyTransformationPhotoInput!): BodyTransformationPhoto!
   updateClub(data: UpdateClubInput!): Club!
   updateClubInviteToken(data: UpdateClubInviteTokenInput!): ClubInviteToken!
@@ -688,6 +694,9 @@ type Query {
   textSearchWorkoutPlans(text: String!): [WorkoutPlan!]
   textSearchWorkouts(text: String!): [Workout!]
   timelinePostsData(postDataRequests: [TimelinePostDataRequestInput!]!): [TimelinePostObjectData!]!
+  userArchivedCustomMoves: [Move!]!
+  userArchivedWorkoutPlans: [WorkoutPlan!]!
+  userArchivedWorkouts: [Workout!]!
   userAvatarById(id: ID!): UserAvatarData!
   userAvatars(ids: [ID!]!): [UserAvatarData!]!
   userBenchmarkById(id: ID!): UserBenchmark!
@@ -995,7 +1004,6 @@ input UpdateUserInput {
 input UpdateWorkoutInput {
   WorkoutGoals: [ConnectRelationInput!]
   WorkoutTags: [ConnectRelationInput!]
-  archived: Boolean
   contentAccessScope: ContentAccessScope
   coverImageUri: String
   description: String
@@ -1041,7 +1049,6 @@ input UpdateWorkoutPlanEnrolmentInput {
 
 input UpdateWorkoutPlanInput {
   WorkoutTags: [ConnectRelationInput!]
-  archived: Boolean
   contentAccessScope: ContentAccessScope
   coverImageUri: String
   daysPerWeek: Int

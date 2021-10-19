@@ -59,6 +59,10 @@ export default gql`
     checkUniqueDisplayName(displayName: String!): Boolean!
     gymProfiles: [GymProfile!]!
     userWorkoutTags: [WorkoutTag!]!
+    #### User Archive ####
+    userArchivedWorkouts: [Workout!]!
+    userArchivedWorkoutPlans: [WorkoutPlan!]!
+    userArchivedCustomMoves: [Move!]!
     #### User Avatars ####
     userAvatars(ids: [ID!]!): [UserAvatarData!]!
     userAvatarById(id: ID!): UserAvatarData!
@@ -93,6 +97,13 @@ export default gql`
   }
 
   type Mutation {
+    #### Archive ####
+    archiveWorkoutById(id: ID!): Workout!
+    unarchiveWorkoutById(id: ID!): Workout!
+    archiveWorkoutPlanById(id: ID!): WorkoutPlan!
+    unarchiveWorkoutPlanById(id: ID!): WorkoutPlan!
+    archiveCustomMoveById(id: ID!): Move!
+    unarchiveCustomMoveById(id: ID!): Move!
     #### Club ####
     createClub(data: CreateClubInput!): Club!
     updateClub(data: UpdateClubInput!): Club!
@@ -222,7 +233,6 @@ export default gql`
     createWorkout(data: CreateWorkoutInput!): Workout!
     updateWorkout(data: UpdateWorkoutInput!): Workout!
     duplicateWorkoutById(id: ID!): Workout!
-    softDeleteWorkoutById(id: ID!): ID
     #### Workout Section ####
     createWorkoutSection(data: CreateWorkoutSectionInput!): WorkoutSection!
     updateWorkoutSection(data: UpdateWorkoutSectionInput!): WorkoutSection!

@@ -5,6 +5,18 @@ import {
 } from '../../generated/graphql'
 
 import {
+  userArchivedWorkouts,
+  userArchivedWorkoutPlans,
+  userArchivedCustomMoves,
+  archiveWorkoutById,
+  unarchiveWorkoutById,
+  archiveWorkoutPlanById,
+  unarchiveWorkoutPlanById,
+  archiveCustomMoveById,
+  unarchiveCustomMoveById,
+} from './archive'
+
+import {
   bodyTransformationPhotos,
   createBodyTransformationPhotos,
   updateBodyTransformationPhoto,
@@ -55,13 +67,7 @@ import {
   updateLoggedWorkoutSection,
 } from './loggedWorkout'
 
-import {
-  standardMoves,
-  userCustomMoves,
-  createMove,
-  updateMove,
-  softDeleteMoveById,
-} from './move'
+import { standardMoves, userCustomMoves, createMove, updateMove } from './move'
 
 import {
   bodyAreas,
@@ -163,7 +169,6 @@ import {
   workoutById,
   createWorkout,
   updateWorkout,
-  softDeleteWorkoutById,
   duplicateWorkoutById,
 } from './workout/workout'
 
@@ -196,7 +201,6 @@ import {
   workoutPlanById,
   createWorkoutPlan,
   updateWorkoutPlan,
-  softDeleteWorkoutPlanById,
   createWorkoutPlanDayWithWorkout,
   updateWorkoutPlanDay,
   moveWorkoutPlanDayToAnotherDay,
@@ -296,6 +300,11 @@ const resolvers: Resolvers = {
     authedUser,
     checkUniqueDisplayName,
     gymProfiles,
+    //// User Archive ////
+    userArchivedWorkouts,
+    userArchivedWorkoutPlans,
+    userArchivedCustomMoves,
+    //// User Public Profiles ////
     userPublicProfileById,
     userPublicProfiles,
     userWorkoutTags,
@@ -390,7 +399,6 @@ const resolvers: Resolvers = {
     //////////////
     createMove,
     updateMove,
-    softDeleteMoveById,
     //////////////////////////
     //// Schedule Workout ////
     //////////////////////////
@@ -404,6 +412,15 @@ const resolvers: Resolvers = {
     createWorkoutTag,
     updateWorkoutTag,
     deleteWorkoutTagById,
+    ////////////////////////
+    //// User Archive //////
+    ////////////////////////
+    archiveWorkoutById,
+    unarchiveWorkoutById,
+    archiveWorkoutPlanById,
+    unarchiveWorkoutPlanById,
+    archiveCustomMoveById,
+    unarchiveCustomMoveById,
     ////////////////////////
     //// User Benchmark ////
     ////////////////////////
@@ -432,7 +449,6 @@ const resolvers: Resolvers = {
     createWorkout,
     updateWorkout,
     duplicateWorkoutById,
-    softDeleteWorkoutById,
     //// Workout Section ////
     createWorkoutSection,
     updateWorkoutSection,
@@ -455,7 +471,6 @@ const resolvers: Resolvers = {
     //////////////////////
     createWorkoutPlan,
     updateWorkoutPlan,
-    softDeleteWorkoutPlanById,
     createWorkoutPlanDayWithWorkout,
     updateWorkoutPlanDay,
     moveWorkoutPlanDayToAnotherDay,
@@ -465,7 +480,7 @@ const resolvers: Resolvers = {
     updateWorkoutPlanDayWorkout,
     deleteWorkoutPlanDayWorkoutById,
     reorderWorkoutPlanDayWorkouts,
-    //// User Specific ////
+    //// Workout Plan User Specific ////
     createWorkoutPlanEnrolment,
     updateWorkoutPlanEnrolment,
     deleteWorkoutPlanEnrolmentById,

@@ -14,6 +14,30 @@ export type ClubWithMemberIdsPayload = Prisma.ClubGetPayload<{
   }
 }>
 
+/// For creating a duplicate of a workout.
+export type WorkoutFullData = Prisma.WorkoutGetPayload<{
+  include: {
+    WorkoutGoals: true
+    WorkoutTags: true
+    WorkoutSections: {
+      include: {
+        WorkoutSectionType: true
+        WorkoutSets: {
+          include: {
+            WorkoutMoves: {
+              include: {
+                Move: true
+                Equipment: true
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}>
+
+/// For generating workout metadata JSON.
 export type WorkoutMetaDataPayload = Prisma.WorkoutGetPayload<{
   include: {
     WorkoutSections: {
