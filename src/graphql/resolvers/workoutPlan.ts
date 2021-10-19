@@ -4,7 +4,6 @@ import {
   MutationCreateWorkoutPlanArgs,
   MutationCreateWorkoutPlanEnrolmentArgs,
   MutationCreateWorkoutPlanReviewArgs,
-  MutationSoftDeleteWorkoutPlanByIdArgs,
   MutationDeleteWorkoutPlanEnrolmentByIdArgs,
   MutationDeleteWorkoutPlanReviewByIdArgs,
   MutationUpdateWorkoutPlanArgs,
@@ -188,10 +187,6 @@ export const updateWorkoutPlan = async (
       name: data.name || undefined,
       lengthWeeks: data.lengthWeeks || undefined,
       daysPerWeek: data.daysPerWeek || undefined,
-      archived:
-        data.hasOwnProperty('archived') && data.archived !== null
-          ? data.archived
-          : undefined,
       contentAccessScope: data.contentAccessScope || undefined,
       /// Pass an empty array to unset / disconnect all tags.
       WorkoutTags: data.hasOwnProperty('WorkoutTags')
@@ -210,26 +205,6 @@ export const updateWorkoutPlan = async (
     return updated as WorkoutPlan
   } else {
     throw new ApolloError('updateWorkoutPlan: There was an issue.')
-  }
-}
-
-export const softDeleteWorkoutPlanById = async (
-  r: any,
-  { id }: MutationSoftDeleteWorkoutPlanByIdArgs,
-  { authedUserId, prisma }: Context,
-) => {
-  await checkUserOwnsObject(id, 'workoutPlan', authedUserId, prisma)
-
-  const archived = await prisma.workoutPlan.update({
-    where: { id },
-    data: { archived: true },
-    select: { id: true },
-  })
-
-  if (archived) {
-    return archived.id
-  } else {
-    throw new ApolloError('softDeleteWorkoutPlanById: There was an issue.')
   }
 }
 

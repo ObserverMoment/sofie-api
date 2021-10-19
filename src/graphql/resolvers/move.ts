@@ -96,13 +96,10 @@ export const updateMove = async (
   { data }: MutationUpdateMoveArgs,
   { authedUserId, userType, prisma, select }: Context,
 ) => {
-  if (data.scope === 'CUSTOM') {
+  if (userType !== 'ADMIN') {
     await checkUserOwnsObject(data.id, 'move', authedUserId, prisma)
-  } else {
-    if (userType !== 'ADMIN') {
-      throw new AccessScopeError()
-    }
   }
+
   validateUpdateMoveInput(data, userType)
 
   // Check if any media files need to be updated. Only delete files from the server after the rest of the transaction is complete.
@@ -172,26 +169,6 @@ export const updateMove = async (
     return updatedMove as Move
   } else {
     throw new ApolloError('updateMove: There was an issue.')
-  }
-}
-
-//// Soft deletes / archives by setting { archived: true } - for periodic cleanup.
-export const softDeleteMoveById = async (
-  r: any,
-  { id }: MutationSoftDeleteMoveByIdArgs,
-  { authedUserId, prisma }: Context,
-) => {
-  await checkUserOwnsObject(id, 'move', authedUserId, prisma)
-
-  const archived = await prisma.move.update({
-    where: { id },
-    data: { archived: true },
-    select: { id: true },
-  })
-  if (archived) {
-    return archived.id
-  } else {
-    throw new ApolloError('softDeleteMoveById: There was an issue.')
   }
 }
 

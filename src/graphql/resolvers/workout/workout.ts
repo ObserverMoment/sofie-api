@@ -3,7 +3,6 @@ import { Context } from '../../..'
 import {
   MutationCreateWorkoutArgs,
   MutationMakeCopyWorkoutByIdArgs,
-  MutationSoftDeleteWorkoutByIdArgs,
   MutationUpdateWorkoutArgs,
   QueryPublicWorkoutsArgs,
   QueryWorkoutByIdArgs,
@@ -20,6 +19,7 @@ import {
   formatWorkoutSectionFiltersInput,
   updateWorkoutMetaData,
 } from './utils'
+import { WorkoutFullData } from '../../../types'
 
 //// Queries ////
 /// https://www.prisma.io/docs/concepts/components/prisma-client/pagination
@@ -135,7 +135,6 @@ export const updateWorkout = async (
     where: { id: data.id },
     data: {
       ...data,
-      archived: data.archived !== null ? data.archived : undefined,
       name: data.name || undefined,
       difficultyLevel: data.difficultyLevel || undefined,
       contentAccessScope: data.contentAccessScope || undefined,
@@ -169,46 +168,34 @@ export const updateWorkout = async (
   }
 }
 
-export const softDeleteWorkoutById = async (
-  r: any,
-  { id }: MutationSoftDeleteWorkoutByIdArgs,
-  { authedUserId, prisma }: Context,
-) => {
-  await checkUserOwnsObject(id, 'workout', authedUserId, prisma)
-
-  const archived = await prisma.workout.update({
-    where: { id },
-    data: { archived: true },
-    select: { id: true },
-  })
-
-  if (archived) {
-    return archived.id
-  } else {
-    throw new ApolloError('softDeleteWorkoutById: There was an issue.')
-  }
-}
-
 // Makes a full copy of the workout and returns it.
 // Adds '- copy' to the name.
 // Does not copy across any media.
-// Does not copy across custom user tags (as they are owned by the user).
+// Functionality is only available on workouts that the user owns.
 export const duplicateWorkoutById = async (
   r: any,
   { id }: MutationMakeCopyWorkoutByIdArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
+  await checkUserOwnsObject(id, 'workout', authedUserId, prisma)
+
   // Get original workout full data
-  const original = await prisma.workout.findUnique({
+  const original: WorkoutFullData | null = await prisma.workout.findUnique({
     where: { id },
     include: {
       WorkoutGoals: true,
       WorkoutTags: true,
       WorkoutSections: {
         include: {
+          WorkoutSectionType: true,
           WorkoutSets: {
             include: {
-              WorkoutMoves: true,
+              WorkoutMoves: {
+                include: {
+                  Move: true,
+                  Equipment: true,
+                },
+              },
             },
           },
         },
@@ -221,12 +208,7 @@ export const duplicateWorkoutById = async (
       'makeCopyWorkoutById: Could not retrieve data for this workout.',
     )
   }
-  // Check that the user has access. Will need to add a group check here as well once groups are implemented.
-  if (original.contentAccessScope === 'PRIVATE') {
-    if (original.userId !== authedUserId) {
-      throw new AccessScopeError()
-    }
-  }
+
   // Create a new copy. Do not copy across the media and adjust the name.
   const copy = await prisma.workout.create({
     data: {
@@ -241,6 +223,9 @@ export const duplicateWorkoutById = async (
       },
       WorkoutGoals: {
         connect: original.WorkoutGoals.map(({ id }) => ({ id })),
+      },
+      WorkoutTags: {
+        connect: original.WorkoutTags.map(({ id }) => ({ id })),
       },
       WorkoutSections: {
         create: original.WorkoutSections.map((section) => ({
