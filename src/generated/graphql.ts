@@ -1891,6 +1891,7 @@ export type UserPublicProfile = {
   tagline?: Maybe<Scalars['String']>;
   tiktokUrl?: Maybe<Scalars['String']>;
   townCity?: Maybe<Scalars['String']>;
+  userProfileScope: UserProfileScope;
   youtubeUrl?: Maybe<Scalars['String']>;
 };
 
@@ -1909,11 +1910,8 @@ export type UserPublicProfileSummary = {
 export type UserSummary = {
   __typename?: 'UserSummary';
   avatarUri?: Maybe<Scalars['String']>;
-  countryCode?: Maybe<Scalars['String']>;
   displayName: Scalars['String'];
   id: Scalars['ID'];
-  tagline?: Maybe<Scalars['String']>;
-  townCity?: Maybe<Scalars['String']>;
   userProfileScope: UserProfileScope;
 };
 
@@ -3040,6 +3038,7 @@ export type UserPublicProfileResolvers<ContextType = any, ParentType extends Res
   tagline?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   tiktokUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   townCity?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  userProfileScope?: Resolver<ResolversTypes['UserProfileScope'], ParentType, ContextType>;
   youtubeUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
@@ -3058,11 +3057,8 @@ export type UserPublicProfileSummaryResolvers<ContextType = any, ParentType exte
 
 export type UserSummaryResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserSummary'] = ResolversParentTypes['UserSummary']> = ResolversObject<{
   avatarUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  countryCode?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   displayName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  tagline?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  townCity?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   userProfileScope?: Resolver<ResolversTypes['UserProfileScope'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;

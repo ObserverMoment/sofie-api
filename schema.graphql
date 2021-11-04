@@ -1174,6 +1174,7 @@ type UserPublicProfile {
   tagline: String
   tiktokUrl: String
   townCity: String
+  userProfileScope: UserProfileScope!
   youtubeUrl: String
 }
 
@@ -1190,11 +1191,8 @@ type UserPublicProfileSummary {
 
 type UserSummary {
   avatarUri: String
-  countryCode: String
   displayName: String!
   id: ID!
-  tagline: String
-  townCity: String
   userProfileScope: UserProfileScope!
 }
 
