@@ -10,6 +10,7 @@ import {
   MutationRemoveMemberAdminStatusArgs,
   MutationRemoveUserFromClubArgs,
   MutationUpdateClubInviteTokenArgs,
+  MutationUserJoinPublicClubArgs,
 } from '../../../generated/graphql'
 import {
   addStreamUserToClubMemberChat,
@@ -21,6 +22,32 @@ import {
   checkUserIsOwnerOrAdmin,
   checkUserIsOwnerOrAdminOfClub,
 } from './utils'
+
+///// Public Club Memberships //////
+///// Any user can join / leave whenever they want //////
+export const userJoinPublicClub = async (
+  r: any,
+  { clubId }: MutationUserJoinPublicClubArgs,
+  { authedUserId, select, prisma }: Context,
+) => {
+  const updated: any = await prisma.club.update({
+    where: { id: clubId },
+    data: {
+      Members: {
+        connect: { id: authedUserId },
+      },
+    },
+    select,
+  })
+
+  if (updated) {
+    /// Add the new member to the GetStream chat group.
+    await addStreamUserToClubMemberChat((updated as Club).id, authedUserId)
+    return updated.id
+  } else {
+    throw new ApolloError('userJoinPublicClub: There was an issue.')
+  }
+}
 
 ///// ClubInviteToken //////
 export const createClubInviteToken = async (
@@ -254,7 +281,7 @@ export const removeUserFromClub = async (
   })
 
   if (updatedClub) {
-    /// Remove the member to the GetStream chat group.
+    /// Remove the member from the GetStream chat group.
     await removeStreamUserFromClubMemberChat(
       (updatedClub as Club).id,
       userToRemoveId,

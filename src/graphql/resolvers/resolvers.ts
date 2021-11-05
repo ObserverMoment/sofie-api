@@ -26,7 +26,6 @@ import {
 import {
   userClubs,
   publicClubs,
-  publicClubSummaries,
   clubSummariesById,
   clubById,
   createClub,
@@ -35,6 +34,7 @@ import {
 } from './club/club'
 
 import {
+  userJoinPublicClub,
   createClubInviteToken,
   updateClubInviteToken,
   deleteClubInviteTokenById,
@@ -266,7 +266,6 @@ const resolvers: Resolvers = {
     workoutSectionTypes,
     ///// Clubs ////
     publicClubs,
-    publicClubSummaries,
     clubSummariesById,
     userClubs,
     clubById,
@@ -342,6 +341,7 @@ const resolvers: Resolvers = {
     ///////////////////////
     //// Club Members /////
     ///////////////////////
+    userJoinPublicClub,
     giveMemberAdminStatus,
     removeMemberAdminStatus,
     addUserToClubViaInviteToken,

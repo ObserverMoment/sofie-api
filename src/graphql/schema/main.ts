@@ -13,13 +13,11 @@ export default gql`
     workoutGoals: [WorkoutGoal!]!
     workoutSectionTypes: [WorkoutSectionType!]!
     #### Clubs ####
-    # Public club summary data for use displaying chat previews and other lists.
-    clubSummariesById(ids: [ID!]!): [ClubPublicSummary!]!
+    # Public club summary data for use displaying chat previews.
+    clubSummariesById(ids: [ID!]!): [ClubSummary!]!
     # ClubFinder functionality.
-    publicClubs: [Club!]!
-    # Public club summary data - discover page and new style lists.
-    publicClubSummaries: [ClubPublicSummary!]!
-    userClubs: [Club!]!
+    publicClubs: [ClubSummary!]!
+    userClubs: [ClubSummary!]!
     clubById(id: ID!): Club!
     #### Invite Tokens ####
     # The ID is the token string, we pass it to check that it is valid #
@@ -112,6 +110,8 @@ export default gql`
     updateClubInviteToken(data: UpdateClubInviteTokenInput!): ClubInviteToken!
     deleteClubInviteTokenById(id: ID!): ID!
     #### Club Member Management ####
+    # Handle authed user request join join a public club.
+    userJoinPublicClub(clubId: ID!): ID! # Club ID
     giveMemberAdminStatus(userId: ID!, clubId: ID!): Club!
     removeMemberAdminStatus(userId: ID!, clubId: ID!): Club!
     addUserToClubViaInviteToken(userId: ID!, clubInviteTokenId: ID!): Club!
