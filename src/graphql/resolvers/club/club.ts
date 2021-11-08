@@ -14,11 +14,7 @@ import {
   deleteStreamClubMemberChat,
 } from '../../../lib/getStream'
 import { checkClubMediaForDeletion, deleteFiles } from '../../../lib/uploadcare'
-import {
-  checkUserIsOwnerOrAdminOfClub,
-  ClubMemberType,
-  isUserClubMember,
-} from './utils'
+import { checkUserIsOwnerOrAdminOfClub, ClubMemberType } from './utils'
 
 //// Queries ////
 export const userClubs = async (

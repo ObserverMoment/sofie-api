@@ -84,12 +84,6 @@ export const workoutById = async (
   })
 
   if (workout) {
-    // Check that the user has access. Will need to add a group check here as well once groups are implemented.
-    if (workout.contentAccessScope === 'PRIVATE') {
-      if (workout.userId !== authedUserId) {
-        throw new AccessScopeError()
-      }
-    }
     return workout as Workout
   } else {
     throw new ApolloError('workoutById: There was an issue.')
