@@ -1,12 +1,14 @@
 import { ApolloError } from 'apollo-server-express'
 import { Context } from '../..'
 import {
+  LifetimeLogStatsSummary,
   LoggedWorkout,
   LoggedWorkoutSection,
   MutationCreateLoggedWorkoutArgs,
   MutationDeleteLoggedWorkoutByIdArgs,
   MutationUpdateLoggedWorkoutArgs,
   MutationUpdateLoggedWorkoutSectionArgs,
+  QueryLifetimeLogStatsSummaryArgs,
   QueryLoggedWorkoutByIdArgs,
   QueryUserLoggedWorkoutsArgs,
 } from '../../generated/graphql'
@@ -45,6 +47,45 @@ export const loggedWorkoutById = async (
 
   if (loggedWorkout) {
     return loggedWorkout as LoggedWorkout
+  } else {
+    throw new ApolloError('loggedWorkoutById: There was an issue.')
+  }
+}
+
+export const lifetimeLogStatsSummary = async (
+  r: any,
+  { userId }: QueryLifetimeLogStatsSummaryArgs,
+  { prisma }: Context,
+) => {
+  const loggedWorkouts = await prisma.loggedWorkout.findMany({
+    where: { userId },
+    select: {
+      LoggedWorkoutSections: {
+        select: {
+          timeTakenSeconds: true,
+        },
+      },
+    },
+  })
+
+  const sessionsLogged = loggedWorkouts.length
+
+  const minutesWorked = loggedWorkouts.reduce((acum, nextLog) => {
+    return (
+      acum +
+      nextLog.LoggedWorkoutSections.reduce((acum, nextSection) => {
+        return nextSection.timeTakenSeconds !== null
+          ? acum + nextSection.timeTakenSeconds
+          : acum
+      }, 0)
+    )
+  }, 0)
+
+  if (loggedWorkouts) {
+    return {
+      sessionsLogged,
+      minutesWorked,
+    } as LifetimeLogStatsSummary
   } else {
     throw new ApolloError('loggedWorkoutById: There was an issue.')
   }

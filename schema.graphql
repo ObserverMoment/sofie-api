@@ -441,6 +441,11 @@ enum JoinClubRequestStatus {
   REJECTED
 }
 
+type LifetimeLogStatsSummary {
+  minutesWorked: Int!
+  sessionsLogged: Int!
+}
+
 enum LoadUnit {
   BODYWEIGHTPERCENT
   KG
@@ -683,6 +688,7 @@ type Query {
   enrolledWorkoutPlans: [WorkoutPlan!]!
   equipments: [Equipment!]!
   gymProfiles: [GymProfile!]!
+  lifetimeLogStatsSummary(userId: ID!): LifetimeLogStatsSummary!
   loggedWorkoutById(id: ID!): LoggedWorkout!
   moveTypes: [MoveType!]!
   progressJournalById(id: ID!): ProgressJournal!

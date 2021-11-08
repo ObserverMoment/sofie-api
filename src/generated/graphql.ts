@@ -454,6 +454,12 @@ export type JoinClubRequestStatus =
   | 'PENDING'
   | 'REJECTED';
 
+export type LifetimeLogStatsSummary = {
+  __typename?: 'LifetimeLogStatsSummary';
+  minutesWorked: Scalars['Int'];
+  sessionsLogged: Scalars['Int'];
+};
+
 export type LoadUnit =
   | 'BODYWEIGHTPERCENT'
   | 'KG'
@@ -1258,6 +1264,7 @@ export type Query = {
   enrolledWorkoutPlans: Array<WorkoutPlan>;
   equipments: Array<Equipment>;
   gymProfiles: Array<GymProfile>;
+  lifetimeLogStatsSummary: LifetimeLogStatsSummary;
   loggedWorkoutById: LoggedWorkout;
   moveTypes: Array<MoveType>;
   progressJournalById: ProgressJournal;
@@ -1326,6 +1333,11 @@ export type QueryClubMembersFeedPostsArgs = {
 
 export type QueryClubSummariesByIdArgs = {
   ids: Array<Scalars['ID']>;
+};
+
+
+export type QueryLifetimeLogStatsSummaryArgs = {
+  userId: Scalars['ID'];
 };
 
 
@@ -2262,6 +2274,7 @@ export type ResolversTypes = ResolversObject<{
   JoinClubInvite: ResolverTypeWrapper<JoinClubInvite>;
   JoinClubRequest: ResolverTypeWrapper<JoinClubRequest>;
   JoinClubRequestStatus: JoinClubRequestStatus;
+  LifetimeLogStatsSummary: ResolverTypeWrapper<LifetimeLogStatsSummary>;
   LoadUnit: LoadUnit;
   LoggedWorkout: ResolverTypeWrapper<LoggedWorkout>;
   LoggedWorkoutSection: ResolverTypeWrapper<LoggedWorkoutSection>;
@@ -2413,6 +2426,7 @@ export type ResolversParentTypes = ResolversObject<{
   JSON: Scalars['JSON'];
   JoinClubInvite: JoinClubInvite;
   JoinClubRequest: JoinClubRequest;
+  LifetimeLogStatsSummary: LifetimeLogStatsSummary;
   LoggedWorkout: LoggedWorkout;
   LoggedWorkoutSection: LoggedWorkoutSection;
   LoggedWorkoutSectionData: LoggedWorkoutSectionData;
@@ -2637,6 +2651,12 @@ export type JoinClubRequestResolvers<ContextType = any, ParentType extends Resol
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   respondedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   status?: Resolver<ResolversTypes['JoinClubRequestStatus'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type LifetimeLogStatsSummaryResolvers<ContextType = any, ParentType extends ResolversParentTypes['LifetimeLogStatsSummary'] = ResolversParentTypes['LifetimeLogStatsSummary']> = ResolversObject<{
+  minutesWorked?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  sessionsLogged?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -2866,6 +2886,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   enrolledWorkoutPlans?: Resolver<Array<ResolversTypes['WorkoutPlan']>, ParentType, ContextType>;
   equipments?: Resolver<Array<ResolversTypes['Equipment']>, ParentType, ContextType>;
   gymProfiles?: Resolver<Array<ResolversTypes['GymProfile']>, ParentType, ContextType>;
+  lifetimeLogStatsSummary?: Resolver<ResolversTypes['LifetimeLogStatsSummary'], ParentType, ContextType, RequireFields<QueryLifetimeLogStatsSummaryArgs, 'userId'>>;
   loggedWorkoutById?: Resolver<ResolversTypes['LoggedWorkout'], ParentType, ContextType, RequireFields<QueryLoggedWorkoutByIdArgs, 'id'>>;
   moveTypes?: Resolver<Array<ResolversTypes['MoveType']>, ParentType, ContextType>;
   progressJournalById?: Resolver<ResolversTypes['ProgressJournal'], ParentType, ContextType, RequireFields<QueryProgressJournalByIdArgs, 'id'>>;
@@ -3246,6 +3267,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   JSON?: GraphQLScalarType;
   JoinClubInvite?: JoinClubInviteResolvers<ContextType>;
   JoinClubRequest?: JoinClubRequestResolvers<ContextType>;
+  LifetimeLogStatsSummary?: LifetimeLogStatsSummaryResolvers<ContextType>;
   LoggedWorkout?: LoggedWorkoutResolvers<ContextType>;
   LoggedWorkoutSection?: LoggedWorkoutSectionResolvers<ContextType>;
   LoggedWorkoutSectionData?: LoggedWorkoutSectionDataResolvers<ContextType>;

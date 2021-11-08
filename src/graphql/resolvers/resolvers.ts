@@ -59,6 +59,7 @@ import {
 } from './gymProfile'
 
 import {
+  lifetimeLogStatsSummary,
   userLoggedWorkouts,
   loggedWorkoutById,
   createLoggedWorkout,
@@ -278,6 +279,7 @@ const resolvers: Resolvers = {
     progressJournalGoalTags,
     progressJournalById,
     //// Logged Workouts ////
+    lifetimeLogStatsSummary,
     loggedWorkoutById,
     userLoggedWorkouts,
     //// Move ////
