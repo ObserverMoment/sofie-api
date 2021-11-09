@@ -18,6 +18,7 @@ import {
 } from '../../generated/graphql'
 import { checkUserMediaForDeletion, deleteFiles } from '../../lib/uploadcare'
 import { AccessScopeError, checkUserOwnsObject } from '../utils'
+import { calcLifetimeLogStatsSummary } from './loggedWorkout'
 
 //// Queries ////
 export const checkUniqueDisplayName = async (
