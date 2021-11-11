@@ -15,19 +15,25 @@ export default gql`
     introVideoThumbUri: String
     introAudioUri: String
     contentAccessScope: ContentAccessScope!
-    Workouts: [Workout!]!
-    WorkoutPlans: [WorkoutPlan!]!
-    # Data should be viewable by admins and owners of groups only.
-    ClubInviteTokens: [ClubInviteToken!]!
-    JoinClubInvites: [JoinClubInvite!]!
-    JoinClubRequests: [JoinClubRequest!]!
+    # Data should be viewable by club members only. Return null if not.
+    Workouts: [Workout!]
+    WorkoutPlans: [WorkoutPlan!]
+    # Data should be viewable by club members, admins and owners only. Return null if not.
+    ClubInviteTokens: [ClubInviteToken!]
+    JoinClubInvites: [JoinClubInvite!]
+    JoinClubRequests: [JoinClubRequest!]
   }
 
-  type ClubPublicSummary {
+  # Use in lists etc where minimal data is needed.
+  type ClubSummary {
     id: ID!
     name: String!
+    description: String
     coverImageUri: String
     location: String
+    Owner: UserSummary!
+    Admins: [UserSummary!]!
+    Members: [UserSummary!]!
   }
 
   input CreateClubInput {

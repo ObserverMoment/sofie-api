@@ -2,7 +2,7 @@ import { ApolloError } from 'apollo-server-express'
 import { Context } from '../../..'
 import {
   Club,
-  ClubPublicSummary,
+  ClubSummary,
   MutationCreateClubArgs,
   MutationDeleteClubByIdArgs,
   MutationUpdateClubArgs,
@@ -14,7 +14,7 @@ import {
   deleteStreamClubMemberChat,
 } from '../../../lib/getStream'
 import { checkClubMediaForDeletion, deleteFiles } from '../../../lib/uploadcare'
-import { checkUserIsMemberOfClub, checkUserIsOwnerOrAdminOfClub } from './utils'
+import { checkUserIsOwnerOrAdminOfClub, ClubMemberType } from './utils'
 
 //// Queries ////
 export const userClubs = async (
@@ -32,7 +32,7 @@ export const userClubs = async (
     },
     select,
   })
-  return clubs as Club[]
+  return clubs as ClubSummary[]
 }
 
 // ClubFinder functionality - filtering and ranking etc.
@@ -45,21 +45,7 @@ export const publicClubs = async (
     where: { contentAccessScope: 'PUBLIC' },
     select,
   })
-  return clubs as Club[]
-}
-
-/// Just the bare minumum data such as name and cover image.
-/// Only public data should be serialized here.
-export const publicClubSummaries = async (
-  r: any,
-  a: any,
-  { select, prisma }: Context,
-) => {
-  const clubs = await prisma.club.findMany({
-    where: { contentAccessScope: 'PUBLIC' },
-    select,
-  })
-  return clubs as ClubPublicSummary[]
+  return clubs as ClubSummary[]
 }
 
 /// Just the bare minumum data such as name and cover image.
@@ -73,7 +59,7 @@ export const clubSummariesById = async (
     where: { id: { in: ids } },
     select,
   })
-  return clubs as ClubPublicSummary[]
+  return clubs as ClubSummary[]
 }
 
 export const clubById = async (
@@ -81,12 +67,67 @@ export const clubById = async (
   { id }: QueryClubByIdArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  await checkUserIsMemberOfClub(id, authedUserId, prisma)
-  const club = await prisma.club.findUnique({
+  const club: any = await prisma.club.findUnique({
     where: { id },
     select,
   })
-  return club as Club
+
+  if (!club) {
+    throw new ApolloError('clubById: Could not find a club with this ID.')
+  }
+
+  const memberType: ClubMemberType =
+    club!.Owner.id === authedUserId
+      ? 'OWNER'
+      : club!.Admins.some((a: any) => a.id === authedUserId)
+      ? 'ADMIN'
+      : club!.Members.some((m: any) => m.id === authedUserId)
+      ? 'MEMBER'
+      : 'NONE'
+
+  if (memberType === 'OWNER' || memberType === 'ADMIN') {
+    return club as Club
+  } else if (memberType === 'MEMBER') {
+    // Exclude the membership related data.
+    const clubMemberData = {
+      id: club.id,
+      createdAt: club.createdAt,
+      Owner: club.Owner,
+      Admins: club.Admins,
+      Members: club.Members,
+      name: club.name,
+      description: club.description,
+      location: club.location,
+      coverImageUri: club.coverImageUri,
+      introVideoUri: club.introVideoUri,
+      introVideoThumbUri: club.introVideoThumbUri,
+      introAudioUri: club.introAudioUri,
+      contentAccessScope: club.contentAccessScope,
+      Workouts: club.Workouts,
+      WorkoutPlans: club.WorkoutPlans,
+    }
+
+    return clubMemberData as Club
+  } else {
+    // Exclude all member content
+    const clubNonMemberData = {
+      id: club.id,
+      createdAt: club.createdAt,
+      Owner: club.Owner,
+      Admins: club.Admins,
+      Members: club.Members,
+      name: club.name,
+      description: club.description,
+      location: club.location,
+      coverImageUri: club.coverImageUri,
+      introVideoUri: club.introVideoUri,
+      introVideoThumbUri: club.introVideoThumbUri,
+      introAudioUri: club.introAudioUri,
+      contentAccessScope: club.contentAccessScope,
+    }
+
+    return clubNonMemberData as Club
+  }
 }
 
 //// Mutations ////

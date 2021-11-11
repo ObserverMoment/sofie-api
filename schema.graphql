@@ -81,13 +81,13 @@ union CheckClubInviteTokenResult = ClubInviteTokenData | InviteTokenError
 
 type Club {
   Admins: [UserSummary!]!
-  ClubInviteTokens: [ClubInviteToken!]!
-  JoinClubInvites: [JoinClubInvite!]!
-  JoinClubRequests: [JoinClubRequest!]!
+  ClubInviteTokens: [ClubInviteToken!]
+  JoinClubInvites: [JoinClubInvite!]
+  JoinClubRequests: [JoinClubRequest!]
   Members: [UserSummary!]!
   Owner: UserSummary!
-  WorkoutPlans: [WorkoutPlan!]!
-  Workouts: [Workout!]!
+  WorkoutPlans: [WorkoutPlan!]
+  Workouts: [Workout!]
   contentAccessScope: ContentAccessScope!
   coverImageUri: String
   createdAt: DateTime!
@@ -115,8 +115,12 @@ type ClubInviteTokenData {
   token: String!
 }
 
-type ClubPublicSummary {
+type ClubSummary {
+  Admins: [UserSummary!]!
+  Members: [UserSummary!]!
+  Owner: UserSummary!
   coverImageUri: String
+  description: String
   id: ID!
   location: String
   name: String!
@@ -437,6 +441,11 @@ enum JoinClubRequestStatus {
   REJECTED
 }
 
+type LifetimeLogStatsSummary {
+  minutesWorked: Int!
+  sessionsLogged: Int!
+}
+
 enum LoadUnit {
   BODYWEIGHTPERCENT
   KG
@@ -623,6 +632,7 @@ type Mutation {
   updateWorkoutSection(data: UpdateWorkoutSectionInput!): WorkoutSection!
   updateWorkoutSet(data: UpdateWorkoutSetInput!): WorkoutSet!
   updateWorkoutTag(data: UpdateWorkoutTagInput!): WorkoutTag!
+  userJoinPublicClub(clubId: ID!): ID!
 }
 
 type ProgressJournal {
@@ -674,16 +684,16 @@ type Query {
   checkUniqueDisplayName(displayName: String!): Boolean!
   clubById(id: ID!): Club!
   clubMembersFeedPosts(clubId: ID!, limit: Int!, offset: Int!): [TimelinePostFullData!]!
-  clubSummariesById(ids: [ID!]!): [ClubPublicSummary!]!
+  clubSummariesById(ids: [ID!]!): [ClubSummary!]!
   enrolledWorkoutPlans: [WorkoutPlan!]!
   equipments: [Equipment!]!
   gymProfiles: [GymProfile!]!
+  lifetimeLogStatsSummary(userId: ID!): LifetimeLogStatsSummary!
   loggedWorkoutById(id: ID!): LoggedWorkout!
   moveTypes: [MoveType!]!
   progressJournalById(id: ID!): ProgressJournal!
   progressJournalGoalTags: [ProgressJournalGoalTag!]!
-  publicClubSummaries: [ClubPublicSummary!]!
-  publicClubs: [Club!]!
+  publicClubs: [ClubSummary!]!
   publicWorkoutPlans(cursor: ID, filters: WorkoutPlanFiltersInput, take: Int): [WorkoutPlan!]!
   publicWorkouts(cursor: ID, filters: WorkoutFiltersInput, take: Int): [Workout!]!
   standardMoves: [Move!]!
@@ -702,7 +712,7 @@ type Query {
   userBenchmarkById(id: ID!): UserBenchmark!
   userBenchmarkTags: [UserBenchmarkTag!]!
   userBenchmarks: [UserBenchmark!]!
-  userClubs: [Club!]!
+  userClubs: [ClubSummary!]!
   userCollectionById(id: ID!): Collection!
   userCollections: [Collection!]!
   userCustomMoves: [Move!]!
@@ -1174,6 +1184,7 @@ type UserPublicProfile {
   tagline: String
   tiktokUrl: String
   townCity: String
+  userProfileScope: UserProfileScope!
   youtubeUrl: String
 }
 
@@ -1190,11 +1201,8 @@ type UserPublicProfileSummary {
 
 type UserSummary {
   avatarUri: String
-  countryCode: String
   displayName: String!
   id: ID!
-  tagline: String
-  townCity: String
   userProfileScope: UserProfileScope!
 }
 
