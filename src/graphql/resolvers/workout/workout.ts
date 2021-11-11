@@ -8,7 +8,7 @@ import {
   QueryWorkoutByIdArgs,
   Workout,
 } from '../../../generated/graphql'
-import { AccessScopeError, checkUserOwnsObject } from '../../utils'
+import { checkUserOwnsObject } from '../../utils'
 import {
   checkWorkoutMediaForDeletion,
   deleteFiles,

@@ -748,9 +748,9 @@ export function formatWorkoutPlanFiltersInput(
     filters.bodyweightOnly !== null
       ? {
           WorkoutPlanDays: {
-            some: {
+            every: {
               WorkoutPlanDayWorkouts: {
-                some: {
+                every: {
                   Workout: {
                     metaData: {
                       path: ['bodyweightOnly'],
