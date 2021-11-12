@@ -235,7 +235,7 @@ export async function calcLifetimeLogStatsSummary(
 
   const sessionsLogged = loggedWorkouts.length
 
-  const minutesWorked = loggedWorkouts.reduce((acum, nextLog) => {
+  const secondsWorked = loggedWorkouts.reduce((acum, nextLog) => {
     return (
       acum +
       nextLog.LoggedWorkoutSections.reduce((acum, nextSection) => {
@@ -249,7 +249,7 @@ export async function calcLifetimeLogStatsSummary(
   if (loggedWorkouts) {
     return {
       sessionsLogged,
-      minutesWorked,
+      minutesWorked: secondsWorked / 60,
     } as LifetimeLogStatsSummary
   } else {
     throw new ApolloError('calcLifetimeLogStatsSummary: There was an issue.')
