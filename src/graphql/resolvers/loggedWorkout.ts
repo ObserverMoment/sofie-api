@@ -249,7 +249,7 @@ export async function calcLifetimeLogStatsSummary(
   if (loggedWorkouts) {
     return {
       sessionsLogged,
-      minutesWorked: secondsWorked / 60,
+      minutesWorked: Math.round(secondsWorked / 60),
     } as LifetimeLogStatsSummary
   } else {
     throw new ApolloError('calcLifetimeLogStatsSummary: There was an issue.')
