@@ -26,7 +26,6 @@ import {
 import {
   userClubs,
   publicClubs,
-  publicClubSummaries,
   clubSummariesById,
   clubById,
   createClub,
@@ -35,6 +34,7 @@ import {
 } from './club/club'
 
 import {
+  userJoinPublicClub,
   createClubInviteToken,
   updateClubInviteToken,
   deleteClubInviteTokenById,
@@ -59,6 +59,7 @@ import {
 } from './gymProfile'
 
 import {
+  lifetimeLogStatsSummary,
   userLoggedWorkouts,
   loggedWorkoutById,
   createLoggedWorkout,
@@ -266,7 +267,6 @@ const resolvers: Resolvers = {
     workoutSectionTypes,
     ///// Clubs ////
     publicClubs,
-    publicClubSummaries,
     clubSummariesById,
     userClubs,
     clubById,
@@ -279,6 +279,7 @@ const resolvers: Resolvers = {
     progressJournalGoalTags,
     progressJournalById,
     //// Logged Workouts ////
+    lifetimeLogStatsSummary,
     loggedWorkoutById,
     userLoggedWorkouts,
     //// Move ////
@@ -342,6 +343,7 @@ const resolvers: Resolvers = {
     ///////////////////////
     //// Club Members /////
     ///////////////////////
+    userJoinPublicClub,
     giveMemberAdminStatus,
     removeMemberAdminStatus,
     addUserToClubViaInviteToken,

@@ -37,9 +37,6 @@ export default gql`
     displayName: String!
     avatarUri: String
     userProfileScope: UserProfileScope!
-    tagline: String
-    countryCode: String
-    townCity: String
   }
 
   # Only used for the currently logged in user to update themselves - so ID not required.
@@ -67,6 +64,7 @@ export default gql`
 
   type UserPublicProfile {
     id: ID!
+    userProfileScope: UserProfileScope!
     avatarUri: String
     introVideoUri: String
     introVideoThumbUri: String

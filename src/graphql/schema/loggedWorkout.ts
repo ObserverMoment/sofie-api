@@ -1,6 +1,12 @@
 import { gql } from 'apollo-server-express'
 
 export default gql`
+  # Workouts sessions completed + total time worked + ?
+  type LifetimeLogStatsSummary {
+    sessionsLogged: Int!
+    minutesWorked: Int!
+  }
+
   #### Types / Return Values - Full Structure Retrievable ####
   type LoggedWorkout {
     id: ID!

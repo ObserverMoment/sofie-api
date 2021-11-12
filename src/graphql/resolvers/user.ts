@@ -18,6 +18,7 @@ import {
 } from '../../generated/graphql'
 import { checkUserMediaForDeletion, deleteFiles } from '../../lib/uploadcare'
 import { AccessScopeError, checkUserOwnsObject } from '../utils'
+import { calcLifetimeLogStatsSummary } from './loggedWorkout'
 
 //// Queries ////
 export const checkUniqueDisplayName = async (
@@ -136,29 +137,69 @@ export const userPublicProfiles = async (
   return publicProfileSummaries as UserPublicProfileSummary[]
 }
 
-// Get a single user profile, based on the user id - must be public.
+// Get a single user profile, based on the user id - fields returned will depend on the user's privacy settings.
 export const userPublicProfileById = async (
   r: any,
   { userId }: QueryUserPublicProfileByIdArgs,
   { select, prisma }: Context,
 ) => {
-  const user = await prisma.user.findFirst({
-    where: { id: userId, userProfileScope: 'PUBLIC' },
+  const checkScope = await prisma.user.findFirst({
+    where: { id: userId },
+    select: {
+      userProfileScope: true,
+    },
+  })
+
+  const isPublic = checkScope?.userProfileScope === 'PUBLIC'
+
+  const user: any = await prisma.user.findFirst({
+    where: { id: userId },
     select: {
       ...select,
-      Workouts: {
-        ...select.Workouts,
-        where: { contentAccessScope: 'PUBLIC', archived: false },
-      },
-      WorkoutPlans: {
-        ...select.WorkoutPlans,
-        where: { contentAccessScope: 'PUBLIC', archived: false },
-      },
+      Workouts: isPublic
+        ? {
+            ...select.Workouts,
+            where: { contentAccessScope: 'PUBLIC', archived: false },
+          }
+        : null,
+      WorkoutPlans: isPublic
+        ? {
+            ...select.WorkoutPlans,
+            where: { contentAccessScope: 'PUBLIC', archived: false },
+          }
+        : null,
     },
   })
 
   if (user) {
-    return user as UserPublicProfile
+    return isPublic
+      ? ({
+          id: user.id,
+          userProfileScope: user.userProfileScope,
+          avatarUri: user.avatarUri,
+          introVideoUri: user.introVideoUri,
+          introVideoThumbUri: user.introVideoThumbUri,
+          bio: user.bio,
+          tagline: user.tagline,
+          townCity: user.townCity,
+          instagramUrl: user.instagramUrl,
+          tiktokUrl: user.tiktokUrl,
+          youtubeUrl: user.youtubeUrl,
+          snapUrl: user.snapUrl,
+          linkedinUrl: user.linkedinUrl,
+          countryCode: user.countryCode,
+          displayName: user.displayName,
+          Workouts: user.Workouts,
+          WorkoutPlans: user.WorkoutPlans,
+        } as UserPublicProfile)
+      : ({
+          id: user.id,
+          displayName: user.displayName,
+          avatarUri: user.avatarUri,
+          userProfileScope: user.userProfileScope,
+          Workouts: [],
+          WorkoutPlans: [],
+        } as UserPublicProfile)
   } else {
     throw new AccessScopeError('userPublicProfileById: There was an issue.')
   }

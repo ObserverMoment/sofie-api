@@ -4,7 +4,7 @@ import { ClubWithMemberIdsPayload } from '../../../types'
 import { AccessScopeError } from '../../utils'
 
 // You can only remove a user type with a lower value that yourself as the authed user.
-type ClubMemberType = 'OWNER' | 'ADMIN' | 'MEMBER' | 'NONE'
+export type ClubMemberType = 'OWNER' | 'ADMIN' | 'MEMBER' | 'NONE'
 const memberTypeScoreMap: { [key in ClubMemberType]: number } = {
   OWNER: 3,
   ADMIN: 2,
@@ -183,6 +183,21 @@ export async function checkUserIsMemberOfClub(
   authedUserId: string,
   prisma: PrismaClient,
 ) {
+  const isMember = await isUserClubMember(clubId, authedUserId, prisma)
+
+  if (!isMember) {
+    throw new AccessScopeError(
+      'User is not a member of this club: checkUserIsMemberOfClub',
+    )
+  }
+}
+
+/// Doesn't throw an error - just does the check and return a [boolean]
+export async function isUserClubMember(
+  clubId: string,
+  authedUserId: string,
+  prisma: PrismaClient,
+): Promise<boolean> {
   const obj = await prisma.club.findFirst({
     where: {
       id: clubId,
@@ -195,9 +210,5 @@ export async function checkUserIsMemberOfClub(
     select: { id: true },
   })
 
-  if (!obj) {
-    throw new AccessScopeError(
-      'User is not a member of this club: checkUserIsMemberOfClub',
-    )
-  }
+  return obj !== null
 }

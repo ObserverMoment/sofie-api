@@ -10,6 +10,9 @@ import {
   MutationRemoveMemberAdminStatusArgs,
   MutationRemoveUserFromClubArgs,
   MutationUpdateClubInviteTokenArgs,
+  MutationUserJoinPublicClubArgs,
+  Workout,
+  WorkoutPlan,
 } from '../../../generated/graphql'
 import {
   addStreamUserToClubMemberChat,
@@ -21,6 +24,32 @@ import {
   checkUserIsOwnerOrAdmin,
   checkUserIsOwnerOrAdminOfClub,
 } from './utils'
+
+///// Public Club Memberships //////
+///// Any user can join / leave whenever they want //////
+export const userJoinPublicClub = async (
+  r: any,
+  { clubId }: MutationUserJoinPublicClubArgs,
+  { authedUserId, select, prisma }: Context,
+) => {
+  const updated: any = await prisma.club.update({
+    where: { id: clubId },
+    data: {
+      Members: {
+        connect: { id: authedUserId },
+      },
+    },
+    select,
+  })
+
+  if (updated) {
+    /// Add the new member to the GetStream chat group.
+    await addStreamUserToClubMemberChat((updated as Club).id, authedUserId)
+    return updated.id
+  } else {
+    throw new ApolloError('userJoinPublicClub: There was an issue.')
+  }
+}
 
 ///// ClubInviteToken //////
 export const createClubInviteToken = async (
@@ -244,7 +273,7 @@ export const removeUserFromClub = async (
 
   const disconnect = { disconnect: { id: userToRemoveId } }
 
-  const updatedClub = await prisma.club.update({
+  const updatedClub: any = await prisma.club.update({
     where: { id: clubId },
     data: {
       Admins: result.memberType === 'ADMIN' ? disconnect : undefined,
@@ -253,12 +282,55 @@ export const removeUserFromClub = async (
     select,
   })
 
+  /// Find all workouts and plans from the club that the user has saved in their collections and disconnect them. They should not be able to access this content once they have left the club.
+  const workoutIdsToRemove = updatedClub.Workouts.map((w: Workout) => w.id)
+  const workoutPlanIdsToRemove = updatedClub.WorkoutPlans.map(
+    (w: WorkoutPlan) => w.id,
+  )
+
+  const contentToRemove = await prisma.user.findUnique({
+    where: { id: authedUserId },
+    select: {
+      Collections: {
+        select: {
+          id: true,
+          Workouts: {
+            where: {
+              id: { in: workoutIdsToRemove },
+            },
+          },
+          WorkoutPlans: {
+            where: {
+              id: { in: workoutPlanIdsToRemove },
+            },
+          },
+        },
+      },
+    },
+  })
+
+  const collectionsToProcess =
+    contentToRemove?.Collections.filter(
+      (c) => c.Workouts.length > 0 || c.WorkoutPlans.length > 0,
+    ) || []
+
+  for await (const collection of collectionsToProcess) {
+    await prisma.collection.update({
+      where: { id: collection.id },
+      data: {
+        Workouts: {
+          disconnect: collection.Workouts.map((w) => ({ id: w.id })),
+        },
+        WorkoutPlans: {
+          disconnect: collection.WorkoutPlans.map((w) => ({ id: w.id })),
+        },
+      },
+    })
+  }
+
   if (updatedClub) {
-    /// Remove the member to the GetStream chat group.
-    await removeStreamUserFromClubMemberChat(
-      (updatedClub as Club).id,
-      userToRemoveId,
-    )
+    /// Remove the member from the GetStream chat group.
+    await removeStreamUserFromClubMemberChat(updatedClub.id, userToRemoveId)
     return updatedClub as Club
   } else {
     throw new ApolloError('removeUserFromClub: There was an issue.')
