@@ -28,7 +28,7 @@ export const userLoggedWorkouts = async (
     orderBy: {
       completedOn: 'desc',
     },
-    take: take ?? 50,
+    take: take ?? undefined,
     select,
   })
   return loggedWorkouts as LoggedWorkout[]
