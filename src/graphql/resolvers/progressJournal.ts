@@ -79,7 +79,6 @@ export const createProgressJournal = async (
   const progressJournal = await prisma.progressJournal.create({
     data: {
       ...data,
-      bodyweightUnit: data.bodyweightUnit || undefined,
       User: {
         connect: { id: authedUserId },
       },
@@ -106,7 +105,6 @@ export const updateProgressJournal = async (
       name: data.name || undefined,
       description: data.description || undefined,
       coverImageUri: data.coverImageUri || undefined,
-      bodyweightUnit: data.bodyweightUnit || undefined,
     },
     select,
   })

@@ -1,6 +1,6 @@
 import { mergeTypeDefs } from '@graphql-tools/merge'
 import bodyArea from './bodyArea'
-import bodyTransformation from './bodyTransformation'
+import bodyTracking from './bodyTracking'
 import club from './club'
 import collection from './collection'
 import enums from './enums'
@@ -24,7 +24,7 @@ import workoutSet from './workout/workoutSet'
 
 const typeDefs = mergeTypeDefs([
   bodyArea,
-  bodyTransformation,
+  bodyTracking,
   club,
   collection,
   enums,

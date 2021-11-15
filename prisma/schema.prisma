@@ -149,61 +149,61 @@ model ScheduledWorkout {
 }
 
 model User {
-  id                       String                    @id @default(uuid())
-  firebaseUid              String                    @unique
-  createdAt                DateTime                  @default(now())
-  hasOnboarded             Boolean                   @default(false)
-  userProfileScope         UserProfileScope          @default(PRIVATE)
-  avatarUri                String?
-  introVideoUri            String?
-  introVideoThumbUri       String?
-  displayName              String                    @unique @default(cuid())
-  firstname                String?
-  lastname                 String?
-  bio                      String?
-  tagline                  String?
-  birthdate                DateTime?
-  gender                   Gender                    @default(PNTS)
-  townCity                 String?
-  countryCode              String?
-  instagramUrl             String?
-  tiktokUrl                String?
-  youtubeUrl               String?
-  snapUrl                  String?
-  linkedinUrl              String?
-  BodyTransformationPhotos BodyTransformationPhoto[]
-  ClubsWhereOwner          Club[]                    @relation("owner")
-  ClubInviteTokens         ClubInviteToken[]
-  Collections              Collection[]
-  GymProfiles              GymProfile[]
-  ClubInvitesReceived      JoinClubInvite[]          @relation("invited")
-  ClubInvitesResponded     JoinClubInvite[]          @relation("invite_responder")
-  ClubInvitesSent          JoinClubInvite[]          @relation("sender")
-  JoinClubRequestsSent     JoinClubRequest[]         @relation("applicant")
-  JoinClubResponsesSent    JoinClubRequest[]         @relation("request_responder")
-  LoggedWorkouts           LoggedWorkout[]
-  LoggedWorkoutSections    LoggedWorkoutSection[]
-  CustomMoves              Move[]
-  ProgressJournals         ProgressJournal[]
-  ProgressJournalEntrys    ProgressJournalEntry[]
-  ProgressJournalGoals     ProgressJournalGoal[]
-  ProgressJournalGoalTags  ProgressJournalGoalTag[]
-  ScheduledWorkouts        ScheduledWorkout[]
-  UserBenchmarks           UserBenchmark[]
-  UserBenchmarkEntries     UserBenchmarkEntry[]
-  UserBenchmarkTags        UserBenchmarkTag[]
-  Workouts                 Workout[]
-  WorkoutMoves             WorkoutMove[]
-  WorkoutPlans             WorkoutPlan[]
-  WorkoutPlanDays          WorkoutPlanDay[]
-  WorkoutPlanDayWorkouts   WorkoutPlanDayWorkout[]
-  WorkoutPlanEnrolments    WorkoutPlanEnrolment[]
-  WorkoutPlanReviews       WorkoutPlanReview[]
-  WorkoutSections          WorkoutSection[]
-  WorkoutSets              WorkoutSet[]
-  WorkoutTag               WorkoutTag[]
-  ClubsWhereAdmin          Club[]                    @relation("admin")
-  ClubsWhereMember         Club[]                    @relation("member")
+  id                      String                   @id @default(uuid())
+  firebaseUid             String                   @unique
+  createdAt               DateTime                 @default(now())
+  hasOnboarded            Boolean                  @default(false)
+  userProfileScope        UserProfileScope         @default(PRIVATE)
+  avatarUri               String?
+  introVideoUri           String?
+  introVideoThumbUri      String?
+  displayName             String                   @unique @default(cuid())
+  firstname               String?
+  lastname                String?
+  bio                     String?
+  tagline                 String?
+  birthdate               DateTime?
+  gender                  Gender                   @default(PNTS)
+  townCity                String?
+  countryCode             String?
+  instagramUrl            String?
+  tiktokUrl               String?
+  youtubeUrl              String?
+  snapUrl                 String?
+  linkedinUrl             String?
+  ClubsWhereOwner         Club[]                   @relation("owner")
+  ClubInviteTokens        ClubInviteToken[]
+  Collections             Collection[]
+  GymProfiles             GymProfile[]
+  ClubInvitesReceived     JoinClubInvite[]         @relation("invited")
+  ClubInvitesResponded    JoinClubInvite[]         @relation("invite_responder")
+  ClubInvitesSent         JoinClubInvite[]         @relation("sender")
+  JoinClubRequestsSent    JoinClubRequest[]        @relation("applicant")
+  JoinClubResponsesSent   JoinClubRequest[]        @relation("request_responder")
+  LoggedWorkouts          LoggedWorkout[]
+  LoggedWorkoutSections   LoggedWorkoutSection[]
+  CustomMoves             Move[]
+  ProgressJournals        ProgressJournal[]
+  ProgressJournalEntrys   ProgressJournalEntry[]
+  ProgressJournalGoals    ProgressJournalGoal[]
+  ProgressJournalGoalTags ProgressJournalGoalTag[]
+  ScheduledWorkouts       ScheduledWorkout[]
+  UserBenchmarks          UserBenchmark[]
+  UserBenchmarkEntries    UserBenchmarkEntry[]
+  UserBenchmarkTags       UserBenchmarkTag[]
+  Workouts                Workout[]
+  WorkoutMoves            WorkoutMove[]
+  WorkoutPlans            WorkoutPlan[]
+  WorkoutPlanDays         WorkoutPlanDay[]
+  WorkoutPlanDayWorkouts  WorkoutPlanDayWorkout[]
+  WorkoutPlanEnrolments   WorkoutPlanEnrolment[]
+  WorkoutPlanReviews      WorkoutPlanReview[]
+  WorkoutSections         WorkoutSection[]
+  WorkoutSets             WorkoutSet[]
+  WorkoutTag              WorkoutTag[]
+  ClubsWhereAdmin         Club[]                   @relation("admin")
+  ClubsWhereMember        Club[]                   @relation("member")
+  BodyTrackingEntry       BodyTrackingEntry[]
 }
 
 model UserBenchmarkTag {
@@ -522,20 +522,24 @@ model LoggedWorkoutSection {
   MoveTypes                MoveType[]
 }
 
-/// /////////////////////////////////////////////
-/// /// Progress Journal Related ////////////////
-/// /////////////////////////////////////////////
-model BodyTransformationPhoto {
-  id          String   @id @default(uuid())
-  createdAt   DateTime @default(now())
-  bodyweight  Float?
-  note        String?
-  userId      String
-  photoUri    String
-  takenOnDate DateTime @default(now())
-  User        User     @relation(fields: [userId], references: [id])
+//////////////////////////////////////////////
+/////// Body Tracking Related ////////////////
+//////////////////////////////////////////////
+model BodyTrackingEntry {
+  id             String         @id @default(uuid())
+  createdAt      DateTime       @default(now())
+  fatPercent     Float?
+  bodyweight     Float?
+  bodyweightUnit BodyweightUnit @default(KG)
+  photoUris      String[]
+  note           String?
+  userId         String
+  User           User           @relation(fields: [userId], references: [id])
 }
 
+//////////////////////////////////////////////
+/////// Progress Journal Related /////////////
+//////////////////////////////////////////////
 model ProgressJournal {
   id                     String                 @id @default(uuid())
   createdAt              DateTime               @default(now())
@@ -543,7 +547,6 @@ model ProgressJournal {
   name                   String
   description            String?
   coverImageUri          String?
-  bodyweightUnit         BodyweightUnit         @default(KG)
   User                   User                   @relation(fields: [userId], references: [id])
   ProgressJournalEntries ProgressJournalEntry[]
   ProgressJournalGoals   ProgressJournalGoal[]
@@ -553,7 +556,6 @@ model ProgressJournalEntry {
   id                String          @id @default(uuid())
   createdAt         DateTime        @default(now())
   voiceNoteUri      String?
-  bodyweight        Float?
   moodScore         Float?
   energyScore       Float?
   motivationScore   Float?

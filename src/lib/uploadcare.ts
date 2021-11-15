@@ -9,6 +9,7 @@ import {
   UpdateWorkoutInput,
   UpdateUserBenchmarkEntryInput,
   UpdateClubInput,
+  UpdateBodyTrackingEntryInput,
 } from '../generated/graphql'
 import { AccessScopeError } from '../graphql/utils'
 
@@ -298,6 +299,36 @@ export async function checkUserBenchmarkEntryMediaForDeletion(
         getFileIdForDeleteOrNull(oldBenchmarkEntry, data, key),
       )
       .filter((x) => !!x) as string[]
+
+    return fileIdsForDeletion
+  }
+}
+
+/** Checks if there are any media (hosted) files being changed.
+ * Returns an array of fileIds (strings) which should be deleted.
+ */
+export async function checkBodyTrackingEntryMediaForDeletion(
+  prisma: PrismaClient,
+  data: UpdateBodyTrackingEntryInput,
+): Promise<string[]> {
+  // Get the old data first.
+  const oldEntry = await prisma.bodyTrackingEntry.findUnique({
+    where: {
+      id: data.id,
+    },
+    select: {
+      photoUris: true,
+    },
+  })
+
+  if (!oldEntry) {
+    throw new AccessScopeError(
+      'checkBodyTrackingEntryMediaForDeletion: Unable to find object to check',
+    )
+  } else {
+    const fileIdsForDeletion: string[] = oldEntry.photoUris.filter(
+      (oldUri) => !data.photoUris?.includes(oldUri),
+    )
 
     return fileIdsForDeletion
   }

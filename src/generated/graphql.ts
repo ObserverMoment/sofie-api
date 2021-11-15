@@ -75,14 +75,15 @@ export type BodyAreaUpperLower =
   | 'LOWER'
   | 'UPPER';
 
-export type BodyTransformationPhoto = {
-  __typename?: 'BodyTransformationPhoto';
+export type BodyTrackingEntry = {
+  __typename?: 'BodyTrackingEntry';
   bodyweight?: Maybe<Scalars['Float']>;
+  bodyweightUnit?: Maybe<BodyweightUnit>;
   createdAt: Scalars['DateTime'];
+  fatPercent?: Maybe<Scalars['Float']>;
   id: Scalars['ID'];
   note?: Maybe<Scalars['String']>;
-  photoUri: Scalars['String'];
-  takenOnDate: Scalars['DateTime'];
+  photoUris: Array<Scalars['String']>;
 };
 
 export type BodyweightUnit =
@@ -166,11 +167,12 @@ export type CopyWorkoutPlanDayToAnotherDayInput = {
   id: Scalars['ID'];
 };
 
-export type CreateBodyTransformationPhotoInput = {
+export type CreateBodyTrackingEntryInput = {
   bodyweight?: Maybe<Scalars['Float']>;
+  bodyweightUnit?: Maybe<BodyweightUnit>;
+  fatPercent?: Maybe<Scalars['Float']>;
   note?: Maybe<Scalars['String']>;
-  photoUri: Scalars['String'];
-  takenOnDate: Scalars['DateTime'];
+  photoUris?: Maybe<Array<Scalars['String']>>;
 };
 
 export type CreateClubInput = {
@@ -258,7 +260,6 @@ export type CreateMoveInput = {
 
 export type CreateProgressJournalEntryInput = {
   ProgressJournal: ConnectRelationInput;
-  bodyweight?: Maybe<Scalars['Float']>;
   confidenceScore?: Maybe<Scalars['Float']>;
   energyScore?: Maybe<Scalars['Float']>;
   moodScore?: Maybe<Scalars['Float']>;
@@ -281,7 +282,6 @@ export type CreateProgressJournalGoalTagInput = {
 };
 
 export type CreateProgressJournalInput = {
-  bodyweightUnit?: Maybe<BodyweightUnit>;
   coverImageUri?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   name: Scalars['String'];
@@ -551,7 +551,7 @@ export type Mutation = {
   archiveWorkoutById: Workout;
   archiveWorkoutPlanById: WorkoutPlan;
   copyWorkoutPlanDayToAnotherDay: WorkoutPlanDay;
-  createBodyTransformationPhotos: Array<BodyTransformationPhoto>;
+  createBodyTrackingEntry: BodyTrackingEntry;
   createClub: Club;
   createClubInviteToken: ClubInviteToken;
   createClubTimelinePost: TimelinePostFullData;
@@ -578,7 +578,7 @@ export type Mutation = {
   createWorkoutSection: WorkoutSection;
   createWorkoutSet: WorkoutSet;
   createWorkoutTag: WorkoutTag;
-  deleteBodyTransformationPhotosById: Array<Scalars['ID']>;
+  deleteBodyTrackingEntryById: Scalars['ID'];
   deleteClubById: Scalars['ID'];
   deleteClubInviteTokenById: Scalars['ID'];
   deleteClubTimelinePost: Scalars['ID'];
@@ -622,7 +622,7 @@ export type Mutation = {
   unarchiveCustomMoveById: Move;
   unarchiveWorkoutById: Workout;
   unarchiveWorkoutPlanById: WorkoutPlan;
-  updateBodyTransformationPhoto: BodyTransformationPhoto;
+  updateBodyTrackingEntry: BodyTrackingEntry;
   updateClub: Club;
   updateClubInviteToken: ClubInviteToken;
   updateCollection: Collection;
@@ -702,8 +702,8 @@ export type MutationCopyWorkoutPlanDayToAnotherDayArgs = {
 };
 
 
-export type MutationCreateBodyTransformationPhotosArgs = {
-  data: Array<CreateBodyTransformationPhotoInput>;
+export type MutationCreateBodyTrackingEntryArgs = {
+  data: CreateBodyTrackingEntryInput;
 };
 
 
@@ -837,8 +837,8 @@ export type MutationCreateWorkoutTagArgs = {
 };
 
 
-export type MutationDeleteBodyTransformationPhotosByIdArgs = {
-  ids: Array<Scalars['ID']>;
+export type MutationDeleteBodyTrackingEntryByIdArgs = {
+  id: Scalars['ID'];
 };
 
 
@@ -1062,8 +1062,8 @@ export type MutationUnarchiveWorkoutPlanByIdArgs = {
 };
 
 
-export type MutationUpdateBodyTransformationPhotoArgs = {
-  data: UpdateBodyTransformationPhotoInput;
+export type MutationUpdateBodyTrackingEntryArgs = {
+  data: UpdateBodyTrackingEntryInput;
 };
 
 
@@ -1210,7 +1210,6 @@ export type ProgressJournal = {
   __typename?: 'ProgressJournal';
   ProgressJournalEntries: Array<ProgressJournalEntry>;
   ProgressJournalGoals: Array<ProgressJournalGoal>;
-  bodyweightUnit: BodyweightUnit;
   coverImageUri?: Maybe<Scalars['String']>;
   createdAt: Scalars['DateTime'];
   description?: Maybe<Scalars['String']>;
@@ -1221,7 +1220,6 @@ export type ProgressJournal = {
 export type ProgressJournalEntry = {
   __typename?: 'ProgressJournalEntry';
   ProgressJournal: ProgressJournal;
-  bodyweight?: Maybe<Scalars['Float']>;
   confidenceScore?: Maybe<Scalars['Float']>;
   createdAt: Scalars['DateTime'];
   energyScore?: Maybe<Scalars['Float']>;
@@ -1255,7 +1253,7 @@ export type Query = {
   __typename?: 'Query';
   authedUser: User;
   bodyAreas: Array<BodyArea>;
-  bodyTransformationPhotos: Array<BodyTransformationPhoto>;
+  bodyTrackingEntries: Array<BodyTrackingEntry>;
   checkClubInviteToken: CheckClubInviteTokenResult;
   checkUniqueDisplayName: Scalars['Boolean'];
   clubById: Club;
@@ -1547,12 +1545,13 @@ export type TimelinePostType =
   | 'WORKOUT'
   | 'WORKOUTPLAN';
 
-export type UpdateBodyTransformationPhotoInput = {
+export type UpdateBodyTrackingEntryInput = {
   bodyweight?: Maybe<Scalars['Float']>;
+  bodyweightUnit?: Maybe<BodyweightUnit>;
+  fatPercent?: Maybe<Scalars['Float']>;
   id: Scalars['ID'];
   note?: Maybe<Scalars['String']>;
-  photoUri?: Maybe<Scalars['String']>;
-  takenOnDate?: Maybe<Scalars['DateTime']>;
+  photoUris?: Maybe<Array<Scalars['String']>>;
 };
 
 export type UpdateClubInput = {
@@ -1639,7 +1638,6 @@ export type UpdateMoveInput = {
 };
 
 export type UpdateProgressJournalEntryInput = {
-  bodyweight?: Maybe<Scalars['Float']>;
   confidenceScore?: Maybe<Scalars['Float']>;
   energyScore?: Maybe<Scalars['Float']>;
   id: Scalars['ID'];
@@ -1665,7 +1663,6 @@ export type UpdateProgressJournalGoalTagInput = {
 };
 
 export type UpdateProgressJournalInput = {
-  bodyweightUnit?: Maybe<BodyweightUnit>;
   coverImageUri?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
@@ -2219,7 +2216,7 @@ export type ResolversTypes = ResolversObject<{
   BodyAreaMoveScore: ResolverTypeWrapper<BodyAreaMoveScore>;
   BodyAreaMoveScoreInput: BodyAreaMoveScoreInput;
   BodyAreaUpperLower: BodyAreaUpperLower;
-  BodyTransformationPhoto: ResolverTypeWrapper<BodyTransformationPhoto>;
+  BodyTrackingEntry: ResolverTypeWrapper<BodyTrackingEntry>;
   BodyweightUnit: BodyweightUnit;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   CheckClubInviteTokenResult: ResolversTypes['ClubInviteTokenData'] | ResolversTypes['InviteTokenError'];
@@ -2231,7 +2228,7 @@ export type ResolversTypes = ResolversObject<{
   ConnectRelationInput: ConnectRelationInput;
   ContentAccessScope: ContentAccessScope;
   CopyWorkoutPlanDayToAnotherDayInput: CopyWorkoutPlanDayToAnotherDayInput;
-  CreateBodyTransformationPhotoInput: CreateBodyTransformationPhotoInput;
+  CreateBodyTrackingEntryInput: CreateBodyTrackingEntryInput;
   CreateClubInput: CreateClubInput;
   CreateClubInviteTokenInput: CreateClubInviteTokenInput;
   CreateClubTimelinePostInput: CreateClubTimelinePostInput;
@@ -2305,7 +2302,7 @@ export type ResolversTypes = ResolversObject<{
   TimelinePostObjectDataObject: ResolverTypeWrapper<TimelinePostObjectDataObject>;
   TimelinePostObjectDataUser: ResolverTypeWrapper<TimelinePostObjectDataUser>;
   TimelinePostType: TimelinePostType;
-  UpdateBodyTransformationPhotoInput: UpdateBodyTransformationPhotoInput;
+  UpdateBodyTrackingEntryInput: UpdateBodyTrackingEntryInput;
   UpdateClubInput: UpdateClubInput;
   UpdateClubInviteTokenInput: UpdateClubInviteTokenInput;
   UpdateCollectionInput: UpdateCollectionInput;
@@ -2377,7 +2374,7 @@ export type ResolversParentTypes = ResolversObject<{
   BodyArea: BodyArea;
   BodyAreaMoveScore: BodyAreaMoveScore;
   BodyAreaMoveScoreInput: BodyAreaMoveScoreInput;
-  BodyTransformationPhoto: BodyTransformationPhoto;
+  BodyTrackingEntry: BodyTrackingEntry;
   Boolean: Scalars['Boolean'];
   CheckClubInviteTokenResult: ResolversParentTypes['ClubInviteTokenData'] | ResolversParentTypes['InviteTokenError'];
   Club: Club;
@@ -2387,7 +2384,7 @@ export type ResolversParentTypes = ResolversObject<{
   Collection: Collection;
   ConnectRelationInput: ConnectRelationInput;
   CopyWorkoutPlanDayToAnotherDayInput: CopyWorkoutPlanDayToAnotherDayInput;
-  CreateBodyTransformationPhotoInput: CreateBodyTransformationPhotoInput;
+  CreateBodyTrackingEntryInput: CreateBodyTrackingEntryInput;
   CreateClubInput: CreateClubInput;
   CreateClubInviteTokenInput: CreateClubInviteTokenInput;
   CreateClubTimelinePostInput: CreateClubTimelinePostInput;
@@ -2453,7 +2450,7 @@ export type ResolversParentTypes = ResolversObject<{
   TimelinePostObjectData: TimelinePostObjectData;
   TimelinePostObjectDataObject: TimelinePostObjectDataObject;
   TimelinePostObjectDataUser: TimelinePostObjectDataUser;
-  UpdateBodyTransformationPhotoInput: UpdateBodyTransformationPhotoInput;
+  UpdateBodyTrackingEntryInput: UpdateBodyTrackingEntryInput;
   UpdateClubInput: UpdateClubInput;
   UpdateClubInviteTokenInput: UpdateClubInviteTokenInput;
   UpdateCollectionInput: UpdateCollectionInput;
@@ -2528,13 +2525,14 @@ export type BodyAreaMoveScoreResolvers<ContextType = any, ParentType extends Res
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export type BodyTransformationPhotoResolvers<ContextType = any, ParentType extends ResolversParentTypes['BodyTransformationPhoto'] = ResolversParentTypes['BodyTransformationPhoto']> = ResolversObject<{
+export type BodyTrackingEntryResolvers<ContextType = any, ParentType extends ResolversParentTypes['BodyTrackingEntry'] = ResolversParentTypes['BodyTrackingEntry']> = ResolversObject<{
   bodyweight?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  bodyweightUnit?: Resolver<Maybe<ResolversTypes['BodyweightUnit']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  fatPercent?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   note?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  photoUri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  takenOnDate?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  photoUris?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -2727,7 +2725,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   archiveWorkoutById?: Resolver<ResolversTypes['Workout'], ParentType, ContextType, RequireFields<MutationArchiveWorkoutByIdArgs, 'id'>>;
   archiveWorkoutPlanById?: Resolver<ResolversTypes['WorkoutPlan'], ParentType, ContextType, RequireFields<MutationArchiveWorkoutPlanByIdArgs, 'id'>>;
   copyWorkoutPlanDayToAnotherDay?: Resolver<ResolversTypes['WorkoutPlanDay'], ParentType, ContextType, RequireFields<MutationCopyWorkoutPlanDayToAnotherDayArgs, 'data'>>;
-  createBodyTransformationPhotos?: Resolver<Array<ResolversTypes['BodyTransformationPhoto']>, ParentType, ContextType, RequireFields<MutationCreateBodyTransformationPhotosArgs, 'data'>>;
+  createBodyTrackingEntry?: Resolver<ResolversTypes['BodyTrackingEntry'], ParentType, ContextType, RequireFields<MutationCreateBodyTrackingEntryArgs, 'data'>>;
   createClub?: Resolver<ResolversTypes['Club'], ParentType, ContextType, RequireFields<MutationCreateClubArgs, 'data'>>;
   createClubInviteToken?: Resolver<ResolversTypes['ClubInviteToken'], ParentType, ContextType, RequireFields<MutationCreateClubInviteTokenArgs, 'data'>>;
   createClubTimelinePost?: Resolver<ResolversTypes['TimelinePostFullData'], ParentType, ContextType, RequireFields<MutationCreateClubTimelinePostArgs, 'data'>>;
@@ -2754,7 +2752,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createWorkoutSection?: Resolver<ResolversTypes['WorkoutSection'], ParentType, ContextType, RequireFields<MutationCreateWorkoutSectionArgs, 'data'>>;
   createWorkoutSet?: Resolver<ResolversTypes['WorkoutSet'], ParentType, ContextType, RequireFields<MutationCreateWorkoutSetArgs, 'data'>>;
   createWorkoutTag?: Resolver<ResolversTypes['WorkoutTag'], ParentType, ContextType, RequireFields<MutationCreateWorkoutTagArgs, 'data'>>;
-  deleteBodyTransformationPhotosById?: Resolver<Array<ResolversTypes['ID']>, ParentType, ContextType, RequireFields<MutationDeleteBodyTransformationPhotosByIdArgs, 'ids'>>;
+  deleteBodyTrackingEntryById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteBodyTrackingEntryByIdArgs, 'id'>>;
   deleteClubById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteClubByIdArgs, 'id'>>;
   deleteClubInviteTokenById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteClubInviteTokenByIdArgs, 'id'>>;
   deleteClubTimelinePost?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteClubTimelinePostArgs, 'activityId'>>;
@@ -2798,7 +2796,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   unarchiveCustomMoveById?: Resolver<ResolversTypes['Move'], ParentType, ContextType, RequireFields<MutationUnarchiveCustomMoveByIdArgs, 'id'>>;
   unarchiveWorkoutById?: Resolver<ResolversTypes['Workout'], ParentType, ContextType, RequireFields<MutationUnarchiveWorkoutByIdArgs, 'id'>>;
   unarchiveWorkoutPlanById?: Resolver<ResolversTypes['WorkoutPlan'], ParentType, ContextType, RequireFields<MutationUnarchiveWorkoutPlanByIdArgs, 'id'>>;
-  updateBodyTransformationPhoto?: Resolver<ResolversTypes['BodyTransformationPhoto'], ParentType, ContextType, RequireFields<MutationUpdateBodyTransformationPhotoArgs, 'data'>>;
+  updateBodyTrackingEntry?: Resolver<ResolversTypes['BodyTrackingEntry'], ParentType, ContextType, RequireFields<MutationUpdateBodyTrackingEntryArgs, 'data'>>;
   updateClub?: Resolver<ResolversTypes['Club'], ParentType, ContextType, RequireFields<MutationUpdateClubArgs, 'data'>>;
   updateClubInviteToken?: Resolver<ResolversTypes['ClubInviteToken'], ParentType, ContextType, RequireFields<MutationUpdateClubInviteTokenArgs, 'data'>>;
   updateCollection?: Resolver<ResolversTypes['Collection'], ParentType, ContextType, RequireFields<MutationUpdateCollectionArgs, 'data'>>;
@@ -2832,7 +2830,6 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
 export type ProgressJournalResolvers<ContextType = any, ParentType extends ResolversParentTypes['ProgressJournal'] = ResolversParentTypes['ProgressJournal']> = ResolversObject<{
   ProgressJournalEntries?: Resolver<Array<ResolversTypes['ProgressJournalEntry']>, ParentType, ContextType>;
   ProgressJournalGoals?: Resolver<Array<ResolversTypes['ProgressJournalGoal']>, ParentType, ContextType>;
-  bodyweightUnit?: Resolver<ResolversTypes['BodyweightUnit'], ParentType, ContextType>;
   coverImageUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -2843,7 +2840,6 @@ export type ProgressJournalResolvers<ContextType = any, ParentType extends Resol
 
 export type ProgressJournalEntryResolvers<ContextType = any, ParentType extends ResolversParentTypes['ProgressJournalEntry'] = ResolversParentTypes['ProgressJournalEntry']> = ResolversObject<{
   ProgressJournal?: Resolver<ResolversTypes['ProgressJournal'], ParentType, ContextType>;
-  bodyweight?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   confidenceScore?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   energyScore?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -2877,7 +2873,7 @@ export type ProgressJournalGoalTagResolvers<ContextType = any, ParentType extend
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   authedUser?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   bodyAreas?: Resolver<Array<ResolversTypes['BodyArea']>, ParentType, ContextType>;
-  bodyTransformationPhotos?: Resolver<Array<ResolversTypes['BodyTransformationPhoto']>, ParentType, ContextType>;
+  bodyTrackingEntries?: Resolver<Array<ResolversTypes['BodyTrackingEntry']>, ParentType, ContextType>;
   checkClubInviteToken?: Resolver<ResolversTypes['CheckClubInviteTokenResult'], ParentType, ContextType, RequireFields<QueryCheckClubInviteTokenArgs, 'id'>>;
   checkUniqueDisplayName?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryCheckUniqueDisplayNameArgs, 'displayName'>>;
   clubById?: Resolver<ResolversTypes['Club'], ParentType, ContextType, RequireFields<QueryClubByIdArgs, 'id'>>;
@@ -3253,7 +3249,7 @@ export type WorkoutTagResolvers<ContextType = any, ParentType extends ResolversP
 export type Resolvers<ContextType = any> = ResolversObject<{
   BodyArea?: BodyAreaResolvers<ContextType>;
   BodyAreaMoveScore?: BodyAreaMoveScoreResolvers<ContextType>;
-  BodyTransformationPhoto?: BodyTransformationPhotoResolvers<ContextType>;
+  BodyTrackingEntry?: BodyTrackingEntryResolvers<ContextType>;
   CheckClubInviteTokenResult?: CheckClubInviteTokenResultResolvers<ContextType>;
   Club?: ClubResolvers<ContextType>;
   ClubInviteToken?: ClubInviteTokenResolvers<ContextType>;

@@ -17,11 +17,11 @@ import {
 } from './archive'
 
 import {
-  bodyTransformationPhotos,
-  createBodyTransformationPhotos,
-  updateBodyTransformationPhoto,
-  deleteBodyTransformationPhotosById,
-} from './bodyTransformation'
+  bodyTrackingEntries,
+  createBodyTrackingEntry,
+  updateBodyTrackingEntry,
+  deleteBodyTrackingEntryById,
+} from './bodyTracking'
 
 import {
   userClubs,
@@ -273,8 +273,9 @@ const resolvers: Resolvers = {
     clubMembersFeedPosts,
     ///// Invites ////
     checkClubInviteToken,
+    //// Progress Body Tracking ////
+    bodyTrackingEntries,
     //// Progress Journal ////
-    bodyTransformationPhotos,
     userProgressJournals,
     progressJournalGoalTags,
     progressJournalById,
@@ -371,12 +372,15 @@ const resolvers: Resolvers = {
     createGymProfile,
     updateGymProfile,
     deleteGymProfileById,
+    ////////////////////////////////
+    //// Progress Body Tracking ////
+    ///////////////////////////////
+    createBodyTrackingEntry,
+    updateBodyTrackingEntry,
+    deleteBodyTrackingEntryById,
     //////////////////////////
     //// Progress Journal ////
     //////////////////////////
-    createBodyTransformationPhotos,
-    updateBodyTransformationPhoto,
-    deleteBodyTransformationPhotosById,
     createProgressJournal,
     updateProgressJournal,
     deleteProgressJournalById,

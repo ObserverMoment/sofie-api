@@ -63,13 +63,14 @@ enum BodyAreaUpperLower {
   UPPER
 }
 
-type BodyTransformationPhoto {
+type BodyTrackingEntry {
   bodyweight: Float
+  bodyweightUnit: BodyweightUnit
   createdAt: DateTime!
+  fatPercent: Float
   id: ID!
   note: String
-  photoUri: String!
-  takenOnDate: DateTime!
+  photoUris: [String!]!
 }
 
 enum BodyweightUnit {
@@ -150,11 +151,12 @@ input CopyWorkoutPlanDayToAnotherDayInput {
   id: ID!
 }
 
-input CreateBodyTransformationPhotoInput {
+input CreateBodyTrackingEntryInput {
   bodyweight: Float
+  bodyweightUnit: BodyweightUnit
+  fatPercent: Float
   note: String
-  photoUri: String!
-  takenOnDate: DateTime!
+  photoUris: [String!]
 }
 
 input CreateClubInput {
@@ -242,7 +244,6 @@ input CreateMoveInput {
 
 input CreateProgressJournalEntryInput {
   ProgressJournal: ConnectRelationInput!
-  bodyweight: Float
   confidenceScore: Float
   energyScore: Float
   moodScore: Float
@@ -265,7 +266,6 @@ input CreateProgressJournalGoalTagInput {
 }
 
 input CreateProgressJournalInput {
-  bodyweightUnit: BodyweightUnit
   coverImageUri: String
   description: String
   name: String!
@@ -533,7 +533,7 @@ type Mutation {
   archiveWorkoutById(id: ID!): Workout!
   archiveWorkoutPlanById(id: ID!): WorkoutPlan!
   copyWorkoutPlanDayToAnotherDay(data: CopyWorkoutPlanDayToAnotherDayInput!): WorkoutPlanDay!
-  createBodyTransformationPhotos(data: [CreateBodyTransformationPhotoInput!]!): [BodyTransformationPhoto!]!
+  createBodyTrackingEntry(data: CreateBodyTrackingEntryInput!): BodyTrackingEntry!
   createClub(data: CreateClubInput!): Club!
   createClubInviteToken(data: CreateClubInviteTokenInput!): ClubInviteToken!
   createClubTimelinePost(data: CreateClubTimelinePostInput!): TimelinePostFullData!
@@ -560,7 +560,7 @@ type Mutation {
   createWorkoutSection(data: CreateWorkoutSectionInput!): WorkoutSection!
   createWorkoutSet(data: CreateWorkoutSetInput!): WorkoutSet!
   createWorkoutTag(data: CreateWorkoutTagInput!): WorkoutTag!
-  deleteBodyTransformationPhotosById(ids: [ID!]!): [ID!]!
+  deleteBodyTrackingEntryById(id: ID!): ID!
   deleteClubById(id: ID!): ID!
   deleteClubInviteTokenById(id: ID!): ID!
   deleteClubTimelinePost(activityId: ID!): ID!
@@ -604,7 +604,7 @@ type Mutation {
   unarchiveCustomMoveById(id: ID!): Move!
   unarchiveWorkoutById(id: ID!): Workout!
   unarchiveWorkoutPlanById(id: ID!): WorkoutPlan!
-  updateBodyTransformationPhoto(data: UpdateBodyTransformationPhotoInput!): BodyTransformationPhoto!
+  updateBodyTrackingEntry(data: UpdateBodyTrackingEntryInput!): BodyTrackingEntry!
   updateClub(data: UpdateClubInput!): Club!
   updateClubInviteToken(data: UpdateClubInviteTokenInput!): ClubInviteToken!
   updateCollection(data: UpdateCollectionInput!): Collection!
@@ -638,7 +638,6 @@ type Mutation {
 type ProgressJournal {
   ProgressJournalEntries: [ProgressJournalEntry!]!
   ProgressJournalGoals: [ProgressJournalGoal!]!
-  bodyweightUnit: BodyweightUnit!
   coverImageUri: String
   createdAt: DateTime!
   description: String
@@ -648,7 +647,6 @@ type ProgressJournal {
 
 type ProgressJournalEntry {
   ProgressJournal: ProgressJournal!
-  bodyweight: Float
   confidenceScore: Float
   createdAt: DateTime!
   energyScore: Float
@@ -679,7 +677,7 @@ type ProgressJournalGoalTag {
 type Query {
   authedUser: User!
   bodyAreas: [BodyArea!]!
-  bodyTransformationPhotos: [BodyTransformationPhoto!]!
+  bodyTrackingEntries: [BodyTrackingEntry!]!
   checkClubInviteToken(id: ID!): CheckClubInviteTokenResult!
   checkUniqueDisplayName(displayName: String!): Boolean!
   clubById(id: ID!): Club!
@@ -824,12 +822,13 @@ enum TimelinePostType {
   WORKOUTPLAN
 }
 
-input UpdateBodyTransformationPhotoInput {
+input UpdateBodyTrackingEntryInput {
   bodyweight: Float
+  bodyweightUnit: BodyweightUnit
+  fatPercent: Float
   id: ID!
   note: String
-  photoUri: String
-  takenOnDate: DateTime
+  photoUris: [String!]
 }
 
 input UpdateClubInput {
@@ -916,7 +915,6 @@ input UpdateMoveInput {
 }
 
 input UpdateProgressJournalEntryInput {
-  bodyweight: Float
   confidenceScore: Float
   energyScore: Float
   id: ID!
@@ -942,7 +940,6 @@ input UpdateProgressJournalGoalTagInput {
 }
 
 input UpdateProgressJournalInput {
-  bodyweightUnit: BodyweightUnit
   coverImageUri: String
   description: String
   id: ID!
