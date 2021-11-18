@@ -253,6 +253,7 @@ export default gql`
     #### Workout Move ####
     createWorkoutMove(data: CreateWorkoutMoveInput!): WorkoutMove!
     updateWorkoutMove(data: UpdateWorkoutMoveInput!): WorkoutMove!
+    updateWorkoutMoves(data: [UpdateWorkoutMoveInput!]!): [WorkoutMove!]!
     deleteWorkoutMoveById(id: ID!): ID!
     duplicateWorkoutMoveById(id: ID!): WorkoutMove!
     reorderWorkoutMoves(

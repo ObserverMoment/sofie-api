@@ -191,6 +191,7 @@ import {
 import {
   createWorkoutMove,
   updateWorkoutMove,
+  updateWorkoutMoves,
   duplicateWorkoutMoveById,
   deleteWorkoutMoveById,
   reorderWorkoutMoves,
@@ -469,6 +470,7 @@ const resolvers: Resolvers = {
     //// Workout Move ////
     createWorkoutMove,
     updateWorkoutMove,
+    updateWorkoutMoves,
     duplicateWorkoutMoveById,
     deleteWorkoutMoveById,
     reorderWorkoutMoves,

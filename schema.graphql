@@ -624,6 +624,7 @@ type Mutation {
   updateUserBenchmarkTag(data: UpdateUserBenchmarkTagInput!): UserBenchmarkTag!
   updateWorkout(data: UpdateWorkoutInput!): Workout!
   updateWorkoutMove(data: UpdateWorkoutMoveInput!): WorkoutMove!
+  updateWorkoutMoves(data: [UpdateWorkoutMoveInput!]!): [WorkoutMove!]!
   updateWorkoutPlan(data: UpdateWorkoutPlanInput!): WorkoutPlan!
   updateWorkoutPlanDay(data: UpdateWorkoutPlanDayInput!): WorkoutPlanDay!
   updateWorkoutPlanDayWorkout(data: UpdateWorkoutPlanDayWorkoutInput!): WorkoutPlanDayWorkout!

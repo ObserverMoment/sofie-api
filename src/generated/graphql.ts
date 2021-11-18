@@ -642,6 +642,7 @@ export type Mutation = {
   updateUserBenchmarkTag: UserBenchmarkTag;
   updateWorkout: Workout;
   updateWorkoutMove: WorkoutMove;
+  updateWorkoutMoves: Array<WorkoutMove>;
   updateWorkoutPlan: WorkoutPlan;
   updateWorkoutPlanDay: WorkoutPlanDay;
   updateWorkoutPlanDayWorkout: WorkoutPlanDayWorkout;
@@ -1159,6 +1160,11 @@ export type MutationUpdateWorkoutArgs = {
 
 export type MutationUpdateWorkoutMoveArgs = {
   data: UpdateWorkoutMoveInput;
+};
+
+
+export type MutationUpdateWorkoutMovesArgs = {
+  data: Array<UpdateWorkoutMoveInput>;
 };
 
 
@@ -2816,6 +2822,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   updateUserBenchmarkTag?: Resolver<ResolversTypes['UserBenchmarkTag'], ParentType, ContextType, RequireFields<MutationUpdateUserBenchmarkTagArgs, 'data'>>;
   updateWorkout?: Resolver<ResolversTypes['Workout'], ParentType, ContextType, RequireFields<MutationUpdateWorkoutArgs, 'data'>>;
   updateWorkoutMove?: Resolver<ResolversTypes['WorkoutMove'], ParentType, ContextType, RequireFields<MutationUpdateWorkoutMoveArgs, 'data'>>;
+  updateWorkoutMoves?: Resolver<Array<ResolversTypes['WorkoutMove']>, ParentType, ContextType, RequireFields<MutationUpdateWorkoutMovesArgs, 'data'>>;
   updateWorkoutPlan?: Resolver<ResolversTypes['WorkoutPlan'], ParentType, ContextType, RequireFields<MutationUpdateWorkoutPlanArgs, 'data'>>;
   updateWorkoutPlanDay?: Resolver<ResolversTypes['WorkoutPlanDay'], ParentType, ContextType, RequireFields<MutationUpdateWorkoutPlanDayArgs, 'data'>>;
   updateWorkoutPlanDayWorkout?: Resolver<ResolversTypes['WorkoutPlanDayWorkout'], ParentType, ContextType, RequireFields<MutationUpdateWorkoutPlanDayWorkoutArgs, 'data'>>;
