@@ -181,6 +181,7 @@ import {
 } from './workout/workoutSection'
 
 import {
+  createWorkoutSetWithWorkoutMoves,
   createWorkoutSet,
   updateWorkoutSet,
   deleteWorkoutSetById,
@@ -462,6 +463,7 @@ const resolvers: Resolvers = {
     deleteWorkoutSectionById,
     reorderWorkoutSections,
     //// Workout Set ////
+    createWorkoutSetWithWorkoutMoves,
     createWorkoutSet,
     updateWorkoutSet,
     duplicateWorkoutSetById,

@@ -308,6 +308,18 @@ input CreateWorkoutInput {
   name: String!
 }
 
+input CreateWorkoutMoveInSetInput {
+  Equipment: ConnectRelationInput
+  Move: ConnectRelationInput!
+  distanceUnit: DistanceUnit
+  loadAmount: Float!
+  loadUnit: LoadUnit
+  repType: WorkoutMoveRepType!
+  reps: Float!
+  sortPosition: Int!
+  timeUnit: TimeUnit
+}
+
 input CreateWorkoutMoveInput {
   Equipment: ConnectRelationInput
   Move: ConnectRelationInput!
@@ -366,6 +378,11 @@ input CreateWorkoutSetInput {
   duration: Int
   rounds: Int
   sortPosition: Int!
+}
+
+input CreateWorkoutSetWithWorkoutMovesInput {
+  workoutMoves: [CreateWorkoutMoveInSetInput!]!
+  workoutSet: CreateWorkoutSetInput!
 }
 
 input CreateWorkoutTagInput {
@@ -559,6 +576,7 @@ type Mutation {
   createWorkoutPlanReview(data: CreateWorkoutPlanReviewInput!): WorkoutPlanReview!
   createWorkoutSection(data: CreateWorkoutSectionInput!): WorkoutSection!
   createWorkoutSet(data: CreateWorkoutSetInput!): WorkoutSet!
+  createWorkoutSetWithWorkoutMoves(data: CreateWorkoutSetWithWorkoutMovesInput!): WorkoutSet!
   createWorkoutTag(data: CreateWorkoutTagInput!): WorkoutTag!
   deleteBodyTrackingEntryById(id: ID!): ID!
   deleteClubById(id: ID!): ID!

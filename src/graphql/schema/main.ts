@@ -243,6 +243,9 @@ export default gql`
       data: [UpdateSortPositionInput!]!
     ): [SortPositionUpdated!]!
     #### Workout Set ####
+    createWorkoutSetWithWorkoutMoves(
+      data: CreateWorkoutSetWithWorkoutMovesInput!
+    ): WorkoutSet!
     createWorkoutSet(data: CreateWorkoutSetInput!): WorkoutSet!
     updateWorkoutSet(data: UpdateWorkoutSetInput!): WorkoutSet!
     duplicateWorkoutSetById(id: ID!): WorkoutSet!
