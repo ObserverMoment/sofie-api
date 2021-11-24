@@ -23,6 +23,7 @@ export default gql`
     # The ID is the token string, we pass it to check that it is valid #
     checkClubInviteToken(id: ID!): CheckClubInviteTokenResult!
     #### Logged Workouts ####
+    logCountByWorkout(id: ID!): Int!
     lifetimeLogStatsSummary(userId: ID!): LifetimeLogStatsSummary!
     userLoggedWorkouts(take: Int): [LoggedWorkout!]!
     loggedWorkoutById(id: ID!): LoggedWorkout!

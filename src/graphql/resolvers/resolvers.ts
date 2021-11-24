@@ -60,6 +60,7 @@ import {
 
 import {
   lifetimeLogStatsSummary,
+  logCountByWorkout,
   userLoggedWorkouts,
   loggedWorkoutById,
   createLoggedWorkout,
@@ -283,6 +284,7 @@ const resolvers: Resolvers = {
     progressJournalById,
     //// Logged Workouts ////
     lifetimeLogStatsSummary,
+    logCountByWorkout,
     loggedWorkoutById,
     userLoggedWorkouts,
     //// Move ////

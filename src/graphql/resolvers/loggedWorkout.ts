@@ -10,6 +10,7 @@ import {
   MutationUpdateLoggedWorkoutArgs,
   MutationUpdateLoggedWorkoutSectionArgs,
   QueryLifetimeLogStatsSummaryArgs,
+  QueryLogCountByWorkoutArgs,
   QueryLoggedWorkoutByIdArgs,
   QueryUserLoggedWorkoutsArgs,
 } from '../../generated/graphql'
@@ -50,6 +51,33 @@ export const loggedWorkoutById = async (
     return loggedWorkout as LoggedWorkout
   } else {
     throw new ApolloError('loggedWorkoutById: There was an issue.')
+  }
+}
+
+/// How many logs have been created against the workout.
+export const logCountByWorkout = async (
+  r: any,
+  { id }: QueryLogCountByWorkoutArgs,
+  { prisma }: Context,
+) => {
+  const workoutWithCount = await prisma.workout.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      _count: {
+        select: {
+          LoggedWorkouts: true,
+        },
+      },
+    },
+  })
+
+  console.log(workoutWithCount?._count)
+
+  if (workoutWithCount?._count) {
+    return workoutWithCount._count.LoggedWorkouts
+  } else {
+    throw new ApolloError('logCountByWorkout: There was an issue.')
   }
 }
 

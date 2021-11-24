@@ -72,7 +72,7 @@ export const userWorkouts = async (
 export const workoutById = async (
   r: any,
   { id }: QueryWorkoutByIdArgs,
-  { authedUserId, select, prisma }: Context,
+  { select, prisma }: Context,
 ) => {
   const workout: any = await prisma.workout.findUnique({
     where: { id },

@@ -1292,6 +1292,7 @@ export type Query = {
   equipments: Array<Equipment>;
   gymProfiles: Array<GymProfile>;
   lifetimeLogStatsSummary: LifetimeLogStatsSummary;
+  logCountByWorkout: Scalars['Int'];
   loggedWorkoutById: LoggedWorkout;
   moveTypes: Array<MoveType>;
   progressJournalById: ProgressJournal;
@@ -1365,6 +1366,11 @@ export type QueryClubSummariesByIdArgs = {
 
 export type QueryLifetimeLogStatsSummaryArgs = {
   userId: Scalars['ID'];
+};
+
+
+export type QueryLogCountByWorkoutArgs = {
+  id: Scalars['ID'];
 };
 
 
@@ -2918,6 +2924,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   equipments?: Resolver<Array<ResolversTypes['Equipment']>, ParentType, ContextType>;
   gymProfiles?: Resolver<Array<ResolversTypes['GymProfile']>, ParentType, ContextType>;
   lifetimeLogStatsSummary?: Resolver<ResolversTypes['LifetimeLogStatsSummary'], ParentType, ContextType, RequireFields<QueryLifetimeLogStatsSummaryArgs, 'userId'>>;
+  logCountByWorkout?: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<QueryLogCountByWorkoutArgs, 'id'>>;
   loggedWorkoutById?: Resolver<ResolversTypes['LoggedWorkout'], ParentType, ContextType, RequireFields<QueryLoggedWorkoutByIdArgs, 'id'>>;
   moveTypes?: Resolver<Array<ResolversTypes['MoveType']>, ParentType, ContextType>;
   progressJournalById?: Resolver<ResolversTypes['ProgressJournal'], ParentType, ContextType, RequireFields<QueryProgressJournalByIdArgs, 'id'>>;
