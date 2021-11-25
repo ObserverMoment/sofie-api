@@ -1,7 +1,127 @@
 import { Prisma, PrismaClient } from '@prisma/client'
-import { WorkoutFiltersInput } from '../../../generated/graphql'
+import { Equipment, WorkoutFiltersInput } from '../../../generated/graphql'
 import { validateWorkoutMetaData } from '../../../lib/jsonValidation'
-import { WorkoutMetaDataPayload } from '../../../types'
+import { WorkoutMetaDataPayload, WorkoutSummaryData } from '../../../types'
+
+export const selectForWorkoutSummary = {
+  id: true,
+  createdAt: true,
+  name: true,
+  archived: true,
+  coverImageUri: true,
+  description: true,
+  difficultyLevel: true,
+  lengthMinutes: true,
+  WorkoutGoals: true,
+  WorkoutTags: true,
+  WorkoutSections: {
+    select: {
+      WorkoutSectionType: {
+        select: {
+          name: true,
+        },
+      },
+      classVideoUri: true,
+      classAudioUri: true,
+      WorkoutSets: {
+        select: {
+          WorkoutMoves: {
+            select: {
+              Equipment: true,
+              Move: {
+                select: {
+                  RequiredEquipments: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+  User: {
+    select: {
+      id: true,
+      displayName: true,
+      avatarUri: true,
+      userProfileScope: true,
+    },
+  },
+  _count: {
+    select: { LoggedWorkouts: true },
+  },
+}
+
+export function formatWorkoutSummaries(workouts: WorkoutSummaryData[]) {
+  return workouts.map((w) => formatWorkoutSummary(w))
+}
+
+export function formatWorkoutSummary(workout: WorkoutSummaryData) {
+  return {
+    id: workout.id,
+    createdAt: workout.createdAt,
+    archived: workout.archived,
+    name: workout.name,
+    User: workout.User,
+    lengthMinutes: workout.lengthMinutes,
+    coverImageUri: workout.coverImageUri,
+    description: workout.description,
+    difficultyLevel: workout.difficultyLevel,
+    loggedSessionsCount: workout._count?.LoggedWorkouts || 0,
+    hasClassVideo: workout.WorkoutSections.some((ws) => ws.classVideoUri),
+    hasClassAudio: workout.WorkoutSections.some((ws) => ws.classAudioUri),
+    equipments: uniqueEquipmentsInWorkout(workout).map((e) => e.name),
+    tags: workoutSectionTypesAndTags(workout),
+  }
+}
+
+export function uniqueEquipmentsInWorkout(
+  workout: WorkoutSummaryData,
+): Equipment[] {
+  const uniqueEquipmentIds: string[] = [] // For quick look up.
+  const uniqueEquipments: Equipment[] = []
+
+  for (const wSection of workout.WorkoutSections) {
+    for (const wSet of wSection.WorkoutSets) {
+      for (const wMove of wSet.WorkoutMoves) {
+        // Selectable
+        if (
+          wMove.Equipment &&
+          !uniqueEquipmentIds.includes(wMove.Equipment.id)
+        ) {
+          uniqueEquipmentIds.push(wMove.Equipment.id)
+          uniqueEquipments.push(wMove.Equipment)
+        }
+        // Required
+        for (const equipment of wMove.Move.RequiredEquipments) {
+          if (!uniqueEquipmentIds.includes(equipment.id)) {
+            uniqueEquipmentIds.push(equipment.id)
+            uniqueEquipments.push(equipment)
+          }
+        }
+      }
+    }
+  }
+
+  return uniqueEquipments
+}
+
+export function workoutSectionTypesAndTags(
+  workout: WorkoutSummaryData,
+): string[] {
+  const uniqueTags: string[] = []
+
+  for (const wSection of workout.WorkoutSections) {
+    if (!uniqueTags.includes(wSection.WorkoutSectionType.name)) {
+      uniqueTags.push(wSection.WorkoutSectionType.name)
+    }
+  }
+
+  uniqueTags.concat(workout.WorkoutGoals.map((goal) => goal.name))
+  uniqueTags.concat(workout.WorkoutTags.map((tag) => tag.tag))
+
+  return uniqueTags
+}
 
 export function formatWorkoutFiltersInput(filters: WorkoutFiltersInput) {
   return [

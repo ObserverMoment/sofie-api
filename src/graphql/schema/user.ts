@@ -26,6 +26,7 @@ export default gql`
     ProgressJournalGoalTags: [ProgressJournalGoalTag!]
   }
 
+  # Used for chat only - consider using UserSummary below and marging these two types.
   type UserAvatarData {
     id: ID!
     displayName: String!
@@ -78,7 +79,7 @@ export default gql`
     linkedinUrl: String
     countryCode: String
     displayName: String!
-    Workouts: [Workout!]!
+    Workouts: [WorkoutSummary!]!
     WorkoutPlans: [WorkoutPlan!]!
   }
 

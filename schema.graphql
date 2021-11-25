@@ -88,7 +88,7 @@ type Club {
   Members: [UserSummary!]!
   Owner: UserSummary!
   WorkoutPlans: [WorkoutPlan!]
-  Workouts: [Workout!]
+  Workouts: [WorkoutSummary!]
   contentAccessScope: ContentAccessScope!
   coverImageUri: String
   createdAt: DateTime!
@@ -130,7 +130,7 @@ type ClubSummary {
 type Collection {
   User: UserSummary!
   WorkoutPlans: [WorkoutPlan!]!
-  Workouts: [Workout!]!
+  Workouts: [WorkoutSummary!]!
   createdAt: DateTime!
   description: String
   id: ID!
@@ -474,12 +474,12 @@ type LoggedWorkout {
   GymProfile: GymProfile
   LoggedWorkoutSections: [LoggedWorkoutSection!]!
   ScheduledWorkout: ScheduledWorkout
-  Workout: Workout
   WorkoutGoals: [WorkoutGoal!]!
   completedOn: DateTime!
   id: ID!
   name: String!
   note: String
+  workoutId: ID
 }
 
 type LoggedWorkoutSection {
@@ -713,7 +713,7 @@ type Query {
   progressJournalGoalTags: [ProgressJournalGoalTag!]!
   publicClubs: [ClubSummary!]!
   publicWorkoutPlans(cursor: ID, filters: WorkoutPlanFiltersInput, take: Int): [WorkoutPlan!]!
-  publicWorkouts(cursor: ID, filters: WorkoutFiltersInput, take: Int): [Workout!]!
+  publicWorkouts(cursor: ID, filters: WorkoutFiltersInput, take: Int): [WorkoutSummary!]!
   standardMoves: [Move!]!
   textSearchUserPublicNames(text: String!): [TextSearchResult!]
   textSearchUserPublicProfiles(text: String!): [UserPublicProfile!]
@@ -741,7 +741,7 @@ type Query {
   userScheduledWorkouts: [ScheduledWorkout!]!
   userWorkoutPlans: [WorkoutPlan!]!
   userWorkoutTags: [WorkoutTag!]!
-  userWorkouts: [Workout!]!
+  userWorkouts: [WorkoutSummary!]!
   validateToken: Boolean!
   workoutById(id: ID!): Workout!
   workoutGoals: [WorkoutGoal!]!
@@ -772,7 +772,7 @@ input RemoveWorkoutPlanFromCollectionInput {
 
 type ScheduledWorkout {
   GymProfile: GymProfile
-  Workout: Workout
+  Workout: WorkoutSummary
   createdAt: DateTime!
   id: ID!
   loggedWorkoutId: ID
@@ -1187,7 +1187,7 @@ enum UserProfileScope {
 
 type UserPublicProfile {
   WorkoutPlans: [WorkoutPlan!]!
-  Workouts: [Workout!]!
+  Workouts: [WorkoutSummary!]!
   avatarUri: String
   bio: String
   countryCode: String
@@ -1408,6 +1408,23 @@ enum WorkoutSetGeneratorType {
   LADDERUP
   PYRAMIDDOWN
   PYRAMIDUP
+}
+
+type WorkoutSummary {
+  User: UserSummary!
+  archived: Boolean!
+  coverImageUri: String
+  createdAt: DateTime!
+  description: String
+  difficultyLevel: DifficultyLevel!
+  equipments: [String!]!
+  hasClassAudio: Boolean!
+  hasClassVideo: Boolean!
+  id: ID!
+  lengthMinutes: Int
+  loggedSessionsCount: Int!
+  name: String!
+  tags: [String!]!
 }
 
 type WorkoutTag {

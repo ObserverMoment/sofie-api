@@ -18,7 +18,10 @@ import {
 } from '../../generated/graphql'
 import { checkUserMediaForDeletion, deleteFiles } from '../../lib/uploadcare'
 import { AccessScopeError, checkUserOwnsObject } from '../utils'
-import { calcLifetimeLogStatsSummary } from './loggedWorkout'
+import {
+  formatWorkoutSummaries,
+  selectForWorkoutSummary,
+} from './workout/utils'
 
 //// Queries ////
 export const checkUniqueDisplayName = async (
@@ -112,13 +115,11 @@ export const userPublicProfiles = async (
       townCity: true,
       countryCode: true,
       displayName: true,
-      Workouts: {
-        select: { id: true },
-        where: { contentAccessScope: 'PUBLIC', archived: false },
-      },
-      WorkoutPlans: {
-        select: { id: true },
-        where: { contentAccessScope: 'PUBLIC', archived: false },
+      _count: {
+        select: {
+          Workouts: true,
+          WorkoutPlans: true,
+        },
       },
     },
   })
@@ -130,8 +131,8 @@ export const userPublicProfiles = async (
     townCity: u.townCity,
     countryCode: u.countryCode,
     displayName: u.displayName,
-    numberPublicWorkouts: u.Workouts.length,
-    numberPublicPlans: u.WorkoutPlans.length,
+    numberPublicWorkouts: u._count?.Workouts || 0,
+    numberPublicPlans: u._count?.WorkoutPlans || 0,
   }))
 
   return publicProfileSummaries as UserPublicProfileSummary[]
@@ -158,8 +159,8 @@ export const userPublicProfileById = async (
       ...select,
       Workouts: isPublic
         ? {
-            ...select.Workouts,
             where: { contentAccessScope: 'PUBLIC', archived: false },
+            select: selectForWorkoutSummary,
           }
         : null,
       WorkoutPlans: isPublic
@@ -189,7 +190,7 @@ export const userPublicProfileById = async (
           linkedinUrl: user.linkedinUrl,
           countryCode: user.countryCode,
           displayName: user.displayName,
-          Workouts: user.Workouts,
+          Workouts: formatWorkoutSummaries(user.Workouts),
           WorkoutPlans: user.WorkoutPlans,
         } as UserPublicProfile)
       : ({

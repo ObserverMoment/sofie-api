@@ -9,7 +9,7 @@ export default gql`
     loggedWorkoutId: ID
     workoutPlanEnrolmentId: ID
     GymProfile: GymProfile
-    Workout: Workout
+    Workout: WorkoutSummary
   }
 
   input CreateScheduledWorkoutInput {

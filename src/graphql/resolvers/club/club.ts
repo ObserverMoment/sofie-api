@@ -14,6 +14,10 @@ import {
   deleteStreamClubMemberChat,
 } from '../../../lib/getStream'
 import { checkClubMediaForDeletion, deleteFiles } from '../../../lib/uploadcare'
+import {
+  formatWorkoutSummaries,
+  selectForWorkoutSummary,
+} from '../workout/utils'
 import { checkUserIsOwnerOrAdminOfClub, ClubMemberType } from './utils'
 
 //// Queries ////
@@ -69,7 +73,12 @@ export const clubById = async (
 ) => {
   const club: any = await prisma.club.findUnique({
     where: { id },
-    select,
+    select: {
+      ...select,
+      Workouts: {
+        select: selectForWorkoutSummary,
+      },
+    },
   })
 
   if (!club) {
@@ -103,7 +112,7 @@ export const clubById = async (
       introVideoThumbUri: club.introVideoThumbUri,
       introAudioUri: club.introAudioUri,
       contentAccessScope: club.contentAccessScope,
-      Workouts: club.Workouts,
+      Workouts: formatWorkoutSummaries(club.Workouts),
       WorkoutPlans: club.WorkoutPlans,
     }
 
@@ -167,15 +176,22 @@ export const updateClub = async (
     data,
   )
 
-  const updated = await prisma.club.update({
+  const updated: any = await prisma.club.update({
     where: { id: data.id },
     data: {
       ...data,
       name: data.name || undefined,
       contentAccessScope: data.contentAccessScope || undefined,
     },
-    select,
+    select: {
+      ...select,
+      Workouts: {
+        select: selectForWorkoutSummary,
+      },
+    },
   })
+
+  updated.Workouts = formatWorkoutSummaries(updated.Workouts)
 
   if (updated) {
     if (fileIdsForDeletion) {

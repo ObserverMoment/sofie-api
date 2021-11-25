@@ -16,7 +16,7 @@ export default gql`
     introAudioUri: String
     contentAccessScope: ContentAccessScope!
     # Data should be viewable by club members only. Return null if not.
-    Workouts: [Workout!]
+    Workouts: [WorkoutSummary!]
     WorkoutPlans: [WorkoutPlan!]
     # Data should be viewable by club members, admins and owners only. Return null if not.
     ClubInviteTokens: [ClubInviteToken!]

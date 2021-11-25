@@ -81,8 +81,8 @@ export default gql`
       cursor: ID
       filters: WorkoutFiltersInput
       take: Int
-    ): [Workout!]!
-    userWorkouts: [Workout!]!
+    ): [WorkoutSummary!]!
+    userWorkouts: [WorkoutSummary!]!
     workoutById(id: ID!): Workout!
     #### Workout Programs and Enrolments ####
     publicWorkoutPlans(

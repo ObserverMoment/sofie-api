@@ -72,8 +72,6 @@ export const logCountByWorkout = async (
     },
   })
 
-  console.log(workoutWithCount?._count)
-
   if (workoutWithCount?._count) {
     return workoutWithCount._count.LoggedWorkouts
   } else {

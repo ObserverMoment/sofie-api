@@ -7,6 +7,7 @@ import {
   QueryPublicWorkoutsArgs,
   QueryWorkoutByIdArgs,
   Workout,
+  WorkoutSummary,
 } from '../../../generated/graphql'
 import { checkUserOwnsObject } from '../../utils'
 import {
@@ -17,7 +18,9 @@ import { Prisma } from '@prisma/client'
 import {
   formatWorkoutFiltersInput,
   formatWorkoutSectionFiltersInput,
+  selectForWorkoutSummary,
   updateWorkoutMetaData,
+  formatWorkoutSummaries,
 } from './utils'
 import { WorkoutFullData } from '../../../types'
 
@@ -26,7 +29,7 @@ import { WorkoutFullData } from '../../../types'
 export const publicWorkouts = async (
   r: any,
   { filters, take, cursor }: QueryPublicWorkoutsArgs,
-  { select, prisma }: Context,
+  { prisma }: Context,
 ) => {
   const publicWorkouts = await prisma.workout.findMany({
     where: {
@@ -47,26 +50,27 @@ export const publicWorkouts = async (
           id: cursor,
         }
       : undefined,
-    select,
+    select: selectForWorkoutSummary,
   })
 
-  return publicWorkouts as Workout[]
+  return formatWorkoutSummaries(publicWorkouts) as WorkoutSummary[]
 }
 
 // All user workouts, both public and private, but not archived.
 export const userWorkouts = async (
   r: any,
   a: any,
-  { authedUserId, select, prisma }: Context,
+  { authedUserId, prisma }: Context,
 ) => {
   const userWorkouts = await prisma.workout.findMany({
     where: { userId: authedUserId, archived: false },
     orderBy: {
       id: 'desc',
     },
-    select,
+    select: selectForWorkoutSummary,
   })
-  return userWorkouts as Workout[]
+
+  return formatWorkoutSummaries(userWorkouts) as WorkoutSummary[]
 }
 
 export const workoutById = async (

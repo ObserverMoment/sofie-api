@@ -7,7 +7,7 @@ export default gql`
     User: UserSummary!
     name: String!
     description: String
-    Workouts: [Workout!]!
+    Workouts: [WorkoutSummary!]!
     WorkoutPlans: [WorkoutPlan!]!
   }
 
