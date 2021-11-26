@@ -80,7 +80,7 @@ export default gql`
     countryCode: String
     displayName: String!
     Workouts: [WorkoutSummary!]!
-    WorkoutPlans: [WorkoutPlan!]!
+    WorkoutPlans: [WorkoutPlanSummary!]!
   }
 
   type UserPublicProfileSummary {

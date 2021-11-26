@@ -38,9 +38,9 @@ export default gql`
     #### Scheduled Workouts ####
     userScheduledWorkouts: [ScheduledWorkout!]!
     #### Text Search ####
-    textSearchWorkouts(text: String!): [Workout!]
+    textSearchWorkouts(text: String!): [WorkoutSummary!]
     textSearchWorkoutNames(text: String!): [TextSearchResult!]
-    textSearchWorkoutPlans(text: String!): [WorkoutPlan!]
+    textSearchWorkoutPlans(text: String!): [WorkoutPlanSummary!]
     textSearchWorkoutPlanNames(text: String!): [TextSearchResult!]
     textSearchUserPublicProfiles(text: String!): [UserPublicProfile!]
     textSearchUserPublicNames(text: String!): [TextSearchResult!]
@@ -84,16 +84,17 @@ export default gql`
     ): [WorkoutSummary!]!
     userWorkouts: [WorkoutSummary!]!
     workoutById(id: ID!): Workout!
-    #### Workout Programs and Enrolments ####
+    #### Workout Plans and Enrolments ####
     publicWorkoutPlans(
       cursor: ID
       filters: WorkoutPlanFiltersInput
       take: Int
-    ): [WorkoutPlan!]!
+    ): [WorkoutPlanSummary!]!
     workoutPlanById(id: ID!): WorkoutPlan!
-    userWorkoutPlans: [WorkoutPlan!]!
-    enrolledWorkoutPlans: [WorkoutPlan!]!
-    workoutPlanByEnrolmentId(id: ID!): WorkoutPlan!
+    userWorkoutPlans: [WorkoutPlanSummary!]!
+    #### Workout Plan Enrolments ####
+    workoutPlanEnrolmentById(id: ID!): WorkoutPlanEnrolmentWithPlan!
+    workoutPlanEnrolments: [WorkoutPlanEnrolmentSummary!]!
   }
 
   type Mutation {

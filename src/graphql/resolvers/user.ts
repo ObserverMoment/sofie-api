@@ -22,6 +22,10 @@ import {
   formatWorkoutSummaries,
   selectForWorkoutSummary,
 } from './workout/utils'
+import {
+  formatWorkoutPlanSummaries,
+  selectForWorkoutPlanSummary,
+} from './workoutPlan/utils'
 
 //// Queries ////
 export const checkUniqueDisplayName = async (
@@ -165,7 +169,7 @@ export const userPublicProfileById = async (
         : null,
       WorkoutPlans: isPublic
         ? {
-            ...select.WorkoutPlans,
+            select: selectForWorkoutPlanSummary,
             where: { contentAccessScope: 'PUBLIC', archived: false },
           }
         : null,
@@ -191,7 +195,7 @@ export const userPublicProfileById = async (
           countryCode: user.countryCode,
           displayName: user.displayName,
           Workouts: formatWorkoutSummaries(user.Workouts),
-          WorkoutPlans: user.WorkoutPlans,
+          WorkoutPlans: formatWorkoutPlanSummaries(user.WorkoutPlans),
         } as UserPublicProfile)
       : ({
           id: user.id,

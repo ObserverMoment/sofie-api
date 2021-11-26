@@ -18,7 +18,8 @@ import userBenchmark from './userBenchmark'
 import user from './user'
 import workout from './workout/workout'
 import workoutMove from './workout/workoutMove'
-import workoutPlan from './workoutPlan'
+import workoutPlan from './workoutPlan/workoutPlan'
+import workoutPlanEnrolment from './workoutPlan/workoutPlanEnrolment'
 import workoutSection from './workout/workoutSection'
 import workoutSet from './workout/workoutSet'
 
@@ -43,6 +44,7 @@ const typeDefs = mergeTypeDefs([
   workout,
   workoutMove,
   workoutPlan,
+  workoutPlanEnrolment,
   workoutSection,
   workoutSet,
 ])

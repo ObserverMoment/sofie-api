@@ -87,7 +87,7 @@ type Club {
   JoinClubRequests: [JoinClubRequest!]
   Members: [UserSummary!]!
   Owner: UserSummary!
-  WorkoutPlans: [WorkoutPlan!]
+  WorkoutPlans: [WorkoutPlanSummary!]
   Workouts: [WorkoutSummary!]
   contentAccessScope: ContentAccessScope!
   coverImageUri: String
@@ -129,7 +129,7 @@ type ClubSummary {
 
 type Collection {
   User: UserSummary!
-  WorkoutPlans: [WorkoutPlan!]!
+  WorkoutPlans: [WorkoutPlanSummary!]!
   Workouts: [WorkoutSummary!]!
   createdAt: DateTime!
   description: String
@@ -702,7 +702,6 @@ type Query {
   clubById(id: ID!): Club!
   clubMembersFeedPosts(clubId: ID!, limit: Int!, offset: Int!): [TimelinePostFullData!]!
   clubSummariesById(ids: [ID!]!): [ClubSummary!]!
-  enrolledWorkoutPlans: [WorkoutPlan!]!
   equipments: [Equipment!]!
   gymProfiles: [GymProfile!]!
   lifetimeLogStatsSummary(userId: ID!): LifetimeLogStatsSummary!
@@ -712,15 +711,15 @@ type Query {
   progressJournalById(id: ID!): ProgressJournal!
   progressJournalGoalTags: [ProgressJournalGoalTag!]!
   publicClubs: [ClubSummary!]!
-  publicWorkoutPlans(cursor: ID, filters: WorkoutPlanFiltersInput, take: Int): [WorkoutPlan!]!
+  publicWorkoutPlans(cursor: ID, filters: WorkoutPlanFiltersInput, take: Int): [WorkoutPlanSummary!]!
   publicWorkouts(cursor: ID, filters: WorkoutFiltersInput, take: Int): [WorkoutSummary!]!
   standardMoves: [Move!]!
   textSearchUserPublicNames(text: String!): [TextSearchResult!]
   textSearchUserPublicProfiles(text: String!): [UserPublicProfile!]
   textSearchWorkoutNames(text: String!): [TextSearchResult!]
   textSearchWorkoutPlanNames(text: String!): [TextSearchResult!]
-  textSearchWorkoutPlans(text: String!): [WorkoutPlan!]
-  textSearchWorkouts(text: String!): [Workout!]
+  textSearchWorkoutPlans(text: String!): [WorkoutPlanSummary!]
+  textSearchWorkouts(text: String!): [WorkoutSummary!]
   timelinePostsData(postDataRequests: [TimelinePostDataRequestInput!]!): [TimelinePostObjectData!]!
   userArchivedCustomMoves: [Move!]!
   userArchivedWorkoutPlans: [WorkoutPlan!]!
@@ -739,14 +738,15 @@ type Query {
   userPublicProfileById(userId: ID!): UserPublicProfile!
   userPublicProfiles(cursor: ID, take: Int): [UserPublicProfileSummary!]!
   userScheduledWorkouts: [ScheduledWorkout!]!
-  userWorkoutPlans: [WorkoutPlan!]!
+  userWorkoutPlans: [WorkoutPlanSummary!]!
   userWorkoutTags: [WorkoutTag!]!
   userWorkouts: [WorkoutSummary!]!
   validateToken: Boolean!
   workoutById(id: ID!): Workout!
   workoutGoals: [WorkoutGoal!]!
-  workoutPlanByEnrolmentId(id: ID!): WorkoutPlan!
   workoutPlanById(id: ID!): WorkoutPlan!
+  workoutPlanEnrolmentById(id: ID!): WorkoutPlanEnrolmentWithPlan!
+  workoutPlanEnrolments: [WorkoutPlanEnrolmentSummary!]!
   workoutSectionTypes: [WorkoutSectionType!]!
 }
 
@@ -1186,7 +1186,7 @@ enum UserProfileScope {
 }
 
 type UserPublicProfile {
-  WorkoutPlans: [WorkoutPlan!]!
+  WorkoutPlans: [WorkoutPlanSummary!]!
   Workouts: [WorkoutSummary!]!
   avatarUri: String
   bio: String
@@ -1325,6 +1325,18 @@ type WorkoutPlanEnrolment {
   startDate: DateTime!
 }
 
+type WorkoutPlanEnrolmentSummary {
+  WorkoutPlan: WorkoutPlanSummary!
+  completedPlanDayWorkoutIds: [String!]!
+  id: ID!
+  startDate: DateTime!
+}
+
+type WorkoutPlanEnrolmentWithPlan {
+  WorkoutPlan: WorkoutPlan!
+  WorkoutPlanEnrolment: WorkoutPlanEnrolment!
+}
+
 input WorkoutPlanFiltersInput {
   bodyweightOnly: Boolean
   daysPerWeek: Int
@@ -1339,6 +1351,24 @@ type WorkoutPlanReview {
   createdAt: DateTime!
   id: ID!
   score: Float!
+}
+
+type WorkoutPlanSummary {
+  User: UserSummary!
+  archived: Boolean!
+  coverImageUri: String
+  createdAt: DateTime!
+  daysPerWeek: Int!
+  description: String
+  enrolmentsCount: Int!
+  goals: [WorkoutGoal!]!
+  id: ID!
+  lengthWeeks: Int!
+  name: String!
+  reviewCount: Int!
+  reviewScore: Float
+  tags: [String!]!
+  workoutsCount: Int!
 }
 
 type WorkoutSection {

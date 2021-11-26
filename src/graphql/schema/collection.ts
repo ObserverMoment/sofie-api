@@ -8,7 +8,7 @@ export default gql`
     name: String!
     description: String
     Workouts: [WorkoutSummary!]!
-    WorkoutPlans: [WorkoutPlan!]!
+    WorkoutPlans: [WorkoutPlanSummary!]!
   }
 
   input CreateCollectionInput {

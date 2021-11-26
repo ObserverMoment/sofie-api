@@ -17,7 +17,7 @@ export default gql`
     contentAccessScope: ContentAccessScope!
     # Data should be viewable by club members only. Return null if not.
     Workouts: [WorkoutSummary!]
-    WorkoutPlans: [WorkoutPlan!]
+    WorkoutPlans: [WorkoutPlanSummary!]
     # Data should be viewable by club members, admins and owners only. Return null if not.
     ClubInviteTokens: [ClubInviteToken!]
     JoinClubInvites: [JoinClubInvite!]

@@ -66,6 +66,57 @@ export type WorkoutSummaryData = Prisma.WorkoutGetPayload<{
   }
 }>
 
+// Data payload required to be able to form up WorkoutSummary data.
+export type WorkoutPlanSummaryData = Prisma.WorkoutPlanGetPayload<{
+  select: {
+    id: true
+    createdAt: true
+    archived: true
+    name: true
+    description: true
+    coverImageUri: true
+    lengthWeeks: true
+    daysPerWeek: true
+    User: {
+      select: {
+        id: true
+        displayName: true
+        avatarUri: true
+        userProfileScope: true
+      }
+    }
+    WorkoutTags: {
+      select: {
+        tag: true
+      }
+    }
+    WorkoutPlanDays: {
+      select: {
+        WorkoutPlanDayWorkouts: {
+          select: {
+            Workout: {
+              select: {
+                WorkoutGoals: true
+              }
+            }
+          }
+        }
+      }
+    }
+
+    WorkoutPlanReviews: {
+      select: {
+        score: true
+      }
+    }
+    _count: {
+      select: {
+        WorkoutPlanEnrolments: true
+      }
+    }
+  }
+}>
+
 /// For creating a duplicate of a workout.
 export type WorkoutFullData = Prisma.WorkoutGetPayload<{
   include: {

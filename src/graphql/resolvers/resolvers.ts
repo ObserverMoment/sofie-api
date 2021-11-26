@@ -214,15 +214,18 @@ import {
   updateWorkoutPlanDayWorkout,
   deleteWorkoutPlanDayWorkoutById,
   reorderWorkoutPlanDayWorkouts,
-  enrolledWorkoutPlans,
-  workoutPlanByEnrolmentId,
-  createWorkoutPlanEnrolment,
-  updateWorkoutPlanEnrolment,
-  deleteWorkoutPlanEnrolmentById,
   createWorkoutPlanReview,
   updateWorkoutPlanReview,
   deleteWorkoutPlanReviewById,
-} from './workoutPlan'
+} from './workoutPlan/workoutPlan'
+
+import {
+  workoutPlanEnrolments,
+  workoutPlanEnrolmentById,
+  createWorkoutPlanEnrolment,
+  updateWorkoutPlanEnrolment,
+  deleteWorkoutPlanEnrolmentById,
+} from './workoutPlan/workoutPlanEnrolments'
 
 import { GraphQLScalarType } from 'graphql'
 import GraphQLJSON from 'graphql-type-json'
@@ -332,8 +335,8 @@ const resolvers: Resolvers = {
     publicWorkoutPlans,
     userWorkoutPlans,
     workoutPlanById,
-    enrolledWorkoutPlans,
-    workoutPlanByEnrolmentId,
+    workoutPlanEnrolments,
+    workoutPlanEnrolmentById,
   },
   Mutation: {
     ///////////////

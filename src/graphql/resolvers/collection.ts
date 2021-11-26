@@ -10,6 +10,7 @@ import {
   MutationRemoveWorkoutPlanFromCollectionArgs,
   MutationUpdateCollectionArgs,
   QueryUserCollectionByIdArgs,
+  WorkoutPlanSummary,
   WorkoutSummary,
 } from '../../generated/graphql'
 import { checkUserOwnsObject } from '../utils'
@@ -17,28 +18,49 @@ import {
   formatWorkoutSummaries,
   selectForWorkoutSummary,
 } from './workout/utils'
+import {
+  formatWorkoutPlanSummaries,
+  selectForWorkoutPlanSummary,
+} from './workoutPlan/utils'
 
 //// Queries ////
 export const userCollections = async (
   r: any,
   a: any,
-  { authedUserId, select, prisma }: Context,
+  { authedUserId, prisma }: Context,
 ) => {
-  const collections: any = await prisma.collection.findMany({
+  const collections = await prisma.collection.findMany({
     where: {
       userId: authedUserId,
     },
     select: {
-      ...select,
+      id: true,
+      createdAt: true,
+      name: true,
+      description: true,
+      User: {
+        select: {
+          id: true,
+          displayName: true,
+          avatarUri: true,
+          userProfileScope: true,
+        },
+      },
       Workouts: {
         select: selectForWorkoutSummary,
+      },
+      WorkoutPlans: {
+        select: selectForWorkoutPlanSummary,
       },
     },
   })
 
-  const formattedCollections = collections.map((c: any) => ({
+  const formattedCollections = collections.map((c) => ({
     ...c,
     Workouts: formatWorkoutSummaries(c.Workouts) as WorkoutSummary[],
+    WorkoutPlans: formatWorkoutPlanSummaries(
+      c.WorkoutPlans,
+    ) as WorkoutPlanSummary[],
   }))
 
   return formattedCollections as Collection[]

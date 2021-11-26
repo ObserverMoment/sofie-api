@@ -18,6 +18,10 @@ import {
   formatWorkoutSummaries,
   selectForWorkoutSummary,
 } from '../workout/utils'
+import {
+  formatWorkoutPlanSummaries,
+  selectForWorkoutPlanSummary,
+} from '../workoutPlan/utils'
 import { checkUserIsOwnerOrAdminOfClub, ClubMemberType } from './utils'
 
 //// Queries ////
@@ -78,6 +82,9 @@ export const clubById = async (
       Workouts: {
         select: selectForWorkoutSummary,
       },
+      WorkoutPlans: {
+        select: selectForWorkoutPlanSummary,
+      },
     },
   })
 
@@ -95,7 +102,11 @@ export const clubById = async (
       : 'NONE'
 
   if (memberType === 'OWNER' || memberType === 'ADMIN') {
-    return club as Club
+    return {
+      ...club,
+      Workouts: formatWorkoutSummaries(club.Workouts),
+      WorkoutPlans: formatWorkoutPlanSummaries(club.WorkoutPlans),
+    } as Club
   } else if (memberType === 'MEMBER') {
     // Exclude the membership related data.
     const clubMemberData = {
@@ -113,7 +124,7 @@ export const clubById = async (
       introAudioUri: club.introAudioUri,
       contentAccessScope: club.contentAccessScope,
       Workouts: formatWorkoutSummaries(club.Workouts),
-      WorkoutPlans: club.WorkoutPlans,
+      WorkoutPlans: formatWorkoutPlanSummaries(club.WorkoutPlans),
     }
 
     return clubMemberData as Club
