@@ -24,6 +24,7 @@ import {
 } from './bodyTracking'
 
 import {
+  checkUniqueClubName,
   userClubs,
   publicClubs,
   clubSummariesById,
@@ -272,6 +273,7 @@ const resolvers: Resolvers = {
     workoutGoals,
     workoutSectionTypes,
     ///// Clubs ////
+    checkUniqueClubName,
     publicClubs,
     clubSummariesById,
     userClubs,

@@ -13,6 +13,7 @@ export default gql`
     workoutGoals: [WorkoutGoal!]!
     workoutSectionTypes: [WorkoutSectionType!]!
     #### Clubs ####
+    checkUniqueClubName(name: String!): Boolean!
     # Public club summary data for use displaying chat previews.
     clubSummariesById(ids: [ID!]!): [ClubSummary!]!
     # ClubFinder functionality.

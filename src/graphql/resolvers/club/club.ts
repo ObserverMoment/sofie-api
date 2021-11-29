@@ -6,6 +6,7 @@ import {
   MutationCreateClubArgs,
   MutationDeleteClubByIdArgs,
   MutationUpdateClubArgs,
+  QueryCheckUniqueClubNameArgs,
   QueryClubByIdArgs,
   QueryClubSummariesByIdArgs,
 } from '../../../generated/graphql'
@@ -25,6 +26,17 @@ import {
 import { checkUserIsOwnerOrAdminOfClub, ClubMemberType } from './utils'
 
 //// Queries ////
+export const checkUniqueClubName = async (
+  r: any,
+  { name }: QueryCheckUniqueClubNameArgs,
+  { prisma }: Context,
+) => {
+  const club = await prisma.club.findUnique({
+    where: { name },
+  })
+  return club === null
+}
+
 export const userClubs = async (
   r: any,
   a: any,
@@ -199,10 +211,14 @@ export const updateClub = async (
       Workouts: {
         select: selectForWorkoutSummary,
       },
+      WorkoutPlans: {
+        select: selectForWorkoutPlanSummary,
+      },
     },
   })
 
   updated.Workouts = formatWorkoutSummaries(updated.Workouts)
+  updated.WorkoutPlans = formatWorkoutPlanSummaries(updated.WorkoutPlans)
 
   if (updated) {
     if (fileIdsForDeletion) {

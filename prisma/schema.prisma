@@ -157,7 +157,7 @@ model User {
   avatarUri               String?
   introVideoUri           String?
   introVideoThumbUri      String?
-  displayName             String                   @unique @default(cuid())
+  displayName             String                   @unique
   firstname               String?
   lastname                String?
   bio                     String?
@@ -251,7 +251,7 @@ model UserBenchmarkEntry {
 model Club {
   id                 String             @id @default(uuid())
   createdAt          DateTime           @default(now())
-  name               String
+  name               String             @unique
   description        String?
   location           String?
   coverImageUri      String?
