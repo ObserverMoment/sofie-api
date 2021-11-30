@@ -590,7 +590,7 @@ export type Mutation = {
   createWorkoutPlan: WorkoutPlan;
   createWorkoutPlanDayWithWorkout: WorkoutPlanDay;
   createWorkoutPlanDayWorkout: WorkoutPlanDayWorkout;
-  createWorkoutPlanEnrolment: WorkoutPlanEnrolment;
+  createWorkoutPlanEnrolment: WorkoutPlanEnrolmentWithPlan;
   createWorkoutPlanReview: WorkoutPlanReview;
   createWorkoutSection: WorkoutSection;
   createWorkoutSet: WorkoutSet;
@@ -2851,7 +2851,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createWorkoutPlan?: Resolver<ResolversTypes['WorkoutPlan'], ParentType, ContextType, RequireFields<MutationCreateWorkoutPlanArgs, 'data'>>;
   createWorkoutPlanDayWithWorkout?: Resolver<ResolversTypes['WorkoutPlanDay'], ParentType, ContextType, RequireFields<MutationCreateWorkoutPlanDayWithWorkoutArgs, 'data'>>;
   createWorkoutPlanDayWorkout?: Resolver<ResolversTypes['WorkoutPlanDayWorkout'], ParentType, ContextType, RequireFields<MutationCreateWorkoutPlanDayWorkoutArgs, 'data'>>;
-  createWorkoutPlanEnrolment?: Resolver<ResolversTypes['WorkoutPlanEnrolment'], ParentType, ContextType, RequireFields<MutationCreateWorkoutPlanEnrolmentArgs, 'workoutPlanId'>>;
+  createWorkoutPlanEnrolment?: Resolver<ResolversTypes['WorkoutPlanEnrolmentWithPlan'], ParentType, ContextType, RequireFields<MutationCreateWorkoutPlanEnrolmentArgs, 'workoutPlanId'>>;
   createWorkoutPlanReview?: Resolver<ResolversTypes['WorkoutPlanReview'], ParentType, ContextType, RequireFields<MutationCreateWorkoutPlanReviewArgs, 'data'>>;
   createWorkoutSection?: Resolver<ResolversTypes['WorkoutSection'], ParentType, ContextType, RequireFields<MutationCreateWorkoutSectionArgs, 'data'>>;
   createWorkoutSet?: Resolver<ResolversTypes['WorkoutSet'], ParentType, ContextType, RequireFields<MutationCreateWorkoutSetArgs, 'data'>>;

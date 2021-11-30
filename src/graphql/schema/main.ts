@@ -85,7 +85,7 @@ export default gql`
     ): [WorkoutSummary!]!
     userWorkouts: [WorkoutSummary!]!
     workoutById(id: ID!): Workout!
-    #### Workout Plans and Enrolments ####
+    #### Workout Plans ####
     publicWorkoutPlans(
       cursor: ID
       filters: WorkoutPlanFiltersInput
@@ -294,7 +294,9 @@ export default gql`
       data: [UpdateSortPositionInput!]!
     ): [SortPositionUpdated!]!
     #### Workout Plan Enrolment ####
-    createWorkoutPlanEnrolment(workoutPlanId: ID!): WorkoutPlanEnrolment!
+    createWorkoutPlanEnrolment(
+      workoutPlanId: ID!
+    ): WorkoutPlanEnrolmentWithPlan!
     updateWorkoutPlanEnrolment(
       data: UpdateWorkoutPlanEnrolmentInput!
     ): WorkoutPlanEnrolment!

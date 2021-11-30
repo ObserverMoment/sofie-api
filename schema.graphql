@@ -572,7 +572,7 @@ type Mutation {
   createWorkoutPlan(data: CreateWorkoutPlanInput!): WorkoutPlan!
   createWorkoutPlanDayWithWorkout(data: CreateWorkoutPlanDayWithWorkoutInput!): WorkoutPlanDay!
   createWorkoutPlanDayWorkout(data: CreateWorkoutPlanDayWorkoutInput!): WorkoutPlanDayWorkout!
-  createWorkoutPlanEnrolment(workoutPlanId: ID!): WorkoutPlanEnrolment!
+  createWorkoutPlanEnrolment(workoutPlanId: ID!): WorkoutPlanEnrolmentWithPlan!
   createWorkoutPlanReview(data: CreateWorkoutPlanReviewInput!): WorkoutPlanReview!
   createWorkoutSection(data: CreateWorkoutSectionInput!): WorkoutSection!
   createWorkoutSet(data: CreateWorkoutSetInput!): WorkoutSet!

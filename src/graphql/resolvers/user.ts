@@ -1,3 +1,4 @@
+import { PrismaClient } from '.prisma/client'
 import { ApolloError } from 'apollo-server-express'
 import { Context } from '../..'
 import {
@@ -33,10 +34,8 @@ export const checkUniqueDisplayName = async (
   { displayName }: QueryCheckUniqueDisplayNameArgs,
   { prisma }: Context,
 ) => {
-  const user = await prisma.user.findUnique({
-    where: { displayName },
-  })
-  return user === null
+  const isAvailable = await displayNameIsAvailable(displayName, prisma)
+  return isAvailable
 }
 
 export const authedUser = async (
@@ -322,4 +321,22 @@ export const deleteWorkoutTagById = async (
   } else {
     throw new ApolloError('deleteWorkoutTagById: There was an issue.')
   }
+}
+
+/////// Utils ///////
+/// case insensitive check for a previously existing user with this name.
+export async function displayNameIsAvailable(
+  name: string,
+  prisma: PrismaClient,
+): Promise<boolean> {
+  const users = await prisma.user.findMany({
+    where: {
+      displayName: {
+        equals: name,
+        mode: 'insensitive',
+      },
+    },
+  })
+
+  return users !== null && users.length === 0
 }

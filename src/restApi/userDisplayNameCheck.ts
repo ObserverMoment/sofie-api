@@ -1,5 +1,6 @@
 import { PrismaClient } from '.prisma/client'
 import { Request, Response } from 'express'
+import { displayNameIsAvailable } from '../graphql/resolvers/user'
 
 export default async function (
   req: Request,
@@ -15,12 +16,10 @@ export default async function (
         .status(401)
         .json({ error: 'Please provide the query parameter [name].' })
     } else {
-      const user = await prisma.user.findUnique({
-        where: { displayName: name },
-      })
+      const isAvailable = await displayNameIsAvailable(name, prisma)
 
       res.json({
-        isUnique: user === null,
+        isAvailable: isAvailable,
       })
     }
   } catch (e) {

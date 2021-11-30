@@ -89,7 +89,7 @@ export const createWorkoutPlanEnrolment = async (
   { workoutPlanId }: MutationCreateWorkoutPlanEnrolmentArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  const workoutPlanEnrolment = await prisma.workoutPlanEnrolment.create({
+  const workoutPlanEnrolment: any = await prisma.workoutPlanEnrolment.create({
     data: {
       User: {
         connect: { id: authedUserId },
@@ -98,11 +98,27 @@ export const createWorkoutPlanEnrolment = async (
         connect: { id: workoutPlanId },
       },
     },
-    select,
+    select: {
+      id: true,
+      completedPlanDayWorkoutIds: true,
+      startDate: true,
+      User: {
+        select: {
+          id: true,
+          displayName: true,
+          avatarUri: true,
+          userProfileScope: true,
+        },
+      },
+      WorkoutPlan: select.WorkoutPlan,
+    },
   })
 
   if (workoutPlanEnrolment) {
-    return workoutPlanEnrolment as WorkoutPlanEnrolment
+    return {
+      WorkoutPlan: workoutPlanEnrolment.WorkoutPlan,
+      WorkoutPlanEnrolment: workoutPlanEnrolment,
+    } as WorkoutPlanEnrolmentWithPlan
   } else {
     throw new ApolloError('createWorkoutPlanEnrolment: There was an issue.')
   }

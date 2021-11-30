@@ -31,10 +31,16 @@ export const checkUniqueClubName = async (
   { name }: QueryCheckUniqueClubNameArgs,
   { prisma }: Context,
 ) => {
-  const club = await prisma.club.findUnique({
-    where: { name },
+  const clubs = await prisma.club.findMany({
+    where: {
+      name: {
+        equals: name,
+        mode: 'insensitive',
+      },
+    },
   })
-  return club === null
+
+  return clubs !== null && clubs.length === 0
 }
 
 export const userClubs = async (
