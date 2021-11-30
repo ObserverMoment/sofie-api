@@ -13,6 +13,7 @@ import { firebaseVerifyToken } from './lib/firebaseAdmin'
 import { initGetStreamClients } from './lib/getStream'
 import registerNewUser from './restApi/registerNewUser'
 import currentUser from './restApi/currentUser'
+import userDisplayNameCheck from './restApi/userDisplayNameCheck'
 import dotenv from 'dotenv'
 import { Resolvers } from './generated/graphql'
 
@@ -102,10 +103,17 @@ async function startApolloServer(
   const httpServer = http.createServer(app)
 
   // RESTful Setup // - used for registration and auth.
+  // https://stackoverflow.com/questions/66525078/bodyparser-is-deprecated
+  app.use(express.urlencoded({ extended: true }))
+  app.use(express.json()) // To parse the incoming requests with JSON payloads
+
   app.post('/api/user/register', (req, res) =>
     registerNewUser(req, res, prisma),
   )
-  app.post('/api/user/current', (req, res) => currentUser(req, res, prisma))
+  app.get('/api/user/current', (req, res) => currentUser(req, res, prisma))
+  app.get('/api/user/name-check', (req, res) =>
+    userDisplayNameCheck(req, res, prisma),
+  )
 
   // GraphQL Setup //
   const schema = makeExecutableSchema({

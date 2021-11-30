@@ -6,6 +6,7 @@ import {
   MutationCreateClubArgs,
   MutationDeleteClubByIdArgs,
   MutationUpdateClubArgs,
+  QueryCheckUniqueClubNameArgs,
   QueryClubByIdArgs,
   QueryClubSummariesByIdArgs,
 } from '../../../generated/graphql'
@@ -14,9 +15,34 @@ import {
   deleteStreamClubMemberChat,
 } from '../../../lib/getStream'
 import { checkClubMediaForDeletion, deleteFiles } from '../../../lib/uploadcare'
+import {
+  formatWorkoutSummaries,
+  selectForWorkoutSummary,
+} from '../workout/utils'
+import {
+  formatWorkoutPlanSummaries,
+  selectForWorkoutPlanSummary,
+} from '../workoutPlan/utils'
 import { checkUserIsOwnerOrAdminOfClub, ClubMemberType } from './utils'
 
 //// Queries ////
+export const checkUniqueClubName = async (
+  r: any,
+  { name }: QueryCheckUniqueClubNameArgs,
+  { prisma }: Context,
+) => {
+  const clubs = await prisma.club.findMany({
+    where: {
+      name: {
+        equals: name,
+        mode: 'insensitive',
+      },
+    },
+  })
+
+  return clubs !== null && clubs.length === 0
+}
+
 export const userClubs = async (
   r: any,
   a: any,
@@ -69,7 +95,15 @@ export const clubById = async (
 ) => {
   const club: any = await prisma.club.findUnique({
     where: { id },
-    select,
+    select: {
+      ...select,
+      Workouts: {
+        select: selectForWorkoutSummary,
+      },
+      WorkoutPlans: {
+        select: selectForWorkoutPlanSummary,
+      },
+    },
   })
 
   if (!club) {
@@ -86,7 +120,11 @@ export const clubById = async (
       : 'NONE'
 
   if (memberType === 'OWNER' || memberType === 'ADMIN') {
-    return club as Club
+    return {
+      ...club,
+      Workouts: formatWorkoutSummaries(club.Workouts),
+      WorkoutPlans: formatWorkoutPlanSummaries(club.WorkoutPlans),
+    } as Club
   } else if (memberType === 'MEMBER') {
     // Exclude the membership related data.
     const clubMemberData = {
@@ -103,8 +141,8 @@ export const clubById = async (
       introVideoThumbUri: club.introVideoThumbUri,
       introAudioUri: club.introAudioUri,
       contentAccessScope: club.contentAccessScope,
-      Workouts: club.Workouts,
-      WorkoutPlans: club.WorkoutPlans,
+      Workouts: formatWorkoutSummaries(club.Workouts),
+      WorkoutPlans: formatWorkoutPlanSummaries(club.WorkoutPlans),
     }
 
     return clubMemberData as Club
@@ -167,15 +205,26 @@ export const updateClub = async (
     data,
   )
 
-  const updated = await prisma.club.update({
+  const updated: any = await prisma.club.update({
     where: { id: data.id },
     data: {
       ...data,
       name: data.name || undefined,
       contentAccessScope: data.contentAccessScope || undefined,
     },
-    select,
+    select: {
+      ...select,
+      Workouts: {
+        select: selectForWorkoutSummary,
+      },
+      WorkoutPlans: {
+        select: selectForWorkoutPlanSummary,
+      },
+    },
   })
+
+  updated.Workouts = formatWorkoutSummaries(updated.Workouts)
+  updated.WorkoutPlans = formatWorkoutPlanSummaries(updated.WorkoutPlans)
 
   if (updated) {
     if (fileIdsForDeletion) {

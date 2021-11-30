@@ -24,4 +24,21 @@ export default gql`
     rounds: Int
     duration: Int
   }
+
+  input CreateWorkoutSetWithWorkoutMovesInput {
+    workoutSet: CreateWorkoutSetInput!
+    workoutMoves: [CreateWorkoutMoveInSetInput!]!
+  }
+
+  input CreateWorkoutMoveInSetInput {
+    sortPosition: Int!
+    reps: Float!
+    repType: WorkoutMoveRepType!
+    distanceUnit: DistanceUnit
+    loadAmount: Float!
+    loadUnit: LoadUnit
+    timeUnit: TimeUnit
+    Move: ConnectRelationInput!
+    Equipment: ConnectRelationInput
+  }
 `

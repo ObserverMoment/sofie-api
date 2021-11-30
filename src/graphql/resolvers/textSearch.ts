@@ -5,14 +5,22 @@ import {
   QueryTextSearchWorkoutsArgs,
   TextSearchResult,
   UserPublicProfile,
-  Workout,
-  WorkoutPlan,
+  WorkoutPlanSummary,
+  WorkoutSummary,
 } from '../../generated/graphql'
+import {
+  formatWorkoutSummaries,
+  selectForWorkoutSummary,
+} from './workout/utils'
+import {
+  formatWorkoutPlanSummaries,
+  selectForWorkoutPlanSummary,
+} from './workoutPlan/utils'
 
 export const textSearchWorkouts = async (
   r: any,
   { text }: QueryTextSearchWorkoutsArgs,
-  { select, prisma }: Context,
+  { prisma }: Context,
 ) => {
   const workouts = await prisma.workout.findMany({
     where: {
@@ -23,9 +31,9 @@ export const textSearchWorkouts = async (
         mode: 'insensitive',
       },
     },
-    select,
+    select: selectForWorkoutSummary,
   })
-  return workouts as Workout[]
+  return formatWorkoutSummaries(workouts) as WorkoutSummary[]
 }
 
 export const textSearchWorkoutNames = async (
@@ -53,7 +61,7 @@ export const textSearchWorkoutNames = async (
 export const textSearchWorkoutPlans = async (
   r: any,
   { text }: QueryTextSearchWorkoutPlansArgs,
-  { select, prisma }: Context,
+  { prisma }: Context,
 ) => {
   const workoutPlans = await prisma.workoutPlan.findMany({
     where: {
@@ -64,9 +72,9 @@ export const textSearchWorkoutPlans = async (
         mode: 'insensitive',
       },
     },
-    select,
+    select: selectForWorkoutPlanSummary,
   })
-  return workoutPlans as WorkoutPlan[]
+  return formatWorkoutPlanSummaries(workoutPlans) as WorkoutPlanSummary[]
 }
 
 export const textSearchWorkoutPlanNames = async (

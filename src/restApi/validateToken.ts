@@ -3,7 +3,7 @@ import { ContextUserType } from '..'
 import { firebaseVerifyToken } from '../lib/firebaseAdmin'
 
 export default async function (
-  authHeader: string,
+  authHeader: string | undefined,
   res: any,
 ): Promise<auth.DecodedIdToken | undefined> {
   const authToken = authHeader ? authHeader.replace('Bearer ', '') : null

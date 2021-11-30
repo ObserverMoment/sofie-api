@@ -10,6 +10,7 @@ import {
   MutationUpdateLoggedWorkoutArgs,
   MutationUpdateLoggedWorkoutSectionArgs,
   QueryLifetimeLogStatsSummaryArgs,
+  QueryLogCountByWorkoutArgs,
   QueryLoggedWorkoutByIdArgs,
   QueryUserLoggedWorkoutsArgs,
 } from '../../generated/graphql'
@@ -28,7 +29,7 @@ export const userLoggedWorkouts = async (
     orderBy: {
       completedOn: 'desc',
     },
-    take: take ?? 50,
+    take: take ?? undefined,
     select,
   })
   return loggedWorkouts as LoggedWorkout[]
@@ -50,6 +51,31 @@ export const loggedWorkoutById = async (
     return loggedWorkout as LoggedWorkout
   } else {
     throw new ApolloError('loggedWorkoutById: There was an issue.')
+  }
+}
+
+/// How many logs have been created against the workout.
+export const logCountByWorkout = async (
+  r: any,
+  { id }: QueryLogCountByWorkoutArgs,
+  { prisma }: Context,
+) => {
+  const workoutWithCount = await prisma.workout.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      _count: {
+        select: {
+          LoggedWorkouts: true,
+        },
+      },
+    },
+  })
+
+  if (workoutWithCount?._count) {
+    return workoutWithCount._count.LoggedWorkouts
+  } else {
+    throw new ApolloError('logCountByWorkout: There was an issue.')
   }
 }
 
@@ -235,7 +261,7 @@ export async function calcLifetimeLogStatsSummary(
 
   const sessionsLogged = loggedWorkouts.length
 
-  const minutesWorked = loggedWorkouts.reduce((acum, nextLog) => {
+  const secondsWorked = loggedWorkouts.reduce((acum, nextLog) => {
     return (
       acum +
       nextLog.LoggedWorkoutSections.reduce((acum, nextSection) => {
@@ -249,7 +275,7 @@ export async function calcLifetimeLogStatsSummary(
   if (loggedWorkouts) {
     return {
       sessionsLogged,
-      minutesWorked,
+      minutesWorked: Math.round(secondsWorked / 60),
     } as LifetimeLogStatsSummary
   } else {
     throw new ApolloError('calcLifetimeLogStatsSummary: There was an issue.')

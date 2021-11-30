@@ -1,3 +1,4 @@
+import { PrismaClient } from '.prisma/client'
 import { ApolloError } from 'apollo-server-express'
 import { Context } from '../..'
 import {
@@ -18,7 +19,14 @@ import {
 } from '../../generated/graphql'
 import { checkUserMediaForDeletion, deleteFiles } from '../../lib/uploadcare'
 import { AccessScopeError, checkUserOwnsObject } from '../utils'
-import { calcLifetimeLogStatsSummary } from './loggedWorkout'
+import {
+  formatWorkoutSummaries,
+  selectForWorkoutSummary,
+} from './workout/utils'
+import {
+  formatWorkoutPlanSummaries,
+  selectForWorkoutPlanSummary,
+} from './workoutPlan/utils'
 
 //// Queries ////
 export const checkUniqueDisplayName = async (
@@ -26,10 +34,8 @@ export const checkUniqueDisplayName = async (
   { displayName }: QueryCheckUniqueDisplayNameArgs,
   { prisma }: Context,
 ) => {
-  const user = await prisma.user.findUnique({
-    where: { displayName },
-  })
-  return user === null
+  const isAvailable = await displayNameIsAvailable(displayName, prisma)
+  return isAvailable
 }
 
 export const authedUser = async (
@@ -112,13 +118,11 @@ export const userPublicProfiles = async (
       townCity: true,
       countryCode: true,
       displayName: true,
-      Workouts: {
-        select: { id: true },
-        where: { contentAccessScope: 'PUBLIC', archived: false },
-      },
-      WorkoutPlans: {
-        select: { id: true },
-        where: { contentAccessScope: 'PUBLIC', archived: false },
+      _count: {
+        select: {
+          Workouts: true,
+          WorkoutPlans: true,
+        },
       },
     },
   })
@@ -130,8 +134,8 @@ export const userPublicProfiles = async (
     townCity: u.townCity,
     countryCode: u.countryCode,
     displayName: u.displayName,
-    numberPublicWorkouts: u.Workouts.length,
-    numberPublicPlans: u.WorkoutPlans.length,
+    numberPublicWorkouts: u._count?.Workouts || 0,
+    numberPublicPlans: u._count?.WorkoutPlans || 0,
   }))
 
   return publicProfileSummaries as UserPublicProfileSummary[]
@@ -158,13 +162,13 @@ export const userPublicProfileById = async (
       ...select,
       Workouts: isPublic
         ? {
-            ...select.Workouts,
             where: { contentAccessScope: 'PUBLIC', archived: false },
+            select: selectForWorkoutSummary,
           }
         : null,
       WorkoutPlans: isPublic
         ? {
-            ...select.WorkoutPlans,
+            select: selectForWorkoutPlanSummary,
             where: { contentAccessScope: 'PUBLIC', archived: false },
           }
         : null,
@@ -189,8 +193,8 @@ export const userPublicProfileById = async (
           linkedinUrl: user.linkedinUrl,
           countryCode: user.countryCode,
           displayName: user.displayName,
-          Workouts: user.Workouts,
-          WorkoutPlans: user.WorkoutPlans,
+          Workouts: formatWorkoutSummaries(user.Workouts),
+          WorkoutPlans: formatWorkoutPlanSummaries(user.WorkoutPlans),
         } as UserPublicProfile)
       : ({
           id: user.id,
@@ -317,4 +321,22 @@ export const deleteWorkoutTagById = async (
   } else {
     throw new ApolloError('deleteWorkoutTagById: There was an issue.')
   }
+}
+
+/////// Utils ///////
+/// case insensitive check for a previously existing user with this name.
+export async function displayNameIsAvailable(
+  name: string,
+  prisma: PrismaClient,
+): Promise<boolean> {
+  const users = await prisma.user.findMany({
+    where: {
+      displayName: {
+        equals: name,
+        mode: 'insensitive',
+      },
+    },
+  })
+
+  return users !== null && users.length === 0
 }

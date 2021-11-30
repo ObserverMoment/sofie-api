@@ -13,10 +13,10 @@ export default gql`
     completedOn: DateTime!
     name: String!
     note: String
+    workoutId: ID # Scalar.
     GymProfile: GymProfile
     LoggedWorkoutSections: [LoggedWorkoutSection!]!
     ScheduledWorkout: ScheduledWorkout
-    Workout: Workout
     WorkoutGoals: [WorkoutGoal!]!
   }
 

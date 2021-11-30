@@ -8,6 +8,7 @@ import {
   ScheduledWorkout,
 } from '../../generated/graphql'
 import { checkUserOwnsObject } from '../utils'
+import { formatWorkoutSummary, selectForWorkoutSummary } from './workout/utils'
 
 //// Queries ////
 export const userScheduledWorkouts = async (
@@ -15,11 +16,22 @@ export const userScheduledWorkouts = async (
   a: any,
   { authedUserId, select, prisma }: Context,
 ) => {
-  const scheduledWorkouts = await prisma.scheduledWorkout.findMany({
+  const scheduledWorkouts: any = await prisma.scheduledWorkout.findMany({
     where: { userId: authedUserId },
-    select,
+    select: {
+      ...select,
+      Workout: {
+        select: selectForWorkoutSummary,
+      },
+    },
   })
-  return scheduledWorkouts as ScheduledWorkout[]
+
+  const formatted = scheduledWorkouts.map((s: any) => ({
+    ...s,
+    Workout: formatWorkoutSummary(s.Workout),
+  }))
+
+  return formatted as ScheduledWorkout[]
 }
 
 //// Mutations ////
@@ -28,7 +40,7 @@ export const createScheduledWorkout = async (
   { data }: MutationCreateScheduledWorkoutArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  const scheduledWorkout = await prisma.scheduledWorkout.create({
+  const scheduledWorkout: any = await prisma.scheduledWorkout.create({
     data: {
       ...data,
       Workout: {
@@ -48,8 +60,15 @@ export const createScheduledWorkout = async (
         connect: { id: authedUserId },
       },
     },
-    select,
+    select: {
+      ...select,
+      Workout: {
+        select: selectForWorkoutSummary,
+      },
+    },
   })
+
+  scheduledWorkout.Workout = formatWorkoutSummary(scheduledWorkout.Workout)
 
   if (scheduledWorkout) {
     return scheduledWorkout as ScheduledWorkout
@@ -65,7 +84,7 @@ export const updateScheduledWorkout = async (
 ) => {
   await checkUserOwnsObject(data.id, 'scheduledWorkout', authedUserId, prisma)
 
-  const updated = await prisma.scheduledWorkout.update({
+  const updated: any = await prisma.scheduledWorkout.update({
     where: { id: data.id },
     data: {
       ...data,
@@ -92,8 +111,15 @@ export const updateScheduledWorkout = async (
           }
         : undefined,
     },
-    select,
+    select: {
+      ...select,
+      Workout: {
+        select: selectForWorkoutSummary,
+      },
+    },
   })
+
+  updated.Workout = formatWorkoutSummary(updated.Workout)
 
   if (updated) {
     return updated as ScheduledWorkout

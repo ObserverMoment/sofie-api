@@ -8,6 +8,10 @@ import {
   MutationRemoveWorkoutPlanFromClubArgs,
 } from '../../../generated/graphql'
 import { checkUserOwnsObject } from '../../utils'
+import {
+  formatWorkoutSummaries,
+  selectForWorkoutSummary,
+} from '../workout/utils'
 import { checkUserIsOwnerOrAdminOfClub } from './utils'
 
 export const addWorkoutToClub = async (
@@ -18,15 +22,22 @@ export const addWorkoutToClub = async (
   await checkUserIsOwnerOrAdminOfClub(clubId, authedUserId, prisma)
   await checkUserOwnsObject(workoutId, 'workout', authedUserId, prisma)
 
-  const updated = await prisma.club.update({
+  const updated: any = await prisma.club.update({
     where: { id: clubId },
     data: {
       Workouts: {
         connect: { id: workoutId },
       },
     },
-    select,
+    select: {
+      ...select,
+      Workouts: {
+        select: selectForWorkoutSummary,
+      },
+    },
   })
+
+  updated.Workouts = formatWorkoutSummaries(updated.Workouts)
 
   if (updated) {
     return updated as Club
@@ -43,15 +54,22 @@ export const removeWorkoutFromClub = async (
   await checkUserIsOwnerOrAdminOfClub(clubId, authedUserId, prisma)
   await checkUserOwnsObject(workoutId, 'workout', authedUserId, prisma)
 
-  const updated = await prisma.club.update({
+  const updated: any = await prisma.club.update({
     where: { id: clubId },
     data: {
       Workouts: {
         disconnect: { id: workoutId },
       },
     },
-    select,
+    select: {
+      ...select,
+      Workouts: {
+        select: selectForWorkoutSummary,
+      },
+    },
   })
+
+  updated.Workouts = formatWorkoutSummaries(updated.Workouts)
 
   if (updated) {
     return updated as Club
@@ -68,15 +86,22 @@ export const addWorkoutPlanToClub = async (
   await checkUserIsOwnerOrAdminOfClub(clubId, authedUserId, prisma)
   await checkUserOwnsObject(workoutPlanId, 'workoutPlan', authedUserId, prisma)
 
-  const updated = await prisma.club.update({
+  const updated: any = await prisma.club.update({
     where: { id: clubId },
     data: {
       WorkoutPlans: {
         connect: { id: workoutPlanId },
       },
     },
-    select,
+    select: {
+      ...select,
+      Workouts: {
+        select: selectForWorkoutSummary,
+      },
+    },
   })
+
+  updated.Workouts = formatWorkoutSummaries(updated.Workouts)
 
   if (updated) {
     return updated as Club
@@ -93,15 +118,22 @@ export const removeWorkoutPlanFromClub = async (
   await checkUserIsOwnerOrAdminOfClub(clubId, authedUserId, prisma)
   await checkUserOwnsObject(workoutPlanId, 'workoutPlan', authedUserId, prisma)
 
-  const updated = await prisma.club.update({
+  const updated: any = await prisma.club.update({
     where: { id: clubId },
     data: {
       WorkoutPlans: {
         disconnect: { id: workoutPlanId },
       },
     },
-    select,
+    select: {
+      ...select,
+      Workouts: {
+        select: selectForWorkoutSummary,
+      },
+    },
   })
+
+  updated.Workouts = formatWorkoutSummaries(updated.Workouts)
 
   if (updated) {
     return updated as Club

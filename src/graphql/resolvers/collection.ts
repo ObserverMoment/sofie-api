@@ -10,22 +10,60 @@ import {
   MutationRemoveWorkoutPlanFromCollectionArgs,
   MutationUpdateCollectionArgs,
   QueryUserCollectionByIdArgs,
+  WorkoutPlanSummary,
+  WorkoutSummary,
 } from '../../generated/graphql'
 import { checkUserOwnsObject } from '../utils'
+import {
+  formatWorkoutSummaries,
+  selectForWorkoutSummary,
+} from './workout/utils'
+import {
+  formatWorkoutPlanSummaries,
+  selectForWorkoutPlanSummary,
+} from './workoutPlan/utils'
 
 //// Queries ////
 export const userCollections = async (
   r: any,
   a: any,
-  { authedUserId, select, prisma }: Context,
+  { authedUserId, prisma }: Context,
 ) => {
   const collections = await prisma.collection.findMany({
     where: {
       userId: authedUserId,
     },
-    select,
+    select: {
+      id: true,
+      createdAt: true,
+      name: true,
+      description: true,
+      User: {
+        select: {
+          id: true,
+          displayName: true,
+          avatarUri: true,
+          userProfileScope: true,
+        },
+      },
+      Workouts: {
+        select: selectForWorkoutSummary,
+      },
+      WorkoutPlans: {
+        select: selectForWorkoutPlanSummary,
+      },
+    },
   })
-  return collections as Collection[]
+
+  const formattedCollections = collections.map((c) => ({
+    ...c,
+    Workouts: formatWorkoutSummaries(c.Workouts) as WorkoutSummary[],
+    WorkoutPlans: formatWorkoutPlanSummaries(
+      c.WorkoutPlans,
+    ) as WorkoutPlanSummary[],
+  }))
+
+  return formattedCollections as Collection[]
 }
 
 export const userCollectionById = async (
@@ -33,13 +71,23 @@ export const userCollectionById = async (
   { id }: QueryUserCollectionByIdArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  const collection = await prisma.collection.findFirst({
+  const collection: any = await prisma.collection.findFirst({
     where: {
       id: id,
       userId: authedUserId,
     },
-    select,
+    select: {
+      ...select,
+      Workouts: {
+        select: selectForWorkoutSummary,
+      },
+    },
   })
+
+  collection.Workouts = formatWorkoutSummaries(
+    collection.Workouts,
+  ) as WorkoutSummary[]
+
   return collection as Collection
 }
 
@@ -73,14 +121,23 @@ export const updateCollection = async (
 ) => {
   await checkUserOwnsObject(data.id, 'collection', authedUserId, prisma)
 
-  const updated = await prisma.collection.update({
+  const updated: any = await prisma.collection.update({
     where: { id: data.id },
     data: {
       ...data,
       name: data.name || undefined,
     },
-    select,
+    select: {
+      ...select,
+      Workouts: {
+        select: selectForWorkoutSummary,
+      },
+    },
   })
+
+  updated.Workouts = formatWorkoutSummaries(
+    updated.Workouts,
+  ) as WorkoutSummary[]
 
   if (updated) {
     return updated as Collection
@@ -122,15 +179,24 @@ export const addWorkoutToCollection = async (
     prisma,
   )
 
-  const updated = await prisma.collection.update({
+  const updated: any = await prisma.collection.update({
     where: { id: data.collectionId },
     data: {
       Workouts: {
         connect: data.Workout,
       },
     },
-    select,
+    select: {
+      ...select,
+      Workouts: {
+        select: selectForWorkoutSummary,
+      },
+    },
   })
+
+  updated.Workouts = formatWorkoutSummaries(
+    updated.Workouts,
+  ) as WorkoutSummary[]
 
   if (updated) {
     return updated as Collection
@@ -151,15 +217,24 @@ export const removeWorkoutFromCollection = async (
     prisma,
   )
 
-  const updated = await prisma.collection.update({
+  const updated: any = await prisma.collection.update({
     where: { id: data.collectionId },
     data: {
       Workouts: {
         disconnect: data.Workout,
       },
     },
-    select,
+    select: {
+      ...select,
+      Workouts: {
+        select: selectForWorkoutSummary,
+      },
+    },
   })
+
+  updated.Workouts = formatWorkoutSummaries(
+    updated.Workouts,
+  ) as WorkoutSummary[]
 
   if (updated) {
     return updated as Collection
@@ -180,15 +255,24 @@ export const addWorkoutPlanToCollection = async (
     prisma,
   )
 
-  const updated = await prisma.collection.update({
+  const updated: any = await prisma.collection.update({
     where: { id: data.collectionId },
     data: {
       WorkoutPlans: {
         connect: data.WorkoutPlan,
       },
     },
-    select,
+    select: {
+      ...select,
+      Workouts: {
+        select: selectForWorkoutSummary,
+      },
+    },
   })
+
+  updated.Workouts = formatWorkoutSummaries(
+    updated.Workouts,
+  ) as WorkoutSummary[]
 
   if (updated) {
     return updated as Collection
@@ -209,15 +293,24 @@ export const removeWorkoutPlanFromCollection = async (
     prisma,
   )
 
-  const updated = await prisma.collection.update({
+  const updated: any = await prisma.collection.update({
     where: { id: data.collectionId },
     data: {
       WorkoutPlans: {
         disconnect: data.WorkoutPlan,
       },
     },
-    select,
+    select: {
+      ...select,
+      Workouts: {
+        select: selectForWorkoutSummary,
+      },
+    },
   })
+
+  updated.Workouts = formatWorkoutSummaries(
+    updated.Workouts,
+  ) as WorkoutSummary[]
 
   if (updated) {
     return updated as Collection

@@ -1,8 +1,13 @@
 import { PrismaClient } from '@prisma/client'
 import { getUserChatToken, getUserFeedToken } from '../lib/getStream'
 import validateToken from './validateToken'
+import { Request, Response } from 'express'
 
-export default async function (req: any, res: any, prisma: PrismaClient) {
+export default async function (
+  req: Request,
+  res: Response,
+  prisma: PrismaClient,
+) {
   try {
     const decodedToken = await validateToken(req.headers.authorization, res)
 

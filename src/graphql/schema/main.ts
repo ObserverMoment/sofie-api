@@ -13,6 +13,7 @@ export default gql`
     workoutGoals: [WorkoutGoal!]!
     workoutSectionTypes: [WorkoutSectionType!]!
     #### Clubs ####
+    checkUniqueClubName(name: String!): Boolean!
     # Public club summary data for use displaying chat previews.
     clubSummariesById(ids: [ID!]!): [ClubSummary!]!
     # ClubFinder functionality.
@@ -23,6 +24,7 @@ export default gql`
     # The ID is the token string, we pass it to check that it is valid #
     checkClubInviteToken(id: ID!): CheckClubInviteTokenResult!
     #### Logged Workouts ####
+    logCountByWorkout(id: ID!): Int!
     lifetimeLogStatsSummary(userId: ID!): LifetimeLogStatsSummary!
     userLoggedWorkouts(take: Int): [LoggedWorkout!]!
     loggedWorkoutById(id: ID!): LoggedWorkout!
@@ -30,16 +32,16 @@ export default gql`
     standardMoves: [Move!]!
     userCustomMoves: [Move!]!
     #### Progress Journal ####
-    bodyTransformationPhotos: [BodyTransformationPhoto!]!
+    bodyTrackingEntries: [BodyTrackingEntry!]!
     userProgressJournals: [ProgressJournal!]!
     progressJournalById(id: ID!): ProgressJournal!
     progressJournalGoalTags: [ProgressJournalGoalTag!]!
     #### Scheduled Workouts ####
     userScheduledWorkouts: [ScheduledWorkout!]!
     #### Text Search ####
-    textSearchWorkouts(text: String!): [Workout!]
+    textSearchWorkouts(text: String!): [WorkoutSummary!]
     textSearchWorkoutNames(text: String!): [TextSearchResult!]
-    textSearchWorkoutPlans(text: String!): [WorkoutPlan!]
+    textSearchWorkoutPlans(text: String!): [WorkoutPlanSummary!]
     textSearchWorkoutPlanNames(text: String!): [TextSearchResult!]
     textSearchUserPublicProfiles(text: String!): [UserPublicProfile!]
     textSearchUserPublicNames(text: String!): [TextSearchResult!]
@@ -80,19 +82,20 @@ export default gql`
       cursor: ID
       filters: WorkoutFiltersInput
       take: Int
-    ): [Workout!]!
-    userWorkouts: [Workout!]!
+    ): [WorkoutSummary!]!
+    userWorkouts: [WorkoutSummary!]!
     workoutById(id: ID!): Workout!
-    #### Workout Programs and Enrolments ####
+    #### Workout Plans ####
     publicWorkoutPlans(
       cursor: ID
       filters: WorkoutPlanFiltersInput
       take: Int
-    ): [WorkoutPlan!]!
+    ): [WorkoutPlanSummary!]!
     workoutPlanById(id: ID!): WorkoutPlan!
-    userWorkoutPlans: [WorkoutPlan!]!
-    enrolledWorkoutPlans: [WorkoutPlan!]!
-    workoutPlanByEnrolmentId(id: ID!): WorkoutPlan!
+    userWorkoutPlans: [WorkoutPlanSummary!]!
+    #### Workout Plan Enrolments ####
+    workoutPlanEnrolmentById(id: ID!): WorkoutPlanEnrolmentWithPlan!
+    workoutPlanEnrolments: [WorkoutPlanEnrolmentSummary!]!
   }
 
   type Mutation {
@@ -134,18 +137,19 @@ export default gql`
     createGymProfile(data: CreateGymProfileInput!): GymProfile!
     updateGymProfile(data: UpdateGymProfileInput!): GymProfile!
     deleteGymProfileById(id: ID!): ID
+    #### Progress Body Tracking ####
+    createBodyTrackingEntry(
+      data: CreateBodyTrackingEntryInput!
+    ): BodyTrackingEntry!
+    updateBodyTrackingEntry(
+      data: UpdateBodyTrackingEntryInput!
+    ): BodyTrackingEntry!
+    deleteBodyTrackingEntryById(id: ID!): ID!
     #### Progress Journal ####
     createProgressJournal(data: CreateProgressJournalInput!): ProgressJournal!
     updateProgressJournal(data: UpdateProgressJournalInput!): ProgressJournal!
     deleteProgressJournalById(id: ID!): ID!
     #### Progress Journal Entry ####
-    createBodyTransformationPhotos(
-      data: [CreateBodyTransformationPhotoInput!]!
-    ): [BodyTransformationPhoto!]!
-    updateBodyTransformationPhoto(
-      data: UpdateBodyTransformationPhotoInput!
-    ): BodyTransformationPhoto!
-    deleteBodyTransformationPhotosById(ids: [ID!]!): [ID!]!
     createProgressJournalEntry(
       data: CreateProgressJournalEntryInput!
     ): ProgressJournalEntry!
@@ -242,6 +246,9 @@ export default gql`
       data: [UpdateSortPositionInput!]!
     ): [SortPositionUpdated!]!
     #### Workout Set ####
+    createWorkoutSetWithWorkoutMoves(
+      data: CreateWorkoutSetWithWorkoutMovesInput!
+    ): WorkoutSet!
     createWorkoutSet(data: CreateWorkoutSetInput!): WorkoutSet!
     updateWorkoutSet(data: UpdateWorkoutSetInput!): WorkoutSet!
     duplicateWorkoutSetById(id: ID!): WorkoutSet!
@@ -252,6 +259,7 @@ export default gql`
     #### Workout Move ####
     createWorkoutMove(data: CreateWorkoutMoveInput!): WorkoutMove!
     updateWorkoutMove(data: UpdateWorkoutMoveInput!): WorkoutMove!
+    updateWorkoutMoves(data: [UpdateWorkoutMoveInput!]!): [WorkoutMove!]!
     deleteWorkoutMoveById(id: ID!): ID!
     duplicateWorkoutMoveById(id: ID!): WorkoutMove!
     reorderWorkoutMoves(
@@ -286,7 +294,9 @@ export default gql`
       data: [UpdateSortPositionInput!]!
     ): [SortPositionUpdated!]!
     #### Workout Plan Enrolment ####
-    createWorkoutPlanEnrolment(workoutPlanId: ID!): WorkoutPlanEnrolment!
+    createWorkoutPlanEnrolment(
+      workoutPlanId: ID!
+    ): WorkoutPlanEnrolmentWithPlan!
     updateWorkoutPlanEnrolment(
       data: UpdateWorkoutPlanEnrolmentInput!
     ): WorkoutPlanEnrolment!

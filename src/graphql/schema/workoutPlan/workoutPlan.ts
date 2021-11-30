@@ -1,6 +1,25 @@
 import { gql } from 'apollo-server-express'
 
 export default gql`
+  # Min data required to render a summary / card with key data for this plan.
+  type WorkoutPlanSummary {
+    id: ID!
+    createdAt: DateTime!
+    archived: Boolean!
+    name: String!
+    description: String
+    coverImageUri: String
+    lengthWeeks: Int!
+    daysPerWeek: Int!
+    workoutsCount: Int!
+    User: UserSummary!
+    enrolmentsCount: Int!
+    goals: [WorkoutGoal!]!
+    tags: [String!]!
+    reviewScore: Float
+    reviewCount: Int!
+  }
+
   type WorkoutPlan {
     id: ID!
     createdAt: DateTime!
@@ -15,10 +34,10 @@ export default gql`
     introAudioUri: String
     contentAccessScope: ContentAccessScope!
     User: UserSummary!
-    WorkoutPlanEnrolments: [WorkoutPlanEnrolment!]!
     WorkoutPlanDays: [WorkoutPlanDay!]!
     WorkoutPlanReviews: [WorkoutPlanReview!]!
     WorkoutTags: [WorkoutTag!]!
+    WorkoutPlanEnrolments: [WorkoutPlanEnrolment!]!
   }
 
   # Just creates the basic required fields to make a fresh, empty plan in the DB ready for CRUDing.
@@ -94,19 +113,6 @@ export default gql`
     note: String
     WorkoutPlanDay: ConnectRelationInput
     Workout: ConnectRelationInput
-  }
-
-  type WorkoutPlanEnrolment {
-    id: ID!
-    startDate: DateTime!
-    completedPlanDayWorkoutIds: [String!]!
-    User: UserSummary!
-  }
-
-  input UpdateWorkoutPlanEnrolmentInput {
-    id: ID!
-    startDate: DateTime
-    completedPlanDayWorkoutIds: [String!]
   }
 
   type WorkoutPlanReview {

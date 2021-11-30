@@ -17,13 +17,14 @@ import {
 } from './archive'
 
 import {
-  bodyTransformationPhotos,
-  createBodyTransformationPhotos,
-  updateBodyTransformationPhoto,
-  deleteBodyTransformationPhotosById,
-} from './bodyTransformation'
+  bodyTrackingEntries,
+  createBodyTrackingEntry,
+  updateBodyTrackingEntry,
+  deleteBodyTrackingEntryById,
+} from './bodyTracking'
 
 import {
+  checkUniqueClubName,
   userClubs,
   publicClubs,
   clubSummariesById,
@@ -60,6 +61,7 @@ import {
 
 import {
   lifetimeLogStatsSummary,
+  logCountByWorkout,
   userLoggedWorkouts,
   loggedWorkoutById,
   createLoggedWorkout,
@@ -181,6 +183,7 @@ import {
 } from './workout/workoutSection'
 
 import {
+  createWorkoutSetWithWorkoutMoves,
   createWorkoutSet,
   updateWorkoutSet,
   deleteWorkoutSetById,
@@ -191,6 +194,7 @@ import {
 import {
   createWorkoutMove,
   updateWorkoutMove,
+  updateWorkoutMoves,
   duplicateWorkoutMoveById,
   deleteWorkoutMoveById,
   reorderWorkoutMoves,
@@ -211,15 +215,18 @@ import {
   updateWorkoutPlanDayWorkout,
   deleteWorkoutPlanDayWorkoutById,
   reorderWorkoutPlanDayWorkouts,
-  enrolledWorkoutPlans,
-  workoutPlanByEnrolmentId,
-  createWorkoutPlanEnrolment,
-  updateWorkoutPlanEnrolment,
-  deleteWorkoutPlanEnrolmentById,
   createWorkoutPlanReview,
   updateWorkoutPlanReview,
   deleteWorkoutPlanReviewById,
-} from './workoutPlan'
+} from './workoutPlan/workoutPlan'
+
+import {
+  workoutPlanEnrolments,
+  workoutPlanEnrolmentById,
+  createWorkoutPlanEnrolment,
+  updateWorkoutPlanEnrolment,
+  deleteWorkoutPlanEnrolmentById,
+} from './workoutPlan/workoutPlanEnrolments'
 
 import { GraphQLScalarType } from 'graphql'
 import GraphQLJSON from 'graphql-type-json'
@@ -266,6 +273,7 @@ const resolvers: Resolvers = {
     workoutGoals,
     workoutSectionTypes,
     ///// Clubs ////
+    checkUniqueClubName,
     publicClubs,
     clubSummariesById,
     userClubs,
@@ -273,13 +281,15 @@ const resolvers: Resolvers = {
     clubMembersFeedPosts,
     ///// Invites ////
     checkClubInviteToken,
+    //// Progress Body Tracking ////
+    bodyTrackingEntries,
     //// Progress Journal ////
-    bodyTransformationPhotos,
     userProgressJournals,
     progressJournalGoalTags,
     progressJournalById,
     //// Logged Workouts ////
     lifetimeLogStatsSummary,
+    logCountByWorkout,
     loggedWorkoutById,
     userLoggedWorkouts,
     //// Move ////
@@ -327,8 +337,8 @@ const resolvers: Resolvers = {
     publicWorkoutPlans,
     userWorkoutPlans,
     workoutPlanById,
-    enrolledWorkoutPlans,
-    workoutPlanByEnrolmentId,
+    workoutPlanEnrolments,
+    workoutPlanEnrolmentById,
   },
   Mutation: {
     ///////////////
@@ -371,12 +381,15 @@ const resolvers: Resolvers = {
     createGymProfile,
     updateGymProfile,
     deleteGymProfileById,
+    ////////////////////////////////
+    //// Progress Body Tracking ////
+    ///////////////////////////////
+    createBodyTrackingEntry,
+    updateBodyTrackingEntry,
+    deleteBodyTrackingEntryById,
     //////////////////////////
     //// Progress Journal ////
     //////////////////////////
-    createBodyTransformationPhotos,
-    updateBodyTransformationPhoto,
-    deleteBodyTransformationPhotosById,
     createProgressJournal,
     updateProgressJournal,
     deleteProgressJournalById,
@@ -457,6 +470,7 @@ const resolvers: Resolvers = {
     deleteWorkoutSectionById,
     reorderWorkoutSections,
     //// Workout Set ////
+    createWorkoutSetWithWorkoutMoves,
     createWorkoutSet,
     updateWorkoutSet,
     duplicateWorkoutSetById,
@@ -465,6 +479,7 @@ const resolvers: Resolvers = {
     //// Workout Move ////
     createWorkoutMove,
     updateWorkoutMove,
+    updateWorkoutMoves,
     duplicateWorkoutMoveById,
     deleteWorkoutMoveById,
     reorderWorkoutMoves,
