@@ -137,6 +137,7 @@ export type ClubSummary = {
   Members: Array<UserSummary>;
   Owner: UserSummary;
   coverImageUri?: Maybe<Scalars['String']>;
+  createdAt: Scalars['DateTime'];
   description?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
   location?: Maybe<Scalars['String']>;
@@ -2688,6 +2689,7 @@ export type ClubSummaryResolvers<ContextType = any, ParentType extends Resolvers
   Members?: Resolver<Array<ResolversTypes['UserSummary']>, ParentType, ContextType>;
   Owner?: Resolver<ResolversTypes['UserSummary'], ParentType, ContextType>;
   coverImageUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   location?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
