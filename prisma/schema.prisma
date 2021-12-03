@@ -166,11 +166,10 @@ model User {
   gender                  Gender                   @default(PNTS)
   townCity                String?
   countryCode             String?
-  instagramUrl            String?
-  tiktokUrl               String?
-  youtubeUrl              String?
-  snapUrl                 String?
-  linkedinUrl             String?
+  instagramHandle         String?
+  tiktokHandle            String?
+  youtubeHandle           String?
+  linkedinHandle          String?
   ClubsWhereOwner         Club[]                   @relation("owner")
   ClubInviteTokens        ClubInviteToken[]
   Collections             Collection[]

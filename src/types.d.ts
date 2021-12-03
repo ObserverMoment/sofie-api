@@ -14,6 +14,31 @@ export type ClubWithMemberIdsPayload = Prisma.ClubGetPayload<{
   }
 }>
 
+export type ClubSummaryData = Prisma.ClubGetPayload<{
+  select: {
+    id: true
+    createdAt: true
+    name: true
+    description: true
+    coverImageUri: true
+    location: true
+    _count: {
+      select: {
+        Members: true
+        Admins: true
+      }
+    }
+    Owner: {
+      select: {
+        id: true
+        displayName: true
+        avatarUri: true
+        userProfileScope: true
+      }
+    }
+  }
+}>
+
 // Data payload required to be able to form up WorkoutSummary data.
 export type WorkoutSummaryData = Prisma.WorkoutGetPayload<{
   select: {

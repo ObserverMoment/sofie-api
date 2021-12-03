@@ -72,25 +72,31 @@ export default gql`
     bio: String
     tagline: String
     townCity: String
-    instagramUrl: String
-    tiktokUrl: String
-    youtubeUrl: String
-    snapUrl: String
-    linkedinUrl: String
+    instagramHandle: String
+    tiktokHandle: String
+    youtubeHandle: String
+    linkedinHandle: String
     countryCode: String
     displayName: String!
-    Workouts: [WorkoutSummary!]!
-    WorkoutPlans: [WorkoutPlanSummary!]!
+    followerCount: Int
+    postsCount: Int
+    workoutCount: Int
+    planCount: Int
+    Clubs: [ClubSummary!]! # Public only
+    LifetimeLogStatsSummary: LifetimeLogStatsSummary
+    BenchmarksWithBestEntries: [UserBenchmarkWithBestEntry!]!
   }
 
   type UserPublicProfileSummary {
     id: ID!
+    userProfileScope: UserProfileScope!
     avatarUri: String
     tagline: String
     townCity: String
     countryCode: String
     displayName: String!
-    numberPublicWorkouts: Int!
-    numberPublicPlans: Int!
+    workoutCount: Int!
+    planCount: Int!
+    Clubs: [ClubSummary!]! # Public only
   }
 `

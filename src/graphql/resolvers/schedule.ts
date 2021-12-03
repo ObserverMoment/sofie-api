@@ -8,7 +8,8 @@ import {
   ScheduledWorkout,
 } from '../../generated/graphql'
 import { checkUserOwnsObject } from '../utils'
-import { formatWorkoutSummary, selectForWorkoutSummary } from './workout/utils'
+import { selectForWorkoutSummary } from './selectDefinitions'
+import { formatWorkoutSummary } from './workout/utils'
 
 //// Queries ////
 export const userScheduledWorkouts = async (

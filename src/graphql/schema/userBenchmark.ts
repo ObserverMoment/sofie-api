@@ -1,6 +1,21 @@
 import { gql } from 'apollo-server-express'
 
 export default gql`
+  type UserBenchmarkSummary {
+    id: String!
+    lastEntryAt: DateTime!
+    name: String!
+    equipmentInfo: String
+    benchmarkType: BenchmarkType!
+    loadUnit: LoadUnit!
+  }
+
+  # Display these publically
+  type UserBenchmarkWithBestEntry {
+    UserBenchmarkSummary: UserBenchmarkSummary!
+    BestEntry: UserBenchmarkEntry!
+  }
+
   type UserBenchmark {
     id: String!
     createdAt: DateTime!

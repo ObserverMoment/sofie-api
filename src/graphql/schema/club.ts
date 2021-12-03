@@ -32,9 +32,8 @@ export default gql`
     description: String
     coverImageUri: String
     location: String
+    memberCount: Int!
     Owner: UserSummary!
-    Admins: [UserSummary!]!
-    Members: [UserSummary!]!
   }
 
   input CreateClubInput {

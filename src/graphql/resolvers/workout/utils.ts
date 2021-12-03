@@ -3,55 +3,6 @@ import { Equipment, WorkoutFiltersInput } from '../../../generated/graphql'
 import { validateWorkoutMetaData } from '../../../lib/jsonValidation'
 import { WorkoutMetaDataPayload, WorkoutSummaryData } from '../../../types'
 
-export const selectForWorkoutSummary = {
-  id: true,
-  createdAt: true,
-  name: true,
-  archived: true,
-  coverImageUri: true,
-  description: true,
-  difficultyLevel: true,
-  lengthMinutes: true,
-  WorkoutGoals: true,
-  WorkoutTags: true,
-  WorkoutSections: {
-    select: {
-      WorkoutSectionType: {
-        select: {
-          name: true,
-        },
-      },
-      classVideoUri: true,
-      classAudioUri: true,
-      WorkoutSets: {
-        select: {
-          WorkoutMoves: {
-            select: {
-              Equipment: true,
-              Move: {
-                select: {
-                  RequiredEquipments: true,
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-  },
-  User: {
-    select: {
-      id: true,
-      displayName: true,
-      avatarUri: true,
-      userProfileScope: true,
-    },
-  },
-  _count: {
-    select: { LoggedWorkouts: true },
-  },
-}
-
 export function formatWorkoutSummaries(workouts: WorkoutSummaryData[]) {
   return workouts.map((w) => formatWorkoutSummary(w))
 }

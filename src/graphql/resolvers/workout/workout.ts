@@ -18,11 +18,11 @@ import { Prisma } from '@prisma/client'
 import {
   formatWorkoutFiltersInput,
   formatWorkoutSectionFiltersInput,
-  selectForWorkoutSummary,
   updateWorkoutMetaData,
   formatWorkoutSummaries,
 } from './utils'
 import { WorkoutFullData } from '../../../types'
+import { selectForWorkoutSummary } from '../selectDefinitions'
 
 //// Queries ////
 /// https://www.prisma.io/docs/concepts/components/prisma-client/pagination

@@ -1,7 +1,29 @@
 import { PrismaClient } from '@prisma/client'
 import { ApolloError } from 'apollo-server-express'
-import { ClubWithMemberIdsPayload } from '../../../types'
+import { ClubSummaryData, ClubWithMemberIdsPayload } from '../../../types'
 import { AccessScopeError } from '../../utils'
+
+export function formatClubSummaries(clubs: ClubSummaryData[]) {
+  return clubs.map((c) => formatClubSummary(c))
+}
+
+export function formatClubSummary(club: ClubSummaryData) {
+  return {
+    id: club.id,
+    createdAt: club.createdAt,
+    name: club.name,
+    description: club.description,
+    coverImageUri: club.coverImageUri,
+    location: club.location,
+    memberCount: (club?._count.Members || 0) + (club?._count.Admins || 0),
+    Owner: {
+      id: club.Owner.id,
+      displayName: club.Owner.displayName,
+      avatarUri: club.Owner.avatarUri,
+      userProfileScope: club.Owner.userProfileScope,
+    },
+  }
+}
 
 // You can only remove a user type with a lower value that yourself as the authed user.
 export type ClubMemberType = 'OWNER' | 'ADMIN' | 'MEMBER' | 'NONE'

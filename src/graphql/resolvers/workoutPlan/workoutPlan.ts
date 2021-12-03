@@ -29,9 +29,9 @@ import {
   deleteFiles,
 } from '../../../lib/uploadcare'
 import { checkAndReorderObjects, checkUserOwnsObject } from '../../utils'
+import { selectForWorkoutPlanSummary } from '../selectDefinitions'
 import {
   formatWorkoutPlanFiltersInput,
-  selectForWorkoutPlanSummary,
   formatWorkoutPlanSummaries,
 } from './utils'
 

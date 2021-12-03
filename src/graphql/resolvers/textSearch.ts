@@ -9,13 +9,11 @@ import {
   WorkoutSummary,
 } from '../../generated/graphql'
 import {
-  formatWorkoutSummaries,
-  selectForWorkoutSummary,
-} from './workout/utils'
-import {
-  formatWorkoutPlanSummaries,
   selectForWorkoutPlanSummary,
-} from './workoutPlan/utils'
+  selectForWorkoutSummary,
+} from './selectDefinitions'
+import { formatWorkoutSummaries } from './workout/utils'
+import { formatWorkoutPlanSummaries } from './workoutPlan/utils'
 
 export const textSearchWorkouts = async (
   r: any,
