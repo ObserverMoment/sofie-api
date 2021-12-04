@@ -2,7 +2,6 @@ import fetch from 'node-fetch'
 import crypto from 'crypto'
 import { PrismaClient } from '@prisma/client'
 import {
-  UpdateUserInput,
   UpdateWorkoutSectionInput,
   UpdateWorkoutPlanInput,
   UpdateMoveInput,
@@ -10,6 +9,7 @@ import {
   UpdateUserBenchmarkEntryInput,
   UpdateClubInput,
   UpdateBodyTrackingEntryInput,
+  UpdateUserProfileInput,
 } from '../generated/graphql'
 import { AccessScopeError } from '../graphql/utils'
 
@@ -110,7 +110,7 @@ export async function checkClubMediaForDeletion(
 export async function checkUserMediaForDeletion(
   prisma: PrismaClient,
   authedUserId: string,
-  data: UpdateUserInput,
+  data: UpdateUserProfileInput,
 ): Promise<string[]> {
   // Get the original move media file info.
   // Then once update transaction is complete you can check to see if media should be deleted.

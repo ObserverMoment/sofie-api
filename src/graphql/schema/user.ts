@@ -1,30 +1,30 @@
 import { gql } from 'apollo-server-express'
 
 export default gql`
-  type User {
-    id: ID!
-    userProfileScope: UserProfileScope!
-    avatarUri: String
-    introVideoUri: String
-    introVideoThumbUri: String
-    bio: String
-    tagline: String
-    birthdate: DateTime
-    townCity: String
-    countryCode: String
-    displayName: String!
-    instagramUrl: String
-    tiktokUrl: String
-    youtubeUrl: String
-    snapUrl: String
-    linkedinUrl: String
-    firstname: String
-    lastname: String
-    gender: Gender!
-    hasOnboarded: Boolean!
-    GymProfiles: [GymProfile!]
-    ProgressJournalGoalTags: [ProgressJournalGoalTag!]
-  }
+  # type User {
+  #   id: ID!
+  #   userProfileScope: UserProfileScope!
+  #   avatarUri: String
+  #   introVideoUri: String
+  #   introVideoThumbUri: String
+  #   bio: String
+  #   tagline: String
+  #   birthdate: DateTime
+  #   townCity: String
+  #   countryCode: String
+  #   displayName: String!
+  #   instagramUrl: String
+  #   tiktokUrl: String
+  #   youtubeUrl: String
+  #   snapUrl: String
+  #   linkedinUrl: String
+  #   firstname: String
+  #   lastname: String
+  #   gender: Gender!
+  #   hasOnboarded: Boolean!
+  #   GymProfiles: [GymProfile!]
+  #   ProgressJournalGoalTags: [ProgressJournalGoalTag!]
+  # }
 
   # Used for chat only - consider using UserSummary below and marging these two types.
   type UserAvatarData {
@@ -40,8 +40,8 @@ export default gql`
     userProfileScope: UserProfileScope!
   }
 
-  # Only used for the currently logged in user to update themselves - so ID not required.
-  input UpdateUserInput {
+  # User can only update their own profile - so no ID required.
+  input UpdateUserProfileInput {
     userProfileScope: UserProfileScope
     avatarUri: String
     introVideoUri: String
@@ -63,7 +63,7 @@ export default gql`
     lastname: String
   }
 
-  type UserPublicProfile {
+  type UserProfile {
     id: ID!
     userProfileScope: UserProfileScope!
     avatarUri: String
@@ -78,6 +78,8 @@ export default gql`
     linkedinHandle: String
     countryCode: String
     displayName: String!
+    gender: Gender
+    birthdate: DateTime
     followerCount: Int
     postsCount: Int
     workoutCount: Int
@@ -87,7 +89,7 @@ export default gql`
     BenchmarksWithBestEntries: [UserBenchmarkWithBestEntry!]!
   }
 
-  type UserPublicProfileSummary {
+  type UserProfileSummary {
     id: ID!
     userProfileScope: UserProfileScope!
     avatarUri: String

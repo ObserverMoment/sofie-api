@@ -13,7 +13,8 @@ export default gql`
   # Display these publically
   type UserBenchmarkWithBestEntry {
     UserBenchmarkSummary: UserBenchmarkSummary!
-    BestEntry: UserBenchmarkEntry!
+    # Can be null if no entry has been made for this PB yet.
+    BestEntry: UserBenchmarkEntry
   }
 
   type UserBenchmark {

@@ -1,20 +1,19 @@
-import { PrismaClient } from '.prisma/client'
+import { PrismaClient, UserBenchmark, UserBenchmarkEntry } from '.prisma/client'
 import { ApolloError } from 'apollo-server-express'
 import { Context } from '../..'
 import {
   MutationCreateWorkoutTagArgs,
   MutationDeleteWorkoutTagByIdArgs,
-  MutationUpdateUserArgs,
+  MutationUpdateUserProfileArgs,
   MutationUpdateWorkoutTagArgs,
   QueryCheckUniqueDisplayNameArgs,
   QueryUserAvatarByIdArgs,
   QueryUserAvatarsArgs,
-  QueryUserPublicProfileByIdArgs,
-  QueryUserPublicProfilesArgs,
-  User,
+  QueryUserProfileByIdArgs,
+  QueryUserProfilesArgs,
   UserAvatarData,
-  UserPublicProfile,
-  UserPublicProfileSummary,
+  UserProfile,
+  UserProfileSummary,
   WorkoutTag,
 } from '../../generated/graphql'
 import { checkUserMediaForDeletion, deleteFiles } from '../../lib/uploadcare'
@@ -32,22 +31,22 @@ export const checkUniqueDisplayName = async (
   return isAvailable
 }
 
-export const authedUser = async (
-  r: any,
-  a: any,
-  { authedUserId, select, prisma }: Context,
-) => {
-  const user = await prisma.user.findUnique({
-    where: { id: authedUserId },
-    select,
-  })
+// export const authedUser = async (
+//   r: any,
+//   a: any,
+//   { authedUserId, select, prisma }: Context,
+// ) => {
+//   const user = await prisma.user.findUnique({
+//     where: { id: authedUserId },
+//     select,
+//   })
 
-  if (user) {
-    return user as User
-  } else {
-    throw new ApolloError('authedUser: There was an issue.')
-  }
-}
+//   if (user) {
+//     return user as User
+//   } else {
+//     throw new ApolloError('authedUser: There was an issue.')
+//   }
+// }
 
 /// The minimum info needed to display a user avatar.
 /// avatarUri + displayName.
@@ -86,9 +85,9 @@ export const userAvatarById = async (
 }
 
 // Public profiles of any users who have set their profiles to public.
-export const userPublicProfiles = async (
+export const userProfiles = async (
   r: any,
-  { take, cursor }: QueryUserPublicProfilesArgs,
+  { take, cursor }: QueryUserProfilesArgs,
   { prisma }: Context,
 ) => {
   const publicUsers = await prisma.user.findMany({
@@ -152,14 +151,14 @@ export const userPublicProfiles = async (
     })),
   }))
 
-  return publicProfileSummaries as UserPublicProfileSummary[]
+  return publicProfileSummaries as UserProfileSummary[]
 }
 
-// Get a single user profile, based on the user id - fields returned will depend on the user's privacy settings.
-export const userPublicProfileById = async (
+// Get a single user profile, based on the user id - fields returned will depend on the user's privacy settings and if they are the one making the request.
+export const userProfileById = async (
   r: any,
-  { userId }: QueryUserPublicProfileByIdArgs,
-  { prisma }: Context,
+  { userId }: QueryUserProfileByIdArgs,
+  { authedUserId, prisma }: Context,
 ) => {
   const checkScope = await prisma.user.findFirst({
     where: { id: userId },
@@ -168,7 +167,9 @@ export const userPublicProfileById = async (
     },
   })
 
-  const isPublic = checkScope?.userProfileScope === 'PUBLIC'
+  const isAuthedUser = authedUserId === userId
+  // User can of course view their own data.
+  const isPublic = isAuthedUser || checkScope?.userProfileScope === 'PUBLIC'
 
   const user = await prisma.user.findUnique({
     where: { id: userId },
@@ -189,6 +190,11 @@ export const userPublicProfileById = async (
       youtubeHandle: isPublic,
       linkedinHandle: isPublic,
       countryCode: isPublic,
+      UserBenchmarks: {
+        include: {
+          UserBenchmarkEntries: true,
+        },
+      },
       ClubsWhereOwner: isPublic
         ? {
             select: selectForClubSummary,
@@ -227,7 +233,7 @@ export const userPublicProfileById = async (
           workoutCount: user._count?.Workouts || 0,
           planCount: user._count?.WorkoutPlans || 0,
           // TODO: Casting as any because [ClubsWhereOwner] was being returned as [Club]
-          // The isPublic tiernary is causing some type weirdness.
+          // The isPublic tiernary is causing some type weirdness?
           // Also stopping me from using [formatClubSummaries] function.
           Clubs: user.ClubsWhereOwner.map((c: any) => ({
             id: c.id,
@@ -248,24 +254,41 @@ export const userPublicProfileById = async (
             user.id,
             prisma,
           ),
-          BenchmarksWithBestEntries: [],
-        } as UserPublicProfile)
+          BenchmarksWithBestEntries: user.UserBenchmarks.map((b) => ({
+            UserBenchmarkSummary: b,
+            BestEntry: findBestUserBenchmarkEntry(b),
+          })),
+        } as UserProfile)
       : ({
           id: user.id,
           displayName: user.displayName,
           avatarUri: user.avatarUri,
           userProfileScope: user.userProfileScope,
-        } as UserPublicProfile)
+        } as UserProfile)
   } else {
-    throw new AccessScopeError('userPublicProfileById: There was an issue.')
+    throw new AccessScopeError('userProfileById: There was an issue.')
   }
+}
+
+//////// Util - Finds the best score from a UserBenchmark based on its type ////////
+export function findBestUserBenchmarkEntry(
+  userBenchmark: UserBenchmark & { UserBenchmarkEntries: UserBenchmarkEntry[] },
+): UserBenchmarkEntry | null {
+  if (!userBenchmark.UserBenchmarkEntries.length) {
+    return null
+  }
+  const entries = userBenchmark.UserBenchmarkEntries.sort((e) => e.score)
+
+  return userBenchmark.benchmarkType == 'FASTESTTIME'
+    ? entries[0]
+    : entries.reverse()[0]
 }
 
 //// Mutations ////
 // For authed user to update their own details only.
-export const updateUser = async (
+export const updateUserProfile = async (
   r: any,
-  { data }: MutationUpdateUserArgs,
+  { data }: MutationUpdateUserProfileArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
   // Check if any media files need to be updated. Only delete files from the server after the rest of the transaction is complete.
@@ -293,9 +316,9 @@ export const updateUser = async (
     if (fileUrisForDeletion && fileUrisForDeletion.length > 0) {
       await deleteFiles(fileUrisForDeletion)
     }
-    return updated as User
+    return updated as UserProfile
   } else {
-    throw new ApolloError('updateUser: There was an issue.')
+    throw new ApolloError('updateUserProfile: There was an issue.')
   }
 }
 

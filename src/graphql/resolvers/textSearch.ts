@@ -1,10 +1,10 @@
 import { Context } from '../..'
 import {
-  QueryTextSearchUserPublicProfilesArgs,
+  QueryTextSearchUserProfilesArgs,
   QueryTextSearchWorkoutPlansArgs,
   QueryTextSearchWorkoutsArgs,
   TextSearchResult,
-  UserPublicProfile,
+  UserProfileSummary,
   WorkoutPlanSummary,
   WorkoutSummary,
 } from '../../generated/graphql'
@@ -97,9 +97,9 @@ export const textSearchWorkoutPlanNames = async (
   return workoutPlans as TextSearchResult[]
 }
 
-export const textSearchUserPublicProfiles = async (
+export const textSearchUserProfiles = async (
   r: any,
-  { text }: QueryTextSearchUserPublicProfilesArgs,
+  { text }: QueryTextSearchUserProfilesArgs,
   { select, prisma }: Context,
 ) => {
   const publicUsers = await prisma.user.findMany({
@@ -112,12 +112,12 @@ export const textSearchUserPublicProfiles = async (
     },
     select,
   })
-  return publicUsers as UserPublicProfile[]
+  return publicUsers as UserProfileSummary[]
 }
 
-export const textSearchUserPublicNames = async (
+export const textSearchUserNames = async (
   r: any,
-  { text }: QueryTextSearchUserPublicProfilesArgs,
+  { text }: QueryTextSearchUserProfilesArgs,
   { prisma }: Context,
 ) => {
   const publicUsers = await prisma.user.findMany({

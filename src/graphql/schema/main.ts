@@ -43,8 +43,8 @@ export default gql`
     textSearchWorkoutNames(text: String!): [TextSearchResult!]
     textSearchWorkoutPlans(text: String!): [WorkoutPlanSummary!]
     textSearchWorkoutPlanNames(text: String!): [TextSearchResult!]
-    textSearchUserPublicProfiles(text: String!): [UserPublicProfile!]
-    textSearchUserPublicNames(text: String!): [TextSearchResult!]
+    textSearchUserProfiles(text: String!): [UserProfileSummary!]
+    textSearchUserNames(text: String!): [TextSearchResult!]
     #### Timeline Feed ####
     # Gets DB objects referenced in getStream activities (posts) and maps fields to those required for displaying in a timeline or feed #
     timelinePostsData(
@@ -56,7 +56,6 @@ export default gql`
       offset: Int!
     ): [TimelinePostFullData!]!
     #### User ####
-    authedUser: User!
     checkUniqueDisplayName(displayName: String!): Boolean!
     gymProfiles: [GymProfile!]!
     userWorkoutTags: [WorkoutTag!]!
@@ -75,8 +74,8 @@ export default gql`
     userCollections: [Collection!]!
     userCollectionById(id: ID!): Collection!
     #### User Public Profiles ####
-    userPublicProfiles(cursor: ID, take: Int): [UserPublicProfileSummary!]!
-    userPublicProfileById(userId: ID!): UserPublicProfile!
+    userProfiles(cursor: ID, take: Int): [UserProfileSummary!]!
+    userProfileById(userId: ID!): UserProfile!
     #### Workouts ####
     publicWorkouts(
       cursor: ID
@@ -195,7 +194,7 @@ export default gql`
     ): ScheduledWorkout!
     deleteScheduledWorkoutById(id: ID!): ID!
     #### User ####
-    updateUser(data: UpdateUserInput!): User!
+    updateUserProfile(data: UpdateUserProfileInput!): UserProfile!
     createWorkoutTag(data: CreateWorkoutTagInput!): WorkoutTag!
     updateWorkoutTag(data: UpdateWorkoutTagInput!): WorkoutTag!
     deleteWorkoutTagById(id: ID!): ID!
