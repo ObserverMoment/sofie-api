@@ -16,14 +16,17 @@ import {
 } from '../../../lib/getStream'
 import { checkClubMediaForDeletion, deleteFiles } from '../../../lib/uploadcare'
 import {
-  formatWorkoutSummaries,
-  selectForWorkoutSummary,
-} from '../workout/utils'
-import {
-  formatWorkoutPlanSummaries,
+  selectForClubSummary,
   selectForWorkoutPlanSummary,
-} from '../workoutPlan/utils'
-import { checkUserIsOwnerOrAdminOfClub, ClubMemberType } from './utils'
+  selectForWorkoutSummary,
+} from '../selectDefinitions'
+import { formatWorkoutSummaries } from '../workout/utils'
+import { formatWorkoutPlanSummaries } from '../workoutPlan/utils'
+import {
+  checkUserIsOwnerOrAdminOfClub,
+  ClubMemberType,
+  formatClubSummaries,
+} from './utils'
 
 //// Queries ////
 export const checkUniqueClubName = async (
@@ -46,7 +49,7 @@ export const checkUniqueClubName = async (
 export const userClubs = async (
   r: any,
   a: any,
-  { authedUserId, select, prisma }: Context,
+  { authedUserId, prisma }: Context,
 ) => {
   const clubs = await prisma.club.findMany({
     where: {
@@ -56,22 +59,24 @@ export const userClubs = async (
         { Members: { some: { id: authedUserId } } },
       ],
     },
-    select,
+    select: selectForClubSummary,
   })
-  return clubs as ClubSummary[]
+
+  const formattedClubs = formatClubSummaries(clubs)
+
+  return formattedClubs as ClubSummary[]
 }
 
 // ClubFinder functionality - filtering and ranking etc.
-export const publicClubs = async (
-  r: any,
-  a: any,
-  { select, prisma }: Context,
-) => {
+export const publicClubs = async (r: any, a: any, { prisma }: Context) => {
   const clubs = await prisma.club.findMany({
     where: { contentAccessScope: 'PUBLIC' },
-    select,
+    select: selectForClubSummary,
   })
-  return clubs as ClubSummary[]
+
+  const formattedClubs = formatClubSummaries(clubs)
+
+  return formattedClubs as ClubSummary[]
 }
 
 /// Just the bare minumum data such as name and cover image.
@@ -79,13 +84,16 @@ export const publicClubs = async (
 export const clubSummariesById = async (
   r: any,
   { ids }: QueryClubSummariesByIdArgs,
-  { select, prisma }: Context,
+  { prisma }: Context,
 ) => {
   const clubs = await prisma.club.findMany({
     where: { id: { in: ids } },
-    select,
+    select: selectForClubSummary,
   })
-  return clubs as ClubSummary[]
+
+  const formattedClubs = formatClubSummaries(clubs)
+
+  return formattedClubs as ClubSummary[]
 }
 
 export const clubById = async (

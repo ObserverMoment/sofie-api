@@ -27,13 +27,13 @@ export default gql`
   # Use in lists etc where minimal data is needed.
   type ClubSummary {
     id: ID!
+    createdAt: DateTime!
     name: String!
     description: String
     coverImageUri: String
     location: String
+    memberCount: Int!
     Owner: UserSummary!
-    Admins: [UserSummary!]!
-    Members: [UserSummary!]!
   }
 
   input CreateClubInput {

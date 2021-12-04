@@ -22,6 +22,7 @@ export default async function (
         select: {
           id: true,
           hasOnboarded: true,
+          displayName: true,
         },
       })
 

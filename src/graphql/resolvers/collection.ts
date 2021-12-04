@@ -15,13 +15,11 @@ import {
 } from '../../generated/graphql'
 import { checkUserOwnsObject } from '../utils'
 import {
-  formatWorkoutSummaries,
-  selectForWorkoutSummary,
-} from './workout/utils'
-import {
-  formatWorkoutPlanSummaries,
   selectForWorkoutPlanSummary,
-} from './workoutPlan/utils'
+  selectForWorkoutSummary,
+} from './selectDefinitions'
+import { formatWorkoutSummaries } from './workout/utils'
+import { formatWorkoutPlanSummaries } from './workoutPlan/utils'
 
 //// Queries ////
 export const userCollections = async (

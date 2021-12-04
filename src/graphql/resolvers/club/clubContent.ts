@@ -8,10 +8,8 @@ import {
   MutationRemoveWorkoutPlanFromClubArgs,
 } from '../../../generated/graphql'
 import { checkUserOwnsObject } from '../../utils'
-import {
-  formatWorkoutSummaries,
-  selectForWorkoutSummary,
-} from '../workout/utils'
+import { selectForWorkoutSummary } from '../selectDefinitions'
+import { formatWorkoutSummaries } from '../workout/utils'
 import { checkUserIsOwnerOrAdminOfClub } from './utils'
 
 export const addWorkoutToClub = async (

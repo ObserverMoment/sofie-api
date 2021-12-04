@@ -10,7 +10,8 @@ import {
   WorkoutPlanEnrolmentWithPlan,
 } from '../../../generated/graphql'
 import { checkUserOwnsObject } from '../../utils'
-import { formatWorkoutPlanSummary, selectForWorkoutPlanSummary } from './utils'
+import { selectForWorkoutPlanSummary } from '../selectDefinitions'
+import { formatWorkoutPlanSummary } from './utils'
 
 //// Queries ////
 export const workoutPlanEnrolmentById = async (

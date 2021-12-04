@@ -112,8 +112,8 @@ import {
   textSearchWorkoutNames,
   textSearchWorkoutPlans,
   textSearchWorkoutPlanNames,
-  textSearchUserPublicProfiles,
-  textSearchUserPublicNames,
+  textSearchUserProfiles,
+  textSearchUserNames,
 } from './textSearch'
 
 import {
@@ -125,12 +125,11 @@ import {
 
 import {
   checkUniqueDisplayName,
-  authedUser,
   userAvatars,
   userAvatarById,
-  userPublicProfileById,
-  userPublicProfiles,
-  updateUser,
+  userProfileById,
+  userProfiles,
+  updateUserProfile,
   userWorkoutTags,
   createWorkoutTag,
   updateWorkoutTag,
@@ -302,13 +301,12 @@ const resolvers: Resolvers = {
     textSearchWorkoutNames,
     textSearchWorkoutPlans,
     textSearchWorkoutPlanNames,
-    textSearchUserPublicProfiles,
-    textSearchUserPublicNames,
+    textSearchUserProfiles,
+    textSearchUserNames,
     //// Timeline Feed ////
     // The data associated with Activities and required to display posts //
     timelinePostsData,
     //// User ////
-    authedUser,
     checkUniqueDisplayName,
     gymProfiles,
     //// User Archive ////
@@ -316,8 +314,8 @@ const resolvers: Resolvers = {
     userArchivedWorkoutPlans,
     userArchivedCustomMoves,
     //// User Public Profiles ////
-    userPublicProfileById,
-    userPublicProfiles,
+    userProfileById,
+    userProfiles,
     userWorkoutTags,
     //// User Avatars ////
     userAvatars,
@@ -423,7 +421,7 @@ const resolvers: Resolvers = {
     //////////////
     //// User ////
     //////////////
-    updateUser,
+    updateUserProfile,
     createWorkoutTag,
     updateWorkoutTag,
     deleteWorkoutTagById,
