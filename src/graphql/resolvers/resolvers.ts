@@ -168,6 +168,7 @@ import { checkClubInviteToken } from './invites'
 import {
   publicWorkouts,
   userWorkouts,
+  userPublicWorkouts,
   workoutById,
   createWorkout,
   updateWorkout,
@@ -202,6 +203,7 @@ import {
 import {
   publicWorkoutPlans,
   userWorkoutPlans,
+  userPublicWorkoutPlans,
   workoutPlanById,
   createWorkoutPlan,
   updateWorkoutPlan,
@@ -329,11 +331,13 @@ const resolvers: Resolvers = {
     userCollectionById,
     //// Workouts ////
     publicWorkouts,
-    userWorkouts,
+    userWorkouts, // Authed user.
+    userPublicWorkouts, // Public users (profiles)
     workoutById,
     //// WorkoutPlans ////
     publicWorkoutPlans,
-    userWorkoutPlans,
+    userWorkoutPlans, // Authed user.
+    userPublicWorkoutPlans, // Public users (profiles)
     workoutPlanById,
     workoutPlanEnrolments,
     workoutPlanEnrolmentById,

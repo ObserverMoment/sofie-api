@@ -82,7 +82,8 @@ export default gql`
       filters: WorkoutFiltersInput
       take: Int
     ): [WorkoutSummary!]!
-    userWorkouts: [WorkoutSummary!]!
+    userWorkouts: [WorkoutSummary!]! # Authed user.
+    userPublicWorkouts(userId: ID!): [WorkoutSummary!]! # Public users (profiles).
     workoutById(id: ID!): Workout!
     #### Workout Plans ####
     publicWorkoutPlans(
@@ -91,7 +92,8 @@ export default gql`
       take: Int
     ): [WorkoutPlanSummary!]!
     workoutPlanById(id: ID!): WorkoutPlan!
-    userWorkoutPlans: [WorkoutPlanSummary!]!
+    userWorkoutPlans: [WorkoutPlanSummary!]! # Authed user.
+    userPublicWorkoutPlans(userId: ID!): [WorkoutPlanSummary!]! # Public users (profiles).
     #### Workout Plan Enrolments ####
     workoutPlanEnrolmentById(id: ID!): WorkoutPlanEnrolmentWithPlan!
     workoutPlanEnrolments: [WorkoutPlanEnrolmentSummary!]!
@@ -194,7 +196,7 @@ export default gql`
     ): ScheduledWorkout!
     deleteScheduledWorkoutById(id: ID!): ID!
     #### User ####
-    updateUserProfile(data: UpdateUserProfileInput!): UserProfile!
+    updateUserProfile(data: UpdateUserProfileInput!): UpdateUserProfileResult!
     createWorkoutTag(data: CreateWorkoutTagInput!): WorkoutTag!
     updateWorkoutTag(data: UpdateWorkoutTagInput!): WorkoutTag!
     deleteWorkoutTagById(id: ID!): ID!

@@ -252,6 +252,18 @@ interface ActivityData {
   dataRequestInput: TimelinePostDataRequestInput
 }
 
+/// How many followers does their [user_feed] feed have.
+export async function getUserFollowersCount(userId: string) {
+  if (!streamFeedClient) {
+    throw Error('streamFeedClient not initialized')
+  }
+  const stats = await streamFeedClient
+    .feed(USER_FEED_NAME, userId)
+    .followStats()
+
+  return stats.results.followers.count
+}
+
 //////////////////////
 /////// Chat /////////
 //////////////////////

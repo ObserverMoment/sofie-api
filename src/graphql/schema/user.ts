@@ -1,31 +1,6 @@
 import { gql } from 'apollo-server-express'
 
 export default gql`
-  # type User {
-  #   id: ID!
-  #   userProfileScope: UserProfileScope!
-  #   avatarUri: String
-  #   introVideoUri: String
-  #   introVideoThumbUri: String
-  #   bio: String
-  #   tagline: String
-  #   birthdate: DateTime
-  #   townCity: String
-  #   countryCode: String
-  #   displayName: String!
-  #   instagramUrl: String
-  #   tiktokUrl: String
-  #   youtubeUrl: String
-  #   snapUrl: String
-  #   linkedinUrl: String
-  #   firstname: String
-  #   lastname: String
-  #   gender: Gender!
-  #   hasOnboarded: Boolean!
-  #   GymProfiles: [GymProfile!]
-  #   ProgressJournalGoalTags: [ProgressJournalGoalTag!]
-  # }
-
   # Used for chat only - consider using UserSummary below and marging these two types.
   type UserAvatarData {
     id: ID!
@@ -38,29 +13,6 @@ export default gql`
     displayName: String!
     avatarUri: String
     userProfileScope: UserProfileScope!
-  }
-
-  # User can only update their own profile - so no ID required.
-  input UpdateUserProfileInput {
-    userProfileScope: UserProfileScope
-    avatarUri: String
-    introVideoUri: String
-    introVideoThumbUri: String
-    bio: String
-    tagline: String
-    birthdate: DateTime
-    townCity: String
-    countryCode: String
-    displayName: String
-    instagramUrl: String
-    tiktokUrl: String
-    youtubeUrl: String
-    snapUrl: String
-    linkedinUrl: String
-    firstname: String
-    gender: Gender
-    hasOnboarded: Boolean
-    lastname: String
   }
 
   type UserProfile {
@@ -81,7 +33,6 @@ export default gql`
     gender: Gender
     birthdate: DateTime
     followerCount: Int
-    postsCount: Int
     workoutCount: Int
     planCount: Int
     Clubs: [ClubSummary!]! # Public only
@@ -100,5 +51,50 @@ export default gql`
     workoutCount: Int!
     planCount: Int!
     Clubs: [ClubSummary!]! # Public only
+  }
+
+  # Resolver should only return the updated fields plus an ID. Only the ID is required.
+  type UpdateUserProfileResult {
+    id: ID!
+    userProfileScope: UserProfileScope
+    avatarUri: String
+    introVideoUri: String
+    introVideoThumbUri: String
+    bio: String
+    tagline: String
+    birthdate: DateTime
+    townCity: String
+    countryCode: String
+    displayName: String
+    instagramHandle: String
+    tiktokHandle: String
+    youtubeHandle: String
+    linkedinHandle: String
+    firstname: String
+    gender: Gender
+    hasOnboarded: Boolean
+    lastname: String
+  }
+
+  # User can only update their own profile - so no ID required.
+  input UpdateUserProfileInput {
+    userProfileScope: UserProfileScope
+    avatarUri: String
+    introVideoUri: String
+    introVideoThumbUri: String
+    bio: String
+    tagline: String
+    birthdate: DateTime
+    townCity: String
+    countryCode: String
+    displayName: String
+    instagramHandle: String
+    tiktokHandle: String
+    youtubeHandle: String
+    linkedinHandle: String
+    firstname: String
+    gender: Gender
+    hasOnboarded: Boolean
+    lastname: String
   }
 `

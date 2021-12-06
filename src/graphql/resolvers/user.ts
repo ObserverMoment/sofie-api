@@ -11,11 +11,13 @@ import {
   QueryUserAvatarsArgs,
   QueryUserProfileByIdArgs,
   QueryUserProfilesArgs,
+  UpdateUserProfileResult,
   UserAvatarData,
   UserProfile,
   UserProfileSummary,
   WorkoutTag,
 } from '../../generated/graphql'
+import { getUserFollowersCount } from '../../lib/getStream'
 import { checkUserMediaForDeletion, deleteFiles } from '../../lib/uploadcare'
 import { AccessScopeError, checkUserOwnsObject } from '../utils'
 import { calcLifetimeLogStatsSummary } from './loggedWorkout'
@@ -30,23 +32,6 @@ export const checkUniqueDisplayName = async (
   const isAvailable = await displayNameIsAvailable(displayName, prisma)
   return isAvailable
 }
-
-// export const authedUser = async (
-//   r: any,
-//   a: any,
-//   { authedUserId, select, prisma }: Context,
-// ) => {
-//   const user = await prisma.user.findUnique({
-//     where: { id: authedUserId },
-//     select,
-//   })
-
-//   if (user) {
-//     return user as User
-//   } else {
-//     throw new ApolloError('authedUser: There was an issue.')
-//   }
-// }
 
 /// The minimum info needed to display a user avatar.
 /// avatarUri + displayName.
@@ -228,8 +213,7 @@ export const userProfileById = async (
           linkedinHandle: user.linkedinHandle,
           countryCode: user.countryCode,
           displayName: user.displayName,
-          followerCount: 0,
-          postsCount: 0,
+          followerCount: await getUserFollowersCount(user.id),
           workoutCount: user._count?.Workouts || 0,
           planCount: user._count?.WorkoutPlans || 0,
           // TODO: Casting as any because [ClubsWhereOwner] was being returned as [Club]
@@ -289,7 +273,7 @@ export function findBestUserBenchmarkEntry(
 export const updateUserProfile = async (
   r: any,
   { data }: MutationUpdateUserProfileArgs,
-  { authedUserId, select, prisma }: Context,
+  { authedUserId, prisma }: Context,
 ) => {
   // Check if any media files need to be updated. Only delete files from the server after the rest of the transaction is complete.
   const fileUrisForDeletion: string[] | null = await checkUserMediaForDeletion(
@@ -309,14 +293,21 @@ export const updateUserProfile = async (
       displayName: data.displayName || undefined,
       gender: data.gender || undefined,
     },
-    select,
+    // Selects only the updated fields plus the ID.
+    select: Object.keys(data).reduce(
+      (obj, key) => ({
+        ...obj,
+        [key]: true,
+      }),
+      { id: true },
+    ),
   })
 
   if (updated) {
     if (fileUrisForDeletion && fileUrisForDeletion.length > 0) {
       await deleteFiles(fileUrisForDeletion)
     }
-    return updated as UserProfile
+    return updated as UpdateUserProfileResult
   } else {
     throw new ApolloError('updateUserProfile: There was an issue.')
   }
