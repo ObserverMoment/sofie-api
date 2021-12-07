@@ -36,14 +36,6 @@ export const userCollections = async (
       createdAt: true,
       name: true,
       description: true,
-      User: {
-        select: {
-          id: true,
-          displayName: true,
-          avatarUri: true,
-          userProfileScope: true,
-        },
-      },
       Workouts: {
         select: selectForWorkoutSummary,
       },
@@ -67,26 +59,34 @@ export const userCollections = async (
 export const userCollectionById = async (
   r: any,
   { id }: QueryUserCollectionByIdArgs,
-  { authedUserId, select, prisma }: Context,
+  { authedUserId, prisma }: Context,
 ) => {
-  const collection: any = await prisma.collection.findFirst({
+  const collection = await prisma.collection.findFirst({
     where: {
       id: id,
       userId: authedUserId,
     },
     select: {
-      ...select,
+      id: true,
+      createdAt: true,
+      name: true,
+      description: true,
       Workouts: {
         select: selectForWorkoutSummary,
+      },
+      WorkoutPlans: {
+        select: selectForWorkoutPlanSummary,
       },
     },
   })
 
-  collection.Workouts = formatWorkoutSummaries(
-    collection.Workouts,
-  ) as WorkoutSummary[]
-
-  return collection as Collection
+  return {
+    ...collection,
+    Workouts: collection ? formatWorkoutSummaries(collection.Workouts) : [],
+    WorkoutPlans: collection
+      ? formatWorkoutPlanSummaries(collection.WorkoutPlans)
+      : null,
+  } as Collection
 }
 
 //// Mutations ////

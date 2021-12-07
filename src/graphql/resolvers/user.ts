@@ -185,14 +185,6 @@ export const userProfileById = async (
             select: selectForClubSummary,
           }
         : undefined,
-      _count: isPublic
-        ? {
-            select: {
-              Workouts: true,
-              WorkoutPlans: true,
-            },
-          }
-        : undefined,
     },
   })
 
@@ -214,8 +206,20 @@ export const userProfileById = async (
           countryCode: user.countryCode,
           displayName: user.displayName,
           followerCount: await getUserFollowersCount(user.id),
-          workoutCount: user._count?.Workouts || 0,
-          planCount: user._count?.WorkoutPlans || 0,
+          workoutCount:
+            (await prisma.workout.count({
+              where: {
+                userId: userId,
+                archived: false,
+              },
+            })) || 0,
+          planCount:
+            (await prisma.workoutPlan.count({
+              where: {
+                userId: userId,
+                archived: false,
+              },
+            })) || 0,
           // TODO: Casting as any because [ClubsWhereOwner] was being returned as [Club]
           // The isPublic tiernary is causing some type weirdness?
           // Also stopping me from using [formatClubSummaries] function.

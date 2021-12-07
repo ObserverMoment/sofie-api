@@ -145,7 +145,6 @@ export type ClubSummary = {
 
 export type Collection = {
   __typename?: 'Collection';
-  User: UserSummary;
   WorkoutPlans: Array<WorkoutPlanSummary>;
   Workouts: Array<WorkoutSummary>;
   createdAt: Scalars['DateTime'];
@@ -2730,7 +2729,6 @@ export type ClubSummaryResolvers<ContextType = any, ParentType extends Resolvers
 }>;
 
 export type CollectionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Collection'] = ResolversParentTypes['Collection']> = ResolversObject<{
-  User?: Resolver<ResolversTypes['UserSummary'], ParentType, ContextType>;
   WorkoutPlans?: Resolver<Array<ResolversTypes['WorkoutPlanSummary']>, ParentType, ContextType>;
   Workouts?: Resolver<Array<ResolversTypes['WorkoutSummary']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;

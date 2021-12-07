@@ -128,7 +128,6 @@ type ClubSummary {
 }
 
 type Collection {
-  User: UserSummary!
   WorkoutPlans: [WorkoutPlanSummary!]!
   Workouts: [WorkoutSummary!]!
   createdAt: DateTime!

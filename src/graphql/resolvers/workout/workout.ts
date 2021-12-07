@@ -75,6 +75,8 @@ export const userWorkouts = async (
     select: selectForWorkoutSummary,
   })
 
+  console.log(userWorkouts)
+
   return formatWorkoutSummaries(userWorkouts) as WorkoutSummary[]
 }
 
