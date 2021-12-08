@@ -148,6 +148,19 @@ model ScheduledWorkout {
   WorkoutPlanEnrolment   WorkoutPlanEnrolment? @relation(fields: [workoutPlanEnrolmentId], references: [id])
 }
 
+model Skill {
+  id             String   @id @default(uuid())
+  createdAt      DateTime @default(now())
+  name           String
+  experience     String?
+  certification  String?
+  awardingBody   String?
+  certificateRef String? // Official reference that people can check to validate the cert.
+  documentUri    String?
+  User           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         String
+}
+
 model User {
   id                      String                   @id @default(uuid())
   firebaseUid             String                   @unique
@@ -187,6 +200,7 @@ model User {
   ProgressJournalGoals    ProgressJournalGoal[]
   ProgressJournalGoalTags ProgressJournalGoalTag[]
   ScheduledWorkouts       ScheduledWorkout[]
+  Skills                  Skill[]
   UserBenchmarks          UserBenchmark[]
   UserBenchmarkEntries    UserBenchmarkEntry[]
   UserBenchmarkTags       UserBenchmarkTag[]
@@ -203,6 +217,7 @@ model User {
   ClubsWhereAdmin         Club[]                   @relation("admin")
   ClubsWhereMember        Club[]                   @relation("member")
   BodyTrackingEntry       BodyTrackingEntry[]
+
 }
 
 model UserBenchmarkTag {

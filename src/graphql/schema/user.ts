@@ -38,6 +38,7 @@ export default gql`
     Clubs: [ClubSummary!]! # Public only
     LifetimeLogStatsSummary: LifetimeLogStatsSummary
     BenchmarksWithBestEntries: [UserBenchmarkWithBestEntry!]!
+    Skills: [Skill!]!
   }
 
   type UserProfileSummary {
@@ -48,6 +49,7 @@ export default gql`
     townCity: String
     countryCode: String
     displayName: String!
+    skills: [String!]!
     workoutCount: Int!
     planCount: Int!
     Clubs: [ClubSummary!]! # Public only

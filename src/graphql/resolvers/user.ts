@@ -103,6 +103,11 @@ export const userProfiles = async (
           WorkoutPlans: true,
         },
       },
+      Skills: {
+        select: {
+          name: true,
+        },
+      },
       ClubsWhereOwner: {
         where: { contentAccessScope: 'PUBLIC' },
         select: selectForClubSummary,
@@ -118,6 +123,7 @@ export const userProfiles = async (
     townCity: u.townCity,
     countryCode: u.countryCode,
     displayName: u.displayName,
+    skills: u.Skills.map((s) => s.name),
     workoutCount: u._count?.Workouts || 0,
     planCount: u._count?.WorkoutPlans || 0,
     Clubs: u.ClubsWhereOwner.map((c) => ({
@@ -175,6 +181,7 @@ export const userProfileById = async (
       youtubeHandle: isPublic,
       linkedinHandle: isPublic,
       countryCode: isPublic,
+      Skills: true,
       UserBenchmarks: {
         include: {
           UserBenchmarkEntries: true,
@@ -220,6 +227,7 @@ export const userProfileById = async (
                 archived: false,
               },
             })) || 0,
+          Skills: user.Skills,
           // TODO: Casting as any because [ClubsWhereOwner] was being returned as [Club]
           // The isPublic tiernary is causing some type weirdness?
           // Also stopping me from using [formatClubSummaries] function.

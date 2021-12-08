@@ -66,11 +66,11 @@ export default gql`
     #### User Avatars ####
     userAvatars(ids: [ID!]!): [UserAvatarData!]!
     userAvatarById(id: ID!): UserAvatarData!
-    #### UserBenchmark (aka Personal Best) ####
+    #### User Benchmark (aka Personal Best) ####
     userBenchmarks: [UserBenchmark!]!
     userBenchmarkById(id: ID!): UserBenchmark!
     userBenchmarkTags: [UserBenchmarkTag!]!
-    #### UserCollection ####
+    #### User Collection ####
     userCollections: [Collection!]!
     userCollectionById(id: ID!): Collection!
     #### User Public Profiles ####
@@ -233,6 +233,12 @@ export default gql`
     removeWorkoutPlanFromCollection(
       data: RemoveWorkoutPlanFromCollectionInput!
     ): Collection!
+    #### User Skills and Certifications ####
+    createSkill(data: CreateSkillInput!): Skill!
+    updateSkill(data: UpdateSkillInput!): Skill!
+    deleteSkillById(id: ID!): ID!
+    addDocumentToSkill(data: AddDocumentToSkillInput!): Skill!
+    removeDocumentFromSkill(data: RemoveDocumentFromSkillInput!): Skill!
     #################
     #### Workout ####
     makeCopyWorkoutById(id: ID!): Workout! # Note: Media should not be copied

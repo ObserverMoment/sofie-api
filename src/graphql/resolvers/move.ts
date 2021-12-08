@@ -6,14 +6,13 @@ import {
   UpdateMoveInput,
   Move,
   MutationCreateMoveArgs,
-  MutationSoftDeleteMoveByIdArgs,
   MutationUpdateMoveArgs,
   BodyAreaMoveScoreInput,
   MoveScope,
   WorkoutMoveRepType,
 } from '../../generated/graphql'
 import { checkMoveMediaForDeletion, deleteFiles } from '../../lib/uploadcare'
-import { AccessScopeError, checkUserOwnsObject } from '../utils'
+import { checkUserOwnsObject } from '../utils'
 
 //// Queries ////
 // Move scopes are 'STANDARD' or 'CUSTOM'.

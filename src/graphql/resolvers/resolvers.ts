@@ -137,6 +137,14 @@ import {
 } from './user'
 
 import {
+  createSkill,
+  updateSkill,
+  deleteSkillById,
+  addDocumentToSkill,
+  removeDocumentFromSkill,
+} from './skillsAndCertifications'
+
+import {
   userBenchmarks,
   userBenchmarkById,
   userBenchmarkTags,
@@ -460,6 +468,14 @@ const resolvers: Resolvers = {
     removeWorkoutFromCollection,
     addWorkoutPlanToCollection,
     removeWorkoutPlanFromCollection,
+    /////////////////////
+    //// User Skills ////
+    /////////////////////
+    createSkill,
+    updateSkill,
+    deleteSkillById,
+    addDocumentToSkill,
+    removeDocumentFromSkill,
     /////////////////
     //// Workout ////
     /////////////////
