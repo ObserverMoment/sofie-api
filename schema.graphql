@@ -141,6 +141,12 @@ type Collection {
   name: String!
 }
 
+type CompletedWorkoutPlanDayWorkout {
+  id: ID!
+  loggedWorkoutId: ID!
+  workoutPlanDayWorkoutId: ID!
+}
+
 input ConnectRelationInput {
   id: ID!
 }
@@ -273,6 +279,11 @@ input CreateProgressJournalInput {
   coverImageUri: String
   description: String
   name: String!
+}
+
+input CreateScheduleForPlanEnrolmentInput {
+  startDate: DateTime!
+  workoutPlanEnrolmentId: ID!
 }
 
 input CreateScheduledWorkoutInput {
@@ -573,6 +584,7 @@ type Mutation {
   createProgressJournalEntry(data: CreateProgressJournalEntryInput!): ProgressJournalEntry!
   createProgressJournalGoal(data: CreateProgressJournalGoalInput!): ProgressJournalGoal!
   createProgressJournalGoalTag(data: CreateProgressJournalGoalTagInput!): ProgressJournalGoalTag!
+  createScheduleForPlanEnrolment(data: CreateScheduleForPlanEnrolmentInput!): WorkoutPlanEnrolment!
   createScheduledWorkout(data: CreateScheduledWorkoutInput!): ScheduledWorkout!
   createSkill(data: CreateSkillInput!): Skill!
   createUserBenchmark(data: CreateUserBenchmarkInput!): UserBenchmark!
@@ -1379,17 +1391,17 @@ type WorkoutPlanDayWorkout {
 }
 
 type WorkoutPlanEnrolment {
+  CompletedWorkoutPlanDayWorkouts: [CompletedWorkoutPlanDayWorkout!]!
   User: UserSummary!
-  completedPlanDayWorkoutIds: [String!]!
   id: ID!
-  startDate: DateTime!
+  startDate: DateTime
 }
 
 type WorkoutPlanEnrolmentSummary {
   WorkoutPlan: WorkoutPlanSummary!
-  completedPlanDayWorkoutIds: [String!]!
+  completedWorkoutsCount: Int!
   id: ID!
-  startDate: DateTime!
+  startDate: DateTime
 }
 
 type WorkoutPlanEnrolmentWithPlan {

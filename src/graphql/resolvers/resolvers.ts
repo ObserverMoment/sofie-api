@@ -235,7 +235,7 @@ import {
   createWorkoutPlanEnrolment,
   updateWorkoutPlanEnrolment,
   deleteWorkoutPlanEnrolmentById,
-} from './workoutPlan/workoutPlanEnrolments'
+} from './workoutPlan/workoutPlanEnrolment'
 
 import { GraphQLScalarType } from 'graphql'
 import GraphQLJSON from 'graphql-type-json'
