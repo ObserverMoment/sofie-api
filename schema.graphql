@@ -284,7 +284,6 @@ input CreateScheduledWorkoutInput {
 }
 
 input CreateSkillInput {
-  description: String
   experience: String
   name: String!
 }
@@ -1015,7 +1014,7 @@ input UpdateSkillInput {
   documentUri: String
   experience: String
   id: ID!
-  name: String!
+  name: String
 }
 
 input UpdateSortPositionInput {

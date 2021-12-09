@@ -301,7 +301,6 @@ export type CreateScheduledWorkoutInput = {
 };
 
 export type CreateSkillInput = {
-  description?: InputMaybe<Scalars['String']>;
   experience?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
 };
@@ -1795,7 +1794,7 @@ export type UpdateSkillInput = {
   documentUri?: InputMaybe<Scalars['String']>;
   experience?: InputMaybe<Scalars['String']>;
   id: Scalars['ID'];
-  name: Scalars['String'];
+  name?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateSortPositionInput = {

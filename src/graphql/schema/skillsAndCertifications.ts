@@ -14,13 +14,12 @@ export default gql`
 
   input CreateSkillInput {
     name: String!
-    description: String
     experience: String
   }
 
   input UpdateSkillInput {
     id: ID!
-    name: String!
+    name: String
     experience: String
     certification: String
     awardingBody: String
