@@ -304,13 +304,18 @@ export default gql`
     createWorkoutPlanEnrolment(
       workoutPlanId: ID!
     ): WorkoutPlanEnrolmentWithPlan!
-    updateWorkoutPlanEnrolment(
-      data: UpdateWorkoutPlanEnrolmentInput!
-    ): WorkoutPlanEnrolment!
     deleteWorkoutPlanEnrolmentById(id: ID!): ID!
     createScheduleForPlanEnrolment(
       data: CreateScheduleForPlanEnrolmentInput!
     ): WorkoutPlanEnrolment!
+    clearScheduleForPlanEnrolment(enrolmentId: ID!): WorkoutPlanEnrolment!
+    createCompletedWorkoutPlanDayWorkout(
+      data: CreateCompletedWorkoutPlanDayWorkoutInput!
+    ): WorkoutPlanEnrolment!
+    deleteCompletedWorkoutPlanDayWorkout(
+      data: DeleteCompletedWorkoutPlanDayWorkoutInput!
+    ): WorkoutPlanEnrolment!
+    clearWorkoutPlanEnrolmentProgress(enrolmentId: ID!): WorkoutPlanEnrolment!
     #### Workout Plan Review ####
     createWorkoutPlanReview(
       data: CreateWorkoutPlanReviewInput!

@@ -94,14 +94,31 @@ export const createLoggedWorkout = async (
   { data }: MutationCreateLoggedWorkoutArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
+  const shouldCreateCompletedWorkoutPlanDayWorkout =
+    data.WorkoutPlanDayWorkout && data.WorkoutPlanEnrolment
+
+  console.log(data.WorkoutPlanDayWorkout)
+  console.log(data.WorkoutPlanEnrolment)
+  console.log(shouldCreateCompletedWorkoutPlanDayWorkout)
+
   const loggedWorkout = await prisma.loggedWorkout.create({
     data: {
-      ...data,
+      completedOn: data.completedOn,
+      name: data.name,
+      note: data.note,
       User: {
         connect: {
           id: authedUserId,
         },
       },
+      CompletedWorkoutPlanDayWorkout: shouldCreateCompletedWorkoutPlanDayWorkout
+        ? {
+            create: {
+              WorkoutPlanDayWorkout: { connect: data.WorkoutPlanDayWorkout! },
+              WorkoutPlanEnrolment: { connect: data.WorkoutPlanEnrolment! },
+            },
+          }
+        : undefined,
       Workout: data.Workout
         ? {
             connect: data.Workout,

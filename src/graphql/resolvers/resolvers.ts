@@ -105,7 +105,7 @@ import {
   createScheduledWorkout,
   updateScheduledWorkout,
   deleteScheduledWorkoutById,
-} from './schedule'
+} from './scheduledWorkout'
 
 import {
   textSearchWorkouts,
@@ -233,8 +233,12 @@ import {
   workoutPlanEnrolments,
   workoutPlanEnrolmentById,
   createWorkoutPlanEnrolment,
-  updateWorkoutPlanEnrolment,
   deleteWorkoutPlanEnrolmentById,
+  createScheduleForPlanEnrolment,
+  clearScheduleForPlanEnrolment,
+  createCompletedWorkoutPlanDayWorkout,
+  deleteCompletedWorkoutPlanDayWorkout,
+  clearWorkoutPlanEnrolmentProgress,
 } from './workoutPlan/workoutPlanEnrolment'
 
 import { GraphQLScalarType } from 'graphql'
@@ -515,13 +519,14 @@ const resolvers: Resolvers = {
     updateWorkoutPlanDayWorkout,
     deleteWorkoutPlanDayWorkoutById,
     reorderWorkoutPlanDayWorkouts,
-    //// Workout Plan User Specific ////
+    //// Workout Plan Enrolment User Specific ////
     createWorkoutPlanEnrolment,
-    updateWorkoutPlanEnrolment,
     deleteWorkoutPlanEnrolmentById,
-    createWorkoutPlanReview,
-    updateWorkoutPlanReview,
-    deleteWorkoutPlanReviewById,
+    createScheduleForPlanEnrolment,
+    clearScheduleForPlanEnrolment,
+    createCompletedWorkoutPlanDayWorkout,
+    deleteCompletedWorkoutPlanDayWorkout,
+    clearWorkoutPlanEnrolmentProgress,
   },
 }
 

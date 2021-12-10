@@ -132,20 +132,22 @@ model GymProfile {
 }
 
 model ScheduledWorkout {
-  id                     String                @id @default(uuid())
-  createdAt              DateTime              @default(now())
-  userId                 String
-  scheduledAt            DateTime              @default(now())
-  workoutId              String?
-  loggedWorkoutId        String?               @unique
-  gymProfileId           String?
-  note                   String?
-  workoutPlanEnrolmentId String?
-  GymProfile             GymProfile?           @relation(fields: [gymProfileId], references: [id])
-  LoggedWorkout          LoggedWorkout?        @relation(fields: [loggedWorkoutId], references: [id])
-  User                   User                  @relation(fields: [userId], references: [id])
-  Workout                Workout?              @relation(fields: [workoutId], references: [id])
-  WorkoutPlanEnrolment   WorkoutPlanEnrolment? @relation(fields: [workoutPlanEnrolmentId], references: [id])
+  id                      String                 @id @default(uuid())
+  createdAt               DateTime               @default(now())
+  userId                  String
+  scheduledAt             DateTime               @default(now())
+  workoutId               String?
+  loggedWorkoutId         String?                @unique
+  gymProfileId            String?
+  note                    String?
+  workoutPlanEnrolmentId  String?
+  GymProfile              GymProfile?            @relation(fields: [gymProfileId], references: [id])
+  LoggedWorkout           LoggedWorkout?         @relation(fields: [loggedWorkoutId], references: [id])
+  User                    User                   @relation(fields: [userId], references: [id])
+  Workout                 Workout?               @relation(fields: [workoutId], references: [id])
+  WorkoutPlanEnrolment    WorkoutPlanEnrolment?  @relation(fields: [workoutPlanEnrolmentId], references: [id])
+  WorkoutPlanDayWorkout   WorkoutPlanDayWorkout? @relation(fields: [workoutPlanDayWorkoutId], references: [id])
+  workoutPlanDayWorkoutId String?
 }
 
 model Skill {
@@ -474,6 +476,7 @@ model WorkoutPlanDayWorkout {
   Workout                         Workout                          @relation(fields: [workoutId], references: [id])
   WorkoutPlanDay                  WorkoutPlanDay                   @relation(fields: [workoutPlanDayId], references: [id])
   CompletedWorkoutPlanDayWorkouts CompletedWorkoutPlanDayWorkout[]
+  ScheduledWorkouts               ScheduledWorkout[]
 }
 
 model WorkoutPlanEnrolment {

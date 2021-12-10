@@ -2,10 +2,13 @@ import { ApolloError } from 'apollo-server-express'
 import { Context } from '../../..'
 import { add } from 'date-fns'
 import {
+  MutationClearScheduleForPlanEnrolmentArgs,
+  MutationClearWorkoutPlanEnrolmentProgressArgs,
+  MutationCreateCompletedWorkoutPlanDayWorkoutArgs,
   MutationCreateScheduleForPlanEnrolmentArgs,
   MutationCreateWorkoutPlanEnrolmentArgs,
+  MutationDeleteCompletedWorkoutPlanDayWorkoutArgs,
   MutationDeleteWorkoutPlanEnrolmentByIdArgs,
-  MutationUpdateWorkoutPlanEnrolmentArgs,
   QueryWorkoutPlanEnrolmentByIdArgs,
   WorkoutPlanEnrolment,
   WorkoutPlanEnrolmentSummary,
@@ -155,8 +158,9 @@ export const deleteWorkoutPlanEnrolmentById = async (
 /// 1. Create schedule and add start date
 /// + 2. Update schdule and update start date (also involves deleting all scheduled workouts related to this plan / user)
 export type ScheduledWorkoutData = {
-  dateTime: Date
+  scheduledAt: Date
   workoutId: string
+  workoutPlanDayWorkoutId: string
 }
 
 export const createScheduleForPlanEnrolment = async (
@@ -182,6 +186,7 @@ export const createScheduleForPlanEnrolment = async (
               dayNumber: true,
               WorkoutPlanDayWorkouts: {
                 select: {
+                  id: true,
                   workoutId: true,
                 },
               },
@@ -210,16 +215,18 @@ export const createScheduleForPlanEnrolment = async (
 
   const startDate = Date.parse(data.startDate)
 
+  /// Calculate when each workout should be scheduled based on the start date.
   const scheduledWorkoutData: ScheduledWorkoutData[] =
     prev.WorkoutPlan.WorkoutPlanDays.reduce<ScheduledWorkoutData[]>(
       (acum, next) => [
         ...acum,
         ...next.WorkoutPlanDayWorkouts.map((pdw, i) => ({
-          dateTime: add(startDate, {
+          scheduledAt: add(startDate, {
             days: next.dayNumber,
             hours: i * 2, // Workouts in the same day will be two hours after each other.
           }),
           workoutId: pdw.workoutId,
+          workoutPlanDayWorkoutId: pdw.id,
         })),
       ],
       [],
@@ -231,6 +238,10 @@ export const createScheduleForPlanEnrolment = async (
       startDate: data.startDate,
       ScheduledWorkouts: {
         create: scheduledWorkoutData.map((s) => ({
+          scheduledAt: s.scheduledAt,
+          WorkoutPlanDayWorkout: {
+            connect: { id: s.workoutPlanDayWorkoutId },
+          },
           Workout: {
             connect: { id: s.workoutId },
           },
@@ -241,9 +252,11 @@ export const createScheduleForPlanEnrolment = async (
     select,
   })
 
-  ops.push(updateOp)
+  ops.unshift(updateOp)
 
-  const [_, updated] = await prisma.$transaction(ops)
+  /// Updated op must be first in array as sometimes there is no delete op needed.
+  /// i.e if the user has not previously scheduled these workouts.
+  const [updated, _] = await prisma.$transaction(ops)
 
   if (updated) {
     return updated as WorkoutPlanEnrolment
@@ -252,44 +265,147 @@ export const createScheduleForPlanEnrolment = async (
   }
 }
 
-/// 3. Clear schdule and clear start date (also involves deleting all scheduled workouts related to this plan / user)
-/// 4. Create CompletedWorkoutPlanDayWorkout
+/// 3. Clear schedule and clear start date (involves deleting all scheduled workouts related to this plan / user)
+export const clearScheduleForPlanEnrolment = async (
+  r: any,
+  { enrolmentId }: MutationClearScheduleForPlanEnrolmentArgs,
+  { authedUserId, select, prisma }: Context,
+) => {
+  await checkUserOwnsObject(
+    enrolmentId,
+    'workoutPlanEnrolment',
+    authedUserId,
+    prisma,
+  )
+
+  const deleteOp = prisma.scheduledWorkout.deleteMany({
+    where: { userId: authedUserId, workoutPlanEnrolmentId: enrolmentId },
+  })
+
+  const updateOp = prisma.workoutPlanEnrolment.update({
+    where: { id: enrolmentId },
+    data: {
+      startDate: null,
+    },
+    select,
+  })
+
+  const [, updated] = await prisma.$transaction([deleteOp, updateOp])
+
+  if (updated) {
+    return updated as WorkoutPlanEnrolment
+  } else {
+    throw new ApolloError('clearScheduleForPlanEnrolment: There was an issue.')
+  }
+}
+
+/// 4. Create CompletedWorkoutPlanDayWorkout.
+export const createCompletedWorkoutPlanDayWorkout = async (
+  r: any,
+  {
+    data: { workoutPlanEnrolmentId, loggedWorkoutId, workoutPlanDayWorkoutId },
+  }: MutationCreateCompletedWorkoutPlanDayWorkoutArgs,
+  { authedUserId, select, prisma }: Context,
+) => {
+  await checkUserOwnsObject(
+    workoutPlanEnrolmentId,
+    'workoutPlanEnrolment',
+    authedUserId,
+    prisma,
+  )
+
+  const updated = await prisma.workoutPlanEnrolment.update({
+    where: { id: workoutPlanEnrolmentId },
+    data: {
+      CompletedWorkoutPlanDayWorkouts: {
+        create: [
+          {
+            WorkoutPlanDayWorkout: { connect: { id: workoutPlanDayWorkoutId } },
+            LoggedWorkout: { connect: { id: loggedWorkoutId } },
+          },
+        ],
+      },
+    },
+    select,
+  })
+
+  if (updated) {
+    return updated as WorkoutPlanEnrolment
+  } else {
+    throw new ApolloError(
+      'createCompletedWorkoutPlanDayWorkout: There was an issue.',
+    )
+  }
+}
+
 /// 5. Delete CompletedWorkoutPlanDayWorkout
+export const deleteCompletedWorkoutPlanDayWorkout = async (
+  r: any,
+  {
+    data: { workoutPlanEnrolmentId, workoutPlanDayWorkoutId },
+  }: MutationDeleteCompletedWorkoutPlanDayWorkoutArgs,
+  { authedUserId, select, prisma }: Context,
+) => {
+  await checkUserOwnsObject(
+    workoutPlanEnrolmentId,
+    'workoutPlanEnrolment',
+    authedUserId,
+    prisma,
+  )
+
+  const updated = await prisma.workoutPlanEnrolment.update({
+    where: { id: workoutPlanEnrolmentId },
+    data: {
+      CompletedWorkoutPlanDayWorkouts: {
+        delete: {
+          id: workoutPlanDayWorkoutId,
+        },
+      },
+    },
+    select,
+  })
+
+  if (updated) {
+    return updated as WorkoutPlanEnrolment
+  } else {
+    throw new ApolloError(
+      'deleteCompletedWorkoutPlanDayWorkout: There was an issue.',
+    )
+  }
+}
+
 /// 6. Clear plan progress - delete all CompletedWorkoutPlanDayWorkouts
+export const clearWorkoutPlanEnrolmentProgress = async (
+  r: any,
+  { enrolmentId }: MutationClearWorkoutPlanEnrolmentProgressArgs,
+  { authedUserId, select, prisma }: Context,
+) => {
+  await checkUserOwnsObject(
+    enrolmentId,
+    'workoutPlanEnrolment',
+    authedUserId,
+    prisma,
+  )
 
-// export const updateWorkoutPlanEnrolment = async (
-//   r: any,
-//   { data }: MutationUpdateWorkoutPlanEnrolmentArgs,
-//   { authedUserId, select, prisma }: Context,
-// ) => {
-//   await checkUserOwnsObject(
-//     data.id,
-//     'workoutPlanEnrolment',
-//     authedUserId,
-//     prisma,
-//   )
+  await prisma.completedWorkoutPlanDayWorkout.deleteMany({
+    where: {
+      workoutPlanEnrolmentId: enrolmentId,
+    },
+  })
 
-//   const updated = await prisma.workoutPlanEnrolment.update({
-//     where: { id: data.id },
-//     data: {
-//       ...data,
-//       completedPlanDayWorkoutIds: data.hasOwnProperty(
-//         'completedPlanDayWorkoutIds',
-//       )
-//         ? {
-//             set:
-//               data.completedPlanDayWorkoutIds != null
-//                 ? data.completedPlanDayWorkoutIds
-//                 : undefined,
-//           }
-//         : undefined,
-//     },
-//     select,
-//   })
+  const updated = await prisma.workoutPlanEnrolment.update({
+    where: { id: enrolmentId },
+    data: {
+      startDate: null,
+    },
+    select,
+  })
 
-//   if (updated) {
-//     return updated as WorkoutPlanEnrolment
-//   } else {
-//     throw new ApolloError('updateWorkoutPlanEnrolment: There was an issue.')
-//   }
-// }
+  if (updated) {
+    return updated as WorkoutPlanEnrolment
+  } else {
+    throw new ApolloError(
+      'clearWorkoutPlanEnrolmentProgress: There was an issue.',
+    )
+  }
+}

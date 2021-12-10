@@ -193,6 +193,12 @@ input CreateCollectionInput {
   name: String!
 }
 
+input CreateCompletedWorkoutPlanDayWorkoutInput {
+  loggedWorkoutId: ID!
+  workoutPlanDayWorkoutId: ID!
+  workoutPlanEnrolmentId: ID!
+}
+
 input CreateEquipmentInput {
   altNames: String
   loadAdjustable: Boolean!
@@ -222,6 +228,8 @@ input CreateLoggedWorkoutInput {
   ScheduledWorkout: ConnectRelationInput
   Workout: ConnectRelationInput
   WorkoutGoals: [ConnectRelationInput!]!
+  WorkoutPlanDayWorkout: ConnectRelationInput
+  WorkoutPlanEnrolment: ConnectRelationInput
   completedOn: DateTime!
   name: String!
   note: String
@@ -289,6 +297,7 @@ input CreateScheduleForPlanEnrolmentInput {
 input CreateScheduledWorkoutInput {
   GymProfile: ConnectRelationInput
   Workout: ConnectRelationInput!
+  WorkoutPlanDayWorkout: ConnectRelationInput
   WorkoutPlanEnrolment: ConnectRelationInput
   note: String
   scheduledAt: DateTime!
@@ -410,6 +419,11 @@ input CreateWorkoutTagInput {
 }
 
 scalar DateTime
+
+input DeleteCompletedWorkoutPlanDayWorkoutInput {
+  workoutPlanDayWorkoutId: ID!
+  workoutPlanEnrolmentId: ID!
+}
 
 enum DifficultyLevel {
   ADVANCED
@@ -570,12 +584,15 @@ type Mutation {
   archiveCustomMoveById(id: ID!): Move!
   archiveWorkoutById(id: ID!): Workout!
   archiveWorkoutPlanById(id: ID!): WorkoutPlan!
+  clearScheduleForPlanEnrolment(enrolmentId: ID!): WorkoutPlanEnrolment!
+  clearWorkoutPlanEnrolmentProgress(enrolmentId: ID!): WorkoutPlanEnrolment!
   copyWorkoutPlanDayToAnotherDay(data: CopyWorkoutPlanDayToAnotherDayInput!): WorkoutPlanDay!
   createBodyTrackingEntry(data: CreateBodyTrackingEntryInput!): BodyTrackingEntry!
   createClub(data: CreateClubInput!): Club!
   createClubInviteToken(data: CreateClubInviteTokenInput!): ClubInviteToken!
   createClubTimelinePost(data: CreateClubTimelinePostInput!): TimelinePostFullData!
   createCollection(data: CreateCollectionInput!): Collection!
+  createCompletedWorkoutPlanDayWorkout(data: CreateCompletedWorkoutPlanDayWorkoutInput!): WorkoutPlanEnrolment!
   createEquipment(data: CreateEquipmentInput!): Equipment
   createGymProfile(data: CreateGymProfileInput!): GymProfile!
   createLoggedWorkout(data: CreateLoggedWorkoutInput!): LoggedWorkout!
@@ -606,6 +623,7 @@ type Mutation {
   deleteClubInviteTokenById(id: ID!): ID!
   deleteClubTimelinePost(activityId: ID!): ID!
   deleteCollectionById(id: ID!): ID!
+  deleteCompletedWorkoutPlanDayWorkout(data: DeleteCompletedWorkoutPlanDayWorkoutInput!): WorkoutPlanEnrolment!
   deleteGymProfileById(id: ID!): ID
   deleteLoggedWorkoutById(id: ID!): ID!
   deleteProgressJournalById(id: ID!): ID!
@@ -672,7 +690,6 @@ type Mutation {
   updateWorkoutPlan(data: UpdateWorkoutPlanInput!): WorkoutPlan!
   updateWorkoutPlanDay(data: UpdateWorkoutPlanDayInput!): WorkoutPlanDay!
   updateWorkoutPlanDayWorkout(data: UpdateWorkoutPlanDayWorkoutInput!): WorkoutPlanDayWorkout!
-  updateWorkoutPlanEnrolment(data: UpdateWorkoutPlanEnrolmentInput!): WorkoutPlanEnrolment!
   updateWorkoutPlanReview(data: UpdateWorkoutPlanReviewInput!): WorkoutPlanReview!
   updateWorkoutSection(data: UpdateWorkoutSectionInput!): WorkoutSection!
   updateWorkoutSet(data: UpdateWorkoutSetInput!): WorkoutSet!
@@ -810,7 +827,9 @@ type ScheduledWorkout {
   loggedWorkoutId: ID
   note: String
   scheduledAt: DateTime!
+  workoutPlanDayWorkoutId: ID
   workoutPlanEnrolmentId: ID
+  workoutPlanName: String
 }
 
 type Skill {
@@ -1012,8 +1031,6 @@ input UpdateProgressJournalInput {
 input UpdateScheduledWorkoutInput {
   GymProfile: ConnectRelationInput
   LoggedWorkout: ConnectRelationInput
-  Workout: ConnectRelationInput
-  WorkoutPlanEnrolment: ConnectRelationInput
   id: ID!
   note: String
   scheduledAt: DateTime
@@ -1140,12 +1157,6 @@ input UpdateWorkoutPlanDayWorkoutInput {
   WorkoutPlanDay: ConnectRelationInput
   id: ID!
   note: String
-}
-
-input UpdateWorkoutPlanEnrolmentInput {
-  completedPlanDayWorkoutIds: [String!]
-  id: ID!
-  startDate: DateTime
 }
 
 input UpdateWorkoutPlanInput {

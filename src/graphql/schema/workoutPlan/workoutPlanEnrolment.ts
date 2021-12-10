@@ -29,16 +29,21 @@ export default gql`
     loggedWorkoutId: ID!
   }
 
+  input CreateCompletedWorkoutPlanDayWorkoutInput {
+    workoutPlanEnrolmentId: ID!
+    workoutPlanDayWorkoutId: ID!
+    loggedWorkoutId: ID!
+  }
+
+  input DeleteCompletedWorkoutPlanDayWorkoutInput {
+    workoutPlanEnrolmentId: ID!
+    workoutPlanDayWorkoutId: ID!
+  }
+
   # Schedules all workouts in the plan (creates a ScheduledWorkout for each and adds to WorkoutPlanEnrolment.scheduledWorkouts[]) where day 1 is [startDate]
   # If WorkoutPlanEnrolment.scheduledWorkouts[] is not empty then it will delete all of these first. Use this to update schedule as well when changing start date.
   input CreateScheduleForPlanEnrolmentInput {
     workoutPlanEnrolmentId: ID!
     startDate: DateTime! # Should be a date and a time. The first workout of the day will be schduled at the time specified, subsequent workouts (when more than one per day) will be n (TBC) hours later.
-  }
-
-  input UpdateWorkoutPlanEnrolmentInput {
-    id: ID!
-    startDate: DateTime
-    completedPlanDayWorkoutIds: [String!]
   }
 `
