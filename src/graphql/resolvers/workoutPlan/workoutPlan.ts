@@ -106,11 +106,7 @@ export const workoutPlanById = async (
 ) => {
   const workoutPlan = await prisma.workoutPlan.findUnique({
     where: { id },
-    select: {
-      ...select,
-      contentAccessScope: true,
-      userId: true,
-    },
+    select,
   })
 
   if (workoutPlan) {

@@ -14,9 +14,9 @@ export default gql`
     name: String!
     note: String
     workoutId: ID # Scalar.
+    User: UserSummary!
     GymProfile: GymProfile
     LoggedWorkoutSections: [LoggedWorkoutSection!]!
-    ScheduledWorkout: ScheduledWorkout
     WorkoutGoals: [WorkoutGoal!]!
   }
 

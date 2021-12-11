@@ -523,7 +523,7 @@ export type LoggedWorkout = {
   __typename?: 'LoggedWorkout';
   GymProfile?: Maybe<GymProfile>;
   LoggedWorkoutSections: Array<LoggedWorkoutSection>;
-  ScheduledWorkout?: Maybe<ScheduledWorkout>;
+  User: UserSummary;
   WorkoutGoals: Array<WorkoutGoal>;
   completedOn: Scalars['DateTime'];
   id: Scalars['ID'];
@@ -2933,7 +2933,7 @@ export type LifetimeLogStatsSummaryResolvers<ContextType = any, ParentType exten
 export type LoggedWorkoutResolvers<ContextType = any, ParentType extends ResolversParentTypes['LoggedWorkout'] = ResolversParentTypes['LoggedWorkout']> = ResolversObject<{
   GymProfile?: Resolver<Maybe<ResolversTypes['GymProfile']>, ParentType, ContextType>;
   LoggedWorkoutSections?: Resolver<Array<ResolversTypes['LoggedWorkoutSection']>, ParentType, ContextType>;
-  ScheduledWorkout?: Resolver<Maybe<ResolversTypes['ScheduledWorkout']>, ParentType, ContextType>;
+  User?: Resolver<ResolversTypes['UserSummary'], ParentType, ContextType>;
   WorkoutGoals?: Resolver<Array<ResolversTypes['WorkoutGoal']>, ParentType, ContextType>;
   completedOn?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;

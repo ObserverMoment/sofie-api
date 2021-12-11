@@ -38,10 +38,8 @@ export const userLoggedWorkouts = async (
 export const loggedWorkoutById = async (
   r: any,
   { id }: QueryLoggedWorkoutByIdArgs,
-  { authedUserId, select, prisma }: Context,
+  { select, prisma }: Context,
 ) => {
-  await checkUserOwnsObject(id, 'loggedWorkout', authedUserId, prisma)
-
   const loggedWorkout = await prisma.loggedWorkout.findUnique({
     where: { id },
     select,
@@ -96,10 +94,6 @@ export const createLoggedWorkout = async (
 ) => {
   const shouldCreateCompletedWorkoutPlanDayWorkout =
     data.WorkoutPlanDayWorkout && data.WorkoutPlanEnrolment
-
-  console.log(data.WorkoutPlanDayWorkout)
-  console.log(data.WorkoutPlanEnrolment)
-  console.log(shouldCreateCompletedWorkoutPlanDayWorkout)
 
   const loggedWorkout = await prisma.loggedWorkout.create({
     data: {
