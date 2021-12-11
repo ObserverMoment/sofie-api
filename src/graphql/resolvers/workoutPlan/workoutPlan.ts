@@ -23,6 +23,7 @@ import {
   MutationDeleteWorkoutPlanDaysByIdArgs,
   QueryPublicWorkoutPlansArgs,
   WorkoutPlanSummary,
+  QueryUserPublicWorkoutPlansArgs,
 } from '../../../generated/graphql'
 import {
   checkWorkoutPlanMediaForDeletion,
@@ -63,13 +64,35 @@ export const publicWorkoutPlans = async (
   return formatWorkoutPlanSummaries(workoutPlans) as WorkoutPlanSummary[]
 }
 
+// All user created plans by user ID. If user is the logged in user, then get all,
+// Otherwise just get public. Never get archived.
 export const userWorkoutPlans = async (
   r: any,
   a: any,
   { authedUserId, prisma }: Context,
 ) => {
   const workoutPlans = await prisma.workoutPlan.findMany({
-    where: { userId: authedUserId, archived: false },
+    where: {
+      userId: authedUserId,
+      archived: false,
+    },
+    select: selectForWorkoutPlanSummary,
+  })
+
+  return formatWorkoutPlanSummaries(workoutPlans) as WorkoutPlanSummary[]
+}
+
+export const userPublicWorkoutPlans = async (
+  r: any,
+  { userId }: QueryUserPublicWorkoutPlansArgs,
+  { prisma }: Context,
+) => {
+  const workoutPlans = await prisma.workoutPlan.findMany({
+    where: {
+      userId: userId,
+      archived: false,
+      contentAccessScope: 'PUBLIC',
+    },
     select: selectForWorkoutPlanSummary,
   })
 
@@ -83,11 +106,7 @@ export const workoutPlanById = async (
 ) => {
   const workoutPlan = await prisma.workoutPlan.findUnique({
     where: { id },
-    select: {
-      ...select,
-      contentAccessScope: true,
-      userId: true,
-    },
+    select,
   })
 
   if (workoutPlan) {

@@ -105,7 +105,7 @@ import {
   createScheduledWorkout,
   updateScheduledWorkout,
   deleteScheduledWorkoutById,
-} from './schedule'
+} from './scheduledWorkout'
 
 import {
   textSearchWorkouts,
@@ -135,6 +135,14 @@ import {
   updateWorkoutTag,
   deleteWorkoutTagById,
 } from './user'
+
+import {
+  createSkill,
+  updateSkill,
+  deleteSkillById,
+  addDocumentToSkill,
+  removeDocumentFromSkill,
+} from './skillsAndCertifications'
 
 import {
   userBenchmarks,
@@ -168,6 +176,7 @@ import { checkClubInviteToken } from './invites'
 import {
   publicWorkouts,
   userWorkouts,
+  userPublicWorkouts,
   workoutById,
   createWorkout,
   updateWorkout,
@@ -202,6 +211,7 @@ import {
 import {
   publicWorkoutPlans,
   userWorkoutPlans,
+  userPublicWorkoutPlans,
   workoutPlanById,
   createWorkoutPlan,
   updateWorkoutPlan,
@@ -223,9 +233,13 @@ import {
   workoutPlanEnrolments,
   workoutPlanEnrolmentById,
   createWorkoutPlanEnrolment,
-  updateWorkoutPlanEnrolment,
   deleteWorkoutPlanEnrolmentById,
-} from './workoutPlan/workoutPlanEnrolments'
+  createScheduleForPlanEnrolment,
+  clearScheduleForPlanEnrolment,
+  createCompletedWorkoutPlanDayWorkout,
+  deleteCompletedWorkoutPlanDayWorkout,
+  clearWorkoutPlanEnrolmentProgress,
+} from './workoutPlan/workoutPlanEnrolment'
 
 import { GraphQLScalarType } from 'graphql'
 import GraphQLJSON from 'graphql-type-json'
@@ -329,11 +343,13 @@ const resolvers: Resolvers = {
     userCollectionById,
     //// Workouts ////
     publicWorkouts,
-    userWorkouts,
+    userWorkouts, // Authed user.
+    userPublicWorkouts, // Public users (profiles)
     workoutById,
     //// WorkoutPlans ////
     publicWorkoutPlans,
-    userWorkoutPlans,
+    userWorkoutPlans, // Authed user.
+    userPublicWorkoutPlans, // Public users (profiles)
     workoutPlanById,
     workoutPlanEnrolments,
     workoutPlanEnrolmentById,
@@ -456,6 +472,14 @@ const resolvers: Resolvers = {
     removeWorkoutFromCollection,
     addWorkoutPlanToCollection,
     removeWorkoutPlanFromCollection,
+    /////////////////////
+    //// User Skills ////
+    /////////////////////
+    createSkill,
+    updateSkill,
+    deleteSkillById,
+    addDocumentToSkill,
+    removeDocumentFromSkill,
     /////////////////
     //// Workout ////
     /////////////////
@@ -495,13 +519,14 @@ const resolvers: Resolvers = {
     updateWorkoutPlanDayWorkout,
     deleteWorkoutPlanDayWorkoutById,
     reorderWorkoutPlanDayWorkouts,
-    //// Workout Plan User Specific ////
+    //// Workout Plan Enrolment User Specific ////
     createWorkoutPlanEnrolment,
-    updateWorkoutPlanEnrolment,
     deleteWorkoutPlanEnrolmentById,
-    createWorkoutPlanReview,
-    updateWorkoutPlanReview,
-    deleteWorkoutPlanReviewById,
+    createScheduleForPlanEnrolment,
+    clearScheduleForPlanEnrolment,
+    createCompletedWorkoutPlanDayWorkout,
+    deleteCompletedWorkoutPlanDayWorkout,
+    clearWorkoutPlanEnrolmentProgress,
   },
 }
 

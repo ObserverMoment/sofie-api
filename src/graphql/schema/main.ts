@@ -66,11 +66,11 @@ export default gql`
     #### User Avatars ####
     userAvatars(ids: [ID!]!): [UserAvatarData!]!
     userAvatarById(id: ID!): UserAvatarData!
-    #### UserBenchmark (aka Personal Best) ####
+    #### User Benchmark (aka Personal Best) ####
     userBenchmarks: [UserBenchmark!]!
     userBenchmarkById(id: ID!): UserBenchmark!
     userBenchmarkTags: [UserBenchmarkTag!]!
-    #### UserCollection ####
+    #### User Collection ####
     userCollections: [Collection!]!
     userCollectionById(id: ID!): Collection!
     #### User Public Profiles ####
@@ -82,7 +82,8 @@ export default gql`
       filters: WorkoutFiltersInput
       take: Int
     ): [WorkoutSummary!]!
-    userWorkouts: [WorkoutSummary!]!
+    userWorkouts: [WorkoutSummary!]! # Authed user.
+    userPublicWorkouts(userId: ID!): [WorkoutSummary!]! # Public users (profiles).
     workoutById(id: ID!): Workout!
     #### Workout Plans ####
     publicWorkoutPlans(
@@ -91,7 +92,8 @@ export default gql`
       take: Int
     ): [WorkoutPlanSummary!]!
     workoutPlanById(id: ID!): WorkoutPlan!
-    userWorkoutPlans: [WorkoutPlanSummary!]!
+    userWorkoutPlans: [WorkoutPlanSummary!]! # Authed user.
+    userPublicWorkoutPlans(userId: ID!): [WorkoutPlanSummary!]! # Public users (profiles).
     #### Workout Plan Enrolments ####
     workoutPlanEnrolmentById(id: ID!): WorkoutPlanEnrolmentWithPlan!
     workoutPlanEnrolments: [WorkoutPlanEnrolmentSummary!]!
@@ -194,7 +196,7 @@ export default gql`
     ): ScheduledWorkout!
     deleteScheduledWorkoutById(id: ID!): ID!
     #### User ####
-    updateUserProfile(data: UpdateUserProfileInput!): UserProfile!
+    updateUserProfile(data: UpdateUserProfileInput!): UpdateUserProfileResult!
     createWorkoutTag(data: CreateWorkoutTagInput!): WorkoutTag!
     updateWorkoutTag(data: UpdateWorkoutTagInput!): WorkoutTag!
     deleteWorkoutTagById(id: ID!): ID!
@@ -231,6 +233,12 @@ export default gql`
     removeWorkoutPlanFromCollection(
       data: RemoveWorkoutPlanFromCollectionInput!
     ): Collection!
+    #### User Skills and Certifications ####
+    createSkill(data: CreateSkillInput!): Skill!
+    updateSkill(data: UpdateSkillInput!): Skill!
+    deleteSkillById(id: ID!): ID!
+    addDocumentToSkill(data: AddDocumentToSkillInput!): Skill!
+    removeDocumentFromSkill(data: RemoveDocumentFromSkillInput!): Skill!
     #################
     #### Workout ####
     makeCopyWorkoutById(id: ID!): Workout! # Note: Media should not be copied
@@ -296,10 +304,18 @@ export default gql`
     createWorkoutPlanEnrolment(
       workoutPlanId: ID!
     ): WorkoutPlanEnrolmentWithPlan!
-    updateWorkoutPlanEnrolment(
-      data: UpdateWorkoutPlanEnrolmentInput!
-    ): WorkoutPlanEnrolment!
     deleteWorkoutPlanEnrolmentById(id: ID!): ID!
+    createScheduleForPlanEnrolment(
+      data: CreateScheduleForPlanEnrolmentInput!
+    ): WorkoutPlanEnrolment!
+    clearScheduleForPlanEnrolment(enrolmentId: ID!): WorkoutPlanEnrolment!
+    createCompletedWorkoutPlanDayWorkout(
+      data: CreateCompletedWorkoutPlanDayWorkoutInput!
+    ): WorkoutPlanEnrolment!
+    deleteCompletedWorkoutPlanDayWorkout(
+      data: DeleteCompletedWorkoutPlanDayWorkoutInput!
+    ): WorkoutPlanEnrolment!
+    clearWorkoutPlanEnrolmentProgress(enrolmentId: ID!): WorkoutPlanEnrolment!
     #### Workout Plan Review ####
     createWorkoutPlanReview(
       data: CreateWorkoutPlanReviewInput!

@@ -1,3 +1,4 @@
+import { prisma, PrismaClient } from '.prisma/client'
 import { ApolloError } from 'apollo-server-errors'
 import { ContextUserType } from '..'
 
@@ -6,6 +7,21 @@ export class AccessScopeError extends ApolloError {
     super(message, 'ACCESS_DENIED')
 
     Object.defineProperty(this, 'name', { value: 'AccessScopeError' })
+  }
+}
+
+export async function checkUserProfileIsPublic(
+  id: string,
+  prisma: PrismaClient,
+) {
+  const user = await prisma.user.findUnique({
+    where: { id },
+    select: { userProfileScope: true },
+  })
+  if (user?.userProfileScope !== 'PUBLIC') {
+    throw new AccessScopeError(
+      'This profile is private, you do not have access.',
+    )
   }
 }
 
@@ -25,6 +41,7 @@ export type ContentObjectType =
   | 'progressJournalGoalTag'
   | 'progressJournalEntry'
   | 'scheduledWorkout'
+  | 'skill'
   | 'workout'
   | 'workoutSection'
   | 'workoutSet'

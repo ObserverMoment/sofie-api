@@ -4,7 +4,6 @@ export default gql`
   type Collection {
     id: ID!
     createdAt: DateTime!
-    User: UserSummary!
     name: String!
     description: String
     Workouts: [WorkoutSummary!]!

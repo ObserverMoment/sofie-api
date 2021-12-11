@@ -5,6 +5,7 @@ import {
   MutationMakeCopyWorkoutByIdArgs,
   MutationUpdateWorkoutArgs,
   QueryPublicWorkoutsArgs,
+  QueryUserPublicWorkoutsArgs,
   QueryWorkoutByIdArgs,
   Workout,
   WorkoutSummary,
@@ -56,14 +57,40 @@ export const publicWorkouts = async (
   return formatWorkoutSummaries(publicWorkouts) as WorkoutSummary[]
 }
 
-// All user workouts, both public and private, but not archived.
+// All user created workouts by user ID. If user is the logged in user, then get all,
+// Otherwise just get public. Never get archived.
 export const userWorkouts = async (
   r: any,
   a: any,
   { authedUserId, prisma }: Context,
 ) => {
   const userWorkouts = await prisma.workout.findMany({
-    where: { userId: authedUserId, archived: false },
+    where: {
+      userId: authedUserId,
+      archived: false,
+    },
+    orderBy: {
+      id: 'desc',
+    },
+    select: selectForWorkoutSummary,
+  })
+
+  console.log(userWorkouts)
+
+  return formatWorkoutSummaries(userWorkouts) as WorkoutSummary[]
+}
+
+export const userPublicWorkouts = async (
+  r: any,
+  { userId }: QueryUserPublicWorkoutsArgs,
+  { prisma }: Context,
+) => {
+  const userWorkouts = await prisma.workout.findMany({
+    where: {
+      userId: userId,
+      archived: false,
+      contentAccessScope: 'PUBLIC',
+    },
     orderBy: {
       id: 'desc',
     },
@@ -80,11 +107,7 @@ export const workoutById = async (
 ) => {
   const workout: any = await prisma.workout.findUnique({
     where: { id },
-    select: {
-      ...select,
-      contentAccessScope: true,
-      userId: true,
-    },
+    select,
   })
 
   if (workout) {
