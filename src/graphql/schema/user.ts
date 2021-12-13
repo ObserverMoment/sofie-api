@@ -35,7 +35,7 @@ export default gql`
     followerCount: Int
     workoutCount: Int
     planCount: Int
-    Clubs: [ClubSummary!]! # Public only
+    Clubs: [ClubSummary!]! # If UserProfile is Private this must be empty.
     LifetimeLogStatsSummary: LifetimeLogStatsSummary
     BenchmarksWithBestEntries: [UserBenchmarkWithBestEntry!]!
     Skills: [Skill!]!

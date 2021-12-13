@@ -8,8 +8,12 @@ import {
   MutationRemoveWorkoutPlanFromClubArgs,
 } from '../../../generated/graphql'
 import { checkUserOwnsObject } from '../../utils'
-import { selectForWorkoutSummary } from '../selectDefinitions'
+import {
+  selectForWorkoutPlanSummary,
+  selectForWorkoutSummary,
+} from '../selectDefinitions'
 import { formatWorkoutSummaries } from '../workout/utils'
+import { formatWorkoutPlanSummaries } from '../workoutPlan/utils'
 import { checkUserIsOwnerOrAdminOfClub } from './utils'
 
 export const addWorkoutToClub = async (
@@ -32,12 +36,15 @@ export const addWorkoutToClub = async (
       Workouts: {
         select: selectForWorkoutSummary,
       },
+      WorkoutPlans: {
+        select: selectForWorkoutPlanSummary,
+      },
     },
   })
 
-  updated.Workouts = formatWorkoutSummaries(updated.Workouts)
-
   if (updated) {
+    updated.Workouts = formatWorkoutSummaries(updated.Workouts)
+    updated.WorkoutPlans = formatWorkoutPlanSummaries(updated.WorkoutPlans)
     return updated as Club
   } else {
     throw new ApolloError('addWorkoutToClub: There was an issue.')
@@ -64,12 +71,15 @@ export const removeWorkoutFromClub = async (
       Workouts: {
         select: selectForWorkoutSummary,
       },
+      WorkoutPlans: {
+        select: selectForWorkoutPlanSummary,
+      },
     },
   })
 
-  updated.Workouts = formatWorkoutSummaries(updated.Workouts)
-
   if (updated) {
+    updated.Workouts = formatWorkoutSummaries(updated.Workouts)
+    updated.WorkoutPlans = formatWorkoutPlanSummaries(updated.WorkoutPlans)
     return updated as Club
   } else {
     throw new ApolloError('removeWorkoutFromClub: There was an issue.')
@@ -96,12 +106,15 @@ export const addWorkoutPlanToClub = async (
       Workouts: {
         select: selectForWorkoutSummary,
       },
+      WorkoutPlans: {
+        select: selectForWorkoutPlanSummary,
+      },
     },
   })
 
-  updated.Workouts = formatWorkoutSummaries(updated.Workouts)
-
   if (updated) {
+    updated.Workouts = formatWorkoutSummaries(updated.Workouts)
+    updated.WorkoutPlans = formatWorkoutPlanSummaries(updated.WorkoutPlans)
     return updated as Club
   } else {
     throw new ApolloError('addWorkoutPlanToClub: There was an issue.')
@@ -128,12 +141,15 @@ export const removeWorkoutPlanFromClub = async (
       Workouts: {
         select: selectForWorkoutSummary,
       },
+      WorkoutPlans: {
+        select: selectForWorkoutPlanSummary,
+      },
     },
   })
 
-  updated.Workouts = formatWorkoutSummaries(updated.Workouts)
-
   if (updated) {
+    updated.Workouts = formatWorkoutSummaries(updated.Workouts)
+    updated.WorkoutPlans = formatWorkoutPlanSummaries(updated.WorkoutPlans)
     return updated as Club
   } else {
     throw new ApolloError('removeWorkoutPlanFromClub: There was an issue.')

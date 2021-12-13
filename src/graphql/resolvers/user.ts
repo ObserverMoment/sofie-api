@@ -97,15 +97,27 @@ export const userProfiles = async (
       townCity: true,
       countryCode: true,
       displayName: true,
-      _count: {
-        select: {
-          Workouts: true,
-          WorkoutPlans: true,
-        },
-      },
       Skills: {
         select: {
           name: true,
+        },
+      },
+      Workouts: {
+        where: {
+          archived: false,
+          contentAccessScope: 'PUBLIC',
+        },
+        select: {
+          id: true,
+        },
+      },
+      WorkoutPlans: {
+        where: {
+          archived: false,
+          contentAccessScope: 'PUBLIC',
+        },
+        select: {
+          id: true,
         },
       },
       ClubsWhereOwner: {
@@ -124,8 +136,8 @@ export const userProfiles = async (
     countryCode: u.countryCode,
     displayName: u.displayName,
     skills: u.Skills.map((s) => s.name),
-    workoutCount: u._count?.Workouts || 0,
-    planCount: u._count?.WorkoutPlans || 0,
+    workoutCount: u.Workouts.length,
+    planCount: u.WorkoutPlans.length,
     Clubs: u.ClubsWhereOwner.map((c) => ({
       id: c.id,
       createdAt: c.createdAt,
@@ -192,6 +204,24 @@ export const userProfileById = async (
             select: selectForClubSummary,
           }
         : undefined,
+      Workouts: {
+        where: {
+          archived: false,
+          contentAccessScope: 'PUBLIC',
+        },
+        select: {
+          id: true,
+        },
+      },
+      WorkoutPlans: {
+        where: {
+          archived: false,
+          contentAccessScope: 'PUBLIC',
+        },
+        select: {
+          id: true,
+        },
+      },
     },
   })
 
@@ -213,20 +243,8 @@ export const userProfileById = async (
           countryCode: user.countryCode,
           displayName: user.displayName,
           followerCount: await getUserFollowersCount(user.id),
-          workoutCount:
-            (await prisma.workout.count({
-              where: {
-                userId: userId,
-                archived: false,
-              },
-            })) || 0,
-          planCount:
-            (await prisma.workoutPlan.count({
-              where: {
-                userId: userId,
-                archived: false,
-              },
-            })) || 0,
+          workoutCount: user.Workouts.length,
+          planCount: user.WorkoutPlans.length,
           Skills: user.Skills,
           // TODO: Casting as any because [ClubsWhereOwner] was being returned as [Club]
           // The isPublic tiernary is causing some type weirdness?
@@ -260,6 +278,9 @@ export const userProfileById = async (
           displayName: user.displayName,
           avatarUri: user.avatarUri,
           userProfileScope: user.userProfileScope,
+          Clubs: [],
+          BenchmarksWithBestEntries: [],
+          Skills: [],
         } as UserProfile)
   } else {
     throw new AccessScopeError('userProfileById: There was an issue.')

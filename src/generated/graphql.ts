@@ -351,7 +351,7 @@ export type CreateUserBenchmarkTagInput = {
 
 export type CreateWorkoutInput = {
   contentAccessScope: ContentAccessScope;
-  difficultyLevel: DifficultyLevel;
+  difficultyLevel?: InputMaybe<DifficultyLevel>;
   name: Scalars['String'];
 };
 
@@ -523,7 +523,7 @@ export type LoggedWorkout = {
   __typename?: 'LoggedWorkout';
   GymProfile?: Maybe<GymProfile>;
   LoggedWorkoutSections: Array<LoggedWorkoutSection>;
-  User: UserSummary;
+  User?: Maybe<UserSummary>;
   WorkoutGoals: Array<WorkoutGoal>;
   completedOn: Scalars['DateTime'];
   id: Scalars['ID'];
@@ -2127,7 +2127,7 @@ export type Workout = {
   coverImageUri?: Maybe<Scalars['String']>;
   createdAt: Scalars['DateTime'];
   description?: Maybe<Scalars['String']>;
-  difficultyLevel: DifficultyLevel;
+  difficultyLevel?: Maybe<DifficultyLevel>;
   id: Scalars['ID'];
   introAudioUri?: Maybe<Scalars['String']>;
   introVideoThumbUri?: Maybe<Scalars['String']>;
@@ -2353,7 +2353,7 @@ export type WorkoutSummary = {
   coverImageUri?: Maybe<Scalars['String']>;
   createdAt: Scalars['DateTime'];
   description?: Maybe<Scalars['String']>;
-  difficultyLevel: DifficultyLevel;
+  difficultyLevel?: Maybe<DifficultyLevel>;
   equipments: Array<Scalars['String']>;
   hasClassAudio: Scalars['Boolean'];
   hasClassVideo: Scalars['Boolean'];
@@ -2933,7 +2933,7 @@ export type LifetimeLogStatsSummaryResolvers<ContextType = any, ParentType exten
 export type LoggedWorkoutResolvers<ContextType = any, ParentType extends ResolversParentTypes['LoggedWorkout'] = ResolversParentTypes['LoggedWorkout']> = ResolversObject<{
   GymProfile?: Resolver<Maybe<ResolversTypes['GymProfile']>, ParentType, ContextType>;
   LoggedWorkoutSections?: Resolver<Array<ResolversTypes['LoggedWorkoutSection']>, ParentType, ContextType>;
-  User?: Resolver<ResolversTypes['UserSummary'], ParentType, ContextType>;
+  User?: Resolver<Maybe<ResolversTypes['UserSummary']>, ParentType, ContextType>;
   WorkoutGoals?: Resolver<Array<ResolversTypes['WorkoutGoal']>, ParentType, ContextType>;
   completedOn?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
@@ -3425,7 +3425,7 @@ export type WorkoutResolvers<ContextType = any, ParentType extends ResolversPare
   coverImageUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  difficultyLevel?: Resolver<ResolversTypes['DifficultyLevel'], ParentType, ContextType>;
+  difficultyLevel?: Resolver<Maybe<ResolversTypes['DifficultyLevel']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   introAudioUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   introVideoThumbUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -3601,7 +3601,7 @@ export type WorkoutSummaryResolvers<ContextType = any, ParentType extends Resolv
   coverImageUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  difficultyLevel?: Resolver<ResolversTypes['DifficultyLevel'], ParentType, ContextType>;
+  difficultyLevel?: Resolver<Maybe<ResolversTypes['DifficultyLevel']>, ParentType, ContextType>;
   equipments?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   hasClassAudio?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   hasClassVideo?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;

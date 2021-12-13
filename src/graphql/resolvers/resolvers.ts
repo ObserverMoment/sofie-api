@@ -519,6 +519,9 @@ const resolvers: Resolvers = {
     updateWorkoutPlanDayWorkout,
     deleteWorkoutPlanDayWorkoutById,
     reorderWorkoutPlanDayWorkouts,
+    createWorkoutPlanReview,
+    updateWorkoutPlanReview,
+    deleteWorkoutPlanReviewById,
     //// Workout Plan Enrolment User Specific ////
     createWorkoutPlanEnrolment,
     deleteWorkoutPlanEnrolmentById,

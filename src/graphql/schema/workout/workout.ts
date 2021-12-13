@@ -12,7 +12,7 @@ export default gql`
     lengthMinutes: Int
     coverImageUri: String
     description: String
-    difficultyLevel: DifficultyLevel!
+    difficultyLevel: DifficultyLevel
     loggedSessionsCount: Int!
     hasClassVideo: Boolean!
     hasClassAudio: Boolean!
@@ -33,7 +33,7 @@ export default gql`
     introVideoThumbUri: String
     introAudioUri: String
     coverImageUri: String
-    difficultyLevel: DifficultyLevel!
+    difficultyLevel: DifficultyLevel
     contentAccessScope: ContentAccessScope!
     WorkoutGoals: [WorkoutGoal!]!
     WorkoutTags: [WorkoutTag!]!
@@ -43,7 +43,7 @@ export default gql`
   # Just creates the basic required fields.
   input CreateWorkoutInput {
     name: String!
-    difficultyLevel: DifficultyLevel!
+    difficultyLevel: DifficultyLevel
     contentAccessScope: ContentAccessScope!
   }
 

@@ -157,7 +157,6 @@ export const updateWorkout = async (
     data: {
       ...data,
       name: data.name || undefined,
-      difficultyLevel: data.difficultyLevel || undefined,
       contentAccessScope: data.contentAccessScope || undefined,
       // Note: You should not pass 'null' to a relationship field. It will be parsed as 'no input' and ignored.
       // To remove all related items of this type pass an empty array.

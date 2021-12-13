@@ -344,7 +344,7 @@ model Workout {
   userId                String
   introVideoThumbUri    String?
   archived              Boolean                 @default(false)
-  difficultyLevel       DifficultyLevel         @default(INTERMEDIATE)
+  difficultyLevel       DifficultyLevel?
   lengthMinutes         Int?
   metaData              Json?
   User                  User                    @relation(fields: [userId], references: [id])
