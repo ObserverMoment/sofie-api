@@ -189,11 +189,6 @@ model User {
   ClubInviteTokens        ClubInviteToken[]
   Collections             Collection[]
   GymProfiles             GymProfile[]
-  ClubInvitesReceived     JoinClubInvite[]         @relation("invited")
-  ClubInvitesResponded    JoinClubInvite[]         @relation("invite_responder")
-  ClubInvitesSent         JoinClubInvite[]         @relation("sender")
-  JoinClubRequestsSent    JoinClubRequest[]        @relation("applicant")
-  JoinClubResponsesSent   JoinClubRequest[]        @relation("request_responder")
   LoggedWorkouts          LoggedWorkout[]
   LoggedWorkoutSections   LoggedWorkoutSection[]
   CustomMoves             Move[]
@@ -278,8 +273,6 @@ model Club {
   contentAccessScope ContentAccessScope @default(PRIVATE)
   Owner              User               @relation("owner", fields: [userId], references: [id])
   ClubInviteTokens   ClubInviteToken[]
-  JoinClubInvites    JoinClubInvite[]
-  JoinClubRequests   JoinClubRequest[]
   Workouts           Workout[]
   WorkoutPlans       WorkoutPlan[]
   Admins             User[]             @relation("admin")
@@ -297,36 +290,6 @@ model ClubInviteToken {
   name          String
   Club          Club     @relation(fields: [clubId], references: [id], onDelete: Cascade)
   User          User     @relation(fields: [userId], references: [id])
-}
-
-/// When a user requests to join a club.
-model JoinClubRequest {
-  id          String                @id @default(uuid())
-  createdAt   DateTime              @default(now())
-  status      JoinClubRequestStatus @default(PENDING)
-  respondedAt DateTime?
-  applicantId String
-  clubId      String
-  responderId String?
-  Applicant   User                  @relation("applicant", fields: [applicantId], references: [id])
-  Club        Club                  @relation(fields: [clubId], references: [id], onDelete: Cascade)
-  Responder   User?                 @relation("request_responder", fields: [responderId], references: [id])
-}
-
-/// When the owner or an admin invites a user to join a club.
-model JoinClubInvite {
-  id          String                @id @default(uuid())
-  createdAt   DateTime              @default(now())
-  invitedId   String
-  status      JoinClubRequestStatus @default(PENDING)
-  respondedAt DateTime?
-  clubId      String
-  senderId    String
-  responderId String?
-  Club        Club                  @relation(fields: [clubId], references: [id], onDelete: Cascade)
-  Invited     User                  @relation("invited", fields: [invitedId], references: [id])
-  Responder   User?                 @relation("invite_responder", fields: [responderId], references: [id])
-  Sender      User                  @relation("sender", fields: [senderId], references: [id])
 }
 
 /// /////////////////////////////////////////////////

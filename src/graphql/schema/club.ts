@@ -20,8 +20,6 @@ export default gql`
     WorkoutPlans: [WorkoutPlanSummary!]
     # Data should be viewable by club members, admins and owners only. Return null if not.
     ClubInviteTokens: [ClubInviteToken!]
-    JoinClubInvites: [JoinClubInvite!]
-    JoinClubRequests: [JoinClubRequest!]
   }
 
   # Use in lists etc where minimal data is needed.
@@ -74,33 +72,6 @@ export default gql`
     WorkoutPlan: ConnectRelationInput!
   }
 
-  #### JoinClubInvite ####
-  # From club to user.
-  type JoinClubInvite {
-    id: ID!
-    createdAt: DateTime!
-    # Owner or admin of the club.
-    Sender: UserSummary!
-    # The user being invited
-    Invited: UserSummary!
-    # Owner or admin who accepts / rejects.
-    Responder: UserSummary!
-    status: JoinClubRequestStatus!
-    respondedAt: DateTime
-  }
-
-  input CreateJoinClubInviteInput {
-    Club: ConnectRelationInput!
-    Sender: ConnectRelationInput!
-    Invited: ConnectRelationInput!
-  }
-
-  input UpdateJoinClubInviteInput {
-    id: ID!
-    Responder: ConnectRelationInput!
-    status: JoinClubRequestStatus!
-  }
-
   #### ClubInviteToken ####
   type ClubInviteToken {
     id: ID! # Use the unique ID string as the 'token' string.
@@ -128,28 +99,5 @@ export default gql`
     name: String
     inviteLimit: Int
     active: Boolean
-  }
-
-  #### JoinClubRequest ####
-  # From user to club.
-  type JoinClubRequest {
-    id: ID!
-    createdAt: DateTime!
-    Applicant: UserSummary!
-    status: JoinClubRequestStatus!
-    # Owner or admin of the group.
-    Responder: UserSummary
-    respondedAt: DateTime
-  }
-
-  input CreateJoinClubRequestInput {
-    Club: ConnectRelationInput!
-    Applicant: ConnectRelationInput!
-  }
-
-  input UpdateJoinClubRequestInput {
-    id: ID!
-    Responder: ConnectRelationInput!
-    status: JoinClubRequestStatus!
   }
 `
