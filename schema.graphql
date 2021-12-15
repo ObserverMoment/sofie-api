@@ -212,6 +212,24 @@ input CreateGymProfileInput {
   name: String!
 }
 
+input CreateJournalGoalInput {
+  deadline: DateTime
+  description: String
+  name: String!
+}
+
+input CreateJournalMoodInput {
+  confidenceScore: Float
+  energyScore: Float
+  moodScore: Float
+  motivationScore: Float
+}
+
+input CreateJournalNoteInput {
+  textNote: String
+  voiceNoteUri: String
+}
+
 input CreateLoggedWorkoutInput {
   GymProfile: ConnectRelationInput
   LoggedWorkoutSections: [CreateLoggedWorkoutSectionInLoggedWorkoutInput!]!
@@ -250,35 +268,6 @@ input CreateMoveInput {
   validRepTypes: [WorkoutMoveRepType!]!
 }
 
-input CreateProgressJournalEntryInput {
-  ProgressJournal: ConnectRelationInput!
-  confidenceScore: Float
-  energyScore: Float
-  moodScore: Float
-  motivationScore: Float
-  note: String
-  voiceNoteUri: String
-}
-
-input CreateProgressJournalGoalInput {
-  ProgressJournal: ConnectRelationInput!
-  ProgressJournalGoalTags: [ConnectRelationInput!]
-  deadline: DateTime
-  description: String
-  name: String!
-}
-
-input CreateProgressJournalGoalTagInput {
-  hexColor: String!
-  tag: String!
-}
-
-input CreateProgressJournalInput {
-  coverImageUri: String
-  description: String
-  name: String!
-}
-
 input CreateScheduleForPlanEnrolmentInput {
   startDate: DateTime!
   workoutPlanEnrolmentId: ID!
@@ -308,16 +297,10 @@ input CreateUserBenchmarkEntryInput {
 }
 
 input CreateUserBenchmarkInput {
-  UserBenchmarkTags: [ConnectRelationInput!]
   benchmarkType: BenchmarkType!
   description: String
   equipmentInfo: String
   loadUnit: LoadUnit
-  name: String!
-}
-
-input CreateUserBenchmarkTagInput {
-  description: String
   name: String!
 }
 
@@ -463,6 +446,31 @@ enum JoinClubRequestStatus {
   REJECTED
 }
 
+type JournalGoal {
+  completedDate: DateTime
+  createdAt: DateTime!
+  deadline: DateTime
+  description: String
+  id: ID!
+  name: String!
+}
+
+type JournalMood {
+  confidenceScore: Float
+  createdAt: DateTime!
+  energyScore: Float
+  id: ID!
+  moodScore: Float
+  motivationScore: Float
+}
+
+type JournalNote {
+  createdAt: DateTime!
+  id: ID!
+  textNote: String
+  voiceNoteUri: String
+}
+
 type LifetimeLogStatsSummary {
   minutesWorked: Int!
   sessionsLogged: Int!
@@ -566,18 +574,16 @@ type Mutation {
   createCompletedWorkoutPlanDayWorkout(data: CreateCompletedWorkoutPlanDayWorkoutInput!): WorkoutPlanEnrolment!
   createEquipment(data: CreateEquipmentInput!): Equipment
   createGymProfile(data: CreateGymProfileInput!): GymProfile!
+  createJournalGoal(data: CreateJournalGoalInput!): JournalGoal!
+  createJournalMood(data: CreateJournalMoodInput!): JournalMood!
+  createJournalNote(data: CreateJournalNoteInput!): JournalNote!
   createLoggedWorkout(data: CreateLoggedWorkoutInput!): LoggedWorkout!
   createMove(data: CreateMoveInput!): Move!
-  createProgressJournal(data: CreateProgressJournalInput!): ProgressJournal!
-  createProgressJournalEntry(data: CreateProgressJournalEntryInput!): ProgressJournalEntry!
-  createProgressJournalGoal(data: CreateProgressJournalGoalInput!): ProgressJournalGoal!
-  createProgressJournalGoalTag(data: CreateProgressJournalGoalTagInput!): ProgressJournalGoalTag!
   createScheduleForPlanEnrolment(data: CreateScheduleForPlanEnrolmentInput!): WorkoutPlanEnrolment!
   createScheduledWorkout(data: CreateScheduledWorkoutInput!): ScheduledWorkout!
   createSkill(data: CreateSkillInput!): Skill!
   createUserBenchmark(data: CreateUserBenchmarkInput!): UserBenchmark!
   createUserBenchmarkEntry(data: CreateUserBenchmarkEntryInput!): UserBenchmarkEntry!
-  createUserBenchmarkTag(data: CreateUserBenchmarkTagInput!): UserBenchmarkTag!
   createWorkout(data: CreateWorkoutInput!): Workout!
   createWorkoutMove(data: CreateWorkoutMoveInput!): WorkoutMove!
   createWorkoutPlan(data: CreateWorkoutPlanInput!): WorkoutPlan!
@@ -596,16 +602,14 @@ type Mutation {
   deleteCollectionById(id: ID!): ID!
   deleteCompletedWorkoutPlanDayWorkout(data: DeleteCompletedWorkoutPlanDayWorkoutInput!): WorkoutPlanEnrolment!
   deleteGymProfileById(id: ID!): ID
+  deleteJournalGoalById(id: ID!): ID!
+  deleteJournalMoodById(id: ID!): ID!
+  deleteJournalNoteById(id: ID!): ID!
   deleteLoggedWorkoutById(id: ID!): ID!
-  deleteProgressJournalById(id: ID!): ID!
-  deleteProgressJournalEntryById(id: ID!): ID!
-  deleteProgressJournalGoalById(id: ID!): ID!
-  deleteProgressJournalGoalTagById(id: ID!): ID!
   deleteScheduledWorkoutById(id: ID!): ID!
   deleteSkillById(id: ID!): ID!
   deleteUserBenchmarkById(id: ID!): ID!
   deleteUserBenchmarkEntryById(id: ID!): ID!
-  deleteUserBenchmarkTagById(id: ID!): ID!
   deleteWorkoutMoveById(id: ID!): ID!
   deleteWorkoutPlanDayWorkoutById(id: ID!): ID!
   deleteWorkoutPlanDaysById(ids: [ID!]!): [ID!]!
@@ -642,18 +646,16 @@ type Mutation {
   updateCollection(data: UpdateCollectionInput!): Collection!
   updateEquipment(data: UpdateEquipmentInput!): Equipment
   updateGymProfile(data: UpdateGymProfileInput!): GymProfile!
+  updateJournalGoal(data: UpdateJournalGoalInput!): JournalGoal!
+  updateJournalMood(data: UpdateJournalMoodInput!): JournalMood!
+  updateJournalNote(data: UpdateJournalNoteInput!): JournalNote!
   updateLoggedWorkout(data: UpdateLoggedWorkoutInput!): LoggedWorkout!
   updateLoggedWorkoutSection(data: UpdateLoggedWorkoutSectionInput!): LoggedWorkoutSection!
   updateMove(data: UpdateMoveInput!): Move!
-  updateProgressJournal(data: UpdateProgressJournalInput!): ProgressJournal!
-  updateProgressJournalEntry(data: UpdateProgressJournalEntryInput!): ProgressJournalEntry!
-  updateProgressJournalGoal(data: UpdateProgressJournalGoalInput!): ProgressJournalGoal!
-  updateProgressJournalGoalTag(data: UpdateProgressJournalGoalTagInput!): ProgressJournalGoalTag!
   updateScheduledWorkout(data: UpdateScheduledWorkoutInput!): ScheduledWorkout!
   updateSkill(data: UpdateSkillInput!): Skill!
   updateUserBenchmark(data: UpdateUserBenchmarkInput!): UserBenchmark!
   updateUserBenchmarkEntry(data: UpdateUserBenchmarkEntryInput!): UserBenchmarkEntry!
-  updateUserBenchmarkTag(data: UpdateUserBenchmarkTagInput!): UserBenchmarkTag!
   updateUserProfile(data: UpdateUserProfileInput!): UpdateUserProfileResult!
   updateWorkout(data: UpdateWorkoutInput!): Workout!
   updateWorkoutMove(data: UpdateWorkoutMoveInput!): WorkoutMove!
@@ -668,45 +670,6 @@ type Mutation {
   userJoinPublicClub(clubId: ID!): ID!
 }
 
-type ProgressJournal {
-  ProgressJournalEntries: [ProgressJournalEntry!]!
-  ProgressJournalGoals: [ProgressJournalGoal!]!
-  coverImageUri: String
-  createdAt: DateTime!
-  description: String
-  id: ID!
-  name: String!
-}
-
-type ProgressJournalEntry {
-  ProgressJournal: ProgressJournal!
-  confidenceScore: Float
-  createdAt: DateTime!
-  energyScore: Float
-  id: ID!
-  moodScore: Float
-  motivationScore: Float
-  note: String
-  voiceNoteUri: String
-}
-
-type ProgressJournalGoal {
-  ProgressJournalGoalTags: [ProgressJournalGoalTag!]!
-  completedDate: DateTime
-  createdAt: DateTime!
-  deadline: DateTime
-  description: String
-  id: ID!
-  name: String!
-}
-
-type ProgressJournalGoalTag {
-  createdAt: DateTime!
-  hexColor: String!
-  id: ID!
-  tag: String!
-}
-
 type Query {
   bodyAreas: [BodyArea!]!
   bodyTrackingEntries: [BodyTrackingEntry!]!
@@ -718,12 +681,13 @@ type Query {
   clubSummariesById(ids: [ID!]!): [ClubSummary!]!
   equipments: [Equipment!]!
   gymProfiles: [GymProfile!]!
+  journalGoals: [JournalGoal!]!
+  journalMoods: [JournalMood!]!
+  journalNotes: [JournalNote!]!
   lifetimeLogStatsSummary(userId: ID!): LifetimeLogStatsSummary!
   logCountByWorkout(id: ID!): Int!
   loggedWorkoutById(id: ID!): LoggedWorkout!
   moveTypes: [MoveType!]!
-  progressJournalById(id: ID!): ProgressJournal!
-  progressJournalGoalTags: [ProgressJournalGoalTag!]!
   publicClubs: [ClubSummary!]!
   publicWorkoutPlans(cursor: ID, filters: WorkoutPlanFiltersInput, take: Int): [WorkoutPlanSummary!]!
   publicWorkouts(cursor: ID, filters: WorkoutFiltersInput, take: Int): [WorkoutSummary!]!
@@ -741,7 +705,6 @@ type Query {
   userAvatarById(id: ID!): UserAvatarData!
   userAvatars(ids: [ID!]!): [UserAvatarData!]!
   userBenchmarkById(id: ID!): UserBenchmark!
-  userBenchmarkTags: [UserBenchmarkTag!]!
   userBenchmarks: [UserBenchmark!]!
   userClubs: [ClubSummary!]!
   userCollectionById(id: ID!): Collection!
@@ -750,7 +713,6 @@ type Query {
   userLoggedWorkouts(take: Int): [LoggedWorkout!]!
   userProfileById(userId: ID!): UserProfile!
   userProfiles(cursor: ID, take: Int): [UserProfileSummary!]!
-  userProgressJournals: [ProgressJournal!]!
   userPublicWorkoutPlans(userId: ID!): [WorkoutPlanSummary!]!
   userPublicWorkouts(userId: ID!): [WorkoutSummary!]!
   userScheduledWorkouts: [ScheduledWorkout!]!
@@ -923,6 +885,28 @@ input UpdateGymProfileInput {
   name: String
 }
 
+input UpdateJournalGoalInput {
+  completedDate: DateTime
+  deadline: DateTime
+  description: String
+  id: ID!
+  name: String
+}
+
+input UpdateJournalMoodInput {
+  confidenceScore: Float
+  energyScore: Float
+  id: ID!
+  moodScore: Float
+  motivationScore: Float
+}
+
+input UpdateJournalNoteInput {
+  id: ID!
+  textNote: String
+  voiceNoteUri: String
+}
+
 input UpdateLoggedWorkoutInput {
   GymProfile: ConnectRelationInput
   WorkoutGoals: [ConnectRelationInput!]!
@@ -953,38 +937,6 @@ input UpdateMoveInput {
   scope: MoveScope
   searchTerms: String
   validRepTypes: [WorkoutMoveRepType!]
-}
-
-input UpdateProgressJournalEntryInput {
-  confidenceScore: Float
-  energyScore: Float
-  id: ID!
-  moodScore: Float
-  motivationScore: Float
-  note: String
-  voiceNoteUri: String
-}
-
-input UpdateProgressJournalGoalInput {
-  ProgressJournalGoalTags: [ConnectRelationInput!]
-  completedDate: DateTime
-  deadline: DateTime
-  description: String
-  id: ID!
-  name: String
-}
-
-input UpdateProgressJournalGoalTagInput {
-  hexColor: String
-  id: ID!
-  tag: String
-}
-
-input UpdateProgressJournalInput {
-  coverImageUri: String
-  description: String
-  id: ID!
-  name: String
 }
 
 input UpdateScheduledWorkoutInput {
@@ -1020,18 +972,11 @@ input UpdateUserBenchmarkEntryInput {
 }
 
 input UpdateUserBenchmarkInput {
-  UserBenchmarkTags: [ConnectRelationInput!]
   benchmarkType: BenchmarkType!
   description: String
   equipmentInfo: String
   id: String!
   loadUnit: LoadUnit
-  name: String
-}
-
-input UpdateUserBenchmarkTagInput {
-  description: String
-  id: ID!
   name: String
 }
 
@@ -1172,7 +1117,6 @@ type UserAvatarData {
 
 type UserBenchmark {
   UserBenchmarkEntries: [UserBenchmarkEntry!]!
-  UserBenchmarkTags: [UserBenchmarkTag!]!
   benchmarkType: BenchmarkType!
   createdAt: DateTime!
   description: String
@@ -1199,12 +1143,6 @@ type UserBenchmarkSummary {
   id: String!
   lastEntryAt: DateTime!
   loadUnit: LoadUnit!
-  name: String!
-}
-
-type UserBenchmarkTag {
-  description: String
-  id: ID!
   name: String!
 }
 

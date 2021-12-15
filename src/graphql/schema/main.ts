@@ -33,9 +33,9 @@ export default gql`
     userCustomMoves: [Move!]!
     #### Progress Journal ####
     bodyTrackingEntries: [BodyTrackingEntry!]!
-    userProgressJournals: [ProgressJournal!]!
-    progressJournalById(id: ID!): ProgressJournal!
-    progressJournalGoalTags: [ProgressJournalGoalTag!]!
+    journalNotes: [JournalNote!]!
+    journalMoods: [JournalMood!]!
+    journalGoals: [JournalGoal!]!
     #### Scheduled Workouts ####
     userScheduledWorkouts: [ScheduledWorkout!]!
     #### Text Search ####
@@ -69,7 +69,6 @@ export default gql`
     #### User Benchmark (aka Personal Best) ####
     userBenchmarks: [UserBenchmark!]!
     userBenchmarkById(id: ID!): UserBenchmark!
-    userBenchmarkTags: [UserBenchmarkTag!]!
     #### User Collection ####
     userCollections: [Collection!]!
     userCollectionById(id: ID!): Collection!
@@ -147,33 +146,18 @@ export default gql`
     ): BodyTrackingEntry!
     deleteBodyTrackingEntryById(id: ID!): ID!
     #### Progress Journal ####
-    createProgressJournal(data: CreateProgressJournalInput!): ProgressJournal!
-    updateProgressJournal(data: UpdateProgressJournalInput!): ProgressJournal!
-    deleteProgressJournalById(id: ID!): ID!
-    #### Progress Journal Entry ####
-    createProgressJournalEntry(
-      data: CreateProgressJournalEntryInput!
-    ): ProgressJournalEntry!
-    updateProgressJournalEntry(
-      data: UpdateProgressJournalEntryInput!
-    ): ProgressJournalEntry!
-    deleteProgressJournalEntryById(id: ID!): ID!
+    #### Progress Journal Note ####
+    createJournalNote(data: CreateJournalNoteInput!): JournalNote!
+    updateJournalNote(data: UpdateJournalNoteInput!): JournalNote!
+    deleteJournalNoteById(id: ID!): ID!
     #### Progress Journal Goal ####
-    createProgressJournalGoal(
-      data: CreateProgressJournalGoalInput!
-    ): ProgressJournalGoal!
-    updateProgressJournalGoal(
-      data: UpdateProgressJournalGoalInput!
-    ): ProgressJournalGoal!
-    deleteProgressJournalGoalById(id: ID!): ID!
-    #### Progress Journal Goal Tag ####
-    createProgressJournalGoalTag(
-      data: CreateProgressJournalGoalTagInput!
-    ): ProgressJournalGoalTag!
-    updateProgressJournalGoalTag(
-      data: UpdateProgressJournalGoalTagInput!
-    ): ProgressJournalGoalTag!
-    deleteProgressJournalGoalTagById(id: ID!): ID!
+    createJournalGoal(data: CreateJournalGoalInput!): JournalGoal!
+    updateJournalGoal(data: UpdateJournalGoalInput!): JournalGoal!
+    deleteJournalGoalById(id: ID!): ID!
+    #### Progress Journal Mood ####
+    createJournalMood(data: CreateJournalMoodInput!): JournalMood!
+    updateJournalMood(data: UpdateJournalMoodInput!): JournalMood!
+    deleteJournalMoodById(id: ID!): ID!
     ########################
     #### Logged Workout ####
     createLoggedWorkout(data: CreateLoggedWorkoutInput!): LoggedWorkout!
@@ -211,14 +195,6 @@ export default gql`
       data: UpdateUserBenchmarkEntryInput!
     ): UserBenchmarkEntry!
     deleteUserBenchmarkEntryById(id: ID!): ID!
-    #### User Benchmark Tag ####
-    createUserBenchmarkTag(
-      data: CreateUserBenchmarkTagInput!
-    ): UserBenchmarkTag!
-    updateUserBenchmarkTag(
-      data: UpdateUserBenchmarkTagInput!
-    ): UserBenchmarkTag!
-    deleteUserBenchmarkTagById(id: ID!): ID!
     #### User Collection ####
     createCollection(data: CreateCollectionInput!): Collection!
     updateCollection(data: UpdateCollectionInput!): Collection!

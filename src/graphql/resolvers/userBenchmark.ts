@@ -3,17 +3,13 @@ import { Context } from '../..'
 import {
   MutationCreateUserBenchmarkArgs,
   MutationCreateUserBenchmarkEntryArgs,
-  MutationCreateUserBenchmarkTagArgs,
   MutationDeleteUserBenchmarkByIdArgs,
   MutationDeleteUserBenchmarkEntryByIdArgs,
-  MutationDeleteUserBenchmarkTagByIdArgs,
   MutationUpdateUserBenchmarkArgs,
   MutationUpdateUserBenchmarkEntryArgs,
-  MutationUpdateUserBenchmarkTagArgs,
   QueryUserBenchmarkByIdArgs,
   UserBenchmark,
   UserBenchmarkEntry,
-  UserBenchmarkTag,
 } from '../../generated/graphql'
 import {
   checkUserBenchmarkEntryMediaForDeletion,
@@ -52,20 +48,6 @@ export const userBenchmarkById = async (
   return userBenchmark as UserBenchmark
 }
 
-export const userBenchmarkTags = async (
-  r: any,
-  a: any,
-  { authedUserId, select, prisma }: Context,
-) => {
-  const userBenchmarkTags = await prisma.userBenchmarkTag.findMany({
-    where: {
-      userId: authedUserId,
-    },
-    select,
-  })
-  return userBenchmarkTags as UserBenchmarkTag[]
-}
-
 //// Mutations ////
 export const createUserBenchmark = async (
   r: any,
@@ -76,11 +58,6 @@ export const createUserBenchmark = async (
     data: {
       ...data,
       loadUnit: data.loadUnit || undefined,
-      UserBenchmarkTags: data.UserBenchmarkTags
-        ? {
-            connect: data.UserBenchmarkTags,
-          }
-        : undefined,
       User: {
         connect: { id: authedUserId },
       },
@@ -108,12 +85,6 @@ export const updateUserBenchmark = async (
       ...data,
       name: data.name || undefined,
       loadUnit: data.loadUnit || undefined,
-      UserBenchmarkTags: {
-        // Note: You should not pass 'null' to a relationship field. It will be parsed as 'no input' and ignored.
-        // To remove all related items of this type pass an empty array.
-        // https://www.prisma.io/docs/concepts/components/prisma-client/relation-queries#disconnect-all-related-records
-        set: data.UserBenchmarkTags ? data.UserBenchmarkTags : undefined,
-      },
     },
     select,
   })
@@ -283,74 +254,5 @@ export const deleteUserBenchmarkEntryById = async (
     return deleted.id
   } else {
     throw new ApolloError('deleteUserBenchmarkEntryById: There was an issue.')
-  }
-}
-
-///////////////////////////
-//// UserBenchmarkTags ////
-///////////////////////////
-export const createUserBenchmarkTag = async (
-  r: any,
-  { data }: MutationCreateUserBenchmarkTagArgs,
-  { authedUserId, select, prisma }: Context,
-) => {
-  const userBenchmarkTag = await prisma.userBenchmarkTag.create({
-    data: {
-      ...data,
-      User: {
-        connect: { id: authedUserId },
-      },
-    },
-    select,
-  })
-
-  if (userBenchmarkTag) {
-    return userBenchmarkTag as UserBenchmarkTag
-  } else {
-    throw new ApolloError('createUserBenchmarkTag: There was an issue.')
-  }
-}
-
-export const updateUserBenchmarkTag = async (
-  r: any,
-  { data }: MutationUpdateUserBenchmarkTagArgs,
-  { authedUserId, select, prisma }: Context,
-) => {
-  await checkUserOwnsObject(data.id, 'userBenchmarkTag', authedUserId, prisma)
-
-  const updated = await prisma.userBenchmarkTag.update({
-    where: { id: data.id },
-    data: {
-      ...data,
-      name: data.name || undefined,
-    },
-    select,
-  })
-
-  if (updated) {
-    return updated as UserBenchmarkTag
-  } else {
-    throw new ApolloError('updateUserBenchmarkTag: There was an issue.')
-  }
-}
-
-export const deleteUserBenchmarkTagById = async (
-  r: any,
-  { id }: MutationDeleteUserBenchmarkTagByIdArgs,
-  { authedUserId, prisma }: Context,
-) => {
-  await checkUserOwnsObject(id, 'userBenchmarkTag', authedUserId, prisma)
-
-  const deleted = await prisma.userBenchmarkTag.delete({
-    where: { id },
-    select: {
-      id: true,
-    },
-  })
-
-  if (deleted) {
-    return deleted.id
-  } else {
-    throw new ApolloError('deleteUserBenchmarkTagById: There was an issue.')
   }
 }

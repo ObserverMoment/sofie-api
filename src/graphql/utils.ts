@@ -36,10 +36,9 @@ export type ContentObjectType =
   | 'loggedWorkoutSet'
   | 'loggedWorkoutMove'
   | 'move'
-  | 'progressJournal'
-  | 'progressJournalGoal'
-  | 'progressJournalGoalTag'
-  | 'progressJournalEntry'
+  | 'journalNote'
+  | 'journalMood'
+  | 'journalGoal'
   | 'scheduledWorkout'
   | 'skill'
   | 'workout'
@@ -56,7 +55,6 @@ export type ContentObjectType =
   | 'workoutTag'
   | 'userBenchmark'
   | 'userBenchmarkEntry'
-  | 'userBenchmarkTag'
 
 /// Checks that a user has access to a single object in the database.
 /// Checks for ownership so cannot use this cor checking, for example, access to group scoped content.

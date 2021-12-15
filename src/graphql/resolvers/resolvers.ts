@@ -83,21 +83,18 @@ import {
 } from './officialData'
 
 import {
-  userProgressJournals,
-  progressJournalGoalTags,
-  progressJournalById,
-  createProgressJournal,
-  updateProgressJournal,
-  deleteProgressJournalById,
-  createProgressJournalGoal,
-  updateProgressJournalGoal,
-  deleteProgressJournalGoalById,
-  createProgressJournalGoalTag,
-  updateProgressJournalGoalTag,
-  deleteProgressJournalGoalTagById,
-  createProgressJournalEntry,
-  updateProgressJournalEntry,
-  deleteProgressJournalEntryById,
+  journalNotes,
+  journalMoods,
+  journalGoals,
+  createJournalGoal,
+  updateJournalGoal,
+  deleteJournalGoalById,
+  createJournalNote,
+  updateJournalNote,
+  deleteJournalNoteById,
+  createJournalMood,
+  updateJournalMood,
+  deleteJournalMoodById,
 } from './progressJournal'
 
 import {
@@ -147,16 +144,12 @@ import {
 import {
   userBenchmarks,
   userBenchmarkById,
-  userBenchmarkTags,
   createUserBenchmark,
   updateUserBenchmark,
   deleteUserBenchmarkById,
   createUserBenchmarkEntry,
   updateUserBenchmarkEntry,
   deleteUserBenchmarkEntryById,
-  createUserBenchmarkTag,
-  updateUserBenchmarkTag,
-  deleteUserBenchmarkTagById,
 } from './userBenchmark'
 
 import {
@@ -297,9 +290,9 @@ const resolvers: Resolvers = {
     //// Progress Body Tracking ////
     bodyTrackingEntries,
     //// Progress Journal ////
-    userProgressJournals,
-    progressJournalGoalTags,
-    progressJournalById,
+    journalNotes,
+    journalMoods,
+    journalGoals,
     //// Logged Workouts ////
     lifetimeLogStatsSummary,
     logCountByWorkout,
@@ -337,7 +330,6 @@ const resolvers: Resolvers = {
     /// User Benchmarks ////
     userBenchmarks,
     userBenchmarkById,
-    userBenchmarkTags,
     /// User Collections ////
     userCollections,
     userCollectionById,
@@ -404,18 +396,15 @@ const resolvers: Resolvers = {
     //////////////////////////
     //// Progress Journal ////
     //////////////////////////
-    createProgressJournal,
-    updateProgressJournal,
-    deleteProgressJournalById,
-    createProgressJournalEntry,
-    updateProgressJournalEntry,
-    deleteProgressJournalEntryById,
-    createProgressJournalGoal,
-    updateProgressJournalGoal,
-    deleteProgressJournalGoalById,
-    createProgressJournalGoalTag,
-    updateProgressJournalGoalTag,
-    deleteProgressJournalGoalTagById,
+    createJournalGoal,
+    updateJournalGoal,
+    deleteJournalGoalById,
+    createJournalNote,
+    updateJournalNote,
+    deleteJournalNoteById,
+    createJournalMood,
+    updateJournalMood,
+    deleteJournalMoodById,
     ///////////////////////
     //// LoggedWorkout ////
     ///////////////////////
@@ -459,9 +448,6 @@ const resolvers: Resolvers = {
     createUserBenchmarkEntry,
     updateUserBenchmarkEntry,
     deleteUserBenchmarkEntryById,
-    createUserBenchmarkTag,
-    updateUserBenchmarkTag,
-    deleteUserBenchmarkTagById,
     ////////////////////////
     //// User Collection ////
     ////////////////////////

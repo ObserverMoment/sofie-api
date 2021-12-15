@@ -1,103 +1,68 @@
 import { gql } from 'apollo-server-express'
 
 export default gql`
-  type ProgressJournal {
+  type JournalNote {
     id: ID!
     createdAt: DateTime!
-    name: String!
-    description: String
-    coverImageUri: String
-    ProgressJournalEntries: [ProgressJournalEntry!]!
-    ProgressJournalGoals: [ProgressJournalGoal!]!
+    textNote: String
+    voiceNoteUri: String
   }
 
-  input CreateProgressJournalInput {
-    name: String!
-    description: String
-    coverImageUri: String
+  input CreateJournalNoteInput {
+    textNote: String
+    voiceNoteUri: String
   }
 
-  input UpdateProgressJournalInput {
+  input UpdateJournalNoteInput {
     id: ID!
-    name: String
-    description: String
-    coverImageUri: String
+    textNote: String
+    voiceNoteUri: String
   }
 
-  type ProgressJournalEntry {
+  type JournalMood {
     id: ID!
     createdAt: DateTime!
-    note: String
-    voiceNoteUri: String
     moodScore: Float
     energyScore: Float
     confidenceScore: Float
     motivationScore: Float
-    ProgressJournal: ProgressJournal!
   }
 
-  input CreateProgressJournalEntryInput {
-    note: String
-    voiceNoteUri: String
+  input CreateJournalMoodInput {
     moodScore: Float
     energyScore: Float
     confidenceScore: Float
     motivationScore: Float
-    ProgressJournal: ConnectRelationInput!
   }
 
-  input UpdateProgressJournalEntryInput {
+  input UpdateJournalMoodInput {
     id: ID!
-    note: String
-    voiceNoteUri: String
     moodScore: Float
     energyScore: Float
     confidenceScore: Float
     motivationScore: Float
   }
 
-  type ProgressJournalGoal {
+  type JournalGoal {
     id: ID!
     createdAt: DateTime!
     name: String!
     description: String
     deadline: DateTime
     completedDate: DateTime
-    ProgressJournalGoalTags: [ProgressJournalGoalTag!]!
   }
 
-  input CreateProgressJournalGoalInput {
+  input CreateJournalGoalInput {
     name: String!
     description: String
     deadline: DateTime
-    ProgressJournal: ConnectRelationInput!
-    ProgressJournalGoalTags: [ConnectRelationInput!]
   }
 
-  input UpdateProgressJournalGoalInput {
+  input UpdateJournalGoalInput {
     id: ID!
     name: String
     description: String
     completedDate: DateTime
     deadline: DateTime
-    ProgressJournalGoalTags: [ConnectRelationInput!]
-  }
-
-  type ProgressJournalGoalTag {
-    id: ID!
-    createdAt: DateTime!
-    tag: String!
-    hexColor: String!
-  }
-
-  input CreateProgressJournalGoalTagInput {
-    tag: String!
-    hexColor: String!
-  }
-
-  input UpdateProgressJournalGoalTagInput {
-    id: ID!
-    tag: String
-    hexColor: String
   }
 `
