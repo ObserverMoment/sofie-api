@@ -24,23 +24,23 @@ export default gql`
     createdAt: DateTime!
     moodScore: Float
     energyScore: Float
-    confidenceScore: Float
-    motivationScore: Float
+    tags: [String!]!
+    textNote: String
   }
 
   input CreateJournalMoodInput {
     moodScore: Float
     energyScore: Float
-    confidenceScore: Float
-    motivationScore: Float
+    tags: [String!]
+    textNote: String
   }
 
   input UpdateJournalMoodInput {
     id: ID!
     moodScore: Float
     energyScore: Float
-    confidenceScore: Float
-    motivationScore: Float
+    tags: [String!]
+    textNote: String
   }
 
   type JournalGoal {

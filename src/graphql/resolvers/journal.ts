@@ -155,6 +155,7 @@ export const createJournalMood = async (
   const mood = await prisma.journalMood.create({
     data: {
       ...data,
+      tags: data.tags || undefined,
       User: {
         connect: { id: authedUserId },
       },
@@ -178,7 +179,14 @@ export const updateJournalMood = async (
 
   const updated = await prisma.journalMood.update({
     where: { id: data.id },
-    data,
+    data: {
+      ...data,
+      // Pass an empty array to clear the tags. Passing null will be ignored.
+      tags:
+        data.hasOwnProperty('tags') && data.tags !== null
+          ? data.tags
+          : undefined,
+    },
     select,
   })
 

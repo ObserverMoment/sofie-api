@@ -95,7 +95,7 @@ import {
   createJournalMood,
   updateJournalMood,
   deleteJournalMoodById,
-} from './progressJournal'
+} from './journal'
 
 import {
   userScheduledWorkouts,

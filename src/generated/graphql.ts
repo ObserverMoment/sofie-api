@@ -237,10 +237,10 @@ export type CreateJournalGoalInput = {
 };
 
 export type CreateJournalMoodInput = {
-  confidenceScore?: InputMaybe<Scalars['Float']>;
   energyScore?: InputMaybe<Scalars['Float']>;
   moodScore?: InputMaybe<Scalars['Float']>;
-  motivationScore?: InputMaybe<Scalars['Float']>;
+  tags?: InputMaybe<Array<Scalars['String']>>;
+  textNote?: InputMaybe<Scalars['String']>;
 };
 
 export type CreateJournalNoteInput = {
@@ -471,12 +471,12 @@ export type JournalGoal = {
 
 export type JournalMood = {
   __typename?: 'JournalMood';
-  confidenceScore?: Maybe<Scalars['Float']>;
   createdAt: Scalars['DateTime'];
   energyScore?: Maybe<Scalars['Float']>;
   id: Scalars['ID'];
   moodScore?: Maybe<Scalars['Float']>;
-  motivationScore?: Maybe<Scalars['Float']>;
+  tags: Array<Scalars['String']>;
+  textNote?: Maybe<Scalars['String']>;
 };
 
 export type JournalNote = {
@@ -1657,11 +1657,11 @@ export type UpdateJournalGoalInput = {
 };
 
 export type UpdateJournalMoodInput = {
-  confidenceScore?: InputMaybe<Scalars['Float']>;
   energyScore?: InputMaybe<Scalars['Float']>;
   id: Scalars['ID'];
   moodScore?: InputMaybe<Scalars['Float']>;
-  motivationScore?: InputMaybe<Scalars['Float']>;
+  tags?: InputMaybe<Array<Scalars['String']>>;
+  textNote?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateJournalNoteInput = {
@@ -2749,12 +2749,12 @@ export type JournalGoalResolvers<ContextType = any, ParentType extends Resolvers
 }>;
 
 export type JournalMoodResolvers<ContextType = any, ParentType extends ResolversParentTypes['JournalMood'] = ResolversParentTypes['JournalMood']> = ResolversObject<{
-  confidenceScore?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   energyScore?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   moodScore?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  motivationScore?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  tags?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
+  textNote?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
