@@ -237,8 +237,8 @@ export type CreateJournalGoalInput = {
 };
 
 export type CreateJournalMoodInput = {
-  energyScore?: InputMaybe<Scalars['Float']>;
-  moodScore?: InputMaybe<Scalars['Float']>;
+  energyScore?: InputMaybe<Scalars['Int']>;
+  moodScore?: InputMaybe<Scalars['Int']>;
   tags?: InputMaybe<Array<Scalars['String']>>;
   textNote?: InputMaybe<Scalars['String']>;
 };
@@ -472,9 +472,9 @@ export type JournalGoal = {
 export type JournalMood = {
   __typename?: 'JournalMood';
   createdAt: Scalars['DateTime'];
-  energyScore?: Maybe<Scalars['Float']>;
+  energyScore?: Maybe<Scalars['Int']>;
   id: Scalars['ID'];
-  moodScore?: Maybe<Scalars['Float']>;
+  moodScore?: Maybe<Scalars['Int']>;
   tags: Array<Scalars['String']>;
   textNote?: Maybe<Scalars['String']>;
 };
@@ -1657,9 +1657,9 @@ export type UpdateJournalGoalInput = {
 };
 
 export type UpdateJournalMoodInput = {
-  energyScore?: InputMaybe<Scalars['Float']>;
+  energyScore?: InputMaybe<Scalars['Int']>;
   id: Scalars['ID'];
-  moodScore?: InputMaybe<Scalars['Float']>;
+  moodScore?: InputMaybe<Scalars['Int']>;
   tags?: InputMaybe<Array<Scalars['String']>>;
   textNote?: InputMaybe<Scalars['String']>;
 };
@@ -2750,9 +2750,9 @@ export type JournalGoalResolvers<ContextType = any, ParentType extends Resolvers
 
 export type JournalMoodResolvers<ContextType = any, ParentType extends ResolversParentTypes['JournalMood'] = ResolversParentTypes['JournalMood']> = ResolversObject<{
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  energyScore?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  energyScore?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  moodScore?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  moodScore?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   tags?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   textNote?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
