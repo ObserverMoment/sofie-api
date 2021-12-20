@@ -1,8 +1,7 @@
-export const selectForUserSummary = {
+export const selectForUserAvatarData = {
   id: true,
   displayName: true,
   avatarUri: true,
-  userProfileScope: true,
 }
 
 export const selectForClubSummary = {
@@ -11,15 +10,37 @@ export const selectForClubSummary = {
   name: true,
   description: true,
   coverImageUri: true,
+  introVideoUri: true,
+  introVideoThumbUri: true,
+  introAudioUri: true,
+  contentAccessScope: true,
   location: true,
   _count: {
     select: {
       Members: true,
       Admins: true,
+      Workouts: true,
+      WorkoutPlans: true,
     },
   },
   Owner: {
-    select: selectForUserSummary,
+    select: selectForUserAvatarData,
+  },
+  Admins: {
+    select: selectForUserAvatarData,
+  },
+}
+
+export const selectForClubMemberSummary = {
+  id: true,
+  displayName: true,
+  avatarUri: true,
+  townCity: true,
+  countryCode: true,
+  Skills: {
+    select: {
+      name: true,
+    },
   },
 }
 
@@ -60,7 +81,7 @@ export const selectForWorkoutSummary = {
     },
   },
   User: {
-    select: selectForUserSummary,
+    select: selectForUserAvatarData,
   },
   _count: {
     select: { LoggedWorkouts: true },
@@ -77,7 +98,7 @@ export const selectForWorkoutPlanSummary = {
   lengthWeeks: true,
   daysPerWeek: true,
   User: {
-    select: selectForUserSummary,
+    select: selectForUserAvatarData,
   },
   WorkoutTags: {
     select: {

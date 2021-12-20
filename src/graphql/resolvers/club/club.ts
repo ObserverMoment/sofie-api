@@ -26,6 +26,7 @@ import {
   checkUserIsOwnerOrAdminOfClub,
   ClubMemberType,
   formatClubSummaries,
+  formatClubSummary,
 } from './utils'
 
 //// Queries ////
@@ -94,6 +95,25 @@ export const clubSummariesById = async (
   const formattedClubs = formatClubSummaries(clubs)
 
   return formattedClubs as ClubSummary[]
+}
+
+/// A single ClubSummary for displaying on the Club details page.
+/// Public data only.
+export const clubSummaryById = async (
+  r: any,
+  { id }: QueryClubByIdArgs,
+  { prisma }: Context,
+) => {
+  const club = await prisma.club.findUnique({
+    where: { id },
+    select: selectForClubSummary,
+  })
+
+  if (!club) {
+    throw new ApolloError('clubById: Could not find a club with this ID.')
+  }
+
+  return formatClubSummary(club) as ClubSummary
 }
 
 export const clubById = async (

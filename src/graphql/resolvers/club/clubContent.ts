@@ -6,6 +6,8 @@ import {
   MutationAddWorkoutToClubArgs,
   MutationRemoveWorkoutFromClubArgs,
   MutationRemoveWorkoutPlanFromClubArgs,
+  QueryClubWorkoutPlansArgs,
+  QueryClubWorkoutsArgs,
 } from '../../../generated/graphql'
 import { checkUserOwnsObject } from '../../utils'
 import {
@@ -14,8 +16,62 @@ import {
 } from '../selectDefinitions'
 import { formatWorkoutSummaries } from '../workout/utils'
 import { formatWorkoutPlanSummaries } from '../workoutPlan/utils'
-import { checkUserIsOwnerOrAdminOfClub } from './utils'
+import { checkUserIsMemberOfClub, checkUserIsOwnerOrAdminOfClub } from './utils'
 
+////// Queries ////////
+export const clubWorkouts = async (
+  r: any,
+  { clubId }: QueryClubWorkoutsArgs,
+  { authedUserId, prisma }: Context,
+) => {
+  // Check that user is a member.
+  await checkUserIsMemberOfClub(clubId, authedUserId, prisma)
+
+  const club = await prisma.club.findUnique({
+    where: { id: clubId },
+    select: {
+      Workouts: {
+        select: selectForWorkoutSummary,
+      },
+    },
+  })
+
+  if (!club) {
+    throw new ApolloError(
+      `clubWorkouts: Unable to retrieve data for club ${clubId}.`,
+    )
+  } else {
+    return formatWorkoutSummaries(club.Workouts)
+  }
+}
+
+export const clubWorkoutPlans = async (
+  r: any,
+  { clubId }: QueryClubWorkoutPlansArgs,
+  { authedUserId, prisma }: Context,
+) => {
+  // Check that user is a member.
+  await checkUserIsMemberOfClub(clubId, authedUserId, prisma)
+
+  const club = await prisma.club.findUnique({
+    where: { id: clubId },
+    select: {
+      WorkoutPlans: {
+        select: selectForWorkoutPlanSummary,
+      },
+    },
+  })
+
+  if (!club) {
+    throw new ApolloError(
+      `clubWorkoutPlans: Unable to retrieve data for club ${clubId}.`,
+    )
+  } else {
+    return formatWorkoutPlanSummaries(club.WorkoutPlans)
+  }
+}
+
+////// Mutations ///////
 export const addWorkoutToClub = async (
   r: any,
   { workoutId, clubId }: MutationAddWorkoutToClubArgs,

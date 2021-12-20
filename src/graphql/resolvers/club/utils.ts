@@ -1,6 +1,12 @@
 import { PrismaClient } from '@prisma/client'
 import { ApolloError } from 'apollo-server-express'
-import { ClubSummaryData, ClubWithMemberIdsPayload } from '../../../types'
+import { ClubMembers } from '../../../generated/graphql'
+import {
+  ClubMembersPayload,
+  ClubMemberSummaryType,
+  ClubSummaryData,
+  ClubWithMemberIdsPayload,
+} from '../../../types'
 import { AccessScopeError } from '../../utils'
 
 export function formatClubSummaries(clubs: ClubSummaryData[]) {
@@ -14,14 +20,45 @@ export function formatClubSummary(club: ClubSummaryData) {
     name: club.name,
     description: club.description,
     coverImageUri: club.coverImageUri,
+    introVideoUri: club.introVideoUri,
+    introVideoThumbUri: club.introVideoThumbUri,
+    introAudioUri: club.introAudioUri,
     location: club.location,
-    memberCount: (club?._count.Members || 0) + (club?._count.Admins || 0),
+    memberCount: club._count.Members + club._count.Admins,
+    workoutCount: club._count.Workouts,
+    planCount: club._count.WorkoutPlans,
+    contentAccessScope: club.contentAccessScope,
     Owner: {
       id: club.Owner.id,
       displayName: club.Owner.displayName,
       avatarUri: club.Owner.avatarUri,
-      userProfileScope: club.Owner.userProfileScope,
     },
+    Admins: club.Admins.map((a) => ({
+      id: a.id,
+      displayName: a.displayName,
+      avatarUri: a.avatarUri,
+    })),
+  }
+}
+
+export function formatClubMemberSummaries(
+  club: ClubMembersPayload,
+): ClubMembers {
+  return {
+    Owner: formatClubMemberSummary(club.Owner),
+    Admins: club.Admins.map((a) => formatClubMemberSummary(a)),
+    Members: club.Members.map((a) => formatClubMemberSummary(a)),
+  }
+}
+
+export function formatClubMemberSummary(clubMember: any) {
+  return {
+    id: clubMember.id,
+    displayName: clubMember.id,
+    avatarUri: clubMember.avatarUri,
+    townCity: clubMember.townCity,
+    countryCode: clubMember.countryCode,
+    skills: clubMember.Skills.map((s: any) => s.name),
   }
 }
 
@@ -200,6 +237,45 @@ export async function checkUserIsOwnerOrAdminOfClub(
   }
 }
 
+export async function getUserClubMemberStatus(
+  clubId: string,
+  userId: string,
+  prisma: PrismaClient,
+) {
+  const members = await prisma.club.findUnique({
+    where: { id: clubId },
+    select: {
+      Owner: {
+        select: { id: true },
+      },
+      Admins: {
+        where: { id: userId },
+        select: { id: true },
+      },
+      Members: {
+        where: { id: userId },
+        select: { id: true },
+      },
+    },
+  })
+
+  if (!members) {
+    throw new ApolloError(
+      `checkUserMemberStatus: There was a problem retrieving the Club member for club ${clubId}.`,
+    )
+  }
+
+  if (members.Owner.id === userId) {
+    return 'OWNER'
+  } else if (members.Admins.some((a) => a.id === userId)) {
+    return 'ADMIN'
+  } else if (members.Members.some((m) => m.id === userId)) {
+    return 'MEMBER'
+  } else {
+    return 'NONE'
+  }
+}
+
 export async function checkUserIsMemberOfClub(
   clubId: string,
   authedUserId: string,
@@ -209,7 +285,7 @@ export async function checkUserIsMemberOfClub(
 
   if (!isMember) {
     throw new AccessScopeError(
-      'User is not a member of this club: checkUserIsMemberOfClub',
+      `checkUserIsMemberOfClub: User is not a member of this club ${clubId}`,
     )
   }
 }

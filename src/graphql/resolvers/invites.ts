@@ -76,12 +76,7 @@ export const checkClubInviteToken = async (
 
   const club = await prisma.club.findUnique({
     where: { id: clubInviteToken!.clubId },
-    select: {
-      introVideoUri: true,
-      introVideoThumbUri: true,
-      introAudioUri: true,
-      ...selectForClubSummary,
-    },
+    select: selectForClubSummary,
   })
 
   if (!club) {

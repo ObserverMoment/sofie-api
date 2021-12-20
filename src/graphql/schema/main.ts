@@ -14,11 +14,19 @@ export default gql`
     workoutSectionTypes: [WorkoutSectionType!]!
     #### Clubs ####
     checkUniqueClubName(name: String!): Boolean!
+    checkUserClubMemberStatus(clubId: ID!): UserClubMemberStatus!
     # Public club summary data for use displaying chat previews.
     clubSummariesById(ids: [ID!]!): [ClubSummary!]!
     # ClubFinder functionality.
     publicClubs: [ClubSummary!]!
     userClubs: [ClubSummary!]!
+    # Public data only
+    clubSummaryById(id: ID!): ClubSummary!
+    clubMembers(clubId: ID!): ClubMembers!
+    clubWorkouts(clubId: ID!): [WorkoutSummary!]!
+    clubWorkoutPlans(clubId: ID!): [WorkoutPlanSummary!]!
+    # Full Club Objects - only owner / admin should have access.
+    # Members access private content through content type endpoints e.g clubWorkouts(clubId): [Workout]
     clubById(id: ID!): Club!
     #### Invite Tokens ####
     # The ID is the token string, we pass it to check that it is valid #

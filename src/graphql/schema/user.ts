@@ -1,18 +1,10 @@
 import { gql } from 'apollo-server-express'
 
 export default gql`
-  # Used for chat only - consider using UserSummary below and marging these two types.
   type UserAvatarData {
     id: ID!
     displayName: String!
     avatarUri: String
-  }
-
-  type UserSummary {
-    id: ID!
-    displayName: String!
-    avatarUri: String
-    userProfileScope: UserProfileScope!
   }
 
   type UserProfile {

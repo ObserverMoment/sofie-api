@@ -3,6 +3,7 @@ import { Context } from '../../..'
 import {
   Club,
   ClubInviteToken,
+  ClubMembers,
   MutationAddUserToClubViaInviteTokenArgs,
   MutationCreateClubInviteTokenArgs,
   MutationDeleteClubInviteTokenByIdArgs,
@@ -11,6 +12,8 @@ import {
   MutationRemoveUserFromClubArgs,
   MutationUpdateClubInviteTokenArgs,
   MutationUserJoinPublicClubArgs,
+  QueryCheckUserClubMemberStatusArgs,
+  QueryClubMembersArgs,
   Workout,
   WorkoutPlan,
 } from '../../../generated/graphql'
@@ -20,11 +23,72 @@ import {
 } from '../../../lib/getStream'
 import {
   checkIfAllowedToRemoveUser,
+  checkUserIsMemberOfClub,
   checkUserIsOwnerOfClub,
   checkUserIsOwnerOrAdmin,
   checkUserIsOwnerOrAdminOfClub,
+  getUserClubMemberStatus,
 } from './utils'
 
+///// Queries ///////
+export const checkUserClubMemberStatus = async (
+  r: any,
+  { clubId }: QueryCheckUserClubMemberStatusArgs,
+  { authedUserId, prisma }: Context,
+) => {
+  return getUserClubMemberStatus(clubId, authedUserId, prisma)
+}
+
+const selectForClubMemberSummary = {
+  id: true,
+  displayName: true,
+  av,
+}
+
+export const clubMembers = async (
+  r: any,
+  { clubId }: QueryClubMembersArgs,
+  { authedUserId, prisma }: Context,
+) => {
+  // Check that user is a member.
+  await checkUserIsMemberOfClub(clubId, authedUserId, prisma)
+
+  const club = await prisma.club.findUnique({
+    where: { id: clubId },
+    select: {
+      Owner: {
+        select: {
+          id: true,
+          displayName: true,
+          avatarUri: true,
+          townCity: true,
+          countryCode: true,
+          Skills: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
+      Admins: {
+        select: selectForUserSummary,
+      },
+      Members: {
+        select: selectForUserSummary,
+      },
+    },
+  })
+
+  if (!club) {
+    throw new ApolloError(
+      `clubMembers: Unable to retrieve data for club ${clubId}.`,
+    )
+  } else {
+    return club as ClubMembers
+  }
+}
+
+///// Mutations //////
 ///// Public Club Memberships //////
 ///// Any user can join / leave whenever they want //////
 export const userJoinPublicClub = async (

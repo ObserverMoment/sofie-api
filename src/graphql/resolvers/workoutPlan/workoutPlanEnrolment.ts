@@ -38,7 +38,6 @@ export const workoutPlanEnrolmentById = async (
             id: true,
             displayName: true,
             avatarUri: true,
-            userProfileScope: true,
           },
         },
         WorkoutPlan: select.WorkoutPlan,
@@ -76,7 +75,6 @@ export const workoutPlanEnrolments = async (
           id: true,
           displayName: true,
           avatarUri: true,
-          userProfileScope: true,
         },
       },
       WorkoutPlan: {
@@ -117,7 +115,6 @@ export const createWorkoutPlanEnrolment = async (
           id: true,
           displayName: true,
           avatarUri: true,
-          userProfileScope: true,
         },
       },
       WorkoutPlan: select.WorkoutPlan,

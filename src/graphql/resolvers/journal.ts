@@ -181,6 +181,8 @@ export const updateJournalMood = async (
     where: { id: data.id },
     data: {
       ...data,
+      moodScore: data.moodScore || undefined,
+      energyScore: data.energyScore || undefined,
       // Pass an empty array to clear the tags. Passing null will be ignored.
       tags:
         data.hasOwnProperty('tags') && data.tags !== null

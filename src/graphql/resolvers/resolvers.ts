@@ -29,12 +29,15 @@ import {
   publicClubs,
   clubSummariesById,
   clubById,
+  clubSummaryById,
   createClub,
   updateClub,
   deleteClubById,
 } from './club/club'
 
 import {
+  clubMembers,
+  checkUserClubMemberStatus,
   userJoinPublicClub,
   createClubInviteToken,
   updateClubInviteToken,
@@ -46,6 +49,8 @@ import {
 } from './club/clubMembers'
 
 import {
+  clubWorkouts,
+  clubWorkoutPlans,
   addWorkoutToClub,
   removeWorkoutFromClub,
   addWorkoutPlanToClub,
@@ -280,10 +285,15 @@ const resolvers: Resolvers = {
     workoutSectionTypes,
     ///// Clubs ////
     checkUniqueClubName,
+    checkUserClubMemberStatus,
     publicClubs,
     clubSummariesById,
     userClubs,
     clubById,
+    clubSummaryById,
+    clubMembers,
+    clubWorkouts,
+    clubWorkoutPlans,
     clubMembersFeedPosts,
     ///// Invites ////
     checkClubInviteToken,

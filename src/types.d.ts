@@ -21,11 +21,17 @@ export type ClubSummaryData = Prisma.ClubGetPayload<{
     name: true
     description: true
     coverImageUri: true
+    introVideoUri: true
+    introVideoThumbUri: true
+    introAudioUri: true
+    contentAccessScope: true
     location: true
     _count: {
       select: {
         Members: true
         Admins: true
+        Workouts: true
+        WorkoutPlans: true
       }
     }
     Owner: {
@@ -33,7 +39,60 @@ export type ClubSummaryData = Prisma.ClubGetPayload<{
         id: true
         displayName: true
         avatarUri: true
-        userProfileScope: true
+      }
+    }
+    Admins: {
+      select: {
+        id: true
+        displayName: true
+        avatarUri: true
+      }
+    }
+  }
+}>
+
+export type ClubMembersPayload = Prisma.ClubGetPayload<{
+  select: {
+    Owner: {
+      select: {
+        id: true
+        displayName: true
+        avatarUri: true
+        townCity: true
+        countryCode: true
+        Skills: {
+          select: {
+            name: true
+          }
+        }
+      }
+    }
+    Admins: {
+      select: {
+        id: true
+        displayName: true
+        avatarUri: true
+        townCity: true
+        countryCode: true
+        Skills: {
+          select: {
+            name: true
+          }
+        }
+      }
+    }
+    Members: {
+      select: {
+        id: true
+        displayName: true
+        avatarUri: true
+        townCity: true
+        countryCode: true
+        Skills: {
+          select: {
+            name: true
+          }
+        }
       }
     }
   }
@@ -82,7 +141,6 @@ export type WorkoutSummaryData = Prisma.WorkoutGetPayload<{
         id: true
         displayName: true
         avatarUri: true
-        userProfileScope: true
       }
     }
     _count: {
@@ -107,7 +165,6 @@ export type WorkoutPlanSummaryData = Prisma.WorkoutPlanGetPayload<{
         id: true
         displayName: true
         avatarUri: true
-        userProfileScope: true
       }
     }
     WorkoutTags: {

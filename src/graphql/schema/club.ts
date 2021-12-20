@@ -4,9 +4,9 @@ export default gql`
   type Club {
     id: ID!
     createdAt: DateTime!
-    Owner: UserSummary!
-    Admins: [UserSummary!]!
-    Members: [UserSummary!]!
+    Owner: UserAvatarData!
+    Admins: [UserAvatarData!]!
+    Members: [UserAvatarData!]!
     name: String!
     description: String
     location: String
@@ -26,12 +26,34 @@ export default gql`
   type ClubSummary {
     id: ID!
     createdAt: DateTime!
+    Owner: UserAvatarData!
+    Admins: [UserAvatarData!]!
     name: String!
     description: String
-    coverImageUri: String
     location: String
+    coverImageUri: String
+    introVideoUri: String
+    introVideoThumbUri: String
+    introAudioUri: String
+    contentAccessScope: ContentAccessScope!
     memberCount: Int!
-    Owner: UserSummary!
+    workoutCount: Int!
+    planCount: Int!
+  }
+
+  type ClubMembers {
+    Owner: ClubMemberSummary!
+    Admins: [ClubMemberSummary!]!
+    Members: [ClubMemberSummary!]
+  }
+
+  type ClubMemberSummary {
+    id: ID!
+    displayName: String!
+    avatarUri: String
+    townCity: String
+    countryCode: String
+    skills: [String!]!
   }
 
   input CreateClubInput {
@@ -85,7 +107,7 @@ export default gql`
     # Compare this length with inviteLimit to check for expiry.
     joinedUserIds: [String!]!
     # Owner or admin of the group.
-    User: UserSummary!
+    User: UserAvatarData!
   }
 
   input CreateClubInviteTokenInput {

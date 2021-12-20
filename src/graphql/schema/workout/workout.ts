@@ -8,7 +8,7 @@ export default gql`
     createdAt: DateTime!
     name: String!
     archived: Boolean!
-    User: UserSummary!
+    User: UserAvatarData!
     lengthMinutes: Int
     coverImageUri: String
     description: String
@@ -24,7 +24,7 @@ export default gql`
   type Workout {
     id: ID!
     createdAt: DateTime!
-    User: UserSummary!
+    User: UserAvatarData!
     archived: Boolean!
     name: String!
     description: String

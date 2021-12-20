@@ -12,7 +12,7 @@ export default gql`
     lengthWeeks: Int!
     daysPerWeek: Int!
     workoutsCount: Int!
-    User: UserSummary!
+    User: UserAvatarData!
     enrolmentsCount: Int!
     goals: [WorkoutGoal!]!
     tags: [String!]!
@@ -33,7 +33,7 @@ export default gql`
     introVideoThumbUri: String
     introAudioUri: String
     contentAccessScope: ContentAccessScope!
-    User: UserSummary!
+    User: UserAvatarData!
     WorkoutPlanDays: [WorkoutPlanDay!]!
     WorkoutPlanReviews: [WorkoutPlanReview!]!
     WorkoutTags: [WorkoutTag!]!
@@ -120,7 +120,7 @@ export default gql`
     createdAt: DateTime!
     score: Float!
     comment: String
-    User: UserSummary!
+    User: UserAvatarData!
   }
 
   input CreateWorkoutPlanReviewInput {

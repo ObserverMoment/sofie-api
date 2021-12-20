@@ -112,4 +112,10 @@ export default gql`
     PRIVATE
     PUBLIC
   }
+  enum UserClubMemberStatus {
+    OWNER
+    ADMIN
+    MEMBER
+    NONE
+  }
 `

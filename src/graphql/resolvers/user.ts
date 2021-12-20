@@ -20,6 +20,7 @@ import {
 import { getUserFollowersCount } from '../../lib/getStream'
 import { checkUserMediaForDeletion, deleteFiles } from '../../lib/uploadcare'
 import { AccessScopeError, checkUserOwnsObject } from '../utils'
+import { formatClubSummaries } from './club/utils'
 import { calcLifetimeLogStatsSummary } from './loggedWorkout'
 import { selectForClubSummary } from './selectDefinitions'
 
@@ -138,20 +139,7 @@ export const userProfiles = async (
     skills: u.Skills.map((s) => s.name),
     workoutCount: u.Workouts.length,
     planCount: u.WorkoutPlans.length,
-    Clubs: u.ClubsWhereOwner.map((c) => ({
-      id: c.id,
-      createdAt: c.createdAt,
-      name: c.name,
-      coverImageUri: c.coverImageUri,
-      location: c.location,
-      memberCount: c._count?.Members || 0,
-      Owner: {
-        id: u.id,
-        displayName: u.displayName,
-        avatarUri: u.avatarUri,
-        userProfileScope: u.userProfileScope,
-      },
-    })),
+    Clubs: formatClubSummaries(u.ClubsWhereOwner),
   }))
 
   return publicProfileSummaries as UserProfileSummary[]
@@ -255,14 +243,24 @@ export const userProfileById = async (
             name: c.name,
             description: c.description,
             coverImageUri: c.coverImageUri,
+            introVideoUri: c.introVideoUri,
+            introVideoThumbUri: c.introVideoThumbUri,
+            introAudioUri: c.introAudioUri,
             location: c.location,
             memberCount: (c._count?.Members || 0) + (c._count?.Admins || 0),
+            workoutCount: c._count?.Workouts || 0,
+            planCount: c._count?.WorkoutPlans || 0,
+            contentAccessScope: c.contentAccessScope,
             Owner: {
               id: user.id,
               displayName: user.displayName,
               avatarUri: user.avatarUri,
-              userProfileScope: user.userProfileScope,
             },
+            Admins: c.Admins.map((a: any) => ({
+              id: a.id,
+              displayName: a.displayName,
+              avatarUri: a.avatarUri,
+            })),
           })),
           LifetimeLogStatsSummary: await calcLifetimeLogStatsSummary(
             user.id,

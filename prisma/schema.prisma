@@ -531,8 +531,8 @@ model JournalNote {
 model JournalMood {
   id          String   @id @default(uuid())
   createdAt   DateTime @default(now())
-  moodScore   Int?
-  energyScore Int?
+  moodScore   Int
+  energyScore Int
   tags        String[]
   textNote    String?
   User        User     @relation(fields: [userId], references: [id])
