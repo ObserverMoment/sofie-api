@@ -22,7 +22,7 @@ import {
   updateWorkoutMetaData,
   formatWorkoutSummaries,
 } from './utils'
-import { WorkoutFullData } from '../../../types'
+import { WorkoutFullDataPayload } from '../../../types'
 import { selectForWorkoutSummary } from '../selectDefinitions'
 
 //// Queries ////
@@ -200,28 +200,29 @@ export const duplicateWorkoutById = async (
   await checkUserOwnsObject(id, 'workout', authedUserId, prisma)
 
   // Get original workout full data
-  const original: WorkoutFullData | null = await prisma.workout.findUnique({
-    where: { id },
-    include: {
-      WorkoutGoals: true,
-      WorkoutTags: true,
-      WorkoutSections: {
-        include: {
-          WorkoutSectionType: true,
-          WorkoutSets: {
-            include: {
-              WorkoutMoves: {
-                include: {
-                  Move: true,
-                  Equipment: true,
+  const original: WorkoutFullDataPayload | null =
+    await prisma.workout.findUnique({
+      where: { id },
+      include: {
+        WorkoutGoals: true,
+        WorkoutTags: true,
+        WorkoutSections: {
+          include: {
+            WorkoutSectionType: true,
+            WorkoutSets: {
+              include: {
+                WorkoutMoves: {
+                  include: {
+                    Move: true,
+                    Equipment: true,
+                  },
                 },
               },
             },
           },
         },
       },
-    },
-  })
+    })
 
   if (!original) {
     throw new ApolloError(

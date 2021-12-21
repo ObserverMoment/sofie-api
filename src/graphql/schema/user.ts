@@ -44,7 +44,7 @@ export default gql`
     skills: [String!]!
     workoutCount: Int!
     planCount: Int!
-    Clubs: [ClubSummary!]! # Public only
+    Clubs: [ClubSummary!]!
   }
 
   # Resolver should only return the updated fields plus an ID. Only the ID is required.

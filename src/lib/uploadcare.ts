@@ -7,7 +7,7 @@ import {
   UpdateMoveInput,
   UpdateWorkoutInput,
   UpdateUserBenchmarkEntryInput,
-  UpdateClubInput,
+  UpdateClubSummaryInput,
   UpdateBodyTrackingEntryInput,
   UpdateUserProfileInput,
 } from '../generated/graphql'
@@ -76,7 +76,7 @@ function getFileIdForDeleteOrNull(
  */
 export async function checkClubMediaForDeletion(
   prisma: PrismaClient,
-  data: UpdateClubInput,
+  data: UpdateClubSummaryInput,
 ): Promise<string[]> {
   // Get the old club data first.
   const oldClub = await prisma.club.findUnique({

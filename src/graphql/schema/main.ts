@@ -15,19 +15,18 @@ export default gql`
     #### Clubs ####
     checkUniqueClubName(name: String!): Boolean!
     checkUserClubMemberStatus(clubId: ID!): UserClubMemberStatus!
-    # Public club summary data for use displaying chat previews.
-    clubSummariesById(ids: [ID!]!): [ClubSummary!]!
+    clubSummaries(ids: [ID!]!): [ClubSummary!]!
     # ClubFinder functionality.
     publicClubs: [ClubSummary!]!
     userClubs: [ClubSummary!]!
-    # Public data only
-    clubSummaryById(id: ID!): ClubSummary!
+    # For displaying within the Club chat. Each person is a UserAvatarData plus there is some extra club data which is needed for displaying the chat.
+    clubChatSummary(clubId: ID!): ClubChatSummary!
+    clubSummary(id: ID!): ClubSummary!
+    clubInviteTokens(clubId: ID!): ClubInviteTokens!
+    # For displaying within the Club/People section. Each person is a ClubMemberSummary
     clubMembers(clubId: ID!): ClubMembers!
-    clubWorkouts(clubId: ID!): [WorkoutSummary!]!
-    clubWorkoutPlans(clubId: ID!): [WorkoutPlanSummary!]!
-    # Full Club Objects - only owner / admin should have access.
-    # Members access private content through content type endpoints e.g clubWorkouts(clubId): [Workout]
-    clubById(id: ID!): Club!
+    clubWorkouts(clubId: ID!): ClubWorkouts!
+    clubWorkoutPlans(clubId: ID!): ClubWorkoutPlans!
     #### Invite Tokens ####
     # The ID is the token string, we pass it to check that it is valid #
     checkClubInviteToken(id: ID!): CheckClubInviteTokenResult!
@@ -115,24 +114,29 @@ export default gql`
     archiveCustomMoveById(id: ID!): Move!
     unarchiveCustomMoveById(id: ID!): Move!
     #### Club ####
-    createClub(data: CreateClubInput!): Club!
-    updateClub(data: UpdateClubInput!): Club!
-    deleteClubById(id: ID!): ID!
+    createClub(data: CreateClubInput!): ClubSummary!
+    updateClubSummary(data: UpdateClubSummaryInput!): ClubSummary!
+    deleteClub(id: ID!): ID!
+    # Returns a list of all invite tokens after the update.
     createClubInviteToken(data: CreateClubInviteTokenInput!): ClubInviteToken!
     updateClubInviteToken(data: UpdateClubInviteTokenInput!): ClubInviteToken!
-    deleteClubInviteTokenById(id: ID!): ID!
+    deleteClubInviteToken(id: ID!): ID!
     #### Club Member Management ####
     # Handle authed user request join join a public club.
     userJoinPublicClub(clubId: ID!): ID! # Club ID
-    giveMemberAdminStatus(userId: ID!, clubId: ID!): Club!
-    removeMemberAdminStatus(userId: ID!, clubId: ID!): Club!
-    addUserToClubViaInviteToken(userId: ID!, clubInviteTokenId: ID!): Club!
-    removeUserFromClub(userToRemoveId: ID!, clubId: ID!): Club!
+    addUserToClubViaInviteToken(userId: ID!, clubInviteTokenId: ID!): ID! # Club ID
+    giveMemberAdminStatus(userId: ID!, clubId: ID!): ClubMembers!
+    removeMemberAdminStatus(userId: ID!, clubId: ID!): ClubMembers!
+    removeUserFromClub(userToRemoveId: ID!, clubId: ID!): ClubMembers!
     #### Club Content Management ####
-    addWorkoutToClub(workoutId: ID!, clubId: ID!): Club!
-    removeWorkoutFromClub(workoutId: ID!, clubId: ID!): Club!
-    addWorkoutPlanToClub(workoutPlanId: ID!, clubId: ID!): Club!
-    removeWorkoutPlanFromClub(workoutPlanId: ID!, clubId: ID!): Club!
+    # Returns the updated content / list of objects.
+    addWorkoutToClub(workoutId: ID!, clubId: ID!): ClubWorkouts!
+    removeWorkoutFromClub(workoutId: ID!, clubId: ID!): ClubWorkouts!
+    addWorkoutPlanToClub(workoutPlanId: ID!, clubId: ID!): ClubWorkoutPlans!
+    removeWorkoutPlanFromClub(
+      workoutPlanId: ID!
+      clubId: ID!
+    ): ClubWorkoutPlans!
     #### Club Timeline Post ####
     createClubTimelinePost(
       data: CreateClubTimelinePostInput!

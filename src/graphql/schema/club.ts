@@ -41,10 +41,22 @@ export default gql`
     planCount: Int!
   }
 
+  # For displaying basic club and user data in the club chat.
+  type ClubChatSummary {
+    id: ID!
+    name: String!
+    coverImageUri: String
+    Owner: UserAvatarData!
+    Admins: [UserAvatarData!]!
+    Members: [UserAvatarData!]!
+  }
+
+  # Display the members of a club within Club/People - i.e only other club members should ever see this.
   type ClubMembers {
+    id: ID! # ClubId
     Owner: ClubMemberSummary!
     Admins: [ClubMemberSummary!]!
-    Members: [ClubMemberSummary!]
+    Members: [ClubMemberSummary!]!
   }
 
   type ClubMemberSummary {
@@ -53,7 +65,23 @@ export default gql`
     avatarUri: String
     townCity: String
     countryCode: String
+    tagline: String
     skills: [String!]!
+  }
+
+  type ClubInviteTokens {
+    id: ID! # ClubId
+    tokens: [ClubInviteToken!]!
+  }
+
+  type ClubWorkouts {
+    id: ID! # ClubId
+    workouts: [WorkoutSummary!]!
+  }
+
+  type ClubWorkoutPlans {
+    id: ID! # ClubId
+    workoutPlans: [WorkoutPlanSummary!]!
   }
 
   input CreateClubInput {
@@ -62,7 +90,7 @@ export default gql`
     location: String
   }
 
-  input UpdateClubInput {
+  input UpdateClubSummaryInput {
     id: ID!
     name: String
     description: String
@@ -106,8 +134,6 @@ export default gql`
     # Only updated by the sever when user joins via this token.
     # Compare this length with inviteLimit to check for expiry.
     joinedUserIds: [String!]!
-    # Owner or admin of the group.
-    User: UserAvatarData!
   }
 
   input CreateClubInviteTokenInput {

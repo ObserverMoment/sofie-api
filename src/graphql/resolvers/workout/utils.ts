@@ -1,13 +1,21 @@
 import { Prisma, PrismaClient } from '@prisma/client'
-import { Equipment, WorkoutFiltersInput } from '../../../generated/graphql'
+import {
+  Equipment,
+  WorkoutFiltersInput,
+  WorkoutSummary,
+} from '../../../generated/graphql'
 import { validateWorkoutMetaData } from '../../../lib/jsonValidation'
-import { WorkoutMetaDataPayload, WorkoutSummaryData } from '../../../types'
+import { WorkoutMetaDataPayload, WorkoutSummaryPayload } from '../../../types'
 
-export function formatWorkoutSummaries(workouts: WorkoutSummaryData[]) {
+export function formatWorkoutSummaries(
+  workouts: WorkoutSummaryPayload[],
+): WorkoutSummary[] {
   return workouts.map((w) => formatWorkoutSummary(w))
 }
 
-export function formatWorkoutSummary(workout: WorkoutSummaryData) {
+export function formatWorkoutSummary(
+  workout: WorkoutSummaryPayload,
+): WorkoutSummary {
   return {
     id: workout.id,
     createdAt: workout.createdAt,
@@ -27,7 +35,7 @@ export function formatWorkoutSummary(workout: WorkoutSummaryData) {
 }
 
 export function uniqueEquipmentsInWorkout(
-  workout: WorkoutSummaryData,
+  workout: WorkoutSummaryPayload,
 ): Equipment[] {
   const uniqueEquipmentIds: string[] = [] // For quick look up.
   const uniqueEquipments: Equipment[] = []
@@ -58,7 +66,7 @@ export function uniqueEquipmentsInWorkout(
 }
 
 export function workoutSectionTypesAndTags(
-  workout: WorkoutSummaryData,
+  workout: WorkoutSummaryPayload,
 ): string[] {
   const uniqueTags: string[] = []
 

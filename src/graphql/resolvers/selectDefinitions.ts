@@ -31,16 +31,40 @@ export const selectForClubSummary = {
   },
 }
 
+export const selectForClubChatSummary = {
+  id: true,
+  name: true,
+  coverImageUri: true,
+  Owner: {
+    select: selectForUserAvatarData,
+  },
+  Admins: { select: selectForUserAvatarData },
+  Members: { select: selectForUserAvatarData },
+}
+
 export const selectForClubMemberSummary = {
   id: true,
   displayName: true,
   avatarUri: true,
   townCity: true,
   countryCode: true,
+  tagline: true,
   Skills: {
     select: {
       name: true,
     },
+  },
+}
+
+export const selectForClubMembers = {
+  Owner: {
+    select: selectForClubMemberSummary,
+  },
+  Admins: {
+    select: selectForClubMemberSummary,
+  },
+  Members: {
+    select: selectForClubMemberSummary,
   },
 }
 

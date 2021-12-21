@@ -27,21 +27,22 @@ import {
   checkUniqueClubName,
   userClubs,
   publicClubs,
-  clubSummariesById,
-  clubById,
-  clubSummaryById,
+  clubSummaries,
+  clubChatSummary,
+  clubSummary,
   createClub,
-  updateClub,
-  deleteClubById,
+  updateClubSummary,
+  deleteClub,
 } from './club/club'
 
 import {
-  clubMembers,
   checkUserClubMemberStatus,
+  clubMembers,
+  clubInviteTokens,
   userJoinPublicClub,
   createClubInviteToken,
   updateClubInviteToken,
-  deleteClubInviteTokenById,
+  deleteClubInviteToken,
   addUserToClubViaInviteToken,
   giveMemberAdminStatus,
   removeMemberAdminStatus,
@@ -287,10 +288,11 @@ const resolvers: Resolvers = {
     checkUniqueClubName,
     checkUserClubMemberStatus,
     publicClubs,
-    clubSummariesById,
+    clubSummaries,
     userClubs,
-    clubById,
-    clubSummaryById,
+    clubChatSummary,
+    clubSummary,
+    clubInviteTokens,
     clubMembers,
     clubWorkouts,
     clubWorkoutPlans,
@@ -361,18 +363,18 @@ const resolvers: Resolvers = {
     //// Club /////
     ///////////////
     createClub,
-    updateClub,
-    deleteClubById,
+    updateClubSummary,
+    deleteClub,
     createClubInviteToken,
     updateClubInviteToken,
-    deleteClubInviteTokenById,
+    deleteClubInviteToken,
     ///////////////////////
     //// Club Members /////
     ///////////////////////
     userJoinPublicClub,
+    addUserToClubViaInviteToken,
     giveMemberAdminStatus,
     removeMemberAdminStatus,
-    addUserToClubViaInviteToken,
     removeUserFromClub,
     ///////////////////////
     //// Club Content /////

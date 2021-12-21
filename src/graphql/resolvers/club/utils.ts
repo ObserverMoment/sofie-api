@@ -1,19 +1,26 @@
 import { PrismaClient } from '@prisma/client'
 import { ApolloError } from 'apollo-server-express'
-import { ClubMembers } from '../../../generated/graphql'
 import {
+  ClubChatSummary,
+  ClubMembers,
+  ClubMemberSummary,
+  ClubSummary,
+} from '../../../generated/graphql'
+import {
+  ClubChatSummaryPayload,
   ClubMembersPayload,
-  ClubMemberSummaryType,
-  ClubSummaryData,
+  ClubSummaryPayload,
   ClubWithMemberIdsPayload,
 } from '../../../types'
 import { AccessScopeError } from '../../utils'
 
-export function formatClubSummaries(clubs: ClubSummaryData[]) {
+export function formatClubSummaries(
+  clubs: ClubSummaryPayload[],
+): ClubSummary[] {
   return clubs.map((c) => formatClubSummary(c))
 }
 
-export function formatClubSummary(club: ClubSummaryData) {
+export function formatClubSummary(club: ClubSummaryPayload): ClubSummary {
   return {
     id: club.id,
     createdAt: club.createdAt,
@@ -41,24 +48,66 @@ export function formatClubSummary(club: ClubSummaryData) {
   }
 }
 
-export function formatClubMemberSummaries(
+export function formatClubChatSummary(
+  club: ClubChatSummaryPayload,
+): ClubChatSummary {
+  return {
+    id: club.id,
+    name: club.name,
+    coverImageUri: club.coverImageUri,
+    Owner: {
+      id: club.Owner.id,
+      displayName: club.Owner.displayName,
+      avatarUri: club.Owner.avatarUri,
+    },
+    Admins: club.Admins.map((a) => ({
+      id: a.id,
+      displayName: a.displayName,
+      avatarUri: a.avatarUri,
+    })),
+    Members: club.Members.map((m) => ({
+      id: m.id,
+      displayName: m.displayName,
+      avatarUri: m.avatarUri,
+    })),
+  }
+}
+
+export function formatClubMembers(
+  clubId: string,
   club: ClubMembersPayload,
 ): ClubMembers {
   return {
+    id: clubId,
     Owner: formatClubMemberSummary(club.Owner),
     Admins: club.Admins.map((a) => formatClubMemberSummary(a)),
     Members: club.Members.map((a) => formatClubMemberSummary(a)),
   }
 }
 
-export function formatClubMemberSummary(clubMember: any) {
+type ClubMemberPayload = {
+  id: string
+  displayName: string
+  avatarUri: string | null
+  townCity: string | null
+  countryCode: string | null
+  tagline: string | null
+  Skills: {
+    name: string
+  }[]
+}
+
+export function formatClubMemberSummary(
+  clubMember: ClubMemberPayload,
+): ClubMemberSummary {
   return {
     id: clubMember.id,
-    displayName: clubMember.id,
+    displayName: clubMember.displayName,
     avatarUri: clubMember.avatarUri,
     townCity: clubMember.townCity,
     countryCode: clubMember.countryCode,
-    skills: clubMember.Skills.map((s: any) => s.name),
+    tagline: clubMember.tagline,
+    skills: clubMember.Skills.map((s) => s.name),
   }
 }
 

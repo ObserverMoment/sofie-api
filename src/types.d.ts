@@ -14,7 +14,7 @@ export type ClubWithMemberIdsPayload = Prisma.ClubGetPayload<{
   }
 }>
 
-export type ClubSummaryData = Prisma.ClubGetPayload<{
+export type ClubSummaryPayload = Prisma.ClubGetPayload<{
   select: {
     id: true
     createdAt: true
@@ -51,6 +51,35 @@ export type ClubSummaryData = Prisma.ClubGetPayload<{
   }
 }>
 
+export type ClubChatSummaryPayload = Prisma.ClubGetPayload<{
+  select: {
+    id: true
+    name: true
+    coverImageUri: true
+    Owner: {
+      select: {
+        id: true
+        displayName: true
+        avatarUri: true
+      }
+    }
+    Admins: {
+      select: {
+        id: true
+        displayName: true
+        avatarUri: true
+      }
+    }
+    Members: {
+      select: {
+        id: true
+        displayName: true
+        avatarUri: true
+      }
+    }
+  }
+}>
+
 export type ClubMembersPayload = Prisma.ClubGetPayload<{
   select: {
     Owner: {
@@ -60,6 +89,7 @@ export type ClubMembersPayload = Prisma.ClubGetPayload<{
         avatarUri: true
         townCity: true
         countryCode: true
+        tagline: true
         Skills: {
           select: {
             name: true
@@ -74,6 +104,7 @@ export type ClubMembersPayload = Prisma.ClubGetPayload<{
         avatarUri: true
         townCity: true
         countryCode: true
+        tagline: true
         Skills: {
           select: {
             name: true
@@ -88,6 +119,7 @@ export type ClubMembersPayload = Prisma.ClubGetPayload<{
         avatarUri: true
         townCity: true
         countryCode: true
+        tagline: true
         Skills: {
           select: {
             name: true
@@ -99,7 +131,7 @@ export type ClubMembersPayload = Prisma.ClubGetPayload<{
 }>
 
 // Data payload required to be able to form up WorkoutSummary data.
-export type WorkoutSummaryData = Prisma.WorkoutGetPayload<{
+export type WorkoutSummaryPayload = Prisma.WorkoutGetPayload<{
   select: {
     id: true
     createdAt: true
@@ -150,7 +182,7 @@ export type WorkoutSummaryData = Prisma.WorkoutGetPayload<{
 }>
 
 // Data payload required to be able to form up WorkoutSummary data.
-export type WorkoutPlanSummaryData = Prisma.WorkoutPlanGetPayload<{
+export type WorkoutPlanSummaryPayload = Prisma.WorkoutPlanGetPayload<{
   select: {
     id: true
     createdAt: true
@@ -200,7 +232,7 @@ export type WorkoutPlanSummaryData = Prisma.WorkoutPlanGetPayload<{
 }>
 
 /// For creating a duplicate of a workout.
-export type WorkoutFullData = Prisma.WorkoutGetPayload<{
+export type WorkoutFullDataPayload = Prisma.WorkoutGetPayload<{
   include: {
     WorkoutGoals: true
     WorkoutTags: true
