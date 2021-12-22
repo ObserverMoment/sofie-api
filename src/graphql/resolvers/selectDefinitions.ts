@@ -68,6 +68,15 @@ export const selectForClubMembers = {
   },
 }
 
+export const selectForClubInviteToken = {
+  id: true,
+  createdAt: true,
+  active: true,
+  inviteLimit: true,
+  joinedUserIds: true,
+  name: true,
+}
+
 export const selectForWorkoutSummary = {
   id: true,
   createdAt: true,

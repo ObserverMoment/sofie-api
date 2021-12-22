@@ -117,10 +117,10 @@ export default gql`
     createClub(data: CreateClubInput!): ClubSummary!
     updateClubSummary(data: UpdateClubSummaryInput!): ClubSummary!
     deleteClub(id: ID!): ID!
-    # Returns a list of all invite tokens after the update.
-    createClubInviteToken(data: CreateClubInviteTokenInput!): ClubInviteToken!
-    updateClubInviteToken(data: UpdateClubInviteTokenInput!): ClubInviteToken!
-    deleteClubInviteToken(id: ID!): ID!
+    # Returns a list of all club invite tokens after the update.
+    createClubInviteToken(data: CreateClubInviteTokenInput!): ClubInviteTokens!
+    updateClubInviteToken(data: UpdateClubInviteTokenInput!): ClubInviteTokens!
+    deleteClubInviteToken(data: DeleteClubInviteTokenInput!): ClubInviteTokens!
     #### Club Member Management ####
     # Handle authed user request join join a public club.
     userJoinPublicClub(clubId: ID!): ID! # Club ID

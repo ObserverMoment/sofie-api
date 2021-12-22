@@ -137,15 +137,21 @@ export default gql`
   }
 
   input CreateClubInviteTokenInput {
+    clubId: ID!
     name: String!
     inviteLimit: Int!
-    Club: ConnectRelationInput!
   }
 
   input UpdateClubInviteTokenInput {
+    clubId: ID!
     id: ID!
     name: String
     inviteLimit: Int
     active: Boolean
+  }
+
+  input DeleteClubInviteTokenInput {
+    clubId: ID!
+    tokenId: ID!
   }
 `
