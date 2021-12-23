@@ -14,18 +14,24 @@ export type ClubWithMemberIdsPayload = Prisma.ClubGetPayload<{
   }
 }>
 
-export type ClubSummaryData = Prisma.ClubGetPayload<{
+export type ClubSummaryPayload = Prisma.ClubGetPayload<{
   select: {
     id: true
     createdAt: true
     name: true
     description: true
     coverImageUri: true
+    introVideoUri: true
+    introVideoThumbUri: true
+    introAudioUri: true
+    contentAccessScope: true
     location: true
     _count: {
       select: {
         Members: true
         Admins: true
+        Workouts: true
+        WorkoutPlans: true
       }
     }
     Owner: {
@@ -33,14 +39,99 @@ export type ClubSummaryData = Prisma.ClubGetPayload<{
         id: true
         displayName: true
         avatarUri: true
-        userProfileScope: true
+      }
+    }
+    Admins: {
+      select: {
+        id: true
+        displayName: true
+        avatarUri: true
+      }
+    }
+  }
+}>
+
+export type ClubChatSummaryPayload = Prisma.ClubGetPayload<{
+  select: {
+    id: true
+    name: true
+    coverImageUri: true
+    Owner: {
+      select: {
+        id: true
+        displayName: true
+        avatarUri: true
+      }
+    }
+    Admins: {
+      select: {
+        id: true
+        displayName: true
+        avatarUri: true
+      }
+    }
+    Members: {
+      select: {
+        id: true
+        displayName: true
+        avatarUri: true
+      }
+    }
+  }
+}>
+
+export type ClubMembersPayload = Prisma.ClubGetPayload<{
+  select: {
+    Owner: {
+      select: {
+        id: true
+        displayName: true
+        avatarUri: true
+        townCity: true
+        countryCode: true
+        tagline: true
+        Skills: {
+          select: {
+            name: true
+          }
+        }
+      }
+    }
+    Admins: {
+      select: {
+        id: true
+        displayName: true
+        avatarUri: true
+        townCity: true
+        countryCode: true
+        tagline: true
+        Skills: {
+          select: {
+            name: true
+          }
+        }
+      }
+    }
+    Members: {
+      select: {
+        id: true
+        displayName: true
+        avatarUri: true
+        townCity: true
+        countryCode: true
+        tagline: true
+        Skills: {
+          select: {
+            name: true
+          }
+        }
       }
     }
   }
 }>
 
 // Data payload required to be able to form up WorkoutSummary data.
-export type WorkoutSummaryData = Prisma.WorkoutGetPayload<{
+export type WorkoutSummaryPayload = Prisma.WorkoutGetPayload<{
   select: {
     id: true
     createdAt: true
@@ -82,7 +173,6 @@ export type WorkoutSummaryData = Prisma.WorkoutGetPayload<{
         id: true
         displayName: true
         avatarUri: true
-        userProfileScope: true
       }
     }
     _count: {
@@ -92,7 +182,7 @@ export type WorkoutSummaryData = Prisma.WorkoutGetPayload<{
 }>
 
 // Data payload required to be able to form up WorkoutSummary data.
-export type WorkoutPlanSummaryData = Prisma.WorkoutPlanGetPayload<{
+export type WorkoutPlanSummaryPayload = Prisma.WorkoutPlanGetPayload<{
   select: {
     id: true
     createdAt: true
@@ -107,7 +197,6 @@ export type WorkoutPlanSummaryData = Prisma.WorkoutPlanGetPayload<{
         id: true
         displayName: true
         avatarUri: true
-        userProfileScope: true
       }
     }
     WorkoutTags: {
@@ -143,7 +232,7 @@ export type WorkoutPlanSummaryData = Prisma.WorkoutPlanGetPayload<{
 }>
 
 /// For creating a duplicate of a workout.
-export type WorkoutFullData = Prisma.WorkoutGetPayload<{
+export type WorkoutFullDataPayload = Prisma.WorkoutGetPayload<{
   include: {
     WorkoutGoals: true
     WorkoutTags: true

@@ -1,14 +1,19 @@
 import {
   WorkoutGoal,
   WorkoutPlanFiltersInput,
+  WorkoutPlanSummary,
 } from '../../../generated/graphql'
-import { WorkoutPlanSummaryData } from '../../../types'
+import { WorkoutPlanSummaryPayload } from '../../../types'
 
-export function formatWorkoutPlanSummaries(plans: WorkoutPlanSummaryData[]) {
+export function formatWorkoutPlanSummaries(
+  plans: WorkoutPlanSummaryPayload[],
+): WorkoutPlanSummary[] {
   return plans.map((w) => formatWorkoutPlanSummary(w))
 }
 
-export function formatWorkoutPlanSummary(plan: WorkoutPlanSummaryData) {
+export function formatWorkoutPlanSummary(
+  plan: WorkoutPlanSummaryPayload,
+): WorkoutPlanSummary {
   return {
     id: plan.id,
     createdAt: plan.createdAt,

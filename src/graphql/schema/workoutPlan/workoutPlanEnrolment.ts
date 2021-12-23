@@ -20,7 +20,7 @@ export default gql`
     id: ID!
     startDate: DateTime
     CompletedWorkoutPlanDayWorkouts: [CompletedWorkoutPlanDayWorkout!]!
-    User: UserSummary!
+    User: UserAvatarData!
   }
 
   type CompletedWorkoutPlanDayWorkout {

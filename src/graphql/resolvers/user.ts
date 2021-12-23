@@ -9,7 +9,7 @@ import {
   QueryCheckUniqueDisplayNameArgs,
   QueryUserAvatarByIdArgs,
   QueryUserAvatarsArgs,
-  QueryUserProfileByIdArgs,
+  QueryUserProfileArgs,
   QueryUserProfilesArgs,
   UpdateUserProfileResult,
   UserAvatarData,
@@ -20,6 +20,7 @@ import {
 import { getUserFollowersCount } from '../../lib/getStream'
 import { checkUserMediaForDeletion, deleteFiles } from '../../lib/uploadcare'
 import { AccessScopeError, checkUserOwnsObject } from '../utils'
+import { formatClubSummaries } from './club/utils'
 import { calcLifetimeLogStatsSummary } from './loggedWorkout'
 import { selectForClubSummary } from './selectDefinitions'
 
@@ -97,15 +98,27 @@ export const userProfiles = async (
       townCity: true,
       countryCode: true,
       displayName: true,
-      _count: {
-        select: {
-          Workouts: true,
-          WorkoutPlans: true,
-        },
-      },
       Skills: {
         select: {
           name: true,
+        },
+      },
+      Workouts: {
+        where: {
+          archived: false,
+          contentAccessScope: 'PUBLIC',
+        },
+        select: {
+          id: true,
+        },
+      },
+      WorkoutPlans: {
+        where: {
+          archived: false,
+          contentAccessScope: 'PUBLIC',
+        },
+        select: {
+          id: true,
         },
       },
       ClubsWhereOwner: {
@@ -124,31 +137,18 @@ export const userProfiles = async (
     countryCode: u.countryCode,
     displayName: u.displayName,
     skills: u.Skills.map((s) => s.name),
-    workoutCount: u._count?.Workouts || 0,
-    planCount: u._count?.WorkoutPlans || 0,
-    Clubs: u.ClubsWhereOwner.map((c) => ({
-      id: c.id,
-      createdAt: c.createdAt,
-      name: c.name,
-      coverImageUri: c.coverImageUri,
-      location: c.location,
-      memberCount: c._count?.Members || 0,
-      Owner: {
-        id: u.id,
-        displayName: u.displayName,
-        avatarUri: u.avatarUri,
-        userProfileScope: u.userProfileScope,
-      },
-    })),
+    workoutCount: u.Workouts.length,
+    planCount: u.WorkoutPlans.length,
+    Clubs: formatClubSummaries(u.ClubsWhereOwner),
   }))
 
   return publicProfileSummaries as UserProfileSummary[]
 }
 
 // Get a single user profile, based on the user id - fields returned will depend on the user's privacy settings and if they are the one making the request.
-export const userProfileById = async (
+export const userProfile = async (
   r: any,
-  { userId }: QueryUserProfileByIdArgs,
+  { userId }: QueryUserProfileArgs,
   { authedUserId, prisma }: Context,
 ) => {
   const checkScope = await prisma.user.findFirst({
@@ -192,6 +192,24 @@ export const userProfileById = async (
             select: selectForClubSummary,
           }
         : undefined,
+      Workouts: {
+        where: {
+          archived: false,
+          contentAccessScope: 'PUBLIC',
+        },
+        select: {
+          id: true,
+        },
+      },
+      WorkoutPlans: {
+        where: {
+          archived: false,
+          contentAccessScope: 'PUBLIC',
+        },
+        select: {
+          id: true,
+        },
+      },
     },
   })
 
@@ -213,20 +231,8 @@ export const userProfileById = async (
           countryCode: user.countryCode,
           displayName: user.displayName,
           followerCount: await getUserFollowersCount(user.id),
-          workoutCount:
-            (await prisma.workout.count({
-              where: {
-                userId: userId,
-                archived: false,
-              },
-            })) || 0,
-          planCount:
-            (await prisma.workoutPlan.count({
-              where: {
-                userId: userId,
-                archived: false,
-              },
-            })) || 0,
+          workoutCount: user.Workouts.length,
+          planCount: user.WorkoutPlans.length,
           Skills: user.Skills,
           // TODO: Casting as any because [ClubsWhereOwner] was being returned as [Club]
           // The isPublic tiernary is causing some type weirdness?
@@ -237,14 +243,24 @@ export const userProfileById = async (
             name: c.name,
             description: c.description,
             coverImageUri: c.coverImageUri,
+            introVideoUri: c.introVideoUri,
+            introVideoThumbUri: c.introVideoThumbUri,
+            introAudioUri: c.introAudioUri,
             location: c.location,
             memberCount: (c._count?.Members || 0) + (c._count?.Admins || 0),
+            workoutCount: c._count?.Workouts || 0,
+            planCount: c._count?.WorkoutPlans || 0,
+            contentAccessScope: c.contentAccessScope,
             Owner: {
               id: user.id,
               displayName: user.displayName,
               avatarUri: user.avatarUri,
-              userProfileScope: user.userProfileScope,
             },
+            Admins: c.Admins.map((a: any) => ({
+              id: a.id,
+              displayName: a.displayName,
+              avatarUri: a.avatarUri,
+            })),
           })),
           LifetimeLogStatsSummary: await calcLifetimeLogStatsSummary(
             user.id,
@@ -260,6 +276,9 @@ export const userProfileById = async (
           displayName: user.displayName,
           avatarUri: user.avatarUri,
           userProfileScope: user.userProfileScope,
+          Clubs: [],
+          BenchmarksWithBestEntries: [],
+          Skills: [],
         } as UserProfile)
   } else {
     throw new AccessScopeError('userProfileById: There was an issue.')
@@ -273,9 +292,11 @@ export function findBestUserBenchmarkEntry(
   if (!userBenchmark.UserBenchmarkEntries.length) {
     return null
   }
-  const entries = userBenchmark.UserBenchmarkEntries.sort((e) => e.score)
+  const entries = userBenchmark.UserBenchmarkEntries.sort(
+    (a, b) => a.score - b.score,
+  )
 
-  return userBenchmark.benchmarkType == 'FASTESTTIME'
+  return userBenchmark.benchmarkType === 'FASTESTTIME'
     ? entries[0]
     : entries.reverse()[0]
 }

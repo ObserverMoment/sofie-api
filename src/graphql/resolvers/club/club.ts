@@ -4,11 +4,12 @@ import {
   Club,
   ClubSummary,
   MutationCreateClubArgs,
-  MutationDeleteClubByIdArgs,
-  MutationUpdateClubArgs,
+  MutationDeleteClubArgs,
+  MutationUpdateClubSummaryArgs,
   QueryCheckUniqueClubNameArgs,
-  QueryClubByIdArgs,
-  QueryClubSummariesByIdArgs,
+  QueryClubChatSummaryArgs,
+  QueryClubSummariesArgs,
+  QueryClubSummaryArgs,
 } from '../../../generated/graphql'
 import {
   createStreamClubMemberChat,
@@ -16,6 +17,7 @@ import {
 } from '../../../lib/getStream'
 import { checkClubMediaForDeletion, deleteFiles } from '../../../lib/uploadcare'
 import {
+  selectForClubChatSummary,
   selectForClubSummary,
   selectForWorkoutPlanSummary,
   selectForWorkoutSummary,
@@ -24,8 +26,9 @@ import { formatWorkoutSummaries } from '../workout/utils'
 import { formatWorkoutPlanSummaries } from '../workoutPlan/utils'
 import {
   checkUserIsOwnerOrAdminOfClub,
-  ClubMemberType,
+  formatClubChatSummary,
   formatClubSummaries,
+  formatClubSummary,
 } from './utils'
 
 //// Queries ////
@@ -64,7 +67,7 @@ export const userClubs = async (
 
   const formattedClubs = formatClubSummaries(clubs)
 
-  return formattedClubs as ClubSummary[]
+  return formattedClubs
 }
 
 // ClubFinder functionality - filtering and ranking etc.
@@ -76,14 +79,14 @@ export const publicClubs = async (r: any, a: any, { prisma }: Context) => {
 
   const formattedClubs = formatClubSummaries(clubs)
 
-  return formattedClubs as ClubSummary[]
+  return formattedClubs
 }
 
 /// Just the bare minumum data such as name and cover image.
 /// Only public data should be serialized here.
-export const clubSummariesById = async (
+export const clubSummaries = async (
   r: any,
-  { ids }: QueryClubSummariesByIdArgs,
+  { ids }: QueryClubSummariesArgs,
   { prisma }: Context,
 ) => {
   const clubs = await prisma.club.findMany({
@@ -93,94 +96,53 @@ export const clubSummariesById = async (
 
   const formattedClubs = formatClubSummaries(clubs)
 
-  return formattedClubs as ClubSummary[]
+  return formattedClubs
 }
 
-export const clubById = async (
+/// Basic sparse data for displaying in the Club chat. Name, avatar + basic users data.
+export const clubChatSummary = async (
   r: any,
-  { id }: QueryClubByIdArgs,
-  { authedUserId, select, prisma }: Context,
+  { clubId }: QueryClubChatSummaryArgs,
+  { prisma }: Context,
 ) => {
-  const club: any = await prisma.club.findUnique({
+  const club = await prisma.club.findUnique({
+    where: { id: clubId },
+    select: selectForClubChatSummary,
+  })
+
+  if (!club) {
+    throw new ApolloError(
+      `clubChatSummary: Could not find a club with ID ${clubId}.`,
+    )
+  }
+
+  return formatClubChatSummary(club)
+}
+
+/// A single ClubSummary for displaying on the Club details page.
+/// Public data only.
+export const clubSummary = async (
+  r: any,
+  { id }: QueryClubSummaryArgs,
+  { prisma }: Context,
+) => {
+  const club = await prisma.club.findUnique({
     where: { id },
-    select: {
-      ...select,
-      Workouts: {
-        select: selectForWorkoutSummary,
-      },
-      WorkoutPlans: {
-        select: selectForWorkoutPlanSummary,
-      },
-    },
+    select: selectForClubSummary,
   })
 
   if (!club) {
     throw new ApolloError('clubById: Could not find a club with this ID.')
   }
 
-  const memberType: ClubMemberType =
-    club!.Owner.id === authedUserId
-      ? 'OWNER'
-      : club!.Admins.some((a: any) => a.id === authedUserId)
-      ? 'ADMIN'
-      : club!.Members.some((m: any) => m.id === authedUserId)
-      ? 'MEMBER'
-      : 'NONE'
-
-  if (memberType === 'OWNER' || memberType === 'ADMIN') {
-    return {
-      ...club,
-      Workouts: formatWorkoutSummaries(club.Workouts),
-      WorkoutPlans: formatWorkoutPlanSummaries(club.WorkoutPlans),
-    } as Club
-  } else if (memberType === 'MEMBER') {
-    // Exclude the membership related data.
-    const clubMemberData = {
-      id: club.id,
-      createdAt: club.createdAt,
-      Owner: club.Owner,
-      Admins: club.Admins,
-      Members: club.Members,
-      name: club.name,
-      description: club.description,
-      location: club.location,
-      coverImageUri: club.coverImageUri,
-      introVideoUri: club.introVideoUri,
-      introVideoThumbUri: club.introVideoThumbUri,
-      introAudioUri: club.introAudioUri,
-      contentAccessScope: club.contentAccessScope,
-      Workouts: formatWorkoutSummaries(club.Workouts),
-      WorkoutPlans: formatWorkoutPlanSummaries(club.WorkoutPlans),
-    }
-
-    return clubMemberData as Club
-  } else {
-    // Exclude all member content
-    const clubNonMemberData = {
-      id: club.id,
-      createdAt: club.createdAt,
-      Owner: club.Owner,
-      Admins: club.Admins,
-      Members: club.Members,
-      name: club.name,
-      description: club.description,
-      location: club.location,
-      coverImageUri: club.coverImageUri,
-      introVideoUri: club.introVideoUri,
-      introVideoThumbUri: club.introVideoThumbUri,
-      introAudioUri: club.introAudioUri,
-      contentAccessScope: club.contentAccessScope,
-    }
-
-    return clubNonMemberData as Club
-  }
+  return formatClubSummary(club)
 }
 
 //// Mutations ////
 export const createClub = async (
   r: any,
   { data }: MutationCreateClubArgs,
-  { authedUserId, select, prisma }: Context,
+  { authedUserId, prisma }: Context,
 ) => {
   const club = await prisma.club.create({
     data: {
@@ -189,21 +151,21 @@ export const createClub = async (
         connect: { id: authedUserId },
       },
     },
-    select,
+    select: selectForClubSummary,
   })
 
   if (club) {
-    await createStreamClubMemberChat((club as Club).id, authedUserId)
-    return club as Club
+    await createStreamClubMemberChat(club.id, authedUserId)
+    return formatClubSummary(club)
   } else {
     throw new ApolloError('createClub: There was an issue.')
   }
 }
 
-export const updateClub = async (
+export const updateClubSummary = async (
   r: any,
-  { data }: MutationUpdateClubArgs,
-  { authedUserId, select, prisma }: Context,
+  { data }: MutationUpdateClubSummaryArgs,
+  { authedUserId, prisma }: Context,
 ) => {
   await checkUserIsOwnerOrAdminOfClub(data.id, authedUserId, prisma)
 
@@ -213,40 +175,29 @@ export const updateClub = async (
     data,
   )
 
-  const updated: any = await prisma.club.update({
+  const updated = await prisma.club.update({
     where: { id: data.id },
     data: {
       ...data,
       name: data.name || undefined,
       contentAccessScope: data.contentAccessScope || undefined,
     },
-    select: {
-      ...select,
-      Workouts: {
-        select: selectForWorkoutSummary,
-      },
-      WorkoutPlans: {
-        select: selectForWorkoutPlanSummary,
-      },
-    },
+    select: selectForClubSummary,
   })
-
-  updated.Workouts = formatWorkoutSummaries(updated.Workouts)
-  updated.WorkoutPlans = formatWorkoutPlanSummaries(updated.WorkoutPlans)
 
   if (updated) {
     if (fileIdsForDeletion) {
       await deleteFiles(fileIdsForDeletion)
     }
-    return updated as Club
+    return formatClubSummary(updated)
   } else {
-    throw new ApolloError('updateClub: There was an issue.')
+    throw new ApolloError('updateClubSummary: There was an issue.')
   }
 }
 
-export const deleteClubById = async (
+export const deleteClub = async (
   r: any,
-  { id }: MutationDeleteClubByIdArgs,
+  { id }: MutationDeleteClubArgs,
   { authedUserId, prisma }: Context,
 ) => {
   await checkUserIsOwnerOrAdminOfClub(id, authedUserId, prisma)
@@ -255,10 +206,24 @@ export const deleteClubById = async (
     where: { id },
     select: {
       id: true,
+      coverImageUri: true,
+      introAudioUri: true,
+      introVideoUri: true,
+      introVideoThumbUri: true,
     },
   })
 
+  const fileIdsForDeletion: string[] = [
+    deleted.coverImageUri,
+    deleted.introAudioUri,
+    deleted.introVideoUri,
+    deleted.introVideoThumbUri,
+  ].filter((x) => x) as string[]
+
   if (deleted) {
+    if (fileIdsForDeletion.length) {
+      await deleteFiles(fileIdsForDeletion)
+    }
     await deleteStreamClubMemberChat(deleted.id)
     return deleted.id
   } else {

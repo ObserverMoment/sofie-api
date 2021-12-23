@@ -27,18 +27,28 @@ import {
   checkUniqueClubName,
   userClubs,
   publicClubs,
-  clubSummariesById,
-  clubById,
+  clubSummaries,
+  clubChatSummary,
+  clubSummary,
   createClub,
-  updateClub,
-  deleteClubById,
+  updateClubSummary,
+  deleteClub,
 } from './club/club'
 
 import {
+  createClubAnnouncement,
+  updateClubAnnouncement,
+  deleteClubAnnouncement,
+} from './club/clubAnnouncement'
+
+import {
+  checkUserClubMemberStatus,
+  clubMembers,
+  clubInviteTokens,
   userJoinPublicClub,
   createClubInviteToken,
   updateClubInviteToken,
-  deleteClubInviteTokenById,
+  deleteClubInviteToken,
   addUserToClubViaInviteToken,
   giveMemberAdminStatus,
   removeMemberAdminStatus,
@@ -46,6 +56,8 @@ import {
 } from './club/clubMembers'
 
 import {
+  clubWorkouts,
+  clubWorkoutPlans,
   addWorkoutToClub,
   removeWorkoutFromClub,
   addWorkoutPlanToClub,
@@ -83,22 +95,19 @@ import {
 } from './officialData'
 
 import {
-  userProgressJournals,
-  progressJournalGoalTags,
-  progressJournalById,
-  createProgressJournal,
-  updateProgressJournal,
-  deleteProgressJournalById,
-  createProgressJournalGoal,
-  updateProgressJournalGoal,
-  deleteProgressJournalGoalById,
-  createProgressJournalGoalTag,
-  updateProgressJournalGoalTag,
-  deleteProgressJournalGoalTagById,
-  createProgressJournalEntry,
-  updateProgressJournalEntry,
-  deleteProgressJournalEntryById,
-} from './progressJournal'
+  journalNotes,
+  journalMoods,
+  journalGoals,
+  createJournalGoal,
+  updateJournalGoal,
+  deleteJournalGoalById,
+  createJournalNote,
+  updateJournalNote,
+  deleteJournalNoteById,
+  createJournalMood,
+  updateJournalMood,
+  deleteJournalMoodById,
+} from './journal'
 
 import {
   userScheduledWorkouts,
@@ -127,7 +136,7 @@ import {
   checkUniqueDisplayName,
   userAvatars,
   userAvatarById,
-  userProfileById,
+  userProfile,
   userProfiles,
   updateUserProfile,
   userWorkoutTags,
@@ -146,17 +155,13 @@ import {
 
 import {
   userBenchmarks,
-  userBenchmarkById,
-  userBenchmarkTags,
+  userBenchmark,
   createUserBenchmark,
   updateUserBenchmark,
-  deleteUserBenchmarkById,
+  deleteUserBenchmark,
   createUserBenchmarkEntry,
   updateUserBenchmarkEntry,
-  deleteUserBenchmarkEntryById,
-  createUserBenchmarkTag,
-  updateUserBenchmarkTag,
-  deleteUserBenchmarkTagById,
+  deleteUserBenchmarkEntry,
 } from './userBenchmark'
 
 import {
@@ -287,19 +292,25 @@ const resolvers: Resolvers = {
     workoutSectionTypes,
     ///// Clubs ////
     checkUniqueClubName,
+    checkUserClubMemberStatus,
     publicClubs,
-    clubSummariesById,
+    clubSummaries,
     userClubs,
-    clubById,
+    clubChatSummary,
+    clubSummary,
+    clubInviteTokens,
+    clubMembers,
+    clubWorkouts,
+    clubWorkoutPlans,
     clubMembersFeedPosts,
     ///// Invites ////
     checkClubInviteToken,
     //// Progress Body Tracking ////
     bodyTrackingEntries,
     //// Progress Journal ////
-    userProgressJournals,
-    progressJournalGoalTags,
-    progressJournalById,
+    journalNotes,
+    journalMoods,
+    journalGoals,
     //// Logged Workouts ////
     lifetimeLogStatsSummary,
     logCountByWorkout,
@@ -328,7 +339,7 @@ const resolvers: Resolvers = {
     userArchivedWorkoutPlans,
     userArchivedCustomMoves,
     //// User Public Profiles ////
-    userProfileById,
+    userProfile,
     userProfiles,
     userWorkoutTags,
     //// User Avatars ////
@@ -336,8 +347,7 @@ const resolvers: Resolvers = {
     userAvatarById,
     /// User Benchmarks ////
     userBenchmarks,
-    userBenchmarkById,
-    userBenchmarkTags,
+    userBenchmark,
     /// User Collections ////
     userCollections,
     userCollectionById,
@@ -359,18 +369,18 @@ const resolvers: Resolvers = {
     //// Club /////
     ///////////////
     createClub,
-    updateClub,
-    deleteClubById,
+    updateClubSummary,
+    deleteClub,
     createClubInviteToken,
     updateClubInviteToken,
-    deleteClubInviteTokenById,
+    deleteClubInviteToken,
     ///////////////////////
     //// Club Members /////
     ///////////////////////
     userJoinPublicClub,
+    addUserToClubViaInviteToken,
     giveMemberAdminStatus,
     removeMemberAdminStatus,
-    addUserToClubViaInviteToken,
     removeUserFromClub,
     ///////////////////////
     //// Club Content /////
@@ -379,9 +389,15 @@ const resolvers: Resolvers = {
     removeWorkoutFromClub,
     addWorkoutPlanToClub,
     removeWorkoutPlanFromClub,
+
     ///////////////////////
     //// Club Timeline ////
     ///////////////////////
+    /// An object that can be shared on a club feed via Stream activity.
+    createClubAnnouncement,
+    updateClubAnnouncement,
+    deleteClubAnnouncement,
+    /// Interacts with Strea.io.
     createClubTimelinePost,
     deleteClubTimelinePost,
     ///////////////////
@@ -404,18 +420,15 @@ const resolvers: Resolvers = {
     //////////////////////////
     //// Progress Journal ////
     //////////////////////////
-    createProgressJournal,
-    updateProgressJournal,
-    deleteProgressJournalById,
-    createProgressJournalEntry,
-    updateProgressJournalEntry,
-    deleteProgressJournalEntryById,
-    createProgressJournalGoal,
-    updateProgressJournalGoal,
-    deleteProgressJournalGoalById,
-    createProgressJournalGoalTag,
-    updateProgressJournalGoalTag,
-    deleteProgressJournalGoalTagById,
+    createJournalGoal,
+    updateJournalGoal,
+    deleteJournalGoalById,
+    createJournalNote,
+    updateJournalNote,
+    deleteJournalNoteById,
+    createJournalMood,
+    updateJournalMood,
+    deleteJournalMoodById,
     ///////////////////////
     //// LoggedWorkout ////
     ///////////////////////
@@ -455,13 +468,10 @@ const resolvers: Resolvers = {
     ////////////////////////
     createUserBenchmark,
     updateUserBenchmark,
-    deleteUserBenchmarkById,
+    deleteUserBenchmark,
     createUserBenchmarkEntry,
     updateUserBenchmarkEntry,
-    deleteUserBenchmarkEntryById,
-    createUserBenchmarkTag,
-    updateUserBenchmarkTag,
-    deleteUserBenchmarkTagById,
+    deleteUserBenchmarkEntry,
     ////////////////////////
     //// User Collection ////
     ////////////////////////
@@ -519,6 +529,9 @@ const resolvers: Resolvers = {
     updateWorkoutPlanDayWorkout,
     deleteWorkoutPlanDayWorkoutById,
     reorderWorkoutPlanDayWorkouts,
+    createWorkoutPlanReview,
+    updateWorkoutPlanReview,
+    deleteWorkoutPlanReviewById,
     //// Workout Plan Enrolment User Specific ////
     createWorkoutPlanEnrolment,
     deleteWorkoutPlanEnrolmentById,

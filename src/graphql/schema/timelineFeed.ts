@@ -37,10 +37,10 @@ export default gql`
     id: ID!
     type: TimelinePostType!
     name: String!
-    introAudioUri: String
-    coverImageUri: String
-    introVideoUri: String
-    introVideoThumbUri: String
+    audioUri: String
+    imageUri: String
+    videoUri: String
+    videoThumbUri: String
   }
 
   input TimelinePostDataRequestInput {

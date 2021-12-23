@@ -1,8 +1,7 @@
-export const selectForUserSummary = {
+export const selectForUserAvatarData = {
   id: true,
   displayName: true,
   avatarUri: true,
-  userProfileScope: true,
 }
 
 export const selectForClubSummary = {
@@ -11,15 +10,83 @@ export const selectForClubSummary = {
   name: true,
   description: true,
   coverImageUri: true,
+  introVideoUri: true,
+  introVideoThumbUri: true,
+  introAudioUri: true,
+  contentAccessScope: true,
   location: true,
   _count: {
     select: {
       Members: true,
       Admins: true,
+      Workouts: true,
+      WorkoutPlans: true,
     },
   },
   Owner: {
-    select: selectForUserSummary,
+    select: selectForUserAvatarData,
+  },
+  Admins: {
+    select: selectForUserAvatarData,
+  },
+}
+
+export const selectForClubChatSummary = {
+  id: true,
+  name: true,
+  coverImageUri: true,
+  Owner: {
+    select: selectForUserAvatarData,
+  },
+  Admins: { select: selectForUserAvatarData },
+  Members: { select: selectForUserAvatarData },
+}
+
+export const selectForClubMemberSummary = {
+  id: true,
+  displayName: true,
+  avatarUri: true,
+  townCity: true,
+  countryCode: true,
+  tagline: true,
+  Skills: {
+    select: {
+      name: true,
+    },
+  },
+}
+
+export const selectForClubMembers = {
+  Owner: {
+    select: selectForClubMemberSummary,
+  },
+  Admins: {
+    select: selectForClubMemberSummary,
+  },
+  Members: {
+    select: selectForClubMemberSummary,
+  },
+}
+
+export const selectForClubInviteToken = {
+  id: true,
+  createdAt: true,
+  active: true,
+  inviteLimit: true,
+  joinedUserIds: true,
+  name: true,
+}
+
+export const selectForClubAnnouncement = {
+  id: true,
+  createdAt: true,
+  description: true,
+  imageUri: true,
+  audioUri: true,
+  videoUri: true,
+  videoThumbUri: true,
+  User: {
+    select: selectForUserAvatarData,
   },
 }
 
@@ -60,7 +127,7 @@ export const selectForWorkoutSummary = {
     },
   },
   User: {
-    select: selectForUserSummary,
+    select: selectForUserAvatarData,
   },
   _count: {
     select: { LoggedWorkouts: true },
@@ -77,7 +144,7 @@ export const selectForWorkoutPlanSummary = {
   lengthWeeks: true,
   daysPerWeek: true,
   User: {
-    select: selectForUserSummary,
+    select: selectForUserAvatarData,
   },
   WorkoutTags: {
     select: {

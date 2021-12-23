@@ -164,72 +164,55 @@ model Skill {
 }
 
 model User {
-  id                      String                   @id @default(uuid())
-  firebaseUid             String                   @unique
-  createdAt               DateTime                 @default(now())
-  hasOnboarded            Boolean                  @default(false)
-  userProfileScope        UserProfileScope         @default(PRIVATE)
-  avatarUri               String?
-  introVideoUri           String?
-  introVideoThumbUri      String?
-  displayName             String                   @unique
-  firstname               String?
-  lastname                String?
-  bio                     String?
-  tagline                 String?
-  birthdate               DateTime?
-  gender                  Gender                   @default(PNTS)
-  townCity                String?
-  countryCode             String?
-  instagramHandle         String?
-  tiktokHandle            String?
-  youtubeHandle           String?
-  linkedinHandle          String?
-  ClubsWhereOwner         Club[]                   @relation("owner")
-  ClubInviteTokens        ClubInviteToken[]
-  Collections             Collection[]
-  GymProfiles             GymProfile[]
-  ClubInvitesReceived     JoinClubInvite[]         @relation("invited")
-  ClubInvitesResponded    JoinClubInvite[]         @relation("invite_responder")
-  ClubInvitesSent         JoinClubInvite[]         @relation("sender")
-  JoinClubRequestsSent    JoinClubRequest[]        @relation("applicant")
-  JoinClubResponsesSent   JoinClubRequest[]        @relation("request_responder")
-  LoggedWorkouts          LoggedWorkout[]
-  LoggedWorkoutSections   LoggedWorkoutSection[]
-  CustomMoves             Move[]
-  ProgressJournals        ProgressJournal[]
-  ProgressJournalEntrys   ProgressJournalEntry[]
-  ProgressJournalGoals    ProgressJournalGoal[]
-  ProgressJournalGoalTags ProgressJournalGoalTag[]
-  ScheduledWorkouts       ScheduledWorkout[]
-  Skills                  Skill[]
-  UserBenchmarks          UserBenchmark[]
-  UserBenchmarkEntries    UserBenchmarkEntry[]
-  UserBenchmarkTags       UserBenchmarkTag[]
-  Workouts                Workout[]
-  WorkoutMoves            WorkoutMove[]
-  WorkoutPlans            WorkoutPlan[]
-  WorkoutPlanDays         WorkoutPlanDay[]
-  WorkoutPlanDayWorkouts  WorkoutPlanDayWorkout[]
-  WorkoutPlanEnrolments   WorkoutPlanEnrolment[]
-  WorkoutPlanReviews      WorkoutPlanReview[]
-  WorkoutSections         WorkoutSection[]
-  WorkoutSets             WorkoutSet[]
-  WorkoutTag              WorkoutTag[]
-  ClubsWhereAdmin         Club[]                   @relation("admin")
-  ClubsWhereMember        Club[]                   @relation("member")
-  BodyTrackingEntry       BodyTrackingEntry[]
-
-}
-
-model UserBenchmarkTag {
-  id             String          @id @default(uuid())
-  createdAt      DateTime        @default(now())
-  userId         String
-  name           String
-  description    String?
-  User           User            @relation(fields: [userId], references: [id])
-  UserBenchmarks UserBenchmark[]
+  id                     String                  @id @default(uuid())
+  firebaseUid            String                  @unique
+  createdAt              DateTime                @default(now())
+  hasOnboarded           Boolean                 @default(false)
+  userProfileScope       UserProfileScope        @default(PRIVATE)
+  avatarUri              String?
+  introVideoUri          String?
+  introVideoThumbUri     String?
+  displayName            String                  @unique
+  firstname              String?
+  lastname               String?
+  bio                    String?
+  tagline                String?
+  birthdate              DateTime?
+  gender                 Gender                  @default(PNTS)
+  townCity               String?
+  countryCode            String?
+  instagramHandle        String?
+  tiktokHandle           String?
+  youtubeHandle          String?
+  linkedinHandle         String?
+  ClubsWhereOwner        Club[]                  @relation("owner")
+  ClubInviteTokens       ClubInviteToken[]
+  Collections            Collection[]
+  GymProfiles            GymProfile[]
+  LoggedWorkouts         LoggedWorkout[]
+  LoggedWorkoutSections  LoggedWorkoutSection[]
+  CustomMoves            Move[]
+  ScheduledWorkouts      ScheduledWorkout[]
+  Skills                 Skill[]
+  UserBenchmarks         UserBenchmark[]
+  UserBenchmarkEntries   UserBenchmarkEntry[]
+  Workouts               Workout[]
+  WorkoutMoves           WorkoutMove[]
+  WorkoutPlans           WorkoutPlan[]
+  WorkoutPlanDays        WorkoutPlanDay[]
+  WorkoutPlanDayWorkouts WorkoutPlanDayWorkout[]
+  WorkoutPlanEnrolments  WorkoutPlanEnrolment[]
+  WorkoutPlanReviews     WorkoutPlanReview[]
+  WorkoutSections        WorkoutSection[]
+  WorkoutSets            WorkoutSet[]
+  WorkoutTag             WorkoutTag[]
+  ClubsWhereAdmin        Club[]                  @relation("admin")
+  ClubsWhereMember       Club[]                  @relation("member")
+  BodyTrackingEntry      BodyTrackingEntry[]
+  JournalNotes           JournalNote[]
+  JournalMoods           JournalMood[]
+  JournalGoals           JournalGoal[]
+  ClubAnnouncements      ClubAnnouncement[]
 }
 
 model UserBenchmark {
@@ -244,7 +227,6 @@ model UserBenchmark {
   loadUnit             LoadUnit             @default(KG)
   User                 User                 @relation(fields: [userId], references: [id])
   UserBenchmarkEntries UserBenchmarkEntry[]
-  UserBenchmarkTags    UserBenchmarkTag[]
 }
 
 model UserBenchmarkEntry {
@@ -278,12 +260,11 @@ model Club {
   contentAccessScope ContentAccessScope @default(PRIVATE)
   Owner              User               @relation("owner", fields: [userId], references: [id])
   ClubInviteTokens   ClubInviteToken[]
-  JoinClubInvites    JoinClubInvite[]
-  JoinClubRequests   JoinClubRequest[]
   Workouts           Workout[]
   WorkoutPlans       WorkoutPlan[]
   Admins             User[]             @relation("admin")
   Members            User[]             @relation("member")
+  ClubAnnouncements  ClubAnnouncement[]
 }
 
 model ClubInviteToken {
@@ -299,34 +280,18 @@ model ClubInviteToken {
   User          User     @relation(fields: [userId], references: [id])
 }
 
-/// When a user requests to join a club.
-model JoinClubRequest {
-  id          String                @id @default(uuid())
-  createdAt   DateTime              @default(now())
-  status      JoinClubRequestStatus @default(PENDING)
-  respondedAt DateTime?
-  applicantId String
-  clubId      String
-  responderId String?
-  Applicant   User                  @relation("applicant", fields: [applicantId], references: [id])
-  Club        Club                  @relation(fields: [clubId], references: [id], onDelete: Cascade)
-  Responder   User?                 @relation("request_responder", fields: [responderId], references: [id])
-}
-
-/// When the owner or an admin invites a user to join a club.
-model JoinClubInvite {
-  id          String                @id @default(uuid())
-  createdAt   DateTime              @default(now())
-  invitedId   String
-  status      JoinClubRequestStatus @default(PENDING)
-  respondedAt DateTime?
-  clubId      String
-  senderId    String
-  responderId String?
-  Club        Club                  @relation(fields: [clubId], references: [id], onDelete: Cascade)
-  Invited     User                  @relation("invited", fields: [invitedId], references: [id])
-  Responder   User?                 @relation("invite_responder", fields: [responderId], references: [id])
-  Sender      User                  @relation("sender", fields: [senderId], references: [id])
+model ClubAnnouncement {
+  id            String   @id @default(uuid())
+  createdAt     DateTime @default(now())
+  description   String
+  imageUri      String?
+  audioUri      String?
+  videoUri      String?
+  videoThumbUri String?
+  Club          Club     @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  clubId        String
+  User          User     @relation(fields: [userId], references: [id])
+  userId        String
 }
 
 /// /////////////////////////////////////////////////
@@ -344,7 +309,7 @@ model Workout {
   userId                String
   introVideoThumbUri    String?
   archived              Boolean                 @default(false)
-  difficultyLevel       DifficultyLevel         @default(INTERMEDIATE)
+  difficultyLevel       DifficultyLevel?
   lengthMinutes         Int?
   metaData              Json?
   User                  User                    @relation(fields: [userId], references: [id])
@@ -567,58 +532,38 @@ model BodyTrackingEntry {
   User           User           @relation(fields: [userId], references: [id])
 }
 
-//////////////////////////////////////////////
-/////// Progress Journal Related /////////////
-//////////////////////////////////////////////
-model ProgressJournal {
-  id                     String                 @id @default(uuid())
-  createdAt              DateTime               @default(now())
-  userId                 String
-  name                   String
-  description            String?
-  coverImageUri          String?
-  User                   User                   @relation(fields: [userId], references: [id])
-  ProgressJournalEntries ProgressJournalEntry[]
-  ProgressJournalGoals   ProgressJournalGoal[]
+/////////////////////////////////////
+/////// Journal Related /////////////
+/////////////////////////////////////
+model JournalNote {
+  id           String   @id @default(uuid())
+  createdAt    DateTime @default(now())
+  voiceNoteUri String?
+  textNote     String?
+  User         User     @relation(fields: [userId], references: [id])
+  userId       String
 }
 
-model ProgressJournalEntry {
-  id                String          @id @default(uuid())
-  createdAt         DateTime        @default(now())
-  voiceNoteUri      String?
-  moodScore         Float?
-  energyScore       Float?
-  motivationScore   Float?
-  progressJournalId String
-  userId            String
-  note              String?
-  confidenceScore   Float?
-  ProgressJournal   ProgressJournal @relation(fields: [progressJournalId], references: [id])
-  User              User            @relation(fields: [userId], references: [id])
+model JournalMood {
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  moodScore   Int
+  energyScore Int
+  tags        String[]
+  textNote    String?
+  User        User     @relation(fields: [userId], references: [id])
+  userId      String
 }
 
-model ProgressJournalGoal {
-  id                      String                   @id @default(uuid())
-  createdAt               DateTime                 @default(now())
-  name                    String
-  description             String?
-  deadline                DateTime?
-  completedDate           DateTime?
-  progressJournalId       String
-  userId                  String
-  ProgressJournal         ProgressJournal          @relation(fields: [progressJournalId], references: [id])
-  User                    User                     @relation(fields: [userId], references: [id])
-  ProgressJournalGoalTags ProgressJournalGoalTag[]
-}
-
-model ProgressJournalGoalTag {
-  id                   String                @id @default(uuid())
-  createdAt            DateTime              @default(now())
-  tag                  String
-  hexColor             String
-  userId               String
-  User                 User                  @relation(fields: [userId], references: [id])
-  ProgressJournalGoals ProgressJournalGoal[]
+model JournalGoal {
+  id            String    @id @default(uuid())
+  createdAt     DateTime  @default(now())
+  name          String
+  description   String?
+  deadline      DateTime?
+  completedDate DateTime?
+  User          User      @relation(fields: [userId], references: [id])
+  userId        String
 }
 
 /// ///////////////////////////////

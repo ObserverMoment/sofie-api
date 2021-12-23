@@ -11,7 +11,7 @@ import invites from './invites'
 import loggedWorkout from './loggedWorkout'
 import main from './main'
 import move from './move'
-import progressJournal from './progressJournal'
+import journal from './journal'
 import scheduledWorkout from './scheduledWorkout'
 import skillsAndCertifications from './skillsAndCertifications'
 import timelineFeed from './timelineFeed'
@@ -37,7 +37,7 @@ const typeDefs = mergeTypeDefs([
   loggedWorkout,
   main,
   move,
-  progressJournal,
+  journal,
   scheduledWorkout,
   skillsAndCertifications,
   timelineFeed,

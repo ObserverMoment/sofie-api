@@ -1,18 +1,10 @@
 import { gql } from 'apollo-server-express'
 
 export default gql`
-  # Used for chat only - consider using UserSummary below and marging these two types.
   type UserAvatarData {
     id: ID!
     displayName: String!
     avatarUri: String
-  }
-
-  type UserSummary {
-    id: ID!
-    displayName: String!
-    avatarUri: String
-    userProfileScope: UserProfileScope!
   }
 
   type UserProfile {
@@ -35,7 +27,7 @@ export default gql`
     followerCount: Int
     workoutCount: Int
     planCount: Int
-    Clubs: [ClubSummary!]! # Public only
+    Clubs: [ClubSummary!]! # If UserProfile is Private this must be empty.
     LifetimeLogStatsSummary: LifetimeLogStatsSummary
     BenchmarksWithBestEntries: [UserBenchmarkWithBestEntry!]!
     Skills: [Skill!]!
@@ -52,7 +44,7 @@ export default gql`
     skills: [String!]!
     workoutCount: Int!
     planCount: Int!
-    Clubs: [ClubSummary!]! # Public only
+    Clubs: [ClubSummary!]!
   }
 
   # Resolver should only return the updated fields plus an ID. Only the ID is required.

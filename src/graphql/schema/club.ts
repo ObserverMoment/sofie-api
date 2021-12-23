@@ -4,9 +4,9 @@ export default gql`
   type Club {
     id: ID!
     createdAt: DateTime!
-    Owner: UserSummary!
-    Admins: [UserSummary!]!
-    Members: [UserSummary!]!
+    Owner: UserAvatarData!
+    Admins: [UserAvatarData!]!
+    Members: [UserAvatarData!]!
     name: String!
     description: String
     location: String
@@ -20,20 +20,68 @@ export default gql`
     WorkoutPlans: [WorkoutPlanSummary!]
     # Data should be viewable by club members, admins and owners only. Return null if not.
     ClubInviteTokens: [ClubInviteToken!]
-    JoinClubInvites: [JoinClubInvite!]
-    JoinClubRequests: [JoinClubRequest!]
   }
 
   # Use in lists etc where minimal data is needed.
   type ClubSummary {
     id: ID!
     createdAt: DateTime!
+    Owner: UserAvatarData!
+    Admins: [UserAvatarData!]!
     name: String!
     description: String
-    coverImageUri: String
     location: String
+    coverImageUri: String
+    introVideoUri: String
+    introVideoThumbUri: String
+    introAudioUri: String
+    contentAccessScope: ContentAccessScope!
     memberCount: Int!
-    Owner: UserSummary!
+    workoutCount: Int!
+    planCount: Int!
+  }
+
+  # For displaying basic club and user data in the club chat.
+  type ClubChatSummary {
+    id: ID!
+    name: String!
+    coverImageUri: String
+    Owner: UserAvatarData!
+    Admins: [UserAvatarData!]!
+    Members: [UserAvatarData!]!
+  }
+
+  # Display the members of a club within Club/People - i.e only other club members should ever see this.
+  type ClubMembers {
+    id: ID! # ClubId
+    Owner: ClubMemberSummary!
+    Admins: [ClubMemberSummary!]!
+    Members: [ClubMemberSummary!]!
+  }
+
+  type ClubMemberSummary {
+    id: ID!
+    displayName: String!
+    avatarUri: String
+    townCity: String
+    countryCode: String
+    tagline: String
+    skills: [String!]!
+  }
+
+  type ClubInviteTokens {
+    id: ID! # ClubId
+    tokens: [ClubInviteToken!]!
+  }
+
+  type ClubWorkouts {
+    id: ID! # ClubId
+    workouts: [WorkoutSummary!]!
+  }
+
+  type ClubWorkoutPlans {
+    id: ID! # ClubId
+    workoutPlans: [WorkoutPlanSummary!]!
   }
 
   input CreateClubInput {
@@ -42,7 +90,7 @@ export default gql`
     location: String
   }
 
-  input UpdateClubInput {
+  input UpdateClubSummaryInput {
     id: ID!
     name: String
     description: String
@@ -74,33 +122,6 @@ export default gql`
     WorkoutPlan: ConnectRelationInput!
   }
 
-  #### JoinClubInvite ####
-  # From club to user.
-  type JoinClubInvite {
-    id: ID!
-    createdAt: DateTime!
-    # Owner or admin of the club.
-    Sender: UserSummary!
-    # The user being invited
-    Invited: UserSummary!
-    # Owner or admin who accepts / rejects.
-    Responder: UserSummary!
-    status: JoinClubRequestStatus!
-    respondedAt: DateTime
-  }
-
-  input CreateJoinClubInviteInput {
-    Club: ConnectRelationInput!
-    Sender: ConnectRelationInput!
-    Invited: ConnectRelationInput!
-  }
-
-  input UpdateJoinClubInviteInput {
-    id: ID!
-    Responder: ConnectRelationInput!
-    status: JoinClubRequestStatus!
-  }
-
   #### ClubInviteToken ####
   type ClubInviteToken {
     id: ID! # Use the unique ID string as the 'token' string.
@@ -113,43 +134,54 @@ export default gql`
     # Only updated by the sever when user joins via this token.
     # Compare this length with inviteLimit to check for expiry.
     joinedUserIds: [String!]!
-    # Owner or admin of the group.
-    User: UserSummary!
   }
 
   input CreateClubInviteTokenInput {
+    clubId: ID!
     name: String!
     inviteLimit: Int!
-    Club: ConnectRelationInput!
   }
 
   input UpdateClubInviteTokenInput {
+    clubId: ID!
     id: ID!
     name: String
     inviteLimit: Int
     active: Boolean
   }
 
-  #### JoinClubRequest ####
-  # From user to club.
-  type JoinClubRequest {
+  input DeleteClubInviteTokenInput {
+    clubId: ID!
+    tokenId: ID!
+  }
+
+  #### ClubAnnouncement ####
+  type ClubAnnouncement {
     id: ID!
     createdAt: DateTime!
-    Applicant: UserSummary!
-    status: JoinClubRequestStatus!
-    # Owner or admin of the group.
-    Responder: UserSummary
-    respondedAt: DateTime
+    description: String!
+    imageUri: String
+    audioUri: String
+    videoUri: String
+    videoThumbUri: String
+    User: UserAvatarData!
   }
 
-  input CreateJoinClubRequestInput {
+  input CreateClubAnnouncementInput {
+    description: String!
+    imageUri: String
+    audioUri: String
+    videoUri: String
+    videoThumbUri: String
     Club: ConnectRelationInput!
-    Applicant: ConnectRelationInput!
   }
 
-  input UpdateJoinClubRequestInput {
+  input UpdateClubAnnouncementInput {
     id: ID!
-    Responder: ConnectRelationInput!
-    status: JoinClubRequestStatus!
+    description: String
+    imageUri: String
+    audioUri: String
+    videoUri: String
+    videoThumbUri: String
   }
 `

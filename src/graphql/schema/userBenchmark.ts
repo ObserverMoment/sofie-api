@@ -27,7 +27,6 @@ export default gql`
     benchmarkType: BenchmarkType!
     loadUnit: LoadUnit!
     UserBenchmarkEntries: [UserBenchmarkEntry!]!
-    UserBenchmarkTags: [UserBenchmarkTag!]!
   }
 
   input CreateUserBenchmarkInput {
@@ -36,7 +35,6 @@ export default gql`
     equipmentInfo: String
     benchmarkType: BenchmarkType!
     loadUnit: LoadUnit
-    UserBenchmarkTags: [ConnectRelationInput!]
   }
 
   input UpdateUserBenchmarkInput {
@@ -46,7 +44,6 @@ export default gql`
     equipmentInfo: String
     benchmarkType: BenchmarkType!
     loadUnit: LoadUnit
-    UserBenchmarkTags: [ConnectRelationInput!]
   }
 
   type UserBenchmarkEntry {
@@ -75,22 +72,5 @@ export default gql`
     note: String
     videoUri: String
     videoThumbUri: String
-  }
-
-  type UserBenchmarkTag {
-    id: ID!
-    name: String!
-    description: String
-  }
-
-  input CreateUserBenchmarkTagInput {
-    name: String!
-    description: String
-  }
-
-  input UpdateUserBenchmarkTagInput {
-    id: ID!
-    name: String
-    description: String
   }
 `

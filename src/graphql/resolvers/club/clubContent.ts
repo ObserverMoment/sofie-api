@@ -1,26 +1,88 @@
 import { ApolloError } from 'apollo-server-errors'
 import { Context } from '../../..'
 import {
-  Club,
   MutationAddWorkoutPlanToClubArgs,
   MutationAddWorkoutToClubArgs,
   MutationRemoveWorkoutFromClubArgs,
   MutationRemoveWorkoutPlanFromClubArgs,
+  QueryClubWorkoutPlansArgs,
+  QueryClubWorkoutsArgs,
 } from '../../../generated/graphql'
 import { checkUserOwnsObject } from '../../utils'
-import { selectForWorkoutSummary } from '../selectDefinitions'
+import {
+  selectForWorkoutPlanSummary,
+  selectForWorkoutSummary,
+} from '../selectDefinitions'
 import { formatWorkoutSummaries } from '../workout/utils'
-import { checkUserIsOwnerOrAdminOfClub } from './utils'
+import { formatWorkoutPlanSummaries } from '../workoutPlan/utils'
+import { checkUserIsMemberOfClub, checkUserIsOwnerOrAdminOfClub } from './utils'
 
+////// Queries ////////
+export const clubWorkouts = async (
+  r: any,
+  { clubId }: QueryClubWorkoutsArgs,
+  { authedUserId, prisma }: Context,
+) => {
+  // Check that user is a member.
+  await checkUserIsMemberOfClub(clubId, authedUserId, prisma)
+
+  const club = await prisma.club.findUnique({
+    where: { id: clubId },
+    select: {
+      Workouts: {
+        select: selectForWorkoutSummary,
+      },
+    },
+  })
+
+  if (!club) {
+    throw new ApolloError(
+      `clubWorkouts: Unable to retrieve data for club ${clubId}.`,
+    )
+  } else {
+    return { id: clubId, workouts: formatWorkoutSummaries(club.Workouts) }
+  }
+}
+
+export const clubWorkoutPlans = async (
+  r: any,
+  { clubId }: QueryClubWorkoutPlansArgs,
+  { authedUserId, prisma }: Context,
+) => {
+  // Check that user is a member.
+  await checkUserIsMemberOfClub(clubId, authedUserId, prisma)
+
+  const club = await prisma.club.findUnique({
+    where: { id: clubId },
+    select: {
+      WorkoutPlans: {
+        select: selectForWorkoutPlanSummary,
+      },
+    },
+  })
+
+  if (!club) {
+    throw new ApolloError(
+      `clubWorkoutPlans: Unable to retrieve data for club ${clubId}.`,
+    )
+  } else {
+    return {
+      id: clubId,
+      workoutPlans: formatWorkoutPlanSummaries(club.WorkoutPlans),
+    }
+  }
+}
+
+////// Mutations ///////
 export const addWorkoutToClub = async (
   r: any,
   { workoutId, clubId }: MutationAddWorkoutToClubArgs,
-  { authedUserId, select, prisma }: Context,
+  { authedUserId, prisma }: Context,
 ) => {
   await checkUserIsOwnerOrAdminOfClub(clubId, authedUserId, prisma)
   await checkUserOwnsObject(workoutId, 'workout', authedUserId, prisma)
 
-  const updated: any = await prisma.club.update({
+  const updated = await prisma.club.update({
     where: { id: clubId },
     data: {
       Workouts: {
@@ -28,17 +90,14 @@ export const addWorkoutToClub = async (
       },
     },
     select: {
-      ...select,
       Workouts: {
         select: selectForWorkoutSummary,
       },
     },
   })
 
-  updated.Workouts = formatWorkoutSummaries(updated.Workouts)
-
   if (updated) {
-    return updated as Club
+    return { id: clubId, workouts: formatWorkoutSummaries(updated.Workouts) }
   } else {
     throw new ApolloError('addWorkoutToClub: There was an issue.')
   }
@@ -47,12 +106,12 @@ export const addWorkoutToClub = async (
 export const removeWorkoutFromClub = async (
   r: any,
   { workoutId, clubId }: MutationRemoveWorkoutFromClubArgs,
-  { authedUserId, select, prisma }: Context,
+  { authedUserId, prisma }: Context,
 ) => {
   await checkUserIsOwnerOrAdminOfClub(clubId, authedUserId, prisma)
   await checkUserOwnsObject(workoutId, 'workout', authedUserId, prisma)
 
-  const updated: any = await prisma.club.update({
+  const updated = await prisma.club.update({
     where: { id: clubId },
     data: {
       Workouts: {
@@ -60,17 +119,14 @@ export const removeWorkoutFromClub = async (
       },
     },
     select: {
-      ...select,
       Workouts: {
         select: selectForWorkoutSummary,
       },
     },
   })
 
-  updated.Workouts = formatWorkoutSummaries(updated.Workouts)
-
   if (updated) {
-    return updated as Club
+    return { id: clubId, workouts: formatWorkoutSummaries(updated.Workouts) }
   } else {
     throw new ApolloError('removeWorkoutFromClub: There was an issue.')
   }
@@ -79,12 +135,12 @@ export const removeWorkoutFromClub = async (
 export const addWorkoutPlanToClub = async (
   r: any,
   { workoutPlanId, clubId }: MutationAddWorkoutPlanToClubArgs,
-  { authedUserId, select, prisma }: Context,
+  { authedUserId, prisma }: Context,
 ) => {
   await checkUserIsOwnerOrAdminOfClub(clubId, authedUserId, prisma)
   await checkUserOwnsObject(workoutPlanId, 'workoutPlan', authedUserId, prisma)
 
-  const updated: any = await prisma.club.update({
+  const updated = await prisma.club.update({
     where: { id: clubId },
     data: {
       WorkoutPlans: {
@@ -92,17 +148,17 @@ export const addWorkoutPlanToClub = async (
       },
     },
     select: {
-      ...select,
-      Workouts: {
-        select: selectForWorkoutSummary,
+      WorkoutPlans: {
+        select: selectForWorkoutPlanSummary,
       },
     },
   })
 
-  updated.Workouts = formatWorkoutSummaries(updated.Workouts)
-
   if (updated) {
-    return updated as Club
+    return {
+      id: clubId,
+      workoutPlans: formatWorkoutPlanSummaries(updated.WorkoutPlans),
+    }
   } else {
     throw new ApolloError('addWorkoutPlanToClub: There was an issue.')
   }
@@ -111,12 +167,12 @@ export const addWorkoutPlanToClub = async (
 export const removeWorkoutPlanFromClub = async (
   r: any,
   { workoutPlanId, clubId }: MutationRemoveWorkoutPlanFromClubArgs,
-  { authedUserId, select, prisma }: Context,
+  { authedUserId, prisma }: Context,
 ) => {
   await checkUserIsOwnerOrAdminOfClub(clubId, authedUserId, prisma)
   await checkUserOwnsObject(workoutPlanId, 'workoutPlan', authedUserId, prisma)
 
-  const updated: any = await prisma.club.update({
+  const updated = await prisma.club.update({
     where: { id: clubId },
     data: {
       WorkoutPlans: {
@@ -124,17 +180,17 @@ export const removeWorkoutPlanFromClub = async (
       },
     },
     select: {
-      ...select,
-      Workouts: {
-        select: selectForWorkoutSummary,
+      WorkoutPlans: {
+        select: selectForWorkoutPlanSummary,
       },
     },
   })
 
-  updated.Workouts = formatWorkoutSummaries(updated.Workouts)
-
   if (updated) {
-    return updated as Club
+    return {
+      id: clubId,
+      workoutPlans: formatWorkoutPlanSummaries(updated.WorkoutPlans),
+    }
   } else {
     throw new ApolloError('removeWorkoutPlanFromClub: There was an issue.')
   }

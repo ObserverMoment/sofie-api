@@ -5,12 +5,14 @@ import {
   InviteTokenError,
   QueryCheckClubInviteTokenArgs,
 } from '../../generated/graphql'
+import { formatClubSummary } from './club/utils'
+import { selectForClubSummary } from './selectDefinitions'
 
 /// Note: The ID is the token
 export const checkClubInviteToken = async (
   r: any,
   { id }: QueryCheckClubInviteTokenArgs,
-  { select, prisma }: Context,
+  { authedUserId, prisma }: Context,
 ) => {
   /// Check that the token is valid and that is has not maxed out.
   const clubInviteToken = await prisma.clubInviteToken.findUnique({
@@ -31,6 +33,7 @@ export const checkClubInviteToken = async (
   }
 
   if (
+    clubInviteToken!.inviteLimit !== null &&
     clubInviteToken!.inviteLimit !== 0 &&
     clubInviteToken!.joinedUserIds.length >= clubInviteToken!.inviteLimit
   ) {
@@ -40,9 +43,40 @@ export const checkClubInviteToken = async (
     } as InviteTokenError
   }
 
+  /// Check if the user is already a member of this club.
+  const clubPeople = await prisma.club.findUnique({
+    where: { id: clubInviteToken!.clubId },
+    select: {
+      Owner: {
+        select: { id: true },
+      },
+      Admins: { select: { id: true } },
+      Members: { select: { id: true } },
+    },
+  })
+
+  if (!clubPeople) {
+    /// Associated Club not found.
+    return {
+      message: 'There was a problem retrieving details of the Club.',
+    } as InviteTokenError
+  }
+
+  const isMember = [
+    clubPeople!.Owner.id,
+    ...clubPeople!.Admins.map((a) => a.id),
+    ...clubPeople!.Members.map((m) => m.id),
+  ].includes(authedUserId)
+
+  if (isMember) {
+    return {
+      message: 'It looks like you are already a member of this Club.',
+    } as InviteTokenError
+  }
+
   const club = await prisma.club.findUnique({
     where: { id: clubInviteToken!.clubId },
-    select: select.Club.select,
+    select: selectForClubSummary,
   })
 
   if (!club) {
@@ -54,6 +88,9 @@ export const checkClubInviteToken = async (
 
   return {
     token: clubInviteToken!.id,
-    Club: club as Club,
+    Club: formatClubSummary(club),
+    introVideoUri: club.introVideoUri,
+    introVideoThumbUri: club.introVideoThumbUri,
+    introAudioUri: club.introAudioUri,
   } as ClubInviteTokenData
 }

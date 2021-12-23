@@ -79,6 +79,7 @@ export default gql`
   }
 
   enum TimelinePostType {
+    ANNOUNCEMENT
     WORKOUT
     WORKOUTPLAN
   }
@@ -111,5 +112,11 @@ export default gql`
   enum UserProfileScope {
     PRIVATE
     PUBLIC
+  }
+  enum UserClubMemberStatus {
+    OWNER
+    ADMIN
+    MEMBER
+    NONE
   }
 `
