@@ -206,10 +206,24 @@ export const deleteClub = async (
     where: { id },
     select: {
       id: true,
+      coverImageUri: true,
+      introAudioUri: true,
+      introVideoUri: true,
+      introVideoThumbUri: true,
     },
   })
 
+  const fileIdsForDeletion: string[] = [
+    deleted.coverImageUri,
+    deleted.introAudioUri,
+    deleted.introVideoUri,
+    deleted.introVideoThumbUri,
+  ].filter((x) => x) as string[]
+
   if (deleted) {
+    if (fileIdsForDeletion.length) {
+      await deleteFiles(fileIdsForDeletion)
+    }
     await deleteStreamClubMemberChat(deleted.id)
     return deleted.id
   } else {

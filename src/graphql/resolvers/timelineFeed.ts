@@ -125,7 +125,7 @@ export async function timelinePostDataFromInputRequests(
   postDataRequests: TimelinePostDataRequestInput[],
   prisma: PrismaClient,
 ): Promise<TimelinePostObjectData[]> {
-  /// All the user data required for the batch (post creators and object creators)
+  /// All the User data required for the batch (post creators and object creators)
   const uniquePosterIds: string[] = [
     ...postDataRequests.reduce((unique, next) => {
       unique.add(next.posterId)
@@ -149,6 +149,7 @@ export async function timelinePostDataFromInputRequests(
       return acum
     },
     {
+      ANNOUNCEMENT: new Set<string>(),
       WORKOUT: new Set<string>(),
       WORKOUTPLAN: new Set<string>(),
     },
@@ -158,6 +159,7 @@ export async function timelinePostDataFromInputRequests(
     Object.entries(postDataRequestsByType).map(([k, v]) => {
       return (
         {
+          ANNOUNCEMENT: () => clubAnnouncementPostsData([...v], prisma),
           WORKOUT: () => workoutPostsData([...v], prisma),
           WORKOUTPLAN: () => workoutPlanPostsData([...v], prisma),
         } as any
@@ -173,6 +175,7 @@ export async function timelinePostDataFromInputRequests(
       /// Currently just casting to non nullable and assuming this won't happen.
       const poster = posters.find((p) => p.id === request.posterId)
       const object = objectsFlat.find((o) => o.id === request.objectId)
+
       return {
         activityId: request.activityId,
         poster: {
@@ -180,19 +183,23 @@ export async function timelinePostDataFromInputRequests(
           displayName: poster!.displayName,
           avatarUri: poster?.avatarUri,
         },
+        /// When the post is an ANNOUNCEMENT.
+        /// The Poster is the creator so these two objects will be the same.
         creator: {
-          id: object!.creator!.id,
-          displayName: object!.creator!.displayName,
-          avatarUri: object!.creator?.avatarUri,
+          id: object?.creator!.id || poster!.id,
+          displayName: object?.creator!.displayName || poster!.displayName,
+          avatarUri: object?.creator?.avatarUri || poster?.avatarUri,
         },
+        /// When post is an ANNOUNCEMENT.
+        /// Name will be the [clubAnnouncement.description].
         object: {
           id: object!.id,
           type: object!.type,
           name: object!.name,
-          introAudioUri: object?.introAudioUri || undefined,
-          coverImageUri: object?.coverImageUri || undefined,
-          introVideoUri: object?.introVideoUri || undefined,
-          introVideoThumbUri: object?.introVideoThumbUri || undefined,
+          audioUri: object?.audioUri || undefined,
+          imageUri: object?.imageUri || undefined,
+          videoUri: object?.videoUri || undefined,
+          videoThumbUri: object?.videoThumbUri || undefined,
         },
       }
     },
@@ -201,16 +208,48 @@ export async function timelinePostDataFromInputRequests(
   return responses as TimelinePostObjectData[]
 }
 
+async function clubAnnouncementPostsData(
+  ids: string[],
+  prisma: PrismaClient,
+): Promise<ObjectAndCreatorData[]> {
+  const responses = await prisma.clubAnnouncement.findMany({
+    where: { id: { in: ids } },
+    select: {
+      id: true,
+      description: true,
+      imageUri: true,
+      audioUri: true,
+      videoUri: true,
+      videoThumbUri: true,
+      User: {
+        select: {
+          id: true,
+          displayName: true,
+          avatarUri: true,
+        },
+      },
+    },
+  })
+
+  if (!responses) {
+    throw new ApolloError(
+      'timelinePostData.clubAnnouncementPostsData: Could not find any announcements associated with these IDs.',
+    )
+  }
+
+  return responses.map((r) => mapResponseToObjectType(r, 'ANNOUNCEMENT'))
+}
+
 async function workoutPostsData(
   ids: string[],
   prisma: PrismaClient,
 ): Promise<ObjectAndCreatorData[]> {
   const responses = await prisma.workout.findMany({
     where: { id: { in: ids } },
-    select: selectFields,
+    select: selectFieldsForPostData,
   })
 
-  if (responses == null) {
+  if (!responses) {
     throw new ApolloError(
       'timelinePostData.workoutPostsData: Could not find any workouts associated with these IDs.',
     )
@@ -225,10 +264,10 @@ async function workoutPlanPostsData(
 ): Promise<ObjectAndCreatorData[]> {
   const responses = await prisma.workoutPlan.findMany({
     where: { id: { in: ids } },
-    select: selectFields,
+    select: selectFieldsForPostData,
   })
 
-  if (responses == null) {
+  if (!responses) {
     throw new ApolloError(
       'timelinePostData.workoutPlanPostsData: Could not find any workout plans associated with these IDs.',
     )
@@ -237,20 +276,41 @@ async function workoutPlanPostsData(
   return responses.map((r) => mapResponseToObjectType(r, 'WORKOUTPLAN'))
 }
 
-function mapResponseToObjectType(r: any, type: TimelinePostType) {
-  return {
-    creator: {
-      id: r.User.id,
-      displayName: r.User.displayName,
-      avatarUri: r.User.avatarUri || undefined,
-    },
-    id: r.id,
-    type: type,
-    name: r.name,
-    introAudioUri: r.introAudioUri || undefined,
-    coverImageUri: r.coverImageUri || undefined,
-    introVideoUri: r.introVideoUri || undefined,
-    introVideoThumbUri: r.introVideoThumbUri || undefined,
+/// Maps data objects retrieved from the DB to the shape requested by the client to display posts.
+function mapResponseToObjectType(
+  r: any,
+  type: TimelinePostType,
+): ObjectAndCreatorData {
+  if (type === 'ANNOUNCEMENT') {
+    return {
+      creator: {
+        id: r.User.id,
+        displayName: r.User.displayName,
+        avatarUri: r.User.avatarUri || undefined,
+      },
+      id: r.id,
+      type: type,
+      name: r.description,
+      audioUri: r.audioUri || undefined,
+      imageUri: r.imageUri || undefined,
+      videoUri: r.videoUri || undefined,
+      videoThumbUri: r.videoThumbUri || undefined,
+    }
+  } else {
+    return {
+      creator: {
+        id: r.User.id,
+        displayName: r.User.displayName,
+        avatarUri: r.User.avatarUri || undefined,
+      },
+      id: r.id,
+      type: type,
+      name: r.name,
+      audioUri: r.introAudioUri || undefined,
+      imageUri: r.coverImageUri || undefined,
+      videoUri: r.introVideoUri || undefined,
+      videoThumbUri: r.introVideoThumbUri || undefined,
+    }
   }
 }
 
@@ -264,13 +324,13 @@ interface ObjectAndCreatorData {
   id: string
   type: TimelinePostType
   name: string
-  coverImageUri?: string
-  introAudioUri?: string
-  introVideoUri?: string
-  introVideoThumbUri?: string
+  imageUri?: string
+  audioUri?: string
+  videoUri?: string
+  videoThumbUri?: string
 }
 
-const selectFields = {
+const selectFieldsForPostData = {
   id: true,
   name: true,
   coverImageUri: true,

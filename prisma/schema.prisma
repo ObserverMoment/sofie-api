@@ -212,6 +212,7 @@ model User {
   JournalNotes           JournalNote[]
   JournalMoods           JournalMood[]
   JournalGoals           JournalGoal[]
+  ClubAnnouncements      ClubAnnouncement[]
 }
 
 model UserBenchmark {
@@ -263,6 +264,7 @@ model Club {
   WorkoutPlans       WorkoutPlan[]
   Admins             User[]             @relation("admin")
   Members            User[]             @relation("member")
+  ClubAnnouncements  ClubAnnouncement[]
 }
 
 model ClubInviteToken {
@@ -276,6 +278,20 @@ model ClubInviteToken {
   name          String
   Club          Club     @relation(fields: [clubId], references: [id], onDelete: Cascade)
   User          User     @relation(fields: [userId], references: [id])
+}
+
+model ClubAnnouncement {
+  id            String   @id @default(uuid())
+  createdAt     DateTime @default(now())
+  description   String
+  imageUri      String?
+  audioUri      String?
+  videoUri      String?
+  videoThumbUri String?
+  Club          Club     @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  clubId        String
+  User          User     @relation(fields: [userId], references: [id])
+  userId        String
 }
 
 /// /////////////////////////////////////////////////

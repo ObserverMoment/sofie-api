@@ -36,6 +36,12 @@ import {
 } from './club/club'
 
 import {
+  createClubAnnouncement,
+  updateClubAnnouncement,
+  deleteClubAnnouncement,
+} from './club/clubAnnouncement'
+
+import {
   checkUserClubMemberStatus,
   clubMembers,
   clubInviteTokens,
@@ -130,7 +136,7 @@ import {
   checkUniqueDisplayName,
   userAvatars,
   userAvatarById,
-  userProfileById,
+  userProfile,
   userProfiles,
   updateUserProfile,
   userWorkoutTags,
@@ -149,13 +155,13 @@ import {
 
 import {
   userBenchmarks,
-  userBenchmarkById,
+  userBenchmark,
   createUserBenchmark,
   updateUserBenchmark,
-  deleteUserBenchmarkById,
+  deleteUserBenchmark,
   createUserBenchmarkEntry,
   updateUserBenchmarkEntry,
-  deleteUserBenchmarkEntryById,
+  deleteUserBenchmarkEntry,
 } from './userBenchmark'
 
 import {
@@ -333,7 +339,7 @@ const resolvers: Resolvers = {
     userArchivedWorkoutPlans,
     userArchivedCustomMoves,
     //// User Public Profiles ////
-    userProfileById,
+    userProfile,
     userProfiles,
     userWorkoutTags,
     //// User Avatars ////
@@ -341,7 +347,7 @@ const resolvers: Resolvers = {
     userAvatarById,
     /// User Benchmarks ////
     userBenchmarks,
-    userBenchmarkById,
+    userBenchmark,
     /// User Collections ////
     userCollections,
     userCollectionById,
@@ -383,9 +389,15 @@ const resolvers: Resolvers = {
     removeWorkoutFromClub,
     addWorkoutPlanToClub,
     removeWorkoutPlanFromClub,
+
     ///////////////////////
     //// Club Timeline ////
     ///////////////////////
+    /// An object that can be shared on a club feed via Stream activity.
+    createClubAnnouncement,
+    updateClubAnnouncement,
+    deleteClubAnnouncement,
+    /// Interacts with Strea.io.
     createClubTimelinePost,
     deleteClubTimelinePost,
     ///////////////////
@@ -456,10 +468,10 @@ const resolvers: Resolvers = {
     ////////////////////////
     createUserBenchmark,
     updateUserBenchmark,
-    deleteUserBenchmarkById,
+    deleteUserBenchmark,
     createUserBenchmarkEntry,
     updateUserBenchmarkEntry,
-    deleteUserBenchmarkEntryById,
+    deleteUserBenchmarkEntry,
     ////////////////////////
     //// User Collection ////
     ////////////////////////

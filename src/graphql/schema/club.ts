@@ -154,4 +154,34 @@ export default gql`
     clubId: ID!
     tokenId: ID!
   }
+
+  #### ClubAnnouncement ####
+  type ClubAnnouncement {
+    id: ID!
+    createdAt: DateTime!
+    description: String!
+    imageUri: String
+    audioUri: String
+    videoUri: String
+    videoThumbUri: String
+    User: UserAvatarData!
+  }
+
+  input CreateClubAnnouncementInput {
+    description: String!
+    imageUri: String
+    audioUri: String
+    videoUri: String
+    videoThumbUri: String
+    Club: ConnectRelationInput!
+  }
+
+  input UpdateClubAnnouncementInput {
+    id: ID!
+    description: String
+    imageUri: String
+    audioUri: String
+    videoUri: String
+    videoThumbUri: String
+  }
 `

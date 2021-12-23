@@ -75,13 +75,13 @@ export default gql`
     userAvatarById(id: ID!): UserAvatarData!
     #### User Benchmark (aka Personal Best) ####
     userBenchmarks: [UserBenchmark!]!
-    userBenchmarkById(id: ID!): UserBenchmark!
+    userBenchmark(id: ID!): UserBenchmark!
     #### User Collection ####
     userCollections: [Collection!]!
     userCollectionById(id: ID!): Collection!
     #### User Public Profiles ####
     userProfiles(cursor: ID, take: Int): [UserProfileSummary!]!
-    userProfileById(userId: ID!): UserProfile!
+    userProfile(userId: ID!): UserProfile!
     #### Workouts ####
     publicWorkouts(
       cursor: ID
@@ -137,6 +137,15 @@ export default gql`
       workoutPlanId: ID!
       clubId: ID!
     ): ClubWorkoutPlans!
+    #### ClubAnnouncement ####
+    # Can be shared as a ClubTimeline Post #
+    createClubAnnouncement(
+      data: CreateClubAnnouncementInput!
+    ): ClubAnnouncement!
+    updateClubAnnouncement(
+      data: UpdateClubAnnouncementInput!
+    ): ClubAnnouncement!
+    deleteClubAnnouncement(id: ID!): ID!
     #### Club Timeline Post ####
     createClubTimelinePost(
       data: CreateClubTimelinePostInput!
@@ -199,14 +208,14 @@ export default gql`
     #### User Benchmark ####
     createUserBenchmark(data: CreateUserBenchmarkInput!): UserBenchmark!
     updateUserBenchmark(data: UpdateUserBenchmarkInput!): UserBenchmark!
-    deleteUserBenchmarkById(id: ID!): ID!
+    deleteUserBenchmark(id: ID!): ID!
     createUserBenchmarkEntry(
       data: CreateUserBenchmarkEntryInput!
     ): UserBenchmarkEntry!
     updateUserBenchmarkEntry(
       data: UpdateUserBenchmarkEntryInput!
     ): UserBenchmarkEntry!
-    deleteUserBenchmarkEntryById(id: ID!): ID!
+    deleteUserBenchmarkEntry(id: ID!): ID!
     #### User Collection ####
     createCollection(data: CreateCollectionInput!): Collection!
     updateCollection(data: UpdateCollectionInput!): Collection!

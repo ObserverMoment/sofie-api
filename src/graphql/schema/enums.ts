@@ -79,6 +79,7 @@ export default gql`
   }
 
   enum TimelinePostType {
+    ANNOUNCEMENT
     WORKOUT
     WORKOUTPLAN
   }

@@ -3,11 +3,11 @@ import { Context } from '../..'
 import {
   MutationCreateUserBenchmarkArgs,
   MutationCreateUserBenchmarkEntryArgs,
-  MutationDeleteUserBenchmarkByIdArgs,
-  MutationDeleteUserBenchmarkEntryByIdArgs,
+  MutationDeleteUserBenchmarkArgs,
+  MutationDeleteUserBenchmarkEntryArgs,
   MutationUpdateUserBenchmarkArgs,
   MutationUpdateUserBenchmarkEntryArgs,
-  QueryUserBenchmarkByIdArgs,
+  QueryUserBenchmarkArgs,
   UserBenchmark,
   UserBenchmarkEntry,
 } from '../../generated/graphql'
@@ -33,9 +33,9 @@ export const userBenchmarks = async (
   return userBenchmarks as UserBenchmark[]
 }
 
-export const userBenchmarkById = async (
+export const userBenchmark = async (
   r: any,
-  { id }: QueryUserBenchmarkByIdArgs,
+  { id }: QueryUserBenchmarkArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
   const userBenchmark = await prisma.userBenchmark.findFirst({
@@ -97,9 +97,9 @@ export const updateUserBenchmark = async (
 }
 
 /// Deletes the benchmark and all of the related entries.
-export const deleteUserBenchmarkById = async (
+export const deleteUserBenchmark = async (
   r: any,
-  { id }: MutationDeleteUserBenchmarkByIdArgs,
+  { id }: MutationDeleteUserBenchmarkArgs,
   { authedUserId, prisma }: Context,
 ) => {
   await checkUserOwnsObject(id, 'userBenchmark', authedUserId, prisma)
@@ -226,9 +226,9 @@ export const updateUserBenchmarkEntry = async (
   }
 }
 
-export const deleteUserBenchmarkEntryById = async (
+export const deleteUserBenchmarkEntry = async (
   r: any,
-  { id }: MutationDeleteUserBenchmarkEntryByIdArgs,
+  { id }: MutationDeleteUserBenchmarkEntryArgs,
   { authedUserId, prisma }: Context,
 ) => {
   await checkUserOwnsObject(id, 'userBenchmarkEntry', authedUserId, prisma)

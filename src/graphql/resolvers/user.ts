@@ -9,7 +9,7 @@ import {
   QueryCheckUniqueDisplayNameArgs,
   QueryUserAvatarByIdArgs,
   QueryUserAvatarsArgs,
-  QueryUserProfileByIdArgs,
+  QueryUserProfileArgs,
   QueryUserProfilesArgs,
   UpdateUserProfileResult,
   UserAvatarData,
@@ -146,9 +146,9 @@ export const userProfiles = async (
 }
 
 // Get a single user profile, based on the user id - fields returned will depend on the user's privacy settings and if they are the one making the request.
-export const userProfileById = async (
+export const userProfile = async (
   r: any,
-  { userId }: QueryUserProfileByIdArgs,
+  { userId }: QueryUserProfileArgs,
   { authedUserId, prisma }: Context,
 ) => {
   const checkScope = await prisma.user.findFirst({
@@ -292,9 +292,11 @@ export function findBestUserBenchmarkEntry(
   if (!userBenchmark.UserBenchmarkEntries.length) {
     return null
   }
-  const entries = userBenchmark.UserBenchmarkEntries.sort((e) => e.score)
+  const entries = userBenchmark.UserBenchmarkEntries.sort(
+    (a, b) => a.score - b.score,
+  )
 
-  return userBenchmark.benchmarkType == 'FASTESTTIME'
+  return userBenchmark.benchmarkType === 'FASTESTTIME'
     ? entries[0]
     : entries.reverse()[0]
 }
