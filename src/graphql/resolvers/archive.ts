@@ -76,9 +76,10 @@ export const archiveWorkoutById = async (
 ) => {
   await checkUserOwnsObject(id, 'workout', authedUserId, prisma)
 
+  // Disconnect from all Collections and Clubs when archiving.
   const archived = await prisma.workout.update({
     where: { id },
-    data: { archived: true },
+    data: { archived: true, Collections: { set: [] }, Clubs: { set: [] } },
     select,
   })
 
@@ -116,9 +117,10 @@ export const archiveWorkoutPlanById = async (
 ) => {
   await checkUserOwnsObject(id, 'workoutPlan', authedUserId, prisma)
 
+  // Disconnect from all Collections and Clubs when archiving.
   const archived = await prisma.workoutPlan.update({
     where: { id },
-    data: { archived: true },
+    data: { archived: true, Collections: { set: [] }, Clubs: { set: [] } },
     select,
   })
 

@@ -1,6 +1,22 @@
 import { gql } from 'apollo-server-express'
 
 export default gql`
+  type UserBenchmarkSummary {
+    id: String!
+    lastEntryAt: DateTime!
+    name: String!
+    equipmentInfo: String
+    benchmarkType: BenchmarkType!
+    loadUnit: LoadUnit!
+  }
+
+  # Display these publically
+  type UserBenchmarkWithBestEntry {
+    UserBenchmarkSummary: UserBenchmarkSummary!
+    # Can be null if no entry has been made for this PB yet.
+    BestEntry: UserBenchmarkEntry
+  }
+
   type UserBenchmark {
     id: String!
     createdAt: DateTime!
@@ -11,7 +27,6 @@ export default gql`
     benchmarkType: BenchmarkType!
     loadUnit: LoadUnit!
     UserBenchmarkEntries: [UserBenchmarkEntry!]!
-    UserBenchmarkTags: [UserBenchmarkTag!]!
   }
 
   input CreateUserBenchmarkInput {
@@ -20,7 +35,6 @@ export default gql`
     equipmentInfo: String
     benchmarkType: BenchmarkType!
     loadUnit: LoadUnit
-    UserBenchmarkTags: [ConnectRelationInput!]
   }
 
   input UpdateUserBenchmarkInput {
@@ -30,7 +44,6 @@ export default gql`
     equipmentInfo: String
     benchmarkType: BenchmarkType!
     loadUnit: LoadUnit
-    UserBenchmarkTags: [ConnectRelationInput!]
   }
 
   type UserBenchmarkEntry {
@@ -59,22 +72,5 @@ export default gql`
     note: String
     videoUri: String
     videoThumbUri: String
-  }
-
-  type UserBenchmarkTag {
-    id: ID!
-    name: String!
-    description: String
-  }
-
-  input CreateUserBenchmarkTagInput {
-    name: String!
-    description: String
-  }
-
-  input UpdateUserBenchmarkTagInput {
-    id: ID!
-    name: String
-    description: String
   }
 `

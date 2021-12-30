@@ -1,24 +1,28 @@
+import { PrismaClient, UserBenchmark, UserBenchmarkEntry } from '.prisma/client'
 import { ApolloError } from 'apollo-server-express'
 import { Context } from '../..'
 import {
   MutationCreateWorkoutTagArgs,
   MutationDeleteWorkoutTagByIdArgs,
-  MutationUpdateUserArgs,
+  MutationUpdateUserProfileArgs,
   MutationUpdateWorkoutTagArgs,
   QueryCheckUniqueDisplayNameArgs,
   QueryUserAvatarByIdArgs,
   QueryUserAvatarsArgs,
-  QueryUserPublicProfileByIdArgs,
-  QueryUserPublicProfilesArgs,
-  User,
+  QueryUserProfileArgs,
+  QueryUserProfilesArgs,
+  UpdateUserProfileResult,
   UserAvatarData,
-  UserPublicProfile,
-  UserPublicProfileSummary,
+  UserProfile,
+  UserProfileSummary,
   WorkoutTag,
 } from '../../generated/graphql'
+import { getUserFollowersCount } from '../../lib/getStream'
 import { checkUserMediaForDeletion, deleteFiles } from '../../lib/uploadcare'
 import { AccessScopeError, checkUserOwnsObject } from '../utils'
+import { formatClubSummaries } from './club/utils'
 import { calcLifetimeLogStatsSummary } from './loggedWorkout'
+import { selectForClubSummary } from './selectDefinitions'
 
 //// Queries ////
 export const checkUniqueDisplayName = async (
@@ -26,27 +30,8 @@ export const checkUniqueDisplayName = async (
   { displayName }: QueryCheckUniqueDisplayNameArgs,
   { prisma }: Context,
 ) => {
-  const user = await prisma.user.findUnique({
-    where: { displayName },
-  })
-  return user === null
-}
-
-export const authedUser = async (
-  r: any,
-  a: any,
-  { authedUserId, select, prisma }: Context,
-) => {
-  const user = await prisma.user.findUnique({
-    where: { id: authedUserId },
-    select,
-  })
-
-  if (user) {
-    return user as User
-  } else {
-    throw new ApolloError('authedUser: There was an issue.')
-  }
+  const isAvailable = await displayNameIsAvailable(displayName, prisma)
+  return isAvailable
 }
 
 /// The minimum info needed to display a user avatar.
@@ -86,9 +71,9 @@ export const userAvatarById = async (
 }
 
 // Public profiles of any users who have set their profiles to public.
-export const userPublicProfiles = async (
+export const userProfiles = async (
   r: any,
-  { take, cursor }: QueryUserPublicProfilesArgs,
+  { take, cursor }: QueryUserProfilesArgs,
   { prisma }: Context,
 ) => {
   const publicUsers = await prisma.user.findMany({
@@ -107,41 +92,64 @@ export const userPublicProfiles = async (
       : undefined,
     select: {
       id: true,
+      userProfileScope: true,
       avatarUri: true,
       tagline: true,
       townCity: true,
       countryCode: true,
       displayName: true,
+      Skills: {
+        select: {
+          name: true,
+        },
+      },
       Workouts: {
-        select: { id: true },
-        where: { contentAccessScope: 'PUBLIC', archived: false },
+        where: {
+          archived: false,
+          contentAccessScope: 'PUBLIC',
+        },
+        select: {
+          id: true,
+        },
       },
       WorkoutPlans: {
-        select: { id: true },
-        where: { contentAccessScope: 'PUBLIC', archived: false },
+        where: {
+          archived: false,
+          contentAccessScope: 'PUBLIC',
+        },
+        select: {
+          id: true,
+        },
+      },
+      ClubsWhereOwner: {
+        where: { contentAccessScope: 'PUBLIC' },
+        select: selectForClubSummary,
       },
     },
   })
 
   const publicProfileSummaries = publicUsers.map((u) => ({
     id: u.id,
+    userProfileScope: u.userProfileScope,
     avatarUri: u.avatarUri,
     tagline: u.tagline,
     townCity: u.townCity,
     countryCode: u.countryCode,
     displayName: u.displayName,
-    numberPublicWorkouts: u.Workouts.length,
-    numberPublicPlans: u.WorkoutPlans.length,
+    skills: u.Skills.map((s) => s.name),
+    workoutCount: u.Workouts.length,
+    planCount: u.WorkoutPlans.length,
+    Clubs: formatClubSummaries(u.ClubsWhereOwner),
   }))
 
-  return publicProfileSummaries as UserPublicProfileSummary[]
+  return publicProfileSummaries as UserProfileSummary[]
 }
 
-// Get a single user profile, based on the user id - fields returned will depend on the user's privacy settings.
-export const userPublicProfileById = async (
+// Get a single user profile, based on the user id - fields returned will depend on the user's privacy settings and if they are the one making the request.
+export const userProfile = async (
   r: any,
-  { userId }: QueryUserPublicProfileByIdArgs,
-  { select, prisma }: Context,
+  { userId }: QueryUserProfileArgs,
+  { authedUserId, prisma }: Context,
 ) => {
   const checkScope = await prisma.user.findFirst({
     where: { id: userId },
@@ -150,24 +158,58 @@ export const userPublicProfileById = async (
     },
   })
 
-  const isPublic = checkScope?.userProfileScope === 'PUBLIC'
+  const isAuthedUser = authedUserId === userId
+  // User can of course view their own data.
+  const isPublic = isAuthedUser || checkScope?.userProfileScope === 'PUBLIC'
 
-  const user: any = await prisma.user.findFirst({
+  const user = await prisma.user.findUnique({
     where: { id: userId },
     select: {
-      ...select,
-      Workouts: isPublic
+      // If private only
+      id: true,
+      displayName: true,
+      userProfileScope: true,
+      avatarUri: true,
+      // If public then
+      introVideoUri: isPublic,
+      introVideoThumbUri: isPublic,
+      bio: isPublic,
+      tagline: isPublic,
+      townCity: isPublic,
+      instagramHandle: isPublic,
+      tiktokHandle: isPublic,
+      youtubeHandle: isPublic,
+      linkedinHandle: isPublic,
+      countryCode: isPublic,
+      Skills: true,
+      UserBenchmarks: {
+        include: {
+          UserBenchmarkEntries: true,
+        },
+      },
+      ClubsWhereOwner: isPublic
         ? {
-            ...select.Workouts,
-            where: { contentAccessScope: 'PUBLIC', archived: false },
+            select: selectForClubSummary,
           }
-        : null,
-      WorkoutPlans: isPublic
-        ? {
-            ...select.WorkoutPlans,
-            where: { contentAccessScope: 'PUBLIC', archived: false },
-          }
-        : null,
+        : undefined,
+      Workouts: {
+        where: {
+          archived: false,
+          contentAccessScope: 'PUBLIC',
+        },
+        select: {
+          id: true,
+        },
+      },
+      WorkoutPlans: {
+        where: {
+          archived: false,
+          contentAccessScope: 'PUBLIC',
+        },
+        select: {
+          id: true,
+        },
+      },
     },
   })
 
@@ -182,35 +224,89 @@ export const userPublicProfileById = async (
           bio: user.bio,
           tagline: user.tagline,
           townCity: user.townCity,
-          instagramUrl: user.instagramUrl,
-          tiktokUrl: user.tiktokUrl,
-          youtubeUrl: user.youtubeUrl,
-          snapUrl: user.snapUrl,
-          linkedinUrl: user.linkedinUrl,
+          instagramHandle: user.instagramHandle,
+          tiktokHandle: user.tiktokHandle,
+          youtubeHandle: user.youtubeHandle,
+          linkedinHandle: user.linkedinHandle,
           countryCode: user.countryCode,
           displayName: user.displayName,
-          Workouts: user.Workouts,
-          WorkoutPlans: user.WorkoutPlans,
-        } as UserPublicProfile)
+          followerCount: await getUserFollowersCount(user.id),
+          workoutCount: user.Workouts.length,
+          planCount: user.WorkoutPlans.length,
+          Skills: user.Skills,
+          // TODO: Casting as any because [ClubsWhereOwner] was being returned as [Club]
+          // The isPublic tiernary is causing some type weirdness?
+          // Also stopping me from using [formatClubSummaries] function.
+          Clubs: user.ClubsWhereOwner.map((c: any) => ({
+            id: c.id,
+            createdAt: c.createdAt,
+            name: c.name,
+            description: c.description,
+            coverImageUri: c.coverImageUri,
+            introVideoUri: c.introVideoUri,
+            introVideoThumbUri: c.introVideoThumbUri,
+            introAudioUri: c.introAudioUri,
+            location: c.location,
+            memberCount: (c._count?.Members || 0) + (c._count?.Admins || 0),
+            workoutCount: c._count?.Workouts || 0,
+            planCount: c._count?.WorkoutPlans || 0,
+            contentAccessScope: c.contentAccessScope,
+            Owner: {
+              id: user.id,
+              displayName: user.displayName,
+              avatarUri: user.avatarUri,
+            },
+            Admins: c.Admins.map((a: any) => ({
+              id: a.id,
+              displayName: a.displayName,
+              avatarUri: a.avatarUri,
+            })),
+          })),
+          LifetimeLogStatsSummary: await calcLifetimeLogStatsSummary(
+            user.id,
+            prisma,
+          ),
+          BenchmarksWithBestEntries: user.UserBenchmarks.map((b) => ({
+            UserBenchmarkSummary: b,
+            BestEntry: findBestUserBenchmarkEntry(b),
+          })),
+        } as UserProfile)
       : ({
           id: user.id,
           displayName: user.displayName,
           avatarUri: user.avatarUri,
           userProfileScope: user.userProfileScope,
-          Workouts: [],
-          WorkoutPlans: [],
-        } as UserPublicProfile)
+          Clubs: [],
+          BenchmarksWithBestEntries: [],
+          Skills: [],
+        } as UserProfile)
   } else {
-    throw new AccessScopeError('userPublicProfileById: There was an issue.')
+    throw new AccessScopeError('userProfileById: There was an issue.')
   }
+}
+
+//////// Util - Finds the best score from a UserBenchmark based on its type ////////
+export function findBestUserBenchmarkEntry(
+  userBenchmark: UserBenchmark & { UserBenchmarkEntries: UserBenchmarkEntry[] },
+): UserBenchmarkEntry | null {
+  if (!userBenchmark.UserBenchmarkEntries.length) {
+    return null
+  }
+  const entries = userBenchmark.UserBenchmarkEntries.sort(
+    (a, b) => a.score - b.score,
+  )
+
+  return userBenchmark.benchmarkType === 'FASTESTTIME'
+    ? entries[0]
+    : entries.reverse()[0]
 }
 
 //// Mutations ////
 // For authed user to update their own details only.
-export const updateUser = async (
+export const updateUserProfile = async (
   r: any,
-  { data }: MutationUpdateUserArgs,
-  { authedUserId, select, prisma }: Context,
+  { data }: MutationUpdateUserProfileArgs,
+  { authedUserId, prisma }: Context,
 ) => {
   // Check if any media files need to be updated. Only delete files from the server after the rest of the transaction is complete.
   const fileUrisForDeletion: string[] | null = await checkUserMediaForDeletion(
@@ -230,16 +326,23 @@ export const updateUser = async (
       displayName: data.displayName || undefined,
       gender: data.gender || undefined,
     },
-    select,
+    // Selects only the updated fields plus the ID.
+    select: Object.keys(data).reduce(
+      (obj, key) => ({
+        ...obj,
+        [key]: true,
+      }),
+      { id: true },
+    ),
   })
 
   if (updated) {
     if (fileUrisForDeletion && fileUrisForDeletion.length > 0) {
       await deleteFiles(fileUrisForDeletion)
     }
-    return updated as User
+    return updated as UpdateUserProfileResult
   } else {
-    throw new ApolloError('updateUser: There was an issue.')
+    throw new ApolloError('updateUserProfile: There was an issue.')
   }
 }
 
@@ -317,4 +420,22 @@ export const deleteWorkoutTagById = async (
   } else {
     throw new ApolloError('deleteWorkoutTagById: There was an issue.')
   }
+}
+
+/////// Utils ///////
+/// case insensitive check for a previously existing user with this name.
+export async function displayNameIsAvailable(
+  name: string,
+  prisma: PrismaClient,
+): Promise<boolean> {
+  const users = await prisma.user.findMany({
+    where: {
+      displayName: {
+        equals: name,
+        mode: 'insensitive',
+      },
+    },
+  })
+
+  return users !== null && users.length === 0
 }

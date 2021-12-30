@@ -10,44 +10,90 @@ import {
   MutationRemoveWorkoutPlanFromCollectionArgs,
   MutationUpdateCollectionArgs,
   QueryUserCollectionByIdArgs,
+  WorkoutPlanSummary,
+  WorkoutSummary,
 } from '../../generated/graphql'
 import { checkUserOwnsObject } from '../utils'
+import {
+  selectForWorkoutPlanSummary,
+  selectForWorkoutSummary,
+} from './selectDefinitions'
+import { formatWorkoutSummaries } from './workout/utils'
+import { formatWorkoutPlanSummaries } from './workoutPlan/utils'
 
 //// Queries ////
 export const userCollections = async (
   r: any,
   a: any,
-  { authedUserId, select, prisma }: Context,
+  { authedUserId, prisma }: Context,
 ) => {
   const collections = await prisma.collection.findMany({
     where: {
       userId: authedUserId,
     },
-    select,
+    select: {
+      id: true,
+      createdAt: true,
+      name: true,
+      description: true,
+      Workouts: {
+        select: selectForWorkoutSummary,
+      },
+      WorkoutPlans: {
+        select: selectForWorkoutPlanSummary,
+      },
+    },
   })
-  return collections as Collection[]
+
+  const formattedCollections = collections.map((c) => ({
+    ...c,
+    Workouts: formatWorkoutSummaries(c.Workouts) as WorkoutSummary[],
+    WorkoutPlans: formatWorkoutPlanSummaries(
+      c.WorkoutPlans,
+    ) as WorkoutPlanSummary[],
+  }))
+
+  return formattedCollections as Collection[]
 }
 
 export const userCollectionById = async (
   r: any,
   { id }: QueryUserCollectionByIdArgs,
-  { authedUserId, select, prisma }: Context,
+  { authedUserId, prisma }: Context,
 ) => {
   const collection = await prisma.collection.findFirst({
     where: {
       id: id,
       userId: authedUserId,
     },
-    select,
+    select: {
+      id: true,
+      createdAt: true,
+      name: true,
+      description: true,
+      Workouts: {
+        select: selectForWorkoutSummary,
+      },
+      WorkoutPlans: {
+        select: selectForWorkoutPlanSummary,
+      },
+    },
   })
-  return collection as Collection
+
+  return {
+    ...collection,
+    Workouts: collection ? formatWorkoutSummaries(collection.Workouts) : [],
+    WorkoutPlans: collection
+      ? formatWorkoutPlanSummaries(collection.WorkoutPlans)
+      : null,
+  } as Collection
 }
 
 //// Mutations ////
 export const createCollection = async (
   r: any,
   { data }: MutationCreateCollectionArgs,
-  { authedUserId, select, prisma }: Context,
+  { authedUserId, prisma }: Context,
 ) => {
   const collection = await prisma.collection.create({
     data: {
@@ -56,11 +102,26 @@ export const createCollection = async (
         connect: { id: authedUserId },
       },
     },
-    select,
+    select: {
+      id: true,
+      createdAt: true,
+      name: true,
+      description: true,
+      Workouts: {
+        select: selectForWorkoutSummary,
+      },
+      WorkoutPlans: {
+        select: selectForWorkoutPlanSummary,
+      },
+    },
   })
 
   if (collection) {
-    return collection as Collection
+    return {
+      ...collection,
+      Workouts: formatWorkoutSummaries(collection.Workouts),
+      WorkoutPlans: formatWorkoutPlanSummaries(collection.WorkoutPlans),
+    } as Collection
   } else {
     throw new ApolloError('createCollection: There was an issue.')
   }
@@ -69,7 +130,7 @@ export const createCollection = async (
 export const updateCollection = async (
   r: any,
   { data }: MutationUpdateCollectionArgs,
-  { authedUserId, select, prisma }: Context,
+  { authedUserId, prisma }: Context,
 ) => {
   await checkUserOwnsObject(data.id, 'collection', authedUserId, prisma)
 
@@ -79,13 +140,206 @@ export const updateCollection = async (
       ...data,
       name: data.name || undefined,
     },
-    select,
+    select: {
+      id: true,
+      createdAt: true,
+      name: true,
+      description: true,
+      Workouts: {
+        select: selectForWorkoutSummary,
+      },
+      WorkoutPlans: {
+        select: selectForWorkoutPlanSummary,
+      },
+    },
   })
 
   if (updated) {
-    return updated as Collection
+    return {
+      ...updated,
+      Workouts: formatWorkoutSummaries(updated.Workouts),
+      WorkoutPlans: formatWorkoutPlanSummaries(updated.WorkoutPlans),
+    } as Collection
   } else {
     throw new ApolloError('updateCollection: There was an issue.')
+  }
+}
+
+export const addWorkoutToCollection = async (
+  r: any,
+  { data }: MutationAddWorkoutToCollectionArgs,
+  { authedUserId, prisma }: Context,
+) => {
+  await checkUserOwnsObject(
+    data.collectionId,
+    'collection',
+    authedUserId,
+    prisma,
+  )
+
+  const updated = await prisma.collection.update({
+    where: { id: data.collectionId },
+    data: {
+      Workouts: {
+        connect: data.Workout,
+      },
+    },
+    select: {
+      id: true,
+      createdAt: true,
+      name: true,
+      description: true,
+      Workouts: {
+        select: selectForWorkoutSummary,
+      },
+      WorkoutPlans: {
+        select: selectForWorkoutPlanSummary,
+      },
+    },
+  })
+
+  if (updated) {
+    return {
+      ...updated,
+      Workouts: formatWorkoutSummaries(updated.Workouts),
+      WorkoutPlans: formatWorkoutPlanSummaries(updated.WorkoutPlans),
+    } as Collection
+  } else {
+    throw new ApolloError('addWorkoutToCollection: There was an issue.')
+  }
+}
+
+export const removeWorkoutFromCollection = async (
+  r: any,
+  { data }: MutationRemoveWorkoutFromCollectionArgs,
+  { authedUserId, prisma }: Context,
+) => {
+  await checkUserOwnsObject(
+    data.collectionId,
+    'collection',
+    authedUserId,
+    prisma,
+  )
+
+  const updated = await prisma.collection.update({
+    where: { id: data.collectionId },
+    data: {
+      Workouts: {
+        disconnect: data.Workout,
+      },
+    },
+    select: {
+      id: true,
+      createdAt: true,
+      name: true,
+      description: true,
+      Workouts: {
+        select: selectForWorkoutSummary,
+      },
+      WorkoutPlans: {
+        select: selectForWorkoutPlanSummary,
+      },
+    },
+  })
+
+  if (updated) {
+    return {
+      ...updated,
+      Workouts: formatWorkoutSummaries(updated.Workouts),
+      WorkoutPlans: formatWorkoutPlanSummaries(updated.WorkoutPlans),
+    } as Collection
+  } else {
+    throw new ApolloError('removeWorkoutFromCollection: There was an issue.')
+  }
+}
+
+export const addWorkoutPlanToCollection = async (
+  r: any,
+  { data }: MutationAddWorkoutPlanToCollectionArgs,
+  { authedUserId, prisma }: Context,
+) => {
+  await checkUserOwnsObject(
+    data.collectionId,
+    'collection',
+    authedUserId,
+    prisma,
+  )
+
+  const updated = await prisma.collection.update({
+    where: { id: data.collectionId },
+    data: {
+      WorkoutPlans: {
+        connect: data.WorkoutPlan,
+      },
+    },
+    select: {
+      id: true,
+      createdAt: true,
+      name: true,
+      description: true,
+      Workouts: {
+        select: selectForWorkoutSummary,
+      },
+      WorkoutPlans: {
+        select: selectForWorkoutPlanSummary,
+      },
+    },
+  })
+
+  if (updated) {
+    return {
+      ...updated,
+      Workouts: formatWorkoutSummaries(updated.Workouts),
+      WorkoutPlans: formatWorkoutPlanSummaries(updated.WorkoutPlans),
+    } as Collection
+  } else {
+    throw new ApolloError('addWorkoutPlanToCollection: There was an issue.')
+  }
+}
+
+export const removeWorkoutPlanFromCollection = async (
+  r: any,
+  { data }: MutationRemoveWorkoutPlanFromCollectionArgs,
+  { authedUserId, prisma }: Context,
+) => {
+  await checkUserOwnsObject(
+    data.collectionId,
+    'collection',
+    authedUserId,
+    prisma,
+  )
+
+  const updated = await prisma.collection.update({
+    where: { id: data.collectionId },
+    data: {
+      WorkoutPlans: {
+        disconnect: data.WorkoutPlan,
+      },
+    },
+    select: {
+      id: true,
+      createdAt: true,
+      name: true,
+      description: true,
+      Workouts: {
+        select: selectForWorkoutSummary,
+      },
+      WorkoutPlans: {
+        select: selectForWorkoutPlanSummary,
+      },
+    },
+  })
+
+  if (updated) {
+    return {
+      ...updated,
+      Workouts: formatWorkoutSummaries(updated.Workouts),
+      WorkoutPlans: formatWorkoutPlanSummaries(updated.WorkoutPlans),
+    } as Collection
+  } else {
+    throw new ApolloError(
+      'removeWorkoutPlanFromCollection: There was an issue.',
+    )
   }
 }
 
@@ -107,123 +361,5 @@ export const deleteCollectionById = async (
     return deleted.id
   } else {
     throw new ApolloError('deleteCollectionById: There was an issue.')
-  }
-}
-
-export const addWorkoutToCollection = async (
-  r: any,
-  { data }: MutationAddWorkoutToCollectionArgs,
-  { authedUserId, select, prisma }: Context,
-) => {
-  await checkUserOwnsObject(
-    data.collectionId,
-    'collection',
-    authedUserId,
-    prisma,
-  )
-
-  const updated = await prisma.collection.update({
-    where: { id: data.collectionId },
-    data: {
-      Workouts: {
-        connect: data.Workout,
-      },
-    },
-    select,
-  })
-
-  if (updated) {
-    return updated as Collection
-  } else {
-    throw new ApolloError('addWorkoutToCollection: There was an issue.')
-  }
-}
-
-export const removeWorkoutFromCollection = async (
-  r: any,
-  { data }: MutationRemoveWorkoutFromCollectionArgs,
-  { authedUserId, select, prisma }: Context,
-) => {
-  await checkUserOwnsObject(
-    data.collectionId,
-    'collection',
-    authedUserId,
-    prisma,
-  )
-
-  const updated = await prisma.collection.update({
-    where: { id: data.collectionId },
-    data: {
-      Workouts: {
-        disconnect: data.Workout,
-      },
-    },
-    select,
-  })
-
-  if (updated) {
-    return updated as Collection
-  } else {
-    throw new ApolloError('removeWorkoutFromCollection: There was an issue.')
-  }
-}
-
-export const addWorkoutPlanToCollection = async (
-  r: any,
-  { data }: MutationAddWorkoutPlanToCollectionArgs,
-  { authedUserId, select, prisma }: Context,
-) => {
-  await checkUserOwnsObject(
-    data.collectionId,
-    'collection',
-    authedUserId,
-    prisma,
-  )
-
-  const updated = await prisma.collection.update({
-    where: { id: data.collectionId },
-    data: {
-      WorkoutPlans: {
-        connect: data.WorkoutPlan,
-      },
-    },
-    select,
-  })
-
-  if (updated) {
-    return updated as Collection
-  } else {
-    throw new ApolloError('addWorkoutPlanToCollection: There was an issue.')
-  }
-}
-
-export const removeWorkoutPlanFromCollection = async (
-  r: any,
-  { data }: MutationRemoveWorkoutPlanFromCollectionArgs,
-  { authedUserId, select, prisma }: Context,
-) => {
-  await checkUserOwnsObject(
-    data.collectionId,
-    'collection',
-    authedUserId,
-    prisma,
-  )
-
-  const updated = await prisma.collection.update({
-    where: { id: data.collectionId },
-    data: {
-      WorkoutPlans: {
-        disconnect: data.WorkoutPlan,
-      },
-    },
-    select,
-  })
-
-  if (updated) {
-    return updated as Collection
-  } else {
-    throw new ApolloError(
-      'removeWorkoutPlanFromCollection: There was an issue.',
-    )
   }
 }

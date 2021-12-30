@@ -1,15 +1,12 @@
 import { ApolloError } from 'apollo-server-express'
-import { Context } from '../..'
+import { Context } from '../../..'
 import {
   MutationCreateWorkoutPlanArgs,
-  MutationCreateWorkoutPlanEnrolmentArgs,
   MutationCreateWorkoutPlanReviewArgs,
-  MutationDeleteWorkoutPlanEnrolmentByIdArgs,
   MutationDeleteWorkoutPlanReviewByIdArgs,
   MutationUpdateWorkoutPlanArgs,
   MutationUpdateWorkoutPlanReviewArgs,
   WorkoutPlan,
-  WorkoutPlanEnrolment,
   WorkoutPlanReview,
   QueryWorkoutPlanByIdArgs,
   WorkoutPlanDay,
@@ -20,30 +17,30 @@ import {
   MutationDeleteWorkoutPlanDayWorkoutByIdArgs,
   MutationReorderWorkoutPlanDayWorkoutsArgs,
   SortPositionUpdated,
-  MutationUpdateWorkoutPlanEnrolmentArgs,
   MutationCreateWorkoutPlanDayWithWorkoutArgs,
   MutationMoveWorkoutPlanDayToAnotherDayArgs,
   MutationCopyWorkoutPlanDayToAnotherDayArgs,
   MutationDeleteWorkoutPlanDaysByIdArgs,
   QueryPublicWorkoutPlansArgs,
-  WorkoutPlanFiltersInput,
-  QueryWorkoutPlanByEnrolmentIdArgs,
-} from '../../generated/graphql'
+  WorkoutPlanSummary,
+  QueryUserPublicWorkoutPlansArgs,
+} from '../../../generated/graphql'
 import {
   checkWorkoutPlanMediaForDeletion,
   deleteFiles,
-} from '../../lib/uploadcare'
+} from '../../../lib/uploadcare'
+import { checkAndReorderObjects, checkUserOwnsObject } from '../../utils'
+import { selectForWorkoutPlanSummary } from '../selectDefinitions'
 import {
-  AccessScopeError,
-  checkAndReorderObjects,
-  checkUserOwnsObject,
-} from '../utils'
+  formatWorkoutPlanFiltersInput,
+  formatWorkoutPlanSummaries,
+} from './utils'
 
 //// Queries ////
 export const publicWorkoutPlans = async (
   r: any,
   { filters, take, cursor }: QueryPublicWorkoutPlansArgs,
-  { prisma, select }: Context,
+  { prisma }: Context,
 ) => {
   const workoutPlans = await prisma.workoutPlan.findMany({
     where: {
@@ -61,82 +58,61 @@ export const publicWorkoutPlans = async (
           id: cursor,
         }
       : undefined,
-    select,
+    select: selectForWorkoutPlanSummary,
   })
 
-  return workoutPlans as WorkoutPlan[]
+  return formatWorkoutPlanSummaries(workoutPlans) as WorkoutPlanSummary[]
 }
 
+// All user created plans by user ID. If user is the logged in user, then get all,
+// Otherwise just get public. Never get archived.
 export const userWorkoutPlans = async (
   r: any,
   a: any,
-  { authedUserId, prisma, select }: Context,
+  { authedUserId, prisma }: Context,
 ) => {
   const workoutPlans = await prisma.workoutPlan.findMany({
-    where: { userId: authedUserId, archived: false },
-    select,
+    where: {
+      userId: authedUserId,
+      archived: false,
+    },
+    select: selectForWorkoutPlanSummary,
   })
 
-  return workoutPlans as WorkoutPlan[]
+  return formatWorkoutPlanSummaries(workoutPlans) as WorkoutPlanSummary[]
+}
+
+export const userPublicWorkoutPlans = async (
+  r: any,
+  { userId }: QueryUserPublicWorkoutPlansArgs,
+  { prisma }: Context,
+) => {
+  const workoutPlans = await prisma.workoutPlan.findMany({
+    where: {
+      userId: userId,
+      archived: false,
+      contentAccessScope: 'PUBLIC',
+    },
+    select: selectForWorkoutPlanSummary,
+  })
+
+  return formatWorkoutPlanSummaries(workoutPlans) as WorkoutPlanSummary[]
 }
 
 export const workoutPlanById = async (
   r: any,
   { id }: QueryWorkoutPlanByIdArgs,
-  { authedUserId, prisma, select }: Context,
+  { prisma, select }: Context,
 ) => {
   const workoutPlan = await prisma.workoutPlan.findUnique({
     where: { id },
-    select: {
-      ...select,
-      contentAccessScope: true,
-      userId: true,
-    },
+    select,
   })
 
   if (workoutPlan) {
     return workoutPlan as WorkoutPlan
   } else {
     throw new ApolloError('workoutPlanById: There was an issue.')
-  }
-}
-
-// Gets all plans that a user is enrolled in.
-export const enrolledWorkoutPlans = async (
-  r: any,
-  a: any,
-  { authedUserId, prisma, select }: Context,
-) => {
-  const workoutPlans = await prisma.workoutPlan.findMany({
-    where: {
-      WorkoutPlanEnrolments: {
-        some: { userId: authedUserId },
-      },
-    },
-    select,
-  })
-
-  return workoutPlans as WorkoutPlan[]
-}
-
-export const workoutPlanByEnrolmentId = async (
-  r: any,
-  { id }: QueryWorkoutPlanByEnrolmentIdArgs,
-  { authedUserId, prisma, select }: Context,
-) => {
-  const workoutPlan = await prisma.workoutPlan.findFirst({
-    where: {
-      WorkoutPlanEnrolments: {
-        some: { id, userId: authedUserId },
-      },
-    },
-    select,
-  })
-
-  if (workoutPlan) {
-    return workoutPlan as WorkoutPlan
-  } else {
-    throw new ApolloError('workoutPlanByEnrolmentId: There was an issue.')
   }
 }
 
@@ -550,87 +526,6 @@ export const reorderWorkoutPlanDayWorkouts = async (
   }
 }
 
-//// Enrolments ////
-export const createWorkoutPlanEnrolment = async (
-  r: any,
-  { workoutPlanId }: MutationCreateWorkoutPlanEnrolmentArgs,
-  { authedUserId, select, prisma }: Context,
-) => {
-  const workoutPlanEnrolment = await prisma.workoutPlanEnrolment.create({
-    data: {
-      User: {
-        connect: { id: authedUserId },
-      },
-      WorkoutPlan: {
-        connect: { id: workoutPlanId },
-      },
-    },
-    select,
-  })
-
-  if (workoutPlanEnrolment) {
-    return workoutPlanEnrolment as WorkoutPlanEnrolment
-  } else {
-    throw new ApolloError('createWorkoutPlanEnrolment: There was an issue.')
-  }
-}
-
-export const updateWorkoutPlanEnrolment = async (
-  r: any,
-  { data }: MutationUpdateWorkoutPlanEnrolmentArgs,
-  { authedUserId, select, prisma }: Context,
-) => {
-  await checkUserOwnsObject(
-    data.id,
-    'workoutPlanEnrolment',
-    authedUserId,
-    prisma,
-  )
-
-  const updated = await prisma.workoutPlanEnrolment.update({
-    where: { id: data.id },
-    data: {
-      ...data,
-      completedPlanDayWorkoutIds: data.hasOwnProperty(
-        'completedPlanDayWorkoutIds',
-      )
-        ? {
-            set:
-              data.completedPlanDayWorkoutIds != null
-                ? data.completedPlanDayWorkoutIds
-                : undefined,
-          }
-        : undefined,
-    },
-    select,
-  })
-
-  if (updated) {
-    return updated as WorkoutPlanEnrolment
-  } else {
-    throw new ApolloError('updateWorkoutPlanEnrolment: There was an issue.')
-  }
-}
-
-export const deleteWorkoutPlanEnrolmentById = async (
-  r: any,
-  { id }: MutationDeleteWorkoutPlanEnrolmentByIdArgs,
-  { authedUserId, prisma }: Context,
-) => {
-  await checkUserOwnsObject(id, 'workoutPlanEnrolment', authedUserId, prisma)
-
-  const deleted = await prisma.workoutPlanEnrolment.delete({
-    where: { id },
-    select: { id: true },
-  })
-
-  if (deleted) {
-    return deleted.id
-  } else {
-    throw new ApolloError('deleteWorkoutPlanEnrolmentById: There was an issue.')
-  }
-}
-
 //// Reviews ////
 export const createWorkoutPlanReview = async (
   r: any,
@@ -697,71 +592,4 @@ export const deleteWorkoutPlanReviewById = async (
   } else {
     throw new ApolloError('deleteWorkoutPlanReviewById: There was an issue.')
   }
-}
-
-/// Format Filters Input
-export function formatWorkoutPlanFiltersInput(
-  filters: WorkoutPlanFiltersInput,
-) {
-  return [
-    {
-      lengthWeeks: filters.lengthWeeks ? { equals: filters.lengthWeeks } : {},
-    },
-    {
-      daysPerWeek: filters.daysPerWeek ? { equals: filters.daysPerWeek } : {},
-    },
-    /// Workout filters
-    filters.difficultyLevel
-      ? {
-          WorkoutPlanDays: {
-            some: {
-              WorkoutPlanDayWorkouts: {
-                some: {
-                  Workout: {
-                    difficultyLevel: {
-                      equals: filters.difficultyLevel,
-                    },
-                  },
-                },
-              },
-            },
-          },
-        }
-      : {},
-    filters.workoutGoals.length > 0
-      ? {
-          WorkoutPlanDays: {
-            some: {
-              WorkoutPlanDayWorkouts: {
-                some: {
-                  Workout: {
-                    WorkoutGoals: {
-                      some: { id: { in: filters.workoutGoals } },
-                    },
-                  },
-                },
-              },
-            },
-          },
-        }
-      : {},
-    filters.bodyweightOnly !== null
-      ? {
-          WorkoutPlanDays: {
-            every: {
-              WorkoutPlanDayWorkouts: {
-                every: {
-                  Workout: {
-                    metaData: {
-                      path: ['bodyweightOnly'],
-                      equals: filters.bodyweightOnly,
-                    },
-                  },
-                },
-              },
-            },
-          },
-        }
-      : {},
-  ]
 }

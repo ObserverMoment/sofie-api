@@ -1,7 +1,86 @@
 import { Prisma, PrismaClient } from '@prisma/client'
-import { WorkoutFiltersInput } from '../../../generated/graphql'
+import {
+  Equipment,
+  WorkoutFiltersInput,
+  WorkoutSummary,
+} from '../../../generated/graphql'
 import { validateWorkoutMetaData } from '../../../lib/jsonValidation'
-import { WorkoutMetaDataPayload } from '../../../types'
+import { WorkoutMetaDataPayload, WorkoutSummaryPayload } from '../../../types'
+
+export function formatWorkoutSummaries(
+  workouts: WorkoutSummaryPayload[],
+): WorkoutSummary[] {
+  return workouts.map((w) => formatWorkoutSummary(w))
+}
+
+export function formatWorkoutSummary(
+  workout: WorkoutSummaryPayload,
+): WorkoutSummary {
+  return {
+    id: workout.id,
+    createdAt: workout.createdAt,
+    archived: workout.archived,
+    name: workout.name,
+    User: workout.User,
+    lengthMinutes: workout.lengthMinutes,
+    coverImageUri: workout.coverImageUri,
+    description: workout.description,
+    difficultyLevel: workout.difficultyLevel,
+    loggedSessionsCount: workout._count?.LoggedWorkouts || 0,
+    hasClassVideo: workout.WorkoutSections.some((ws) => ws.classVideoUri),
+    hasClassAudio: workout.WorkoutSections.some((ws) => ws.classAudioUri),
+    equipments: uniqueEquipmentsInWorkout(workout).map((e) => e.name),
+    tags: workoutSectionTypesAndTags(workout),
+  }
+}
+
+export function uniqueEquipmentsInWorkout(
+  workout: WorkoutSummaryPayload,
+): Equipment[] {
+  const uniqueEquipmentIds: string[] = [] // For quick look up.
+  const uniqueEquipments: Equipment[] = []
+
+  for (const wSection of workout.WorkoutSections) {
+    for (const wSet of wSection.WorkoutSets) {
+      for (const wMove of wSet.WorkoutMoves) {
+        // Selectable
+        if (
+          wMove.Equipment &&
+          !uniqueEquipmentIds.includes(wMove.Equipment.id)
+        ) {
+          uniqueEquipmentIds.push(wMove.Equipment.id)
+          uniqueEquipments.push(wMove.Equipment)
+        }
+        // Required
+        for (const equipment of wMove.Move.RequiredEquipments) {
+          if (!uniqueEquipmentIds.includes(equipment.id)) {
+            uniqueEquipmentIds.push(equipment.id)
+            uniqueEquipments.push(equipment)
+          }
+        }
+      }
+    }
+  }
+
+  return uniqueEquipments
+}
+
+export function workoutSectionTypesAndTags(
+  workout: WorkoutSummaryPayload,
+): string[] {
+  const uniqueTags: string[] = []
+
+  for (const wSection of workout.WorkoutSections) {
+    if (!uniqueTags.includes(wSection.WorkoutSectionType.name)) {
+      uniqueTags.push(wSection.WorkoutSectionType.name)
+    }
+  }
+
+  uniqueTags.concat(workout.WorkoutGoals.map((goal) => goal.name))
+  uniqueTags.concat(workout.WorkoutTags.map((tag) => tag.tag))
+
+  return uniqueTags
+}
 
 export function formatWorkoutFiltersInput(filters: WorkoutFiltersInput) {
   return [

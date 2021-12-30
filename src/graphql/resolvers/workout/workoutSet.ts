@@ -6,6 +6,7 @@ import {
 } from '../../utils'
 import {
   MutationCreateWorkoutSetArgs,
+  MutationCreateWorkoutSetWithWorkoutMovesArgs,
   MutationDeleteWorkoutSetByIdArgs,
   MutationDuplicateWorkoutSetByIdArgs,
   MutationReorderWorkoutSetsArgs,
@@ -61,6 +62,70 @@ export const createWorkoutSet = async (
     return workoutSet as WorkoutSet
   } else {
     throw new ApolloError('createWorkoutSet: There was an issue.')
+  }
+}
+
+export const createWorkoutSetWithWorkoutMoves = async (
+  r: any,
+  { data }: MutationCreateWorkoutSetWithWorkoutMovesArgs,
+  { authedUserId, select, prisma }: Context,
+) => {
+  // Check user owns the parent.
+  await checkUserOwnsObject(
+    data.workoutSet.WorkoutSection.id,
+    'workoutSection',
+    authedUserId,
+    prisma,
+  )
+
+  // Reorder other sets.
+  await reorderItemsForInsertDelete({
+    reorderType: 'insert',
+    sortPosition: data.workoutSet.sortPosition,
+    parentId: data.workoutSet.WorkoutSection.id,
+    parentType: 'workoutSection',
+    objectType: 'workoutSet',
+    prisma: prisma,
+  })
+
+  // NOTE: Ideally this would be part of the above transaction so full rollback could occur in event of an error.
+  const workoutSet = await prisma.workoutSet.create({
+    data: {
+      ...data.workoutSet,
+      rounds: data.workoutSet.rounds || undefined,
+      duration: data.workoutSet.duration || undefined,
+      User: {
+        connect: { id: authedUserId },
+      },
+      WorkoutSection: {
+        connect: { id: data.workoutSet.WorkoutSection.id },
+      },
+      WorkoutMoves: {
+        create: data.workoutMoves.map((wm) => ({
+          reps: wm.reps,
+          repType: wm.repType,
+          distanceUnit: wm.distanceUnit || undefined,
+          loadUnit: wm.loadUnit || undefined,
+          loadAmount: wm.loadAmount,
+          timeUnit: wm.timeUnit || undefined,
+          sortPosition: wm.sortPosition,
+          User: {
+            connect: { id: authedUserId },
+          },
+          Equipment: wm.Equipment ? { connect: wm.Equipment } : undefined,
+          Move: { connect: wm.Move },
+        })),
+      },
+    },
+    select,
+  })
+
+  if (workoutSet) {
+    return workoutSet as WorkoutSet
+  } else {
+    throw new ApolloError(
+      'createWorkoutSetWithWorkoutMoves: There was an issue.',
+    )
   }
 }
 

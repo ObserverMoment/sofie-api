@@ -1,18 +1,24 @@
 import { Context } from '../..'
 import {
-  QueryTextSearchUserPublicProfilesArgs,
+  QueryTextSearchUserProfilesArgs,
   QueryTextSearchWorkoutPlansArgs,
   QueryTextSearchWorkoutsArgs,
   TextSearchResult,
-  UserPublicProfile,
-  Workout,
-  WorkoutPlan,
+  UserProfileSummary,
+  WorkoutPlanSummary,
+  WorkoutSummary,
 } from '../../generated/graphql'
+import {
+  selectForWorkoutPlanSummary,
+  selectForWorkoutSummary,
+} from './selectDefinitions'
+import { formatWorkoutSummaries } from './workout/utils'
+import { formatWorkoutPlanSummaries } from './workoutPlan/utils'
 
 export const textSearchWorkouts = async (
   r: any,
   { text }: QueryTextSearchWorkoutsArgs,
-  { select, prisma }: Context,
+  { prisma }: Context,
 ) => {
   const workouts = await prisma.workout.findMany({
     where: {
@@ -23,9 +29,9 @@ export const textSearchWorkouts = async (
         mode: 'insensitive',
       },
     },
-    select,
+    select: selectForWorkoutSummary,
   })
-  return workouts as Workout[]
+  return formatWorkoutSummaries(workouts) as WorkoutSummary[]
 }
 
 export const textSearchWorkoutNames = async (
@@ -53,7 +59,7 @@ export const textSearchWorkoutNames = async (
 export const textSearchWorkoutPlans = async (
   r: any,
   { text }: QueryTextSearchWorkoutPlansArgs,
-  { select, prisma }: Context,
+  { prisma }: Context,
 ) => {
   const workoutPlans = await prisma.workoutPlan.findMany({
     where: {
@@ -64,9 +70,9 @@ export const textSearchWorkoutPlans = async (
         mode: 'insensitive',
       },
     },
-    select,
+    select: selectForWorkoutPlanSummary,
   })
-  return workoutPlans as WorkoutPlan[]
+  return formatWorkoutPlanSummaries(workoutPlans) as WorkoutPlanSummary[]
 }
 
 export const textSearchWorkoutPlanNames = async (
@@ -91,9 +97,9 @@ export const textSearchWorkoutPlanNames = async (
   return workoutPlans as TextSearchResult[]
 }
 
-export const textSearchUserPublicProfiles = async (
+export const textSearchUserProfiles = async (
   r: any,
-  { text }: QueryTextSearchUserPublicProfilesArgs,
+  { text }: QueryTextSearchUserProfilesArgs,
   { select, prisma }: Context,
 ) => {
   const publicUsers = await prisma.user.findMany({
@@ -106,12 +112,12 @@ export const textSearchUserPublicProfiles = async (
     },
     select,
   })
-  return publicUsers as UserPublicProfile[]
+  return publicUsers as UserProfileSummary[]
 }
 
-export const textSearchUserPublicNames = async (
+export const textSearchUserNames = async (
   r: any,
-  { text }: QueryTextSearchUserPublicProfilesArgs,
+  { text }: QueryTextSearchUserProfilesArgs,
   { prisma }: Context,
 ) => {
   const publicUsers = await prisma.user.findMany({

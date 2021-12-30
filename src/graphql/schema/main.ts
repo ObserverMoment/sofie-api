@@ -13,16 +13,25 @@ export default gql`
     workoutGoals: [WorkoutGoal!]!
     workoutSectionTypes: [WorkoutSectionType!]!
     #### Clubs ####
-    # Public club summary data for use displaying chat previews.
-    clubSummariesById(ids: [ID!]!): [ClubSummary!]!
+    checkUniqueClubName(name: String!): Boolean!
+    checkUserClubMemberStatus(clubId: ID!): UserClubMemberStatus!
+    clubSummaries(ids: [ID!]!): [ClubSummary!]!
     # ClubFinder functionality.
     publicClubs: [ClubSummary!]!
     userClubs: [ClubSummary!]!
-    clubById(id: ID!): Club!
+    # For displaying within the Club chat. Each person is a UserAvatarData plus there is some extra club data which is needed for displaying the chat.
+    clubChatSummary(clubId: ID!): ClubChatSummary!
+    clubSummary(id: ID!): ClubSummary!
+    clubInviteTokens(clubId: ID!): ClubInviteTokens!
+    # For displaying within the Club/People section. Each person is a ClubMemberSummary
+    clubMembers(clubId: ID!): ClubMembers!
+    clubWorkouts(clubId: ID!): ClubWorkouts!
+    clubWorkoutPlans(clubId: ID!): ClubWorkoutPlans!
     #### Invite Tokens ####
     # The ID is the token string, we pass it to check that it is valid #
     checkClubInviteToken(id: ID!): CheckClubInviteTokenResult!
     #### Logged Workouts ####
+    logCountByWorkout(id: ID!): Int!
     lifetimeLogStatsSummary(userId: ID!): LifetimeLogStatsSummary!
     userLoggedWorkouts(take: Int): [LoggedWorkout!]!
     loggedWorkoutById(id: ID!): LoggedWorkout!
@@ -30,19 +39,19 @@ export default gql`
     standardMoves: [Move!]!
     userCustomMoves: [Move!]!
     #### Progress Journal ####
-    bodyTransformationPhotos: [BodyTransformationPhoto!]!
-    userProgressJournals: [ProgressJournal!]!
-    progressJournalById(id: ID!): ProgressJournal!
-    progressJournalGoalTags: [ProgressJournalGoalTag!]!
+    bodyTrackingEntries: [BodyTrackingEntry!]!
+    journalNotes: [JournalNote!]!
+    journalMoods: [JournalMood!]!
+    journalGoals: [JournalGoal!]!
     #### Scheduled Workouts ####
     userScheduledWorkouts: [ScheduledWorkout!]!
     #### Text Search ####
-    textSearchWorkouts(text: String!): [Workout!]
+    textSearchWorkouts(text: String!): [WorkoutSummary!]
     textSearchWorkoutNames(text: String!): [TextSearchResult!]
-    textSearchWorkoutPlans(text: String!): [WorkoutPlan!]
+    textSearchWorkoutPlans(text: String!): [WorkoutPlanSummary!]
     textSearchWorkoutPlanNames(text: String!): [TextSearchResult!]
-    textSearchUserPublicProfiles(text: String!): [UserPublicProfile!]
-    textSearchUserPublicNames(text: String!): [TextSearchResult!]
+    textSearchUserProfiles(text: String!): [UserProfileSummary!]
+    textSearchUserNames(text: String!): [TextSearchResult!]
     #### Timeline Feed ####
     # Gets DB objects referenced in getStream activities (posts) and maps fields to those required for displaying in a timeline or feed #
     timelinePostsData(
@@ -54,7 +63,6 @@ export default gql`
       offset: Int!
     ): [TimelinePostFullData!]!
     #### User ####
-    authedUser: User!
     checkUniqueDisplayName(displayName: String!): Boolean!
     gymProfiles: [GymProfile!]!
     userWorkoutTags: [WorkoutTag!]!
@@ -65,34 +73,36 @@ export default gql`
     #### User Avatars ####
     userAvatars(ids: [ID!]!): [UserAvatarData!]!
     userAvatarById(id: ID!): UserAvatarData!
-    #### UserBenchmark (aka Personal Best) ####
+    #### User Benchmark (aka Personal Best) ####
     userBenchmarks: [UserBenchmark!]!
-    userBenchmarkById(id: ID!): UserBenchmark!
-    userBenchmarkTags: [UserBenchmarkTag!]!
-    #### UserCollection ####
+    userBenchmark(id: ID!): UserBenchmark!
+    #### User Collection ####
     userCollections: [Collection!]!
     userCollectionById(id: ID!): Collection!
     #### User Public Profiles ####
-    userPublicProfiles(cursor: ID, take: Int): [UserPublicProfileSummary!]!
-    userPublicProfileById(userId: ID!): UserPublicProfile!
+    userProfiles(cursor: ID, take: Int): [UserProfileSummary!]!
+    userProfile(userId: ID!): UserProfile!
     #### Workouts ####
     publicWorkouts(
       cursor: ID
       filters: WorkoutFiltersInput
       take: Int
-    ): [Workout!]!
-    userWorkouts: [Workout!]!
+    ): [WorkoutSummary!]!
+    userWorkouts: [WorkoutSummary!]! # Authed user.
+    userPublicWorkouts(userId: ID!): [WorkoutSummary!]! # Public users (profiles).
     workoutById(id: ID!): Workout!
-    #### Workout Programs and Enrolments ####
+    #### Workout Plans ####
     publicWorkoutPlans(
       cursor: ID
       filters: WorkoutPlanFiltersInput
       take: Int
-    ): [WorkoutPlan!]!
+    ): [WorkoutPlanSummary!]!
     workoutPlanById(id: ID!): WorkoutPlan!
-    userWorkoutPlans: [WorkoutPlan!]!
-    enrolledWorkoutPlans: [WorkoutPlan!]!
-    workoutPlanByEnrolmentId(id: ID!): WorkoutPlan!
+    userWorkoutPlans: [WorkoutPlanSummary!]! # Authed user.
+    userPublicWorkoutPlans(userId: ID!): [WorkoutPlanSummary!]! # Public users (profiles).
+    #### Workout Plan Enrolments ####
+    workoutPlanEnrolmentById(id: ID!): WorkoutPlanEnrolmentWithPlan!
+    workoutPlanEnrolments: [WorkoutPlanEnrolmentSummary!]!
   }
 
   type Mutation {
@@ -104,24 +114,38 @@ export default gql`
     archiveCustomMoveById(id: ID!): Move!
     unarchiveCustomMoveById(id: ID!): Move!
     #### Club ####
-    createClub(data: CreateClubInput!): Club!
-    updateClub(data: UpdateClubInput!): Club!
-    deleteClubById(id: ID!): ID!
-    createClubInviteToken(data: CreateClubInviteTokenInput!): ClubInviteToken!
-    updateClubInviteToken(data: UpdateClubInviteTokenInput!): ClubInviteToken!
-    deleteClubInviteTokenById(id: ID!): ID!
+    createClub(data: CreateClubInput!): ClubSummary!
+    updateClubSummary(data: UpdateClubSummaryInput!): ClubSummary!
+    deleteClub(id: ID!): ID!
+    # Returns a list of all club invite tokens after the update.
+    createClubInviteToken(data: CreateClubInviteTokenInput!): ClubInviteTokens!
+    updateClubInviteToken(data: UpdateClubInviteTokenInput!): ClubInviteTokens!
+    deleteClubInviteToken(data: DeleteClubInviteTokenInput!): ClubInviteTokens!
     #### Club Member Management ####
     # Handle authed user request join join a public club.
     userJoinPublicClub(clubId: ID!): ID! # Club ID
-    giveMemberAdminStatus(userId: ID!, clubId: ID!): Club!
-    removeMemberAdminStatus(userId: ID!, clubId: ID!): Club!
-    addUserToClubViaInviteToken(userId: ID!, clubInviteTokenId: ID!): Club!
-    removeUserFromClub(userToRemoveId: ID!, clubId: ID!): Club!
+    addUserToClubViaInviteToken(userId: ID!, clubInviteTokenId: ID!): ID! # Club ID
+    giveMemberAdminStatus(userId: ID!, clubId: ID!): ClubMembers!
+    removeMemberAdminStatus(userId: ID!, clubId: ID!): ClubMembers!
+    removeUserFromClub(userToRemoveId: ID!, clubId: ID!): ClubMembers!
     #### Club Content Management ####
-    addWorkoutToClub(workoutId: ID!, clubId: ID!): Club!
-    removeWorkoutFromClub(workoutId: ID!, clubId: ID!): Club!
-    addWorkoutPlanToClub(workoutPlanId: ID!, clubId: ID!): Club!
-    removeWorkoutPlanFromClub(workoutPlanId: ID!, clubId: ID!): Club!
+    # Returns the updated content / list of objects.
+    addWorkoutToClub(workoutId: ID!, clubId: ID!): ClubWorkouts!
+    removeWorkoutFromClub(workoutId: ID!, clubId: ID!): ClubWorkouts!
+    addWorkoutPlanToClub(workoutPlanId: ID!, clubId: ID!): ClubWorkoutPlans!
+    removeWorkoutPlanFromClub(
+      workoutPlanId: ID!
+      clubId: ID!
+    ): ClubWorkoutPlans!
+    #### ClubAnnouncement ####
+    # Can be shared as a ClubTimeline Post #
+    createClubAnnouncement(
+      data: CreateClubAnnouncementInput!
+    ): ClubAnnouncement!
+    updateClubAnnouncement(
+      data: UpdateClubAnnouncementInput!
+    ): ClubAnnouncement!
+    deleteClubAnnouncement(id: ID!): ID!
     #### Club Timeline Post ####
     createClubTimelinePost(
       data: CreateClubTimelinePostInput!
@@ -134,41 +158,27 @@ export default gql`
     createGymProfile(data: CreateGymProfileInput!): GymProfile!
     updateGymProfile(data: UpdateGymProfileInput!): GymProfile!
     deleteGymProfileById(id: ID!): ID
+    #### Progress Body Tracking ####
+    createBodyTrackingEntry(
+      data: CreateBodyTrackingEntryInput!
+    ): BodyTrackingEntry!
+    updateBodyTrackingEntry(
+      data: UpdateBodyTrackingEntryInput!
+    ): BodyTrackingEntry!
+    deleteBodyTrackingEntryById(id: ID!): ID!
     #### Progress Journal ####
-    createProgressJournal(data: CreateProgressJournalInput!): ProgressJournal!
-    updateProgressJournal(data: UpdateProgressJournalInput!): ProgressJournal!
-    deleteProgressJournalById(id: ID!): ID!
-    #### Progress Journal Entry ####
-    createBodyTransformationPhotos(
-      data: [CreateBodyTransformationPhotoInput!]!
-    ): [BodyTransformationPhoto!]!
-    updateBodyTransformationPhoto(
-      data: UpdateBodyTransformationPhotoInput!
-    ): BodyTransformationPhoto!
-    deleteBodyTransformationPhotosById(ids: [ID!]!): [ID!]!
-    createProgressJournalEntry(
-      data: CreateProgressJournalEntryInput!
-    ): ProgressJournalEntry!
-    updateProgressJournalEntry(
-      data: UpdateProgressJournalEntryInput!
-    ): ProgressJournalEntry!
-    deleteProgressJournalEntryById(id: ID!): ID!
+    #### Progress Journal Note ####
+    createJournalNote(data: CreateJournalNoteInput!): JournalNote!
+    updateJournalNote(data: UpdateJournalNoteInput!): JournalNote!
+    deleteJournalNoteById(id: ID!): ID!
     #### Progress Journal Goal ####
-    createProgressJournalGoal(
-      data: CreateProgressJournalGoalInput!
-    ): ProgressJournalGoal!
-    updateProgressJournalGoal(
-      data: UpdateProgressJournalGoalInput!
-    ): ProgressJournalGoal!
-    deleteProgressJournalGoalById(id: ID!): ID!
-    #### Progress Journal Goal Tag ####
-    createProgressJournalGoalTag(
-      data: CreateProgressJournalGoalTagInput!
-    ): ProgressJournalGoalTag!
-    updateProgressJournalGoalTag(
-      data: UpdateProgressJournalGoalTagInput!
-    ): ProgressJournalGoalTag!
-    deleteProgressJournalGoalTagById(id: ID!): ID!
+    createJournalGoal(data: CreateJournalGoalInput!): JournalGoal!
+    updateJournalGoal(data: UpdateJournalGoalInput!): JournalGoal!
+    deleteJournalGoalById(id: ID!): ID!
+    #### Progress Journal Mood ####
+    createJournalMood(data: CreateJournalMoodInput!): JournalMood!
+    updateJournalMood(data: UpdateJournalMoodInput!): JournalMood!
+    deleteJournalMoodById(id: ID!): ID!
     ########################
     #### Logged Workout ####
     createLoggedWorkout(data: CreateLoggedWorkoutInput!): LoggedWorkout!
@@ -191,29 +201,21 @@ export default gql`
     ): ScheduledWorkout!
     deleteScheduledWorkoutById(id: ID!): ID!
     #### User ####
-    updateUser(data: UpdateUserInput!): User!
+    updateUserProfile(data: UpdateUserProfileInput!): UpdateUserProfileResult!
     createWorkoutTag(data: CreateWorkoutTagInput!): WorkoutTag!
     updateWorkoutTag(data: UpdateWorkoutTagInput!): WorkoutTag!
     deleteWorkoutTagById(id: ID!): ID!
     #### User Benchmark ####
     createUserBenchmark(data: CreateUserBenchmarkInput!): UserBenchmark!
     updateUserBenchmark(data: UpdateUserBenchmarkInput!): UserBenchmark!
-    deleteUserBenchmarkById(id: ID!): ID!
+    deleteUserBenchmark(id: ID!): ID!
     createUserBenchmarkEntry(
       data: CreateUserBenchmarkEntryInput!
     ): UserBenchmarkEntry!
     updateUserBenchmarkEntry(
       data: UpdateUserBenchmarkEntryInput!
     ): UserBenchmarkEntry!
-    deleteUserBenchmarkEntryById(id: ID!): ID!
-    #### User Benchmark Tag ####
-    createUserBenchmarkTag(
-      data: CreateUserBenchmarkTagInput!
-    ): UserBenchmarkTag!
-    updateUserBenchmarkTag(
-      data: UpdateUserBenchmarkTagInput!
-    ): UserBenchmarkTag!
-    deleteUserBenchmarkTagById(id: ID!): ID!
+    deleteUserBenchmarkEntry(id: ID!): ID!
     #### User Collection ####
     createCollection(data: CreateCollectionInput!): Collection!
     updateCollection(data: UpdateCollectionInput!): Collection!
@@ -228,6 +230,12 @@ export default gql`
     removeWorkoutPlanFromCollection(
       data: RemoveWorkoutPlanFromCollectionInput!
     ): Collection!
+    #### User Skills and Certifications ####
+    createSkill(data: CreateSkillInput!): Skill!
+    updateSkill(data: UpdateSkillInput!): Skill!
+    deleteSkillById(id: ID!): ID!
+    addDocumentToSkill(data: AddDocumentToSkillInput!): Skill!
+    removeDocumentFromSkill(data: RemoveDocumentFromSkillInput!): Skill!
     #################
     #### Workout ####
     makeCopyWorkoutById(id: ID!): Workout! # Note: Media should not be copied
@@ -242,6 +250,9 @@ export default gql`
       data: [UpdateSortPositionInput!]!
     ): [SortPositionUpdated!]!
     #### Workout Set ####
+    createWorkoutSetWithWorkoutMoves(
+      data: CreateWorkoutSetWithWorkoutMovesInput!
+    ): WorkoutSet!
     createWorkoutSet(data: CreateWorkoutSetInput!): WorkoutSet!
     updateWorkoutSet(data: UpdateWorkoutSetInput!): WorkoutSet!
     duplicateWorkoutSetById(id: ID!): WorkoutSet!
@@ -252,6 +263,7 @@ export default gql`
     #### Workout Move ####
     createWorkoutMove(data: CreateWorkoutMoveInput!): WorkoutMove!
     updateWorkoutMove(data: UpdateWorkoutMoveInput!): WorkoutMove!
+    updateWorkoutMoves(data: [UpdateWorkoutMoveInput!]!): [WorkoutMove!]!
     deleteWorkoutMoveById(id: ID!): ID!
     duplicateWorkoutMoveById(id: ID!): WorkoutMove!
     reorderWorkoutMoves(
@@ -286,11 +298,21 @@ export default gql`
       data: [UpdateSortPositionInput!]!
     ): [SortPositionUpdated!]!
     #### Workout Plan Enrolment ####
-    createWorkoutPlanEnrolment(workoutPlanId: ID!): WorkoutPlanEnrolment!
-    updateWorkoutPlanEnrolment(
-      data: UpdateWorkoutPlanEnrolmentInput!
-    ): WorkoutPlanEnrolment!
+    createWorkoutPlanEnrolment(
+      workoutPlanId: ID!
+    ): WorkoutPlanEnrolmentWithPlan!
     deleteWorkoutPlanEnrolmentById(id: ID!): ID!
+    createScheduleForPlanEnrolment(
+      data: CreateScheduleForPlanEnrolmentInput!
+    ): WorkoutPlanEnrolment!
+    clearScheduleForPlanEnrolment(enrolmentId: ID!): WorkoutPlanEnrolment!
+    createCompletedWorkoutPlanDayWorkout(
+      data: CreateCompletedWorkoutPlanDayWorkoutInput!
+    ): WorkoutPlanEnrolment!
+    deleteCompletedWorkoutPlanDayWorkout(
+      data: DeleteCompletedWorkoutPlanDayWorkoutInput!
+    ): WorkoutPlanEnrolment!
+    clearWorkoutPlanEnrolmentProgress(enrolmentId: ID!): WorkoutPlanEnrolment!
     #### Workout Plan Review ####
     createWorkoutPlanReview(
       data: CreateWorkoutPlanReviewInput!

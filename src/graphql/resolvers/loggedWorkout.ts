@@ -10,6 +10,7 @@ import {
   MutationUpdateLoggedWorkoutArgs,
   MutationUpdateLoggedWorkoutSectionArgs,
   QueryLifetimeLogStatsSummaryArgs,
+  QueryLogCountByWorkoutArgs,
   QueryLoggedWorkoutByIdArgs,
   QueryUserLoggedWorkoutsArgs,
 } from '../../generated/graphql'
@@ -37,10 +38,8 @@ export const userLoggedWorkouts = async (
 export const loggedWorkoutById = async (
   r: any,
   { id }: QueryLoggedWorkoutByIdArgs,
-  { authedUserId, select, prisma }: Context,
+  { select, prisma }: Context,
 ) => {
-  await checkUserOwnsObject(id, 'loggedWorkout', authedUserId, prisma)
-
   const loggedWorkout = await prisma.loggedWorkout.findUnique({
     where: { id },
     select,
@@ -50,6 +49,31 @@ export const loggedWorkoutById = async (
     return loggedWorkout as LoggedWorkout
   } else {
     throw new ApolloError('loggedWorkoutById: There was an issue.')
+  }
+}
+
+/// How many logs have been created against the workout.
+export const logCountByWorkout = async (
+  r: any,
+  { id }: QueryLogCountByWorkoutArgs,
+  { prisma }: Context,
+) => {
+  const workoutWithCount = await prisma.workout.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      _count: {
+        select: {
+          LoggedWorkouts: true,
+        },
+      },
+    },
+  })
+
+  if (workoutWithCount?._count) {
+    return workoutWithCount._count.LoggedWorkouts
+  } else {
+    throw new ApolloError('logCountByWorkout: There was an issue.')
   }
 }
 
@@ -68,14 +92,27 @@ export const createLoggedWorkout = async (
   { data }: MutationCreateLoggedWorkoutArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
+  const shouldCreateCompletedWorkoutPlanDayWorkout =
+    data.WorkoutPlanDayWorkout && data.WorkoutPlanEnrolment
+
   const loggedWorkout = await prisma.loggedWorkout.create({
     data: {
-      ...data,
+      completedOn: data.completedOn,
+      name: data.name,
+      note: data.note,
       User: {
         connect: {
           id: authedUserId,
         },
       },
+      CompletedWorkoutPlanDayWorkout: shouldCreateCompletedWorkoutPlanDayWorkout
+        ? {
+            create: {
+              WorkoutPlanDayWorkout: { connect: data.WorkoutPlanDayWorkout! },
+              WorkoutPlanEnrolment: { connect: data.WorkoutPlanEnrolment! },
+            },
+          }
+        : undefined,
       Workout: data.Workout
         ? {
             connect: data.Workout,

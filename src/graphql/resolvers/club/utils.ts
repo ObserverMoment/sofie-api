@@ -1,7 +1,115 @@
 import { PrismaClient } from '@prisma/client'
 import { ApolloError } from 'apollo-server-express'
-import { ClubWithMemberIdsPayload } from '../../../types'
+import {
+  ClubChatSummary,
+  ClubMembers,
+  ClubMemberSummary,
+  ClubSummary,
+} from '../../../generated/graphql'
+import {
+  ClubChatSummaryPayload,
+  ClubMembersPayload,
+  ClubSummaryPayload,
+  ClubWithMemberIdsPayload,
+} from '../../../types'
 import { AccessScopeError } from '../../utils'
+
+export function formatClubSummaries(
+  clubs: ClubSummaryPayload[],
+): ClubSummary[] {
+  return clubs.map((c) => formatClubSummary(c))
+}
+
+export function formatClubSummary(club: ClubSummaryPayload): ClubSummary {
+  return {
+    id: club.id,
+    createdAt: club.createdAt,
+    name: club.name,
+    description: club.description,
+    coverImageUri: club.coverImageUri,
+    introVideoUri: club.introVideoUri,
+    introVideoThumbUri: club.introVideoThumbUri,
+    introAudioUri: club.introAudioUri,
+    location: club.location,
+    memberCount: club._count.Members + club._count.Admins,
+    workoutCount: club._count.Workouts,
+    planCount: club._count.WorkoutPlans,
+    contentAccessScope: club.contentAccessScope,
+    Owner: {
+      id: club.Owner.id,
+      displayName: club.Owner.displayName,
+      avatarUri: club.Owner.avatarUri,
+    },
+    Admins: club.Admins.map((a) => ({
+      id: a.id,
+      displayName: a.displayName,
+      avatarUri: a.avatarUri,
+    })),
+  }
+}
+
+export function formatClubChatSummary(
+  club: ClubChatSummaryPayload,
+): ClubChatSummary {
+  return {
+    id: club.id,
+    name: club.name,
+    coverImageUri: club.coverImageUri,
+    Owner: {
+      id: club.Owner.id,
+      displayName: club.Owner.displayName,
+      avatarUri: club.Owner.avatarUri,
+    },
+    Admins: club.Admins.map((a) => ({
+      id: a.id,
+      displayName: a.displayName,
+      avatarUri: a.avatarUri,
+    })),
+    Members: club.Members.map((m) => ({
+      id: m.id,
+      displayName: m.displayName,
+      avatarUri: m.avatarUri,
+    })),
+  }
+}
+
+export function formatClubMembers(
+  clubId: string,
+  club: ClubMembersPayload,
+): ClubMembers {
+  return {
+    id: clubId,
+    Owner: formatClubMemberSummary(club.Owner),
+    Admins: club.Admins.map((a) => formatClubMemberSummary(a)),
+    Members: club.Members.map((a) => formatClubMemberSummary(a)),
+  }
+}
+
+type ClubMemberPayload = {
+  id: string
+  displayName: string
+  avatarUri: string | null
+  townCity: string | null
+  countryCode: string | null
+  tagline: string | null
+  Skills: {
+    name: string
+  }[]
+}
+
+export function formatClubMemberSummary(
+  clubMember: ClubMemberPayload,
+): ClubMemberSummary {
+  return {
+    id: clubMember.id,
+    displayName: clubMember.displayName,
+    avatarUri: clubMember.avatarUri,
+    townCity: clubMember.townCity,
+    countryCode: clubMember.countryCode,
+    tagline: clubMember.tagline,
+    skills: clubMember.Skills.map((s) => s.name),
+  }
+}
 
 // You can only remove a user type with a lower value that yourself as the authed user.
 export type ClubMemberType = 'OWNER' | 'ADMIN' | 'MEMBER' | 'NONE'
@@ -178,6 +286,45 @@ export async function checkUserIsOwnerOrAdminOfClub(
   }
 }
 
+export async function getUserClubMemberStatus(
+  clubId: string,
+  userId: string,
+  prisma: PrismaClient,
+) {
+  const members = await prisma.club.findUnique({
+    where: { id: clubId },
+    select: {
+      Owner: {
+        select: { id: true },
+      },
+      Admins: {
+        where: { id: userId },
+        select: { id: true },
+      },
+      Members: {
+        where: { id: userId },
+        select: { id: true },
+      },
+    },
+  })
+
+  if (!members) {
+    throw new ApolloError(
+      `checkUserMemberStatus: There was a problem retrieving the Club member for club ${clubId}.`,
+    )
+  }
+
+  if (members.Owner.id === userId) {
+    return 'OWNER'
+  } else if (members.Admins.some((a) => a.id === userId)) {
+    return 'ADMIN'
+  } else if (members.Members.some((m) => m.id === userId)) {
+    return 'MEMBER'
+  } else {
+    return 'NONE'
+  }
+}
+
 export async function checkUserIsMemberOfClub(
   clubId: string,
   authedUserId: string,
@@ -187,7 +334,7 @@ export async function checkUserIsMemberOfClub(
 
   if (!isMember) {
     throw new AccessScopeError(
-      'User is not a member of this club: checkUserIsMemberOfClub',
+      `checkUserIsMemberOfClub: User is not a member of this club ${clubId}`,
     )
   }
 }

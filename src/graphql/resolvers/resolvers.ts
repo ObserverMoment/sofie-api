@@ -17,27 +17,38 @@ import {
 } from './archive'
 
 import {
-  bodyTransformationPhotos,
-  createBodyTransformationPhotos,
-  updateBodyTransformationPhoto,
-  deleteBodyTransformationPhotosById,
-} from './bodyTransformation'
+  bodyTrackingEntries,
+  createBodyTrackingEntry,
+  updateBodyTrackingEntry,
+  deleteBodyTrackingEntryById,
+} from './bodyTracking'
 
 import {
+  checkUniqueClubName,
   userClubs,
   publicClubs,
-  clubSummariesById,
-  clubById,
+  clubSummaries,
+  clubChatSummary,
+  clubSummary,
   createClub,
-  updateClub,
-  deleteClubById,
+  updateClubSummary,
+  deleteClub,
 } from './club/club'
 
 import {
+  createClubAnnouncement,
+  updateClubAnnouncement,
+  deleteClubAnnouncement,
+} from './club/clubAnnouncement'
+
+import {
+  checkUserClubMemberStatus,
+  clubMembers,
+  clubInviteTokens,
   userJoinPublicClub,
   createClubInviteToken,
   updateClubInviteToken,
-  deleteClubInviteTokenById,
+  deleteClubInviteToken,
   addUserToClubViaInviteToken,
   giveMemberAdminStatus,
   removeMemberAdminStatus,
@@ -45,6 +56,8 @@ import {
 } from './club/clubMembers'
 
 import {
+  clubWorkouts,
+  clubWorkoutPlans,
   addWorkoutToClub,
   removeWorkoutFromClub,
   addWorkoutPlanToClub,
@@ -60,6 +73,7 @@ import {
 
 import {
   lifetimeLogStatsSummary,
+  logCountByWorkout,
   userLoggedWorkouts,
   loggedWorkoutById,
   createLoggedWorkout,
@@ -81,37 +95,34 @@ import {
 } from './officialData'
 
 import {
-  userProgressJournals,
-  progressJournalGoalTags,
-  progressJournalById,
-  createProgressJournal,
-  updateProgressJournal,
-  deleteProgressJournalById,
-  createProgressJournalGoal,
-  updateProgressJournalGoal,
-  deleteProgressJournalGoalById,
-  createProgressJournalGoalTag,
-  updateProgressJournalGoalTag,
-  deleteProgressJournalGoalTagById,
-  createProgressJournalEntry,
-  updateProgressJournalEntry,
-  deleteProgressJournalEntryById,
-} from './progressJournal'
+  journalNotes,
+  journalMoods,
+  journalGoals,
+  createJournalGoal,
+  updateJournalGoal,
+  deleteJournalGoalById,
+  createJournalNote,
+  updateJournalNote,
+  deleteJournalNoteById,
+  createJournalMood,
+  updateJournalMood,
+  deleteJournalMoodById,
+} from './journal'
 
 import {
   userScheduledWorkouts,
   createScheduledWorkout,
   updateScheduledWorkout,
   deleteScheduledWorkoutById,
-} from './schedule'
+} from './scheduledWorkout'
 
 import {
   textSearchWorkouts,
   textSearchWorkoutNames,
   textSearchWorkoutPlans,
   textSearchWorkoutPlanNames,
-  textSearchUserPublicProfiles,
-  textSearchUserPublicNames,
+  textSearchUserProfiles,
+  textSearchUserNames,
 } from './textSearch'
 
 import {
@@ -123,12 +134,11 @@ import {
 
 import {
   checkUniqueDisplayName,
-  authedUser,
   userAvatars,
   userAvatarById,
-  userPublicProfileById,
-  userPublicProfiles,
-  updateUser,
+  userProfile,
+  userProfiles,
+  updateUserProfile,
   userWorkoutTags,
   createWorkoutTag,
   updateWorkoutTag,
@@ -136,18 +146,22 @@ import {
 } from './user'
 
 import {
+  createSkill,
+  updateSkill,
+  deleteSkillById,
+  addDocumentToSkill,
+  removeDocumentFromSkill,
+} from './skillsAndCertifications'
+
+import {
   userBenchmarks,
-  userBenchmarkById,
-  userBenchmarkTags,
+  userBenchmark,
   createUserBenchmark,
   updateUserBenchmark,
-  deleteUserBenchmarkById,
+  deleteUserBenchmark,
   createUserBenchmarkEntry,
   updateUserBenchmarkEntry,
-  deleteUserBenchmarkEntryById,
-  createUserBenchmarkTag,
-  updateUserBenchmarkTag,
-  deleteUserBenchmarkTagById,
+  deleteUserBenchmarkEntry,
 } from './userBenchmark'
 
 import {
@@ -167,6 +181,7 @@ import { checkClubInviteToken } from './invites'
 import {
   publicWorkouts,
   userWorkouts,
+  userPublicWorkouts,
   workoutById,
   createWorkout,
   updateWorkout,
@@ -181,6 +196,7 @@ import {
 } from './workout/workoutSection'
 
 import {
+  createWorkoutSetWithWorkoutMoves,
   createWorkoutSet,
   updateWorkoutSet,
   deleteWorkoutSetById,
@@ -191,6 +207,7 @@ import {
 import {
   createWorkoutMove,
   updateWorkoutMove,
+  updateWorkoutMoves,
   duplicateWorkoutMoveById,
   deleteWorkoutMoveById,
   reorderWorkoutMoves,
@@ -199,6 +216,7 @@ import {
 import {
   publicWorkoutPlans,
   userWorkoutPlans,
+  userPublicWorkoutPlans,
   workoutPlanById,
   createWorkoutPlan,
   updateWorkoutPlan,
@@ -211,15 +229,22 @@ import {
   updateWorkoutPlanDayWorkout,
   deleteWorkoutPlanDayWorkoutById,
   reorderWorkoutPlanDayWorkouts,
-  enrolledWorkoutPlans,
-  workoutPlanByEnrolmentId,
-  createWorkoutPlanEnrolment,
-  updateWorkoutPlanEnrolment,
-  deleteWorkoutPlanEnrolmentById,
   createWorkoutPlanReview,
   updateWorkoutPlanReview,
   deleteWorkoutPlanReviewById,
-} from './workoutPlan'
+} from './workoutPlan/workoutPlan'
+
+import {
+  workoutPlanEnrolments,
+  workoutPlanEnrolmentById,
+  createWorkoutPlanEnrolment,
+  deleteWorkoutPlanEnrolmentById,
+  createScheduleForPlanEnrolment,
+  clearScheduleForPlanEnrolment,
+  createCompletedWorkoutPlanDayWorkout,
+  deleteCompletedWorkoutPlanDayWorkout,
+  clearWorkoutPlanEnrolmentProgress,
+} from './workoutPlan/workoutPlanEnrolment'
 
 import { GraphQLScalarType } from 'graphql'
 import GraphQLJSON from 'graphql-type-json'
@@ -266,20 +291,29 @@ const resolvers: Resolvers = {
     workoutGoals,
     workoutSectionTypes,
     ///// Clubs ////
+    checkUniqueClubName,
+    checkUserClubMemberStatus,
     publicClubs,
-    clubSummariesById,
+    clubSummaries,
     userClubs,
-    clubById,
+    clubChatSummary,
+    clubSummary,
+    clubInviteTokens,
+    clubMembers,
+    clubWorkouts,
+    clubWorkoutPlans,
     clubMembersFeedPosts,
     ///// Invites ////
     checkClubInviteToken,
+    //// Progress Body Tracking ////
+    bodyTrackingEntries,
     //// Progress Journal ////
-    bodyTransformationPhotos,
-    userProgressJournals,
-    progressJournalGoalTags,
-    progressJournalById,
+    journalNotes,
+    journalMoods,
+    journalGoals,
     //// Logged Workouts ////
     lifetimeLogStatsSummary,
+    logCountByWorkout,
     loggedWorkoutById,
     userLoggedWorkouts,
     //// Move ////
@@ -292,13 +326,12 @@ const resolvers: Resolvers = {
     textSearchWorkoutNames,
     textSearchWorkoutPlans,
     textSearchWorkoutPlanNames,
-    textSearchUserPublicProfiles,
-    textSearchUserPublicNames,
+    textSearchUserProfiles,
+    textSearchUserNames,
     //// Timeline Feed ////
     // The data associated with Activities and required to display posts //
     timelinePostsData,
     //// User ////
-    authedUser,
     checkUniqueDisplayName,
     gymProfiles,
     //// User Archive ////
@@ -306,47 +339,48 @@ const resolvers: Resolvers = {
     userArchivedWorkoutPlans,
     userArchivedCustomMoves,
     //// User Public Profiles ////
-    userPublicProfileById,
-    userPublicProfiles,
+    userProfile,
+    userProfiles,
     userWorkoutTags,
     //// User Avatars ////
     userAvatars,
     userAvatarById,
     /// User Benchmarks ////
     userBenchmarks,
-    userBenchmarkById,
-    userBenchmarkTags,
+    userBenchmark,
     /// User Collections ////
     userCollections,
     userCollectionById,
     //// Workouts ////
     publicWorkouts,
-    userWorkouts,
+    userWorkouts, // Authed user.
+    userPublicWorkouts, // Public users (profiles)
     workoutById,
     //// WorkoutPlans ////
     publicWorkoutPlans,
-    userWorkoutPlans,
+    userWorkoutPlans, // Authed user.
+    userPublicWorkoutPlans, // Public users (profiles)
     workoutPlanById,
-    enrolledWorkoutPlans,
-    workoutPlanByEnrolmentId,
+    workoutPlanEnrolments,
+    workoutPlanEnrolmentById,
   },
   Mutation: {
     ///////////////
     //// Club /////
     ///////////////
     createClub,
-    updateClub,
-    deleteClubById,
+    updateClubSummary,
+    deleteClub,
     createClubInviteToken,
     updateClubInviteToken,
-    deleteClubInviteTokenById,
+    deleteClubInviteToken,
     ///////////////////////
     //// Club Members /////
     ///////////////////////
     userJoinPublicClub,
+    addUserToClubViaInviteToken,
     giveMemberAdminStatus,
     removeMemberAdminStatus,
-    addUserToClubViaInviteToken,
     removeUserFromClub,
     ///////////////////////
     //// Club Content /////
@@ -355,9 +389,15 @@ const resolvers: Resolvers = {
     removeWorkoutFromClub,
     addWorkoutPlanToClub,
     removeWorkoutPlanFromClub,
+
     ///////////////////////
     //// Club Timeline ////
     ///////////////////////
+    /// An object that can be shared on a club feed via Stream activity.
+    createClubAnnouncement,
+    updateClubAnnouncement,
+    deleteClubAnnouncement,
+    /// Interacts with Strea.io.
     createClubTimelinePost,
     deleteClubTimelinePost,
     ///////////////////
@@ -371,24 +411,24 @@ const resolvers: Resolvers = {
     createGymProfile,
     updateGymProfile,
     deleteGymProfileById,
+    ////////////////////////////////
+    //// Progress Body Tracking ////
+    ///////////////////////////////
+    createBodyTrackingEntry,
+    updateBodyTrackingEntry,
+    deleteBodyTrackingEntryById,
     //////////////////////////
     //// Progress Journal ////
     //////////////////////////
-    createBodyTransformationPhotos,
-    updateBodyTransformationPhoto,
-    deleteBodyTransformationPhotosById,
-    createProgressJournal,
-    updateProgressJournal,
-    deleteProgressJournalById,
-    createProgressJournalEntry,
-    updateProgressJournalEntry,
-    deleteProgressJournalEntryById,
-    createProgressJournalGoal,
-    updateProgressJournalGoal,
-    deleteProgressJournalGoalById,
-    createProgressJournalGoalTag,
-    updateProgressJournalGoalTag,
-    deleteProgressJournalGoalTagById,
+    createJournalGoal,
+    updateJournalGoal,
+    deleteJournalGoalById,
+    createJournalNote,
+    updateJournalNote,
+    deleteJournalNoteById,
+    createJournalMood,
+    updateJournalMood,
+    deleteJournalMoodById,
     ///////////////////////
     //// LoggedWorkout ////
     ///////////////////////
@@ -410,7 +450,7 @@ const resolvers: Resolvers = {
     //////////////
     //// User ////
     //////////////
-    updateUser,
+    updateUserProfile,
     createWorkoutTag,
     updateWorkoutTag,
     deleteWorkoutTagById,
@@ -428,13 +468,10 @@ const resolvers: Resolvers = {
     ////////////////////////
     createUserBenchmark,
     updateUserBenchmark,
-    deleteUserBenchmarkById,
+    deleteUserBenchmark,
     createUserBenchmarkEntry,
     updateUserBenchmarkEntry,
-    deleteUserBenchmarkEntryById,
-    createUserBenchmarkTag,
-    updateUserBenchmarkTag,
-    deleteUserBenchmarkTagById,
+    deleteUserBenchmarkEntry,
     ////////////////////////
     //// User Collection ////
     ////////////////////////
@@ -445,6 +482,14 @@ const resolvers: Resolvers = {
     removeWorkoutFromCollection,
     addWorkoutPlanToCollection,
     removeWorkoutPlanFromCollection,
+    /////////////////////
+    //// User Skills ////
+    /////////////////////
+    createSkill,
+    updateSkill,
+    deleteSkillById,
+    addDocumentToSkill,
+    removeDocumentFromSkill,
     /////////////////
     //// Workout ////
     /////////////////
@@ -457,6 +502,7 @@ const resolvers: Resolvers = {
     deleteWorkoutSectionById,
     reorderWorkoutSections,
     //// Workout Set ////
+    createWorkoutSetWithWorkoutMoves,
     createWorkoutSet,
     updateWorkoutSet,
     duplicateWorkoutSetById,
@@ -465,6 +511,7 @@ const resolvers: Resolvers = {
     //// Workout Move ////
     createWorkoutMove,
     updateWorkoutMove,
+    updateWorkoutMoves,
     duplicateWorkoutMoveById,
     deleteWorkoutMoveById,
     reorderWorkoutMoves,
@@ -482,13 +529,17 @@ const resolvers: Resolvers = {
     updateWorkoutPlanDayWorkout,
     deleteWorkoutPlanDayWorkoutById,
     reorderWorkoutPlanDayWorkouts,
-    //// Workout Plan User Specific ////
-    createWorkoutPlanEnrolment,
-    updateWorkoutPlanEnrolment,
-    deleteWorkoutPlanEnrolmentById,
     createWorkoutPlanReview,
     updateWorkoutPlanReview,
     deleteWorkoutPlanReviewById,
+    //// Workout Plan Enrolment User Specific ////
+    createWorkoutPlanEnrolment,
+    deleteWorkoutPlanEnrolmentById,
+    createScheduleForPlanEnrolment,
+    clearScheduleForPlanEnrolment,
+    createCompletedWorkoutPlanDayWorkout,
+    deleteCompletedWorkoutPlanDayWorkout,
+    clearWorkoutPlanEnrolmentProgress,
   },
 }
 

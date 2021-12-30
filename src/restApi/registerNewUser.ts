@@ -6,10 +6,22 @@ import {
   getUserFeedToken,
 } from '../lib/getStream'
 import validateToken from './validateToken'
+import { Request, Response } from 'express'
 
-export default async function (req: any, res: any, prisma: PrismaClient) {
+export default async function (
+  req: Request,
+  res: Response,
+  prisma: PrismaClient,
+) {
   try {
     const decodedToken = await validateToken(req.headers.authorization, res)
+    const displayName = req.body['name']
+
+    if (displayName === undefined) {
+      res.status(401).json({
+        error: 'No display name provided. A unique display name is required.',
+      })
+    }
 
     if (!decodedToken || !decodedToken.uid) {
       res
@@ -27,14 +39,16 @@ export default async function (req: any, res: any, prisma: PrismaClient) {
           error: 'A user is already associated with this firebase Uid.',
         })
       } else {
-        // Create an empty new user linkied to the new firebase ID
+        // Create a new user linkied to the new firebase ID
         const user = await prisma.user.create({
           data: {
+            displayName,
             firebaseUid: decodedToken.uid,
           },
           select: {
             id: true,
             hasOnboarded: true,
+            displayName: true,
           },
         })
 

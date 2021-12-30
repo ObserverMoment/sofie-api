@@ -7,6 +7,7 @@ import {
   MutationDuplicateWorkoutMoveByIdArgs,
   MutationReorderWorkoutMovesArgs,
   MutationUpdateWorkoutMoveArgs,
+  MutationUpdateWorkoutMovesArgs,
   SortPositionUpdated,
   WorkoutMove,
 } from '../../../generated/graphql'
@@ -14,6 +15,7 @@ import {
   checkUserOwnsObject,
   checkAndReorderObjects,
   reorderItemsForInsertDelete,
+  checkUserAccessScopeMulti,
 } from '../../utils'
 import {
   updateWorkoutMetaData,
@@ -184,6 +186,56 @@ export const updateWorkoutMove = async (
     return updated as WorkoutMove
   } else {
     throw new ApolloError('updateWorkoutMove: There was an issue.')
+  }
+}
+
+/// Same as updateWorkoutMove but updates an array of workoutMoves.
+export const updateWorkoutMoves = async (
+  r: any,
+  { data }: MutationUpdateWorkoutMovesArgs,
+  { authedUserId, select, prisma }: Context,
+) => {
+  const ids = data.map((wm) => wm.id)
+  await checkUserAccessScopeMulti(ids, 'workoutMove', authedUserId, prisma)
+
+  const updateOps = data.map((d) =>
+    prisma.workoutMove.update({
+      where: { id: d.id },
+      data: {
+        ...d,
+        repType: d.repType || undefined,
+        reps: d.reps || undefined,
+        distanceUnit: d.distanceUnit || undefined,
+        loadUnit: d.loadUnit || undefined,
+        timeUnit: d.timeUnit || undefined,
+        // Necessary extra check because 0 is falsey in js.
+        loadAmount: d.loadAmount !== null ? d.loadAmount : undefined,
+        Move: d.Move ? { connect: d.Move } : undefined,
+        // Equipment can be null - i.e no equipment, so it can only be ignored if not present in the data object.
+        // passing null should disconnect any connected Equipment.
+        Equipment: d.hasOwnProperty('Equipment')
+          ? d.Equipment
+            ? { connect: d.Equipment }
+            : { disconnect: true }
+          : undefined,
+      },
+      select,
+    }),
+  )
+
+  const allUpdated = await prisma.$transaction(updateOps)
+
+  if (allUpdated) {
+    /// If any move has been changed then the workout meta data needs to be re-generated.
+    if (data.some((d) => d.Move)) {
+      await updateWorkoutMetaDataFromWorkoutMove(
+        prisma,
+        (allUpdated[0] as WorkoutMove).id,
+      )
+    }
+    return allUpdated as WorkoutMove[]
+  } else {
+    throw new ApolloError('updateWorkoutMoves: There was an issue.')
   }
 }
 

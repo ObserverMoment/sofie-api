@@ -13,10 +13,10 @@ export default gql`
     completedOn: DateTime!
     name: String!
     note: String
+    workoutId: ID # Scalar.
+    User: UserAvatarData
     GymProfile: GymProfile
     LoggedWorkoutSections: [LoggedWorkoutSection!]!
-    ScheduledWorkout: ScheduledWorkout
-    Workout: Workout
     WorkoutGoals: [WorkoutGoal!]!
   }
 
@@ -40,9 +40,13 @@ export default gql`
     note: String
     LoggedWorkoutSections: [CreateLoggedWorkoutSectionInLoggedWorkoutInput!]!
     GymProfile: ConnectRelationInput
-    ScheduledWorkout: ConnectRelationInput
     Workout: ConnectRelationInput
     WorkoutGoals: [ConnectRelationInput!]!
+    # If the log should be connected to a ScheduledWorkout or a WorkoutPlanEnrolment then provide these.
+    ScheduledWorkout: ConnectRelationInput
+    # These objects are not related to the LoggedWorkout. We use them to create a CompletedWorkoutPlanDayWorkout - if they are both provided.
+    WorkoutPlanDayWorkout: ConnectRelationInput
+    WorkoutPlanEnrolment: ConnectRelationInput
   }
 
   input CreateLoggedWorkoutSectionInLoggedWorkoutInput {

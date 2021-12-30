@@ -139,23 +139,20 @@ export async function createStreamClubMembersFeedActivity(
         tags: tags,
       })
 
-    const activityData: ActivityData =
-      // Should be a [FlatActivity[]] but we need to index into custom fields
-      // So set as [any] for now.
-      {
+    const activityData: ActivityData = {
+      activityId: activity.id,
+      postedAt: new Date(activity.time),
+      caption: activity['caption'] as string,
+      tags: activity['tags'] as string[],
+      dataRequestInput: {
         activityId: activity.id,
-        postedAt: new Date(activity.time),
-        caption: (activity as any)['caption'],
-        tags: (activity as any)['tags'],
-        dataRequestInput: {
-          activityId: activity.id,
-          posterId: (activity.actor as string).split(':')[1],
-          objectId: (activity.object as string).split(':')[1],
-          objectType: (activity.object as string)
-            .split(':')[0]
-            .toUpperCase() as TimelinePostType,
-        },
-      }
+        posterId: (activity.actor as string).split(':')[1],
+        objectId: (activity.object as string).split(':')[1],
+        objectType: (activity.object as string)
+          .split(':')[0]
+          .toUpperCase() as TimelinePostType,
+      },
+    }
     // Includes the fields we need to populate the objects from the DB before returning to client.
     return activityData
   } catch (e) {
@@ -250,6 +247,18 @@ interface ActivityData {
   caption?: string
   tags: string[]
   dataRequestInput: TimelinePostDataRequestInput
+}
+
+/// How many followers does their [user_feed] feed have.
+export async function getUserFollowersCount(userId: string) {
+  if (!streamFeedClient) {
+    throw Error('streamFeedClient not initialized')
+  }
+  const stats = await streamFeedClient
+    .feed(USER_FEED_NAME, userId)
+    .followStats()
+
+  return stats.results.followers.count
 }
 
 //////////////////////

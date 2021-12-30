@@ -4,11 +4,10 @@ export default gql`
   type Collection {
     id: ID!
     createdAt: DateTime!
-    User: UserSummary!
     name: String!
     description: String
-    Workouts: [Workout!]!
-    WorkoutPlans: [WorkoutPlan!]!
+    Workouts: [WorkoutSummary!]!
+    WorkoutPlans: [WorkoutPlanSummary!]!
   }
 
   input CreateCollectionInput {

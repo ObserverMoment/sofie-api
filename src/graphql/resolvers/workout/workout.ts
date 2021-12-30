@@ -5,8 +5,10 @@ import {
   MutationMakeCopyWorkoutByIdArgs,
   MutationUpdateWorkoutArgs,
   QueryPublicWorkoutsArgs,
+  QueryUserPublicWorkoutsArgs,
   QueryWorkoutByIdArgs,
   Workout,
+  WorkoutSummary,
 } from '../../../generated/graphql'
 import { checkUserOwnsObject } from '../../utils'
 import {
@@ -18,15 +20,17 @@ import {
   formatWorkoutFiltersInput,
   formatWorkoutSectionFiltersInput,
   updateWorkoutMetaData,
+  formatWorkoutSummaries,
 } from './utils'
-import { WorkoutFullData } from '../../../types'
+import { WorkoutFullDataPayload } from '../../../types'
+import { selectForWorkoutSummary } from '../selectDefinitions'
 
 //// Queries ////
 /// https://www.prisma.io/docs/concepts/components/prisma-client/pagination
 export const publicWorkouts = async (
   r: any,
   { filters, take, cursor }: QueryPublicWorkoutsArgs,
-  { select, prisma }: Context,
+  { prisma }: Context,
 ) => {
   const publicWorkouts = await prisma.workout.findMany({
     where: {
@@ -47,40 +51,63 @@ export const publicWorkouts = async (
           id: cursor,
         }
       : undefined,
-    select,
+    select: selectForWorkoutSummary,
   })
 
-  return publicWorkouts as Workout[]
+  return formatWorkoutSummaries(publicWorkouts) as WorkoutSummary[]
 }
 
-// All user workouts, both public and private, but not archived.
+// All user created workouts by user ID. If user is the logged in user, then get all,
+// Otherwise just get public. Never get archived.
 export const userWorkouts = async (
   r: any,
   a: any,
-  { authedUserId, select, prisma }: Context,
+  { authedUserId, prisma }: Context,
 ) => {
   const userWorkouts = await prisma.workout.findMany({
-    where: { userId: authedUserId, archived: false },
+    where: {
+      userId: authedUserId,
+      archived: false,
+    },
     orderBy: {
       id: 'desc',
     },
-    select,
+    select: selectForWorkoutSummary,
   })
-  return userWorkouts as Workout[]
+
+  console.log(userWorkouts)
+
+  return formatWorkoutSummaries(userWorkouts) as WorkoutSummary[]
+}
+
+export const userPublicWorkouts = async (
+  r: any,
+  { userId }: QueryUserPublicWorkoutsArgs,
+  { prisma }: Context,
+) => {
+  const userWorkouts = await prisma.workout.findMany({
+    where: {
+      userId: userId,
+      archived: false,
+      contentAccessScope: 'PUBLIC',
+    },
+    orderBy: {
+      id: 'desc',
+    },
+    select: selectForWorkoutSummary,
+  })
+
+  return formatWorkoutSummaries(userWorkouts) as WorkoutSummary[]
 }
 
 export const workoutById = async (
   r: any,
   { id }: QueryWorkoutByIdArgs,
-  { authedUserId, select, prisma }: Context,
+  { select, prisma }: Context,
 ) => {
   const workout: any = await prisma.workout.findUnique({
     where: { id },
-    select: {
-      ...select,
-      contentAccessScope: true,
-      userId: true,
-    },
+    select,
   })
 
   if (workout) {
@@ -130,7 +157,6 @@ export const updateWorkout = async (
     data: {
       ...data,
       name: data.name || undefined,
-      difficultyLevel: data.difficultyLevel || undefined,
       contentAccessScope: data.contentAccessScope || undefined,
       // Note: You should not pass 'null' to a relationship field. It will be parsed as 'no input' and ignored.
       // To remove all related items of this type pass an empty array.
@@ -174,28 +200,29 @@ export const duplicateWorkoutById = async (
   await checkUserOwnsObject(id, 'workout', authedUserId, prisma)
 
   // Get original workout full data
-  const original: WorkoutFullData | null = await prisma.workout.findUnique({
-    where: { id },
-    include: {
-      WorkoutGoals: true,
-      WorkoutTags: true,
-      WorkoutSections: {
-        include: {
-          WorkoutSectionType: true,
-          WorkoutSets: {
-            include: {
-              WorkoutMoves: {
-                include: {
-                  Move: true,
-                  Equipment: true,
+  const original: WorkoutFullDataPayload | null =
+    await prisma.workout.findUnique({
+      where: { id },
+      include: {
+        WorkoutGoals: true,
+        WorkoutTags: true,
+        WorkoutSections: {
+          include: {
+            WorkoutSectionType: true,
+            WorkoutSets: {
+              include: {
+                WorkoutMoves: {
+                  include: {
+                    Move: true,
+                    Equipment: true,
+                  },
                 },
               },
             },
           },
         },
       },
-    },
-  })
+    })
 
   if (!original) {
     throw new ApolloError(

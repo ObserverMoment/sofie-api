@@ -1,3 +1,4 @@
+import { prisma, PrismaClient } from '.prisma/client'
 import { ApolloError } from 'apollo-server-errors'
 import { ContextUserType } from '..'
 
@@ -9,10 +10,26 @@ export class AccessScopeError extends ApolloError {
   }
 }
 
+export async function checkUserProfileIsPublic(
+  id: string,
+  prisma: PrismaClient,
+) {
+  const user = await prisma.user.findUnique({
+    where: { id },
+    select: { userProfileScope: true },
+  })
+  if (user?.userProfileScope !== 'PUBLIC') {
+    throw new AccessScopeError(
+      'This profile is private, you do not have access.',
+    )
+  }
+}
+
 /// Must match the prisma model names as per prisma[modelName].findUnique()
 /// i.e. be camelCase.
 export type ContentObjectType =
-  | 'bodyTransformationPhoto'
+  | 'bodyTrackingEntry'
+  | 'clubAnnouncement'
   | 'collection'
   | 'gymProfile'
   | 'loggedWorkout'
@@ -20,11 +37,11 @@ export type ContentObjectType =
   | 'loggedWorkoutSet'
   | 'loggedWorkoutMove'
   | 'move'
-  | 'progressJournal'
-  | 'progressJournalGoal'
-  | 'progressJournalGoalTag'
-  | 'progressJournalEntry'
+  | 'journalNote'
+  | 'journalMood'
+  | 'journalGoal'
   | 'scheduledWorkout'
+  | 'skill'
   | 'workout'
   | 'workoutSection'
   | 'workoutSet'
@@ -39,7 +56,6 @@ export type ContentObjectType =
   | 'workoutTag'
   | 'userBenchmark'
   | 'userBenchmarkEntry'
-  | 'userBenchmarkTag'
 
 /// Checks that a user has access to a single object in the database.
 /// Checks for ownership so cannot use this cor checking, for example, access to group scoped content.

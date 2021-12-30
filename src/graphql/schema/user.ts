@@ -1,7 +1,13 @@
 import { gql } from 'apollo-server-express'
 
 export default gql`
-  type User {
+  type UserAvatarData {
+    id: ID!
+    displayName: String!
+    avatarUri: String
+  }
+
+  type UserProfile {
     id: ID!
     userProfileScope: UserProfileScope!
     avatarUri: String
@@ -9,38 +15,41 @@ export default gql`
     introVideoThumbUri: String
     bio: String
     tagline: String
+    townCity: String
+    instagramHandle: String
+    tiktokHandle: String
+    youtubeHandle: String
+    linkedinHandle: String
+    countryCode: String
+    displayName: String!
+    gender: Gender
     birthdate: DateTime
+    followerCount: Int
+    workoutCount: Int
+    planCount: Int
+    Clubs: [ClubSummary!]! # If UserProfile is Private this must be empty.
+    LifetimeLogStatsSummary: LifetimeLogStatsSummary
+    BenchmarksWithBestEntries: [UserBenchmarkWithBestEntry!]!
+    Skills: [Skill!]!
+  }
+
+  type UserProfileSummary {
+    id: ID!
+    userProfileScope: UserProfileScope!
+    avatarUri: String
+    tagline: String
     townCity: String
     countryCode: String
     displayName: String!
-    instagramUrl: String
-    tiktokUrl: String
-    youtubeUrl: String
-    snapUrl: String
-    linkedinUrl: String
-    firstname: String
-    lastname: String
-    gender: Gender!
-    hasOnboarded: Boolean!
-    GymProfiles: [GymProfile!]
-    ProgressJournalGoalTags: [ProgressJournalGoalTag!]
+    skills: [String!]!
+    workoutCount: Int!
+    planCount: Int!
+    Clubs: [ClubSummary!]!
   }
 
-  type UserAvatarData {
+  # Resolver should only return the updated fields plus an ID. Only the ID is required.
+  type UpdateUserProfileResult {
     id: ID!
-    displayName: String!
-    avatarUri: String
-  }
-
-  type UserSummary {
-    id: ID!
-    displayName: String!
-    avatarUri: String
-    userProfileScope: UserProfileScope!
-  }
-
-  # Only used for the currently logged in user to update themselves - so ID not required.
-  input UpdateUserInput {
     userProfileScope: UserProfileScope
     avatarUri: String
     introVideoUri: String
@@ -51,45 +60,35 @@ export default gql`
     townCity: String
     countryCode: String
     displayName: String
-    instagramUrl: String
-    tiktokUrl: String
-    youtubeUrl: String
-    snapUrl: String
-    linkedinUrl: String
+    instagramHandle: String
+    tiktokHandle: String
+    youtubeHandle: String
+    linkedinHandle: String
     firstname: String
     gender: Gender
     hasOnboarded: Boolean
     lastname: String
   }
 
-  type UserPublicProfile {
-    id: ID!
-    userProfileScope: UserProfileScope!
+  # User can only update their own profile - so no ID required.
+  input UpdateUserProfileInput {
+    userProfileScope: UserProfileScope
     avatarUri: String
     introVideoUri: String
     introVideoThumbUri: String
     bio: String
     tagline: String
-    townCity: String
-    instagramUrl: String
-    tiktokUrl: String
-    youtubeUrl: String
-    snapUrl: String
-    linkedinUrl: String
-    countryCode: String
-    displayName: String!
-    Workouts: [Workout!]!
-    WorkoutPlans: [WorkoutPlan!]!
-  }
-
-  type UserPublicProfileSummary {
-    id: ID!
-    avatarUri: String
-    tagline: String
+    birthdate: DateTime
     townCity: String
     countryCode: String
-    displayName: String!
-    numberPublicWorkouts: Int!
-    numberPublicPlans: Int!
+    displayName: String
+    instagramHandle: String
+    tiktokHandle: String
+    youtubeHandle: String
+    linkedinHandle: String
+    firstname: String
+    gender: Gender
+    hasOnboarded: Boolean
+    lastname: String
   }
 `

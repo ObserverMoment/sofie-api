@@ -2,49 +2,117 @@ import { ApolloError } from 'apollo-server-express'
 import { Context } from '../../..'
 import {
   Club,
-  ClubInviteToken,
   MutationAddUserToClubViaInviteTokenArgs,
   MutationCreateClubInviteTokenArgs,
-  MutationDeleteClubInviteTokenByIdArgs,
+  MutationDeleteClubInviteTokenArgs,
   MutationGiveMemberAdminStatusArgs,
   MutationRemoveMemberAdminStatusArgs,
   MutationRemoveUserFromClubArgs,
   MutationUpdateClubInviteTokenArgs,
   MutationUserJoinPublicClubArgs,
-  Workout,
-  WorkoutPlan,
+  QueryCheckUserClubMemberStatusArgs,
+  QueryClubInviteTokensArgs,
+  QueryClubMembersArgs,
 } from '../../../generated/graphql'
 import {
   addStreamUserToClubMemberChat,
   removeStreamUserFromClubMemberChat,
 } from '../../../lib/getStream'
 import {
+  selectForClubInviteToken,
+  selectForClubMembers,
+} from '../selectDefinitions'
+import {
   checkIfAllowedToRemoveUser,
+  checkUserIsMemberOfClub,
   checkUserIsOwnerOfClub,
   checkUserIsOwnerOrAdmin,
   checkUserIsOwnerOrAdminOfClub,
+  formatClubMembers,
+  getUserClubMemberStatus,
 } from './utils'
 
+///// Queries ///////
+export const checkUserClubMemberStatus = async (
+  r: any,
+  { clubId }: QueryCheckUserClubMemberStatusArgs,
+  { authedUserId, prisma }: Context,
+) => {
+  return getUserClubMemberStatus(clubId, authedUserId, prisma)
+}
+
+export const clubMembers = async (
+  r: any,
+  { clubId }: QueryClubMembersArgs,
+  { authedUserId, prisma }: Context,
+) => {
+  // Check that user is a member.
+  await checkUserIsMemberOfClub(clubId, authedUserId, prisma)
+
+  const club = await prisma.club.findUnique({
+    where: { id: clubId },
+    select: selectForClubMembers,
+  })
+
+  if (!club) {
+    throw new ApolloError(
+      `clubMembers: Unable to retrieve data for club ${clubId}.`,
+    )
+  } else {
+    return formatClubMembers(clubId, club)
+  }
+}
+
+export const clubInviteTokens = async (
+  r: any,
+  { clubId }: QueryClubInviteTokensArgs,
+  { authedUserId, prisma }: Context,
+) => {
+  // Check that user is owner or admin.
+  await checkUserIsOwnerOrAdmin(clubId, 'club', authedUserId, prisma)
+
+  const club = await prisma.club.findUnique({
+    where: { id: clubId },
+    select: {
+      id: true,
+      ClubInviteTokens: {
+        select: selectForClubInviteToken,
+      },
+    },
+  })
+
+  if (!club) {
+    throw new ApolloError(
+      `clubInviteTokens: Unable to retrieve data for club ${clubId}.`,
+    )
+  } else {
+    return { id: club.id, tokens: club.ClubInviteTokens }
+  }
+}
+
+///// Mutations //////
 ///// Public Club Memberships //////
 ///// Any user can join / leave whenever they want //////
 export const userJoinPublicClub = async (
   r: any,
   { clubId }: MutationUserJoinPublicClubArgs,
-  { authedUserId, select, prisma }: Context,
+  { authedUserId, prisma }: Context,
 ) => {
-  const updated: any = await prisma.club.update({
+  const updated = await prisma.club.update({
     where: { id: clubId },
     data: {
       Members: {
         connect: { id: authedUserId },
       },
     },
-    select,
+    select: {
+      id: true,
+    },
   })
 
   if (updated) {
     /// Add the new member to the GetStream chat group.
-    await addStreamUserToClubMemberChat((updated as Club).id, authedUserId)
+    await addStreamUserToClubMemberChat(updated.id, authedUserId)
     return updated.id
   } else {
     throw new ApolloError('userJoinPublicClub: There was an issue.')
@@ -55,26 +123,39 @@ export const userJoinPublicClub = async (
 export const createClubInviteToken = async (
   r: any,
   { data }: MutationCreateClubInviteTokenArgs,
-  { authedUserId, select, prisma }: Context,
+  { authedUserId, prisma }: Context,
 ) => {
-  await checkUserIsOwnerOrAdminOfClub(data.Club.id, authedUserId, prisma)
+  await checkUserIsOwnerOrAdminOfClub(data.clubId, authedUserId, prisma)
 
-  const clubInviteToken = await prisma.clubInviteToken.create({
+  const updated = await prisma.club.update({
+    where: { id: data.clubId },
     data: {
-      ...data,
-      active: true,
-      Club: {
-        connect: data.Club,
-      },
-      User: {
-        connect: { id: authedUserId },
+      ClubInviteTokens: {
+        create: [
+          {
+            name: data.name,
+            inviteLimit: data.inviteLimit,
+            active: true,
+            User: {
+              connect: { id: authedUserId },
+            },
+          },
+        ],
       },
     },
-    select,
+    select: {
+      id: true,
+      ClubInviteTokens: {
+        select: selectForClubInviteToken,
+      },
+    },
   })
 
-  if (clubInviteToken) {
-    return clubInviteToken as ClubInviteToken
+  if (updated) {
+    return {
+      id: updated.id,
+      tokens: updated.ClubInviteTokens,
+    }
   } else {
     throw new ApolloError('createClubInviteToken: There was an issue.')
   }
@@ -83,7 +164,7 @@ export const createClubInviteToken = async (
 export const updateClubInviteToken = async (
   r: any,
   { data }: MutationUpdateClubInviteTokenArgs,
-  { select, authedUserId, prisma }: Context,
+  { authedUserId, prisma }: Context,
 ) => {
   await checkUserIsOwnerOrAdmin(
     data.id,
@@ -92,7 +173,8 @@ export const updateClubInviteToken = async (
     prisma,
   )
 
-  const updated = await prisma.clubInviteToken.update({
+  // Update the token.
+  await prisma.clubInviteToken.update({
     where: { id: data.id },
     data: {
       ...data,
@@ -100,32 +182,65 @@ export const updateClubInviteToken = async (
       active: data.active || undefined,
       inviteLimit: data.inviteLimit || undefined,
     },
-    select,
+  })
+
+  // Get the updated tokens list via the Club to easily return [ClubInviteTokens] object.
+  const updated = await prisma.club.findUnique({
+    where: { id: data.clubId },
+    select: {
+      id: true,
+      ClubInviteTokens: {
+        select: selectForClubInviteToken,
+      },
+    },
   })
 
   if (updated) {
-    return updated as ClubInviteToken
+    return {
+      id: updated.id,
+      tokens: updated.ClubInviteTokens,
+    }
   } else {
     throw new ApolloError('updateClubInviteToken: There was an issue.')
   }
 }
 
-export const deleteClubInviteTokenById = async (
+export const deleteClubInviteToken = async (
   r: any,
-  { id }: MutationDeleteClubInviteTokenByIdArgs,
+  { data }: MutationDeleteClubInviteTokenArgs,
   { authedUserId, prisma }: Context,
 ) => {
-  await checkUserIsOwnerOrAdmin(id, 'clubInviteToken', authedUserId, prisma)
+  await checkUserIsOwnerOrAdmin(
+    data.tokenId,
+    'clubInviteToken',
+    authedUserId,
+    prisma,
+  )
 
-  const deleted = await prisma.clubInviteToken.delete({
-    where: { id },
+  // Delete the token.
+  await prisma.clubInviteToken.delete({
+    where: { id: data.tokenId },
     select: {
       id: true,
     },
   })
 
-  if (deleted) {
-    return deleted.id
+  // Get the updated tokens list via the Club to easily return [ClubInviteTokens] object.
+  const updated = await prisma.club.findUnique({
+    where: { id: data.clubId },
+    select: {
+      id: true,
+      ClubInviteTokens: {
+        select: selectForClubInviteToken,
+      },
+    },
+  })
+
+  if (updated) {
+    return {
+      id: updated.id,
+      tokens: updated.ClubInviteTokens,
+    }
   } else {
     throw new ApolloError('deleteClubInviteTokenById: There was an issue.')
   }
@@ -137,7 +252,7 @@ export const deleteClubInviteTokenById = async (
 export const addUserToClubViaInviteToken = async (
   r: any,
   { userId, clubInviteTokenId }: MutationAddUserToClubViaInviteTokenArgs,
-  { select, prisma }: Context,
+  { prisma }: Context,
 ) => {
   // Get the token info and associated club ID.
   const clubInviteToken = await prisma.clubInviteToken.findUnique({
@@ -173,7 +288,9 @@ export const addUserToClubViaInviteToken = async (
         connect: { id: userId },
       },
     },
-    select,
+    select: {
+      id: true,
+    },
   })
 
   const updateTokenInvitesUsed = prisma.clubInviteToken.update({
@@ -193,7 +310,7 @@ export const addUserToClubViaInviteToken = async (
   if (updatedClub) {
     /// Add the new member to the GetStream chat group.
     await addStreamUserToClubMemberChat((updatedClub as Club).id, userId)
-    return updatedClub as Club
+    return updatedClub.id
   } else {
     throw new ApolloError('addUserToClubViaInviteToken: There was an issue.')
   }
@@ -202,11 +319,11 @@ export const addUserToClubViaInviteToken = async (
 export const giveMemberAdminStatus = async (
   r: any,
   { userId, clubId }: MutationGiveMemberAdminStatusArgs,
-  { authedUserId, select, prisma }: Context,
+  { authedUserId, prisma }: Context,
 ) => {
   await checkUserIsOwnerOfClub(clubId, authedUserId, prisma)
 
-  const updatedClub = await prisma.club.update({
+  const updated = await prisma.club.update({
     where: { id: clubId },
     data: {
       Admins: {
@@ -216,11 +333,11 @@ export const giveMemberAdminStatus = async (
         disconnect: { id: userId },
       },
     },
-    select,
+    select: selectForClubMembers,
   })
 
-  if (updatedClub) {
-    return updatedClub as Club
+  if (updated) {
+    return formatClubMembers(clubId, updated)
   } else {
     throw new ApolloError('giveMemberAdminStatus: There was an issue.')
   }
@@ -229,11 +346,11 @@ export const giveMemberAdminStatus = async (
 export const removeMemberAdminStatus = async (
   r: any,
   { userId, clubId }: MutationRemoveMemberAdminStatusArgs,
-  { authedUserId, select, prisma }: Context,
+  { authedUserId, prisma }: Context,
 ) => {
   await checkUserIsOwnerOfClub(clubId, authedUserId, prisma)
 
-  const updatedClub = await prisma.club.update({
+  const updated = await prisma.club.update({
     where: { id: clubId },
     data: {
       Admins: {
@@ -243,11 +360,11 @@ export const removeMemberAdminStatus = async (
         connect: { id: userId },
       },
     },
-    select,
+    select: selectForClubMembers,
   })
 
-  if (updatedClub) {
-    return updatedClub as Club
+  if (updated) {
+    return formatClubMembers(clubId, updated)
   } else {
     throw new ApolloError('removeMemberAdminStatus: There was an issue.')
   }
@@ -256,7 +373,7 @@ export const removeMemberAdminStatus = async (
 export const removeUserFromClub = async (
   r: any,
   { userToRemoveId, clubId }: MutationRemoveUserFromClubArgs,
-  { authedUserId, select, prisma }: Context,
+  { authedUserId, prisma }: Context,
 ) => {
   let result = await checkIfAllowedToRemoveUser(
     authedUserId,
@@ -273,20 +390,27 @@ export const removeUserFromClub = async (
 
   const disconnect = { disconnect: { id: userToRemoveId } }
 
-  const updatedClub: any = await prisma.club.update({
+  const updated = await prisma.club.update({
     where: { id: clubId },
     data: {
       Admins: result.memberType === 'ADMIN' ? disconnect : undefined,
       Members: result.memberType === 'MEMBER' ? disconnect : undefined,
     },
-    select,
+    select: {
+      id: true,
+      ...selectForClubMembers,
+      Workouts: {
+        select: { id: true },
+      },
+      WorkoutPlans: {
+        select: { id: true },
+      },
+    },
   })
 
   /// Find all workouts and plans from the club that the user has saved in their collections and disconnect them. They should not be able to access this content once they have left the club.
-  const workoutIdsToRemove = updatedClub.Workouts.map((w: Workout) => w.id)
-  const workoutPlanIdsToRemove = updatedClub.WorkoutPlans.map(
-    (w: WorkoutPlan) => w.id,
-  )
+  const workoutIdsToRemove = updated.Workouts.map((w) => w.id)
+  const workoutPlanIdsToRemove = updated.WorkoutPlans.map((w) => w.id)
 
   const contentToRemove = await prisma.user.findUnique({
     where: { id: authedUserId },
@@ -328,10 +452,10 @@ export const removeUserFromClub = async (
     })
   }
 
-  if (updatedClub) {
+  if (updated) {
     /// Remove the member from the GetStream chat group.
-    await removeStreamUserFromClubMemberChat(updatedClub.id, userToRemoveId)
-    return updatedClub as Club
+    await removeStreamUserFromClubMemberChat(updated.id, userToRemoveId)
+    return formatClubMembers(clubId, updated)
   } else {
     throw new ApolloError('removeUserFromClub: There was an issue.')
   }

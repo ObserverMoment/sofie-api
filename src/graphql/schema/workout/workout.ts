@@ -1,10 +1,30 @@
 import { gql } from 'apollo-server-express'
 
 export default gql`
+  # Used for displaying a workout card style summary.
+  # Min data required to optimise calls to list resolvers.
+  type WorkoutSummary {
+    id: ID!
+    createdAt: DateTime!
+    name: String!
+    archived: Boolean!
+    User: UserAvatarData!
+    lengthMinutes: Int
+    coverImageUri: String
+    description: String
+    difficultyLevel: DifficultyLevel
+    loggedSessionsCount: Int!
+    hasClassVideo: Boolean!
+    hasClassAudio: Boolean!
+    equipments: [String!]!
+    # Workout Section Types, Goals and Tags as strings.
+    tags: [String!]!
+  }
+
   type Workout {
     id: ID!
     createdAt: DateTime!
-    User: UserSummary!
+    User: UserAvatarData!
     archived: Boolean!
     name: String!
     description: String
@@ -13,7 +33,7 @@ export default gql`
     introVideoThumbUri: String
     introAudioUri: String
     coverImageUri: String
-    difficultyLevel: DifficultyLevel!
+    difficultyLevel: DifficultyLevel
     contentAccessScope: ContentAccessScope!
     WorkoutGoals: [WorkoutGoal!]!
     WorkoutTags: [WorkoutTag!]!
@@ -23,7 +43,7 @@ export default gql`
   # Just creates the basic required fields.
   input CreateWorkoutInput {
     name: String!
-    difficultyLevel: DifficultyLevel!
+    difficultyLevel: DifficultyLevel
     contentAccessScope: ContentAccessScope!
   }
 
