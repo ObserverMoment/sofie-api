@@ -40,7 +40,7 @@
     "graphql-type-json": "^0.3.2",
     "joi": "^17.5.0",
     "node-fetch": "^2.6.2",
-    "stream-chat": "^5.0.1"
+    "stream-chat": "^5.1.0"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^2.3.0",
