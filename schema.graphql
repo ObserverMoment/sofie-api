@@ -445,7 +445,6 @@ input CreateWorkoutSectionInput {
 input CreateWorkoutSetInput {
   WorkoutSection: ConnectRelationInput!
   duration: Int
-  rounds: Int
   sortPosition: Int!
 }
 
@@ -1193,7 +1192,6 @@ input UpdateWorkoutSectionInput {
 input UpdateWorkoutSetInput {
   duration: Int
   id: ID!
-  rounds: Int
 }
 
 input UpdateWorkoutTagInput {
@@ -1496,7 +1494,6 @@ type WorkoutSet {
   WorkoutMoves: [WorkoutMove!]!
   duration: Int!
   id: ID!
-  rounds: Int!
   sortPosition: Int!
 }
 

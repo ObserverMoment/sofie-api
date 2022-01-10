@@ -46,7 +46,6 @@ export const createWorkoutSet = async (
   const workoutSet = await prisma.workoutSet.create({
     data: {
       ...data,
-      rounds: data.rounds || undefined,
       duration: data.duration || undefined,
       User: {
         connect: { id: authedUserId },
@@ -92,7 +91,6 @@ export const createWorkoutSetWithWorkoutMoves = async (
   const workoutSet = await prisma.workoutSet.create({
     data: {
       ...data.workoutSet,
-      rounds: data.workoutSet.rounds || undefined,
       duration: data.workoutSet.duration || undefined,
       User: {
         connect: { id: authedUserId },
@@ -173,7 +171,6 @@ export const duplicateWorkoutSetById = async (
   // Create a new copy.
   const copy = await prisma.workoutSet.create({
     data: {
-      rounds: original.rounds,
       sortPosition: original.sortPosition + 1,
       duration: original.duration,
       WorkoutSection: { connect: { id: original.WorkoutSection.id } },
@@ -217,7 +214,6 @@ export const updateWorkoutSet = async (
     where: { id: data.id },
     data: {
       ...data,
-      rounds: data.rounds || undefined,
       duration: data.duration || undefined,
     },
     select,
