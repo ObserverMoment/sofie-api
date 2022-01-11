@@ -366,7 +366,7 @@ model WorkoutSet {
   id               String         @id @default(uuid())
   createdAt        DateTime       @default(now())
   sortPosition     Int
-  rounds           Int            @default(1)
+  rounds           Int            @default(1) //// Deprecated - remove after UI update.
   workoutSectionId String
   userId           String
   duration         Int            @default(60)
