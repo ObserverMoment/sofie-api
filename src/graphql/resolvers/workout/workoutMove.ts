@@ -53,8 +53,7 @@ export const createWorkoutMove = async (
       repType: data.repType,
       distanceUnit: data.distanceUnit || undefined,
       loadUnit: data.loadUnit || undefined,
-      // Necessary extra check because 0 is falsey in js.
-      loadAmount: data.loadAmount !== null ? data.loadAmount : undefined,
+      loadAmount: data.loadAmount,
       timeUnit: data.timeUnit || undefined,
       sortPosition: data.sortPosition,
       User: {
@@ -122,7 +121,6 @@ export const duplicateWorkoutMoveById = async (
       repType: original.repType,
       distanceUnit: original.distanceUnit,
       loadUnit: original.loadUnit,
-      // necessary extra check because
       loadAmount: original.loadAmount,
       timeUnit: original.timeUnit,
       sortPosition: original.sortPosition + 1,

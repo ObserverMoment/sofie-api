@@ -470,7 +470,6 @@ export type CreateWorkoutSectionInput = {
 export type CreateWorkoutSetInput = {
   WorkoutSection: ConnectRelationInput;
   duration?: InputMaybe<Scalars['Int']>;
-  rounds?: InputMaybe<Scalars['Int']>;
   sortPosition: Scalars['Int'];
 };
 
@@ -2009,7 +2008,6 @@ export type UpdateWorkoutSectionInput = {
 export type UpdateWorkoutSetInput = {
   duration?: InputMaybe<Scalars['Int']>;
   id: Scalars['ID'];
-  rounds?: InputMaybe<Scalars['Int']>;
 };
 
 export type UpdateWorkoutTagInput = {
@@ -2332,7 +2330,6 @@ export type WorkoutSet = {
   WorkoutMoves: Array<WorkoutMove>;
   duration: Scalars['Int'];
   id: Scalars['ID'];
-  rounds: Scalars['Int'];
   sortPosition: Scalars['Int'];
 };
 
@@ -3601,7 +3598,6 @@ export type WorkoutSetResolvers<ContextType = any, ParentType extends ResolversP
   WorkoutMoves?: Resolver<Array<ResolversTypes['WorkoutMove']>, ParentType, ContextType>;
   duration?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  rounds?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   sortPosition?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
