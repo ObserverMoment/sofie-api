@@ -11,6 +11,7 @@ import {
   MutationDeleteLoggedWorkoutByIdArgs,
   MutationUpdateLoggedWorkoutArgs,
   MutationUpdateLoggedWorkoutMoveArgs,
+  MutationDeleteLoggedWorkoutMoveArgs,
   MutationUpdateLoggedWorkoutSectionArgs,
   MutationUpdateLoggedWorkoutSetArgs,
   QueryLifetimeLogStatsSummaryArgs,
@@ -322,6 +323,27 @@ export const updateLoggedWorkoutMove = async (
     return updated as LoggedWorkoutMove
   } else {
     throw new ApolloError('updateLoggedWorkoutMove: There was an issue.')
+  }
+}
+
+export const deleteLoggedWorkoutMove = async (
+  r: any,
+  { id }: MutationDeleteLoggedWorkoutMoveArgs,
+  { authedUserId, select, prisma }: Context,
+) => {
+  await checkUserOwnsObject(id, 'loggedWorkoutMove', authedUserId, prisma)
+
+  const deleted = await prisma.loggedWorkoutMove.delete({
+    where: {
+      id,
+    },
+    select,
+  })
+
+  if (deleted) {
+    return id
+  } else {
+    throw new ApolloError('deleteLoggedWorkoutMove: There was an issue.')
   }
 }
 

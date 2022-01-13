@@ -735,6 +735,7 @@ export type Mutation = {
   deleteJournalMoodById: Scalars['ID'];
   deleteJournalNoteById: Scalars['ID'];
   deleteLoggedWorkoutById: Scalars['ID'];
+  deleteLoggedWorkoutMove: Scalars['ID'];
   deleteScheduledWorkoutById: Scalars['ID'];
   deleteSkillById: Scalars['ID'];
   deleteUserBenchmark: Scalars['ID'];
@@ -1072,6 +1073,11 @@ export type MutationDeleteJournalNoteByIdArgs = {
 
 
 export type MutationDeleteLoggedWorkoutByIdArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationDeleteLoggedWorkoutMoveArgs = {
   id: Scalars['ID'];
 };
 
@@ -3152,6 +3158,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   deleteJournalMoodById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteJournalMoodByIdArgs, 'id'>>;
   deleteJournalNoteById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteJournalNoteByIdArgs, 'id'>>;
   deleteLoggedWorkoutById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteLoggedWorkoutByIdArgs, 'id'>>;
+  deleteLoggedWorkoutMove?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteLoggedWorkoutMoveArgs, 'id'>>;
   deleteScheduledWorkoutById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteScheduledWorkoutByIdArgs, 'id'>>;
   deleteSkillById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteSkillByIdArgs, 'id'>>;
   deleteUserBenchmark?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteUserBenchmarkArgs, 'id'>>;

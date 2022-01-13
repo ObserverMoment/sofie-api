@@ -82,6 +82,7 @@ import {
   updateLoggedWorkoutSection,
   updateLoggedWorkoutSet,
   updateLoggedWorkoutMove,
+  deleteLoggedWorkoutMove,
 } from './loggedWorkout'
 
 import { standardMoves, userCustomMoves, createMove, updateMove } from './move'
@@ -440,6 +441,7 @@ const resolvers: Resolvers = {
     updateLoggedWorkoutSection,
     updateLoggedWorkoutSet,
     updateLoggedWorkoutMove,
+    deleteLoggedWorkoutMove,
     //////////////
     //// Move ////
     //////////////

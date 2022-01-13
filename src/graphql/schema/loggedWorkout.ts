@@ -126,36 +126,4 @@ export default gql`
     Equipment: ConnectRelationInput
     Move: ConnectRelationInput
   }
-
-  ######### Structure for JSON type in the database. ###########
-  ######### Deprecated Jan 2022 #######
-  # type LoggedWorkoutSectionData {
-  #   rounds: [WorkoutSectionRoundData!]!
-  # }
-
-  # type WorkoutSectionRoundData {
-  #   timeTakenSeconds: Int!
-  #   sets: [WorkoutSectionRoundSetData!]!
-  # }
-
-  # type WorkoutSectionRoundSetData {
-  #   timeTakenSeconds: Int!
-  #   # Comma separated list of the moves in the set. Including reps, move name and load.
-  #   moves: String!
-  # }
-
-  # input LoggedWorkoutSectionDataInput {
-  #   rounds: [WorkoutSectionRoundDataInput!]!
-  # }
-
-  # input WorkoutSectionRoundDataInput {
-  #   timeTakenSeconds: Int!
-  #   sets: [WorkoutSectionRoundSetDataInput!]!
-  # }
-
-  # input WorkoutSectionRoundSetDataInput {
-  #   timeTakenSeconds: Int!
-  #   # Comma separated list of the moves in the set. Including reps, move name and load.
-  #   moves: String!
-  # }
 `
