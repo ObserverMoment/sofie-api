@@ -184,6 +184,13 @@ export type ClubMembers = {
   id: Scalars['ID'];
 };
 
+export type ClubMetaData = {
+  __typename?: 'ClubMetaData';
+  metaTags: Array<Scalars['String']>;
+  reasonNotValidated?: Maybe<Scalars['String']>;
+  validated: PublicContentValidationStatus;
+};
+
 export type ClubSummary = {
   __typename?: 'ClubSummary';
   Admins: Array<UserAvatarData>;
@@ -201,6 +208,12 @@ export type ClubSummary = {
   name: Scalars['String'];
   planCount: Scalars['Int'];
   workoutCount: Scalars['Int'];
+};
+
+export type ClubWithMetaData = {
+  __typename?: 'ClubWithMetaData';
+  Club: Club;
+  metaData: ClubMetaData;
 };
 
 export type ClubWorkoutPlans = {
@@ -415,7 +428,6 @@ export type CreateUserBenchmarkInput = {
 
 export type CreateWorkoutInput = {
   contentAccessScope: ContentAccessScope;
-  difficultyLevel?: InputMaybe<DifficultyLevel>;
   name: Scalars['String'];
 };
 
@@ -773,6 +785,7 @@ export type Mutation = {
   updateBodyTrackingEntry: BodyTrackingEntry;
   updateClubAnnouncement: ClubAnnouncement;
   updateClubInviteToken: ClubInviteTokens;
+  updateClubMetaData: ClubMetaData;
   updateClubSummary: ClubSummary;
   updateCollection: Collection;
   updateEquipment?: Maybe<Equipment>;
@@ -791,11 +804,13 @@ export type Mutation = {
   updateUserBenchmarkEntry: UserBenchmarkEntry;
   updateUserProfile: UpdateUserProfileResult;
   updateWorkout: Workout;
+  updateWorkoutMetaData: WorkoutMetaData;
   updateWorkoutMove: WorkoutMove;
   updateWorkoutMoves: Array<WorkoutMove>;
   updateWorkoutPlan: WorkoutPlan;
   updateWorkoutPlanDay: WorkoutPlanDay;
   updateWorkoutPlanDayWorkout: WorkoutPlanDayWorkout;
+  updateWorkoutPlanMetaData?: Maybe<WorkoutPlanMetaData>;
   updateWorkoutPlanReview: WorkoutPlanReview;
   updateWorkoutSection: WorkoutSection;
   updateWorkoutSet: WorkoutSet;
@@ -1272,6 +1287,11 @@ export type MutationUpdateClubInviteTokenArgs = {
 };
 
 
+export type MutationUpdateClubMetaDataArgs = {
+  data: UpdateClubMetaDataInput;
+};
+
+
 export type MutationUpdateClubSummaryArgs = {
   data: UpdateClubSummaryInput;
 };
@@ -1362,6 +1382,11 @@ export type MutationUpdateWorkoutArgs = {
 };
 
 
+export type MutationUpdateWorkoutMetaDataArgs = {
+  data: UpdateWorkoutMetaDataInput;
+};
+
+
 export type MutationUpdateWorkoutMoveArgs = {
   data: UpdateWorkoutMoveInput;
 };
@@ -1384,6 +1409,11 @@ export type MutationUpdateWorkoutPlanDayArgs = {
 
 export type MutationUpdateWorkoutPlanDayWorkoutArgs = {
   data: UpdateWorkoutPlanDayWorkoutInput;
+};
+
+
+export type MutationUpdateWorkoutPlanMetaDataArgs = {
+  data: UpdateWorkoutPlanMetaDataInput;
 };
 
 
@@ -1411,8 +1441,17 @@ export type MutationUserJoinPublicClubArgs = {
   clubId: Scalars['ID'];
 };
 
+export type PublicContentValidationStatus =
+  | 'INVALID'
+  | 'PENDING'
+  | 'PENDINGUPDATED'
+  | 'VALID';
+
 export type Query = {
   __typename?: 'Query';
+  adminPublicClubs: Array<ClubWithMetaData>;
+  adminPublicWorkoutPlans: Array<WorkoutPlanWithMetaData>;
+  adminPublicWorkouts: Array<WorkoutWithMetaData>;
   bodyAreas: Array<BodyArea>;
   bodyTrackingEntries: Array<BodyTrackingEntry>;
   checkClubInviteToken: CheckClubInviteTokenResult;
@@ -1474,6 +1513,21 @@ export type Query = {
   workoutPlanEnrolmentById: WorkoutPlanEnrolmentWithPlan;
   workoutPlanEnrolments: Array<WorkoutPlanEnrolmentSummary>;
   workoutSectionTypes: Array<WorkoutSectionType>;
+};
+
+
+export type QueryAdminPublicClubsArgs = {
+  status: PublicContentValidationStatus;
+};
+
+
+export type QueryAdminPublicWorkoutPlansArgs = {
+  status: PublicContentValidationStatus;
+};
+
+
+export type QueryAdminPublicWorkoutsArgs = {
+  status: PublicContentValidationStatus;
 };
 
 
@@ -1805,6 +1859,13 @@ export type UpdateClubInviteTokenInput = {
   name?: InputMaybe<Scalars['String']>;
 };
 
+export type UpdateClubMetaDataInput = {
+  id: Scalars['ID'];
+  metaTags?: InputMaybe<Array<Scalars['String']>>;
+  reasonNotValidated?: InputMaybe<Scalars['String']>;
+  validated?: InputMaybe<PublicContentValidationStatus>;
+};
+
 export type UpdateClubSummaryInput = {
   contentAccessScope?: InputMaybe<ContentAccessScope>;
   coverImageUri?: InputMaybe<Scalars['String']>;
@@ -1996,13 +2057,20 @@ export type UpdateWorkoutInput = {
   contentAccessScope?: InputMaybe<ContentAccessScope>;
   coverImageUri?: InputMaybe<Scalars['String']>;
   description?: InputMaybe<Scalars['String']>;
-  difficultyLevel?: InputMaybe<DifficultyLevel>;
   id: Scalars['ID'];
   introAudioUri?: InputMaybe<Scalars['String']>;
   introVideoThumbUri?: InputMaybe<Scalars['String']>;
   introVideoUri?: InputMaybe<Scalars['String']>;
   lengthMinutes?: InputMaybe<Scalars['Int']>;
   name?: InputMaybe<Scalars['String']>;
+};
+
+export type UpdateWorkoutMetaDataInput = {
+  difficultyLevel?: InputMaybe<DifficultyLevel>;
+  id: Scalars['ID'];
+  metaTags?: InputMaybe<Array<Scalars['String']>>;
+  reasonNotValidated?: InputMaybe<Scalars['String']>;
+  validated?: InputMaybe<PublicContentValidationStatus>;
 };
 
 export type UpdateWorkoutMoveInput = {
@@ -2042,6 +2110,14 @@ export type UpdateWorkoutPlanInput = {
   introVideoUri?: InputMaybe<Scalars['String']>;
   lengthWeeks?: InputMaybe<Scalars['Int']>;
   name?: InputMaybe<Scalars['String']>;
+};
+
+export type UpdateWorkoutPlanMetaDataInput = {
+  difficultyLevel?: InputMaybe<DifficultyLevel>;
+  id: Scalars['ID'];
+  metaTags?: InputMaybe<Array<Scalars['String']>>;
+  reasonNotValidated?: InputMaybe<Scalars['String']>;
+  validated?: InputMaybe<PublicContentValidationStatus>;
 };
 
 export type UpdateWorkoutPlanReviewInput = {
@@ -2217,6 +2293,14 @@ export type WorkoutGoal = {
   name: Scalars['String'];
 };
 
+export type WorkoutMetaData = {
+  __typename?: 'WorkoutMetaData';
+  difficultyLevel?: Maybe<DifficultyLevel>;
+  metaTags: Array<Scalars['String']>;
+  reasonNotValidated?: Maybe<Scalars['String']>;
+  validated: PublicContentValidationStatus;
+};
+
 export type WorkoutMove = {
   __typename?: 'WorkoutMove';
   Equipment?: Maybe<Equipment>;
@@ -2304,6 +2388,14 @@ export type WorkoutPlanFiltersInput = {
   workoutGoals: Array<Scalars['ID']>;
 };
 
+export type WorkoutPlanMetaData = {
+  __typename?: 'WorkoutPlanMetaData';
+  difficultyLevel?: Maybe<DifficultyLevel>;
+  metaTags: Array<Scalars['String']>;
+  reasonNotValidated?: Maybe<Scalars['String']>;
+  validated: PublicContentValidationStatus;
+};
+
 export type WorkoutPlanReview = {
   __typename?: 'WorkoutPlanReview';
   User: UserAvatarData;
@@ -2330,6 +2422,12 @@ export type WorkoutPlanSummary = {
   reviewScore?: Maybe<Scalars['Float']>;
   tags: Array<Scalars['String']>;
   workoutsCount: Scalars['Int'];
+};
+
+export type WorkoutPlanWithMetaData = {
+  __typename?: 'WorkoutPlanWithMetaData';
+  WorkoutPlan: WorkoutPlan;
+  metaData: WorkoutPlanMetaData;
 };
 
 export type WorkoutSection = {
@@ -2401,6 +2499,12 @@ export type WorkoutTag = {
   __typename?: 'WorkoutTag';
   id: Scalars['ID'];
   tag: Scalars['String'];
+};
+
+export type WorkoutWithMetaData = {
+  __typename?: 'WorkoutWithMetaData';
+  Workout: Workout;
+  metaData: WorkoutMetaData;
 };
 
 export type WithIndex<TObject> = TObject & Record<string, any>;
@@ -2496,7 +2600,9 @@ export type ResolversTypes = ResolversObject<{
   ClubInviteTokens: ResolverTypeWrapper<ClubInviteTokens>;
   ClubMemberSummary: ResolverTypeWrapper<ClubMemberSummary>;
   ClubMembers: ResolverTypeWrapper<ClubMembers>;
+  ClubMetaData: ResolverTypeWrapper<ClubMetaData>;
   ClubSummary: ResolverTypeWrapper<ClubSummary>;
+  ClubWithMetaData: ResolverTypeWrapper<ClubWithMetaData>;
   ClubWorkoutPlans: ResolverTypeWrapper<ClubWorkoutPlans>;
   ClubWorkouts: ResolverTypeWrapper<ClubWorkouts>;
   Collection: ResolverTypeWrapper<Collection>;
@@ -2565,6 +2671,7 @@ export type ResolversTypes = ResolversObject<{
   MoveType: ResolverTypeWrapper<MoveType>;
   MoveWorkoutPlanDayToAnotherDayInput: MoveWorkoutPlanDayToAnotherDayInput;
   Mutation: ResolverTypeWrapper<{}>;
+  PublicContentValidationStatus: PublicContentValidationStatus;
   Query: ResolverTypeWrapper<{}>;
   RemoveDocumentFromSkillInput: RemoveDocumentFromSkillInput;
   RemoveWorkoutFromClubInput: RemoveWorkoutFromClubInput;
@@ -2586,6 +2693,7 @@ export type ResolversTypes = ResolversObject<{
   UpdateBodyTrackingEntryInput: UpdateBodyTrackingEntryInput;
   UpdateClubAnnouncementInput: UpdateClubAnnouncementInput;
   UpdateClubInviteTokenInput: UpdateClubInviteTokenInput;
+  UpdateClubMetaDataInput: UpdateClubMetaDataInput;
   UpdateClubSummaryInput: UpdateClubSummaryInput;
   UpdateCollectionInput: UpdateCollectionInput;
   UpdateEquipmentInput: UpdateEquipmentInput;
@@ -2606,10 +2714,12 @@ export type ResolversTypes = ResolversObject<{
   UpdateUserProfileInput: UpdateUserProfileInput;
   UpdateUserProfileResult: ResolverTypeWrapper<UpdateUserProfileResult>;
   UpdateWorkoutInput: UpdateWorkoutInput;
+  UpdateWorkoutMetaDataInput: UpdateWorkoutMetaDataInput;
   UpdateWorkoutMoveInput: UpdateWorkoutMoveInput;
   UpdateWorkoutPlanDayInput: UpdateWorkoutPlanDayInput;
   UpdateWorkoutPlanDayWorkoutInput: UpdateWorkoutPlanDayWorkoutInput;
   UpdateWorkoutPlanInput: UpdateWorkoutPlanInput;
+  UpdateWorkoutPlanMetaDataInput: UpdateWorkoutPlanMetaDataInput;
   UpdateWorkoutPlanReviewInput: UpdateWorkoutPlanReviewInput;
   UpdateWorkoutSectionInput: UpdateWorkoutSectionInput;
   UpdateWorkoutSetInput: UpdateWorkoutSetInput;
@@ -2626,6 +2736,7 @@ export type ResolversTypes = ResolversObject<{
   Workout: ResolverTypeWrapper<Workout>;
   WorkoutFiltersInput: WorkoutFiltersInput;
   WorkoutGoal: ResolverTypeWrapper<WorkoutGoal>;
+  WorkoutMetaData: ResolverTypeWrapper<WorkoutMetaData>;
   WorkoutMove: ResolverTypeWrapper<WorkoutMove>;
   WorkoutMoveRepType: WorkoutMoveRepType;
   WorkoutPlan: ResolverTypeWrapper<WorkoutPlan>;
@@ -2635,8 +2746,10 @@ export type ResolversTypes = ResolversObject<{
   WorkoutPlanEnrolmentSummary: ResolverTypeWrapper<WorkoutPlanEnrolmentSummary>;
   WorkoutPlanEnrolmentWithPlan: ResolverTypeWrapper<WorkoutPlanEnrolmentWithPlan>;
   WorkoutPlanFiltersInput: WorkoutPlanFiltersInput;
+  WorkoutPlanMetaData: ResolverTypeWrapper<WorkoutPlanMetaData>;
   WorkoutPlanReview: ResolverTypeWrapper<WorkoutPlanReview>;
   WorkoutPlanSummary: ResolverTypeWrapper<WorkoutPlanSummary>;
+  WorkoutPlanWithMetaData: ResolverTypeWrapper<WorkoutPlanWithMetaData>;
   WorkoutSection: ResolverTypeWrapper<WorkoutSection>;
   WorkoutSectionType: ResolverTypeWrapper<WorkoutSectionType>;
   WorkoutSet: ResolverTypeWrapper<WorkoutSet>;
@@ -2644,6 +2757,7 @@ export type ResolversTypes = ResolversObject<{
   WorkoutSetGeneratorType: WorkoutSetGeneratorType;
   WorkoutSummary: ResolverTypeWrapper<WorkoutSummary>;
   WorkoutTag: ResolverTypeWrapper<WorkoutTag>;
+  WorkoutWithMetaData: ResolverTypeWrapper<WorkoutWithMetaData>;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -2667,7 +2781,9 @@ export type ResolversParentTypes = ResolversObject<{
   ClubInviteTokens: ClubInviteTokens;
   ClubMemberSummary: ClubMemberSummary;
   ClubMembers: ClubMembers;
+  ClubMetaData: ClubMetaData;
   ClubSummary: ClubSummary;
+  ClubWithMetaData: ClubWithMetaData;
   ClubWorkoutPlans: ClubWorkoutPlans;
   ClubWorkouts: ClubWorkouts;
   Collection: Collection;
@@ -2748,6 +2864,7 @@ export type ResolversParentTypes = ResolversObject<{
   UpdateBodyTrackingEntryInput: UpdateBodyTrackingEntryInput;
   UpdateClubAnnouncementInput: UpdateClubAnnouncementInput;
   UpdateClubInviteTokenInput: UpdateClubInviteTokenInput;
+  UpdateClubMetaDataInput: UpdateClubMetaDataInput;
   UpdateClubSummaryInput: UpdateClubSummaryInput;
   UpdateCollectionInput: UpdateCollectionInput;
   UpdateEquipmentInput: UpdateEquipmentInput;
@@ -2768,10 +2885,12 @@ export type ResolversParentTypes = ResolversObject<{
   UpdateUserProfileInput: UpdateUserProfileInput;
   UpdateUserProfileResult: UpdateUserProfileResult;
   UpdateWorkoutInput: UpdateWorkoutInput;
+  UpdateWorkoutMetaDataInput: UpdateWorkoutMetaDataInput;
   UpdateWorkoutMoveInput: UpdateWorkoutMoveInput;
   UpdateWorkoutPlanDayInput: UpdateWorkoutPlanDayInput;
   UpdateWorkoutPlanDayWorkoutInput: UpdateWorkoutPlanDayWorkoutInput;
   UpdateWorkoutPlanInput: UpdateWorkoutPlanInput;
+  UpdateWorkoutPlanMetaDataInput: UpdateWorkoutPlanMetaDataInput;
   UpdateWorkoutPlanReviewInput: UpdateWorkoutPlanReviewInput;
   UpdateWorkoutSectionInput: UpdateWorkoutSectionInput;
   UpdateWorkoutSetInput: UpdateWorkoutSetInput;
@@ -2786,6 +2905,7 @@ export type ResolversParentTypes = ResolversObject<{
   Workout: Workout;
   WorkoutFiltersInput: WorkoutFiltersInput;
   WorkoutGoal: WorkoutGoal;
+  WorkoutMetaData: WorkoutMetaData;
   WorkoutMove: WorkoutMove;
   WorkoutPlan: WorkoutPlan;
   WorkoutPlanDay: WorkoutPlanDay;
@@ -2794,13 +2914,16 @@ export type ResolversParentTypes = ResolversObject<{
   WorkoutPlanEnrolmentSummary: WorkoutPlanEnrolmentSummary;
   WorkoutPlanEnrolmentWithPlan: WorkoutPlanEnrolmentWithPlan;
   WorkoutPlanFiltersInput: WorkoutPlanFiltersInput;
+  WorkoutPlanMetaData: WorkoutPlanMetaData;
   WorkoutPlanReview: WorkoutPlanReview;
   WorkoutPlanSummary: WorkoutPlanSummary;
+  WorkoutPlanWithMetaData: WorkoutPlanWithMetaData;
   WorkoutSection: WorkoutSection;
   WorkoutSectionType: WorkoutSectionType;
   WorkoutSet: WorkoutSet;
   WorkoutSummary: WorkoutSummary;
   WorkoutTag: WorkoutTag;
+  WorkoutWithMetaData: WorkoutWithMetaData;
 }>;
 
 export type BodyAreaResolvers<ContextType = any, ParentType extends ResolversParentTypes['BodyArea'] = ResolversParentTypes['BodyArea']> = ResolversObject<{
@@ -2920,6 +3043,13 @@ export type ClubMembersResolvers<ContextType = any, ParentType extends Resolvers
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type ClubMetaDataResolvers<ContextType = any, ParentType extends ResolversParentTypes['ClubMetaData'] = ResolversParentTypes['ClubMetaData']> = ResolversObject<{
+  metaTags?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
+  reasonNotValidated?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  validated?: Resolver<ResolversTypes['PublicContentValidationStatus'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type ClubSummaryResolvers<ContextType = any, ParentType extends ResolversParentTypes['ClubSummary'] = ResolversParentTypes['ClubSummary']> = ResolversObject<{
   Admins?: Resolver<Array<ResolversTypes['UserAvatarData']>, ParentType, ContextType>;
   Owner?: Resolver<ResolversTypes['UserAvatarData'], ParentType, ContextType>;
@@ -2936,6 +3066,12 @@ export type ClubSummaryResolvers<ContextType = any, ParentType extends Resolvers
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   planCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   workoutCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type ClubWithMetaDataResolvers<ContextType = any, ParentType extends ResolversParentTypes['ClubWithMetaData'] = ResolversParentTypes['ClubWithMetaData']> = ResolversObject<{
+  Club?: Resolver<ResolversTypes['Club'], ParentType, ContextType>;
+  metaData?: Resolver<ResolversTypes['ClubMetaData'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -3196,6 +3332,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   updateBodyTrackingEntry?: Resolver<ResolversTypes['BodyTrackingEntry'], ParentType, ContextType, RequireFields<MutationUpdateBodyTrackingEntryArgs, 'data'>>;
   updateClubAnnouncement?: Resolver<ResolversTypes['ClubAnnouncement'], ParentType, ContextType, RequireFields<MutationUpdateClubAnnouncementArgs, 'data'>>;
   updateClubInviteToken?: Resolver<ResolversTypes['ClubInviteTokens'], ParentType, ContextType, RequireFields<MutationUpdateClubInviteTokenArgs, 'data'>>;
+  updateClubMetaData?: Resolver<ResolversTypes['ClubMetaData'], ParentType, ContextType, RequireFields<MutationUpdateClubMetaDataArgs, 'data'>>;
   updateClubSummary?: Resolver<ResolversTypes['ClubSummary'], ParentType, ContextType, RequireFields<MutationUpdateClubSummaryArgs, 'data'>>;
   updateCollection?: Resolver<ResolversTypes['Collection'], ParentType, ContextType, RequireFields<MutationUpdateCollectionArgs, 'data'>>;
   updateEquipment?: Resolver<Maybe<ResolversTypes['Equipment']>, ParentType, ContextType, RequireFields<MutationUpdateEquipmentArgs, 'data'>>;
@@ -3214,11 +3351,13 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   updateUserBenchmarkEntry?: Resolver<ResolversTypes['UserBenchmarkEntry'], ParentType, ContextType, RequireFields<MutationUpdateUserBenchmarkEntryArgs, 'data'>>;
   updateUserProfile?: Resolver<ResolversTypes['UpdateUserProfileResult'], ParentType, ContextType, RequireFields<MutationUpdateUserProfileArgs, 'data'>>;
   updateWorkout?: Resolver<ResolversTypes['Workout'], ParentType, ContextType, RequireFields<MutationUpdateWorkoutArgs, 'data'>>;
+  updateWorkoutMetaData?: Resolver<ResolversTypes['WorkoutMetaData'], ParentType, ContextType, RequireFields<MutationUpdateWorkoutMetaDataArgs, 'data'>>;
   updateWorkoutMove?: Resolver<ResolversTypes['WorkoutMove'], ParentType, ContextType, RequireFields<MutationUpdateWorkoutMoveArgs, 'data'>>;
   updateWorkoutMoves?: Resolver<Array<ResolversTypes['WorkoutMove']>, ParentType, ContextType, RequireFields<MutationUpdateWorkoutMovesArgs, 'data'>>;
   updateWorkoutPlan?: Resolver<ResolversTypes['WorkoutPlan'], ParentType, ContextType, RequireFields<MutationUpdateWorkoutPlanArgs, 'data'>>;
   updateWorkoutPlanDay?: Resolver<ResolversTypes['WorkoutPlanDay'], ParentType, ContextType, RequireFields<MutationUpdateWorkoutPlanDayArgs, 'data'>>;
   updateWorkoutPlanDayWorkout?: Resolver<ResolversTypes['WorkoutPlanDayWorkout'], ParentType, ContextType, RequireFields<MutationUpdateWorkoutPlanDayWorkoutArgs, 'data'>>;
+  updateWorkoutPlanMetaData?: Resolver<Maybe<ResolversTypes['WorkoutPlanMetaData']>, ParentType, ContextType, RequireFields<MutationUpdateWorkoutPlanMetaDataArgs, 'data'>>;
   updateWorkoutPlanReview?: Resolver<ResolversTypes['WorkoutPlanReview'], ParentType, ContextType, RequireFields<MutationUpdateWorkoutPlanReviewArgs, 'data'>>;
   updateWorkoutSection?: Resolver<ResolversTypes['WorkoutSection'], ParentType, ContextType, RequireFields<MutationUpdateWorkoutSectionArgs, 'data'>>;
   updateWorkoutSet?: Resolver<ResolversTypes['WorkoutSet'], ParentType, ContextType, RequireFields<MutationUpdateWorkoutSetArgs, 'data'>>;
@@ -3227,6 +3366,9 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
 }>;
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
+  adminPublicClubs?: Resolver<Array<ResolversTypes['ClubWithMetaData']>, ParentType, ContextType, RequireFields<QueryAdminPublicClubsArgs, 'status'>>;
+  adminPublicWorkoutPlans?: Resolver<Array<ResolversTypes['WorkoutPlanWithMetaData']>, ParentType, ContextType, RequireFields<QueryAdminPublicWorkoutPlansArgs, 'status'>>;
+  adminPublicWorkouts?: Resolver<Array<ResolversTypes['WorkoutWithMetaData']>, ParentType, ContextType, RequireFields<QueryAdminPublicWorkoutsArgs, 'status'>>;
   bodyAreas?: Resolver<Array<ResolversTypes['BodyArea']>, ParentType, ContextType>;
   bodyTrackingEntries?: Resolver<Array<ResolversTypes['BodyTrackingEntry']>, ParentType, ContextType>;
   checkClubInviteToken?: Resolver<ResolversTypes['CheckClubInviteTokenResult'], ParentType, ContextType, RequireFields<QueryCheckClubInviteTokenArgs, 'id'>>;
@@ -3505,6 +3647,14 @@ export type WorkoutGoalResolvers<ContextType = any, ParentType extends Resolvers
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type WorkoutMetaDataResolvers<ContextType = any, ParentType extends ResolversParentTypes['WorkoutMetaData'] = ResolversParentTypes['WorkoutMetaData']> = ResolversObject<{
+  difficultyLevel?: Resolver<Maybe<ResolversTypes['DifficultyLevel']>, ParentType, ContextType>;
+  metaTags?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
+  reasonNotValidated?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  validated?: Resolver<ResolversTypes['PublicContentValidationStatus'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type WorkoutMoveResolvers<ContextType = any, ParentType extends ResolversParentTypes['WorkoutMove'] = ResolversParentTypes['WorkoutMove']> = ResolversObject<{
   Equipment?: Resolver<Maybe<ResolversTypes['Equipment']>, ParentType, ContextType>;
   Move?: Resolver<ResolversTypes['Move'], ParentType, ContextType>;
@@ -3578,6 +3728,14 @@ export type WorkoutPlanEnrolmentWithPlanResolvers<ContextType = any, ParentType 
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type WorkoutPlanMetaDataResolvers<ContextType = any, ParentType extends ResolversParentTypes['WorkoutPlanMetaData'] = ResolversParentTypes['WorkoutPlanMetaData']> = ResolversObject<{
+  difficultyLevel?: Resolver<Maybe<ResolversTypes['DifficultyLevel']>, ParentType, ContextType>;
+  metaTags?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
+  reasonNotValidated?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  validated?: Resolver<ResolversTypes['PublicContentValidationStatus'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type WorkoutPlanReviewResolvers<ContextType = any, ParentType extends ResolversParentTypes['WorkoutPlanReview'] = ResolversParentTypes['WorkoutPlanReview']> = ResolversObject<{
   User?: Resolver<ResolversTypes['UserAvatarData'], ParentType, ContextType>;
   comment?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -3603,6 +3761,12 @@ export type WorkoutPlanSummaryResolvers<ContextType = any, ParentType extends Re
   reviewScore?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   tags?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   workoutsCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type WorkoutPlanWithMetaDataResolvers<ContextType = any, ParentType extends ResolversParentTypes['WorkoutPlanWithMetaData'] = ResolversParentTypes['WorkoutPlanWithMetaData']> = ResolversObject<{
+  WorkoutPlan?: Resolver<ResolversTypes['WorkoutPlan'], ParentType, ContextType>;
+  metaData?: Resolver<ResolversTypes['WorkoutPlanMetaData'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -3667,6 +3831,12 @@ export type WorkoutTagResolvers<ContextType = any, ParentType extends ResolversP
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type WorkoutWithMetaDataResolvers<ContextType = any, ParentType extends ResolversParentTypes['WorkoutWithMetaData'] = ResolversParentTypes['WorkoutWithMetaData']> = ResolversObject<{
+  Workout?: Resolver<ResolversTypes['Workout'], ParentType, ContextType>;
+  metaData?: Resolver<ResolversTypes['WorkoutMetaData'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type Resolvers<ContextType = any> = ResolversObject<{
   BodyArea?: BodyAreaResolvers<ContextType>;
   BodyAreaMoveScore?: BodyAreaMoveScoreResolvers<ContextType>;
@@ -3680,7 +3850,9 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   ClubInviteTokens?: ClubInviteTokensResolvers<ContextType>;
   ClubMemberSummary?: ClubMemberSummaryResolvers<ContextType>;
   ClubMembers?: ClubMembersResolvers<ContextType>;
+  ClubMetaData?: ClubMetaDataResolvers<ContextType>;
   ClubSummary?: ClubSummaryResolvers<ContextType>;
+  ClubWithMetaData?: ClubWithMetaDataResolvers<ContextType>;
   ClubWorkoutPlans?: ClubWorkoutPlansResolvers<ContextType>;
   ClubWorkouts?: ClubWorkoutsResolvers<ContextType>;
   Collection?: CollectionResolvers<ContextType>;
@@ -3720,6 +3892,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   UserProfileSummary?: UserProfileSummaryResolvers<ContextType>;
   Workout?: WorkoutResolvers<ContextType>;
   WorkoutGoal?: WorkoutGoalResolvers<ContextType>;
+  WorkoutMetaData?: WorkoutMetaDataResolvers<ContextType>;
   WorkoutMove?: WorkoutMoveResolvers<ContextType>;
   WorkoutPlan?: WorkoutPlanResolvers<ContextType>;
   WorkoutPlanDay?: WorkoutPlanDayResolvers<ContextType>;
@@ -3727,12 +3900,15 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   WorkoutPlanEnrolment?: WorkoutPlanEnrolmentResolvers<ContextType>;
   WorkoutPlanEnrolmentSummary?: WorkoutPlanEnrolmentSummaryResolvers<ContextType>;
   WorkoutPlanEnrolmentWithPlan?: WorkoutPlanEnrolmentWithPlanResolvers<ContextType>;
+  WorkoutPlanMetaData?: WorkoutPlanMetaDataResolvers<ContextType>;
   WorkoutPlanReview?: WorkoutPlanReviewResolvers<ContextType>;
   WorkoutPlanSummary?: WorkoutPlanSummaryResolvers<ContextType>;
+  WorkoutPlanWithMetaData?: WorkoutPlanWithMetaDataResolvers<ContextType>;
   WorkoutSection?: WorkoutSectionResolvers<ContextType>;
   WorkoutSectionType?: WorkoutSectionTypeResolvers<ContextType>;
   WorkoutSet?: WorkoutSetResolvers<ContextType>;
   WorkoutSummary?: WorkoutSummaryResolvers<ContextType>;
   WorkoutTag?: WorkoutTagResolvers<ContextType>;
+  WorkoutWithMetaData?: WorkoutWithMetaDataResolvers<ContextType>;
 }>;
 

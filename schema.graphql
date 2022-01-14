@@ -163,6 +163,12 @@ type ClubMembers {
   id: ID!
 }
 
+type ClubMetaData {
+  metaTags: [String!]!
+  reasonNotValidated: String
+  validated: PublicContentValidationStatus!
+}
+
 type ClubSummary {
   Admins: [UserAvatarData!]!
   Owner: UserAvatarData!
@@ -179,6 +185,11 @@ type ClubSummary {
   name: String!
   planCount: Int!
   workoutCount: Int!
+}
+
+type ClubWithMetaData {
+  Club: Club!
+  metaData: ClubMetaData!
 }
 
 type ClubWorkoutPlans {
@@ -390,7 +401,6 @@ input CreateUserBenchmarkInput {
 
 input CreateWorkoutInput {
   contentAccessScope: ContentAccessScope!
-  difficultyLevel: DifficultyLevel
   name: String!
 }
 
@@ -744,6 +754,7 @@ type Mutation {
   updateBodyTrackingEntry(data: UpdateBodyTrackingEntryInput!): BodyTrackingEntry!
   updateClubAnnouncement(data: UpdateClubAnnouncementInput!): ClubAnnouncement!
   updateClubInviteToken(data: UpdateClubInviteTokenInput!): ClubInviteTokens!
+  updateClubMetaData(data: UpdateClubMetaDataInput!): ClubMetaData!
   updateClubSummary(data: UpdateClubSummaryInput!): ClubSummary!
   updateCollection(data: UpdateCollectionInput!): Collection!
   updateEquipment(data: UpdateEquipmentInput!): Equipment
@@ -762,11 +773,13 @@ type Mutation {
   updateUserBenchmarkEntry(data: UpdateUserBenchmarkEntryInput!): UserBenchmarkEntry!
   updateUserProfile(data: UpdateUserProfileInput!): UpdateUserProfileResult!
   updateWorkout(data: UpdateWorkoutInput!): Workout!
+  updateWorkoutMetaData(data: UpdateWorkoutMetaDataInput!): WorkoutMetaData!
   updateWorkoutMove(data: UpdateWorkoutMoveInput!): WorkoutMove!
   updateWorkoutMoves(data: [UpdateWorkoutMoveInput!]!): [WorkoutMove!]!
   updateWorkoutPlan(data: UpdateWorkoutPlanInput!): WorkoutPlan!
   updateWorkoutPlanDay(data: UpdateWorkoutPlanDayInput!): WorkoutPlanDay!
   updateWorkoutPlanDayWorkout(data: UpdateWorkoutPlanDayWorkoutInput!): WorkoutPlanDayWorkout!
+  updateWorkoutPlanMetaData(data: UpdateWorkoutPlanMetaDataInput!): WorkoutPlanMetaData
   updateWorkoutPlanReview(data: UpdateWorkoutPlanReviewInput!): WorkoutPlanReview!
   updateWorkoutSection(data: UpdateWorkoutSectionInput!): WorkoutSection!
   updateWorkoutSet(data: UpdateWorkoutSetInput!): WorkoutSet!
@@ -774,7 +787,17 @@ type Mutation {
   userJoinPublicClub(clubId: ID!): ID!
 }
 
+enum PublicContentValidationStatus {
+  INVALID
+  PENDING
+  PENDINGUPDATED
+  VALID
+}
+
 type Query {
+  adminPublicClubs(status: PublicContentValidationStatus!): [ClubWithMetaData!]!
+  adminPublicWorkoutPlans(status: PublicContentValidationStatus!): [WorkoutPlanWithMetaData!]!
+  adminPublicWorkouts(status: PublicContentValidationStatus!): [WorkoutWithMetaData!]!
   bodyAreas: [BodyArea!]!
   bodyTrackingEntries: [BodyTrackingEntry!]!
   checkClubInviteToken(id: ID!): CheckClubInviteTokenResult!
@@ -974,6 +997,13 @@ input UpdateClubInviteTokenInput {
   name: String
 }
 
+input UpdateClubMetaDataInput {
+  id: ID!
+  metaTags: [String!]
+  reasonNotValidated: String
+  validated: PublicContentValidationStatus
+}
+
 input UpdateClubSummaryInput {
   contentAccessScope: ContentAccessScope
   coverImageUri: String
@@ -1164,13 +1194,20 @@ input UpdateWorkoutInput {
   contentAccessScope: ContentAccessScope
   coverImageUri: String
   description: String
-  difficultyLevel: DifficultyLevel
   id: ID!
   introAudioUri: String
   introVideoThumbUri: String
   introVideoUri: String
   lengthMinutes: Int
   name: String
+}
+
+input UpdateWorkoutMetaDataInput {
+  difficultyLevel: DifficultyLevel
+  id: ID!
+  metaTags: [String!]
+  reasonNotValidated: String
+  validated: PublicContentValidationStatus
 }
 
 input UpdateWorkoutMoveInput {
@@ -1210,6 +1247,14 @@ input UpdateWorkoutPlanInput {
   introVideoUri: String
   lengthWeeks: Int
   name: String
+}
+
+input UpdateWorkoutPlanMetaDataInput {
+  difficultyLevel: DifficultyLevel
+  id: ID!
+  metaTags: [String!]
+  reasonNotValidated: String
+  validated: PublicContentValidationStatus
 }
 
 input UpdateWorkoutPlanReviewInput {
@@ -1378,6 +1423,13 @@ type WorkoutGoal {
   name: String!
 }
 
+type WorkoutMetaData {
+  difficultyLevel: DifficultyLevel
+  metaTags: [String!]!
+  reasonNotValidated: String
+  validated: PublicContentValidationStatus!
+}
+
 type WorkoutMove {
   Equipment: Equipment
   Move: Move!
@@ -1459,6 +1511,13 @@ input WorkoutPlanFiltersInput {
   workoutGoals: [ID!]!
 }
 
+type WorkoutPlanMetaData {
+  difficultyLevel: DifficultyLevel
+  metaTags: [String!]!
+  reasonNotValidated: String
+  validated: PublicContentValidationStatus!
+}
+
 type WorkoutPlanReview {
   User: UserAvatarData!
   comment: String
@@ -1483,6 +1542,11 @@ type WorkoutPlanSummary {
   reviewScore: Float
   tags: [String!]!
   workoutsCount: Int!
+}
+
+type WorkoutPlanWithMetaData {
+  WorkoutPlan: WorkoutPlan!
+  metaData: WorkoutPlanMetaData!
 }
 
 type WorkoutSection {
@@ -1551,4 +1615,9 @@ type WorkoutSummary {
 type WorkoutTag {
   id: ID!
   tag: String!
+}
+
+type WorkoutWithMetaData {
+  Workout: Workout!
+  metaData: WorkoutMetaData!
 }

@@ -78,6 +78,13 @@ export default gql`
     CUSTOM
   }
 
+  enum PublicContentValidationStatus {
+    VALID
+    INVALID
+    PENDINGUPDATED
+    PENDING
+  }
+
   enum TimelinePostType {
     ANNOUNCEMENT
     WORKOUT

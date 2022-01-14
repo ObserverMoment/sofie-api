@@ -35,6 +35,8 @@ import {
   deleteClub,
 } from './club/club'
 
+import { adminPublicClubs, updateClubMetaData } from './club/metaData'
+
 import {
   createClubAnnouncement,
   updateClubAnnouncement,
@@ -191,6 +193,8 @@ import {
   duplicateWorkoutById,
 } from './workout/workout'
 
+import { adminPublicWorkouts, updateWorkoutMetaData } from './workout/metaData'
+
 import {
   createWorkoutSection,
   updateWorkoutSection,
@@ -236,6 +240,11 @@ import {
   updateWorkoutPlanReview,
   deleteWorkoutPlanReviewById,
 } from './workoutPlan/workoutPlan'
+
+import {
+  adminPublicWorkoutPlans,
+  updateWorkoutPlanMetaData,
+} from './workoutPlan/metaData'
 
 import {
   workoutPlanEnrolments,
@@ -287,6 +296,11 @@ const resolvers: Resolvers = {
   },
   Query: {
     validateToken: () => true, // Empty Resolver - call it and it will throw auth error if token is not valid / expired or if an associated user does not exist in the database.
+    //// ADMIN ONLY QUERIES ////
+    adminPublicWorkouts,
+    adminPublicWorkoutPlans,
+    adminPublicClubs,
+    //// END OF ADMIN ONLY QUERIES ////
     //// Core Data ////
     bodyAreas,
     equipments,
@@ -368,6 +382,11 @@ const resolvers: Resolvers = {
     workoutPlanEnrolmentById,
   },
   Mutation: {
+    //// ADMIN ONLY MUTATIONS ////
+    updateWorkoutMetaData,
+    updateWorkoutPlanMetaData,
+    updateClubMetaData,
+    //// END OF ADMIN ONLY MUTATIONS ////
     ///////////////
     //// Club /////
     ///////////////
