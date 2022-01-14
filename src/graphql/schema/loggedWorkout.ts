@@ -26,15 +26,14 @@ export default gql`
     sortPosition: Int!
     timeTakenSeconds: Int!
     repScore: Int
-    loggedWorkoutSectionData: LoggedWorkoutSectionData #### Deprecated ####
     WorkoutSectionType: WorkoutSectionType!
     LoggedWorkoutSets: [LoggedWorkoutSet!]!
-    LoggedWorkout: LoggedWorkout!
   }
 
   type LoggedWorkoutSet {
     id: ID!
     sectionRoundNumber: Int!
+    sortPosition: Int!
     timeTakenSeconds: Int
     LoggedWorkoutMoves: [LoggedWorkoutMove!]!
   }
@@ -73,15 +72,15 @@ export default gql`
     sortPosition: Int!
     repScore: Int
     timeTakenSeconds: Int!
-    loggedWorkoutSectionData: LoggedWorkoutSectionDataInput! #### Deprecated ####
     WorkoutSectionType: ConnectRelationInput!
-    loggedWorkoutSet: CreateLoggedWorkoutSetInLoggedWorkoutSectionInput!
+    LoggedWorkoutSets: [CreateLoggedWorkoutSetInLoggedWorkoutSectionInput!]!
   }
 
   input CreateLoggedWorkoutSetInLoggedWorkoutSectionInput {
     sectionRoundNumber: Int!
+    sortPosition: Int!
     timeTakenSeconds: Int
-    LoggedWorkoutMoves: CreateLoggedWorkoutMoveInLoggedWorkoutSetInput!
+    LoggedWorkoutMoves: [CreateLoggedWorkoutMoveInLoggedWorkoutSetInput!]!
   }
 
   input CreateLoggedWorkoutMoveInLoggedWorkoutSetInput {
@@ -109,7 +108,6 @@ export default gql`
     id: ID!
     timeTakenSeconds: Int
     repScore: Int
-    loggedWorkoutSectionData: LoggedWorkoutSectionDataInput #### Deprecated ####
   }
 
   input UpdateLoggedWorkoutSetInput {
@@ -127,37 +125,5 @@ export default gql`
     timeUnit: TimeUnit
     Equipment: ConnectRelationInput
     Move: ConnectRelationInput
-  }
-
-  ######### Structure for JSON type in the database. ###########
-  ######### Deprecated Jan 2022 #######
-  type LoggedWorkoutSectionData {
-    rounds: [WorkoutSectionRoundData!]!
-  }
-
-  type WorkoutSectionRoundData {
-    timeTakenSeconds: Int!
-    sets: [WorkoutSectionRoundSetData!]!
-  }
-
-  type WorkoutSectionRoundSetData {
-    timeTakenSeconds: Int!
-    # Comma separated list of the moves in the set. Including reps, move name and load.
-    moves: String!
-  }
-
-  input LoggedWorkoutSectionDataInput {
-    rounds: [WorkoutSectionRoundDataInput!]!
-  }
-
-  input WorkoutSectionRoundDataInput {
-    timeTakenSeconds: Int!
-    sets: [WorkoutSectionRoundSetDataInput!]!
-  }
-
-  input WorkoutSectionRoundSetDataInput {
-    timeTakenSeconds: Int!
-    # Comma separated list of the moves in the set. Including reps, move name and load.
-    moves: String!
   }
 `

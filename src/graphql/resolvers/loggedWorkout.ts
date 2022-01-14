@@ -4,11 +4,16 @@ import { Context } from '../..'
 import {
   LifetimeLogStatsSummary,
   LoggedWorkout,
+  LoggedWorkoutMove,
   LoggedWorkoutSection,
+  LoggedWorkoutSet,
   MutationCreateLoggedWorkoutArgs,
   MutationDeleteLoggedWorkoutByIdArgs,
   MutationUpdateLoggedWorkoutArgs,
+  MutationUpdateLoggedWorkoutMoveArgs,
+  MutationDeleteLoggedWorkoutMoveArgs,
   MutationUpdateLoggedWorkoutSectionArgs,
+  MutationUpdateLoggedWorkoutSetArgs,
   QueryLifetimeLogStatsSummaryArgs,
   QueryLogCountByWorkoutArgs,
   QueryLoggedWorkoutByIdArgs,
@@ -138,16 +143,32 @@ export const createLoggedWorkout = async (
           WorkoutSectionType: {
             connect: section.WorkoutSectionType,
           },
-          BodyAreas: section.BodyAreas
-            ? {
-                connect: section.BodyAreas,
-              }
-            : undefined,
-          MoveTypes: section.MoveTypes
-            ? {
-                connect: section.MoveTypes,
-              }
-            : undefined,
+          LoggedWorkoutSets: {
+            create: section.LoggedWorkoutSets.map((lws) => ({
+              sectionRoundNumber: lws.sectionRoundNumber,
+              sortPosition: lws.sortPosition,
+              timeTakenSeconds: lws.timeTakenSeconds,
+              User: { connect: { id: authedUserId } },
+              LoggedWorkoutMoves: {
+                create: lws.LoggedWorkoutMoves.map((lwm) => ({
+                  sortPosition: lwm.sortPosition,
+                  repType: lwm.repType,
+                  reps: lwm.reps,
+                  distanceUnit: lwm.distanceUnit || undefined,
+                  loadAmount: lwm.loadAmount || undefined,
+                  loadUnit: lwm.loadUnit || undefined,
+                  timeUnit: lwm.timeUnit || undefined,
+                  Equipment: lwm.Equipment
+                    ? {
+                        connect: lwm.Equipment,
+                      }
+                    : undefined,
+                  Move: { connect: lwm.Move },
+                  User: { connect: { id: authedUserId } },
+                })),
+              },
+            })),
+          },
         })),
       },
     },
@@ -233,16 +254,6 @@ export const updateLoggedWorkoutSection = async (
     data: {
       ...data,
       timeTakenSeconds: data.timeTakenSeconds || undefined,
-      loggedWorkoutSectionData: data.loggedWorkoutSectionData || undefined,
-      // For BodyAreas and MoveTypes.
-      // If present then do not ignore if null or [].
-      // Both null and [] will effectively clear all relations.
-      BodyAreas: data.hasOwnProperty('BodyAreas')
-        ? { set: data.BodyAreas || [] }
-        : undefined,
-      MoveTypes: data.hasOwnProperty('MoveTypes')
-        ? { set: data.MoveTypes || [] }
-        : undefined,
     },
     select,
   })
@@ -251,6 +262,88 @@ export const updateLoggedWorkoutSection = async (
     return updated as LoggedWorkoutSection
   } else {
     throw new ApolloError('updateLoggedWorkoutSection: There was an issue.')
+  }
+}
+
+export const updateLoggedWorkoutSet = async (
+  r: any,
+  { data }: MutationUpdateLoggedWorkoutSetArgs,
+  { authedUserId, select, prisma }: Context,
+) => {
+  await checkUserOwnsObject(data.id, 'loggedWorkoutSet', authedUserId, prisma)
+
+  const updated = await prisma.loggedWorkoutSet.update({
+    where: {
+      id: data.id,
+    },
+    data,
+    select,
+  })
+
+  if (updated) {
+    return updated as LoggedWorkoutSet
+  } else {
+    throw new ApolloError('updateLoggedWorkoutSet: There was an issue.')
+  }
+}
+
+export const updateLoggedWorkoutMove = async (
+  r: any,
+  { data }: MutationUpdateLoggedWorkoutMoveArgs,
+  { authedUserId, select, prisma }: Context,
+) => {
+  await checkUserOwnsObject(data.id, 'loggedWorkoutMove', authedUserId, prisma)
+
+  const updated = await prisma.loggedWorkoutMove.update({
+    where: {
+      id: data.id,
+    },
+    data: {
+      ...data,
+      repType: data.repType || undefined,
+      distanceUnit: data.distanceUnit || undefined,
+      loadAmount: data.loadAmount || undefined,
+      loadUnit: data.loadUnit || undefined,
+      timeUnit: data.timeUnit || undefined,
+      Equipment: data.Equipment
+        ? {
+            connect: data.Equipment,
+          }
+        : undefined,
+      Move: data.Move
+        ? {
+            connect: data.Move,
+          }
+        : undefined,
+    },
+    select,
+  })
+
+  if (updated) {
+    return updated as LoggedWorkoutMove
+  } else {
+    throw new ApolloError('updateLoggedWorkoutMove: There was an issue.')
+  }
+}
+
+export const deleteLoggedWorkoutMove = async (
+  r: any,
+  { id }: MutationDeleteLoggedWorkoutMoveArgs,
+  { authedUserId, select, prisma }: Context,
+) => {
+  await checkUserOwnsObject(id, 'loggedWorkoutMove', authedUserId, prisma)
+
+  const deleted = await prisma.loggedWorkoutMove.delete({
+    where: {
+      id,
+    },
+    select,
+  })
+
+  if (deleted) {
+    return id
+  } else {
+    throw new ApolloError('deleteLoggedWorkoutMove: There was an issue.')
   }
 }
 

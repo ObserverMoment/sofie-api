@@ -517,8 +517,8 @@ model LoggedWorkoutSection {
   LoggedWorkout            LoggedWorkout      @relation(fields: [loggedWorkoutId], references: [id], onDelete: Cascade)
   User                     User               @relation(fields: [userId], references: [id])
   WorkoutSectionType       WorkoutSectionType @relation(fields: [workoutSectionTypeId], references: [id])
-  BodyAreas                BodyArea[]
-  MoveTypes                MoveType[]
+  BodyAreas                BodyArea[] ///// @@@@deprecated in favour of new model.
+  MoveTypes                MoveType[] ///// @@@@deprecated in favour of new model.
   LoggedWorkoutSets        LoggedWorkoutSet[]
 }
 
@@ -526,6 +526,7 @@ model LoggedWorkoutSet {
   id                     String               @id @default(uuid())
   createdAt              DateTime             @default(now())
   sectionRoundNumber     Int
+  sortPosition           Int                  @default(0) /// TODO: Remove this default once migration to production is completed.
   timeTakenSeconds       Int?
   LoggedWorkoutSection   LoggedWorkoutSection @relation(fields: [loggedWorkoutSectionId], references: [id])
   loggedWorkoutSectionId String
