@@ -20,14 +20,13 @@ model Admin {
 /// / Global / Core Data / Tags ////////
 /// ////////////////////////////////////
 model BodyArea {
-  id                    String                 @id @default(uuid())
-  createdAt             DateTime               @default(now())
-  name                  String                 @unique
-  altNames              String?
-  frontBack             BodyAreaFrontBack      @default(FRONT)
-  upperLower            BodyAreaUpperLower     @default(UPPER)
-  BodyAreaMoveScores    BodyAreaMoveScore[]
-  LoggedWorkoutSections LoggedWorkoutSection[]
+  id                 String              @id @default(uuid())
+  createdAt          DateTime            @default(now())
+  name               String              @unique
+  altNames           String?
+  frontBack          BodyAreaFrontBack   @default(FRONT)
+  upperLower         BodyAreaUpperLower  @default(UPPER)
+  BodyAreaMoveScores BodyAreaMoveScore[]
 }
 
 model BodyAreaMoveScore {
@@ -77,13 +76,12 @@ model Move {
 }
 
 model MoveType {
-  id                    String                 @id @default(uuid())
-  createdAt             DateTime               @default(now())
-  name                  String
-  description           String?
-  imageUri              String?
-  Moves                 Move[]
-  LoggedWorkoutSections LoggedWorkoutSection[]
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  name        String
+  description String?
+  imageUri    String?
+  Moves       Move[]
 }
 
 model WorkoutGoal {
@@ -374,7 +372,6 @@ model WorkoutSet {
   id               String         @id @default(uuid())
   createdAt        DateTime       @default(now())
   sortPosition     Int
-  rounds           Int            @default(1) //// Deprecated - remove after UI update.
   workoutSectionId String
   userId           String
   duration         Int            @default(60)
@@ -517,22 +514,19 @@ model LoggedWorkout {
 }
 
 model LoggedWorkoutSection {
-  id                       String             @id @default(uuid())
-  createdAt                DateTime           @default(now())
-  loggedWorkoutId          String
-  workoutSectionTypeId     String
-  userId                   String
-  name                     String?
-  sortPosition             Int
-  repScore                 Int?
-  timeTakenSeconds         Int                @default(1800)
-  loggedWorkoutSectionData Json? ///// @@@@deprecated in favour of LoggedWorkoutSet model.
-  LoggedWorkout            LoggedWorkout      @relation(fields: [loggedWorkoutId], references: [id], onDelete: Cascade)
-  User                     User               @relation(fields: [userId], references: [id])
-  WorkoutSectionType       WorkoutSectionType @relation(fields: [workoutSectionTypeId], references: [id])
-  BodyAreas                BodyArea[] ///// @@@@deprecated in favour of new model.
-  MoveTypes                MoveType[] ///// @@@@deprecated in favour of new model.
-  LoggedWorkoutSets        LoggedWorkoutSet[]
+  id                   String             @id @default(uuid())
+  createdAt            DateTime           @default(now())
+  loggedWorkoutId      String
+  workoutSectionTypeId String
+  userId               String
+  name                 String?
+  sortPosition         Int
+  repScore             Int?
+  timeTakenSeconds     Int                @default(1800)
+  LoggedWorkout        LoggedWorkout      @relation(fields: [loggedWorkoutId], references: [id], onDelete: Cascade)
+  User                 User               @relation(fields: [userId], references: [id])
+  WorkoutSectionType   WorkoutSectionType @relation(fields: [workoutSectionTypeId], references: [id])
+  LoggedWorkoutSets    LoggedWorkoutSet[]
 }
 
 model LoggedWorkoutSet {
