@@ -26,22 +26,40 @@ export default gql`
     sortPosition: Int!
     timeTakenSeconds: Int!
     repScore: Int
-    loggedWorkoutSectionData: LoggedWorkoutSectionData
-    BodyAreas: [BodyArea!]!
     WorkoutSectionType: WorkoutSectionType!
-    MoveTypes: [MoveType!]!
-    LoggedWorkout: LoggedWorkout!
+    LoggedWorkoutSets: [LoggedWorkoutSet!]!
   }
 
-  #### Create Inputs - Nested create of LoggedWorkout + LoggedWorkoutSections ####
+  type LoggedWorkoutSet {
+    id: ID!
+    sectionRoundNumber: Int!
+    sortPosition: Int!
+    timeTakenSeconds: Int
+    LoggedWorkoutMoves: [LoggedWorkoutMove!]!
+  }
+
+  type LoggedWorkoutMove {
+    id: ID!
+    sortPosition: Int!
+    repType: WorkoutMoveRepType!
+    reps: Float!
+    distanceUnit: DistanceUnit!
+    loadAmount: Float!
+    loadUnit: LoadUnit!
+    timeUnit: TimeUnit!
+    Equipment: Equipment
+    Move: Move!
+  }
+
+  #### Create Inputs - Nested create of LoggedWorkout + LoggedWorkoutSections etc ####
   input CreateLoggedWorkoutInput {
     completedOn: DateTime!
     name: String!
     note: String
-    LoggedWorkoutSections: [CreateLoggedWorkoutSectionInLoggedWorkoutInput!]!
     GymProfile: ConnectRelationInput
     Workout: ConnectRelationInput
     WorkoutGoals: [ConnectRelationInput!]!
+    LoggedWorkoutSections: [CreateLoggedWorkoutSectionInLoggedWorkoutInput!]!
     # If the log should be connected to a ScheduledWorkout or a WorkoutPlanEnrolment then provide these.
     ScheduledWorkout: ConnectRelationInput
     # These objects are not related to the LoggedWorkout. We use them to create a CompletedWorkoutPlanDayWorkout - if they are both provided.
@@ -54,10 +72,27 @@ export default gql`
     sortPosition: Int!
     repScore: Int
     timeTakenSeconds: Int!
-    loggedWorkoutSectionData: LoggedWorkoutSectionDataInput!
     WorkoutSectionType: ConnectRelationInput!
-    BodyAreas: [ConnectRelationInput!]!
-    MoveTypes: [ConnectRelationInput!]!
+    LoggedWorkoutSets: [CreateLoggedWorkoutSetInLoggedWorkoutSectionInput!]!
+  }
+
+  input CreateLoggedWorkoutSetInLoggedWorkoutSectionInput {
+    sectionRoundNumber: Int!
+    sortPosition: Int!
+    timeTakenSeconds: Int
+    LoggedWorkoutMoves: [CreateLoggedWorkoutMoveInLoggedWorkoutSetInput!]!
+  }
+
+  input CreateLoggedWorkoutMoveInLoggedWorkoutSetInput {
+    sortPosition: Int!
+    repType: WorkoutMoveRepType!
+    reps: Float!
+    distanceUnit: DistanceUnit
+    loadAmount: Float
+    loadUnit: LoadUnit
+    timeUnit: TimeUnit
+    Equipment: ConnectRelationInput
+    Move: ConnectRelationInput!
   }
 
   #### Update Inputs - Updates are made atomically at each level. (Non nested) ####
@@ -73,41 +108,22 @@ export default gql`
     id: ID!
     timeTakenSeconds: Int
     repScore: Int
-    loggedWorkoutSectionData: LoggedWorkoutSectionDataInput
-    BodyAreas: [ConnectRelationInput!]!
-    MoveTypes: [ConnectRelationInput!]!
   }
 
-  ######### Structure for JSON type in the database. ###########
-  type LoggedWorkoutSectionData {
-    rounds: [WorkoutSectionRoundData!]!
+  input UpdateLoggedWorkoutSetInput {
+    id: ID!
+    timeTakenSeconds: Int
   }
 
-  type WorkoutSectionRoundData {
-    timeTakenSeconds: Int!
-    sets: [WorkoutSectionRoundSetData!]!
-  }
-
-  type WorkoutSectionRoundSetData {
-    rounds: Int!
-    timeTakenSeconds: Int!
-    # Comma separated list of the moves in the set. Including reps, move name and load.
-    moves: String!
-  }
-
-  input LoggedWorkoutSectionDataInput {
-    rounds: [WorkoutSectionRoundDataInput!]!
-  }
-
-  input WorkoutSectionRoundDataInput {
-    timeTakenSeconds: Int!
-    sets: [WorkoutSectionRoundSetDataInput!]!
-  }
-
-  input WorkoutSectionRoundSetDataInput {
-    rounds: Int!
-    timeTakenSeconds: Int!
-    # Comma separated list of the moves in the set. Including reps, move name and load.
-    moves: String!
+  input UpdateLoggedWorkoutMoveInput {
+    id: ID!
+    repType: WorkoutMoveRepType
+    reps: Float!
+    distanceUnit: DistanceUnit
+    loadAmount: Float
+    loadUnit: LoadUnit
+    timeUnit: TimeUnit
+    Equipment: ConnectRelationInput
+    Move: ConnectRelationInput
   }
 `

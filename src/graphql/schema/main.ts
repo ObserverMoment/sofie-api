@@ -184,10 +184,16 @@ export default gql`
     createLoggedWorkout(data: CreateLoggedWorkoutInput!): LoggedWorkout!
     updateLoggedWorkout(data: UpdateLoggedWorkoutInput!): LoggedWorkout!
     deleteLoggedWorkoutById(id: ID!): ID!
-    #### Logged Workout Section ####
     updateLoggedWorkoutSection(
       data: UpdateLoggedWorkoutSectionInput!
     ): LoggedWorkoutSection!
+    updateLoggedWorkoutSet(
+      data: UpdateLoggedWorkoutSetInput!
+    ): LoggedWorkoutSet!
+    updateLoggedWorkoutMove(
+      data: UpdateLoggedWorkoutMoveInput!
+    ): LoggedWorkoutMove!
+    deleteLoggedWorkoutMove(id: ID!): ID!
     ### Move ###
     createMove(data: CreateMoveInput!): Move!
     updateMove(data: UpdateMoveInput!): Move!

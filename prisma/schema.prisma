@@ -42,15 +42,16 @@ model BodyAreaMoveScore {
 }
 
 model Equipment {
-  id                 String        @id @default(uuid())
-  createdAt          DateTime      @default(now())
-  name               String        @unique
+  id                 String              @id @default(uuid())
+  createdAt          DateTime            @default(now())
+  name               String              @unique
   altNames           String?
-  loadAdjustable     Boolean       @default(true)
+  loadAdjustable     Boolean             @default(true)
   WorkoutMoves       WorkoutMove[]
   GymProfiles        GymProfile[]
-  RequiredForMoves   Move[]        @relation("moveToRequiredEquipments")
-  SelectableForMoves Move[]        @relation("moveToSelectableEquipments")
+  RequiredForMoves   Move[]              @relation("moveToRequiredEquipments")
+  SelectableForMoves Move[]              @relation("moveToSelectableEquipments")
+  LoggedWorkoutMoves LoggedWorkoutMove[]
 }
 
 model Move {
@@ -72,6 +73,7 @@ model Move {
   WorkoutMoves         WorkoutMove[]
   RequiredEquipments   Equipment[]          @relation("moveToRequiredEquipments")
   SelectableEquipments Equipment[]          @relation("moveToSelectableEquipments")
+  LoggedWorkoutMoves   LoggedWorkoutMove[]
 }
 
 model MoveType {
@@ -213,6 +215,8 @@ model User {
   JournalMoods           JournalMood[]
   JournalGoals           JournalGoal[]
   ClubAnnouncements      ClubAnnouncement[]
+  LoggedWorkoutSet       LoggedWorkoutSet[]
+  LoggedWorkoutMove      LoggedWorkoutMove[]
 }
 
 model UserBenchmark {
@@ -362,7 +366,7 @@ model WorkoutSet {
   id               String         @id @default(uuid())
   createdAt        DateTime       @default(now())
   sortPosition     Int
-  rounds           Int            @default(1)
+  rounds           Int            @default(1) //// Deprecated - remove after UI update.
   workoutSectionId String
   userId           String
   duration         Int            @default(60)
@@ -509,12 +513,46 @@ model LoggedWorkoutSection {
   sortPosition             Int
   repScore                 Int?
   timeTakenSeconds         Int                @default(1800)
-  loggedWorkoutSectionData Json?
+  loggedWorkoutSectionData Json? ///// @@@@deprecated in favour of LoggedWorkoutSet model.
   LoggedWorkout            LoggedWorkout      @relation(fields: [loggedWorkoutId], references: [id], onDelete: Cascade)
   User                     User               @relation(fields: [userId], references: [id])
   WorkoutSectionType       WorkoutSectionType @relation(fields: [workoutSectionTypeId], references: [id])
-  BodyAreas                BodyArea[]
-  MoveTypes                MoveType[]
+  BodyAreas                BodyArea[] ///// @@@@deprecated in favour of new model.
+  MoveTypes                MoveType[] ///// @@@@deprecated in favour of new model.
+  LoggedWorkoutSets        LoggedWorkoutSet[]
+}
+
+model LoggedWorkoutSet {
+  id                     String               @id @default(uuid())
+  createdAt              DateTime             @default(now())
+  sectionRoundNumber     Int
+  sortPosition           Int                  @default(0) /// TODO: Remove this default once migration to production is completed.
+  timeTakenSeconds       Int?
+  LoggedWorkoutSection   LoggedWorkoutSection @relation(fields: [loggedWorkoutSectionId], references: [id])
+  loggedWorkoutSectionId String
+  LoggedWorkoutMoves     LoggedWorkoutMove[]
+  User                   User                 @relation(fields: [userId], references: [id])
+  userId                 String
+}
+
+model LoggedWorkoutMove {
+  id                 String             @id @default(uuid())
+  createdAt          DateTime           @default(now())
+  sortPosition       Int
+  repType            WorkoutMoveRepType
+  reps               Float
+  distanceUnit       DistanceUnit       @default(METRES)
+  loadAmount         Float              @default(0)
+  loadUnit           LoadUnit           @default(KG)
+  timeUnit           TimeUnit           @default(SECONDS)
+  Equipment          Equipment?         @relation(fields: [equipmentId], references: [id])
+  equipmentId        String?
+  Move               Move               @relation(fields: [moveId], references: [id])
+  moveId             String
+  LoggedWorkoutSet   LoggedWorkoutSet   @relation(fields: [loggedWorkoutSetId], references: [id])
+  loggedWorkoutSetId String
+  User               User               @relation(fields: [userId], references: [id])
+  userId             String
 }
 
 //////////////////////////////////////////////
