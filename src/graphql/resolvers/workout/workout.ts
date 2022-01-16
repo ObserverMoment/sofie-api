@@ -264,7 +264,6 @@ export const duplicateWorkoutById = async (
           WorkoutSets: {
             create: section.WorkoutSets.map((set) => ({
               sortPosition: set.sortPosition,
-              rounds: set.rounds,
               duration: set.duration,
               User: {
                 connect: { id: authedUserId },

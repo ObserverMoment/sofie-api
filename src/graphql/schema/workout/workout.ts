@@ -12,6 +12,7 @@ export default gql`
     lengthMinutes: Int
     coverImageUri: String
     description: String
+    # Should be read only for non admins - to be useful the difficulty level should be assigned by a professional.
     difficultyLevel: DifficultyLevel
     loggedSessionsCount: Int!
     hasClassVideo: Boolean!
@@ -33,6 +34,7 @@ export default gql`
     introVideoThumbUri: String
     introAudioUri: String
     coverImageUri: String
+    # Should be read only for non admins - to be useful the difficulty level should be assigned by a professional.
     difficultyLevel: DifficultyLevel
     contentAccessScope: ContentAccessScope!
     WorkoutGoals: [WorkoutGoal!]!
@@ -43,7 +45,6 @@ export default gql`
   # Just creates the basic required fields.
   input CreateWorkoutInput {
     name: String!
-    difficultyLevel: DifficultyLevel
     contentAccessScope: ContentAccessScope!
   }
 
@@ -56,7 +57,6 @@ export default gql`
     introVideoThumbUri: String
     introAudioUri: String
     coverImageUri: String
-    difficultyLevel: DifficultyLevel
     contentAccessScope: ContentAccessScope
     WorkoutGoals: [ConnectRelationInput!]
     WorkoutTags: [ConnectRelationInput!]
