@@ -5,6 +5,18 @@ export default gql`
   scalar JSON
 
   type Query {
+    #### ADMIN ONLY QUERIES ####
+    # Content Requiring Validation #
+    adminPublicWorkouts(
+      status: PublicContentValidationStatus!
+    ): [WorkoutWithMetaData!]!
+    adminPublicWorkoutPlans(
+      status: PublicContentValidationStatus!
+    ): [WorkoutPlanWithMetaData!]!
+    adminPublicClubs(
+      status: PublicContentValidationStatus!
+    ): [ClubWithMetaData!]!
+    #### END OF ADMIN ONLY QUERIES ####
     validateToken: Boolean!
     #### Core Data ####
     bodyAreas: [BodyArea!]!
@@ -106,6 +118,13 @@ export default gql`
   }
 
   type Mutation {
+    #### ADMIN ONLY MUTATIONS ####
+    updateWorkoutMetaData(data: UpdateWorkoutMetaDataInput!): WorkoutMetaData!
+    updateWorkoutPlanMetaData(
+      data: UpdateWorkoutPlanMetaDataInput!
+    ): WorkoutPlanMetaData
+    updateClubMetaData(data: UpdateClubMetaDataInput!): ClubMetaData!
+    #### END OF ADMIN ONLY MUTATIONS ####
     #### Archive ####
     archiveWorkoutById(id: ID!): Workout!
     unarchiveWorkoutById(id: ID!): Workout!
