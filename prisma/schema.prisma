@@ -35,7 +35,7 @@ model BodyAreaMoveScore {
   bodyAreaId String
   score      Int      @default(1)
   BodyArea   BodyArea @relation(fields: [bodyAreaId], references: [id])
-  Move       Move     @relation(fields: [moveId], references: [id])
+  Move       Move     @relation(fields: [moveId], references: [id], onDelete: Cascade)
 
   @@id([moveId, bodyAreaId])
 }
@@ -67,7 +67,7 @@ model Move {
   validRepTypes        WorkoutMoveRepType[]
   userId               String?
   MoveType             MoveType?            @relation(fields: [moveTypeId], references: [id])
-  User                 User?                @relation(fields: [userId], references: [id])
+  User                 User?                @relation(fields: [userId], references: [id], onDelete: Cascade)
   BodyAreaMoveScores   BodyAreaMoveScore[]
   WorkoutMoves         WorkoutMove[]
   RequiredEquipments   Equipment[]          @relation("moveToRequiredEquipments")
@@ -114,7 +114,7 @@ model Collection {
   userId       String
   description  String?
   name         String
-  User         User          @relation(fields: [userId], references: [id])
+  User         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   Workouts     Workout[]
   WorkoutPlans WorkoutPlan[]
 }
@@ -125,7 +125,7 @@ model GymProfile {
   name              String
   description       String?
   userId            String
-  User              User               @relation(fields: [userId], references: [id])
+  User              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   LoggedWorkouts    LoggedWorkout[]
   ScheduledWorkouts ScheduledWorkout[]
   Equipments        Equipment[]
@@ -143,7 +143,7 @@ model ScheduledWorkout {
   workoutPlanEnrolmentId  String?
   GymProfile              GymProfile?            @relation(fields: [gymProfileId], references: [id])
   LoggedWorkout           LoggedWorkout?         @relation(fields: [loggedWorkoutId], references: [id])
-  User                    User                   @relation(fields: [userId], references: [id])
+  User                    User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
   Workout                 Workout?               @relation(fields: [workoutId], references: [id])
   WorkoutPlanEnrolment    WorkoutPlanEnrolment?  @relation(fields: [workoutPlanEnrolmentId], references: [id])
   WorkoutPlanDayWorkout   WorkoutPlanDayWorkout? @relation(fields: [workoutPlanDayWorkoutId], references: [id])
@@ -227,7 +227,7 @@ model UserBenchmark {
   benchmarkType        BenchmarkType        @default(MAXLOAD)
   equipmentInfo        String?
   loadUnit             LoadUnit             @default(KG)
-  User                 User                 @relation(fields: [userId], references: [id])
+  User                 User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
   UserBenchmarkEntries UserBenchmarkEntry[]
 }
 
@@ -241,7 +241,7 @@ model UserBenchmarkEntry {
   videoThumbUri   String?
   userBenchmarkId String
   score           Float
-  UserBenchmark   UserBenchmark @relation(fields: [userBenchmarkId], references: [id])
+  UserBenchmark   UserBenchmark @relation(fields: [userBenchmarkId], references: [id], onDelete: Cascade)
   User            User          @relation(fields: [userId], references: [id])
 }
 
@@ -260,7 +260,7 @@ model Club {
   introAudioUri      String?
   userId             String
   contentAccessScope ContentAccessScope            @default(PRIVATE)
-  Owner              User                          @relation("owner", fields: [userId], references: [id])
+  Owner              User                          @relation("owner", fields: [userId], references: [id], onDelete: Cascade)
   ClubInviteTokens   ClubInviteToken[]
   Workouts           Workout[]
   WorkoutPlans       WorkoutPlan[]
@@ -317,7 +317,7 @@ model Workout {
   archived              Boolean                       @default(false)
   lengthMinutes         Int?
   metaData              Json?
-  User                  User                          @relation(fields: [userId], references: [id])
+  User                  User                          @relation(fields: [userId], references: [id], onDelete: Cascade)
   LoggedWorkouts        LoggedWorkout[]
   ScheduledWorkouts     ScheduledWorkout[]
   WorkoutPlanDayWorkout WorkoutPlanDayWorkout[]
@@ -339,7 +339,7 @@ model WorkoutTag {
   createdAt    DateTime      @default(now())
   userId       String
   tag          String
-  User         User          @relation(fields: [userId], references: [id])
+  User         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   WorkoutPlans WorkoutPlan[]
   Workouts     Workout[]
 }
@@ -362,8 +362,8 @@ model WorkoutSection {
   archived             Boolean            @default(false)
   note                 String?
   timecap              Int                @default(0)
-  User                 User               @relation(fields: [userId], references: [id])
-  Workout              Workout            @relation(fields: [workoutId], references: [id])
+  User                 User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Workout              Workout            @relation(fields: [workoutId], references: [id], onDelete: Cascade)
   WorkoutSectionType   WorkoutSectionType @relation(fields: [workoutSectionTypeId], references: [id])
   WorkoutSets          WorkoutSet[]
 }
@@ -375,8 +375,8 @@ model WorkoutSet {
   workoutSectionId String
   userId           String
   duration         Int            @default(60)
-  User             User           @relation(fields: [userId], references: [id])
-  WorkoutSection   WorkoutSection @relation(fields: [workoutSectionId], references: [id])
+  User             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  WorkoutSection   WorkoutSection @relation(fields: [workoutSectionId], references: [id], onDelete: Cascade)
   WorkoutMoves     WorkoutMove[]
 }
 
@@ -395,9 +395,9 @@ model WorkoutMove {
   userId       String
   timeUnit     TimeUnit           @default(SECONDS)
   Equipment    Equipment?         @relation(fields: [equipmentId], references: [id])
-  Move         Move               @relation(fields: [moveId], references: [id])
-  User         User               @relation(fields: [userId], references: [id])
-  WorkoutSet   WorkoutSet         @relation(fields: [workoutSetId], references: [id])
+  Move         Move               @relation(fields: [moveId], references: [id], onDelete: Cascade)
+  User         User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  WorkoutSet   WorkoutSet         @relation(fields: [workoutSetId], references: [id], onDelete: Cascade)
 }
 
 /// ////////////////////////////////////////
@@ -417,7 +417,7 @@ model WorkoutPlan {
   userId                String
   lengthWeeks           Int                           @default(2)
   daysPerWeek           Int                           @default(3)
-  User                  User                          @relation(fields: [userId], references: [id])
+  User                  User                          @relation(fields: [userId], references: [id], onDelete: Cascade)
   WorkoutPlanDays       WorkoutPlanDay[]
   WorkoutPlanEnrolments WorkoutPlanEnrolment[]
   WorkoutPlanReviews    WorkoutPlanReview[]
@@ -438,8 +438,8 @@ model WorkoutPlanDay {
   dayNumber              Int
   workoutPlanId          String
   userId                 String
-  User                   User                    @relation(fields: [userId], references: [id])
-  WorkoutPlan            WorkoutPlan             @relation(fields: [workoutPlanId], references: [id])
+  User                   User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  WorkoutPlan            WorkoutPlan             @relation(fields: [workoutPlanId], references: [id], onDelete: Cascade)
   WorkoutPlanDayWorkouts WorkoutPlanDayWorkout[]
 }
 
@@ -451,9 +451,9 @@ model WorkoutPlanDayWorkout {
   workoutId                       String
   workoutPlanDayId                String
   userId                          String
-  User                            User                             @relation(fields: [userId], references: [id])
-  Workout                         Workout                          @relation(fields: [workoutId], references: [id])
-  WorkoutPlanDay                  WorkoutPlanDay                   @relation(fields: [workoutPlanDayId], references: [id])
+  User                            User                             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Workout                         Workout                          @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+  WorkoutPlanDay                  WorkoutPlanDay                   @relation(fields: [workoutPlanDayId], references: [id], onDelete: Cascade)
   CompletedWorkoutPlanDayWorkouts CompletedWorkoutPlanDayWorkout[]
   ScheduledWorkouts               ScheduledWorkout[]
 }
@@ -464,8 +464,8 @@ model WorkoutPlanEnrolment {
   startDate                       DateTime?
   userId                          String
   workoutPlanId                   String
-  User                            User                             @relation(fields: [userId], references: [id])
-  WorkoutPlan                     WorkoutPlan                      @relation(fields: [workoutPlanId], references: [id])
+  User                            User                             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  WorkoutPlan                     WorkoutPlan                      @relation(fields: [workoutPlanId], references: [id], onDelete: Cascade)
   ScheduledWorkouts               ScheduledWorkout[]
   CompletedWorkoutPlanDayWorkouts CompletedWorkoutPlanDayWorkout[]
 }
@@ -473,11 +473,11 @@ model WorkoutPlanEnrolment {
 model CompletedWorkoutPlanDayWorkout {
   id                      String                @id @default(uuid())
   createdAt               DateTime              @default(now())
-  WorkoutPlanDayWorkout   WorkoutPlanDayWorkout @relation(fields: [workoutPlanDayWorkoutId], references: [id])
+  WorkoutPlanDayWorkout   WorkoutPlanDayWorkout @relation(fields: [workoutPlanDayWorkoutId], references: [id], onDelete: Cascade)
   workoutPlanDayWorkoutId String
   LoggedWorkout           LoggedWorkout?        @relation(fields: [loggedWorkoutId], references: [id])
   loggedWorkoutId         String?               @unique
-  WorkoutPlanEnrolment    WorkoutPlanEnrolment  @relation(fields: [workoutPlanEnrolmentId], references: [id])
+  WorkoutPlanEnrolment    WorkoutPlanEnrolment  @relation(fields: [workoutPlanEnrolmentId], references: [id], onDelete: Cascade)
   workoutPlanEnrolmentId  String
 }
 
@@ -488,8 +488,8 @@ model WorkoutPlanReview {
   score         Float
   comment       String?
   workoutPlanId String
-  User          User        @relation(fields: [userId], references: [id])
-  WorkoutPlan   WorkoutPlan @relation(fields: [workoutPlanId], references: [id])
+  User          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  WorkoutPlan   WorkoutPlan @relation(fields: [workoutPlanId], references: [id], onDelete: Cascade)
 }
 
 /// ///////////////////////////////////////////////////////
@@ -505,7 +505,7 @@ model LoggedWorkout {
   note                           String?
   gymProfileId                   String?
   GymProfile                     GymProfile?                     @relation(fields: [gymProfileId], references: [id])
-  User                           User                            @relation(fields: [userId], references: [id])
+  User                           User                            @relation(fields: [userId], references: [id], onDelete: Cascade)
   Workout                        Workout?                        @relation(fields: [workoutId], references: [id])
   LoggedWorkoutSections          LoggedWorkoutSection[]
   ScheduledWorkout               ScheduledWorkout?
@@ -524,7 +524,7 @@ model LoggedWorkoutSection {
   repScore             Int?
   timeTakenSeconds     Int                @default(1800)
   LoggedWorkout        LoggedWorkout      @relation(fields: [loggedWorkoutId], references: [id], onDelete: Cascade)
-  User                 User               @relation(fields: [userId], references: [id])
+  User                 User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   WorkoutSectionType   WorkoutSectionType @relation(fields: [workoutSectionTypeId], references: [id])
   LoggedWorkoutSets    LoggedWorkoutSet[]
 }
@@ -535,10 +535,10 @@ model LoggedWorkoutSet {
   sectionRoundNumber     Int
   sortPosition           Int                  @default(0) /// TODO: Remove this default once migration to production is completed.
   timeTakenSeconds       Int?
-  LoggedWorkoutSection   LoggedWorkoutSection @relation(fields: [loggedWorkoutSectionId], references: [id])
+  LoggedWorkoutSection   LoggedWorkoutSection @relation(fields: [loggedWorkoutSectionId], references: [id], onDelete: Cascade)
   loggedWorkoutSectionId String
   LoggedWorkoutMoves     LoggedWorkoutMove[]
-  User                   User                 @relation(fields: [userId], references: [id])
+  User                   User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId                 String
 }
 
@@ -554,11 +554,11 @@ model LoggedWorkoutMove {
   timeUnit           TimeUnit           @default(SECONDS)
   Equipment          Equipment?         @relation(fields: [equipmentId], references: [id])
   equipmentId        String?
-  Move               Move               @relation(fields: [moveId], references: [id])
+  Move               Move               @relation(fields: [moveId], references: [id], onDelete: Cascade)
   moveId             String
-  LoggedWorkoutSet   LoggedWorkoutSet   @relation(fields: [loggedWorkoutSetId], references: [id])
+  LoggedWorkoutSet   LoggedWorkoutSet   @relation(fields: [loggedWorkoutSetId], references: [id], onDelete: Cascade)
   loggedWorkoutSetId String
-  User               User               @relation(fields: [userId], references: [id])
+  User               User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId             String
 }
 
@@ -574,7 +574,7 @@ model BodyTrackingEntry {
   photoUris      String[]
   note           String?
   userId         String
-  User           User           @relation(fields: [userId], references: [id])
+  User           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 /////////////////////////////////////
@@ -585,7 +585,7 @@ model JournalNote {
   createdAt    DateTime @default(now())
   voiceNoteUri String?
   textNote     String?
-  User         User     @relation(fields: [userId], references: [id])
+  User         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId       String
 }
 
@@ -596,7 +596,7 @@ model JournalMood {
   energyScore Int
   tags        String[]
   textNote    String?
-  User        User     @relation(fields: [userId], references: [id])
+  User        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      String
 }
 
@@ -607,7 +607,7 @@ model JournalGoal {
   description   String?
   deadline      DateTime?
   completedDate DateTime?
-  User          User      @relation(fields: [userId], references: [id])
+  User          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId        String
 }
 
