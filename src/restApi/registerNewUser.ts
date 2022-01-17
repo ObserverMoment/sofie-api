@@ -1,6 +1,6 @@
 import { PrismaClient } from '.prisma/client'
 import {
-  createStreamChatUser,
+  upsertStreamChatUser,
   createStreamFeedUser,
   getUserChatToken,
   getUserFeedToken,
@@ -63,7 +63,7 @@ export default async function (
         }
 
         // Create a new user for GetStreamChat services.
-        await createStreamChatUser(user.id)
+        await upsertStreamChatUser(user.id, displayName)
 
         // Get the user token associated with this new user.
         const streamChatToken = getUserChatToken(user.id)
