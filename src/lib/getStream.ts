@@ -305,7 +305,7 @@ export async function updateStreamChatUser(
       set.name = displayName
     }
     if (avatarUri) {
-      set.image = getAvatarUrl(avatarUri)
+      set.image = avatarUri
     }
 
     const update = {
