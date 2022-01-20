@@ -17,7 +17,10 @@ import {
   UserProfileSummary,
   WorkoutTag,
 } from '../../generated/graphql'
-import { getUserFollowersCount } from '../../lib/getStream'
+import {
+  getUserFollowersCount,
+  updateStreamChatUser,
+} from '../../lib/getStream'
 import { checkUserMediaForDeletion, deleteFiles } from '../../lib/uploadcare'
 import { AccessScopeError, checkUserOwnsObject } from '../utils'
 import { formatClubSummaries } from './club/utils'
@@ -337,6 +340,15 @@ export const updateUserProfile = async (
   })
 
   if (updated) {
+    /// Update the user info on Stream Chat.
+    if (data.displayName || data.avatarUri) {
+      await updateStreamChatUser(
+        authedUserId,
+        data.displayName || undefined,
+        data.avatarUri || undefined,
+      )
+    }
+
     if (fileUrisForDeletion && fileUrisForDeletion.length > 0) {
       await deleteFiles(fileUrisForDeletion)
     }

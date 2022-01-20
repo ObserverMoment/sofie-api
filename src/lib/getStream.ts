@@ -6,6 +6,7 @@ import {
 } from '../generated/graphql'
 import { PrismaClient } from '@prisma/client'
 import { checkUserIsOwnerOrAdminOfClub } from '../graphql/resolvers/club/utils'
+import { getAvatarUrl } from './uploadcare'
 
 export let streamFeedClient: StreamClient | null = null
 export let streamChatClient: StreamChat | null = null
@@ -264,14 +265,54 @@ export async function getUserFollowersCount(userId: string) {
 //////////////////////
 /////// Chat /////////
 //////////////////////
-export async function createStreamChatUser(userId: string) {
+export async function upsertStreamChatUser(
+  userId: string,
+  displayName: string,
+) {
   try {
     if (!streamChatClient) {
       throw Error('streamChatClient not initialized')
     }
     await streamChatClient!.upsertUser({
       id: userId,
+      name: displayName,
     })
+  } catch (e) {
+    console.log(e)
+    throw new Error(String(e))
+  }
+}
+
+type SetFields = {
+  name?: string
+  image?: string
+}
+
+export async function updateStreamChatUser(
+  userId: string,
+  displayName?: string,
+  avatarUri?: string,
+) {
+  try {
+    if (!displayName && !avatarUri) return
+
+    if (!streamChatClient) {
+      throw Error('streamChatClient not initialized')
+    }
+
+    const set: SetFields = {}
+    if (displayName) {
+      set.name = displayName
+    }
+    if (avatarUri) {
+      set.image = avatarUri
+    }
+
+    const update = {
+      id: userId,
+      set,
+    }
+    await streamChatClient.partialUpdateUser(update)
   } catch (e) {
     console.log(e)
     throw new Error(String(e))
