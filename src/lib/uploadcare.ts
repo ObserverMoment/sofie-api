@@ -14,7 +14,18 @@ import {
 } from '../generated/graphql'
 import { AccessScopeError } from '../graphql/utils'
 
-const uploadcareApiUBaseUri = 'https://api.uploadcare.com'
+const uploadcareApiUBaseUrl = 'https://api.uploadcare.com'
+const cdnBaseUrl = 'https://ucarecdn.com/'
+
+/// Gets a file Url in small size for avatar use.
+export function getAvatarUrl(uid: string) {
+  return `${cdnBaseUrl}${uid}/-/preview/400x400/`
+}
+
+/// Gets a file Url in small size for avatar use.
+export function getFileUrl(uid: string) {
+  return `${cdnBaseUrl}${uid}`
+}
 
 // https://github.com/RexMorgan/uploadcare-node/blob/master/lib/main.js
 // https://uploadcare.com/docs/rest_api/requests_auth/
@@ -51,7 +62,7 @@ function prepareHeaders(verb: string, path: string, requestBody: any = '') {
 
 export async function deleteFiles(fileIds: string[]): Promise<boolean> {
   const requestBody = JSON.stringify(fileIds)
-  const res = await fetch(`${uploadcareApiUBaseUri}/files/storage/`, {
+  const res = await fetch(`${uploadcareApiUBaseUrl}/files/storage/`, {
     method: 'DELETE',
     headers: prepareHeaders('DELETE', '/files/storage/', requestBody),
     body: requestBody,
