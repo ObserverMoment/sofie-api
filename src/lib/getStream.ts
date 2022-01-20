@@ -6,7 +6,6 @@ import {
 } from '../generated/graphql'
 import { PrismaClient } from '@prisma/client'
 import { checkUserIsOwnerOrAdminOfClub } from '../graphql/resolvers/club/utils'
-import { getAvatarUrl } from './uploadcare'
 
 export let streamFeedClient: StreamClient | null = null
 export let streamChatClient: StreamChat | null = null
@@ -19,7 +18,7 @@ const CLUB_MEMBERS_FEED_NAME = 'club_members_feed'
 const USER_FEED_NAME = 'user_feed'
 // Timelines follow feeds and they are what users view when they see their timleine.
 const USER_TIMELINE_FEED_NAME = 'user_timeline'
-const USER_NOTIFICATION_NAME = 'user_notification'
+const USER_NOTIFICATION_FEED_NAME = 'user_notification'
 
 /// Call this when booting app. Sets up clients for chat and feeds.
 export function initGetStreamClients() {
@@ -105,7 +104,7 @@ export async function toggleFollowClubMembersFeed(
       await userTimeline.follow(CLUB_MEMBERS_FEED_NAME, clubId)
     } else {
       await userTimeline.unfollow(CLUB_MEMBERS_FEED_NAME, clubId, {
-        // Err on the side of caution re. club feed data.
+        // Err on the side of caution re. club feed data as this is 'paid content'.
         keepHistory: false,
       })
     }

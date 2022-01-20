@@ -17,6 +17,7 @@ import {
 import {
   addStreamUserToClubMemberChat,
   removeStreamUserFromClubMemberChat,
+  toggleFollowClubMembersFeed,
 } from '../../../lib/getStream'
 import {
   selectForClubInviteToken,
@@ -113,6 +114,8 @@ export const userJoinPublicClub = async (
   if (updated) {
     /// Add the new member to the GetStream chat group.
     await addStreamUserToClubMemberChat(updated.id, authedUserId)
+    /// Subscribe the user's timeline_feed to the club_feed.
+    await toggleFollowClubMembersFeed(updated.id, authedUserId, 'FOLLOW')
     return updated.id
   } else {
     throw new ApolloError('userJoinPublicClub: There was an issue.')
@@ -310,6 +313,8 @@ export const addUserToClubViaInviteToken = async (
   if (updatedClub) {
     /// Add the new member to the GetStream chat group.
     await addStreamUserToClubMemberChat((updatedClub as Club).id, userId)
+    /// Subscribe the user's timeline_feed to the club_feed.
+    await toggleFollowClubMembersFeed(updatedClub.id, userId, 'FOLLOW')
     return updatedClub.id
   } else {
     throw new ApolloError('addUserToClubViaInviteToken: There was an issue.')
@@ -455,6 +460,8 @@ export const removeUserFromClub = async (
   if (updated) {
     /// Remove the member from the GetStream chat group.
     await removeStreamUserFromClubMemberChat(updated.id, userToRemoveId)
+    /// Unsubscribe the user's timeline_feed to the club_feed. This also removes feed history from their timeline.
+    await toggleFollowClubMembersFeed(updated.id, userToRemoveId, 'UNFOLLOW')
     return formatClubMembers(clubId, updated)
   } else {
     throw new ApolloError('removeUserFromClub: There was an issue.')
