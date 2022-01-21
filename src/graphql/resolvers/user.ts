@@ -20,6 +20,7 @@ import {
 import {
   getUserFollowersCount,
   updateStreamChatUser,
+  updateStreamFeedUser,
 } from '../../lib/getStream'
 import { checkUserMediaForDeletion, deleteFiles } from '../../lib/uploadcare'
 import { AccessScopeError, checkUserOwnsObject } from '../utils'
@@ -343,6 +344,11 @@ export const updateUserProfile = async (
     /// Update the user info on Stream Chat.
     if (data.displayName || data.avatarUri) {
       await updateStreamChatUser(
+        authedUserId,
+        data.displayName || undefined,
+        data.avatarUri || undefined,
+      )
+      await updateStreamFeedUser(
         authedUserId,
         data.displayName || undefined,
         data.avatarUri || undefined,

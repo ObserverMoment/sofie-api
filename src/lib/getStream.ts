@@ -20,6 +20,11 @@ const USER_FEED_NAME = 'user_feed'
 const USER_TIMELINE_FEED_NAME = 'user_timeline'
 const USER_NOTIFICATION_FEED_NAME = 'user_notification'
 
+type SetUserFields = {
+  name?: string
+  image?: string
+}
+
 /// Call this when booting app. Sets up clients for chat and feeds.
 export function initGetStreamClients() {
   try {
@@ -55,12 +60,45 @@ export function initGetStreamClients() {
  * [user_notifications] = notifications from the system.
  * [club_members_feed] = timelines of members can (optionally) follow this feed to get club related posts.
  */
-export async function createStreamFeedUser(userId: string) {
+export async function createStreamFeedUser(
+  userId: string,
+  displayName: string,
+) {
   try {
     if (!streamFeedClient) {
       throw Error('streamFeedClient not initialized')
     }
-    await streamFeedClient!.user(userId).create()
+    await streamFeedClient!.user(userId).create({
+      name: displayName,
+    })
+  } catch (e) {
+    console.log(e)
+    throw new Error(String(e))
+  }
+}
+
+export async function updateStreamFeedUser(
+  userId: string,
+  displayName?: string,
+  avatarUri?: string,
+) {
+  try {
+    if (!displayName && !avatarUri) return
+
+    if (!streamFeedClient) {
+      throw Error('streamFeedClient not initialized')
+    }
+
+    const update: SetUserFields = {}
+
+    if (displayName) {
+      update.name = displayName
+    }
+    if (avatarUri) {
+      update.image = avatarUri
+    }
+
+    await streamFeedClient.user(userId).update(update)
   } catch (e) {
     console.log(e)
     throw new Error(String(e))
@@ -282,11 +320,6 @@ export async function upsertStreamChatUser(
   }
 }
 
-type SetFields = {
-  name?: string
-  image?: string
-}
-
 export async function updateStreamChatUser(
   userId: string,
   displayName?: string,
@@ -299,7 +332,8 @@ export async function updateStreamChatUser(
       throw Error('streamChatClient not initialized')
     }
 
-    const set: SetFields = {}
+    const set: SetUserFields = {}
+
     if (displayName) {
       set.name = displayName
     }
