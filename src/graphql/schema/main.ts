@@ -42,6 +42,12 @@ export default gql`
     #### Invite Tokens ####
     # The ID is the token string, we pass it to check that it is valid #
     checkClubInviteToken(id: ID!): CheckClubInviteTokenResult!
+    #### Club Feeds ####
+    clubMembersFeedPosts(
+      clubId: ID!
+      limit: Int!
+      offset: Int!
+    ): [StreamEnrichedActivity!]!
     #### Logged Workouts ####
     logCountByWorkout(id: ID!): Int!
     lifetimeLogStatsSummary(userId: ID!): LifetimeLogStatsSummary!
@@ -64,16 +70,6 @@ export default gql`
     textSearchWorkoutPlanNames(text: String!): [TextSearchResult!]
     textSearchUserProfiles(text: String!): [UserProfileSummary!]
     textSearchUserNames(text: String!): [TextSearchResult!]
-    #### Timeline Feed ####
-    # Gets DB objects referenced in getStream activities (posts) and maps fields to those required for displaying in a timeline or feed #
-    timelinePostsData(
-      postDataRequests: [TimelinePostDataRequestInput!]!
-    ): [TimelinePostObjectData!]!
-    clubMembersFeedPosts(
-      clubId: ID!
-      limit: Int!
-      offset: Int!
-    ): [TimelinePostFullData!]!
     #### User ####
     checkUniqueDisplayName(displayName: String!): Boolean!
     gymProfiles: [GymProfile!]!
@@ -156,20 +152,12 @@ export default gql`
       workoutPlanId: ID!
       clubId: ID!
     ): ClubWorkoutPlans!
-    #### ClubAnnouncement ####
-    # Can be shared as a ClubTimeline Post #
-    createClubAnnouncement(
-      data: CreateClubAnnouncementInput!
-    ): ClubAnnouncement!
-    updateClubAnnouncement(
-      data: UpdateClubAnnouncementInput!
-    ): ClubAnnouncement!
-    deleteClubAnnouncement(id: ID!): ID!
-    #### Club Timeline Post ####
-    createClubTimelinePost(
-      data: CreateClubTimelinePostInput!
-    ): TimelinePostFullData!
-    deleteClubTimelinePost(activityId: ID!): ID! # The Stream activity ID.
+    #### Club Feed Post ####
+    createClubMembersFeedPost(
+      clubId: ID!
+      data: CreateStreamFeedActivityInput!
+    ): StreamEnrichedActivity!
+    deleteClubMembersFeedPost(activityId: ID!): ID! # The Stream activity ID.
     #### Equipment ####
     createEquipment(data: CreateEquipmentInput!): Equipment
     updateEquipment(data: UpdateEquipmentInput!): Equipment

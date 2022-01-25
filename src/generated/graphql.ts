@@ -287,13 +287,6 @@ export type CreateClubInviteTokenInput = {
   name: Scalars['String'];
 };
 
-export type CreateClubTimelinePostInput = {
-  caption?: InputMaybe<Scalars['String']>;
-  clubId: Scalars['String'];
-  object: Scalars['String'];
-  tags?: InputMaybe<Array<Scalars['String']>>;
-};
-
 export type CreateCollectionInput = {
   description?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
@@ -407,6 +400,25 @@ export type CreateScheduledWorkoutInput = {
 export type CreateSkillInput = {
   experience?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
+};
+
+export type CreateStreamFeedActivityExtraDataInput = {
+  audioUrl?: InputMaybe<Scalars['String']>;
+  caption?: InputMaybe<Scalars['String']>;
+  club?: InputMaybe<Scalars['String']>;
+  creator?: InputMaybe<Scalars['String']>;
+  imageUrl?: InputMaybe<Scalars['String']>;
+  originalPostId?: InputMaybe<Scalars['String']>;
+  tags: Array<Scalars['String']>;
+  title?: InputMaybe<Scalars['String']>;
+  videoUrl?: InputMaybe<Scalars['String']>;
+};
+
+export type CreateStreamFeedActivityInput = {
+  actor: Scalars['String'];
+  extraData: CreateStreamFeedActivityExtraDataInput;
+  object: Scalars['String'];
+  verb: Scalars['String'];
 };
 
 export type CreateUserBenchmarkEntryInput = {
@@ -707,9 +719,8 @@ export type Mutation = {
   copyWorkoutPlanDayToAnotherDay: WorkoutPlanDay;
   createBodyTrackingEntry: BodyTrackingEntry;
   createClub: ClubSummary;
-  createClubAnnouncement: ClubAnnouncement;
   createClubInviteToken: ClubInviteTokens;
-  createClubTimelinePost: TimelinePostFullData;
+  createClubMembersFeedPost: StreamEnrichedActivity;
   createCollection: Collection;
   createCompletedWorkoutPlanDayWorkout: WorkoutPlanEnrolment;
   createEquipment?: Maybe<Equipment>;
@@ -737,9 +748,8 @@ export type Mutation = {
   createWorkoutTag: WorkoutTag;
   deleteBodyTrackingEntryById: Scalars['ID'];
   deleteClub: Scalars['ID'];
-  deleteClubAnnouncement: Scalars['ID'];
   deleteClubInviteToken: ClubInviteTokens;
-  deleteClubTimelinePost: Scalars['ID'];
+  deleteClubMembersFeedPost: Scalars['ID'];
   deleteCollectionById: Scalars['ID'];
   deleteCompletedWorkoutPlanDayWorkout: WorkoutPlanEnrolment;
   deleteGymProfileById?: Maybe<Scalars['ID']>;
@@ -783,7 +793,6 @@ export type Mutation = {
   unarchiveWorkoutById: Workout;
   unarchiveWorkoutPlanById: WorkoutPlan;
   updateBodyTrackingEntry: BodyTrackingEntry;
-  updateClubAnnouncement: ClubAnnouncement;
   updateClubInviteToken: ClubInviteTokens;
   updateClubMetaData: ClubMetaData;
   updateClubSummary: ClubSummary;
@@ -892,18 +901,14 @@ export type MutationCreateClubArgs = {
 };
 
 
-export type MutationCreateClubAnnouncementArgs = {
-  data: CreateClubAnnouncementInput;
-};
-
-
 export type MutationCreateClubInviteTokenArgs = {
   data: CreateClubInviteTokenInput;
 };
 
 
-export type MutationCreateClubTimelinePostArgs = {
-  data: CreateClubTimelinePostInput;
+export type MutationCreateClubMembersFeedPostArgs = {
+  clubId: Scalars['ID'];
+  data: CreateStreamFeedActivityInput;
 };
 
 
@@ -1042,17 +1047,12 @@ export type MutationDeleteClubArgs = {
 };
 
 
-export type MutationDeleteClubAnnouncementArgs = {
-  id: Scalars['ID'];
-};
-
-
 export type MutationDeleteClubInviteTokenArgs = {
   data: DeleteClubInviteTokenInput;
 };
 
 
-export type MutationDeleteClubTimelinePostArgs = {
+export type MutationDeleteClubMembersFeedPostArgs = {
   activityId: Scalars['ID'];
 };
 
@@ -1277,11 +1277,6 @@ export type MutationUpdateBodyTrackingEntryArgs = {
 };
 
 
-export type MutationUpdateClubAnnouncementArgs = {
-  data: UpdateClubAnnouncementInput;
-};
-
-
 export type MutationUpdateClubInviteTokenArgs = {
   data: UpdateClubInviteTokenInput;
 };
@@ -1461,7 +1456,7 @@ export type Query = {
   clubChatSummary: ClubChatSummary;
   clubInviteTokens: ClubInviteTokens;
   clubMembers: ClubMembers;
-  clubMembersFeedPosts: Array<TimelinePostFullData>;
+  clubMembersFeedPosts: Array<StreamEnrichedActivity>;
   clubSummaries: Array<ClubSummary>;
   clubSummary: ClubSummary;
   clubWorkoutPlans: ClubWorkoutPlans;
@@ -1485,7 +1480,6 @@ export type Query = {
   textSearchWorkoutPlanNames?: Maybe<Array<TextSearchResult>>;
   textSearchWorkoutPlans?: Maybe<Array<WorkoutPlanSummary>>;
   textSearchWorkouts?: Maybe<Array<WorkoutSummary>>;
-  timelinePostsData: Array<TimelinePostObjectData>;
   userArchivedCustomMoves: Array<Move>;
   userArchivedWorkoutPlans: Array<WorkoutPlan>;
   userArchivedWorkouts: Array<Workout>;
@@ -1652,11 +1646,6 @@ export type QueryTextSearchWorkoutsArgs = {
 };
 
 
-export type QueryTimelinePostsDataArgs = {
-  postDataRequests: Array<TimelinePostDataRequestInput>;
-};
-
-
 export type QueryUserAvatarByIdArgs = {
   id: Scalars['ID'];
 };
@@ -1773,6 +1762,60 @@ export type SortPositionUpdated = {
   sortPosition: Scalars['Int'];
 };
 
+export type StreamActivityExtraData = {
+  __typename?: 'StreamActivityExtraData';
+  audioUrl?: Maybe<Scalars['String']>;
+  caption?: Maybe<Scalars['String']>;
+  club?: Maybe<StreamFeedClub>;
+  creator?: Maybe<StreamFeedUser>;
+  imageUrl?: Maybe<Scalars['String']>;
+  originalPostId?: Maybe<Scalars['String']>;
+  tags: Array<Scalars['String']>;
+  title?: Maybe<Scalars['String']>;
+  videoUrl?: Maybe<Scalars['String']>;
+};
+
+export type StreamActivityReactionCounts = {
+  __typename?: 'StreamActivityReactionCounts';
+  likes?: Maybe<Scalars['Int']>;
+  shares?: Maybe<Scalars['Int']>;
+};
+
+export type StreamEnrichedActivity = {
+  __typename?: 'StreamEnrichedActivity';
+  actor: StreamFeedUser;
+  extraData: StreamActivityExtraData;
+  id: Scalars['String'];
+  object: Scalars['String'];
+  reactionCounts?: Maybe<StreamActivityReactionCounts>;
+  time: Scalars['DateTime'];
+  verb: Scalars['String'];
+};
+
+export type StreamFeedClub = {
+  __typename?: 'StreamFeedClub';
+  data: StreamFeedClubData;
+  id: Scalars['String'];
+};
+
+export type StreamFeedClubData = {
+  __typename?: 'StreamFeedClubData';
+  image?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
+};
+
+export type StreamFeedUser = {
+  __typename?: 'StreamFeedUser';
+  data: StreamFeedUserData;
+  id: Scalars['String'];
+};
+
+export type StreamFeedUserData = {
+  __typename?: 'StreamFeedUserData';
+  image?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
+};
+
 export type TextSearchResult = {
   __typename?: 'TextSearchResult';
   id: Scalars['ID'];
@@ -1783,55 +1826,6 @@ export type TimeUnit =
   | 'HOURS'
   | 'MINUTES'
   | 'SECONDS';
-
-export type TimelinePostDataRequestInput = {
-  activityId: Scalars['String'];
-  objectId: Scalars['ID'];
-  objectType: TimelinePostType;
-  posterId: Scalars['ID'];
-};
-
-export type TimelinePostFullData = {
-  __typename?: 'TimelinePostFullData';
-  activityId: Scalars['String'];
-  caption?: Maybe<Scalars['String']>;
-  creator: TimelinePostObjectDataUser;
-  object: TimelinePostObjectDataObject;
-  postedAt: Scalars['DateTime'];
-  poster: TimelinePostObjectDataUser;
-  tags: Array<Scalars['String']>;
-};
-
-export type TimelinePostObjectData = {
-  __typename?: 'TimelinePostObjectData';
-  activityId: Scalars['String'];
-  creator: TimelinePostObjectDataUser;
-  object: TimelinePostObjectDataObject;
-  poster: TimelinePostObjectDataUser;
-};
-
-export type TimelinePostObjectDataObject = {
-  __typename?: 'TimelinePostObjectDataObject';
-  audioUri?: Maybe<Scalars['String']>;
-  id: Scalars['ID'];
-  imageUri?: Maybe<Scalars['String']>;
-  name: Scalars['String'];
-  type: TimelinePostType;
-  videoThumbUri?: Maybe<Scalars['String']>;
-  videoUri?: Maybe<Scalars['String']>;
-};
-
-export type TimelinePostObjectDataUser = {
-  __typename?: 'TimelinePostObjectDataUser';
-  avatarUri?: Maybe<Scalars['String']>;
-  displayName: Scalars['String'];
-  id: Scalars['ID'];
-};
-
-export type TimelinePostType =
-  | 'ANNOUNCEMENT'
-  | 'WORKOUT'
-  | 'WORKOUTPLAN';
 
 export type UpdateBodyTrackingEntryInput = {
   bodyweight?: InputMaybe<Scalars['Float']>;
@@ -2614,7 +2608,6 @@ export type ResolversTypes = ResolversObject<{
   CreateClubAnnouncementInput: CreateClubAnnouncementInput;
   CreateClubInput: CreateClubInput;
   CreateClubInviteTokenInput: CreateClubInviteTokenInput;
-  CreateClubTimelinePostInput: CreateClubTimelinePostInput;
   CreateCollectionInput: CreateCollectionInput;
   CreateCompletedWorkoutPlanDayWorkoutInput: CreateCompletedWorkoutPlanDayWorkoutInput;
   CreateEquipmentInput: CreateEquipmentInput;
@@ -2630,6 +2623,8 @@ export type ResolversTypes = ResolversObject<{
   CreateScheduleForPlanEnrolmentInput: CreateScheduleForPlanEnrolmentInput;
   CreateScheduledWorkoutInput: CreateScheduledWorkoutInput;
   CreateSkillInput: CreateSkillInput;
+  CreateStreamFeedActivityExtraDataInput: CreateStreamFeedActivityExtraDataInput;
+  CreateStreamFeedActivityInput: CreateStreamFeedActivityInput;
   CreateUserBenchmarkEntryInput: CreateUserBenchmarkEntryInput;
   CreateUserBenchmarkInput: CreateUserBenchmarkInput;
   CreateWorkoutInput: CreateWorkoutInput;
@@ -2681,15 +2676,16 @@ export type ResolversTypes = ResolversObject<{
   ScheduledWorkout: ResolverTypeWrapper<ScheduledWorkout>;
   Skill: ResolverTypeWrapper<Skill>;
   SortPositionUpdated: ResolverTypeWrapper<SortPositionUpdated>;
+  StreamActivityExtraData: ResolverTypeWrapper<StreamActivityExtraData>;
+  StreamActivityReactionCounts: ResolverTypeWrapper<StreamActivityReactionCounts>;
+  StreamEnrichedActivity: ResolverTypeWrapper<StreamEnrichedActivity>;
+  StreamFeedClub: ResolverTypeWrapper<StreamFeedClub>;
+  StreamFeedClubData: ResolverTypeWrapper<StreamFeedClubData>;
+  StreamFeedUser: ResolverTypeWrapper<StreamFeedUser>;
+  StreamFeedUserData: ResolverTypeWrapper<StreamFeedUserData>;
   String: ResolverTypeWrapper<Scalars['String']>;
   TextSearchResult: ResolverTypeWrapper<TextSearchResult>;
   TimeUnit: TimeUnit;
-  TimelinePostDataRequestInput: TimelinePostDataRequestInput;
-  TimelinePostFullData: ResolverTypeWrapper<TimelinePostFullData>;
-  TimelinePostObjectData: ResolverTypeWrapper<TimelinePostObjectData>;
-  TimelinePostObjectDataObject: ResolverTypeWrapper<TimelinePostObjectDataObject>;
-  TimelinePostObjectDataUser: ResolverTypeWrapper<TimelinePostObjectDataUser>;
-  TimelinePostType: TimelinePostType;
   UpdateBodyTrackingEntryInput: UpdateBodyTrackingEntryInput;
   UpdateClubAnnouncementInput: UpdateClubAnnouncementInput;
   UpdateClubInviteTokenInput: UpdateClubInviteTokenInput;
@@ -2794,7 +2790,6 @@ export type ResolversParentTypes = ResolversObject<{
   CreateClubAnnouncementInput: CreateClubAnnouncementInput;
   CreateClubInput: CreateClubInput;
   CreateClubInviteTokenInput: CreateClubInviteTokenInput;
-  CreateClubTimelinePostInput: CreateClubTimelinePostInput;
   CreateCollectionInput: CreateCollectionInput;
   CreateCompletedWorkoutPlanDayWorkoutInput: CreateCompletedWorkoutPlanDayWorkoutInput;
   CreateEquipmentInput: CreateEquipmentInput;
@@ -2810,6 +2805,8 @@ export type ResolversParentTypes = ResolversObject<{
   CreateScheduleForPlanEnrolmentInput: CreateScheduleForPlanEnrolmentInput;
   CreateScheduledWorkoutInput: CreateScheduledWorkoutInput;
   CreateSkillInput: CreateSkillInput;
+  CreateStreamFeedActivityExtraDataInput: CreateStreamFeedActivityExtraDataInput;
+  CreateStreamFeedActivityInput: CreateStreamFeedActivityInput;
   CreateUserBenchmarkEntryInput: CreateUserBenchmarkEntryInput;
   CreateUserBenchmarkInput: CreateUserBenchmarkInput;
   CreateWorkoutInput: CreateWorkoutInput;
@@ -2854,13 +2851,15 @@ export type ResolversParentTypes = ResolversObject<{
   ScheduledWorkout: ScheduledWorkout;
   Skill: Skill;
   SortPositionUpdated: SortPositionUpdated;
+  StreamActivityExtraData: StreamActivityExtraData;
+  StreamActivityReactionCounts: StreamActivityReactionCounts;
+  StreamEnrichedActivity: StreamEnrichedActivity;
+  StreamFeedClub: StreamFeedClub;
+  StreamFeedClubData: StreamFeedClubData;
+  StreamFeedUser: StreamFeedUser;
+  StreamFeedUserData: StreamFeedUserData;
   String: Scalars['String'];
   TextSearchResult: TextSearchResult;
-  TimelinePostDataRequestInput: TimelinePostDataRequestInput;
-  TimelinePostFullData: TimelinePostFullData;
-  TimelinePostObjectData: TimelinePostObjectData;
-  TimelinePostObjectDataObject: TimelinePostObjectDataObject;
-  TimelinePostObjectDataUser: TimelinePostObjectDataUser;
   UpdateBodyTrackingEntryInput: UpdateBodyTrackingEntryInput;
   UpdateClubAnnouncementInput: UpdateClubAnnouncementInput;
   UpdateClubInviteTokenInput: UpdateClubInviteTokenInput;
@@ -3254,9 +3253,8 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   copyWorkoutPlanDayToAnotherDay?: Resolver<ResolversTypes['WorkoutPlanDay'], ParentType, ContextType, RequireFields<MutationCopyWorkoutPlanDayToAnotherDayArgs, 'data'>>;
   createBodyTrackingEntry?: Resolver<ResolversTypes['BodyTrackingEntry'], ParentType, ContextType, RequireFields<MutationCreateBodyTrackingEntryArgs, 'data'>>;
   createClub?: Resolver<ResolversTypes['ClubSummary'], ParentType, ContextType, RequireFields<MutationCreateClubArgs, 'data'>>;
-  createClubAnnouncement?: Resolver<ResolversTypes['ClubAnnouncement'], ParentType, ContextType, RequireFields<MutationCreateClubAnnouncementArgs, 'data'>>;
   createClubInviteToken?: Resolver<ResolversTypes['ClubInviteTokens'], ParentType, ContextType, RequireFields<MutationCreateClubInviteTokenArgs, 'data'>>;
-  createClubTimelinePost?: Resolver<ResolversTypes['TimelinePostFullData'], ParentType, ContextType, RequireFields<MutationCreateClubTimelinePostArgs, 'data'>>;
+  createClubMembersFeedPost?: Resolver<ResolversTypes['StreamEnrichedActivity'], ParentType, ContextType, RequireFields<MutationCreateClubMembersFeedPostArgs, 'clubId' | 'data'>>;
   createCollection?: Resolver<ResolversTypes['Collection'], ParentType, ContextType, RequireFields<MutationCreateCollectionArgs, 'data'>>;
   createCompletedWorkoutPlanDayWorkout?: Resolver<ResolversTypes['WorkoutPlanEnrolment'], ParentType, ContextType, RequireFields<MutationCreateCompletedWorkoutPlanDayWorkoutArgs, 'data'>>;
   createEquipment?: Resolver<Maybe<ResolversTypes['Equipment']>, ParentType, ContextType, RequireFields<MutationCreateEquipmentArgs, 'data'>>;
@@ -3284,9 +3282,8 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createWorkoutTag?: Resolver<ResolversTypes['WorkoutTag'], ParentType, ContextType, RequireFields<MutationCreateWorkoutTagArgs, 'data'>>;
   deleteBodyTrackingEntryById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteBodyTrackingEntryByIdArgs, 'id'>>;
   deleteClub?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteClubArgs, 'id'>>;
-  deleteClubAnnouncement?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteClubAnnouncementArgs, 'id'>>;
   deleteClubInviteToken?: Resolver<ResolversTypes['ClubInviteTokens'], ParentType, ContextType, RequireFields<MutationDeleteClubInviteTokenArgs, 'data'>>;
-  deleteClubTimelinePost?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteClubTimelinePostArgs, 'activityId'>>;
+  deleteClubMembersFeedPost?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteClubMembersFeedPostArgs, 'activityId'>>;
   deleteCollectionById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteCollectionByIdArgs, 'id'>>;
   deleteCompletedWorkoutPlanDayWorkout?: Resolver<ResolversTypes['WorkoutPlanEnrolment'], ParentType, ContextType, RequireFields<MutationDeleteCompletedWorkoutPlanDayWorkoutArgs, 'data'>>;
   deleteGymProfileById?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType, RequireFields<MutationDeleteGymProfileByIdArgs, 'id'>>;
@@ -3330,7 +3327,6 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   unarchiveWorkoutById?: Resolver<ResolversTypes['Workout'], ParentType, ContextType, RequireFields<MutationUnarchiveWorkoutByIdArgs, 'id'>>;
   unarchiveWorkoutPlanById?: Resolver<ResolversTypes['WorkoutPlan'], ParentType, ContextType, RequireFields<MutationUnarchiveWorkoutPlanByIdArgs, 'id'>>;
   updateBodyTrackingEntry?: Resolver<ResolversTypes['BodyTrackingEntry'], ParentType, ContextType, RequireFields<MutationUpdateBodyTrackingEntryArgs, 'data'>>;
-  updateClubAnnouncement?: Resolver<ResolversTypes['ClubAnnouncement'], ParentType, ContextType, RequireFields<MutationUpdateClubAnnouncementArgs, 'data'>>;
   updateClubInviteToken?: Resolver<ResolversTypes['ClubInviteTokens'], ParentType, ContextType, RequireFields<MutationUpdateClubInviteTokenArgs, 'data'>>;
   updateClubMetaData?: Resolver<ResolversTypes['ClubMetaData'], ParentType, ContextType, RequireFields<MutationUpdateClubMetaDataArgs, 'data'>>;
   updateClubSummary?: Resolver<ResolversTypes['ClubSummary'], ParentType, ContextType, RequireFields<MutationUpdateClubSummaryArgs, 'data'>>;
@@ -3378,7 +3374,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   clubChatSummary?: Resolver<ResolversTypes['ClubChatSummary'], ParentType, ContextType, RequireFields<QueryClubChatSummaryArgs, 'clubId'>>;
   clubInviteTokens?: Resolver<ResolversTypes['ClubInviteTokens'], ParentType, ContextType, RequireFields<QueryClubInviteTokensArgs, 'clubId'>>;
   clubMembers?: Resolver<ResolversTypes['ClubMembers'], ParentType, ContextType, RequireFields<QueryClubMembersArgs, 'clubId'>>;
-  clubMembersFeedPosts?: Resolver<Array<ResolversTypes['TimelinePostFullData']>, ParentType, ContextType, RequireFields<QueryClubMembersFeedPostsArgs, 'clubId' | 'limit' | 'offset'>>;
+  clubMembersFeedPosts?: Resolver<Array<ResolversTypes['StreamEnrichedActivity']>, ParentType, ContextType, RequireFields<QueryClubMembersFeedPostsArgs, 'clubId' | 'limit' | 'offset'>>;
   clubSummaries?: Resolver<Array<ResolversTypes['ClubSummary']>, ParentType, ContextType, RequireFields<QueryClubSummariesArgs, 'ids'>>;
   clubSummary?: Resolver<ResolversTypes['ClubSummary'], ParentType, ContextType, RequireFields<QueryClubSummaryArgs, 'id'>>;
   clubWorkoutPlans?: Resolver<ResolversTypes['ClubWorkoutPlans'], ParentType, ContextType, RequireFields<QueryClubWorkoutPlansArgs, 'clubId'>>;
@@ -3402,7 +3398,6 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   textSearchWorkoutPlanNames?: Resolver<Maybe<Array<ResolversTypes['TextSearchResult']>>, ParentType, ContextType, RequireFields<QueryTextSearchWorkoutPlanNamesArgs, 'text'>>;
   textSearchWorkoutPlans?: Resolver<Maybe<Array<ResolversTypes['WorkoutPlanSummary']>>, ParentType, ContextType, RequireFields<QueryTextSearchWorkoutPlansArgs, 'text'>>;
   textSearchWorkouts?: Resolver<Maybe<Array<ResolversTypes['WorkoutSummary']>>, ParentType, ContextType, RequireFields<QueryTextSearchWorkoutsArgs, 'text'>>;
-  timelinePostsData?: Resolver<Array<ResolversTypes['TimelinePostObjectData']>, ParentType, ContextType, RequireFields<QueryTimelinePostsDataArgs, 'postDataRequests'>>;
   userArchivedCustomMoves?: Resolver<Array<ResolversTypes['Move']>, ParentType, ContextType>;
   userArchivedWorkoutPlans?: Resolver<Array<ResolversTypes['WorkoutPlan']>, ParentType, ContextType>;
   userArchivedWorkouts?: Resolver<Array<ResolversTypes['Workout']>, ParentType, ContextType>;
@@ -3464,46 +3459,63 @@ export type SortPositionUpdatedResolvers<ContextType = any, ParentType extends R
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type StreamActivityExtraDataResolvers<ContextType = any, ParentType extends ResolversParentTypes['StreamActivityExtraData'] = ResolversParentTypes['StreamActivityExtraData']> = ResolversObject<{
+  audioUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  caption?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  club?: Resolver<Maybe<ResolversTypes['StreamFeedClub']>, ParentType, ContextType>;
+  creator?: Resolver<Maybe<ResolversTypes['StreamFeedUser']>, ParentType, ContextType>;
+  imageUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  originalPostId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  tags?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
+  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  videoUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type StreamActivityReactionCountsResolvers<ContextType = any, ParentType extends ResolversParentTypes['StreamActivityReactionCounts'] = ResolversParentTypes['StreamActivityReactionCounts']> = ResolversObject<{
+  likes?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  shares?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type StreamEnrichedActivityResolvers<ContextType = any, ParentType extends ResolversParentTypes['StreamEnrichedActivity'] = ResolversParentTypes['StreamEnrichedActivity']> = ResolversObject<{
+  actor?: Resolver<ResolversTypes['StreamFeedUser'], ParentType, ContextType>;
+  extraData?: Resolver<ResolversTypes['StreamActivityExtraData'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  object?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  reactionCounts?: Resolver<Maybe<ResolversTypes['StreamActivityReactionCounts']>, ParentType, ContextType>;
+  time?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  verb?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type StreamFeedClubResolvers<ContextType = any, ParentType extends ResolversParentTypes['StreamFeedClub'] = ResolversParentTypes['StreamFeedClub']> = ResolversObject<{
+  data?: Resolver<ResolversTypes['StreamFeedClubData'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type StreamFeedClubDataResolvers<ContextType = any, ParentType extends ResolversParentTypes['StreamFeedClubData'] = ResolversParentTypes['StreamFeedClubData']> = ResolversObject<{
+  image?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type StreamFeedUserResolvers<ContextType = any, ParentType extends ResolversParentTypes['StreamFeedUser'] = ResolversParentTypes['StreamFeedUser']> = ResolversObject<{
+  data?: Resolver<ResolversTypes['StreamFeedUserData'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type StreamFeedUserDataResolvers<ContextType = any, ParentType extends ResolversParentTypes['StreamFeedUserData'] = ResolversParentTypes['StreamFeedUserData']> = ResolversObject<{
+  image?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type TextSearchResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['TextSearchResult'] = ResolversParentTypes['TextSearchResult']> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type TimelinePostFullDataResolvers<ContextType = any, ParentType extends ResolversParentTypes['TimelinePostFullData'] = ResolversParentTypes['TimelinePostFullData']> = ResolversObject<{
-  activityId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  caption?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  creator?: Resolver<ResolversTypes['TimelinePostObjectDataUser'], ParentType, ContextType>;
-  object?: Resolver<ResolversTypes['TimelinePostObjectDataObject'], ParentType, ContextType>;
-  postedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  poster?: Resolver<ResolversTypes['TimelinePostObjectDataUser'], ParentType, ContextType>;
-  tags?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type TimelinePostObjectDataResolvers<ContextType = any, ParentType extends ResolversParentTypes['TimelinePostObjectData'] = ResolversParentTypes['TimelinePostObjectData']> = ResolversObject<{
-  activityId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  creator?: Resolver<ResolversTypes['TimelinePostObjectDataUser'], ParentType, ContextType>;
-  object?: Resolver<ResolversTypes['TimelinePostObjectDataObject'], ParentType, ContextType>;
-  poster?: Resolver<ResolversTypes['TimelinePostObjectDataUser'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type TimelinePostObjectDataObjectResolvers<ContextType = any, ParentType extends ResolversParentTypes['TimelinePostObjectDataObject'] = ResolversParentTypes['TimelinePostObjectDataObject']> = ResolversObject<{
-  audioUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  imageUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  type?: Resolver<ResolversTypes['TimelinePostType'], ParentType, ContextType>;
-  videoThumbUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  videoUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type TimelinePostObjectDataUserResolvers<ContextType = any, ParentType extends ResolversParentTypes['TimelinePostObjectDataUser'] = ResolversParentTypes['TimelinePostObjectDataUser']> = ResolversObject<{
-  avatarUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  displayName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -3877,11 +3889,14 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   ScheduledWorkout?: ScheduledWorkoutResolvers<ContextType>;
   Skill?: SkillResolvers<ContextType>;
   SortPositionUpdated?: SortPositionUpdatedResolvers<ContextType>;
+  StreamActivityExtraData?: StreamActivityExtraDataResolvers<ContextType>;
+  StreamActivityReactionCounts?: StreamActivityReactionCountsResolvers<ContextType>;
+  StreamEnrichedActivity?: StreamEnrichedActivityResolvers<ContextType>;
+  StreamFeedClub?: StreamFeedClubResolvers<ContextType>;
+  StreamFeedClubData?: StreamFeedClubDataResolvers<ContextType>;
+  StreamFeedUser?: StreamFeedUserResolvers<ContextType>;
+  StreamFeedUserData?: StreamFeedUserDataResolvers<ContextType>;
   TextSearchResult?: TextSearchResultResolvers<ContextType>;
-  TimelinePostFullData?: TimelinePostFullDataResolvers<ContextType>;
-  TimelinePostObjectData?: TimelinePostObjectDataResolvers<ContextType>;
-  TimelinePostObjectDataObject?: TimelinePostObjectDataObjectResolvers<ContextType>;
-  TimelinePostObjectDataUser?: TimelinePostObjectDataUserResolvers<ContextType>;
   UpdateUserProfileResult?: UpdateUserProfileResultResolvers<ContextType>;
   UserAvatarData?: UserAvatarDataResolvers<ContextType>;
   UserBenchmark?: UserBenchmarkResolvers<ContextType>;

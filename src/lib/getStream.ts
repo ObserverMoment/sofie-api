@@ -1,11 +1,20 @@
 import { StreamChat } from 'stream-chat'
-import { connect, StreamClient } from 'getstream'
 import {
-  TimelinePostDataRequestInput,
-  TimelinePostType,
-} from '../generated/graphql'
+  CollectionEntry,
+  connect,
+  EnrichedActivity,
+  EnrichedUser,
+  StreamClient,
+} from 'getstream'
 import { PrismaClient } from '@prisma/client'
 import { checkUserIsOwnerOrAdminOfClub } from '../graphql/resolvers/club/utils'
+import {
+  CreateStreamFeedActivityInput,
+  Maybe,
+  StreamEnrichedActivity,
+  StreamFeedClub,
+  StreamFeedUser,
+} from '../generated/graphql'
 
 export let streamFeedClient: StreamClient | null = null
 export let streamChatClient: StreamChat | null = null
@@ -20,7 +29,14 @@ const USER_FEED_NAME = 'user_feed'
 const USER_TIMELINE_FEED_NAME = 'user_timeline'
 const USER_NOTIFICATION_FEED_NAME = 'user_notification'
 
+const CLUBS_COLLECTION_NAME = 'club'
+
 type SetUserFields = {
+  name?: string
+  image?: string
+}
+
+type SetClubFields = {
   name?: string
   image?: string
 }
@@ -60,6 +76,22 @@ export function initGetStreamClients() {
  * [user_notifications] = notifications from the system.
  * [club_members_feed] = timelines of members can (optionally) follow this feed to get club related posts.
  */
+/**
+ * For GetStream activity feeds - used on the client as an access token for the logged in user.
+ * @param  {string} userId - the database User ID.
+ */
+export function getUserFeedToken(userId: string): string {
+  try {
+    if (!streamFeedClient) {
+      throw Error('streamFeedClient not initialized')
+    }
+    return streamFeedClient!.createUserToken(userId)
+  } catch (e) {
+    console.log(e)
+    throw new Error(String(e))
+  }
+}
+
 export async function createStreamFeedUser(
   userId: string,
   displayName: string,
@@ -105,16 +137,49 @@ export async function updateStreamFeedUser(
   }
 }
 
-/**
- * For GetStream activity feeds - used on the client as an access token for the logged in user.
- * @param  {string} userId - the database User ID.
- */
-export function getUserFeedToken(userId: string): string {
+/// Saving basic club info to Stream servers so that we can display club name and avatar when club posts are being displayed in a user's feed.
+/// Via the Stream [Collections] functionality.
+/// https://getstream.io/activity-feeds/docs/node/collections_introduction/?language=javascript#updating-collections
+export async function createStreamFeedClub(clubId: string, name: string) {
   try {
     if (!streamFeedClient) {
       throw Error('streamFeedClient not initialized')
     }
-    return streamFeedClient!.createUserToken(userId)
+    await streamFeedClient!.collections.add(CLUBS_COLLECTION_NAME, clubId, {
+      name,
+    })
+  } catch (e) {
+    console.log(e)
+    throw new Error(String(e))
+  }
+}
+
+export async function updateStreamFeedClub(
+  clubId: string,
+  name?: string,
+  coverImageUri?: string,
+) {
+  try {
+    if (!name && !coverImageUri) return
+
+    if (!streamFeedClient) {
+      throw Error('streamFeedClient not initialized')
+    }
+
+    const update: SetUserFields = {}
+
+    if (name) {
+      update.name = name
+    }
+    if (coverImageUri) {
+      update.image = coverImageUri
+    }
+
+    await streamFeedClient!.collections.update(
+      CLUBS_COLLECTION_NAME,
+      clubId,
+      update,
+    )
   } catch (e) {
     console.log(e)
     throw new Error(String(e))
@@ -152,58 +217,11 @@ export async function toggleFollowClubMembersFeed(
   }
 }
 
-export async function createStreamClubMembersFeedActivity(
-  clubId: string,
-  authedUserId: string,
-  {
-    object,
-    caption,
-    tags,
-  }: { object: string; caption?: string; tags?: string[] },
-): Promise<ActivityData> {
-  try {
-    if (!streamFeedClient) {
-      throw Error('streamFeedClient not initialized')
-    }
-    // Create the new activity.
-    const activity = await streamFeedClient
-      .feed(CLUB_MEMBERS_FEED_NAME, clubId)
-      .addActivity({
-        actor: `SU:${authedUserId}`,
-        verb: 'club-post',
-        object: object,
-        foreign_id: clubId,
-        caption: caption,
-        tags: tags,
-      })
-
-    const activityData: ActivityData = {
-      activityId: activity.id,
-      postedAt: new Date(activity.time),
-      caption: activity['caption'] as string,
-      tags: activity['tags'] as string[],
-      dataRequestInput: {
-        activityId: activity.id,
-        posterId: (activity.actor as string).split(':')[1],
-        objectId: (activity.object as string).split(':')[1],
-        objectType: (activity.object as string)
-          .split(':')[0]
-          .toUpperCase() as TimelinePostType,
-      },
-    }
-    // Includes the fields we need to populate the objects from the DB before returning to client.
-    return activityData
-  } catch (e) {
-    console.log(e)
-    throw new Error(String(e))
-  }
-}
-
 export async function getStreamClubMembersFeedActivities(
   clubId: string,
   limit: number,
   offset: number,
-): Promise<ActivityData[]> {
+): Promise<StreamEnrichedActivity[]> {
   try {
     if (!streamFeedClient) {
       throw Error('streamFeedClient not initialized')
@@ -214,38 +232,51 @@ export async function getStreamClubMembersFeedActivities(
       .get({
         limit: limit,
         offset: offset,
+        enrich: true,
       })
 
-    // Data from the activity that we want to extract as well as the ids of objects that we need to get from the database.
-    // Note that [TimelinePostType] is a graphql schema enum and is therefore CAPITALIZED.
-    // We should send already capitalized like [WORKOUT:6c35a392-19cd-4b13-bb7b-a45e643fc697]
-    // This is an extra check...
-    const activityData: ActivityData[] =
-      // Should be a [FlatActivity[]] but we need to index into custom fields
-      // So set as [any] for now.
-      (response.results as any[]).map((a: any) => ({
-        activityId: a.id,
-        postedAt: new Date(a.time),
-        caption: a['caption'],
-        tags: a['tags'],
-        dataRequestInput: {
-          activityId: a.id,
-          posterId: (a.actor as string).split(':')[1],
-          objectId: (a.object as string).split(':')[1],
-          objectType: (a.object as string)
-            .split(':')[0]
-            .toUpperCase() as TimelinePostType,
-        },
-      }))
-
-    return activityData
+    return response.results.map((r) =>
+      formatStreamActivityData(r as EnrichedActivity),
+    )
   } catch (e) {
     console.log(e)
     throw new Error(String(e))
   }
 }
 
-export async function deleteStreamClubPostActivity(
+export async function createStreamClubMembersFeedActivity(
+  clubId: string,
+  authedUserId: string,
+  data: CreateStreamFeedActivityInput,
+): Promise<StreamEnrichedActivity> {
+  try {
+    if (!streamFeedClient) {
+      throw Error('streamFeedClient not initialized')
+    }
+    // Create the new activity.
+    const activity = await streamFeedClient
+      .feed(CLUB_MEMBERS_FEED_NAME, clubId)
+      .addActivity({
+        actor: `SU:${authedUserId}`,
+        verb: 'club-post',
+        object: data.object,
+        ...data.extraData,
+      })
+
+    // Get the new activity enriched from stream server.
+    const getActivitiesAPIResponse = await streamFeedClient.getActivities({
+      ids: [activity.id],
+      enrich: true,
+    })
+
+    return formatStreamActivityData(getActivitiesAPIResponse.results[0])
+  } catch (e) {
+    console.log(e)
+    throw new Error(String(e))
+  }
+}
+
+export async function deleteStreamClubMembersFeedActivity(
   authedUserId: string,
   activityId: string,
   prisma: PrismaClient,
@@ -259,7 +290,7 @@ export async function deleteStreamClubPostActivity(
       await streamFeedClient.getActivities({ ids: [activityId] })
     ).results[0]
 
-    const clubId = activity.foreign_id as string
+    const clubId = (activity.club as CollectionEntry).id as string
 
     // Club ID should always be saved as the foreign_id of these posts.
     await checkUserIsOwnerOrAdminOfClub(clubId, authedUserId, prisma)
@@ -279,14 +310,6 @@ export async function deleteStreamClubPostActivity(
   }
 }
 
-interface ActivityData {
-  activityId: string
-  postedAt: Date
-  caption?: string
-  tags: string[]
-  dataRequestInput: TimelinePostDataRequestInput
-}
-
 /// How many followers does their [user_feed] feed have.
 export async function getUserFollowersCount(userId: string) {
   if (!streamFeedClient) {
@@ -297,6 +320,63 @@ export async function getUserFollowersCount(userId: string) {
     .followStats()
 
   return stats.results.followers.count
+}
+
+/// These methods convert an enriched activity returned from the stream servers into the graphql defined type that needs to be sent to the client.
+/// The graphql types match the Dart types on the client so that the client can interact with this API and with the stream Flutter SDK in the same way.
+function formatStreamActivityData(a: EnrichedActivity): StreamEnrichedActivity {
+  return {
+    id: a.id,
+    actor: formatStreamUserObject(a.actor as EnrichedUser)!,
+    verb: a.verb,
+    object: a.object as string,
+    time: new Date(a.time),
+    extraData: {
+      creator: a.creator
+        ? formatStreamUserObject(a.creator as EnrichedUser)
+        : null,
+      club: a.club
+        ? formatStreamCollectionObject(a.club as CollectionEntry)
+        : null,
+      title: a.title as string | undefined,
+      caption: a.caption as string | undefined,
+      tags: (a.tags as string[]) || [],
+      audioUrl: a.audioUrl as string | undefined,
+      imageUrl: a.imageUrl as string | undefined,
+      videoUrl: a.videoUrl as string | undefined,
+      originalPostId: a.originalPostId as string | undefined,
+    },
+  }
+}
+
+function formatStreamUserObject(u: EnrichedUser): StreamFeedUser | null {
+  if (u.id && u.data) {
+    return {
+      id: u.id,
+      data: {
+        name: u.data.name as string | undefined,
+        image: u.data.image as string | undefined,
+      },
+    }
+  } else {
+    return null
+  }
+}
+
+function formatStreamCollectionObject(
+  c: CollectionEntry,
+): StreamFeedClub | null {
+  if (c.id && c.data) {
+    return {
+      id: c.id,
+      data: {
+        name: c.data?.name as string | undefined,
+        image: c.data?.image as string | undefined,
+      },
+    }
+  } else {
+    return null
+  }
 }
 
 //////////////////////

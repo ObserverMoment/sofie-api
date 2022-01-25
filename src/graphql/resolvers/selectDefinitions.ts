@@ -77,19 +77,6 @@ export const selectForClubInviteToken = {
   name: true,
 }
 
-export const selectForClubAnnouncement = {
-  id: true,
-  createdAt: true,
-  description: true,
-  imageUri: true,
-  audioUri: true,
-  videoUri: true,
-  videoThumbUri: true,
-  User: {
-    select: selectForUserAvatarData,
-  },
-}
-
 export const selectForWorkoutSummary = {
   id: true,
   createdAt: true,

@@ -38,12 +38,6 @@ import {
 import { adminPublicClubs, updateClubMetaData } from './club/metaData'
 
 import {
-  createClubAnnouncement,
-  updateClubAnnouncement,
-  deleteClubAnnouncement,
-} from './club/clubAnnouncement'
-
-import {
   checkUserClubMemberStatus,
   clubMembers,
   clubInviteTokens,
@@ -131,9 +125,8 @@ import {
 } from './textSearch'
 
 import {
-  createClubTimelinePost,
-  deleteClubTimelinePost,
-  timelinePostsData,
+  createClubMembersFeedPost,
+  deleteClubMembersFeedPost,
   clubMembersFeedPosts,
 } from './timelineFeed'
 
@@ -345,9 +338,6 @@ const resolvers: Resolvers = {
     textSearchWorkoutPlanNames,
     textSearchUserProfiles,
     textSearchUserNames,
-    //// Timeline Feed ////
-    // The data associated with Activities and required to display posts //
-    timelinePostsData,
     //// User ////
     checkUniqueDisplayName,
     gymProfiles,
@@ -411,17 +401,12 @@ const resolvers: Resolvers = {
     removeWorkoutFromClub,
     addWorkoutPlanToClub,
     removeWorkoutPlanFromClub,
-
-    ///////////////////////
-    //// Club Timeline ////
-    ///////////////////////
-    /// An object that can be shared on a club feed via Stream activity.
-    createClubAnnouncement,
-    updateClubAnnouncement,
-    deleteClubAnnouncement,
-    /// Interacts with Strea.io.
-    createClubTimelinePost,
-    deleteClubTimelinePost,
+    ///////////////////
+    //// Club Feed ////
+    ///////////////////
+    /// Interacts with Stream.io.
+    createClubMembersFeedPost,
+    deleteClubMembersFeedPost,
     ///////////////////
     //// Equipment ////
     ///////////////////
