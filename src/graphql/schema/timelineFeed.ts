@@ -18,6 +18,7 @@ export default gql`
     title: String
     caption: String
     tags: [String!]!
+    articleUrl: String
     audioUrl: String
     imageUrl: String
     videoUrl: String
@@ -56,23 +57,26 @@ export default gql`
   input CreateStreamFeedActivityInput {
     # Ref to poster in format SU:id. Generated via [client.currentUser.ref]
     actor: String!
+    # i.e post / pin / tweet etc.
     verb: String!
     # Ref to the content type in format feedPostType:id.
     # If shared content (workout, plam, log etc) then format will be [type:id]
-    # If media only content (should be available to club posts only) it will just be the typename.
+    # If media only content (should be available to club posts only) it will be [type:timestamp].
     # I.e. [announcement], [video], [article]
     object: String!
     extraData: CreateStreamFeedActivityExtraDataInput!
   }
 
   input CreateStreamFeedActivityExtraDataInput {
-    # Ref to creator in format SU:id. Generated via [client.user.ref] or manually.
+    # Ref to creator of shared content. In format SU:id. Generated via [client.user.ref] or manually.
     creator: String
-    # Ref to club generated via [client.collections.entry('club', clubId)];
-    club: String
+    # Title of the post
     title: String
+    # Main content of the post
     caption: String
     tags: [String!]!
+    # Media for the post. Only one of these should ever be present. Only Club owners.
+    articleUrl: String
     audioUrl: String
     imageUrl: String
     videoUrl: String

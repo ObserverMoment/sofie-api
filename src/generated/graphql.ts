@@ -403,9 +403,9 @@ export type CreateSkillInput = {
 };
 
 export type CreateStreamFeedActivityExtraDataInput = {
+  articleUrl?: InputMaybe<Scalars['String']>;
   audioUrl?: InputMaybe<Scalars['String']>;
   caption?: InputMaybe<Scalars['String']>;
-  club?: InputMaybe<Scalars['String']>;
   creator?: InputMaybe<Scalars['String']>;
   imageUrl?: InputMaybe<Scalars['String']>;
   originalPostId?: InputMaybe<Scalars['String']>;
@@ -1764,6 +1764,7 @@ export type SortPositionUpdated = {
 
 export type StreamActivityExtraData = {
   __typename?: 'StreamActivityExtraData';
+  articleUrl?: Maybe<Scalars['String']>;
   audioUrl?: Maybe<Scalars['String']>;
   caption?: Maybe<Scalars['String']>;
   club?: Maybe<StreamFeedClub>;
@@ -3460,6 +3461,7 @@ export type SortPositionUpdatedResolvers<ContextType = any, ParentType extends R
 }>;
 
 export type StreamActivityExtraDataResolvers<ContextType = any, ParentType extends ResolversParentTypes['StreamActivityExtraData'] = ResolversParentTypes['StreamActivityExtraData']> = ResolversObject<{
+  articleUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   audioUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   caption?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   club?: Resolver<Maybe<ResolversTypes['StreamFeedClub']>, ParentType, ContextType>;

@@ -10,7 +10,6 @@ import { PrismaClient } from '@prisma/client'
 import { checkUserIsOwnerOrAdminOfClub } from '../graphql/resolvers/club/utils'
 import {
   CreateStreamFeedActivityInput,
-  Maybe,
   StreamEnrichedActivity,
   StreamFeedClub,
   StreamFeedUser,
@@ -253,13 +252,22 @@ export async function createStreamClubMembersFeedActivity(
     if (!streamFeedClient) {
       throw Error('streamFeedClient not initialized')
     }
+
+    const clubRef = streamFeedClient.collections.entry(
+      CLUBS_COLLECTION_NAME,
+      clubId,
+      {},
+    )
+    const userRef = streamFeedClient.user(authedUserId)
+
     // Create the new activity.
     const activity = await streamFeedClient
       .feed(CLUB_MEMBERS_FEED_NAME, clubId)
       .addActivity({
-        actor: `SU:${authedUserId}`,
-        verb: 'club-post',
+        actor: userRef,
+        verb: 'post',
         object: data.object,
+        club: clubRef,
         ...data.extraData,
       })
 
@@ -341,6 +349,7 @@ function formatStreamActivityData(a: EnrichedActivity): StreamEnrichedActivity {
       title: a.title as string | undefined,
       caption: a.caption as string | undefined,
       tags: (a.tags as string[]) || [],
+      articleUrl: a.articleUrl as string | undefined,
       audioUrl: a.audioUrl as string | undefined,
       imageUrl: a.imageUrl as string | undefined,
       videoUrl: a.videoUrl as string | undefined,
@@ -370,8 +379,8 @@ function formatStreamCollectionObject(
     return {
       id: c.id,
       data: {
-        name: c.data?.name as string | undefined,
-        image: c.data?.image as string | undefined,
+        name: c.data.name as string | undefined,
+        image: c.data.image as string | undefined,
       },
     }
   } else {
