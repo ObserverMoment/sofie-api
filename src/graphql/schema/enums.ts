@@ -85,12 +85,6 @@ export default gql`
     PENDING
   }
 
-  enum TimelinePostType {
-    ANNOUNCEMENT
-    WORKOUT
-    WORKOUTPLAN
-  }
-
   enum TimeUnit {
     HOURS
     MINUTES

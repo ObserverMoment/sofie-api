@@ -69,7 +69,7 @@ export default async function (
         const streamChatToken = getUserChatToken(user.id)
 
         // Create a new user for GetStream Feeds services.
-        await createStreamFeedUser(user.id)
+        await createStreamFeedUser(user.id, displayName)
 
         // Get the user token associated with this new user.
         const streamFeedToken = getUserFeedToken(user.id)

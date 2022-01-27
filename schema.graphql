@@ -260,13 +260,6 @@ input CreateClubInviteTokenInput {
   name: String!
 }
 
-input CreateClubTimelinePostInput {
-  caption: String
-  clubId: String!
-  object: String!
-  tags: [String!]
-}
-
 input CreateCollectionInput {
   description: String
   name: String!
@@ -380,6 +373,25 @@ input CreateScheduledWorkoutInput {
 input CreateSkillInput {
   experience: String
   name: String!
+}
+
+input CreateStreamFeedActivityExtraDataInput {
+  articleUrl: String
+  audioUrl: String
+  caption: String
+  creator: String
+  imageUrl: String
+  originalPostId: String
+  tags: [String!]!
+  title: String
+  videoUrl: String
+}
+
+input CreateStreamFeedActivityInput {
+  actor: String!
+  extraData: CreateStreamFeedActivityExtraDataInput!
+  object: String!
+  verb: String!
 }
 
 input CreateUserBenchmarkEntryInput {
@@ -676,9 +688,8 @@ type Mutation {
   copyWorkoutPlanDayToAnotherDay(data: CopyWorkoutPlanDayToAnotherDayInput!): WorkoutPlanDay!
   createBodyTrackingEntry(data: CreateBodyTrackingEntryInput!): BodyTrackingEntry!
   createClub(data: CreateClubInput!): ClubSummary!
-  createClubAnnouncement(data: CreateClubAnnouncementInput!): ClubAnnouncement!
   createClubInviteToken(data: CreateClubInviteTokenInput!): ClubInviteTokens!
-  createClubTimelinePost(data: CreateClubTimelinePostInput!): TimelinePostFullData!
+  createClubMembersFeedPost(clubId: ID!, data: CreateStreamFeedActivityInput!): StreamEnrichedActivity!
   createCollection(data: CreateCollectionInput!): Collection!
   createCompletedWorkoutPlanDayWorkout(data: CreateCompletedWorkoutPlanDayWorkoutInput!): WorkoutPlanEnrolment!
   createEquipment(data: CreateEquipmentInput!): Equipment
@@ -706,9 +717,8 @@ type Mutation {
   createWorkoutTag(data: CreateWorkoutTagInput!): WorkoutTag!
   deleteBodyTrackingEntryById(id: ID!): ID!
   deleteClub(id: ID!): ID!
-  deleteClubAnnouncement(id: ID!): ID!
   deleteClubInviteToken(data: DeleteClubInviteTokenInput!): ClubInviteTokens!
-  deleteClubTimelinePost(activityId: ID!): ID!
+  deleteClubMembersFeedPost(activityId: ID!): ID!
   deleteCollectionById(id: ID!): ID!
   deleteCompletedWorkoutPlanDayWorkout(data: DeleteCompletedWorkoutPlanDayWorkoutInput!): WorkoutPlanEnrolment!
   deleteGymProfileById(id: ID!): ID
@@ -752,7 +762,6 @@ type Mutation {
   unarchiveWorkoutById(id: ID!): Workout!
   unarchiveWorkoutPlanById(id: ID!): WorkoutPlan!
   updateBodyTrackingEntry(data: UpdateBodyTrackingEntryInput!): BodyTrackingEntry!
-  updateClubAnnouncement(data: UpdateClubAnnouncementInput!): ClubAnnouncement!
   updateClubInviteToken(data: UpdateClubInviteTokenInput!): ClubInviteTokens!
   updateClubMetaData(data: UpdateClubMetaDataInput!): ClubMetaData!
   updateClubSummary(data: UpdateClubSummaryInput!): ClubSummary!
@@ -807,7 +816,7 @@ type Query {
   clubChatSummary(clubId: ID!): ClubChatSummary!
   clubInviteTokens(clubId: ID!): ClubInviteTokens!
   clubMembers(clubId: ID!): ClubMembers!
-  clubMembersFeedPosts(clubId: ID!, limit: Int!, offset: Int!): [TimelinePostFullData!]!
+  clubMembersFeedPosts(clubId: ID!, limit: Int!, offset: Int!): [StreamEnrichedActivity!]!
   clubSummaries(ids: [ID!]!): [ClubSummary!]!
   clubSummary(id: ID!): ClubSummary!
   clubWorkoutPlans(clubId: ID!): ClubWorkoutPlans!
@@ -831,7 +840,6 @@ type Query {
   textSearchWorkoutPlanNames(text: String!): [TextSearchResult!]
   textSearchWorkoutPlans(text: String!): [WorkoutPlanSummary!]
   textSearchWorkouts(text: String!): [WorkoutSummary!]
-  timelinePostsData(postDataRequests: [TimelinePostDataRequestInput!]!): [TimelinePostObjectData!]!
   userArchivedCustomMoves: [Move!]!
   userArchivedWorkoutPlans: [WorkoutPlan!]!
   userArchivedWorkouts: [Workout!]!
@@ -914,6 +922,55 @@ type SortPositionUpdated {
   sortPosition: Int!
 }
 
+type StreamActivityExtraData {
+  articleUrl: String
+  audioUrl: String
+  caption: String
+  club: StreamFeedClub
+  creator: StreamFeedUser
+  imageUrl: String
+  originalPostId: String
+  tags: [String!]!
+  title: String
+  videoUrl: String
+}
+
+type StreamActivityReactionCounts {
+  comments: Int
+  likes: Int
+}
+
+type StreamEnrichedActivity {
+  actor: StreamFeedUser!
+  extraData: StreamActivityExtraData!
+  id: String!
+  object: String!
+  reactionCounts: StreamActivityReactionCounts
+  time: DateTime!
+  userLikeReactionId: String
+  verb: String!
+}
+
+type StreamFeedClub {
+  data: StreamFeedClubData!
+  id: String!
+}
+
+type StreamFeedClubData {
+  image: String
+  name: String
+}
+
+type StreamFeedUser {
+  data: StreamFeedUserData!
+  id: String!
+}
+
+type StreamFeedUserData {
+  image: String
+  name: String
+}
+
 type TextSearchResult {
   id: ID!
   name: String!
@@ -923,52 +980,6 @@ enum TimeUnit {
   HOURS
   MINUTES
   SECONDS
-}
-
-input TimelinePostDataRequestInput {
-  activityId: String!
-  objectId: ID!
-  objectType: TimelinePostType!
-  posterId: ID!
-}
-
-type TimelinePostFullData {
-  activityId: String!
-  caption: String
-  creator: TimelinePostObjectDataUser!
-  object: TimelinePostObjectDataObject!
-  postedAt: DateTime!
-  poster: TimelinePostObjectDataUser!
-  tags: [String!]!
-}
-
-type TimelinePostObjectData {
-  activityId: String!
-  creator: TimelinePostObjectDataUser!
-  object: TimelinePostObjectDataObject!
-  poster: TimelinePostObjectDataUser!
-}
-
-type TimelinePostObjectDataObject {
-  audioUri: String
-  id: ID!
-  imageUri: String
-  name: String!
-  type: TimelinePostType!
-  videoThumbUri: String
-  videoUri: String
-}
-
-type TimelinePostObjectDataUser {
-  avatarUri: String
-  displayName: String!
-  id: ID!
-}
-
-enum TimelinePostType {
-  ANNOUNCEMENT
-  WORKOUT
-  WORKOUTPLAN
 }
 
 input UpdateBodyTrackingEntryInput {

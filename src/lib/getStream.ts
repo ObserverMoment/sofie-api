@@ -1,12 +1,21 @@
 import { StreamChat } from 'stream-chat'
-import { connect, StreamClient } from 'getstream'
 import {
-  TimelinePostDataRequestInput,
-  TimelinePostType,
-} from '../generated/graphql'
+  CollectionEntry,
+  connect,
+  EnrichedActivity,
+  EnrichedUser,
+  ReactionAPIResponse,
+  StreamClient,
+  UR,
+} from 'getstream'
 import { PrismaClient } from '@prisma/client'
 import { checkUserIsOwnerOrAdminOfClub } from '../graphql/resolvers/club/utils'
-import { getAvatarUrl } from './uploadcare'
+import {
+  CreateStreamFeedActivityInput,
+  StreamEnrichedActivity,
+  StreamFeedClub,
+  StreamFeedUser,
+} from '../generated/graphql'
 
 export let streamFeedClient: StreamClient | null = null
 export let streamChatClient: StreamChat | null = null
@@ -19,7 +28,22 @@ const CLUB_MEMBERS_FEED_NAME = 'club_members_feed'
 const USER_FEED_NAME = 'user_feed'
 // Timelines follow feeds and they are what users view when they see their timleine.
 const USER_TIMELINE_FEED_NAME = 'user_timeline'
-const USER_NOTIFICATION_NAME = 'user_notification'
+const USER_NOTIFICATION_FEED_NAME = 'user_notification'
+
+const CLUBS_COLLECTION_NAME = 'club'
+
+const REACTION_TYPE_LIKE = 'like'
+const REACTION_TYPE_COMMENT = 'comment'
+
+type SetUserFields = {
+  name?: string
+  image?: string
+}
+
+type SetClubFields = {
+  name?: string
+  image?: string
+}
 
 /// Call this when booting app. Sets up clients for chat and feeds.
 export function initGetStreamClients() {
@@ -56,18 +80,6 @@ export function initGetStreamClients() {
  * [user_notifications] = notifications from the system.
  * [club_members_feed] = timelines of members can (optionally) follow this feed to get club related posts.
  */
-export async function createStreamFeedUser(userId: string) {
-  try {
-    if (!streamFeedClient) {
-      throw Error('streamFeedClient not initialized')
-    }
-    await streamFeedClient!.user(userId).create()
-  } catch (e) {
-    console.log(e)
-    throw new Error(String(e))
-  }
-}
-
 /**
  * For GetStream activity feeds - used on the client as an access token for the logged in user.
  * @param  {string} userId - the database User ID.
@@ -78,6 +90,100 @@ export function getUserFeedToken(userId: string): string {
       throw Error('streamFeedClient not initialized')
     }
     return streamFeedClient!.createUserToken(userId)
+  } catch (e) {
+    console.log(e)
+    throw new Error(String(e))
+  }
+}
+
+export async function createStreamFeedUser(
+  userId: string,
+  displayName: string,
+) {
+  try {
+    if (!streamFeedClient) {
+      throw Error('streamFeedClient not initialized')
+    }
+    await streamFeedClient!.user(userId).create({
+      name: displayName,
+    })
+  } catch (e) {
+    console.log(e)
+    throw new Error(String(e))
+  }
+}
+
+export async function updateStreamFeedUser(
+  userId: string,
+  displayName?: string,
+  avatarUri?: string,
+) {
+  try {
+    if (!displayName && !avatarUri) return
+
+    if (!streamFeedClient) {
+      throw Error('streamFeedClient not initialized')
+    }
+
+    const update: SetUserFields = {}
+
+    if (displayName) {
+      update.name = displayName
+    }
+    if (avatarUri) {
+      update.image = avatarUri
+    }
+
+    await streamFeedClient.user(userId).update(update)
+  } catch (e) {
+    console.log(e)
+    throw new Error(String(e))
+  }
+}
+
+/// Saving basic club info to Stream servers so that we can display club name and avatar when club posts are being displayed in a user's feed.
+/// Via the Stream [Collections] functionality.
+/// https://getstream.io/activity-feeds/docs/node/collections_introduction/?language=javascript#updating-collections
+export async function createStreamFeedClub(clubId: string, name: string) {
+  try {
+    if (!streamFeedClient) {
+      throw Error('streamFeedClient not initialized')
+    }
+    await streamFeedClient!.collections.add(CLUBS_COLLECTION_NAME, clubId, {
+      name,
+    })
+  } catch (e) {
+    console.log(e)
+    throw new Error(String(e))
+  }
+}
+
+export async function updateStreamFeedClub(
+  clubId: string,
+  name?: string,
+  coverImageUri?: string,
+) {
+  try {
+    if (!name && !coverImageUri) return
+
+    if (!streamFeedClient) {
+      throw Error('streamFeedClient not initialized')
+    }
+
+    const update: SetUserFields = {}
+
+    if (name) {
+      update.name = name
+    }
+    if (coverImageUri) {
+      update.image = coverImageUri
+    }
+
+    await streamFeedClient!.collections.update(
+      CLUBS_COLLECTION_NAME,
+      clubId,
+      update,
+    )
   } catch (e) {
     console.log(e)
     throw new Error(String(e))
@@ -105,7 +211,7 @@ export async function toggleFollowClubMembersFeed(
       await userTimeline.follow(CLUB_MEMBERS_FEED_NAME, clubId)
     } else {
       await userTimeline.unfollow(CLUB_MEMBERS_FEED_NAME, clubId, {
-        // Err on the side of caution re. club feed data.
+        // Err on the side of caution re. club feed data as this is 'paid content'.
         keepHistory: false,
       })
     }
@@ -115,58 +221,12 @@ export async function toggleFollowClubMembersFeed(
   }
 }
 
-export async function createStreamClubMembersFeedActivity(
-  clubId: string,
-  authedUserId: string,
-  {
-    object,
-    caption,
-    tags,
-  }: { object: string; caption?: string; tags?: string[] },
-): Promise<ActivityData> {
-  try {
-    if (!streamFeedClient) {
-      throw Error('streamFeedClient not initialized')
-    }
-    // Create the new activity.
-    const activity = await streamFeedClient
-      .feed(CLUB_MEMBERS_FEED_NAME, clubId)
-      .addActivity({
-        actor: `SU:${authedUserId}`,
-        verb: 'club-post',
-        object: object,
-        foreign_id: clubId,
-        caption: caption,
-        tags: tags,
-      })
-
-    const activityData: ActivityData = {
-      activityId: activity.id,
-      postedAt: new Date(activity.time),
-      caption: activity['caption'] as string,
-      tags: activity['tags'] as string[],
-      dataRequestInput: {
-        activityId: activity.id,
-        posterId: (activity.actor as string).split(':')[1],
-        objectId: (activity.object as string).split(':')[1],
-        objectType: (activity.object as string)
-          .split(':')[0]
-          .toUpperCase() as TimelinePostType,
-      },
-    }
-    // Includes the fields we need to populate the objects from the DB before returning to client.
-    return activityData
-  } catch (e) {
-    console.log(e)
-    throw new Error(String(e))
-  }
-}
-
 export async function getStreamClubMembersFeedActivities(
+  authedUserId: string,
   clubId: string,
   limit: number,
   offset: number,
-): Promise<ActivityData[]> {
+): Promise<StreamEnrichedActivity[]> {
   try {
     if (!streamFeedClient) {
       throw Error('streamFeedClient not initialized')
@@ -177,38 +237,72 @@ export async function getStreamClubMembersFeedActivities(
       .get({
         limit: limit,
         offset: offset,
+        enrich: true,
+        withReactionCounts: true,
       })
 
-    // Data from the activity that we want to extract as well as the ids of objects that we need to get from the database.
-    // Note that [TimelinePostType] is a graphql schema enum and is therefore CAPITALIZED.
-    // We should send already capitalized like [WORKOUT:6c35a392-19cd-4b13-bb7b-a45e643fc697]
-    // This is an extra check...
-    const activityData: ActivityData[] =
-      // Should be a [FlatActivity[]] but we need to index into custom fields
-      // So set as [any] for now.
-      (response.results as any[]).map((a: any) => ({
-        activityId: a.id,
-        postedAt: new Date(a.time),
-        caption: a['caption'],
-        tags: a['tags'],
-        dataRequestInput: {
-          activityId: a.id,
-          posterId: (a.actor as string).split(':')[1],
-          objectId: (a.object as string).split(':')[1],
-          objectType: (a.object as string)
-            .split(':')[0]
-            .toUpperCase() as TimelinePostType,
-        },
-      }))
+    const userReactions = await streamFeedClient.reactions.filter({
+      user_id: authedUserId,
+      kind: REACTION_TYPE_LIKE,
+    })
 
-    return activityData
+    /// Filter for reactions to the retrieved activities posted by the authed user.
+    const activityIds = response.results.map((a) => a.id)
+    const relevantUserReactions = userReactions.results.filter((r) =>
+      activityIds.includes(r.activity_id),
+    )
+
+    return response.results.map((a) =>
+      formatStreamActivityData(a as EnrichedActivity, relevantUserReactions),
+    )
   } catch (e) {
     console.log(e)
     throw new Error(String(e))
   }
 }
 
-export async function deleteStreamClubPostActivity(
+export async function createStreamClubMembersFeedActivity(
+  clubId: string,
+  authedUserId: string,
+  data: CreateStreamFeedActivityInput,
+): Promise<StreamEnrichedActivity> {
+  try {
+    if (!streamFeedClient) {
+      throw Error('streamFeedClient not initialized')
+    }
+
+    const clubRef = streamFeedClient.collections.entry(
+      CLUBS_COLLECTION_NAME,
+      clubId,
+      {},
+    )
+    const userRef = streamFeedClient.user(authedUserId)
+
+    // Create the new activity.
+    const activity = await streamFeedClient
+      .feed(CLUB_MEMBERS_FEED_NAME, clubId)
+      .addActivity({
+        actor: userRef,
+        verb: 'post',
+        object: data.object,
+        club: clubRef,
+        ...data.extraData,
+      })
+
+    // Get the new activity enriched from stream server.
+    const getActivitiesAPIResponse = await streamFeedClient.getActivities({
+      ids: [activity.id],
+      enrich: true,
+    })
+
+    return formatStreamActivityData(getActivitiesAPIResponse.results[0])
+  } catch (e) {
+    console.log(e)
+    throw new Error(String(e))
+  }
+}
+
+export async function deleteStreamClubMembersFeedActivity(
   authedUserId: string,
   activityId: string,
   prisma: PrismaClient,
@@ -222,7 +316,7 @@ export async function deleteStreamClubPostActivity(
       await streamFeedClient.getActivities({ ids: [activityId] })
     ).results[0]
 
-    const clubId = activity.foreign_id as string
+    const clubId = (activity.club as CollectionEntry).id as string
 
     // Club ID should always be saved as the foreign_id of these posts.
     await checkUserIsOwnerOrAdminOfClub(clubId, authedUserId, prisma)
@@ -242,14 +336,6 @@ export async function deleteStreamClubPostActivity(
   }
 }
 
-interface ActivityData {
-  activityId: string
-  postedAt: Date
-  caption?: string
-  tags: string[]
-  dataRequestInput: TimelinePostDataRequestInput
-}
-
 /// How many followers does their [user_feed] feed have.
 export async function getUserFollowersCount(userId: string) {
   if (!streamFeedClient) {
@@ -260,6 +346,79 @@ export async function getUserFollowersCount(userId: string) {
     .followStats()
 
   return stats.results.followers.count
+}
+
+/// These methods convert an enriched activity returned from the stream servers into the graphql defined type that needs to be sent to the client.
+/// The graphql types match the Dart types on the client so that the client can interact with this API and with the stream Flutter SDK in the same way.
+function formatStreamActivityData(
+  a: EnrichedActivity,
+  reactions?: ReactionAPIResponse<UR>[],
+): StreamEnrichedActivity {
+  const likeReaction = reactions?.find((r) => r.activity_id === a.id)
+
+  const likes =
+    a.reaction_counts !== null ? a.reaction_counts![REACTION_TYPE_LIKE] : 0
+  const comments =
+    a.reaction_counts !== null ? a.reaction_counts![REACTION_TYPE_COMMENT] : 0
+
+  return {
+    id: a.id,
+    actor: formatStreamUserObject(a.actor as EnrichedUser)!,
+    verb: a.verb,
+    object: a.object as string,
+    time: new Date(a.time),
+    reactionCounts: {
+      likes,
+      comments,
+    },
+    userLikeReactionId: likeReaction?.id,
+    extraData: {
+      creator: a.creator
+        ? formatStreamUserObject(a.creator as EnrichedUser)
+        : null,
+      club: a.club
+        ? formatStreamCollectionObject(a.club as CollectionEntry)
+        : null,
+      title: a.title as string | undefined,
+      caption: a.caption as string | undefined,
+      tags: (a.tags as string[]) || [],
+      articleUrl: a.articleUrl as string | undefined,
+      audioUrl: a.audioUrl as string | undefined,
+      imageUrl: a.imageUrl as string | undefined,
+      videoUrl: a.videoUrl as string | undefined,
+      originalPostId: a.originalPostId as string | undefined,
+    },
+  }
+}
+
+function formatStreamUserObject(u: EnrichedUser): StreamFeedUser | null {
+  if (u.id && u.data) {
+    return {
+      id: u.id,
+      data: {
+        name: u.data.name as string | undefined,
+        image: u.data.image as string | undefined,
+      },
+    }
+  } else {
+    return null
+  }
+}
+
+function formatStreamCollectionObject(
+  c: CollectionEntry,
+): StreamFeedClub | null {
+  if (c.id && c.data) {
+    return {
+      id: c.id,
+      data: {
+        name: c.data.name as string | undefined,
+        image: c.data.image as string | undefined,
+      },
+    }
+  } else {
+    return null
+  }
 }
 
 //////////////////////
@@ -283,11 +442,6 @@ export async function upsertStreamChatUser(
   }
 }
 
-type SetFields = {
-  name?: string
-  image?: string
-}
-
 export async function updateStreamChatUser(
   userId: string,
   displayName?: string,
@@ -300,7 +454,8 @@ export async function updateStreamChatUser(
       throw Error('streamChatClient not initialized')
     }
 
-    const set: SetFields = {}
+    const set: SetUserFields = {}
+
     if (displayName) {
       set.name = displayName
     }
