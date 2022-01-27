@@ -936,8 +936,8 @@ type StreamActivityExtraData {
 }
 
 type StreamActivityReactionCounts {
+  comments: Int
   likes: Int
-  shares: Int
 }
 
 type StreamEnrichedActivity {
@@ -947,6 +947,7 @@ type StreamEnrichedActivity {
   object: String!
   reactionCounts: StreamActivityReactionCounts
   time: DateTime!
+  userLikeReactionId: String
   verb: String!
 }
 

@@ -4,7 +4,9 @@ import {
   connect,
   EnrichedActivity,
   EnrichedUser,
+  ReactionAPIResponse,
   StreamClient,
+  UR,
 } from 'getstream'
 import { PrismaClient } from '@prisma/client'
 import { checkUserIsOwnerOrAdminOfClub } from '../graphql/resolvers/club/utils'
@@ -29,6 +31,9 @@ const USER_TIMELINE_FEED_NAME = 'user_timeline'
 const USER_NOTIFICATION_FEED_NAME = 'user_notification'
 
 const CLUBS_COLLECTION_NAME = 'club'
+
+const REACTION_TYPE_LIKE = 'like'
+const REACTION_TYPE_COMMENT = 'comment'
 
 type SetUserFields = {
   name?: string
@@ -217,6 +222,7 @@ export async function toggleFollowClubMembersFeed(
 }
 
 export async function getStreamClubMembersFeedActivities(
+  authedUserId: string,
   clubId: string,
   limit: number,
   offset: number,
@@ -232,10 +238,22 @@ export async function getStreamClubMembersFeedActivities(
         limit: limit,
         offset: offset,
         enrich: true,
+        withReactionCounts: true,
       })
 
-    return response.results.map((r) =>
-      formatStreamActivityData(r as EnrichedActivity),
+    const userReactions = await streamFeedClient.reactions.filter({
+      user_id: authedUserId,
+      kind: REACTION_TYPE_LIKE,
+    })
+
+    /// Filter for reactions to the retrieved activities posted by the authed user.
+    const activityIds = response.results.map((a) => a.id)
+    const relevantUserReactions = userReactions.results.filter((r) =>
+      activityIds.includes(r.activity_id),
+    )
+
+    return response.results.map((a) =>
+      formatStreamActivityData(a as EnrichedActivity, relevantUserReactions),
     )
   } catch (e) {
     console.log(e)
@@ -332,13 +350,28 @@ export async function getUserFollowersCount(userId: string) {
 
 /// These methods convert an enriched activity returned from the stream servers into the graphql defined type that needs to be sent to the client.
 /// The graphql types match the Dart types on the client so that the client can interact with this API and with the stream Flutter SDK in the same way.
-function formatStreamActivityData(a: EnrichedActivity): StreamEnrichedActivity {
+function formatStreamActivityData(
+  a: EnrichedActivity,
+  reactions?: ReactionAPIResponse<UR>[],
+): StreamEnrichedActivity {
+  const likeReaction = reactions?.find((r) => r.activity_id === a.id)
+
+  const likes =
+    a.reaction_counts !== null ? a.reaction_counts![REACTION_TYPE_LIKE] : 0
+  const comments =
+    a.reaction_counts !== null ? a.reaction_counts![REACTION_TYPE_COMMENT] : 0
+
   return {
     id: a.id,
     actor: formatStreamUserObject(a.actor as EnrichedUser)!,
     verb: a.verb,
     object: a.object as string,
     time: new Date(a.time),
+    reactionCounts: {
+      likes,
+      comments,
+    },
+    userLikeReactionId: likeReaction?.id,
     extraData: {
       creator: a.creator
         ? formatStreamUserObject(a.creator as EnrichedUser)

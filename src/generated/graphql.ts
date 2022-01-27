@@ -1778,8 +1778,8 @@ export type StreamActivityExtraData = {
 
 export type StreamActivityReactionCounts = {
   __typename?: 'StreamActivityReactionCounts';
+  comments?: Maybe<Scalars['Int']>;
   likes?: Maybe<Scalars['Int']>;
-  shares?: Maybe<Scalars['Int']>;
 };
 
 export type StreamEnrichedActivity = {
@@ -1790,6 +1790,7 @@ export type StreamEnrichedActivity = {
   object: Scalars['String'];
   reactionCounts?: Maybe<StreamActivityReactionCounts>;
   time: Scalars['DateTime'];
+  userLikeReactionId?: Maybe<Scalars['String']>;
   verb: Scalars['String'];
 };
 
@@ -3475,8 +3476,8 @@ export type StreamActivityExtraDataResolvers<ContextType = any, ParentType exten
 }>;
 
 export type StreamActivityReactionCountsResolvers<ContextType = any, ParentType extends ResolversParentTypes['StreamActivityReactionCounts'] = ResolversParentTypes['StreamActivityReactionCounts']> = ResolversObject<{
+  comments?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   likes?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  shares?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -3487,6 +3488,7 @@ export type StreamEnrichedActivityResolvers<ContextType = any, ParentType extend
   object?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   reactionCounts?: Resolver<Maybe<ResolversTypes['StreamActivityReactionCounts']>, ParentType, ContextType>;
   time?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  userLikeReactionId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   verb?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;

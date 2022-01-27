@@ -23,7 +23,7 @@ export const clubMembersFeedPosts = async (
 ) => {
   await checkUserIsMemberOfClub(clubId, authedUserId, prisma)
 
-  return getStreamClubMembersFeedActivities(clubId, limit, offset)
+  return getStreamClubMembersFeedActivities(authedUserId, clubId, limit, offset)
 }
 
 //// Mutations ////

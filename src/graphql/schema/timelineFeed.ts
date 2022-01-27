@@ -8,6 +8,8 @@ export default gql`
     verb: String!
     object: String!
     time: DateTime!
+    # If the logged in user has liked this activity then the ID should be here.
+    userLikeReactionId: String
     reactionCounts: StreamActivityReactionCounts
     extraData: StreamActivityExtraData!
   }
@@ -27,7 +29,7 @@ export default gql`
 
   type StreamActivityReactionCounts {
     likes: Int
-    shares: Int
+    comments: Int
   }
 
   # Enriched Stream User. This data is being stored on the GetStream servers.
