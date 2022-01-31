@@ -28,6 +28,27 @@ input AddWorkoutToCollectionInput {
   collectionId: ID!
 }
 
+type AnnouncementUpdate {
+  actions: [AnnouncementUpdateAction!]!
+  articleUrl: String
+  audioUri: String
+  bodyOne: String
+  bodyTwo: String
+  createdAt: DateTime!
+  id: ID!
+  imageUri: String
+  subtitle: String
+  title: String!
+  videoUri: String
+}
+
+type AnnouncementUpdateAction {
+  createdAt: DateTime!
+  id: ID!
+  routeTo: String!
+  text: String!
+}
+
 """Enums"""
 enum BenchmarkType {
   AMRAP
@@ -102,17 +123,6 @@ type Club {
   introVideoUri: String
   location: String
   name: String!
-}
-
-type ClubAnnouncement {
-  User: UserAvatarData!
-  audioUri: String
-  createdAt: DateTime!
-  description: String!
-  id: ID!
-  imageUri: String
-  videoThumbUri: String
-  videoUri: String
 }
 
 type ClubChatSummary {
@@ -237,15 +247,6 @@ input CreateBodyTrackingEntryInput {
   fatPercent: Float
   note: String
   photoUris: [String!]
-}
-
-input CreateClubAnnouncementInput {
-  Club: ConnectRelationInput!
-  audioUri: String
-  description: String!
-  imageUri: String
-  videoThumbUri: String
-  videoUri: String
 }
 
 input CreateClubInput {
@@ -636,6 +637,11 @@ type LoggedWorkoutSet {
   timeTakenSeconds: Int
 }
 
+input MarkAnnouncementUpdateAsSeenInput {
+  announcementUpdateId: ID!
+  userId: ID!
+}
+
 type Move {
   BodyAreaMoveScores: [BodyAreaMoveScore!]!
   MoveType: MoveType!
@@ -744,6 +750,7 @@ type Mutation {
   duplicateWorkoutSetById(id: ID!): WorkoutSet!
   giveMemberAdminStatus(clubId: ID!, userId: ID!): ClubMembers!
   makeCopyWorkoutById(id: ID!): Workout!
+  markAnnouncementUpdateAsSeen(data: MarkAnnouncementUpdateAsSeenInput!): ID!
   moveWorkoutPlanDayToAnotherDay(data: MoveWorkoutPlanDayToAnotherDayInput!): WorkoutPlanDay!
   removeDocumentFromSkill(data: RemoveDocumentFromSkillInput!): Skill!
   removeMemberAdminStatus(clubId: ID!, userId: ID!): ClubMembers!
@@ -807,6 +814,7 @@ type Query {
   adminPublicClubs(status: PublicContentValidationStatus!): [ClubWithMetaData!]!
   adminPublicWorkoutPlans(status: PublicContentValidationStatus!): [WorkoutPlanWithMetaData!]!
   adminPublicWorkouts(status: PublicContentValidationStatus!): [WorkoutWithMetaData!]!
+  announcementUpdates: [AnnouncementUpdate!]!
   bodyAreas: [BodyArea!]!
   bodyTrackingEntries: [BodyTrackingEntry!]!
   checkClubInviteToken(id: ID!): CheckClubInviteTokenResult!
@@ -989,15 +997,6 @@ input UpdateBodyTrackingEntryInput {
   id: ID!
   note: String
   photoUris: [String!]
-}
-
-input UpdateClubAnnouncementInput {
-  audioUri: String
-  description: String
-  id: ID!
-  imageUri: String
-  videoThumbUri: String
-  videoUri: String
 }
 
 input UpdateClubInviteTokenInput {

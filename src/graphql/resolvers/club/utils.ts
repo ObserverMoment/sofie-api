@@ -359,3 +359,40 @@ export async function isUserClubMember(
 
   return obj !== null
 }
+
+type ClubOwnerAndAdminIds = {
+  owner: string
+  admins: string[]
+}
+
+export async function getIdsOfOwnerAndAdminsOfClub(
+  clubId: string,
+  prisma: PrismaClient,
+): Promise<ClubOwnerAndAdminIds> {
+  const club = await prisma.club.findFirst({
+    where: {
+      id: clubId,
+    },
+    select: {
+      Owner: {
+        select: {
+          id: true,
+        },
+      },
+      Admins: {
+        select: { id: true },
+      },
+    },
+  })
+
+  if (!club) {
+    throw new ApolloError(
+      `getIdsOfOwnerAndAdminsOfClub: Could not retrieve the club with ${clubId}`,
+    )
+  }
+
+  return {
+    owner: club.Owner.id,
+    admins: club.Admins.map((a) => a.id),
+  }
+}

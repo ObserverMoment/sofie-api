@@ -17,6 +17,7 @@ export default gql`
       status: PublicContentValidationStatus!
     ): [ClubWithMetaData!]!
     #### END OF ADMIN ONLY QUERIES ####
+    announcementUpdates: [AnnouncementUpdate!]!
     validateToken: Boolean!
     #### Core Data ####
     bodyAreas: [BodyArea!]!
@@ -121,6 +122,8 @@ export default gql`
     ): WorkoutPlanMetaData
     updateClubMetaData(data: UpdateClubMetaDataInput!): ClubMetaData!
     #### END OF ADMIN ONLY MUTATIONS ####
+    #### AnnouncementUpdate ####
+    markAnnouncementUpdateAsSeen(data: MarkAnnouncementUpdateAsSeenInput!): ID!
     #### Archive ####
     archiveWorkoutById(id: ID!): Workout!
     unarchiveWorkoutById(id: ID!): Workout!

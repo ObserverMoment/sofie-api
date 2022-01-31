@@ -18,6 +18,7 @@ import {
   addStreamUserToClubMemberChat,
   removeStreamUserFromClubMemberChat,
   toggleFollowClubMembersFeed,
+  notifyOwnerAndAdminsOfMemberJoinLeave,
 } from '../../../lib/getStream'
 import {
   selectForClubInviteToken,
@@ -116,6 +117,13 @@ export const userJoinPublicClub = async (
     await addStreamUserToClubMemberChat(updated.id, authedUserId)
     /// Subscribe the user's timeline_feed to the club_feed.
     await toggleFollowClubMembersFeed(updated.id, authedUserId, 'FOLLOW')
+    /// Notify owner and admins that user has joined.
+    await notifyOwnerAndAdminsOfMemberJoinLeave(
+      authedUserId,
+      updated.id,
+      'FOLLOW',
+      prisma,
+    )
     return updated.id
   } else {
     throw new ApolloError('userJoinPublicClub: There was an issue.')
@@ -315,6 +323,13 @@ export const addUserToClubViaInviteToken = async (
     await addStreamUserToClubMemberChat((updatedClub as Club).id, userId)
     /// Subscribe the user's timeline_feed to the club_feed.
     await toggleFollowClubMembersFeed(updatedClub.id, userId, 'FOLLOW')
+    /// Notify owner and admins that user has joined.
+    await notifyOwnerAndAdminsOfMemberJoinLeave(
+      userId,
+      updatedClub.id,
+      'FOLLOW',
+      prisma,
+    )
     return updatedClub.id
   } else {
     throw new ApolloError('addUserToClubViaInviteToken: There was an issue.')
@@ -462,6 +477,13 @@ export const removeUserFromClub = async (
     await removeStreamUserFromClubMemberChat(updated.id, userToRemoveId)
     /// Unsubscribe the user's timeline_feed to the club_feed. This also removes feed history from their timeline.
     await toggleFollowClubMembersFeed(updated.id, userToRemoveId, 'UNFOLLOW')
+    /// Notify owner and admins that user has joined.
+    await notifyOwnerAndAdminsOfMemberJoinLeave(
+      authedUserId,
+      updated.id,
+      'UNFOLLOW',
+      prisma,
+    )
     return formatClubMembers(clubId, updated)
   } else {
     throw new ApolloError('removeUserFromClub: There was an issue.')

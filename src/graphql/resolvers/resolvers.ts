@@ -5,6 +5,11 @@ import {
 } from '../../generated/graphql'
 
 import {
+  announcementUpdates,
+  markAnnouncementUpdateAsSeen,
+} from './announcementUpdate'
+
+import {
   userArchivedWorkouts,
   userArchivedWorkoutPlans,
   userArchivedCustomMoves,
@@ -254,6 +259,7 @@ import {
 import { GraphQLScalarType } from 'graphql'
 import GraphQLJSON from 'graphql-type-json'
 import { Kind } from 'graphql/language'
+import announcementUpdate from '../schema/announcementUpdate'
 
 const resolvers: Resolvers = {
   JSON: GraphQLJSON,
@@ -295,6 +301,7 @@ const resolvers: Resolvers = {
     adminPublicClubs,
     //// END OF ADMIN ONLY QUERIES ////
     //// Core Data ////
+    announcementUpdates,
     bodyAreas,
     equipments,
     moveTypes,
@@ -377,6 +384,10 @@ const resolvers: Resolvers = {
     updateWorkoutPlanMetaData,
     updateClubMetaData,
     //// END OF ADMIN ONLY MUTATIONS ////
+    ////////////////////
+    //// Core Data /////
+    ////////////////////
+    markAnnouncementUpdateAsSeen,
     ///////////////
     //// Club /////
     ///////////////
