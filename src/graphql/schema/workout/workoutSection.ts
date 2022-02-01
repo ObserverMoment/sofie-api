@@ -48,14 +48,4 @@ export default gql`
     classAudioUri: String
     WorkoutSectionType: ConnectRelationInput
   }
-
-  type WorkoutSectionType {
-    id: ID!
-    name: String!
-    subtitle: String!
-    description: String!
-    validRepTypes: [WorkoutMoveRepType!]!
-    WorkoutSections: [WorkoutSection!]!
-    LoggedWorkoutSections: [LoggedWorkoutSection!]!
-  }
 `

@@ -16,19 +16,7 @@ import { checkUserOwnsObject } from '../utils'
 
 //// Queries ////
 // Move scopes are 'STANDARD' or 'CUSTOM'.
-export const standardMoves = async (
-  r: any,
-  a: any,
-  { prisma, select }: Context,
-) => {
-  const moves = await prisma.move.findMany({
-    where: { scope: 'STANDARD', archived: false },
-    select,
-  })
-  return moves as Move[]
-}
-
-export const userCustomMoves = async (
+export const customMoves = async (
   r: any,
   a: any,
   { authedUserId, prisma, select }: Context,

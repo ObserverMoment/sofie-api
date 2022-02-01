@@ -1,27 +1,23 @@
 import { ApolloError } from 'apollo-server-errors'
 import { Context } from '../../..'
 import {
-  MutationUpdateWorkoutMetaDataArgs,
-  QueryAdminPublicWorkoutsArgs,
-  WorkoutMetaData,
-  WorkoutWithMetaData,
+  MutationUpdateWorkoutPlanMetaDataAdminArgs,
+  QueryAdminPublicWorkoutPlansArgs,
+  WorkoutPlanMetaDataAdmin,
+  WorkoutPlanWithMetaDataAdmin,
 } from '../../../generated/graphql'
 import { AccessScopeError } from '../../utils'
 
 //// NOTE: Admin Only Access to these resolvers ////
+
 //// Queries ////
-
 /// https://www.prisma.io/docs/concepts/components/prisma-client/pagination
-export const adminPublicWorkouts = async (
+export const adminPublicWorkoutPlans = async (
   r: any,
-  { status }: QueryAdminPublicWorkoutsArgs,
-  { prisma, select, userType }: Context,
+  { status }: QueryAdminPublicWorkoutPlansArgs,
+  { prisma, select }: Context,
 ) => {
-  if (userType !== 'ADMIN') {
-    throw new AccessScopeError()
-  }
-
-  const publicWorkouts = await prisma.workout.findMany({
+  const publicWorkoutPlans = await prisma.workoutPlan.findMany({
     where: {
       contentAccessScope: 'PUBLIC',
       archived: false,
@@ -34,19 +30,19 @@ export const adminPublicWorkouts = async (
     select,
   })
 
-  return publicWorkouts as WorkoutWithMetaData[]
+  return publicWorkoutPlans as WorkoutPlanWithMetaDataAdmin[]
 }
 
-export const updateWorkoutMetaData = async (
+export const updateWorkoutPlanMetaDataAdmin = async (
   r: any,
-  { data }: MutationUpdateWorkoutMetaDataArgs,
+  { data }: MutationUpdateWorkoutPlanMetaDataAdminArgs,
   { prisma, userType }: Context,
 ) => {
   if (userType !== 'ADMIN') {
     throw new AccessScopeError()
   }
 
-  const updated = await prisma.workout.update({
+  const updated = await prisma.workoutPlan.update({
     where: { id: data.id },
     data: {
       ...data,
@@ -63,8 +59,8 @@ export const updateWorkoutMetaData = async (
   })
 
   if (updated) {
-    return updated as WorkoutMetaData
+    return updated as WorkoutPlanMetaDataAdmin
   } else {
-    throw new ApolloError('updateWorkoutMetaData: There was an issue.')
+    throw new ApolloError('updateWorkoutPlanMetaDataAdmin: There was an issue.')
   }
 }

@@ -86,6 +86,7 @@ export const selectForWorkoutSummary = {
   description: true,
   difficultyLevel: true,
   lengthMinutes: true,
+  metaData: true,
   WorkoutGoals: true,
   WorkoutTags: true,
   WorkoutSections: {

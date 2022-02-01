@@ -40,7 +40,7 @@ import {
   deleteClub,
 } from './club/club'
 
-import { adminPublicClubs, updateClubMetaData } from './club/metaData'
+import { adminPublicClubs, updateClubMetaDataAdmin } from './club/metaDataAdmin'
 
 import {
   checkUserClubMemberStatus,
@@ -66,6 +66,12 @@ import {
 } from './club/clubContent'
 
 import {
+  coreData,
+  createEquipment, // Admin only
+  updateEquipment, // Admin only
+} from './coreData'
+
+import {
   gymProfiles,
   createGymProfile,
   updateGymProfile,
@@ -86,17 +92,7 @@ import {
   deleteLoggedWorkoutMove,
 } from './loggedWorkout'
 
-import { standardMoves, userCustomMoves, createMove, updateMove } from './move'
-
-import {
-  bodyAreas,
-  equipments,
-  createEquipment,
-  updateEquipment,
-  workoutGoals,
-  workoutSectionTypes,
-  moveTypes,
-} from './officialData'
+import { customMoves, createMove, updateMove } from './move'
 
 import {
   journalNotes,
@@ -191,7 +187,10 @@ import {
   duplicateWorkoutById,
 } from './workout/workout'
 
-import { adminPublicWorkouts, updateWorkoutMetaData } from './workout/metaData'
+import {
+  adminPublicWorkouts,
+  updateWorkoutMetaDataAdmin,
+} from './workout/metaDataAdmin'
 
 import {
   createWorkoutSection,
@@ -241,8 +240,8 @@ import {
 
 import {
   adminPublicWorkoutPlans,
-  updateWorkoutPlanMetaData,
-} from './workoutPlan/metaData'
+  updateWorkoutPlanMetaDataAdmin,
+} from './workoutPlan/metaDataAdmin'
 
 import {
   workoutPlanEnrolments,
@@ -259,7 +258,6 @@ import {
 import { GraphQLScalarType } from 'graphql'
 import GraphQLJSON from 'graphql-type-json'
 import { Kind } from 'graphql/language'
-import announcementUpdate from '../schema/announcementUpdate'
 
 const resolvers: Resolvers = {
   JSON: GraphQLJSON,
@@ -302,11 +300,7 @@ const resolvers: Resolvers = {
     //// END OF ADMIN ONLY QUERIES ////
     //// Core Data ////
     announcementUpdates,
-    bodyAreas,
-    equipments,
-    moveTypes,
-    workoutGoals,
-    workoutSectionTypes,
+    coreData,
     ///// Clubs ////
     checkUniqueClubName,
     checkUserClubMemberStatus,
@@ -333,9 +327,8 @@ const resolvers: Resolvers = {
     logCountByWorkout,
     loggedWorkoutById,
     userLoggedWorkouts,
-    //// Move ////
-    standardMoves,
-    userCustomMoves,
+    //// User Custom Move ////
+    customMoves,
     //// Scheduled Workouts ////
     userScheduledWorkouts,
     //// Text Search ////
@@ -380,9 +373,9 @@ const resolvers: Resolvers = {
   },
   Mutation: {
     //// ADMIN ONLY MUTATIONS ////
-    updateWorkoutMetaData,
-    updateWorkoutPlanMetaData,
-    updateClubMetaData,
+    updateWorkoutMetaDataAdmin,
+    updateWorkoutPlanMetaDataAdmin,
+    updateClubMetaDataAdmin,
     //// END OF ADMIN ONLY MUTATIONS ////
     ////////////////////
     //// Core Data /////

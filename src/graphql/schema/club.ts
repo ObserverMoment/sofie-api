@@ -2,18 +2,18 @@ import { gql } from 'apollo-server-express'
 
 export default gql`
   ## Admin use only ##
-  type ClubWithMetaData {
+  type ClubWithMetaDataAdmin {
     Club: Club!
-    metaData: ClubMetaData!
+    metaData: ClubMetaDataAdmin!
   }
 
-  type ClubMetaData {
+  type ClubMetaDataAdmin {
     validated: PublicContentValidationStatus!
     reasonNotValidated: String
     metaTags: [String!]!
   }
 
-  input UpdateClubMetaDataInput {
+  input UpdateClubMetaDataAdminInput {
     id: ID!
     validated: PublicContentValidationStatus
     reasonNotValidated: String

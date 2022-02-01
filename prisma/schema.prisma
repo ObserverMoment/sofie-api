@@ -329,7 +329,7 @@ model Workout {
   introVideoThumbUri    String?
   archived              Boolean                       @default(false)
   lengthMinutes         Int?
-  metaData              Json?
+  metaData              Json? /// Meta data about the content of the workout.
   User                  User                          @relation(fields: [userId], references: [id], onDelete: Cascade)
   LoggedWorkouts        LoggedWorkout[]
   ScheduledWorkouts     ScheduledWorkout[]
@@ -339,7 +339,7 @@ model Workout {
   Collections           Collection[]
   WorkoutGoals          WorkoutGoal[]
   WorkoutTags           WorkoutTag[]
-  ////// Admin access only - meta data //////
+  ////// Admin access only - admin / search / app level meta data //////
   validated             PublicContentValidationStatus @default(PENDING) // For public display
   reasonNotValidated    String?
   metaTags              String[]

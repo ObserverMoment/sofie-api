@@ -1,9 +1,9 @@
 import { ApolloError } from 'apollo-server-errors'
 import { Context } from '../../..'
 import {
-  ClubMetaData,
-  ClubWithMetaData,
-  MutationUpdateClubMetaDataArgs,
+  ClubMetaDataAdmin,
+  ClubWithMetaDataAdmin,
+  MutationUpdateClubMetaDataAdminArgs,
   QueryAdminPublicWorkoutPlansArgs,
 } from '../../../generated/graphql'
 import { AccessScopeError } from '../../utils'
@@ -29,12 +29,12 @@ export const adminPublicClubs = async (
     select,
   })
 
-  return publicClubs as ClubWithMetaData[]
+  return publicClubs as ClubWithMetaDataAdmin[]
 }
 
-export const updateClubMetaData = async (
+export const updateClubMetaDataAdmin = async (
   r: any,
-  { data }: MutationUpdateClubMetaDataArgs,
+  { data }: MutationUpdateClubMetaDataAdminArgs,
   { prisma, userType }: Context,
 ) => {
   if (userType !== 'ADMIN') {
@@ -57,8 +57,8 @@ export const updateClubMetaData = async (
   })
 
   if (updated) {
-    return updated as ClubMetaData
+    return updated as ClubMetaDataAdmin
   } else {
-    throw new ApolloError('updateClubMetaData: There was an issue.')
+    throw new ApolloError('updateClubMetaDataAdmin: There was an issue.')
   }
 }
