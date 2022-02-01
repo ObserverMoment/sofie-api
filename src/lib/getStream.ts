@@ -9,13 +9,17 @@ import {
   UR,
 } from 'getstream'
 import { PrismaClient } from '@prisma/client'
-import { checkUserIsOwnerOrAdminOfClub } from '../graphql/resolvers/club/utils'
+import {
+  checkUserIsOwnerOrAdminOfClub,
+  getIdsOfOwnerAndAdminsOfClub,
+} from '../graphql/resolvers/club/utils'
 import {
   CreateStreamFeedActivityInput,
   StreamEnrichedActivity,
   StreamFeedClub,
   StreamFeedUser,
 } from '../generated/graphql'
+import { ApolloError } from 'apollo-server-errors'
 
 export let streamFeedClient: StreamClient | null = null
 export let streamChatClient: StreamChat | null = null
@@ -192,6 +196,8 @@ export async function updateStreamFeedClub(
 
 type FollowActionType = 'FOLLOW' | 'UNFOLLOW'
 
+/// Also sends a notification to the owner / admins of the Club via
+/// USER_NOTIFICATION_FEED_NAME:userId
 export async function toggleFollowClubMembersFeed(
   clubId: string,
   authedUserId: string,
@@ -215,6 +221,119 @@ export async function toggleFollowClubMembersFeed(
         keepHistory: false,
       })
     }
+  } catch (e) {
+    console.log(e)
+    throw new Error(String(e))
+  }
+}
+
+/// https://getstream.io/activity-feeds/docs/node/add_many_activities/?language=javascript#batch-activity-add
+export async function notifyOwnerAndAdminsOfMemberJoinLeave(
+  userId: string,
+  clubId: string,
+  action: FollowActionType,
+  prisma: PrismaClient,
+) {
+  try {
+    if (!streamFeedClient) {
+      throw Error('streamFeedClient not initialized')
+    }
+
+    const ownerAndAdminIds = await getIdsOfOwnerAndAdminsOfClub(clubId, prisma)
+
+    const feeds = [
+      `${USER_NOTIFICATION_FEED_NAME}:${ownerAndAdminIds.owner}`,
+      ...ownerAndAdminIds.admins.map(
+        (a) => `${USER_NOTIFICATION_FEED_NAME}:${a}`,
+      ),
+    ]
+
+    const clubRef = streamFeedClient.collections.entry(
+      CLUBS_COLLECTION_NAME,
+      clubId,
+      {},
+    )
+
+    if (!streamFeedClient.addToMany) {
+      throw new ApolloError(
+        'Method [streamFeedClient.addToMany] was not found - unable to send notifications to club owners and admins.',
+      )
+    }
+
+    await streamFeedClient.addToMany!(
+      {
+        actor: `SU:${userId}`,
+        verb: action === 'FOLLOW' ? 'join-club' : 'leave-club',
+        object: clubRef,
+      },
+      feeds,
+    )
+  } catch (e) {
+    console.log(e)
+    throw new Error(String(e))
+  }
+}
+
+type PlanActionType = 'JOIN' | 'LEAVE'
+
+export async function notifyPlanOwnerOfUserJoinLeave(
+  userId: string,
+  planOwnerId: string,
+  planId: string,
+  planName: string,
+  action: PlanActionType,
+) {
+  /// Don't notify yourself...about yourself.
+  if (userId === planOwnerId) return
+
+  try {
+    if (!streamFeedClient) {
+      throw Error('streamFeedClient not initialized')
+    }
+
+    const planOwnerFeed = streamFeedClient.feed(
+      USER_NOTIFICATION_FEED_NAME,
+      planOwnerId,
+    )
+
+    await planOwnerFeed.addActivity({
+      actor: `SU:${userId}`,
+      verb: action === 'JOIN' ? 'join-plan' : 'leave-plan',
+      object: `workoutplan:${planId}`,
+      foreign_id: planName,
+    })
+  } catch (e) {
+    console.log(e)
+    throw new Error(String(e))
+  }
+}
+
+/// Tell workout owners when someone logs their workout.
+export async function notifyWorkoutOwnerOfLogEvent(
+  userId: string,
+  workoutOwnerId: string,
+  workoutId: string,
+  workoutName: string,
+) {
+  /// Don't notify yourself...about yourself.
+  if (userId === workoutOwnerId) return
+
+  try {
+    if (!streamFeedClient) {
+      throw Error('streamFeedClient not initialized')
+    }
+
+    const workoutOwnerFeed = streamFeedClient.feed(
+      USER_NOTIFICATION_FEED_NAME,
+      workoutOwnerId,
+    )
+
+    await workoutOwnerFeed.addActivity({
+      actor: `SU:${userId}`,
+      verb: 'log-workout',
+      object: `workout:${workoutId}`,
+      foreign_id: workoutName,
+    })
   } catch (e) {
     console.log(e)
     throw new Error(String(e))

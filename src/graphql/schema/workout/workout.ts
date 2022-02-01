@@ -17,9 +17,14 @@ export default gql`
     loggedSessionsCount: Int!
     hasClassVideo: Boolean!
     hasClassAudio: Boolean!
+    # Equipment IDs
     equipments: [String!]!
     # Workout Section Types, Goals and Tags as strings.
+    sectionTypes: [String!]!
+    goals: [String!]!
     tags: [String!]!
+    # Targeted body areas - IDs.
+    bodyAreas: [ID!]!
   }
 
   type Workout {
@@ -60,13 +65,6 @@ export default gql`
     contentAccessScope: ContentAccessScope
     WorkoutGoals: [ConnectRelationInput!]
     WorkoutTags: [ConnectRelationInput!]
-  }
-
-  type WorkoutGoal {
-    id: ID!
-    name: String!
-    description: String!
-    hexColor: String!
   }
 
   type WorkoutTag {

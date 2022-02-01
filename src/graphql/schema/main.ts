@@ -9,21 +9,18 @@ export default gql`
     # Content Requiring Validation #
     adminPublicWorkouts(
       status: PublicContentValidationStatus!
-    ): [WorkoutWithMetaData!]!
+    ): [WorkoutWithMetaDataAdmin!]!
     adminPublicWorkoutPlans(
       status: PublicContentValidationStatus!
-    ): [WorkoutPlanWithMetaData!]!
+    ): [WorkoutPlanWithMetaDataAdmin!]!
     adminPublicClubs(
       status: PublicContentValidationStatus!
-    ): [ClubWithMetaData!]!
+    ): [ClubWithMetaDataAdmin!]!
     #### END OF ADMIN ONLY QUERIES ####
+    announcementUpdates: [AnnouncementUpdate!]!
     validateToken: Boolean!
     #### Core Data ####
-    bodyAreas: [BodyArea!]!
-    equipments: [Equipment!]!
-    moveTypes: [MoveType!]!
-    workoutGoals: [WorkoutGoal!]!
-    workoutSectionTypes: [WorkoutSectionType!]!
+    coreData: CoreData!
     #### Clubs ####
     checkUniqueClubName(name: String!): Boolean!
     checkUserClubMemberStatus(clubId: ID!): UserClubMemberStatus!
@@ -53,9 +50,8 @@ export default gql`
     lifetimeLogStatsSummary(userId: ID!): LifetimeLogStatsSummary!
     userLoggedWorkouts(take: Int): [LoggedWorkout!]!
     loggedWorkoutById(id: ID!): LoggedWorkout!
-    #### Moves ####
-    standardMoves: [Move!]!
-    userCustomMoves: [Move!]!
+    #### User Custom Moves ####
+    customMoves: [Move!]!
     #### Progress Journal ####
     bodyTrackingEntries: [BodyTrackingEntry!]!
     journalNotes: [JournalNote!]!
@@ -115,12 +111,18 @@ export default gql`
 
   type Mutation {
     #### ADMIN ONLY MUTATIONS ####
-    updateWorkoutMetaData(data: UpdateWorkoutMetaDataInput!): WorkoutMetaData!
-    updateWorkoutPlanMetaData(
-      data: UpdateWorkoutPlanMetaDataInput!
-    ): WorkoutPlanMetaData
-    updateClubMetaData(data: UpdateClubMetaDataInput!): ClubMetaData!
+    updateWorkoutMetaDataAdmin(
+      data: UpdateWorkoutMetaDataAdminInput!
+    ): WorkoutMetaDataAdmin!
+    updateWorkoutPlanMetaDataAdmin(
+      data: UpdateWorkoutPlanMetaDataAdminInput!
+    ): WorkoutPlanMetaDataAdmin
+    updateClubMetaDataAdmin(
+      data: UpdateClubMetaDataAdminInput!
+    ): ClubMetaDataAdmin!
     #### END OF ADMIN ONLY MUTATIONS ####
+    #### AnnouncementUpdate ####
+    markAnnouncementUpdateAsSeen(data: MarkAnnouncementUpdateAsSeenInput!): ID!
     #### Archive ####
     archiveWorkoutById(id: ID!): Workout!
     unarchiveWorkoutById(id: ID!): Workout!

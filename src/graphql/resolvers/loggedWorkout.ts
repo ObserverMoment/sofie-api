@@ -19,6 +19,7 @@ import {
   QueryLoggedWorkoutByIdArgs,
   QueryUserLoggedWorkoutsArgs,
 } from '../../generated/graphql'
+import { notifyWorkoutOwnerOfLogEvent } from '../../lib/getStream'
 import { checkUserOwnsObject } from '../utils'
 
 //// Queries ////
@@ -172,10 +173,39 @@ export const createLoggedWorkout = async (
         })),
       },
     },
-    select,
+    select: {
+      ...select,
+      // Get some workout info so that you can send a notification to the owner that a workout has been logged.
+      Workout: {
+        select: {
+          id: true,
+          name: true,
+          User: {
+            select: { id: true },
+          },
+        },
+      },
+    },
   })
 
   if (loggedWorkout) {
+    /// Notify the owner of the workout that a log has been created against it.
+    const workoutOwnerId = (loggedWorkout as any).Workout.User.id
+    const workoutId = (loggedWorkout as any).Workout.id
+    const workoutName = (loggedWorkout as any).Workout.name
+
+    if (!workoutOwnerId || !workoutId || !workoutName) {
+      throw new ApolloError(
+        'Could not [notifyWorkoutOwnerOfLogEvent] as could not find the workout data needed in the select response object.',
+      )
+    }
+    await notifyWorkoutOwnerOfLogEvent(
+      authedUserId,
+      workoutOwnerId,
+      workoutId,
+      workoutName,
+    )
+
     return loggedWorkout as LoggedWorkout
   } else {
     throw new ApolloError('createLoggedWorkout: There was an issue.')

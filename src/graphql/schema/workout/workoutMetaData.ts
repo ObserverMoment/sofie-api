@@ -1,20 +1,20 @@
 import { gql } from 'apollo-server-express'
 
-// Admin use only //
+/// ADMIN USE ONLY ///
 export default gql`
-  type WorkoutWithMetaData {
+  type WorkoutWithMetaDataAdmin {
     Workout: Workout!
-    metaData: WorkoutMetaData!
+    metaData: WorkoutMetaDataAdmin!
   }
 
-  type WorkoutMetaData {
+  type WorkoutMetaDataAdmin {
     validated: PublicContentValidationStatus!
     reasonNotValidated: String
     difficultyLevel: DifficultyLevel
     metaTags: [String!]!
   }
 
-  input UpdateWorkoutMetaDataInput {
+  input UpdateWorkoutMetaDataAdminInput {
     id: ID!
     validated: PublicContentValidationStatus
     reasonNotValidated: String

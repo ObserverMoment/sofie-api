@@ -2,18 +2,18 @@ import { gql } from 'apollo-server-express'
 
 export default gql`
   ## Admin use only ##
-  type ClubWithMetaData {
+  type ClubWithMetaDataAdmin {
     Club: Club!
-    metaData: ClubMetaData!
+    metaData: ClubMetaDataAdmin!
   }
 
-  type ClubMetaData {
+  type ClubMetaDataAdmin {
     validated: PublicContentValidationStatus!
     reasonNotValidated: String
     metaTags: [String!]!
   }
 
-  input UpdateClubMetaDataInput {
+  input UpdateClubMetaDataAdminInput {
     id: ID!
     validated: PublicContentValidationStatus
     reasonNotValidated: String
@@ -173,35 +173,5 @@ export default gql`
   input DeleteClubInviteTokenInput {
     clubId: ID!
     tokenId: ID!
-  }
-
-  #### ClubAnnouncement ####
-  type ClubAnnouncement {
-    id: ID!
-    createdAt: DateTime!
-    description: String!
-    imageUri: String
-    audioUri: String
-    videoUri: String
-    videoThumbUri: String
-    User: UserAvatarData!
-  }
-
-  input CreateClubAnnouncementInput {
-    description: String!
-    imageUri: String
-    audioUri: String
-    videoUri: String
-    videoThumbUri: String
-    Club: ConnectRelationInput!
-  }
-
-  input UpdateClubAnnouncementInput {
-    id: ID!
-    description: String
-    imageUri: String
-    audioUri: String
-    videoUri: String
-    videoThumbUri: String
   }
 `
