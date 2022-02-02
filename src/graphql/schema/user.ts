@@ -47,7 +47,6 @@ export default gql`
     Clubs: [ClubSummary!]!
   }
 
-  # Resolver should only return the updated fields plus an ID. Only the ID is required.
   type UpdateUserProfileResult {
     id: ID!
     userProfileScope: UserProfileScope
