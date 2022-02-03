@@ -4,6 +4,7 @@ export default gql`
   type Skill {
     id: ID!
     createdAt: DateTime!
+    updatedAt: DateTime!
     name: String!
     experience: String
     certification: String

@@ -43,9 +43,7 @@ export const publicWorkouts = async (
     },
     take: take ?? 50,
     skip: cursor ? 1 : 0,
-    orderBy: {
-      id: 'desc',
-    },
+    orderBy: [{ updatedAt: 'desc' }, { id: 'desc' }],
     cursor: cursor
       ? {
           id: cursor,
@@ -69,9 +67,7 @@ export const userWorkouts = async (
       userId: authedUserId,
       archived: false,
     },
-    orderBy: {
-      id: 'desc',
-    },
+    orderBy: [{ updatedAt: 'desc' }, { id: 'desc' }],
     select: selectForWorkoutSummary,
   })
 
@@ -91,9 +87,7 @@ export const userPublicWorkouts = async (
       archived: false,
       contentAccessScope: 'PUBLIC',
     },
-    orderBy: {
-      id: 'desc',
-    },
+    orderBy: [{ updatedAt: 'desc' }, { id: 'desc' }],
     select: selectForWorkoutSummary,
   })
 

@@ -2,16 +2,20 @@ import { ApolloError } from 'apollo-server-express'
 import { Context } from '../../..'
 import {
   Club,
+  ClubMemberNote,
   MutationAddUserToClubViaInviteTokenArgs,
   MutationCreateClubInviteTokenArgs,
+  MutationCreateClubMemberNoteArgs,
   MutationDeleteClubInviteTokenArgs,
   MutationGiveMemberAdminStatusArgs,
   MutationRemoveMemberAdminStatusArgs,
   MutationRemoveUserFromClubArgs,
   MutationUpdateClubInviteTokenArgs,
+  MutationUpdateClubMemberNoteArgs,
   MutationUserJoinPublicClubArgs,
   QueryCheckUserClubMemberStatusArgs,
   QueryClubInviteTokensArgs,
+  QueryClubMemberNotesArgs,
   QueryClubMembersArgs,
 } from '../../../generated/graphql'
 import {
@@ -20,9 +24,12 @@ import {
   toggleFollowClubMembersFeed,
   notifyOwnerAndAdminsOfMemberJoinLeave,
 } from '../../../lib/getStream'
+import { checkUserOwnsObject } from '../../utils'
 import {
   selectForClubInviteToken,
   selectForClubMembers,
+  selectForClubMemberSummary,
+  selectForUserAvatarData,
 } from '../selectDefinitions'
 import {
   checkIfAllowedToRemoveUser,
@@ -31,6 +38,7 @@ import {
   checkUserIsOwnerOrAdmin,
   checkUserIsOwnerOrAdminOfClub,
   formatClubMembers,
+  formatClubMemberSummary,
   getUserClubMemberStatus,
 } from './utils'
 
@@ -90,6 +98,34 @@ export const clubInviteTokens = async (
   } else {
     return { id: club.id, tokens: club.ClubInviteTokens }
   }
+}
+
+/// Gets all notes for a specific club and user combination.
+export const clubMemberNotes = async (
+  r: any,
+  { clubId, memberId, take, cursor }: QueryClubMemberNotesArgs,
+  { authedUserId, select, prisma }: Context,
+) => {
+  // Check that user is an owner or admin.
+  await checkUserIsOwnerOrAdmin(clubId, 'club', authedUserId, prisma)
+
+  const clubMemberNotes = await prisma.clubMemberNote.findMany({
+    where: {
+      clubId,
+      memberId,
+    },
+    cursor: cursor
+      ? {
+          id: cursor,
+        }
+      : undefined,
+    take: take ?? 50,
+    skip: cursor ? 1 : 0,
+    orderBy: [{ updatedAt: 'desc' }, { id: 'desc' }],
+    select,
+  })
+
+  return clubMemberNotes as ClubMemberNote[]
 }
 
 ///// Mutations //////
@@ -254,6 +290,103 @@ export const deleteClubInviteToken = async (
     }
   } else {
     throw new ApolloError('deleteClubInviteTokenById: There was an issue.')
+  }
+}
+
+///// Club Member Note /////
+export const createClubMemberNote = async (
+  r: any,
+  { data }: MutationCreateClubMemberNoteArgs,
+  { authedUserId, select, prisma }: Context,
+) => {
+  // Check that user is an owner or admin.
+  await checkUserIsOwnerOrAdmin(data.clubId, 'club', authedUserId, prisma)
+
+  // Also check that the member ID provided is actually a member of the club (can't leave notes on admins / owners or people not IN the club).
+  const club = await prisma.club.findUnique({
+    where: { id: data.clubId },
+    select: {
+      Owner: {
+        select: {
+          id: true,
+        },
+      },
+      Admins: {
+        where: { id: data.memberId },
+      },
+      Members: {
+        where: { id: data.memberId },
+      },
+    },
+  })
+
+  if (!club) {
+    throw new ApolloError(
+      `createClubMemberNote: Could not find a club with id ${data.clubId}`,
+    )
+  } else if (
+    club.Owner.id !== data.memberId &&
+    !club!.Members.length &&
+    !club!.Admins.length
+  ) {
+    throw new ApolloError(
+      `createClubMemberNote: Member ${data.memberId} does not appear to be member of club with id ${data.clubId}`,
+    )
+  }
+
+  const clubMemberNote = await prisma.clubMemberNote.create({
+    data: {
+      note: data.note,
+      tags: data.tags,
+      User: {
+        connect: { id: authedUserId },
+      },
+      Member: {
+        connect: {
+          id: data.memberId,
+        },
+      },
+      Club: {
+        connect: {
+          id: data.clubId,
+        },
+      },
+    },
+    select,
+  })
+
+  console.log(clubMemberNote)
+
+  if (clubMemberNote) {
+    return clubMemberNote as ClubMemberNote
+  } else {
+    throw new ApolloError('createClubMemberNote: There was an issue.')
+  }
+}
+
+export const updateClubMemberNote = async (
+  r: any,
+  { data }: MutationUpdateClubMemberNoteArgs,
+  { authedUserId, select, prisma }: Context,
+) => {
+  // Check that user owns the note. Only the creator of the note can update it and there is no delete functionality as the notes should act as a undeletable history of the member / client.
+  await checkUserOwnsObject(data.id, 'clubMemberNote', authedUserId, prisma)
+
+  const updated = await prisma.clubMemberNote.update({
+    where: {
+      id: data.id,
+    },
+    data: {
+      note: data.note || undefined,
+      tags: data.tags || undefined,
+    },
+    select,
+  })
+
+  if (updated) {
+    return updated as ClubMemberNote
+  } else {
+    throw new ApolloError('updateClubMemberNote: There was an issue.')
   }
 }
 
