@@ -80,6 +80,7 @@ export const selectForClubInviteToken = {
 export const selectForWorkoutSummary = {
   id: true,
   createdAt: true,
+  updatedAt: true,
   name: true,
   archived: true,
   coverImageUri: true,
@@ -125,6 +126,7 @@ export const selectForWorkoutSummary = {
 export const selectForWorkoutPlanSummary = {
   id: true,
   createdAt: true,
+  updatedAt: true,
   archived: true,
   name: true,
   description: true,

@@ -155,6 +155,15 @@ type ClubInviteTokens {
   tokens: [ClubInviteToken!]!
 }
 
+type ClubMemberNote {
+  User: UserAvatarData
+  createdAt: DateTime!
+  id: ID!
+  note: String!
+  tags: [String!]!
+  updatedAt: DateTime!
+}
+
 type ClubMemberSummary {
   avatarUri: String
   countryCode: String
@@ -267,6 +276,13 @@ input CreateClubInviteTokenInput {
   clubId: ID!
   inviteLimit: Int!
   name: String!
+}
+
+input CreateClubMemberNoteInput {
+  clubId: ID!
+  memberId: ID!
+  note: String!
+  tags: [String!]!
 }
 
 input CreateCollectionInput {
@@ -703,6 +719,7 @@ type Mutation {
   createBodyTrackingEntry(data: CreateBodyTrackingEntryInput!): BodyTrackingEntry!
   createClub(data: CreateClubInput!): ClubSummary!
   createClubInviteToken(data: CreateClubInviteTokenInput!): ClubInviteTokens!
+  createClubMemberNote(data: CreateClubMemberNoteInput!): ClubMemberNote!
   createClubMembersFeedPost(clubId: ID!, data: CreateStreamFeedActivityInput!): StreamEnrichedActivity!
   createCollection(data: CreateCollectionInput!): Collection!
   createCompletedWorkoutPlanDayWorkout(data: CreateCompletedWorkoutPlanDayWorkoutInput!): WorkoutPlanEnrolment!
@@ -778,6 +795,7 @@ type Mutation {
   unarchiveWorkoutPlanById(id: ID!): WorkoutPlan!
   updateBodyTrackingEntry(data: UpdateBodyTrackingEntryInput!): BodyTrackingEntry!
   updateClubInviteToken(data: UpdateClubInviteTokenInput!): ClubInviteTokens!
+  updateClubMemberNote(data: UpdateClubMemberNoteInput!): ClubMemberNote!
   updateClubMetaDataAdmin(data: UpdateClubMetaDataAdminInput!): ClubMetaDataAdmin!
   updateClubSummary(data: UpdateClubSummaryInput!): ClubSummary!
   updateCollection(data: UpdateCollectionInput!): Collection!
@@ -830,6 +848,7 @@ type Query {
   checkUserClubMemberStatus(clubId: ID!): UserClubMemberStatus!
   clubChatSummary(clubId: ID!): ClubChatSummary!
   clubInviteTokens(clubId: ID!): ClubInviteTokens!
+  clubMemberNotes(clubId: ID!, cursor: ID, memberId: ID!, take: Int): [ClubMemberNote!]!
   clubMembers(clubId: ID!): ClubMembers!
   clubMembersFeedPosts(clubId: ID!, limit: Int!, offset: Int!): [StreamEnrichedActivity!]!
   clubSummaries(ids: [ID!]!): [ClubSummary!]!
@@ -926,6 +945,7 @@ type Skill {
   experience: String
   id: ID!
   name: String!
+  updatedAt: DateTime!
 }
 
 type SortPositionUpdated {
@@ -1008,6 +1028,12 @@ input UpdateClubInviteTokenInput {
   id: ID!
   inviteLimit: Int
   name: String
+}
+
+input UpdateClubMemberNoteInput {
+  id: ID!
+  note: String
+  tags: [String!]
 }
 
 input UpdateClubMetaDataAdminInput {
@@ -1412,6 +1438,7 @@ type Workout {
   introVideoUri: String
   lengthMinutes: Int
   name: String!
+  updatedAt: DateTime!
 }
 
 input WorkoutFiltersInput {
@@ -1481,6 +1508,7 @@ type WorkoutPlan {
   introVideoUri: String
   lengthWeeks: Int!
   name: String!
+  updatedAt: DateTime!
 }
 
 type WorkoutPlanDay {
@@ -1554,6 +1582,7 @@ type WorkoutPlanSummary {
   reviewCount: Int!
   reviewScore: Float
   tags: [String!]!
+  updatedAt: DateTime!
   workoutsCount: Int!
 }
 
@@ -1624,6 +1653,7 @@ type WorkoutSummary {
   name: String!
   sectionTypes: [String!]!
   tags: [String!]!
+  updatedAt: DateTime!
 }
 
 type WorkoutTag {

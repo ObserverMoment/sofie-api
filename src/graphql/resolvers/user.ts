@@ -169,12 +169,12 @@ export const userProfile = async (
   const user = await prisma.user.findUnique({
     where: { id: userId },
     select: {
-      // If private only
+      // Always return this public info.
       id: true,
       displayName: true,
       userProfileScope: true,
       avatarUri: true,
-      // If public then
+      // Only return this info profile is either public or the user is retrieving their own data.
       introVideoUri: isPublic,
       introVideoThumbUri: isPublic,
       bio: isPublic,
@@ -218,7 +218,7 @@ export const userProfile = async (
   })
 
   if (user) {
-    return isPublic
+    return isPublic || isAuthedUser
       ? ({
           id: user.id,
           userProfileScope: user.userProfileScope,

@@ -45,6 +45,9 @@ import { adminPublicClubs, updateClubMetaDataAdmin } from './club/metaDataAdmin'
 import {
   checkUserClubMemberStatus,
   clubMembers,
+  clubMemberNotes,
+  createClubMemberNote,
+  updateClubMemberNote,
   clubInviteTokens,
   userJoinPublicClub,
   createClubInviteToken,
@@ -314,6 +317,8 @@ const resolvers: Resolvers = {
     clubWorkouts,
     clubWorkoutPlans,
     clubMembersFeedPosts,
+    ///// Notes ////
+    clubMemberNotes,
     ///// Invites ////
     checkClubInviteToken,
     //// Progress Body Tracking ////
@@ -398,6 +403,9 @@ const resolvers: Resolvers = {
     giveMemberAdminStatus,
     removeMemberAdminStatus,
     removeUserFromClub,
+    ///// Notes ///////////
+    createClubMemberNote,
+    updateClubMemberNote,
     ///////////////////////
     //// Club Content /////
     ///////////////////////

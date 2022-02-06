@@ -142,6 +142,34 @@ export default gql`
     WorkoutPlan: ConnectRelationInput!
   }
 
+  #### Club Member Notes ####
+  #### For Owners and Admins of Clubs Only ####
+  type ClubMemberNote {
+    id: ID!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+    note: String!
+    tags: [String!]!
+    # User == Author
+    User: UserAvatarData
+  }
+
+  ### Owners and Admins can create ####
+  input CreateClubMemberNoteInput {
+    clubId: ID!
+    memberId: ID!
+    note: String!
+    tags: [String!]!
+  }
+
+  ### Only the owner of the note can modify it ###
+  ### No delete functionality for notes - they should serve as a history ###
+  input UpdateClubMemberNoteInput {
+    id: ID!
+    note: String
+    tags: [String!]
+  }
+
   #### ClubInviteToken ####
   type ClubInviteToken {
     id: ID! # Use the unique ID string as the 'token' string.

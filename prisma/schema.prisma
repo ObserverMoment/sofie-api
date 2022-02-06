@@ -180,6 +180,7 @@ model ScheduledWorkout {
 model Skill {
   id             String   @id @default(uuid())
   createdAt      DateTime @default(now())
+  updatedAt      DateTime @default(now()) @updatedAt
   name           String
   experience     String?
   certification  String?
@@ -243,6 +244,8 @@ model User {
   JournalGoals            JournalGoal[]
   LoggedWorkoutSet        LoggedWorkoutSet[]
   LoggedWorkoutMove       LoggedWorkoutMove[]
+  ClubMemberNotesAsAuthor ClubMemberNote[]        @relation("note_author")
+  ClubMemberNotesAsMember ClubMemberNote[]        @relation("note_member")
 }
 
 model UserBenchmark {
@@ -298,6 +301,24 @@ model Club {
   validated          PublicContentValidationStatus @default(PENDING) // For public display
   reasonNotValidated String?
   metaTags           String[]
+  ClubMemberNote     ClubMemberNote[]
+}
+
+/// Only owners or admins of the club should be able to CRUD.
+model ClubMemberNote {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  note      String
+  tags      String[]
+  // Must be 'User' because this is the standard way of checking ownership when protecting CRUD ops. The check is always [object.userId == authedUserId].
+  User      User     @relation("note_author", fields: [userId], references: [id], onDelete: SetNull)
+  userId    String
+  // Cascade because we should not keep notes about users that have left the app.
+  Member    User     @relation("note_member", fields: [memberId], references: [id], onDelete: Cascade)
+  memberId  String
+  Club      Club     @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  clubId    String
 }
 
 model ClubInviteToken {
@@ -319,6 +340,7 @@ model ClubInviteToken {
 model Workout {
   id                    String                        @id @default(uuid())
   createdAt             DateTime                      @default(now())
+  updatedAt             DateTime                      @default(now()) @updatedAt
   name                  String
   description           String?
   introVideoUri         String?
@@ -419,6 +441,7 @@ model WorkoutMove {
 model WorkoutPlan {
   id                    String                        @id @default(uuid())
   createdAt             DateTime                      @default(now())
+  updatedAt             DateTime                      @default(now()) @updatedAt
   archived              Boolean                       @default(false)
   name                  String
   description           String?

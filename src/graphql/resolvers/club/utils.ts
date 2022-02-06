@@ -81,7 +81,7 @@ export function formatClubMembers(
     id: clubId,
     Owner: formatClubMemberSummary(club.Owner),
     Admins: club.Admins.map((a) => formatClubMemberSummary(a)),
-    Members: club.Members.map((a) => formatClubMemberSummary(a)),
+    Members: club.Members.map((m) => formatClubMemberSummary(m)),
   }
 }
 

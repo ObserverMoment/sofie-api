@@ -36,6 +36,13 @@ export default gql`
     clubMembers(clubId: ID!): ClubMembers!
     clubWorkouts(clubId: ID!): ClubWorkouts!
     clubWorkoutPlans(clubId: ID!): ClubWorkoutPlans!
+    #### Club Member Notes ####
+    clubMemberNotes(
+      clubId: ID!
+      memberId: ID!
+      cursor: ID
+      take: Int
+    ): [ClubMemberNote!]!
     #### Invite Tokens ####
     # The ID is the token string, we pass it to check that it is valid #
     checkClubInviteToken(id: ID!): CheckClubInviteTokenResult!
@@ -145,6 +152,9 @@ export default gql`
     giveMemberAdminStatus(userId: ID!, clubId: ID!): ClubMembers!
     removeMemberAdminStatus(userId: ID!, clubId: ID!): ClubMembers!
     removeUserFromClub(userToRemoveId: ID!, clubId: ID!): ClubMembers!
+    #### Club Member Notes ####
+    createClubMemberNote(data: CreateClubMemberNoteInput!): ClubMemberNote!
+    updateClubMemberNote(data: UpdateClubMemberNoteInput!): ClubMemberNote!
     #### Club Content Management ####
     # Returns the updated content / list of objects.
     addWorkoutToClub(workoutId: ID!, clubId: ID!): ClubWorkouts!

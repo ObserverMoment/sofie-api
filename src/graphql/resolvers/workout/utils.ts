@@ -23,6 +23,7 @@ export function formatWorkoutSummary(
   return {
     id: workout.id,
     createdAt: workout.createdAt,
+    updatedAt: workout.updatedAt,
     archived: workout.archived,
     name: workout.name,
     User: workout.User,

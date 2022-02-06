@@ -30,6 +30,7 @@ export async function checkUserProfileIsPublic(
 export type ContentObjectType =
   | 'bodyTrackingEntry'
   | 'clubAnnouncement'
+  | 'clubMemberNote'
   | 'collection'
   | 'gymProfile'
   | 'loggedWorkout'

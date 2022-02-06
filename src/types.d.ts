@@ -135,6 +135,7 @@ export type WorkoutSummaryPayload = Prisma.WorkoutGetPayload<{
   select: {
     id: true
     createdAt: true
+    updatedAt: true
     archived: true
     name: true
     coverImageUri: true
@@ -193,6 +194,7 @@ export type WorkoutPlanSummaryPayload = Prisma.WorkoutPlanGetPayload<{
   select: {
     id: true
     createdAt: true
+    updatedAt: true
     archived: true
     name: true
     description: true
