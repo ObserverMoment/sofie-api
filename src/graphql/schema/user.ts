@@ -27,6 +27,8 @@ export default gql`
     followerCount: Int
     workoutCount: Int
     planCount: Int
+    workoutsPerWeekTarget: Int
+    streakTrackingStartDate: DateTime
     Clubs: [ClubSummary!]! # If UserProfile is Private this must be empty.
     LifetimeLogStatsSummary: LifetimeLogStatsSummary
     BenchmarksWithBestEntries: [UserBenchmarkWithBestEntry!]!
@@ -67,6 +69,8 @@ export default gql`
     gender: Gender
     hasOnboarded: Boolean
     lastname: String
+    workoutsPerWeekTarget: Int
+    streakTrackingStartDate: DateTime
   }
 
   # User can only update their own profile - so no ID required.
@@ -89,5 +93,7 @@ export default gql`
     gender: Gender
     hasOnboarded: Boolean
     lastname: String
+    workoutsPerWeekTarget: Int
+    streakTrackingStartDate: DateTime
   }
 `

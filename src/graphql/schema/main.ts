@@ -59,11 +59,10 @@ export default gql`
     loggedWorkoutById(id: ID!): LoggedWorkout!
     #### User Custom Moves ####
     customMoves: [Move!]!
-    #### Progress Journal ####
+    #### User Day Log Tracking ####
+    userDayLogs: [UserDayLog!]!
+    userGoals: [UserGoal!]!
     bodyTrackingEntries: [BodyTrackingEntry!]!
-    journalNotes: [JournalNote!]!
-    journalMoods: [JournalMood!]!
-    journalGoals: [JournalGoal!]!
     #### Scheduled Workouts ####
     userScheduledWorkouts: [ScheduledWorkout!]!
     #### Text Search ####
@@ -185,19 +184,19 @@ export default gql`
       data: UpdateBodyTrackingEntryInput!
     ): BodyTrackingEntry!
     deleteBodyTrackingEntryById(id: ID!): ID!
-    #### Progress Journal ####
-    #### Progress Journal Note ####
-    createJournalNote(data: CreateJournalNoteInput!): JournalNote!
-    updateJournalNote(data: UpdateJournalNoteInput!): JournalNote!
-    deleteJournalNoteById(id: ID!): ID!
-    #### Progress Journal Goal ####
-    createJournalGoal(data: CreateJournalGoalInput!): JournalGoal!
-    updateJournalGoal(data: UpdateJournalGoalInput!): JournalGoal!
-    deleteJournalGoalById(id: ID!): ID!
-    #### Progress Journal Mood ####
-    createJournalMood(data: CreateJournalMoodInput!): JournalMood!
-    updateJournalMood(data: UpdateJournalMoodInput!): JournalMood!
-    deleteJournalMoodById(id: ID!): ID!
+    #### User Day Log Tracking ####
+    #### User Goal ####
+    createUserGoal(data: CreateUserGoalInput!): UserGoal!
+    updateUserGoal(data: UpdateUserGoalInput!): UserGoal!
+    deleteUserGoal(id: ID!): ID!
+    #### User Day Log ####
+    createUserDayLog(data: CreateUserDayLogInput!): UserDayLog!
+    updateUserDayLog(data: UpdateUserDayLogInput!): UserDayLog!
+    deleteUserDayLog(id: ID!): ID!
+    #### User Day Log Mood ####
+    createUserDayLogMood(data: CreateUserDayLogMoodInput!): UserDayLogMood!
+    updateUserDayLogMood(data: UpdateUserDayLogMoodInput!): UserDayLogMood!
+    deleteUserDayLogMood(id: ID!): ID!
     ########################
     #### Logged Workout ####
     createLoggedWorkout(data: CreateLoggedWorkoutInput!): LoggedWorkout!

@@ -185,6 +185,8 @@ export const userProfile = async (
       youtubeHandle: isPublic,
       linkedinHandle: isPublic,
       countryCode: isPublic,
+      workoutsPerWeekTarget: isAuthedUser,
+      streakTrackingStartDate: isAuthedUser,
       Skills: true,
       UserBenchmarks: {
         include: {
@@ -237,6 +239,12 @@ export const userProfile = async (
           followerCount: await getUserFollowersCount(user.id),
           workoutCount: user.Workouts.length,
           planCount: user.WorkoutPlans.length,
+          workoutsPerWeekTarget: isAuthedUser
+            ? user.workoutsPerWeekTarget
+            : null,
+          streakTrackingStartDate: isAuthedUser
+            ? user.streakTrackingStartDate
+            : null,
           Skills: user.Skills,
           // TODO: Casting as any because [ClubsWhereOwner] was being returned as [Club]
           // The isPublic tiernary is causing some type weirdness?
@@ -255,6 +263,7 @@ export const userProfile = async (
             workoutCount: c._count?.Workouts || 0,
             planCount: c._count?.WorkoutPlans || 0,
             contentAccessScope: c.contentAccessScope,
+
             Owner: {
               id: user.id,
               displayName: user.displayName,
@@ -329,6 +338,8 @@ export const updateUserProfile = async (
       hasOnboarded: data.hasOnboarded || undefined,
       displayName: data.displayName || undefined,
       gender: data.gender || undefined,
+      workoutsPerWeekTarget: data.workoutsPerWeekTarget || undefined,
+      streakTrackingStartDate: data.streakTrackingStartDate || undefined,
     },
     // Selects only the updated fields plus the ID.
     select: Object.keys(data).reduce(

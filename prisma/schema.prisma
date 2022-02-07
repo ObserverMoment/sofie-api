@@ -213,6 +213,11 @@ model User {
   tiktokHandle            String?
   youtubeHandle           String?
   linkedinHandle          String?
+  // Log / Streak tracking settings.
+  workoutsPerWeekTarget   Int                     @default(3)
+  streakTrackingStartDate DateTime                @default(now())
+  // User assigned holiday days. Jan 1st is day 0. User gets 2 'holiday days' every 4 weeks, 26 per year.
+  holidayDayAssigned      Int[]
   // When user marks as seen / got it / don't show again we add to here.
   SeenAnnouncementUpdates AnnouncementUpdate[]
   ClubsWhereOwner         Club[]                  @relation("owner")
@@ -239,13 +244,13 @@ model User {
   ClubsWhereAdmin         Club[]                  @relation("admin")
   ClubsWhereMember        Club[]                  @relation("member")
   BodyTrackingEntry       BodyTrackingEntry[]
-  JournalNotes            JournalNote[]
-  JournalMoods            JournalMood[]
-  JournalGoals            JournalGoal[]
   LoggedWorkoutSet        LoggedWorkoutSet[]
   LoggedWorkoutMove       LoggedWorkoutMove[]
   ClubMemberNotesAsAuthor ClubMemberNote[]        @relation("note_author")
   ClubMemberNotesAsMember ClubMemberNote[]        @relation("note_member")
+  UserDayLogs             UserDayLog[]
+  UserDayLogMoods         UserDayLogMood[]
+  UserGoals               UserGoal[]
 }
 
 model UserBenchmark {
@@ -614,29 +619,38 @@ model BodyTrackingEntry {
 }
 
 /////////////////////////////////////
-/////// Journal Related /////////////
+/////// Day Tracking Related ////////
 /////////////////////////////////////
-model JournalNote {
-  id           String   @id @default(uuid())
-  createdAt    DateTime @default(now())
-  voiceNoteUri String?
+model UserDayLog {
+  id                String            @id @default(uuid())
+  createdAt         DateTime          @default(now())
+  dayNumber         Int // Jan 1st is day 0
+  User              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId            String
+  eatWell           UserDayLogRating?
+  sleepWell         UserDayLogRating?
+  meditationMinutes Int               @default(0)
+  stretchingMinutes Int               @default(0)
+  UserDayLogMood    UserDayLogMood?
+  // One entry per user per day.
+
+  @@unique([dayNumber, userId])
+}
+
+model UserDayLogMood {
+  id           String     @id @default(uuid())
+  createdAt    DateTime   @default(now())
+  moodScore    Int
+  energyScore  Int
+  tags         String[]
   textNote     String?
-  User         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  UserDayLog   UserDayLog @relation(fields: [userDayLogId], references: [id], onDelete: Cascade)
+  userDayLogId String     @unique
+  User         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId       String
 }
 
-model JournalMood {
-  id          String   @id @default(uuid())
-  createdAt   DateTime @default(now())
-  moodScore   Int
-  energyScore Int
-  tags        String[]
-  textNote    String?
-  User        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId      String
-}
-
-model JournalGoal {
+model UserGoal {
   id            String    @id @default(uuid())
   createdAt     DateTime  @default(now())
   name          String
@@ -647,9 +661,9 @@ model JournalGoal {
   userId        String
 }
 
-/// ///////////////////////////////
-/// / ENUMS ///////////////////////
-/// ///////////////////////////////
+//////////////////////////////////
+//// ENUMS ///////////////////////
+//////////////////////////////////
 enum BenchmarkType {
   UNBROKENREPS
   UNBROKENTIME
@@ -736,6 +750,12 @@ enum TimeUnit {
   HOURS
   MINUTES
   SECONDS
+}
+
+enum UserDayLogRating {
+  GOOD
+  AVERAGE
+  BAD
 }
 
 enum WeightUnit {

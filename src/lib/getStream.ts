@@ -108,9 +108,15 @@ export async function createStreamFeedUser(
     if (!streamFeedClient) {
       throw Error('streamFeedClient not initialized')
     }
+    /// Create new user
     await streamFeedClient!.user(userId).create({
       name: displayName,
     })
+
+    /// All users should 'follow' their own feeds by default.
+    const userTimeline = streamFeedClient.feed(USER_TIMELINE_FEED_NAME, userId)
+
+    await userTimeline.follow(USER_FEED_NAME, userId)
   } catch (e) {
     console.log(e)
     throw new Error(String(e))

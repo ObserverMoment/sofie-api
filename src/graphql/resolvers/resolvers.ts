@@ -98,21 +98,6 @@ import {
 import { customMoves, createMove, updateMove } from './move'
 
 import {
-  journalNotes,
-  journalMoods,
-  journalGoals,
-  createJournalGoal,
-  updateJournalGoal,
-  deleteJournalGoalById,
-  createJournalNote,
-  updateJournalNote,
-  deleteJournalNoteById,
-  createJournalMood,
-  updateJournalMood,
-  deleteJournalMoodById,
-} from './journal'
-
-import {
   userScheduledWorkouts,
   createScheduledWorkout,
   updateScheduledWorkout,
@@ -146,6 +131,20 @@ import {
   updateWorkoutTag,
   deleteWorkoutTagById,
 } from './user'
+
+import {
+  userDayLogs,
+  userGoals,
+  createUserGoal,
+  updateUserGoal,
+  deleteUserGoal,
+  createUserDayLog,
+  updateUserDayLog,
+  deleteUserDayLog,
+  createUserDayLogMood,
+  updateUserDayLogMood,
+  deleteUserDayLogMood,
+} from './userDayLogs'
 
 import {
   createSkill,
@@ -323,10 +322,9 @@ const resolvers: Resolvers = {
     checkClubInviteToken,
     //// Progress Body Tracking ////
     bodyTrackingEntries,
-    //// Progress Journal ////
-    journalNotes,
-    journalMoods,
-    journalGoals,
+    //// User Day Log Tracking ////
+    userDayLogs,
+    userGoals,
     //// Logged Workouts ////
     lifetimeLogStatsSummary,
     logCountByWorkout,
@@ -436,18 +434,18 @@ const resolvers: Resolvers = {
     createBodyTrackingEntry,
     updateBodyTrackingEntry,
     deleteBodyTrackingEntryById,
-    //////////////////////////
-    //// Progress Journal ////
-    //////////////////////////
-    createJournalGoal,
-    updateJournalGoal,
-    deleteJournalGoalById,
-    createJournalNote,
-    updateJournalNote,
-    deleteJournalNoteById,
-    createJournalMood,
-    updateJournalMood,
-    deleteJournalMoodById,
+    ///////////////////////////////
+    //// User Day Log Tracking ////
+    ///////////////////////////////
+    createUserGoal,
+    updateUserGoal,
+    deleteUserGoal,
+    createUserDayLog,
+    updateUserDayLog,
+    deleteUserDayLog,
+    createUserDayLogMood,
+    updateUserDayLogMood,
+    deleteUserDayLogMood,
     ///////////////////////
     //// LoggedWorkout ////
     ///////////////////////
