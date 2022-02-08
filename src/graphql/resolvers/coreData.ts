@@ -29,6 +29,8 @@ export const coreData = async (r: any, a: any, { prisma }: Context) => {
         SelectableEquipments: true,
       },
     }),
+    prisma.progressWidget.findMany(),
+    prisma.logDataWidget.findMany(),
   ])
 
   return {
@@ -38,6 +40,8 @@ export const coreData = async (r: any, a: any, { prisma }: Context) => {
     workoutGoals: coreData[3],
     workoutSectionTypes: coreData[4],
     standardMoves: coreData[5],
+    progressWidgets: coreData[6],
+    logDataWidgets: coreData[7],
   } as CoreData
 }
 

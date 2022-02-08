@@ -133,18 +133,17 @@ import {
 } from './user'
 
 import {
-  userDayLogs,
+  userDayLogMoods,
+  createUserDayLogMood,
+  updateUserDayLogMood,
+} from './userDayLogTracking'
+
+import {
   userGoals,
   createUserGoal,
   updateUserGoal,
   deleteUserGoal,
-  createUserDayLog,
-  updateUserDayLog,
-  deleteUserDayLog,
-  createUserDayLogMood,
-  updateUserDayLogMood,
-  deleteUserDayLogMood,
-} from './userDayLogs'
+} from './userProgressTracking'
 
 import {
   createSkill,
@@ -322,9 +321,10 @@ const resolvers: Resolvers = {
     checkClubInviteToken,
     //// Progress Body Tracking ////
     bodyTrackingEntries,
-    //// User Day Log Tracking ////
-    userDayLogs,
+    //// Progress Goal Tracking ////
     userGoals,
+    //// User Day Log Tracking ////
+    userDayLogMoods,
     //// Logged Workouts ////
     lifetimeLogStatsSummary,
     logCountByWorkout,
@@ -440,12 +440,8 @@ const resolvers: Resolvers = {
     createUserGoal,
     updateUserGoal,
     deleteUserGoal,
-    createUserDayLog,
-    updateUserDayLog,
-    deleteUserDayLog,
     createUserDayLogMood,
     updateUserDayLogMood,
-    deleteUserDayLogMood,
     ///////////////////////
     //// LoggedWorkout ////
     ///////////////////////

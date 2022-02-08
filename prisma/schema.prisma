@@ -46,6 +46,20 @@ model AnnouncementUpdateAction {
   announcementUpdateId String
 }
 
+model OnboardingMessage {
+  id              String   @id @default(uuid())
+  createdAt       DateTime @default(now())
+  imageUri        String?
+  videoUri        String?
+  audioUri        String?
+  articleUrl      String?
+  title           String
+  subtitle        String?
+  bodyOne         String?
+  bodyTwo         String?
+  UsersMarkedSeen User[]
+}
+
 model BodyArea {
   id                 String              @id @default(uuid())
   createdAt          DateTime            @default(now())
@@ -68,38 +82,40 @@ model BodyAreaMoveScore {
 }
 
 model Equipment {
-  id                 String              @id @default(uuid())
-  createdAt          DateTime            @default(now())
-  name               String              @unique
-  altNames           String?
-  loadAdjustable     Boolean             @default(true)
-  WorkoutMoves       WorkoutMove[]
-  GymProfiles        GymProfile[]
-  RequiredForMoves   Move[]              @relation("moveToRequiredEquipments")
-  SelectableForMoves Move[]              @relation("moveToSelectableEquipments")
-  LoggedWorkoutMoves LoggedWorkoutMove[]
+  id                        String                     @id @default(uuid())
+  createdAt                 DateTime                   @default(now())
+  name                      String                     @unique
+  altNames                  String?
+  loadAdjustable            Boolean                    @default(true)
+  WorkoutMoves              WorkoutMove[]
+  GymProfiles               GymProfile[]
+  RequiredForMoves          Move[]                     @relation("moveToRequiredEquipments")
+  SelectableForMoves        Move[]                     @relation("moveToSelectableEquipments")
+  LoggedWorkoutMoves        LoggedWorkoutMove[]
+  MoveHistoryTrackerWidgets MoveHistoryTrackerWidget[]
 }
 
 model Move {
-  id                   String               @id @default(uuid())
-  createdAt            DateTime             @default(now())
-  archived             Boolean              @default(false)
-  scope                MoveScope            @default(CUSTOM)
-  name                 String
-  searchTerms          String?
-  description          String?
-  demoVideoUri         String?
-  demoVideoThumbUri    String?
-  moveTypeId           String?
-  validRepTypes        WorkoutMoveRepType[]
-  userId               String?
-  MoveType             MoveType?            @relation(fields: [moveTypeId], references: [id])
-  User                 User?                @relation(fields: [userId], references: [id], onDelete: Cascade)
-  BodyAreaMoveScores   BodyAreaMoveScore[]
-  WorkoutMoves         WorkoutMove[]
-  RequiredEquipments   Equipment[]          @relation("moveToRequiredEquipments")
-  SelectableEquipments Equipment[]          @relation("moveToSelectableEquipments")
-  LoggedWorkoutMoves   LoggedWorkoutMove[]
+  id                        String                     @id @default(uuid())
+  createdAt                 DateTime                   @default(now())
+  archived                  Boolean                    @default(false)
+  scope                     MoveScope                  @default(CUSTOM)
+  name                      String
+  searchTerms               String?
+  description               String?
+  demoVideoUri              String?
+  demoVideoThumbUri         String?
+  moveTypeId                String?
+  validRepTypes             WorkoutMoveRepType[]
+  userId                    String?
+  MoveType                  MoveType?                  @relation(fields: [moveTypeId], references: [id])
+  User                      User?                      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  BodyAreaMoveScores        BodyAreaMoveScore[]
+  WorkoutMoves              WorkoutMove[]
+  RequiredEquipments        Equipment[]                @relation("moveToRequiredEquipments")
+  SelectableEquipments      Equipment[]                @relation("moveToSelectableEquipments")
+  LoggedWorkoutMoves        LoggedWorkoutMove[]
+  MoveHistoryTrackerWidgets MoveHistoryTrackerWidget[]
 }
 
 model MoveType {
@@ -132,9 +148,52 @@ model WorkoutSectionType {
   WorkoutSections       WorkoutSection[]
 }
 
-/// ////////////////////////////////////
-/// / User and User Related ////////////
-/// ////////////////////////////////////
+///////////////////////////////////////
+//// Widgets and Customisable /////////
+///////////////////////////////////////
+// Core Data - read only by clients. Definitions for a set of pre-built but selectable widgets that the user can choose to display.
+model ProgressWidget {
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  name        String
+  subtitle    String?
+  description String?
+}
+
+// Core Data - read only by clients. Definitions for a set of pre-built but selectable widgets that the user can choose to display.
+model LogDataWidget {
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  name        String
+  subtitle    String?
+  description String?
+}
+
+// User defined data analysis widget that scans log history for moves that match the specs defined in this object and displays progress graph and top scores.
+model MoveHistoryTrackerWidget {
+  id            String             @id @default(uuid())
+  createdAt     DateTime           @default(now())
+  sortPosition  Int
+  name          String
+  description   String?
+  benchmarkType BenchmarkType      @default(MAXLOAD)
+  repType       WorkoutMoveRepType
+  reps          Float?
+  distanceUnit  DistanceUnit       @default(METRES)
+  loadAmount    Float              @default(0)
+  loadUnit      LoadUnit           @default(KG)
+  timeUnit      TimeUnit           @default(SECONDS)
+  Equipment     Equipment?         @relation(fields: [equipmentId], references: [id])
+  equipmentId   String?
+  Move          Move               @relation(fields: [moveId], references: [id], onDelete: Cascade)
+  moveId        String
+  User          User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        String
+}
+
+///////////////////////////////////////
+//// User and User Related ////////////
+///////////////////////////////////////
 model Collection {
   id           String        @id @default(uuid())
   createdAt    DateTime      @default(now())
@@ -192,65 +251,75 @@ model Skill {
 }
 
 model User {
-  id                      String                  @id @default(uuid())
-  firebaseUid             String                  @unique
-  createdAt               DateTime                @default(now())
-  hasOnboarded            Boolean                 @default(false)
-  userProfileScope        UserProfileScope        @default(PRIVATE)
-  avatarUri               String?
-  introVideoUri           String?
-  introVideoThumbUri      String?
-  displayName             String                  @unique
-  firstname               String?
-  lastname                String?
-  bio                     String?
-  tagline                 String?
-  birthdate               DateTime?
-  gender                  Gender                  @default(PNTS)
-  townCity                String?
-  countryCode             String?
-  instagramHandle         String?
-  tiktokHandle            String?
-  youtubeHandle           String?
-  linkedinHandle          String?
+  id                        String                     @id @default(uuid())
+  firebaseUid               String                     @unique
+  createdAt                 DateTime                   @default(now())
+  hasOnboarded              Boolean                    @default(false)
+  userProfileScope          UserProfileScope           @default(PRIVATE)
+  avatarUri                 String?
+  introVideoUri             String?
+  introVideoThumbUri        String?
+  displayName               String                     @unique
+  firstname                 String?
+  lastname                  String?
+  bio                       String?
+  tagline                   String?
+  birthdate                 DateTime?
+  gender                    Gender                     @default(PNTS)
+  townCity                  String?
+  countryCode               String?
+  instagramHandle           String?
+  tiktokHandle              String?
+  youtubeHandle             String?
+  linkedinHandle            String?
+  // Ids of widgets that the user has added / enabled on the client (Progress page)
+  // The sort order of these Ids determines the position that the widgets sit on the screen
+  activeProgressWidgets     String[]
+  activeLogDataWidgets      String[]
   // Log / Streak tracking settings.
-  workoutsPerWeekTarget   Int                     @default(3)
-  streakTrackingStartDate DateTime                @default(now())
+  workoutsPerWeekTarget     Int                        @default(3)
+  streakTrackingStartDate   DateTime                   @default(now())
   // User assigned holiday days. Jan 1st is day 0. User gets 2 'holiday days' every 4 weeks, 26 per year.
-  holidayDayAssigned      Int[]
+  holidayDayAssigned        Int[]
   // When user marks as seen / got it / don't show again we add to here.
-  SeenAnnouncementUpdates AnnouncementUpdate[]
-  ClubsWhereOwner         Club[]                  @relation("owner")
-  ClubInviteTokens        ClubInviteToken[]
-  Collections             Collection[]
-  GymProfiles             GymProfile[]
-  LoggedWorkouts          LoggedWorkout[]
-  LoggedWorkoutSections   LoggedWorkoutSection[]
-  CustomMoves             Move[]
-  ScheduledWorkouts       ScheduledWorkout[]
-  Skills                  Skill[]
-  UserBenchmarks          UserBenchmark[]
-  UserBenchmarkEntries    UserBenchmarkEntry[]
-  Workouts                Workout[]
-  WorkoutMoves            WorkoutMove[]
-  WorkoutPlans            WorkoutPlan[]
-  WorkoutPlanDays         WorkoutPlanDay[]
-  WorkoutPlanDayWorkouts  WorkoutPlanDayWorkout[]
-  WorkoutPlanEnrolments   WorkoutPlanEnrolment[]
-  WorkoutPlanReviews      WorkoutPlanReview[]
-  WorkoutSections         WorkoutSection[]
-  WorkoutSets             WorkoutSet[]
-  WorkoutTag              WorkoutTag[]
-  ClubsWhereAdmin         Club[]                  @relation("admin")
-  ClubsWhereMember        Club[]                  @relation("member")
-  BodyTrackingEntry       BodyTrackingEntry[]
-  LoggedWorkoutSet        LoggedWorkoutSet[]
-  LoggedWorkoutMove       LoggedWorkoutMove[]
-  ClubMemberNotesAsAuthor ClubMemberNote[]        @relation("note_author")
-  ClubMemberNotesAsMember ClubMemberNote[]        @relation("note_member")
-  UserDayLogs             UserDayLog[]
-  UserDayLogMoods         UserDayLogMood[]
-  UserGoals               UserGoal[]
+  SeenAnnouncementUpdates   AnnouncementUpdate[]
+  // When user marks as seen / got it / don't show again we add to here.
+  SeenOnboardingMessages    OnboardingMessage[]
+  ClubsWhereOwner           Club[]                     @relation("owner")
+  ClubInviteTokens          ClubInviteToken[]
+  Collections               Collection[]
+  GymProfiles               GymProfile[]
+  LoggedWorkouts            LoggedWorkout[]
+  LoggedWorkoutSections     LoggedWorkoutSection[]
+  CustomMoves               Move[]
+  ScheduledWorkouts         ScheduledWorkout[]
+  Skills                    Skill[]
+  UserBenchmarks            UserBenchmark[]
+  UserBenchmarkEntries      UserBenchmarkEntry[]
+  Workouts                  Workout[]
+  WorkoutMoves              WorkoutMove[]
+  WorkoutPlans              WorkoutPlan[]
+  WorkoutPlanDays           WorkoutPlanDay[]
+  WorkoutPlanDayWorkouts    WorkoutPlanDayWorkout[]
+  WorkoutPlanEnrolments     WorkoutPlanEnrolment[]
+  WorkoutPlanReviews        WorkoutPlanReview[]
+  WorkoutSections           WorkoutSection[]
+  WorkoutSets               WorkoutSet[]
+  WorkoutTag                WorkoutTag[]
+  ClubsWhereAdmin           Club[]                     @relation("admin")
+  ClubsWhereMember          Club[]                     @relation("member")
+  BodyTrackingEntry         BodyTrackingEntry[]
+  LoggedWorkoutSet          LoggedWorkoutSet[]
+  LoggedWorkoutMove         LoggedWorkoutMove[]
+  ClubMemberNotesAsAuthor   ClubMemberNote[]           @relation("note_author")
+  ClubMemberNotesAsMember   ClubMemberNote[]           @relation("note_member")
+  UserDayLogMoods           UserDayLogMood[]
+  UserGoals                 UserGoal[]
+  MoveHistoryTrackerWidgets MoveHistoryTrackerWidget[]
+  UserMeditationLogs        UserMeditationLog[]
+  UserMobilityLogs          UserMobilityLog[]
+  UserEatWellLogs           UserEatWellLog[]
+  UserSleepWellLogs         UserSleepWellLog[]
 }
 
 model UserBenchmark {
@@ -621,33 +690,74 @@ model BodyTrackingEntry {
 /////////////////////////////////////
 /////// Day Tracking Related ////////
 /////////////////////////////////////
-model UserDayLog {
-  id                String            @id @default(uuid())
-  createdAt         DateTime          @default(now())
-  dayNumber         Int // Jan 1st is day 0
-  User              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId            String
-  eatWell           UserDayLogRating?
-  sleepWell         UserDayLogRating?
-  meditationMinutes Int               @default(0)
-  stretchingMinutes Int               @default(0)
-  UserDayLogMood    UserDayLogMood?
+model UserMeditationLog {
+  id            String   @id @default(uuid())
+  createdAt     DateTime @default(now())
+  dayNumber     Int // Jan 1st is day 0
+  minutesLogged Int      @default(0)
+  note          String?
+  User          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        String
+  // One entry per user per day.
+
+  @@unique([dayNumber, userId])
+}
+
+// Time spent stretching or doing mobility exercises.
+// Eventually this will be automatically logged when a user does a 'mobility' workout
+model UserMobilityLog {
+  id            String   @id @default(uuid())
+  createdAt     DateTime @default(now())
+  dayNumber     Int // Jan 1st is day 0
+  minutesLogged Int      @default(0)
+  note          String?
+  User          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        String
   // One entry per user per day.
 
   @@unique([dayNumber, userId])
 }
 
 model UserDayLogMood {
-  id           String     @id @default(uuid())
-  createdAt    DateTime   @default(now())
-  moodScore    Int
-  energyScore  Int
-  tags         String[]
-  textNote     String?
-  UserDayLog   UserDayLog @relation(fields: [userDayLogId], references: [id], onDelete: Cascade)
-  userDayLogId String     @unique
-  User         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  dayNumber   Int // Jan 1st is day 0
+  moodScore   Int
+  energyScore Int
+  tags        String[]
+  note        String?
+  User        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String
+  // One entry per user per day.
+
+  @@unique([dayNumber, userId])
+}
+
+model UserEatWellLog {
+  id        String           @id @default(uuid())
+  createdAt DateTime         @default(now())
+  dayNumber Int // Jan 1st is day 0
+  rating    UserDayLogRating
+  note      String?
+  User      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  // One entry per user per day.
+
+  @@unique([dayNumber, userId])
+}
+
+model UserSleepWellLog {
+  id           String           @id @default(uuid())
+  createdAt    DateTime         @default(now())
+  dayNumber    Int // Jan 1st is day 0
+  rating       UserDayLogRating
+  minutesSlept Int?
+  note         String?
+  User         User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId       String
+  // One entry per user per day.
+
+  @@unique([dayNumber, userId])
 }
 
 model UserGoal {

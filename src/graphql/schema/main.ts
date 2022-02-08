@@ -59,10 +59,14 @@ export default gql`
     loggedWorkoutById(id: ID!): LoggedWorkout!
     #### User Custom Moves ####
     customMoves: [Move!]!
-    #### User Day Log Tracking ####
-    userDayLogs: [UserDayLog!]!
+    #### User Progress Tracking ####
     userGoals: [UserGoal!]!
     bodyTrackingEntries: [BodyTrackingEntry!]!
+    userDayLogMoods: [UserDayLogMood!]!
+    userMeditationLogs: [UserMeditationLog!]!
+    userMobilityLogs: [UserMobilityLog!]!
+    userEatWellLogs: [UserEatWellLog!]!
+    userSleepWellLogs: [UserSleepWellLog!]!
     #### Scheduled Workouts ####
     userScheduledWorkouts: [ScheduledWorkout!]!
     #### Text Search ####
@@ -129,6 +133,7 @@ export default gql`
     #### END OF ADMIN ONLY MUTATIONS ####
     #### AnnouncementUpdate ####
     markAnnouncementUpdateAsSeen(data: MarkAnnouncementUpdateAsSeenInput!): ID!
+    markOnboardingMessageAsSeen(data: MarkOnboardingMessageAsSeenInput!): ID!
     #### Archive ####
     archiveWorkoutById(id: ID!): Workout!
     unarchiveWorkoutById(id: ID!): Workout!
@@ -184,19 +189,35 @@ export default gql`
       data: UpdateBodyTrackingEntryInput!
     ): BodyTrackingEntry!
     deleteBodyTrackingEntryById(id: ID!): ID!
-    #### User Day Log Tracking ####
-    #### User Goal ####
+    #### User Goal Tracking ####
     createUserGoal(data: CreateUserGoalInput!): UserGoal!
     updateUserGoal(data: UpdateUserGoalInput!): UserGoal!
     deleteUserGoal(id: ID!): ID!
-    #### User Day Log ####
-    createUserDayLog(data: CreateUserDayLogInput!): UserDayLog!
-    updateUserDayLog(data: UpdateUserDayLogInput!): UserDayLog!
-    deleteUserDayLog(id: ID!): ID!
+    ###############################
+    #### User Day Log Tracking ####
     #### User Day Log Mood ####
     createUserDayLogMood(data: CreateUserDayLogMoodInput!): UserDayLogMood!
     updateUserDayLogMood(data: UpdateUserDayLogMoodInput!): UserDayLogMood!
-    deleteUserDayLogMood(id: ID!): ID!
+    #### User Day Meditation Log ####
+    createUserMeditationLog(
+      data: CreateUserMeditationLogInput!
+    ): UserMeditationLog!
+    updateUserMeditationLog(
+      data: UpdateUserMeditationLogInput!
+    ): UserMeditationLog!
+    #### User Day Mobility Log ####
+    createUserMobilityLog(data: CreateUserMobilityLogInput!): UserMobilityLog!
+    updateUserMobilityLog(data: UpdateUserMobilityLogInput!): UserMobilityLog!
+    #### User Day Eat Well Log ####
+    createUserEatWellLog(data: CreateUserEatWellLogInput!): UserEatWellLog!
+    updateUserEatWellLog(data: UpdateUserEatWellLogInput!): UserEatWellLog!
+    ### User Day Sleep Well Log ####
+    createUserSleepWellLog(
+      data: CreateUserSleepWellLogInput!
+    ): UserSleepWellLog!
+    updateUserSleepWellLog(
+      data: UpdateUserSleepWellLogInput!
+    ): UserSleepWellLog!
     ########################
     #### Logged Workout ####
     createLoggedWorkout(data: CreateLoggedWorkoutInput!): LoggedWorkout!
