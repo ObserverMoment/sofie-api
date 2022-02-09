@@ -1,30 +1,21 @@
 import { gql } from 'apollo-server-express'
 
 export default gql`
+  # Non editable (but can delete) momentary user input of how they are feeling in the moment.
   type UserDayLogMood {
     id: ID!
     createdAt: DateTime!
-    dayNumber: Int!
     moodScore: Int!
     energyScore: Int!
     tags: [String!]!
-    textNote: String
+    note: String
   }
 
   input CreateUserDayLogMoodInput {
-    dayNumber: Int!
     moodScore: Int!
     energyScore: Int!
     tags: [String!]
-    textNote: String
-  }
-
-  input UpdateUserDayLogMoodInput {
-    id: ID!
-    moodScore: Int
-    energyScore: Int
-    tags: [String!]
-    textNote: String
+    note: String
   }
 
   type UserMeditationLog {

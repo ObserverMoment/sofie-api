@@ -2,7 +2,7 @@ import { ApolloError } from 'apollo-server-express'
 import { Context } from '../..'
 import {
   MutationCreateUserDayLogMoodArgs,
-  MutationUpdateUserDayLogMoodArgs,
+  MutationDeleteUserDayLogMoodArgs,
   UserDayLogMood,
 } from '../../generated/graphql'
 import { checkUserOwnsObject } from '../utils'
@@ -47,31 +47,21 @@ export const createUserDayLogMood = async (
   }
 }
 
-export const updateUserDayLogMood = async (
+export const deleteUserDayLogMood = async (
   r: any,
-  { data }: MutationUpdateUserDayLogMoodArgs,
-  { authedUserId, select, prisma }: Context,
+  { id }: MutationDeleteUserDayLogMoodArgs,
+  { authedUserId, prisma }: Context,
 ) => {
-  await checkUserOwnsObject(data.id, 'userDayLogMood', authedUserId, prisma)
+  await checkUserOwnsObject(id, 'userDayLogMood', authedUserId, prisma)
 
-  const updated = await prisma.userDayLogMood.update({
-    where: { id: data.id },
-    data: {
-      ...data,
-      moodScore: data.moodScore || undefined,
-      energyScore: data.energyScore || undefined,
-      // Pass an empty array to clear the tags. Passing null will be ignored.
-      tags:
-        data.hasOwnProperty('tags') && data.tags !== null
-          ? data.tags
-          : undefined,
-    },
-    select,
+  const updated = await prisma.userDayLogMood.delete({
+    where: { id },
+    select: { id: true },
   })
 
   if (updated) {
-    return updated as UserDayLogMood
+    return updated.id
   } else {
-    throw new ApolloError('updateUserDayLogMood: There was an issue.')
+    throw new ApolloError('deleteUserDayLogMood: There was an issue.')
   }
 }

@@ -451,11 +451,10 @@ export type CreateUserBenchmarkInput = {
 };
 
 export type CreateUserDayLogMoodInput = {
-  dayNumber: Scalars['Int'];
   energyScore: Scalars['Int'];
   moodScore: Scalars['Int'];
+  note?: InputMaybe<Scalars['String']>;
   tags?: InputMaybe<Array<Scalars['String']>>;
-  textNote?: InputMaybe<Scalars['String']>;
 };
 
 export type CreateUserEatWellLogInput = {
@@ -823,6 +822,7 @@ export type Mutation = {
   deleteSkillById: Scalars['ID'];
   deleteUserBenchmark: Scalars['ID'];
   deleteUserBenchmarkEntry: Scalars['ID'];
+  deleteUserDayLogMood: Scalars['ID'];
   deleteUserGoal: Scalars['ID'];
   deleteWorkoutMoveById: Scalars['ID'];
   deleteWorkoutPlanDayWorkoutById: Scalars['ID'];
@@ -873,7 +873,6 @@ export type Mutation = {
   updateSkill: Skill;
   updateUserBenchmark: UserBenchmark;
   updateUserBenchmarkEntry: UserBenchmarkEntry;
-  updateUserDayLogMood: UserDayLogMood;
   updateUserEatWellLog: UserEatWellLog;
   updateUserGoal: UserGoal;
   updateUserMeditationLog: UserMeditationLog;
@@ -1190,6 +1189,11 @@ export type MutationDeleteUserBenchmarkEntryArgs = {
 };
 
 
+export type MutationDeleteUserDayLogMoodArgs = {
+  id: Scalars['ID'];
+};
+
+
 export type MutationDeleteUserGoalArgs = {
   id: Scalars['ID'];
 };
@@ -1442,11 +1446,6 @@ export type MutationUpdateUserBenchmarkArgs = {
 
 export type MutationUpdateUserBenchmarkEntryArgs = {
   data: UpdateUserBenchmarkEntryInput;
-};
-
-
-export type MutationUpdateUserDayLogMoodArgs = {
-  data: UpdateUserDayLogMoodInput;
 };
 
 
@@ -2118,14 +2117,6 @@ export type UpdateUserBenchmarkInput = {
   name?: InputMaybe<Scalars['String']>;
 };
 
-export type UpdateUserDayLogMoodInput = {
-  energyScore?: InputMaybe<Scalars['Int']>;
-  id: Scalars['ID'];
-  moodScore?: InputMaybe<Scalars['Int']>;
-  tags?: InputMaybe<Array<Scalars['String']>>;
-  textNote?: InputMaybe<Scalars['String']>;
-};
-
 export type UpdateUserEatWellLogInput = {
   id: Scalars['ID'];
   note?: InputMaybe<Scalars['String']>;
@@ -2166,7 +2157,6 @@ export type UpdateUserProfileInput = {
   introVideoUri?: InputMaybe<Scalars['String']>;
   lastname?: InputMaybe<Scalars['String']>;
   linkedinHandle?: InputMaybe<Scalars['String']>;
-  streakTrackingStartDate?: InputMaybe<Scalars['DateTime']>;
   tagline?: InputMaybe<Scalars['String']>;
   tiktokHandle?: InputMaybe<Scalars['String']>;
   townCity?: InputMaybe<Scalars['String']>;
@@ -2191,7 +2181,6 @@ export type UpdateUserProfileResult = {
   introVideoUri?: Maybe<Scalars['String']>;
   lastname?: Maybe<Scalars['String']>;
   linkedinHandle?: Maybe<Scalars['String']>;
-  streakTrackingStartDate?: Maybe<Scalars['DateTime']>;
   tagline?: Maybe<Scalars['String']>;
   tiktokHandle?: Maybe<Scalars['String']>;
   townCity?: Maybe<Scalars['String']>;
@@ -2363,12 +2352,11 @@ export type UserClubMemberStatus =
 export type UserDayLogMood = {
   __typename?: 'UserDayLogMood';
   createdAt: Scalars['DateTime'];
-  dayNumber: Scalars['Int'];
   energyScore: Scalars['Int'];
   id: Scalars['ID'];
   moodScore: Scalars['Int'];
+  note?: Maybe<Scalars['String']>;
   tags: Array<Scalars['String']>;
-  textNote?: Maybe<Scalars['String']>;
 };
 
 export type UserDayLogRating =
@@ -2432,7 +2420,6 @@ export type UserProfile = {
   introVideoUri?: Maybe<Scalars['String']>;
   linkedinHandle?: Maybe<Scalars['String']>;
   planCount?: Maybe<Scalars['Int']>;
-  streakTrackingStartDate?: Maybe<Scalars['DateTime']>;
   tagline?: Maybe<Scalars['String']>;
   tiktokHandle?: Maybe<Scalars['String']>;
   townCity?: Maybe<Scalars['String']>;
@@ -2945,7 +2932,6 @@ export type ResolversTypes = ResolversObject<{
   UpdateSortPositionInput: UpdateSortPositionInput;
   UpdateUserBenchmarkEntryInput: UpdateUserBenchmarkEntryInput;
   UpdateUserBenchmarkInput: UpdateUserBenchmarkInput;
-  UpdateUserDayLogMoodInput: UpdateUserDayLogMoodInput;
   UpdateUserEatWellLogInput: UpdateUserEatWellLogInput;
   UpdateUserGoalInput: UpdateUserGoalInput;
   UpdateUserMeditationLogInput: UpdateUserMeditationLogInput;
@@ -3138,7 +3124,6 @@ export type ResolversParentTypes = ResolversObject<{
   UpdateSortPositionInput: UpdateSortPositionInput;
   UpdateUserBenchmarkEntryInput: UpdateUserBenchmarkEntryInput;
   UpdateUserBenchmarkInput: UpdateUserBenchmarkInput;
-  UpdateUserDayLogMoodInput: UpdateUserDayLogMoodInput;
   UpdateUserEatWellLogInput: UpdateUserEatWellLogInput;
   UpdateUserGoalInput: UpdateUserGoalInput;
   UpdateUserMeditationLogInput: UpdateUserMeditationLogInput;
@@ -3597,6 +3582,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   deleteSkillById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteSkillByIdArgs, 'id'>>;
   deleteUserBenchmark?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteUserBenchmarkArgs, 'id'>>;
   deleteUserBenchmarkEntry?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteUserBenchmarkEntryArgs, 'id'>>;
+  deleteUserDayLogMood?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteUserDayLogMoodArgs, 'id'>>;
   deleteUserGoal?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteUserGoalArgs, 'id'>>;
   deleteWorkoutMoveById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteWorkoutMoveByIdArgs, 'id'>>;
   deleteWorkoutPlanDayWorkoutById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteWorkoutPlanDayWorkoutByIdArgs, 'id'>>;
@@ -3647,7 +3633,6 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   updateSkill?: Resolver<ResolversTypes['Skill'], ParentType, ContextType, RequireFields<MutationUpdateSkillArgs, 'data'>>;
   updateUserBenchmark?: Resolver<ResolversTypes['UserBenchmark'], ParentType, ContextType, RequireFields<MutationUpdateUserBenchmarkArgs, 'data'>>;
   updateUserBenchmarkEntry?: Resolver<ResolversTypes['UserBenchmarkEntry'], ParentType, ContextType, RequireFields<MutationUpdateUserBenchmarkEntryArgs, 'data'>>;
-  updateUserDayLogMood?: Resolver<ResolversTypes['UserDayLogMood'], ParentType, ContextType, RequireFields<MutationUpdateUserDayLogMoodArgs, 'data'>>;
   updateUserEatWellLog?: Resolver<ResolversTypes['UserEatWellLog'], ParentType, ContextType, RequireFields<MutationUpdateUserEatWellLogArgs, 'data'>>;
   updateUserGoal?: Resolver<ResolversTypes['UserGoal'], ParentType, ContextType, RequireFields<MutationUpdateUserGoalArgs, 'data'>>;
   updateUserMeditationLog?: Resolver<ResolversTypes['UserMeditationLog'], ParentType, ContextType, RequireFields<MutationUpdateUserMeditationLogArgs, 'data'>>;
@@ -3868,7 +3853,6 @@ export type UpdateUserProfileResultResolvers<ContextType = any, ParentType exten
   introVideoUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   lastname?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   linkedinHandle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  streakTrackingStartDate?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   tagline?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   tiktokHandle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   townCity?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -3927,12 +3911,11 @@ export type UserBenchmarkWithBestEntryResolvers<ContextType = any, ParentType ex
 
 export type UserDayLogMoodResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserDayLogMood'] = ResolversParentTypes['UserDayLogMood']> = ResolversObject<{
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  dayNumber?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   energyScore?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   moodScore?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  note?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   tags?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
-  textNote?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -3991,7 +3974,6 @@ export type UserProfileResolvers<ContextType = any, ParentType extends Resolvers
   introVideoUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   linkedinHandle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   planCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  streakTrackingStartDate?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   tagline?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   tiktokHandle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   townCity?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;

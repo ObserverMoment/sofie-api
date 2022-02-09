@@ -135,7 +135,7 @@ import {
 import {
   userDayLogMoods,
   createUserDayLogMood,
-  updateUserDayLogMood,
+  deleteUserDayLogMood,
 } from './userDayLogTracking'
 
 import {
@@ -441,7 +441,7 @@ const resolvers: Resolvers = {
     updateUserGoal,
     deleteUserGoal,
     createUserDayLogMood,
-    updateUserDayLogMood,
+    deleteUserDayLogMood,
     ///////////////////////
     //// LoggedWorkout ////
     ///////////////////////

@@ -278,7 +278,6 @@ model User {
   activeLogDataWidgets      String[]
   // Log / Streak tracking settings.
   workoutsPerWeekTarget     Int                        @default(3)
-  streakTrackingStartDate   DateTime                   @default(now())
   // User assigned holiday days. Jan 1st is day 0. User gets 2 'holiday days' every 4 weeks, 26 per year.
   holidayDayAssigned        Int[]
   // When user marks as seen / got it / don't show again we add to here.
@@ -721,16 +720,12 @@ model UserMobilityLog {
 model UserDayLogMood {
   id          String   @id @default(uuid())
   createdAt   DateTime @default(now())
-  dayNumber   Int // Jan 1st is day 0
   moodScore   Int
   energyScore Int
   tags        String[]
   note        String?
   User        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      String
-  // One entry per user per day.
-
-  @@unique([dayNumber, userId])
 }
 
 model UserEatWellLog {

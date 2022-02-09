@@ -197,7 +197,7 @@ export default gql`
     #### User Day Log Tracking ####
     #### User Day Log Mood ####
     createUserDayLogMood(data: CreateUserDayLogMoodInput!): UserDayLogMood!
-    updateUserDayLogMood(data: UpdateUserDayLogMoodInput!): UserDayLogMood!
+    deleteUserDayLogMood(id: ID!): ID!
     #### User Day Meditation Log ####
     createUserMeditationLog(
       data: CreateUserMeditationLogInput!
