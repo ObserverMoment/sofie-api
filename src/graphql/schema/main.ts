@@ -64,7 +64,6 @@ export default gql`
     bodyTrackingEntries: [BodyTrackingEntry!]!
     userDayLogMoods: [UserDayLogMood!]!
     userMeditationLogs: [UserMeditationLog!]!
-    userMobilityLogs: [UserMobilityLog!]!
     userEatWellLogs: [UserEatWellLog!]!
     userSleepWellLogs: [UserSleepWellLog!]!
     #### Scheduled Workouts ####
@@ -205,9 +204,6 @@ export default gql`
     updateUserMeditationLog(
       data: UpdateUserMeditationLogInput!
     ): UserMeditationLog!
-    #### User Day Mobility Log ####
-    createUserMobilityLog(data: CreateUserMobilityLogInput!): UserMobilityLog!
-    updateUserMobilityLog(data: UpdateUserMobilityLogInput!): UserMobilityLog!
     #### User Day Eat Well Log ####
     createUserEatWellLog(data: CreateUserEatWellLogInput!): UserEatWellLog!
     updateUserEatWellLog(data: UpdateUserEatWellLogInput!): UserEatWellLog!

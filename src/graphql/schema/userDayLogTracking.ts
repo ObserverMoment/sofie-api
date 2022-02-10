@@ -21,12 +21,14 @@ export default gql`
   type UserMeditationLog {
     id: ID!
     createdAt: DateTime!
+    year: Int!
     dayNumber: Int!
     minutesLogged: Int!
     note: String
   }
 
   input CreateUserMeditationLogInput {
+    year: Int!
     dayNumber: Int!
     minutesLogged: Int!
     note: String
@@ -38,35 +40,17 @@ export default gql`
     note: String
   }
 
-  type UserMobilityLog {
-    id: ID!
-    createdAt: DateTime!
-    dayNumber: Int!
-    minutesLogged: Int!
-    note: String
-  }
-
-  input CreateUserMobilityLogInput {
-    dayNumber: Int!
-    minutesLogged: Int!
-    note: String
-  }
-
-  input UpdateUserMobilityLogInput {
-    id: ID!
-    minutesLogged: Int
-    note: String
-  }
-
   type UserEatWellLog {
     id: ID!
     createdAt: DateTime!
+    year: Int!
     dayNumber: Int!
     rating: UserDayLogRating!
     note: String
   }
 
   input CreateUserEatWellLogInput {
+    year: Int!
     dayNumber: Int!
     rating: UserDayLogRating!
     note: String
@@ -81,6 +65,7 @@ export default gql`
   type UserSleepWellLog {
     id: ID!
     createdAt: DateTime!
+    year: Int!
     dayNumber: Int!
     rating: UserDayLogRating!
     minutesSlept: Int
@@ -88,6 +73,7 @@ export default gql`
   }
 
   input CreateUserSleepWellLogInput {
+    year: Int!
     dayNumber: Int!
     rating: UserDayLogRating!
     minutesSlept: Int

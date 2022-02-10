@@ -174,7 +174,7 @@ export const userProfile = async (
       displayName: true,
       userProfileScope: true,
       avatarUri: true,
-      // Only return this info profile is either public or the user is retrieving their own data.
+      // Only return this info if profile is either public or the user is retrieving their own data.
       introVideoUri: isPublic,
       introVideoThumbUri: isPublic,
       bio: isPublic,
@@ -185,7 +185,10 @@ export const userProfile = async (
       youtubeHandle: isPublic,
       linkedinHandle: isPublic,
       countryCode: isPublic,
+      // Only return this info if the user is retrieving their own data.
       workoutsPerWeekTarget: isAuthedUser,
+      activeProgressWidgets: isAuthedUser,
+      activeLogDataWidgets: isAuthedUser,
       Skills: true,
       UserBenchmarks: {
         include: {
@@ -241,6 +244,10 @@ export const userProfile = async (
           workoutsPerWeekTarget: isAuthedUser
             ? user.workoutsPerWeekTarget
             : null,
+          activeProgressWidgets: isAuthedUser
+            ? user.activeProgressWidgets
+            : null,
+          activeLogDataWidgets: isAuthedUser ? user.activeLogDataWidgets : null,
           Skills: user.Skills,
           // TODO: Casting as any because [ClubsWhereOwner] was being returned as [Club]
           // The isPublic tiernary is causing some type weirdness?
@@ -334,6 +341,8 @@ export const updateUserProfile = async (
       displayName: data.displayName || undefined,
       gender: data.gender || undefined,
       workoutsPerWeekTarget: data.workoutsPerWeekTarget || undefined,
+      activeProgressWidgets: data.activeProgressWidgets || undefined,
+      activeLogDataWidgets: data.activeLogDataWidgets || undefined,
     },
     // Selects only the updated fields plus the ID.
     select: Object.keys(data).reduce(

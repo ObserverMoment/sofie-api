@@ -134,8 +134,17 @@ import {
 
 import {
   userDayLogMoods,
+  userMeditationLogs,
+  userEatWellLogs,
+  userSleepWellLogs,
   createUserDayLogMood,
   deleteUserDayLogMood,
+  createUserMeditationLog,
+  updateUserMeditationLog,
+  createUserEatWellLog,
+  updateUserEatWellLog,
+  createUserSleepWellLog,
+  updateUserSleepWellLog,
 } from './userDayLogTracking'
 
 import {
@@ -325,6 +334,9 @@ const resolvers: Resolvers = {
     userGoals,
     //// User Day Log Tracking ////
     userDayLogMoods,
+    userMeditationLogs,
+    userEatWellLogs,
+    userSleepWellLogs,
     //// Logged Workouts ////
     lifetimeLogStatsSummary,
     logCountByWorkout,
@@ -442,6 +454,12 @@ const resolvers: Resolvers = {
     deleteUserGoal,
     createUserDayLogMood,
     deleteUserDayLogMood,
+    createUserMeditationLog,
+    updateUserMeditationLog,
+    createUserEatWellLog,
+    updateUserEatWellLog,
+    createUserSleepWellLog,
+    updateUserSleepWellLog,
     ///////////////////////
     //// LoggedWorkout ////
     ///////////////////////

@@ -27,7 +27,9 @@ export default gql`
     followerCount: Int
     workoutCount: Int
     planCount: Int
-    workoutsPerWeekTarget: Int
+    workoutsPerWeekTarget: Int # Null when not requested by authed user.
+    activeProgressWidgets: [String!] # Null when not requested by authed user.
+    activeLogDataWidgets: [String!] # Null when not requested by authed user.
     Clubs: [ClubSummary!]! # If UserProfile is Private this must be empty.
     LifetimeLogStatsSummary: LifetimeLogStatsSummary
     BenchmarksWithBestEntries: [UserBenchmarkWithBestEntry!]!
@@ -48,6 +50,7 @@ export default gql`
     Clubs: [ClubSummary!]!
   }
 
+  # Return type for the UpdateUserProfile mutation - returns only updated fields plus the ID.
   type UpdateUserProfileResult {
     id: ID!
     userProfileScope: UserProfileScope
@@ -69,9 +72,12 @@ export default gql`
     hasOnboarded: Boolean
     lastname: String
     workoutsPerWeekTarget: Int
+    activeProgressWidgets: [String!]
+    activeLogDataWidgets: [String!]
   }
 
   # User can only update their own profile - so no ID required.
+  # Returns a [UpdateUserProfileResult]
   input UpdateUserProfileInput {
     userProfileScope: UserProfileScope
     avatarUri: String
@@ -92,5 +98,7 @@ export default gql`
     hasOnboarded: Boolean
     lastname: String
     workoutsPerWeekTarget: Int
+    activeProgressWidgets: [String!]
+    activeLogDataWidgets: [String!]
   }
 `

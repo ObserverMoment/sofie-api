@@ -316,7 +316,6 @@ model User {
   UserGoals                 UserGoal[]
   MoveHistoryTrackerWidgets MoveHistoryTrackerWidget[]
   UserMeditationLogs        UserMeditationLog[]
-  UserMobilityLogs          UserMobilityLog[]
   UserEatWellLogs           UserEatWellLog[]
   UserSleepWellLogs         UserSleepWellLog[]
 }
@@ -689,34 +688,6 @@ model BodyTrackingEntry {
 /////////////////////////////////////
 /////// Day Tracking Related ////////
 /////////////////////////////////////
-model UserMeditationLog {
-  id            String   @id @default(uuid())
-  createdAt     DateTime @default(now())
-  dayNumber     Int // Jan 1st is day 0
-  minutesLogged Int      @default(0)
-  note          String?
-  User          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId        String
-  // One entry per user per day.
-
-  @@unique([dayNumber, userId])
-}
-
-// Time spent stretching or doing mobility exercises.
-// Eventually this will be automatically logged when a user does a 'mobility' workout
-model UserMobilityLog {
-  id            String   @id @default(uuid())
-  createdAt     DateTime @default(now())
-  dayNumber     Int // Jan 1st is day 0
-  minutesLogged Int      @default(0)
-  note          String?
-  User          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId        String
-  // One entry per user per day.
-
-  @@unique([dayNumber, userId])
-}
-
 model UserDayLogMood {
   id          String   @id @default(uuid())
   createdAt   DateTime @default(now())
@@ -728,33 +699,6 @@ model UserDayLogMood {
   userId      String
 }
 
-model UserEatWellLog {
-  id        String           @id @default(uuid())
-  createdAt DateTime         @default(now())
-  dayNumber Int // Jan 1st is day 0
-  rating    UserDayLogRating
-  note      String?
-  User      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String
-  // One entry per user per day.
-
-  @@unique([dayNumber, userId])
-}
-
-model UserSleepWellLog {
-  id           String           @id @default(uuid())
-  createdAt    DateTime         @default(now())
-  dayNumber    Int // Jan 1st is day 0
-  rating       UserDayLogRating
-  minutesSlept Int?
-  note         String?
-  User         User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId       String
-  // One entry per user per day.
-
-  @@unique([dayNumber, userId])
-}
-
 model UserGoal {
   id            String    @id @default(uuid())
   createdAt     DateTime  @default(now())
@@ -764,6 +708,49 @@ model UserGoal {
   completedDate DateTime?
   User          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId        String
+}
+
+model UserMeditationLog {
+  id            String   @id @default(uuid())
+  createdAt     DateTime @default(now())
+  year          Int
+  dayNumber     Int // Jan 1st is day 1
+  minutesLogged Int      @default(0)
+  note          String?
+  User          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        String
+  // One entry per user per day.
+
+  @@unique([year, dayNumber, userId])
+}
+
+model UserEatWellLog {
+  id        String           @id @default(uuid())
+  createdAt DateTime         @default(now())
+  year      Int
+  dayNumber Int // Jan 1st is day 1
+  rating    UserDayLogRating
+  note      String?
+  User      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  // One entry per user per day.
+
+  @@unique([year, dayNumber, userId])
+}
+
+model UserSleepWellLog {
+  id           String           @id @default(uuid())
+  createdAt    DateTime         @default(now())
+  year         Int
+  dayNumber    Int // Jan 1st is day 1
+  rating       UserDayLogRating
+  minutesSlept Int?
+  note         String?
+  User         User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       String
+  // One entry per user per day.
+
+  @@unique([year, dayNumber, userId])
 }
 
 //////////////////////////////////
