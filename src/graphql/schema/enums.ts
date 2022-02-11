@@ -69,6 +69,12 @@ export default gql`
     PERCENTMAX
   }
 
+  enum UserDayLogRating {
+    GOOD
+    AVERAGE
+    BAD
+  }
+
   """
   Standard moves are built in / official.
   Custom moves are created by users.

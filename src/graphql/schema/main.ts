@@ -59,11 +59,13 @@ export default gql`
     loggedWorkoutById(id: ID!): LoggedWorkout!
     #### User Custom Moves ####
     customMoves: [Move!]!
-    #### Progress Journal ####
+    #### User Progress Tracking ####
+    userGoals: [UserGoal!]!
     bodyTrackingEntries: [BodyTrackingEntry!]!
-    journalNotes: [JournalNote!]!
-    journalMoods: [JournalMood!]!
-    journalGoals: [JournalGoal!]!
+    userDayLogMoods: [UserDayLogMood!]!
+    userMeditationLogs: [UserMeditationLog!]!
+    userEatWellLogs: [UserEatWellLog!]!
+    userSleepWellLogs: [UserSleepWellLog!]!
     #### Scheduled Workouts ####
     userScheduledWorkouts: [ScheduledWorkout!]!
     #### Text Search ####
@@ -130,6 +132,7 @@ export default gql`
     #### END OF ADMIN ONLY MUTATIONS ####
     #### AnnouncementUpdate ####
     markAnnouncementUpdateAsSeen(data: MarkAnnouncementUpdateAsSeenInput!): ID!
+    markOnboardingMessageAsSeen(data: MarkOnboardingMessageAsSeenInput!): ID!
     #### Archive ####
     archiveWorkoutById(id: ID!): Workout!
     unarchiveWorkoutById(id: ID!): Workout!
@@ -185,19 +188,32 @@ export default gql`
       data: UpdateBodyTrackingEntryInput!
     ): BodyTrackingEntry!
     deleteBodyTrackingEntryById(id: ID!): ID!
-    #### Progress Journal ####
-    #### Progress Journal Note ####
-    createJournalNote(data: CreateJournalNoteInput!): JournalNote!
-    updateJournalNote(data: UpdateJournalNoteInput!): JournalNote!
-    deleteJournalNoteById(id: ID!): ID!
-    #### Progress Journal Goal ####
-    createJournalGoal(data: CreateJournalGoalInput!): JournalGoal!
-    updateJournalGoal(data: UpdateJournalGoalInput!): JournalGoal!
-    deleteJournalGoalById(id: ID!): ID!
-    #### Progress Journal Mood ####
-    createJournalMood(data: CreateJournalMoodInput!): JournalMood!
-    updateJournalMood(data: UpdateJournalMoodInput!): JournalMood!
-    deleteJournalMoodById(id: ID!): ID!
+    #### User Goal Tracking ####
+    createUserGoal(data: CreateUserGoalInput!): UserGoal!
+    updateUserGoal(data: UpdateUserGoalInput!): UserGoal!
+    deleteUserGoal(id: ID!): ID!
+    ###############################
+    #### User Day Log Tracking ####
+    #### User Day Log Mood ####
+    createUserDayLogMood(data: CreateUserDayLogMoodInput!): UserDayLogMood!
+    deleteUserDayLogMood(id: ID!): ID!
+    #### User Day Meditation Log ####
+    createUserMeditationLog(
+      data: CreateUserMeditationLogInput!
+    ): UserMeditationLog!
+    updateUserMeditationLog(
+      data: UpdateUserMeditationLogInput!
+    ): UserMeditationLog!
+    #### User Day Eat Well Log ####
+    createUserEatWellLog(data: CreateUserEatWellLogInput!): UserEatWellLog!
+    updateUserEatWellLog(data: UpdateUserEatWellLogInput!): UserEatWellLog!
+    ### User Day Sleep Well Log ####
+    createUserSleepWellLog(
+      data: CreateUserSleepWellLogInput!
+    ): UserSleepWellLog!
+    updateUserSleepWellLog(
+      data: UpdateUserSleepWellLogInput!
+    ): UserSleepWellLog!
     ########################
     #### Logged Workout ####
     createLoggedWorkout(data: CreateLoggedWorkoutInput!): LoggedWorkout!

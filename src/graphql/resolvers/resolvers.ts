@@ -98,21 +98,6 @@ import {
 import { customMoves, createMove, updateMove } from './move'
 
 import {
-  journalNotes,
-  journalMoods,
-  journalGoals,
-  createJournalGoal,
-  updateJournalGoal,
-  deleteJournalGoalById,
-  createJournalNote,
-  updateJournalNote,
-  deleteJournalNoteById,
-  createJournalMood,
-  updateJournalMood,
-  deleteJournalMoodById,
-} from './journal'
-
-import {
   userScheduledWorkouts,
   createScheduledWorkout,
   updateScheduledWorkout,
@@ -146,6 +131,28 @@ import {
   updateWorkoutTag,
   deleteWorkoutTagById,
 } from './user'
+
+import {
+  userDayLogMoods,
+  userMeditationLogs,
+  userEatWellLogs,
+  userSleepWellLogs,
+  createUserDayLogMood,
+  deleteUserDayLogMood,
+  createUserMeditationLog,
+  updateUserMeditationLog,
+  createUserEatWellLog,
+  updateUserEatWellLog,
+  createUserSleepWellLog,
+  updateUserSleepWellLog,
+} from './userDayLogTracking'
+
+import {
+  userGoals,
+  createUserGoal,
+  updateUserGoal,
+  deleteUserGoal,
+} from './userProgressTracking'
 
 import {
   createSkill,
@@ -323,10 +330,13 @@ const resolvers: Resolvers = {
     checkClubInviteToken,
     //// Progress Body Tracking ////
     bodyTrackingEntries,
-    //// Progress Journal ////
-    journalNotes,
-    journalMoods,
-    journalGoals,
+    //// Progress Goal Tracking ////
+    userGoals,
+    //// User Day Log Tracking ////
+    userDayLogMoods,
+    userMeditationLogs,
+    userEatWellLogs,
+    userSleepWellLogs,
     //// Logged Workouts ////
     lifetimeLogStatsSummary,
     logCountByWorkout,
@@ -436,18 +446,20 @@ const resolvers: Resolvers = {
     createBodyTrackingEntry,
     updateBodyTrackingEntry,
     deleteBodyTrackingEntryById,
-    //////////////////////////
-    //// Progress Journal ////
-    //////////////////////////
-    createJournalGoal,
-    updateJournalGoal,
-    deleteJournalGoalById,
-    createJournalNote,
-    updateJournalNote,
-    deleteJournalNoteById,
-    createJournalMood,
-    updateJournalMood,
-    deleteJournalMoodById,
+    ///////////////////////////////
+    //// User Day Log Tracking ////
+    ///////////////////////////////
+    createUserGoal,
+    updateUserGoal,
+    deleteUserGoal,
+    createUserDayLogMood,
+    deleteUserDayLogMood,
+    createUserMeditationLog,
+    updateUserMeditationLog,
+    createUserEatWellLog,
+    updateUserEatWellLog,
+    createUserSleepWellLog,
+    updateUserSleepWellLog,
     ///////////////////////
     //// LoggedWorkout ////
     ///////////////////////
