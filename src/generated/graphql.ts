@@ -2364,6 +2364,7 @@ export type UserGoal = {
   description?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
   name: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
 };
 
 export type UserMeditationLog = {
@@ -3907,6 +3908,7 @@ export type UserGoalResolvers<ContextType = any, ParentType extends ResolversPar
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 

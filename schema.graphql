@@ -1468,6 +1468,7 @@ type UserGoal {
   description: String
   id: ID!
   name: String!
+  updatedAt: DateTime!
 }
 
 type UserMeditationLog {

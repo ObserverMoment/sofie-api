@@ -29,7 +29,11 @@ import {
   checkWorkoutPlanMediaForDeletion,
   deleteFiles,
 } from '../../../lib/uploadcare'
-import { checkAndReorderObjects, checkUserOwnsObject } from '../../utils'
+import {
+  addObjectToUserRecentlyViewed,
+  checkAndReorderObjects,
+  checkUserOwnsObject,
+} from '../../utils'
 import { selectForWorkoutPlanSummary } from '../selectDefinitions'
 import {
   formatWorkoutPlanFiltersInput,
@@ -133,6 +137,12 @@ export const createWorkoutPlan = async (
   })
 
   if (workoutPlan) {
+    await addObjectToUserRecentlyViewed(
+      'createWorkoutPlan',
+      { id: (workoutPlan as WorkoutPlan).id },
+      authedUserId,
+      prisma,
+    )
     return workoutPlan as WorkoutPlan
   } else {
     throw new ApolloError('createWorkoutPlan: There was an issue.')

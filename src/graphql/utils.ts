@@ -1,4 +1,4 @@
-import { prisma, PrismaClient } from '.prisma/client'
+import { PrismaClient } from '.prisma/client'
 import { ApolloError } from 'apollo-server-errors'
 import { ContextUserType } from '..'
 
@@ -204,5 +204,82 @@ export function checkIsAdmin(userType: ContextUserType) {
     throw new AccessScopeError(
       'Only admins can access this data of functionality.',
     )
+  }
+}
+
+//// User Recently Viewed /////
+/// Adds an object as a string formatted [type:id] to User.recentlyViewed.
+/// Ensuring that there are max 10 items in the list.
+export async function addObjectToUserRecentlyViewed(
+  resolverName: string, // Eg. 'workoutById', 'createWorkoutPlan'
+  resolverArgs: any, // The id of the object will be either at [args.id] or [args.data.id]
+  userId: string,
+  prisma: PrismaClient,
+) {
+  let typeAndId: string
+
+  switch (resolverName) {
+    case 'clubSummary':
+      typeAndId = `clubSummary:${resolverArgs.id}`
+      break
+    case 'workoutById':
+      typeAndId = `workoutSummary:${resolverArgs.id}`
+      break
+    case 'workoutPlanById':
+      typeAndId = `workoutPlanSummary:${resolverArgs.id}`
+      break
+    /// These create branches should only get hit when the method is being called from the resolvers themselves, not via middleware.
+    /// Make sure you are passing an object like {id: newObjectId} as [resolverArgs].
+    case 'createClub':
+      typeAndId = `clubSummary:${resolverArgs.id}`
+      break
+    case 'createWorkout':
+      typeAndId = `workoutSummary:${resolverArgs.id}`
+      break
+    case 'createWorkoutPlan':
+      typeAndId = `workoutPlanSummary:${resolverArgs.id}`
+      break
+    /// Update args are formatted { data: { id, ...rest }}
+    case 'updateClubSummary':
+      typeAndId = `clubSummary:${resolverArgs.data.id}`
+      break
+    case 'updateWorkout':
+      typeAndId = `workoutSummary:${resolverArgs.data.id}`
+      break
+    case 'updateWorkoutPlan':
+      typeAndId = `workoutPlanSummary:${resolverArgs.data.id}`
+      break
+
+    default:
+      throw new Error(
+        `${resolverName} is not a valid resolver name for the function [addObjectToUserRecentlyViewed]`,
+      )
+  }
+
+  const prev = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+    select: {
+      recentlyViewedObjects: true,
+    },
+  })
+
+  if (prev) {
+    /// Filter out any previous entry for this [typeAndId] before prepending the new one.
+    /// Max of 20 recently viewed.
+    const updated = [
+      typeAndId,
+      ...prev.recentlyViewedObjects.filter((o) => o !== typeAndId),
+    ].slice(0, 20)
+
+    await prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        recentlyViewedObjects: updated,
+      },
+    })
   }
 }

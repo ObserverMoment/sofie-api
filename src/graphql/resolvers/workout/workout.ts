@@ -10,7 +10,7 @@ import {
   Workout,
   WorkoutSummary,
 } from '../../../generated/graphql'
-import { checkUserOwnsObject } from '../../utils'
+import { addObjectToUserRecentlyViewed, checkUserOwnsObject } from '../../utils'
 import {
   checkWorkoutMediaForDeletion,
   deleteFiles,
@@ -129,6 +129,12 @@ export const createWorkout = async (
 
   if (workout) {
     await updateWorkoutMetaData(prisma, (workout as Workout).id)
+    await addObjectToUserRecentlyViewed(
+      'createWorkout',
+      { id: (workout as Workout).id },
+      authedUserId,
+      prisma,
+    )
     return workout as Workout
   } else {
     throw new ApolloError('createWorkout: There was an issue.')

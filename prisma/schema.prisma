@@ -197,6 +197,7 @@ model MoveHistoryTrackerWidget {
 model Collection {
   id           String        @id @default(uuid())
   createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @default(now()) @updatedAt
   userId       String
   description  String?
   name         String
@@ -208,6 +209,7 @@ model Collection {
 model GymProfile {
   id                String             @id @default(uuid())
   createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @default(now()) @updatedAt
   name              String
   description       String?
   userId            String
@@ -278,8 +280,8 @@ model User {
   activeLogDataWidgets      String[]
   // Log / Streak tracking settings.
   workoutsPerWeekTarget     Int                        @default(3)
-  // User assigned holiday days. Jan 1st is day 0. User gets 2 'holiday days' every 4 weeks, 26 per year.
-  holidayDayAssigned        Int[]
+  // Object ids in the format [type:id]. Max of 20 (?). See [Utils.addObjectToUserRecentlyViewed].
+  recentlyViewedObjects     String[]
   // When user marks as seen / got it / don't show again we add to here.
   SeenAnnouncementUpdates   AnnouncementUpdate[]
   // When user marks as seen / got it / don't show again we add to here.
@@ -380,7 +382,7 @@ model Club {
 model ClubMemberNote {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
   note      String
   tags      String[]
   // Must be 'User' because this is the standard way of checking ownership when protecting CRUD ops. The check is always [object.userId == authedUserId].
@@ -396,6 +398,7 @@ model ClubMemberNote {
 model ClubInviteToken {
   id            String   @id @default(uuid())
   createdAt     DateTime @default(now())
+  updatedAt     DateTime @default(now()) @updatedAt
   active        Boolean
   inviteLimit   Int      @default(0)
   clubId        String
@@ -592,6 +595,7 @@ model CompletedWorkoutPlanDayWorkout {
 model WorkoutPlanReview {
   id            String      @id @default(uuid())
   createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @default(now()) @updatedAt
   userId        String
   score         Float
   comment       String?
@@ -702,6 +706,7 @@ model UserDayLogMood {
 model UserGoal {
   id            String    @id @default(uuid())
   createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @default(now()) @updatedAt
   name          String
   description   String?
   deadline      DateTime?
