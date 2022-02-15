@@ -66,6 +66,8 @@ export default gql`
     userMeditationLogs: [UserMeditationLog!]!
     userEatWellLogs: [UserEatWellLog!]!
     userSleepWellLogs: [UserSleepWellLog!]!
+    #### User Recently Viewed ####
+    userRecentlyViewedObjects: [UserRecentlyViewedObject!]!
     #### Scheduled Workouts ####
     userScheduledWorkouts: [ScheduledWorkout!]!
     #### Text Search ####

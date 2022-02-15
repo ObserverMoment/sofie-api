@@ -1,6 +1,14 @@
 import { gql } from 'apollo-server-express'
 
 export default gql`
+  # Note: Had issues generating the client side types when defining this as a union of possible types - so went with this stop gap.
+  # Only one should be present. If none are present the client should just ignore that data.
+  type UserRecentlyViewedObject {
+    Club: ClubSummary
+    Workout: WorkoutSummary
+    WorkoutPlan: WorkoutPlanSummary
+  }
+
   type UserAvatarData {
     id: ID!
     displayName: String!
