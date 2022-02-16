@@ -2,25 +2,34 @@ import { ApolloError } from 'apollo-server-express'
 import { Context } from '../../..'
 import {
   Club,
+  ClubMemberNote,
   MutationAddUserToClubViaInviteTokenArgs,
   MutationCreateClubInviteTokenArgs,
+  MutationCreateClubMemberNoteArgs,
   MutationDeleteClubInviteTokenArgs,
   MutationGiveMemberAdminStatusArgs,
   MutationRemoveMemberAdminStatusArgs,
   MutationRemoveUserFromClubArgs,
   MutationUpdateClubInviteTokenArgs,
+  MutationUpdateClubMemberNoteArgs,
   MutationUserJoinPublicClubArgs,
   QueryCheckUserClubMemberStatusArgs,
   QueryClubInviteTokensArgs,
+  QueryClubMemberNotesArgs,
   QueryClubMembersArgs,
 } from '../../../generated/graphql'
 import {
   addStreamUserToClubMemberChat,
   removeStreamUserFromClubMemberChat,
+  toggleFollowClubMembersFeed,
+  notifyOwnerAndAdminsOfMemberJoinLeave,
 } from '../../../lib/getStream'
+import { checkUserOwnsObject } from '../../utils'
 import {
   selectForClubInviteToken,
   selectForClubMembers,
+  selectForClubMemberSummary,
+  selectForUserAvatarData,
 } from '../selectDefinitions'
 import {
   checkIfAllowedToRemoveUser,
@@ -29,6 +38,7 @@ import {
   checkUserIsOwnerOrAdmin,
   checkUserIsOwnerOrAdminOfClub,
   formatClubMembers,
+  formatClubMemberSummary,
   getUserClubMemberStatus,
 } from './utils'
 
@@ -90,6 +100,34 @@ export const clubInviteTokens = async (
   }
 }
 
+/// Gets all notes for a specific club and user combination.
+export const clubMemberNotes = async (
+  r: any,
+  { clubId, memberId, take, cursor }: QueryClubMemberNotesArgs,
+  { authedUserId, select, prisma }: Context,
+) => {
+  // Check that user is an owner or admin.
+  await checkUserIsOwnerOrAdmin(clubId, 'club', authedUserId, prisma)
+
+  const clubMemberNotes = await prisma.clubMemberNote.findMany({
+    where: {
+      clubId,
+      memberId,
+    },
+    cursor: cursor
+      ? {
+          id: cursor,
+        }
+      : undefined,
+    take: take ?? 50,
+    skip: cursor ? 1 : 0,
+    orderBy: [{ updatedAt: 'desc' }, { id: 'desc' }],
+    select,
+  })
+
+  return clubMemberNotes as ClubMemberNote[]
+}
+
 ///// Mutations //////
 ///// Public Club Memberships //////
 ///// Any user can join / leave whenever they want //////
@@ -113,6 +151,15 @@ export const userJoinPublicClub = async (
   if (updated) {
     /// Add the new member to the GetStream chat group.
     await addStreamUserToClubMemberChat(updated.id, authedUserId)
+    /// Subscribe the user's timeline_feed to the club_feed.
+    await toggleFollowClubMembersFeed(updated.id, authedUserId, 'FOLLOW')
+    /// Notify owner and admins that user has joined.
+    await notifyOwnerAndAdminsOfMemberJoinLeave(
+      authedUserId,
+      updated.id,
+      'FOLLOW',
+      prisma,
+    )
     return updated.id
   } else {
     throw new ApolloError('userJoinPublicClub: There was an issue.')
@@ -246,6 +293,103 @@ export const deleteClubInviteToken = async (
   }
 }
 
+///// Club Member Note /////
+export const createClubMemberNote = async (
+  r: any,
+  { data }: MutationCreateClubMemberNoteArgs,
+  { authedUserId, select, prisma }: Context,
+) => {
+  // Check that user is an owner or admin.
+  await checkUserIsOwnerOrAdmin(data.clubId, 'club', authedUserId, prisma)
+
+  // Also check that the member ID provided is actually a member of the club (can't leave notes on admins / owners or people not IN the club).
+  const club = await prisma.club.findUnique({
+    where: { id: data.clubId },
+    select: {
+      Owner: {
+        select: {
+          id: true,
+        },
+      },
+      Admins: {
+        where: { id: data.memberId },
+      },
+      Members: {
+        where: { id: data.memberId },
+      },
+    },
+  })
+
+  if (!club) {
+    throw new ApolloError(
+      `createClubMemberNote: Could not find a club with id ${data.clubId}`,
+    )
+  } else if (
+    club.Owner.id !== data.memberId &&
+    !club!.Members.length &&
+    !club!.Admins.length
+  ) {
+    throw new ApolloError(
+      `createClubMemberNote: Member ${data.memberId} does not appear to be member of club with id ${data.clubId}`,
+    )
+  }
+
+  const clubMemberNote = await prisma.clubMemberNote.create({
+    data: {
+      note: data.note,
+      tags: data.tags,
+      User: {
+        connect: { id: authedUserId },
+      },
+      Member: {
+        connect: {
+          id: data.memberId,
+        },
+      },
+      Club: {
+        connect: {
+          id: data.clubId,
+        },
+      },
+    },
+    select,
+  })
+
+  console.log(clubMemberNote)
+
+  if (clubMemberNote) {
+    return clubMemberNote as ClubMemberNote
+  } else {
+    throw new ApolloError('createClubMemberNote: There was an issue.')
+  }
+}
+
+export const updateClubMemberNote = async (
+  r: any,
+  { data }: MutationUpdateClubMemberNoteArgs,
+  { authedUserId, select, prisma }: Context,
+) => {
+  // Check that user owns the note. Only the creator of the note can update it and there is no delete functionality as the notes should act as a undeletable history of the member / client.
+  await checkUserOwnsObject(data.id, 'clubMemberNote', authedUserId, prisma)
+
+  const updated = await prisma.clubMemberNote.update({
+    where: {
+      id: data.id,
+    },
+    data: {
+      note: data.note || undefined,
+      tags: data.tags || undefined,
+    },
+    select,
+  })
+
+  if (updated) {
+    return updated as ClubMemberNote
+  } else {
+    throw new ApolloError('updateClubMemberNote: There was an issue.')
+  }
+}
+
 ///// Manage Members and Admins /////
 ///// ClubInviteToken //////
 // The validity of the token should have already been checked //
@@ -310,6 +454,15 @@ export const addUserToClubViaInviteToken = async (
   if (updatedClub) {
     /// Add the new member to the GetStream chat group.
     await addStreamUserToClubMemberChat((updatedClub as Club).id, userId)
+    /// Subscribe the user's timeline_feed to the club_feed.
+    await toggleFollowClubMembersFeed(updatedClub.id, userId, 'FOLLOW')
+    /// Notify owner and admins that user has joined.
+    await notifyOwnerAndAdminsOfMemberJoinLeave(
+      userId,
+      updatedClub.id,
+      'FOLLOW',
+      prisma,
+    )
     return updatedClub.id
   } else {
     throw new ApolloError('addUserToClubViaInviteToken: There was an issue.')
@@ -455,6 +608,15 @@ export const removeUserFromClub = async (
   if (updated) {
     /// Remove the member from the GetStream chat group.
     await removeStreamUserFromClubMemberChat(updated.id, userToRemoveId)
+    /// Unsubscribe the user's timeline_feed to the club_feed. This also removes feed history from their timeline.
+    await toggleFollowClubMembersFeed(updated.id, userToRemoveId, 'UNFOLLOW')
+    /// Notify owner and admins that user has joined.
+    await notifyOwnerAndAdminsOfMemberJoinLeave(
+      authedUserId,
+      updated.id,
+      'UNFOLLOW',
+      prisma,
+    )
     return formatClubMembers(clubId, updated)
   } else {
     throw new ApolloError('removeUserFromClub: There was an issue.')

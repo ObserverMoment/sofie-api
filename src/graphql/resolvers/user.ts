@@ -15,17 +15,25 @@ import {
   UserAvatarData,
   UserProfile,
   UserProfileSummary,
+  UserRecentlyViewedObject,
   WorkoutTag,
 } from '../../generated/graphql'
 import {
   getUserFollowersCount,
   updateStreamChatUser,
+  updateStreamFeedUser,
 } from '../../lib/getStream'
 import { checkUserMediaForDeletion, deleteFiles } from '../../lib/uploadcare'
 import { AccessScopeError, checkUserOwnsObject } from '../utils'
 import { formatClubSummaries } from './club/utils'
 import { calcLifetimeLogStatsSummary } from './loggedWorkout'
-import { selectForClubSummary } from './selectDefinitions'
+import {
+  selectForClubSummary,
+  selectForWorkoutPlanSummary,
+  selectForWorkoutSummary,
+} from './selectDefinitions'
+import { formatWorkoutSummaries } from './workout/utils'
+import { formatWorkoutPlanSummaries } from './workoutPlan/utils'
 
 //// Queries ////
 export const checkUniqueDisplayName = async (
@@ -37,8 +45,80 @@ export const checkUniqueDisplayName = async (
   return isAvailable
 }
 
-/// The minimum info needed to display a user avatar.
-/// avatarUri + displayName.
+/// From User.recentlyViewedObjects
+export const userRecentlyViewedObjects = async (
+  r: any,
+  a: any,
+  { authedUserId, prisma }: Context,
+) => {
+  /// String formatted as [type:id]
+  const user = await prisma.user.findUnique({
+    where: { id: authedUserId },
+    select: {
+      recentlyViewedObjects: true,
+    },
+  })
+
+  if (!user) {
+    console.error(
+      `userRecentlyViewedObjects: Could not find a user with id ${authedUserId}`,
+    )
+    return [] as UserRecentlyViewedObject[]
+  }
+
+  /// Group the object types so we can make fewer DB calls.
+  const objectInfos = user.recentlyViewedObjects.reduce(
+    (acum, next) => {
+      const o = recentlyViewedObjectInfo(next)
+      acum[o.type].push(o.id)
+      acum.sortedIds.push(o.id)
+      return acum
+    },
+    {
+      sortedIds: [] as string[],
+      clubSummary: [] as string[],
+      workoutSummary: [] as string[],
+      workoutPlanSummary: [] as string[],
+    },
+  )
+
+  const objects = await Promise.all([
+    prisma.club.findMany({
+      where: { id: { in: objectInfos.clubSummary } },
+      select: selectForClubSummary,
+    }),
+    prisma.workout.findMany({
+      where: { id: { in: objectInfos.workoutSummary } },
+      select: selectForWorkoutSummary,
+    }),
+    prisma.workoutPlan.findMany({
+      where: { id: { in: objectInfos.workoutPlanSummary } },
+      select: selectForWorkoutPlanSummary,
+    }),
+  ])
+
+  const formattedClubSummaries = formatClubSummaries(objects[0])
+  const formattedWorkoutSummaries = formatWorkoutSummaries(objects[1])
+  const formattedWorkoutPlanSummaries = formatWorkoutPlanSummaries(objects[2])
+
+  /// Return in the same order as they are found in the db.
+  /// Had issues generating client side types (Dart) when trying to define [UserRecentlyViewedObject] as a union of types. Falling back on nullable fields option.
+  /// Currently no checks to make sure multiple objects aren't returned on a single [UserRecentlyViewedObject].
+  const data = objectInfos.sortedIds
+    .map((id) => ({
+      Club: formattedClubSummaries.find((o) => o.id === id),
+      Workout: formattedWorkoutSummaries.find((o) => o.id === id),
+      WorkoutPlan: formattedWorkoutPlanSummaries.find((o) => o.id === id),
+    }))
+    .filter((o) => o.Club?.id || o.Workout?.id || o.WorkoutPlan?.id)
+
+  if (data) {
+    return data
+  } else {
+    throw new ApolloError('userRecentlyViewedObjects: There was an issue.')
+  }
+}
+
 export const userAvatars = async (
   r: any,
   { ids }: QueryUserAvatarsArgs,
@@ -168,12 +248,12 @@ export const userProfile = async (
   const user = await prisma.user.findUnique({
     where: { id: userId },
     select: {
-      // If private only
+      // Always return this public info.
       id: true,
       displayName: true,
       userProfileScope: true,
       avatarUri: true,
-      // If public then
+      // Only return this info if profile is either public or the user is retrieving their own data.
       introVideoUri: isPublic,
       introVideoThumbUri: isPublic,
       bio: isPublic,
@@ -184,6 +264,10 @@ export const userProfile = async (
       youtubeHandle: isPublic,
       linkedinHandle: isPublic,
       countryCode: isPublic,
+      // Only return this info if the user is retrieving their own data.
+      workoutsPerWeekTarget: isAuthedUser,
+      activeProgressWidgets: isAuthedUser,
+      activeLogDataWidgets: isAuthedUser,
       Skills: true,
       UserBenchmarks: {
         include: {
@@ -217,7 +301,7 @@ export const userProfile = async (
   })
 
   if (user) {
-    return isPublic
+    return isPublic || isAuthedUser
       ? ({
           id: user.id,
           userProfileScope: user.userProfileScope,
@@ -236,6 +320,13 @@ export const userProfile = async (
           followerCount: await getUserFollowersCount(user.id),
           workoutCount: user.Workouts.length,
           planCount: user.WorkoutPlans.length,
+          workoutsPerWeekTarget: isAuthedUser
+            ? user.workoutsPerWeekTarget
+            : null,
+          activeProgressWidgets: isAuthedUser
+            ? user.activeProgressWidgets
+            : null,
+          activeLogDataWidgets: isAuthedUser ? user.activeLogDataWidgets : null,
           Skills: user.Skills,
           // TODO: Casting as any because [ClubsWhereOwner] was being returned as [Club]
           // The isPublic tiernary is causing some type weirdness?
@@ -328,6 +419,9 @@ export const updateUserProfile = async (
       hasOnboarded: data.hasOnboarded || undefined,
       displayName: data.displayName || undefined,
       gender: data.gender || undefined,
+      workoutsPerWeekTarget: data.workoutsPerWeekTarget || undefined,
+      activeProgressWidgets: data.activeProgressWidgets || undefined,
+      activeLogDataWidgets: data.activeLogDataWidgets || undefined,
     },
     // Selects only the updated fields plus the ID.
     select: Object.keys(data).reduce(
@@ -343,6 +437,11 @@ export const updateUserProfile = async (
     /// Update the user info on Stream Chat.
     if (data.displayName || data.avatarUri) {
       await updateStreamChatUser(
+        authedUserId,
+        data.displayName || undefined,
+        data.avatarUri || undefined,
+      )
+      await updateStreamFeedUser(
         authedUserId,
         data.displayName || undefined,
         data.avatarUri || undefined,
@@ -450,4 +549,18 @@ export async function displayNameIsAvailable(
   })
 
   return users !== null && users.length === 0
+}
+
+type RecentObjectType = 'clubSummary' | 'workoutSummary' | 'workoutPlanSummary'
+
+interface RecentlyViewedObjectInfo {
+  id: string
+  type: RecentObjectType
+}
+
+function recentlyViewedObjectInfo(typeAndId: string): RecentlyViewedObjectInfo {
+  return {
+    id: typeAndId.split(':')[1],
+    type: typeAndId.split(':')[0] as RecentObjectType,
+  }
 }

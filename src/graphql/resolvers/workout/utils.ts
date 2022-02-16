@@ -5,7 +5,11 @@ import {
   WorkoutSummary,
 } from '../../../generated/graphql'
 import { validateWorkoutMetaData } from '../../../lib/jsonValidation'
-import { WorkoutMetaDataPayload, WorkoutSummaryPayload } from '../../../types'
+import {
+  WorkoutMetaData,
+  WorkoutMetaDataPayload,
+  WorkoutSummaryPayload,
+} from '../../../types'
 
 export function formatWorkoutSummaries(
   workouts: WorkoutSummaryPayload[],
@@ -19,6 +23,7 @@ export function formatWorkoutSummary(
   return {
     id: workout.id,
     createdAt: workout.createdAt,
+    updatedAt: workout.updatedAt,
     archived: workout.archived,
     name: workout.name,
     User: workout.User,
@@ -30,7 +35,12 @@ export function formatWorkoutSummary(
     hasClassVideo: workout.WorkoutSections.some((ws) => ws.classVideoUri),
     hasClassAudio: workout.WorkoutSections.some((ws) => ws.classAudioUri),
     equipments: uniqueEquipmentsInWorkout(workout).map((e) => e.name),
-    tags: workoutSectionTypesAndTags(workout),
+    sectionTypes: uniqueWorkoutSectionTypes(workout),
+    goals: workout.WorkoutGoals.map((g) => g.name),
+    tags: workout.WorkoutTags.map((t) => t.tag),
+    bodyAreas: (workout.metaData as WorkoutMetaData).bodyAreas
+      ? (workout.metaData as WorkoutMetaData).bodyAreas
+      : [],
   }
 }
 
@@ -65,21 +75,17 @@ export function uniqueEquipmentsInWorkout(
   return uniqueEquipments
 }
 
-export function workoutSectionTypesAndTags(
+export function uniqueWorkoutSectionTypes(
   workout: WorkoutSummaryPayload,
 ): string[] {
-  const uniqueTags: string[] = []
+  const uniqueSectionTypes: string[] = []
 
   for (const wSection of workout.WorkoutSections) {
-    if (!uniqueTags.includes(wSection.WorkoutSectionType.name)) {
-      uniqueTags.push(wSection.WorkoutSectionType.name)
+    if (!uniqueSectionTypes.includes(wSection.WorkoutSectionType.name)) {
+      uniqueSectionTypes.push(wSection.WorkoutSectionType.name)
     }
   }
-
-  uniqueTags.concat(workout.WorkoutGoals.map((goal) => goal.name))
-  uniqueTags.concat(workout.WorkoutTags.map((tag) => tag.tag))
-
-  return uniqueTags
+  return uniqueSectionTypes
 }
 
 export function formatWorkoutFiltersInput(filters: WorkoutFiltersInput) {

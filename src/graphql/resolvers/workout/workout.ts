@@ -10,7 +10,7 @@ import {
   Workout,
   WorkoutSummary,
 } from '../../../generated/graphql'
-import { checkUserOwnsObject } from '../../utils'
+import { addObjectToUserRecentlyViewed, checkUserOwnsObject } from '../../utils'
 import {
   checkWorkoutMediaForDeletion,
   deleteFiles,
@@ -43,9 +43,7 @@ export const publicWorkouts = async (
     },
     take: take ?? 50,
     skip: cursor ? 1 : 0,
-    orderBy: {
-      id: 'desc',
-    },
+    orderBy: [{ updatedAt: 'desc' }, { id: 'desc' }],
     cursor: cursor
       ? {
           id: cursor,
@@ -69,9 +67,7 @@ export const userWorkouts = async (
       userId: authedUserId,
       archived: false,
     },
-    orderBy: {
-      id: 'desc',
-    },
+    orderBy: [{ updatedAt: 'desc' }, { id: 'desc' }],
     select: selectForWorkoutSummary,
   })
 
@@ -91,9 +87,7 @@ export const userPublicWorkouts = async (
       archived: false,
       contentAccessScope: 'PUBLIC',
     },
-    orderBy: {
-      id: 'desc',
-    },
+    orderBy: [{ updatedAt: 'desc' }, { id: 'desc' }],
     select: selectForWorkoutSummary,
   })
 
@@ -135,6 +129,12 @@ export const createWorkout = async (
 
   if (workout) {
     await updateWorkoutMetaData(prisma, (workout as Workout).id)
+    await addObjectToUserRecentlyViewed(
+      'createWorkout',
+      { id: (workout as Workout).id },
+      authedUserId,
+      prisma,
+    )
     return workout as Workout
   } else {
     throw new ApolloError('createWorkout: There was an issue.')

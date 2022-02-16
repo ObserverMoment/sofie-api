@@ -135,12 +135,14 @@ export type WorkoutSummaryPayload = Prisma.WorkoutGetPayload<{
   select: {
     id: true
     createdAt: true
+    updatedAt: true
     archived: true
     name: true
     coverImageUri: true
     description: true
     difficultyLevel: true
     lengthMinutes: true
+    metaData: true
     WorkoutGoals: true
     WorkoutTags: true
     WorkoutSections: {
@@ -181,11 +183,18 @@ export type WorkoutSummaryPayload = Prisma.WorkoutGetPayload<{
   }
 }>
 
+export type WorkoutMetaData = {
+  bodyweightOnly: boolean
+  moves: string[]
+  bodyAreas: string[]
+}
+
 // Data payload required to be able to form up WorkoutSummary data.
 export type WorkoutPlanSummaryPayload = Prisma.WorkoutPlanGetPayload<{
   select: {
     id: true
     createdAt: true
+    updatedAt: true
     archived: true
     name: true
     description: true

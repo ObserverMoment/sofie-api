@@ -17,6 +17,7 @@ export function formatWorkoutPlanSummary(
   return {
     id: plan.id,
     createdAt: plan.createdAt,
+    updatedAt: plan.updatedAt,
     archived: plan.archived,
     name: plan.name,
     description: plan.description,

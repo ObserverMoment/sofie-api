@@ -5,6 +5,7 @@ export default gql`
   type WorkoutPlanSummary {
     id: ID!
     createdAt: DateTime!
+    updatedAt: DateTime!
     archived: Boolean!
     name: String!
     description: String
@@ -23,6 +24,7 @@ export default gql`
   type WorkoutPlan {
     id: ID!
     createdAt: DateTime!
+    updatedAt: DateTime!
     archived: Boolean!
     name: String!
     description: String

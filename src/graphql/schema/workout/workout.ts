@@ -6,6 +6,7 @@ export default gql`
   type WorkoutSummary {
     id: ID!
     createdAt: DateTime!
+    updatedAt: DateTime!
     name: String!
     archived: Boolean!
     User: UserAvatarData!
@@ -17,14 +18,20 @@ export default gql`
     loggedSessionsCount: Int!
     hasClassVideo: Boolean!
     hasClassAudio: Boolean!
+    # Equipment IDs
     equipments: [String!]!
     # Workout Section Types, Goals and Tags as strings.
+    sectionTypes: [String!]!
+    goals: [String!]!
     tags: [String!]!
+    # Targeted body areas - IDs.
+    bodyAreas: [ID!]!
   }
 
   type Workout {
     id: ID!
     createdAt: DateTime!
+    updatedAt: DateTime!
     User: UserAvatarData!
     archived: Boolean!
     name: String!
@@ -60,13 +67,6 @@ export default gql`
     contentAccessScope: ContentAccessScope
     WorkoutGoals: [ConnectRelationInput!]
     WorkoutTags: [ConnectRelationInput!]
-  }
-
-  type WorkoutGoal {
-    id: ID!
-    name: String!
-    description: String!
-    hexColor: String!
   }
 
   type WorkoutTag {

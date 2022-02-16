@@ -9,21 +9,18 @@ export default gql`
     # Content Requiring Validation #
     adminPublicWorkouts(
       status: PublicContentValidationStatus!
-    ): [WorkoutWithMetaData!]!
+    ): [WorkoutWithMetaDataAdmin!]!
     adminPublicWorkoutPlans(
       status: PublicContentValidationStatus!
-    ): [WorkoutPlanWithMetaData!]!
+    ): [WorkoutPlanWithMetaDataAdmin!]!
     adminPublicClubs(
       status: PublicContentValidationStatus!
-    ): [ClubWithMetaData!]!
+    ): [ClubWithMetaDataAdmin!]!
     #### END OF ADMIN ONLY QUERIES ####
+    announcementUpdates: [AnnouncementUpdate!]!
     validateToken: Boolean!
     #### Core Data ####
-    bodyAreas: [BodyArea!]!
-    equipments: [Equipment!]!
-    moveTypes: [MoveType!]!
-    workoutGoals: [WorkoutGoal!]!
-    workoutSectionTypes: [WorkoutSectionType!]!
+    coreData: CoreData!
     #### Clubs ####
     checkUniqueClubName(name: String!): Boolean!
     checkUserClubMemberStatus(clubId: ID!): UserClubMemberStatus!
@@ -39,22 +36,38 @@ export default gql`
     clubMembers(clubId: ID!): ClubMembers!
     clubWorkouts(clubId: ID!): ClubWorkouts!
     clubWorkoutPlans(clubId: ID!): ClubWorkoutPlans!
+    #### Club Member Notes ####
+    clubMemberNotes(
+      clubId: ID!
+      memberId: ID!
+      cursor: ID
+      take: Int
+    ): [ClubMemberNote!]!
     #### Invite Tokens ####
     # The ID is the token string, we pass it to check that it is valid #
     checkClubInviteToken(id: ID!): CheckClubInviteTokenResult!
+    #### Club Feeds ####
+    clubMembersFeedPosts(
+      clubId: ID!
+      limit: Int!
+      offset: Int!
+    ): [StreamEnrichedActivity!]!
     #### Logged Workouts ####
     logCountByWorkout(id: ID!): Int!
     lifetimeLogStatsSummary(userId: ID!): LifetimeLogStatsSummary!
     userLoggedWorkouts(take: Int): [LoggedWorkout!]!
     loggedWorkoutById(id: ID!): LoggedWorkout!
-    #### Moves ####
-    standardMoves: [Move!]!
-    userCustomMoves: [Move!]!
-    #### Progress Journal ####
+    #### User Custom Moves ####
+    customMoves: [Move!]!
+    #### User Progress Tracking ####
+    userGoals: [UserGoal!]!
     bodyTrackingEntries: [BodyTrackingEntry!]!
-    journalNotes: [JournalNote!]!
-    journalMoods: [JournalMood!]!
-    journalGoals: [JournalGoal!]!
+    userDayLogMoods: [UserDayLogMood!]!
+    userMeditationLogs: [UserMeditationLog!]!
+    userEatWellLogs: [UserEatWellLog!]!
+    userSleepWellLogs: [UserSleepWellLog!]!
+    #### User Recently Viewed ####
+    userRecentlyViewedObjects: [UserRecentlyViewedObject!]!
     #### Scheduled Workouts ####
     userScheduledWorkouts: [ScheduledWorkout!]!
     #### Text Search ####
@@ -64,16 +77,6 @@ export default gql`
     textSearchWorkoutPlanNames(text: String!): [TextSearchResult!]
     textSearchUserProfiles(text: String!): [UserProfileSummary!]
     textSearchUserNames(text: String!): [TextSearchResult!]
-    #### Timeline Feed ####
-    # Gets DB objects referenced in getStream activities (posts) and maps fields to those required for displaying in a timeline or feed #
-    timelinePostsData(
-      postDataRequests: [TimelinePostDataRequestInput!]!
-    ): [TimelinePostObjectData!]!
-    clubMembersFeedPosts(
-      clubId: ID!
-      limit: Int!
-      offset: Int!
-    ): [TimelinePostFullData!]!
     #### User ####
     checkUniqueDisplayName(displayName: String!): Boolean!
     gymProfiles: [GymProfile!]!
@@ -119,12 +122,19 @@ export default gql`
 
   type Mutation {
     #### ADMIN ONLY MUTATIONS ####
-    updateWorkoutMetaData(data: UpdateWorkoutMetaDataInput!): WorkoutMetaData!
-    updateWorkoutPlanMetaData(
-      data: UpdateWorkoutPlanMetaDataInput!
-    ): WorkoutPlanMetaData
-    updateClubMetaData(data: UpdateClubMetaDataInput!): ClubMetaData!
+    updateWorkoutMetaDataAdmin(
+      data: UpdateWorkoutMetaDataAdminInput!
+    ): WorkoutMetaDataAdmin!
+    updateWorkoutPlanMetaDataAdmin(
+      data: UpdateWorkoutPlanMetaDataAdminInput!
+    ): WorkoutPlanMetaDataAdmin
+    updateClubMetaDataAdmin(
+      data: UpdateClubMetaDataAdminInput!
+    ): ClubMetaDataAdmin!
     #### END OF ADMIN ONLY MUTATIONS ####
+    #### AnnouncementUpdate ####
+    markAnnouncementUpdateAsSeen(data: MarkAnnouncementUpdateAsSeenInput!): ID!
+    markOnboardingMessageAsSeen(data: MarkOnboardingMessageAsSeenInput!): ID!
     #### Archive ####
     archiveWorkoutById(id: ID!): Workout!
     unarchiveWorkoutById(id: ID!): Workout!
@@ -147,6 +157,9 @@ export default gql`
     giveMemberAdminStatus(userId: ID!, clubId: ID!): ClubMembers!
     removeMemberAdminStatus(userId: ID!, clubId: ID!): ClubMembers!
     removeUserFromClub(userToRemoveId: ID!, clubId: ID!): ClubMembers!
+    #### Club Member Notes ####
+    createClubMemberNote(data: CreateClubMemberNoteInput!): ClubMemberNote!
+    updateClubMemberNote(data: UpdateClubMemberNoteInput!): ClubMemberNote!
     #### Club Content Management ####
     # Returns the updated content / list of objects.
     addWorkoutToClub(workoutId: ID!, clubId: ID!): ClubWorkouts!
@@ -156,20 +169,12 @@ export default gql`
       workoutPlanId: ID!
       clubId: ID!
     ): ClubWorkoutPlans!
-    #### ClubAnnouncement ####
-    # Can be shared as a ClubTimeline Post #
-    createClubAnnouncement(
-      data: CreateClubAnnouncementInput!
-    ): ClubAnnouncement!
-    updateClubAnnouncement(
-      data: UpdateClubAnnouncementInput!
-    ): ClubAnnouncement!
-    deleteClubAnnouncement(id: ID!): ID!
-    #### Club Timeline Post ####
-    createClubTimelinePost(
-      data: CreateClubTimelinePostInput!
-    ): TimelinePostFullData!
-    deleteClubTimelinePost(activityId: ID!): ID! # The Stream activity ID.
+    #### Club Feed Post ####
+    createClubMembersFeedPost(
+      clubId: ID!
+      data: CreateStreamFeedActivityInput!
+    ): StreamEnrichedActivity!
+    deleteClubMembersFeedPost(activityId: ID!): ID! # The Stream activity ID.
     #### Equipment ####
     createEquipment(data: CreateEquipmentInput!): Equipment
     updateEquipment(data: UpdateEquipmentInput!): Equipment
@@ -185,19 +190,32 @@ export default gql`
       data: UpdateBodyTrackingEntryInput!
     ): BodyTrackingEntry!
     deleteBodyTrackingEntryById(id: ID!): ID!
-    #### Progress Journal ####
-    #### Progress Journal Note ####
-    createJournalNote(data: CreateJournalNoteInput!): JournalNote!
-    updateJournalNote(data: UpdateJournalNoteInput!): JournalNote!
-    deleteJournalNoteById(id: ID!): ID!
-    #### Progress Journal Goal ####
-    createJournalGoal(data: CreateJournalGoalInput!): JournalGoal!
-    updateJournalGoal(data: UpdateJournalGoalInput!): JournalGoal!
-    deleteJournalGoalById(id: ID!): ID!
-    #### Progress Journal Mood ####
-    createJournalMood(data: CreateJournalMoodInput!): JournalMood!
-    updateJournalMood(data: UpdateJournalMoodInput!): JournalMood!
-    deleteJournalMoodById(id: ID!): ID!
+    #### User Goal Tracking ####
+    createUserGoal(data: CreateUserGoalInput!): UserGoal!
+    updateUserGoal(data: UpdateUserGoalInput!): UserGoal!
+    deleteUserGoal(id: ID!): ID!
+    ###############################
+    #### User Day Log Tracking ####
+    #### User Day Log Mood ####
+    createUserDayLogMood(data: CreateUserDayLogMoodInput!): UserDayLogMood!
+    deleteUserDayLogMood(id: ID!): ID!
+    #### User Day Meditation Log ####
+    createUserMeditationLog(
+      data: CreateUserMeditationLogInput!
+    ): UserMeditationLog!
+    updateUserMeditationLog(
+      data: UpdateUserMeditationLogInput!
+    ): UserMeditationLog!
+    #### User Day Eat Well Log ####
+    createUserEatWellLog(data: CreateUserEatWellLogInput!): UserEatWellLog!
+    updateUserEatWellLog(data: UpdateUserEatWellLogInput!): UserEatWellLog!
+    ### User Day Sleep Well Log ####
+    createUserSleepWellLog(
+      data: CreateUserSleepWellLogInput!
+    ): UserSleepWellLog!
+    updateUserSleepWellLog(
+      data: UpdateUserSleepWellLogInput!
+    ): UserSleepWellLog!
     ########################
     #### Logged Workout ####
     createLoggedWorkout(data: CreateLoggedWorkoutInput!): LoggedWorkout!

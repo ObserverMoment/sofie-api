@@ -77,28 +77,17 @@ export const selectForClubInviteToken = {
   name: true,
 }
 
-export const selectForClubAnnouncement = {
-  id: true,
-  createdAt: true,
-  description: true,
-  imageUri: true,
-  audioUri: true,
-  videoUri: true,
-  videoThumbUri: true,
-  User: {
-    select: selectForUserAvatarData,
-  },
-}
-
 export const selectForWorkoutSummary = {
   id: true,
   createdAt: true,
+  updatedAt: true,
   name: true,
   archived: true,
   coverImageUri: true,
   description: true,
   difficultyLevel: true,
   lengthMinutes: true,
+  metaData: true,
   WorkoutGoals: true,
   WorkoutTags: true,
   WorkoutSections: {
@@ -137,6 +126,7 @@ export const selectForWorkoutSummary = {
 export const selectForWorkoutPlanSummary = {
   id: true,
   createdAt: true,
+  updatedAt: true,
   archived: true,
   name: true,
   description: true,

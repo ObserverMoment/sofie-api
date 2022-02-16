@@ -1,8 +1,14 @@
 import {
   ClubInviteTokenData,
+  ClubSummary,
   InviteTokenError,
   Resolvers,
 } from '../../generated/graphql'
+
+import {
+  announcementUpdates,
+  markAnnouncementUpdateAsSeen,
+} from './announcementUpdate'
 
 import {
   userArchivedWorkouts,
@@ -35,17 +41,14 @@ import {
   deleteClub,
 } from './club/club'
 
-import { adminPublicClubs, updateClubMetaData } from './club/metaData'
-
-import {
-  createClubAnnouncement,
-  updateClubAnnouncement,
-  deleteClubAnnouncement,
-} from './club/clubAnnouncement'
+import { adminPublicClubs, updateClubMetaDataAdmin } from './club/metaDataAdmin'
 
 import {
   checkUserClubMemberStatus,
   clubMembers,
+  clubMemberNotes,
+  createClubMemberNote,
+  updateClubMemberNote,
   clubInviteTokens,
   userJoinPublicClub,
   createClubInviteToken,
@@ -65,6 +68,12 @@ import {
   addWorkoutPlanToClub,
   removeWorkoutPlanFromClub,
 } from './club/clubContent'
+
+import {
+  coreData,
+  createEquipment, // Admin only
+  updateEquipment, // Admin only
+} from './coreData'
 
 import {
   gymProfiles,
@@ -87,32 +96,7 @@ import {
   deleteLoggedWorkoutMove,
 } from './loggedWorkout'
 
-import { standardMoves, userCustomMoves, createMove, updateMove } from './move'
-
-import {
-  bodyAreas,
-  equipments,
-  createEquipment,
-  updateEquipment,
-  workoutGoals,
-  workoutSectionTypes,
-  moveTypes,
-} from './officialData'
-
-import {
-  journalNotes,
-  journalMoods,
-  journalGoals,
-  createJournalGoal,
-  updateJournalGoal,
-  deleteJournalGoalById,
-  createJournalNote,
-  updateJournalNote,
-  deleteJournalNoteById,
-  createJournalMood,
-  updateJournalMood,
-  deleteJournalMoodById,
-} from './journal'
+import { customMoves, createMove, updateMove } from './move'
 
 import {
   userScheduledWorkouts,
@@ -131,14 +115,14 @@ import {
 } from './textSearch'
 
 import {
-  createClubTimelinePost,
-  deleteClubTimelinePost,
-  timelinePostsData,
+  createClubMembersFeedPost,
+  deleteClubMembersFeedPost,
   clubMembersFeedPosts,
 } from './timelineFeed'
 
 import {
   checkUniqueDisplayName,
+  userRecentlyViewedObjects,
   userAvatars,
   userAvatarById,
   userProfile,
@@ -149,6 +133,28 @@ import {
   updateWorkoutTag,
   deleteWorkoutTagById,
 } from './user'
+
+import {
+  userDayLogMoods,
+  userMeditationLogs,
+  userEatWellLogs,
+  userSleepWellLogs,
+  createUserDayLogMood,
+  deleteUserDayLogMood,
+  createUserMeditationLog,
+  updateUserMeditationLog,
+  createUserEatWellLog,
+  updateUserEatWellLog,
+  createUserSleepWellLog,
+  updateUserSleepWellLog,
+} from './userDayLogTracking'
+
+import {
+  userGoals,
+  createUserGoal,
+  updateUserGoal,
+  deleteUserGoal,
+} from './userProgressTracking'
 
 import {
   createSkill,
@@ -193,7 +199,10 @@ import {
   duplicateWorkoutById,
 } from './workout/workout'
 
-import { adminPublicWorkouts, updateWorkoutMetaData } from './workout/metaData'
+import {
+  adminPublicWorkouts,
+  updateWorkoutMetaDataAdmin,
+} from './workout/metaDataAdmin'
 
 import {
   createWorkoutSection,
@@ -243,8 +252,8 @@ import {
 
 import {
   adminPublicWorkoutPlans,
-  updateWorkoutPlanMetaData,
-} from './workoutPlan/metaData'
+  updateWorkoutPlanMetaDataAdmin,
+} from './workoutPlan/metaDataAdmin'
 
 import {
   workoutPlanEnrolments,
@@ -302,11 +311,8 @@ const resolvers: Resolvers = {
     adminPublicClubs,
     //// END OF ADMIN ONLY QUERIES ////
     //// Core Data ////
-    bodyAreas,
-    equipments,
-    moveTypes,
-    workoutGoals,
-    workoutSectionTypes,
+    announcementUpdates,
+    coreData,
     ///// Clubs ////
     checkUniqueClubName,
     checkUserClubMemberStatus,
@@ -320,22 +326,28 @@ const resolvers: Resolvers = {
     clubWorkouts,
     clubWorkoutPlans,
     clubMembersFeedPosts,
+    ///// Notes ////
+    clubMemberNotes,
     ///// Invites ////
     checkClubInviteToken,
     //// Progress Body Tracking ////
     bodyTrackingEntries,
-    //// Progress Journal ////
-    journalNotes,
-    journalMoods,
-    journalGoals,
+    //// Progress Goal Tracking ////
+    userGoals,
+    //// User Day Log Tracking ////
+    userDayLogMoods,
+    userMeditationLogs,
+    userEatWellLogs,
+    userSleepWellLogs,
+    //// User Recently Viewed Items ////
+    userRecentlyViewedObjects,
     //// Logged Workouts ////
     lifetimeLogStatsSummary,
     logCountByWorkout,
     loggedWorkoutById,
     userLoggedWorkouts,
-    //// Move ////
-    standardMoves,
-    userCustomMoves,
+    //// User Custom Move ////
+    customMoves,
     //// Scheduled Workouts ////
     userScheduledWorkouts,
     //// Text Search ////
@@ -345,9 +357,6 @@ const resolvers: Resolvers = {
     textSearchWorkoutPlanNames,
     textSearchUserProfiles,
     textSearchUserNames,
-    //// Timeline Feed ////
-    // The data associated with Activities and required to display posts //
-    timelinePostsData,
     //// User ////
     checkUniqueDisplayName,
     gymProfiles,
@@ -383,10 +392,14 @@ const resolvers: Resolvers = {
   },
   Mutation: {
     //// ADMIN ONLY MUTATIONS ////
-    updateWorkoutMetaData,
-    updateWorkoutPlanMetaData,
-    updateClubMetaData,
+    updateWorkoutMetaDataAdmin,
+    updateWorkoutPlanMetaDataAdmin,
+    updateClubMetaDataAdmin,
     //// END OF ADMIN ONLY MUTATIONS ////
+    ////////////////////
+    //// Core Data /////
+    ////////////////////
+    markAnnouncementUpdateAsSeen,
     ///////////////
     //// Club /////
     ///////////////
@@ -404,6 +417,9 @@ const resolvers: Resolvers = {
     giveMemberAdminStatus,
     removeMemberAdminStatus,
     removeUserFromClub,
+    ///// Notes ///////////
+    createClubMemberNote,
+    updateClubMemberNote,
     ///////////////////////
     //// Club Content /////
     ///////////////////////
@@ -411,17 +427,12 @@ const resolvers: Resolvers = {
     removeWorkoutFromClub,
     addWorkoutPlanToClub,
     removeWorkoutPlanFromClub,
-
-    ///////////////////////
-    //// Club Timeline ////
-    ///////////////////////
-    /// An object that can be shared on a club feed via Stream activity.
-    createClubAnnouncement,
-    updateClubAnnouncement,
-    deleteClubAnnouncement,
-    /// Interacts with Strea.io.
-    createClubTimelinePost,
-    deleteClubTimelinePost,
+    ///////////////////
+    //// Club Feed ////
+    ///////////////////
+    /// Interacts with Stream.io.
+    createClubMembersFeedPost,
+    deleteClubMembersFeedPost,
     ///////////////////
     //// Equipment ////
     ///////////////////
@@ -439,18 +450,20 @@ const resolvers: Resolvers = {
     createBodyTrackingEntry,
     updateBodyTrackingEntry,
     deleteBodyTrackingEntryById,
-    //////////////////////////
-    //// Progress Journal ////
-    //////////////////////////
-    createJournalGoal,
-    updateJournalGoal,
-    deleteJournalGoalById,
-    createJournalNote,
-    updateJournalNote,
-    deleteJournalNoteById,
-    createJournalMood,
-    updateJournalMood,
-    deleteJournalMoodById,
+    ///////////////////////////////
+    //// User Day Log Tracking ////
+    ///////////////////////////////
+    createUserGoal,
+    updateUserGoal,
+    deleteUserGoal,
+    createUserDayLogMood,
+    deleteUserDayLogMood,
+    createUserMeditationLog,
+    updateUserMeditationLog,
+    createUserEatWellLog,
+    updateUserEatWellLog,
+    createUserSleepWellLog,
+    updateUserSleepWellLog,
     ///////////////////////
     //// LoggedWorkout ////
     ///////////////////////

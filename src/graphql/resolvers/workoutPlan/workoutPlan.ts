@@ -29,7 +29,11 @@ import {
   checkWorkoutPlanMediaForDeletion,
   deleteFiles,
 } from '../../../lib/uploadcare'
-import { checkAndReorderObjects, checkUserOwnsObject } from '../../utils'
+import {
+  addObjectToUserRecentlyViewed,
+  checkAndReorderObjects,
+  checkUserOwnsObject,
+} from '../../utils'
 import { selectForWorkoutPlanSummary } from '../selectDefinitions'
 import {
   formatWorkoutPlanFiltersInput,
@@ -50,9 +54,7 @@ export const publicWorkoutPlans = async (
     },
     take: take ?? 50,
     skip: cursor ? 1 : 0,
-    orderBy: {
-      id: 'desc',
-    },
+    orderBy: [{ updatedAt: 'desc' }, { id: 'desc' }],
     cursor: cursor
       ? {
           id: cursor,
@@ -76,6 +78,7 @@ export const userWorkoutPlans = async (
       userId: authedUserId,
       archived: false,
     },
+    orderBy: [{ updatedAt: 'desc' }, { id: 'desc' }],
     select: selectForWorkoutPlanSummary,
   })
 
@@ -93,6 +96,7 @@ export const userPublicWorkoutPlans = async (
       archived: false,
       contentAccessScope: 'PUBLIC',
     },
+    orderBy: [{ updatedAt: 'desc' }, { id: 'desc' }],
     select: selectForWorkoutPlanSummary,
   })
 
@@ -133,6 +137,12 @@ export const createWorkoutPlan = async (
   })
 
   if (workoutPlan) {
+    await addObjectToUserRecentlyViewed(
+      'createWorkoutPlan',
+      { id: (workoutPlan as WorkoutPlan).id },
+      authedUserId,
+      prisma,
+    )
     return workoutPlan as WorkoutPlan
   } else {
     throw new ApolloError('createWorkoutPlan: There was an issue.')

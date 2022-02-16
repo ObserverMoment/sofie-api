@@ -1,8 +1,6 @@
 import { ApolloError } from 'apollo-server-express'
 import { Context } from '../../..'
 import {
-  Club,
-  ClubSummary,
   MutationCreateClubArgs,
   MutationDeleteClubArgs,
   MutationUpdateClubSummaryArgs,
@@ -13,17 +11,16 @@ import {
 } from '../../../generated/graphql'
 import {
   createStreamClubMemberChat,
+  createStreamFeedClub,
   deleteStreamClubMemberChat,
+  updateStreamFeedClub,
 } from '../../../lib/getStream'
 import { checkClubMediaForDeletion, deleteFiles } from '../../../lib/uploadcare'
+import { addObjectToUserRecentlyViewed } from '../../utils'
 import {
   selectForClubChatSummary,
   selectForClubSummary,
-  selectForWorkoutPlanSummary,
-  selectForWorkoutSummary,
 } from '../selectDefinitions'
-import { formatWorkoutSummaries } from '../workout/utils'
-import { formatWorkoutPlanSummaries } from '../workoutPlan/utils'
 import {
   checkUserIsOwnerOrAdminOfClub,
   formatClubChatSummary,
@@ -156,6 +153,13 @@ export const createClub = async (
 
   if (club) {
     await createStreamClubMemberChat(club.id, authedUserId)
+    await createStreamFeedClub(club.id, club.name)
+    await addObjectToUserRecentlyViewed(
+      'createClub',
+      { id: club.id },
+      authedUserId,
+      prisma,
+    )
     return formatClubSummary(club)
   } else {
     throw new ApolloError('createClub: There was an issue.')
@@ -188,6 +192,13 @@ export const updateClubSummary = async (
   if (updated) {
     if (fileIdsForDeletion) {
       await deleteFiles(fileIdsForDeletion)
+    }
+    if (data.name || data.coverImageUri) {
+      await updateStreamFeedClub(
+        updated.id,
+        data.name || undefined,
+        data.coverImageUri || undefined,
+      )
     }
     return formatClubSummary(updated)
   } else {

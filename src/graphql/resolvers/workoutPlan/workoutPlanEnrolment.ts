@@ -17,6 +17,7 @@ import {
 import { checkUserOwnsObject } from '../../utils'
 import { selectForWorkoutPlanSummary } from '../selectDefinitions'
 import { formatWorkoutPlanSummary } from './utils'
+import { notifyPlanOwnerOfUserJoinLeave } from '../../../lib/getStream'
 
 //// Queries ////
 export const workoutPlanEnrolmentById = async (
@@ -122,6 +123,23 @@ export const createWorkoutPlanEnrolment = async (
   })
 
   if (workoutPlanEnrolment) {
+    /// Notify the plan owner that this user has joined their plan.
+    const planOwnerId = workoutPlanEnrolment.WorkoutPlan.User.id
+    const planId = workoutPlanEnrolment.WorkoutPlan.id
+    const planName = workoutPlanEnrolment.WorkoutPlan.name
+
+    if (!planOwnerId || !planId || !planName) {
+      throw new ApolloError(
+        'Could not [notifyPlanOwnerOfPlanJoinLeave] as could not find the workout plan data needed in the select response object.',
+      )
+    }
+    await notifyPlanOwnerOfUserJoinLeave(
+      authedUserId,
+      planOwnerId,
+      planId,
+      planName,
+      'JOIN',
+    )
     return {
       WorkoutPlan: workoutPlanEnrolment.WorkoutPlan,
       WorkoutPlanEnrolment: workoutPlanEnrolment,
@@ -141,10 +159,38 @@ export const deleteWorkoutPlanEnrolmentById = async (
 
   const deleted = await prisma.workoutPlanEnrolment.delete({
     where: { id },
-    select: { id: true },
+    select: {
+      id: true,
+      WorkoutPlan: {
+        select: {
+          id: true,
+          name: true,
+          User: {
+            select: { id: true },
+          },
+        },
+      },
+    },
   })
 
   if (deleted) {
+    /// Notify the plan owner that this user has joined their plan.
+    const planOwnerId = deleted.WorkoutPlan.User.id
+    const planId = deleted.WorkoutPlan.id
+    const planName = deleted.WorkoutPlan.name
+
+    if (!planOwnerId || !planId || !planName) {
+      throw new ApolloError(
+        'Could not [notifyPlanOwnerOfPlanJoinLeave] as could not find the workout plan data needed in the select response object.',
+      )
+    }
+    await notifyPlanOwnerOfUserJoinLeave(
+      authedUserId,
+      planOwnerId,
+      planId,
+      planName,
+      'LEAVE',
+    )
     return deleted.id
   } else {
     throw new ApolloError('deleteWorkoutPlanEnrolmentById: There was an issue.')

@@ -16,6 +16,7 @@ import currentUser from './restApi/currentUser'
 import userDisplayNameCheck from './restApi/userDisplayNameCheck'
 import dotenv from 'dotenv'
 import { Resolvers } from './generated/graphql'
+import { addObjectToUserRecentlyViewed } from './graphql/utils'
 
 dotenv.config()
 
@@ -36,9 +37,49 @@ const prisma = new PrismaClient({
   errorFormat: 'pretty',
 })
 
+const recentMiddlewareWrapper = async (
+  resolve: any,
+  parent: any,
+  args: any,
+  context: Context,
+  info: GraphQLResolveInfo,
+) => {
+  /// No recently viewed for ADMIN user type.
+  if (context.userType === 'USER' && context.authedUserId) {
+    /// Update recently viewed data based on the resolver and the object ID from the args.
+    await addObjectToUserRecentlyViewed(
+      info.path.key.toString(),
+      args,
+      context.authedUserId,
+      context.prisma,
+    )
+  }
+
+  return resolve(parent, args, context, info)
+}
+
+/// For certain queries we want to update the users recently viewed items list.
+/// Add throwdowns and events once they are built.
+const recentsMiddleware = {
+  Query: {
+    clubSummary: recentMiddlewareWrapper,
+    workoutById: recentMiddlewareWrapper,
+    workoutPlanById: recentMiddlewareWrapper,
+  },
+  Mutation: {
+    /// NOTE: We can not update Create recents from middleware as no object exists until AFTER the create op has completed. Check the actual resolvers for implementation of this where the function will be run.
+    /// Keep listed here as reference.
+    // createClub: recentMiddlewareWrapper,
+    // createWorkout: recentMiddlewareWrapper,
+    // createWorkoutPlan: recentMiddlewareWrapper,
+  },
+}
+
+/// import { PrismaSelect } from '@paljs/plugins'
+/// Transforms a graphql info object into a prisma select object.
 const selectMiddleware = async (
   resolve: any,
-  root: any,
+  parent: any,
   args: any,
   context: Context,
   info: GraphQLResolveInfo,
@@ -50,7 +91,7 @@ const selectMiddleware = async (
       ...result,
     }
   }
-  return resolve(root, args, context, info)
+  return resolve(parent, args, context, info)
 }
 
 const createAdminContext = async (uid: string) => {
@@ -123,7 +164,7 @@ async function startApolloServer(
 
   // https://github.com/prisma-labs/graphqlgen/issues/15
   const server = new ApolloServer({
-    schema: applyMiddleware(schema, selectMiddleware),
+    schema: applyMiddleware(schema, selectMiddleware, recentsMiddleware),
     plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
     context: async ({ req }) => {
       const userType = req.headers['user-type']

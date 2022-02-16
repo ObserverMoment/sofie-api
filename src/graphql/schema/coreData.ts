@@ -1,6 +1,53 @@
 import { gql } from 'apollo-server-express'
 
 export default gql`
+  # All core / read only data that can be retrieved on app load
+  type CoreData {
+    bodyAreas: [BodyArea!]!
+    equipment: [Equipment!]!
+    moveTypes: [MoveType!]!
+    workoutGoals: [WorkoutGoal!]!
+    workoutSectionTypes: [WorkoutSectionType!]!
+    standardMoves: [Move!]!
+    progressWidgets: [ProgressWidget!]!
+    logDataWidgets: [LogDataWidget!]!
+  }
+
+  type BodyArea {
+    id: ID!
+    name: String!
+    altNames: String
+    frontBack: BodyAreaFrontBack!
+    upperLower: BodyAreaUpperLower!
+  }
+
+  type BodyAreaMoveScore {
+    BodyArea: BodyArea!
+    score: Int!
+  }
+
+  type Equipment {
+    id: ID!
+    name: String!
+    altNames: String
+    loadAdjustable: Boolean!
+  }
+
+  # For use by ADMIN user type only
+  input CreateEquipmentInput {
+    name: String!
+    altNames: String
+    loadAdjustable: Boolean!
+  }
+
+  # For use by ADMIN user type only
+  input UpdateEquipmentInput {
+    id: ID!
+    name: String
+    altNames: String
+    loadAdjustable: Boolean
+  }
+
   type Move {
     id: ID!
     name: String!
@@ -24,6 +71,7 @@ export default gql`
     imageUri: String
   }
 
+  # For user custom move CRUD
   input CreateMoveInput {
     name: String!
     searchTerms: String
@@ -60,5 +108,39 @@ export default gql`
   input BodyAreaMoveScoreInput {
     BodyArea: ConnectRelationInput!
     score: Float!
+  }
+
+  type WorkoutGoal {
+    id: ID!
+    name: String!
+    description: String!
+    hexColor: String!
+  }
+
+  type WorkoutSectionType {
+    id: ID!
+    name: String!
+    subtitle: String!
+    description: String!
+    validRepTypes: [WorkoutMoveRepType!]!
+  }
+
+  ### Widgets Data ####
+  # Definitions for a set of pre-built but selectable widgets that the user can choose to display.
+  type ProgressWidget {
+    id: ID!
+    createdAt: DateTime!
+    name: String!
+    subtitle: String
+    description: String
+  }
+
+  # Core Data - read only by clients. Definitions for a set of pre-built but selectable widgets that the user can choose to display.
+  type LogDataWidget {
+    id: ID!
+    createdAt: DateTime!
+    name: String!
+    subtitle: String
+    description: String
   }
 `
