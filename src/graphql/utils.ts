@@ -212,7 +212,7 @@ export function checkIsAdmin(userType: ContextUserType) {
 /// Ensuring that there are max 10 items in the list.
 export async function addObjectToUserRecentlyViewed(
   resolverName: string, // Eg. 'workoutById', 'createWorkoutPlan'
-  resolverArgs: any, // The id of the object will be either at [args.id] or [args.data.id]
+  resolverArgs: any, // The id of the object should be either at [args.id] or [args.data.id]
   userId: string,
   prisma: PrismaClient,
 ) {
@@ -238,16 +238,6 @@ export async function addObjectToUserRecentlyViewed(
       break
     case 'createWorkoutPlan':
       typeAndId = `workoutPlanSummary:${resolverArgs.id}`
-      break
-    /// Update args are formatted { data: { id, ...rest }}
-    case 'updateClubSummary':
-      typeAndId = `clubSummary:${resolverArgs.data.id}`
-      break
-    case 'updateWorkout':
-      typeAndId = `workoutSummary:${resolverArgs.data.id}`
-      break
-    case 'updateWorkoutPlan':
-      typeAndId = `workoutPlanSummary:${resolverArgs.data.id}`
       break
 
     default:

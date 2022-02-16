@@ -67,11 +67,8 @@ const recentsMiddleware = {
     workoutPlanById: recentMiddlewareWrapper,
   },
   Mutation: {
-    updateClubSummary: recentMiddlewareWrapper,
-    updateWorkout: recentMiddlewareWrapper,
-    updateWorkoutPlan: recentMiddlewareWrapper,
-    /// NOTE: We can not update recents from middleware as no object exists until after the create op has completed. Check the actual resolvers for implementation of this.
-    /// But keep listed here as reference.
+    /// NOTE: We can not update Create recents from middleware as no object exists until AFTER the create op has completed. Check the actual resolvers for implementation of this where the function will be run.
+    /// Keep listed here as reference.
     // createClub: recentMiddlewareWrapper,
     // createWorkout: recentMiddlewareWrapper,
     // createWorkoutPlan: recentMiddlewareWrapper,
