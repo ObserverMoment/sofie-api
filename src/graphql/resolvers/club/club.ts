@@ -16,6 +16,7 @@ import {
   updateStreamFeedClub,
 } from '../../../lib/getStream'
 import { checkClubMediaForDeletion, deleteFiles } from '../../../lib/uploadcare'
+import { addObjectToUserRecentlyViewed } from '../../utils'
 import {
   selectForClubChatSummary,
   selectForClubSummary,
@@ -153,6 +154,12 @@ export const createClub = async (
   if (club) {
     await createStreamClubMemberChat(club.id, authedUserId)
     await createStreamFeedClub(club.id, club.name)
+    await addObjectToUserRecentlyViewed(
+      'createClub',
+      { id: club.id },
+      authedUserId,
+      prisma,
+    )
     return formatClubSummary(club)
   } else {
     throw new ApolloError('createClub: There was an issue.')

@@ -1,5 +1,6 @@
 import {
   ClubInviteTokenData,
+  ClubSummary,
   InviteTokenError,
   Resolvers,
 } from '../../generated/graphql'
@@ -121,6 +122,7 @@ import {
 
 import {
   checkUniqueDisplayName,
+  userRecentlyViewedObjects,
   userAvatars,
   userAvatarById,
   userProfile,
@@ -337,6 +339,8 @@ const resolvers: Resolvers = {
     userMeditationLogs,
     userEatWellLogs,
     userSleepWellLogs,
+    //// User Recently Viewed Items ////
+    userRecentlyViewedObjects,
     //// Logged Workouts ////
     lifetimeLogStatsSummary,
     logCountByWorkout,

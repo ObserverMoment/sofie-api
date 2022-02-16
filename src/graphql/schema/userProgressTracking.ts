@@ -22,6 +22,7 @@ export default gql`
   type UserGoal {
     id: ID!
     createdAt: DateTime!
+    updatedAt: DateTime!
     name: String!
     description: String
     deadline: DateTime
