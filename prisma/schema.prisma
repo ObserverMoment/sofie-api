@@ -197,7 +197,7 @@ model MoveHistoryTrackerWidget {
 model Collection {
   id           String        @id @default(uuid())
   createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @default(now()) @updatedAt
+  updatedAt    DateTime      @updatedAt
   userId       String
   description  String?
   name         String
@@ -209,7 +209,7 @@ model Collection {
 model GymProfile {
   id                String             @id @default(uuid())
   createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @default(now()) @updatedAt
+  updatedAt         DateTime           @updatedAt
   name              String
   description       String?
   userId            String
@@ -241,7 +241,7 @@ model ScheduledWorkout {
 model Skill {
   id             String   @id @default(uuid())
   createdAt      DateTime @default(now())
-  updatedAt      DateTime @default(now()) @updatedAt
+  updatedAt      DateTime @updatedAt
   name           String
   experience     String?
   certification  String?
@@ -382,7 +382,7 @@ model Club {
 model ClubMemberNote {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
+  updatedAt DateTime @updatedAt
   note      String
   tags      String[]
   // Must be 'User' because this is the standard way of checking ownership when protecting CRUD ops. The check is always [object.userId == authedUserId].
@@ -398,7 +398,7 @@ model ClubMemberNote {
 model ClubInviteToken {
   id            String   @id @default(uuid())
   createdAt     DateTime @default(now())
-  updatedAt     DateTime @default(now()) @updatedAt
+  updatedAt     DateTime @updatedAt
   active        Boolean
   inviteLimit   Int      @default(0)
   clubId        String
@@ -415,7 +415,7 @@ model ClubInviteToken {
 model Workout {
   id                    String                        @id @default(uuid())
   createdAt             DateTime                      @default(now())
-  updatedAt             DateTime                      @default(now()) @updatedAt
+  updatedAt             DateTime                      @updatedAt
   name                  String
   description           String?
   introVideoUri         String?
@@ -516,7 +516,7 @@ model WorkoutMove {
 model WorkoutPlan {
   id                    String                        @id @default(uuid())
   createdAt             DateTime                      @default(now())
-  updatedAt             DateTime                      @default(now()) @updatedAt
+  updatedAt             DateTime                      @updatedAt
   archived              Boolean                       @default(false)
   name                  String
   description           String?
@@ -595,7 +595,7 @@ model CompletedWorkoutPlanDayWorkout {
 model WorkoutPlanReview {
   id            String      @id @default(uuid())
   createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @default(now()) @updatedAt
+  updatedAt     DateTime    @updatedAt
   userId        String
   score         Float
   comment       String?
@@ -706,7 +706,7 @@ model UserDayLogMood {
 model UserGoal {
   id            String    @id @default(uuid())
   createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @default(now()) @updatedAt
+  updatedAt     DateTime  @updatedAt
   name          String
   description   String?
   deadline      DateTime?
