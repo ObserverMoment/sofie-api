@@ -108,9 +108,8 @@ export const clubChatSummary = async (
   })
 
   if (!club) {
-    throw new ApolloError(
-      `clubChatSummary: Could not find a club with ID ${clubId}.`,
-    )
+    console.error(`clubChatSummary: Could not find a club with ID ${clubId}.`)
+    return null
   }
 
   return formatClubChatSummary(club)
@@ -129,7 +128,8 @@ export const clubSummary = async (
   })
 
   if (!club) {
-    throw new ApolloError('clubById: Could not find a club with this ID.')
+    console.error(`clubById: Could not find a club with ID ${id}.`)
+    return null
   }
 
   return formatClubSummary(club)

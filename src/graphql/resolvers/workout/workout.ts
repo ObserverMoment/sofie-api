@@ -107,7 +107,8 @@ export const workoutById = async (
   if (workout) {
     return workout as Workout
   } else {
-    throw new ApolloError('workoutById: There was an issue.')
+    console.error(`workoutById: Could not find a workout with id ${id}`)
+    return null
   }
 }
 

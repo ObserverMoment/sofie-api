@@ -46,17 +46,14 @@ model AnnouncementUpdateAction {
   announcementUpdateId String
 }
 
-model OnboardingMessage {
+/// Items for new users to do / dismiss whe they first start using the app.
+/// Tapping the list either routes to a new page or opens a video.
+model WelcomeTodoItem {
   id              String   @id @default(uuid())
   createdAt       DateTime @default(now())
-  imageUri        String?
   videoUri        String?
-  audioUri        String?
-  articleUrl      String?
+  routeTo         String?
   title           String
-  subtitle        String?
-  bodyOne         String?
-  bodyTwo         String?
   UsersMarkedSeen User[]
 }
 
@@ -285,7 +282,7 @@ model User {
   // When user marks as seen / got it / don't show again we add to here.
   SeenAnnouncementUpdates   AnnouncementUpdate[]
   // When user marks as seen / got it / don't show again we add to here.
-  SeenOnboardingMessages    OnboardingMessage[]
+  SeenWelcomeTodoItems      WelcomeTodoItem[]
   ClubsWhereOwner           Club[]                     @relation("owner")
   ClubInviteTokens          ClubInviteToken[]
   Collections               Collection[]
