@@ -18,6 +18,7 @@ export default gql`
     ): [ClubWithMetaDataAdmin!]!
     #### END OF ADMIN ONLY QUERIES ####
     announcementUpdates: [AnnouncementUpdate!]!
+    welcomeTodoItems: [WelcomeTodoItem!]!
     validateToken: Boolean!
     #### Core Data ####
     coreData: CoreData!
@@ -29,8 +30,8 @@ export default gql`
     publicClubs: [ClubSummary!]!
     userClubs: [ClubSummary!]!
     # For displaying within the Club chat. Each person is a UserAvatarData plus there is some extra club data which is needed for displaying the chat.
-    clubChatSummary(clubId: ID!): ClubChatSummary!
-    clubSummary(id: ID!): ClubSummary!
+    clubChatSummary(clubId: ID!): ClubChatSummary
+    clubSummary(id: ID!): ClubSummary
     clubInviteTokens(clubId: ID!): ClubInviteTokens!
     # For displaying within the Club/People section. Each person is a ClubMemberSummary
     clubMembers(clubId: ID!): ClubMembers!
@@ -55,8 +56,8 @@ export default gql`
     #### Logged Workouts ####
     logCountByWorkout(id: ID!): Int!
     lifetimeLogStatsSummary(userId: ID!): LifetimeLogStatsSummary!
-    userLoggedWorkouts(take: Int): [LoggedWorkout!]!
-    loggedWorkoutById(id: ID!): LoggedWorkout!
+    userLoggedWorkouts: [LoggedWorkout!]!
+    loggedWorkoutById(id: ID!): LoggedWorkout
     #### User Custom Moves ####
     customMoves: [Move!]!
     #### User Progress Tracking ####
@@ -87,7 +88,7 @@ export default gql`
     userArchivedCustomMoves: [Move!]!
     #### User Avatars ####
     userAvatars(ids: [ID!]!): [UserAvatarData!]!
-    userAvatarById(id: ID!): UserAvatarData!
+    userAvatarById(id: ID!): UserAvatarData
     #### User Benchmark (aka Personal Best) ####
     userBenchmarks: [UserBenchmark!]!
     userBenchmark(id: ID!): UserBenchmark!
@@ -96,7 +97,7 @@ export default gql`
     userCollectionById(id: ID!): Collection!
     #### User Public Profiles ####
     userProfiles(cursor: ID, take: Int): [UserProfileSummary!]!
-    userProfile(userId: ID!): UserProfile!
+    userProfile(userId: ID!): UserProfile
     #### Workouts ####
     publicWorkouts(
       cursor: ID
@@ -105,18 +106,18 @@ export default gql`
     ): [WorkoutSummary!]!
     userWorkouts: [WorkoutSummary!]! # Authed user.
     userPublicWorkouts(userId: ID!): [WorkoutSummary!]! # Public users (profiles).
-    workoutById(id: ID!): Workout!
+    workoutById(id: ID!): Workout
     #### Workout Plans ####
     publicWorkoutPlans(
       cursor: ID
       filters: WorkoutPlanFiltersInput
       take: Int
     ): [WorkoutPlanSummary!]!
-    workoutPlanById(id: ID!): WorkoutPlan!
+    workoutPlanById(id: ID!): WorkoutPlan
     userWorkoutPlans: [WorkoutPlanSummary!]! # Authed user.
     userPublicWorkoutPlans(userId: ID!): [WorkoutPlanSummary!]! # Public users (profiles).
     #### Workout Plan Enrolments ####
-    workoutPlanEnrolmentById(id: ID!): WorkoutPlanEnrolmentWithPlan!
+    workoutPlanEnrolmentById(id: ID!): WorkoutPlanEnrolmentWithPlan
     workoutPlanEnrolments: [WorkoutPlanEnrolmentSummary!]!
   }
 
@@ -134,7 +135,7 @@ export default gql`
     #### END OF ADMIN ONLY MUTATIONS ####
     #### AnnouncementUpdate ####
     markAnnouncementUpdateAsSeen(data: MarkAnnouncementUpdateAsSeenInput!): ID!
-    markOnboardingMessageAsSeen(data: MarkOnboardingMessageAsSeenInput!): ID!
+    markWelcomeTodoItemAsSeen(data: MarkWelcomeTodoItemAsSeenInput!): ID!
     #### Archive ####
     archiveWorkoutById(id: ID!): Workout!
     unarchiveWorkoutById(id: ID!): Workout!

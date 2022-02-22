@@ -98,6 +98,8 @@ import {
 
 import { customMoves, createMove, updateMove } from './move'
 
+import { welcomeTodoItems, markWelcomeTodoItemAsSeen } from './welcomeTodoItems'
+
 import {
   userScheduledWorkouts,
   createScheduledWorkout,
@@ -312,6 +314,7 @@ const resolvers: Resolvers = {
     //// END OF ADMIN ONLY QUERIES ////
     //// Core Data ////
     announcementUpdates,
+    welcomeTodoItems,
     coreData,
     ///// Clubs ////
     checkUniqueClubName,
@@ -400,6 +403,7 @@ const resolvers: Resolvers = {
     //// Core Data /////
     ////////////////////
     markAnnouncementUpdateAsSeen,
+    markWelcomeTodoItemAsSeen,
     ///////////////
     //// Club /////
     ///////////////

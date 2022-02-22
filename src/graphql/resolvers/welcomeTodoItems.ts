@@ -1,16 +1,16 @@
 import { Context } from '../..'
 import {
-  MutationMarkOnboardingMessageAsSeenArgs,
-  OnboardingMessage,
+  MutationMarkWelcomeTodoItemAsSeenArgs,
+  WelcomeTodoItem,
 } from '../../generated/graphql'
 
 ///// Queries /////
-export const onboardingMessages = async (
+export const welcomeTodoItems = async (
   r: any,
   a: any,
   { authedUserId, select, prisma }: Context,
 ) => {
-  const messages = await prisma.onboardingMessage.findMany({
+  const items = await prisma.welcomeTodoItem.findMany({
     where: {
       UsersMarkedSeen: {
         none: {
@@ -21,17 +21,17 @@ export const onboardingMessages = async (
     select,
   })
 
-  return messages as OnboardingMessage[]
+  return items as WelcomeTodoItem[]
 }
 ////// Mutations /////
-export const markOnboardingMessageAsSeen = async (
+export const markWelcomeTodoItemAsSeen = async (
   r: any,
-  { data }: MutationMarkOnboardingMessageAsSeenArgs,
+  { data }: MutationMarkWelcomeTodoItemAsSeenArgs,
   { authedUserId, prisma }: Context,
 ) => {
-  const updated = await prisma.onboardingMessage.update({
+  const updated = await prisma.welcomeTodoItem.update({
     where: {
-      id: data.onboardingMessageId,
+      id: data.welcomeTodoItemId,
     },
     data: {
       UsersMarkedSeen: {

@@ -698,9 +698,9 @@ export type MarkAnnouncementUpdateAsSeenInput = {
   userId: Scalars['ID'];
 };
 
-export type MarkOnboardingMessageAsSeenInput = {
-  onboardingMessageId: Scalars['ID'];
+export type MarkWelcomeTodoItemAsSeenInput = {
   userId: Scalars['ID'];
+  welcomeTodoItemId: Scalars['ID'];
 };
 
 export type Move = {
@@ -834,7 +834,7 @@ export type Mutation = {
   giveMemberAdminStatus: ClubMembers;
   makeCopyWorkoutById: Workout;
   markAnnouncementUpdateAsSeen: Scalars['ID'];
-  markOnboardingMessageAsSeen: Scalars['ID'];
+  markWelcomeTodoItemAsSeen: Scalars['ID'];
   moveWorkoutPlanDayToAnotherDay: WorkoutPlanDay;
   removeDocumentFromSkill: Skill;
   removeMemberAdminStatus: ClubMembers;
@@ -1260,8 +1260,8 @@ export type MutationMarkAnnouncementUpdateAsSeenArgs = {
 };
 
 
-export type MutationMarkOnboardingMessageAsSeenArgs = {
-  data: MarkOnboardingMessageAsSeenInput;
+export type MutationMarkWelcomeTodoItemAsSeenArgs = {
+  data: MarkWelcomeTodoItemAsSeenInput;
 };
 
 
@@ -1528,20 +1528,6 @@ export type MutationUserJoinPublicClubArgs = {
   clubId: Scalars['ID'];
 };
 
-export type OnboardingMessage = {
-  __typename?: 'OnboardingMessage';
-  articleUrl?: Maybe<Scalars['String']>;
-  audioUri?: Maybe<Scalars['String']>;
-  bodyOne?: Maybe<Scalars['String']>;
-  bodyTwo?: Maybe<Scalars['String']>;
-  createdAt: Scalars['DateTime'];
-  id: Scalars['ID'];
-  imageUri?: Maybe<Scalars['String']>;
-  subtitle?: Maybe<Scalars['String']>;
-  title: Scalars['String'];
-  videoUri?: Maybe<Scalars['String']>;
-};
-
 export type ProgressWidget = {
   __typename?: 'ProgressWidget';
   createdAt: Scalars['DateTime'];
@@ -1568,13 +1554,13 @@ export type Query = {
   checkUniqueClubName: Scalars['Boolean'];
   checkUniqueDisplayName: Scalars['Boolean'];
   checkUserClubMemberStatus: UserClubMemberStatus;
-  clubChatSummary: ClubChatSummary;
+  clubChatSummary?: Maybe<ClubChatSummary>;
   clubInviteTokens: ClubInviteTokens;
   clubMemberNotes: Array<ClubMemberNote>;
   clubMembers: ClubMembers;
   clubMembersFeedPosts: Array<StreamEnrichedActivity>;
   clubSummaries: Array<ClubSummary>;
-  clubSummary: ClubSummary;
+  clubSummary?: Maybe<ClubSummary>;
   clubWorkoutPlans: ClubWorkoutPlans;
   clubWorkouts: ClubWorkouts;
   coreData: CoreData;
@@ -1582,7 +1568,7 @@ export type Query = {
   gymProfiles: Array<GymProfile>;
   lifetimeLogStatsSummary: LifetimeLogStatsSummary;
   logCountByWorkout: Scalars['Int'];
-  loggedWorkoutById: LoggedWorkout;
+  loggedWorkoutById?: Maybe<LoggedWorkout>;
   publicClubs: Array<ClubSummary>;
   publicWorkoutPlans: Array<WorkoutPlanSummary>;
   publicWorkouts: Array<WorkoutSummary>;
@@ -1595,7 +1581,7 @@ export type Query = {
   userArchivedCustomMoves: Array<Move>;
   userArchivedWorkoutPlans: Array<WorkoutPlan>;
   userArchivedWorkouts: Array<Workout>;
-  userAvatarById: UserAvatarData;
+  userAvatarById?: Maybe<UserAvatarData>;
   userAvatars: Array<UserAvatarData>;
   userBenchmark: UserBenchmark;
   userBenchmarks: Array<UserBenchmark>;
@@ -1607,7 +1593,7 @@ export type Query = {
   userGoals: Array<UserGoal>;
   userLoggedWorkouts: Array<LoggedWorkout>;
   userMeditationLogs: Array<UserMeditationLog>;
-  userProfile: UserProfile;
+  userProfile?: Maybe<UserProfile>;
   userProfiles: Array<UserProfileSummary>;
   userPublicWorkoutPlans: Array<WorkoutPlanSummary>;
   userPublicWorkouts: Array<WorkoutSummary>;
@@ -1618,9 +1604,10 @@ export type Query = {
   userWorkoutTags: Array<WorkoutTag>;
   userWorkouts: Array<WorkoutSummary>;
   validateToken: Scalars['Boolean'];
-  workoutById: Workout;
-  workoutPlanById: WorkoutPlan;
-  workoutPlanEnrolmentById: WorkoutPlanEnrolmentWithPlan;
+  welcomeTodoItems: Array<WelcomeTodoItem>;
+  workoutById?: Maybe<Workout>;
+  workoutPlanById?: Maybe<WorkoutPlan>;
+  workoutPlanEnrolmentById?: Maybe<WorkoutPlanEnrolmentWithPlan>;
   workoutPlanEnrolments: Array<WorkoutPlanEnrolmentSummary>;
 };
 
@@ -1786,11 +1773,6 @@ export type QueryUserBenchmarkArgs = {
 
 export type QueryUserCollectionByIdArgs = {
   id: Scalars['ID'];
-};
-
-
-export type QueryUserLoggedWorkoutsArgs = {
-  take?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -2445,6 +2427,15 @@ export type UserSleepWellLog = {
   year: Scalars['Int'];
 };
 
+export type WelcomeTodoItem = {
+  __typename?: 'WelcomeTodoItem';
+  createdAt: Scalars['DateTime'];
+  id: Scalars['ID'];
+  routeTo?: Maybe<Scalars['String']>;
+  title: Scalars['String'];
+  videoUri?: Maybe<Scalars['String']>;
+};
+
 export type Workout = {
   __typename?: 'Workout';
   User: UserAvatarData;
@@ -2871,14 +2862,13 @@ export type ResolversTypes = ResolversObject<{
   LoggedWorkoutSection: ResolverTypeWrapper<LoggedWorkoutSection>;
   LoggedWorkoutSet: ResolverTypeWrapper<LoggedWorkoutSet>;
   MarkAnnouncementUpdateAsSeenInput: MarkAnnouncementUpdateAsSeenInput;
-  MarkOnboardingMessageAsSeenInput: MarkOnboardingMessageAsSeenInput;
+  MarkWelcomeTodoItemAsSeenInput: MarkWelcomeTodoItemAsSeenInput;
   Move: ResolverTypeWrapper<Move>;
   MoveHistoryTrackerWidget: ResolverTypeWrapper<MoveHistoryTrackerWidget>;
   MoveScope: MoveScope;
   MoveType: ResolverTypeWrapper<MoveType>;
   MoveWorkoutPlanDayToAnotherDayInput: MoveWorkoutPlanDayToAnotherDayInput;
   Mutation: ResolverTypeWrapper<{}>;
-  OnboardingMessage: ResolverTypeWrapper<OnboardingMessage>;
   ProgressWidget: ResolverTypeWrapper<ProgressWidget>;
   PublicContentValidationStatus: PublicContentValidationStatus;
   Query: ResolverTypeWrapper<{}>;
@@ -2951,6 +2941,7 @@ export type ResolversTypes = ResolversObject<{
   UserProfileSummary: ResolverTypeWrapper<UserProfileSummary>;
   UserRecentlyViewedObject: ResolverTypeWrapper<UserRecentlyViewedObject>;
   UserSleepWellLog: ResolverTypeWrapper<UserSleepWellLog>;
+  WelcomeTodoItem: ResolverTypeWrapper<WelcomeTodoItem>;
   Workout: ResolverTypeWrapper<Workout>;
   WorkoutFiltersInput: WorkoutFiltersInput;
   WorkoutGoal: ResolverTypeWrapper<WorkoutGoal>;
@@ -3064,13 +3055,12 @@ export type ResolversParentTypes = ResolversObject<{
   LoggedWorkoutSection: LoggedWorkoutSection;
   LoggedWorkoutSet: LoggedWorkoutSet;
   MarkAnnouncementUpdateAsSeenInput: MarkAnnouncementUpdateAsSeenInput;
-  MarkOnboardingMessageAsSeenInput: MarkOnboardingMessageAsSeenInput;
+  MarkWelcomeTodoItemAsSeenInput: MarkWelcomeTodoItemAsSeenInput;
   Move: Move;
   MoveHistoryTrackerWidget: MoveHistoryTrackerWidget;
   MoveType: MoveType;
   MoveWorkoutPlanDayToAnotherDayInput: MoveWorkoutPlanDayToAnotherDayInput;
   Mutation: {};
-  OnboardingMessage: OnboardingMessage;
   ProgressWidget: ProgressWidget;
   Query: {};
   RemoveDocumentFromSkillInput: RemoveDocumentFromSkillInput;
@@ -3138,6 +3128,7 @@ export type ResolversParentTypes = ResolversObject<{
   UserProfileSummary: UserProfileSummary;
   UserRecentlyViewedObject: UserRecentlyViewedObject;
   UserSleepWellLog: UserSleepWellLog;
+  WelcomeTodoItem: WelcomeTodoItem;
   Workout: Workout;
   WorkoutFiltersInput: WorkoutFiltersInput;
   WorkoutGoal: WorkoutGoal;
@@ -3580,7 +3571,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   giveMemberAdminStatus?: Resolver<ResolversTypes['ClubMembers'], ParentType, ContextType, RequireFields<MutationGiveMemberAdminStatusArgs, 'clubId' | 'userId'>>;
   makeCopyWorkoutById?: Resolver<ResolversTypes['Workout'], ParentType, ContextType, RequireFields<MutationMakeCopyWorkoutByIdArgs, 'id'>>;
   markAnnouncementUpdateAsSeen?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationMarkAnnouncementUpdateAsSeenArgs, 'data'>>;
-  markOnboardingMessageAsSeen?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationMarkOnboardingMessageAsSeenArgs, 'data'>>;
+  markWelcomeTodoItemAsSeen?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationMarkWelcomeTodoItemAsSeenArgs, 'data'>>;
   moveWorkoutPlanDayToAnotherDay?: Resolver<ResolversTypes['WorkoutPlanDay'], ParentType, ContextType, RequireFields<MutationMoveWorkoutPlanDayToAnotherDayArgs, 'data'>>;
   removeDocumentFromSkill?: Resolver<ResolversTypes['Skill'], ParentType, ContextType, RequireFields<MutationRemoveDocumentFromSkillArgs, 'data'>>;
   removeMemberAdminStatus?: Resolver<ResolversTypes['ClubMembers'], ParentType, ContextType, RequireFields<MutationRemoveMemberAdminStatusArgs, 'clubId' | 'userId'>>;
@@ -3635,20 +3626,6 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   userJoinPublicClub?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationUserJoinPublicClubArgs, 'clubId'>>;
 }>;
 
-export type OnboardingMessageResolvers<ContextType = any, ParentType extends ResolversParentTypes['OnboardingMessage'] = ResolversParentTypes['OnboardingMessage']> = ResolversObject<{
-  articleUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  audioUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  bodyOne?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  bodyTwo?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  imageUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  subtitle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  videoUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
 export type ProgressWidgetResolvers<ContextType = any, ParentType extends ResolversParentTypes['ProgressWidget'] = ResolversParentTypes['ProgressWidget']> = ResolversObject<{
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -3668,13 +3645,13 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   checkUniqueClubName?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryCheckUniqueClubNameArgs, 'name'>>;
   checkUniqueDisplayName?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryCheckUniqueDisplayNameArgs, 'displayName'>>;
   checkUserClubMemberStatus?: Resolver<ResolversTypes['UserClubMemberStatus'], ParentType, ContextType, RequireFields<QueryCheckUserClubMemberStatusArgs, 'clubId'>>;
-  clubChatSummary?: Resolver<ResolversTypes['ClubChatSummary'], ParentType, ContextType, RequireFields<QueryClubChatSummaryArgs, 'clubId'>>;
+  clubChatSummary?: Resolver<Maybe<ResolversTypes['ClubChatSummary']>, ParentType, ContextType, RequireFields<QueryClubChatSummaryArgs, 'clubId'>>;
   clubInviteTokens?: Resolver<ResolversTypes['ClubInviteTokens'], ParentType, ContextType, RequireFields<QueryClubInviteTokensArgs, 'clubId'>>;
   clubMemberNotes?: Resolver<Array<ResolversTypes['ClubMemberNote']>, ParentType, ContextType, RequireFields<QueryClubMemberNotesArgs, 'clubId' | 'memberId'>>;
   clubMembers?: Resolver<ResolversTypes['ClubMembers'], ParentType, ContextType, RequireFields<QueryClubMembersArgs, 'clubId'>>;
   clubMembersFeedPosts?: Resolver<Array<ResolversTypes['StreamEnrichedActivity']>, ParentType, ContextType, RequireFields<QueryClubMembersFeedPostsArgs, 'clubId' | 'limit' | 'offset'>>;
   clubSummaries?: Resolver<Array<ResolversTypes['ClubSummary']>, ParentType, ContextType, RequireFields<QueryClubSummariesArgs, 'ids'>>;
-  clubSummary?: Resolver<ResolversTypes['ClubSummary'], ParentType, ContextType, RequireFields<QueryClubSummaryArgs, 'id'>>;
+  clubSummary?: Resolver<Maybe<ResolversTypes['ClubSummary']>, ParentType, ContextType, RequireFields<QueryClubSummaryArgs, 'id'>>;
   clubWorkoutPlans?: Resolver<ResolversTypes['ClubWorkoutPlans'], ParentType, ContextType, RequireFields<QueryClubWorkoutPlansArgs, 'clubId'>>;
   clubWorkouts?: Resolver<ResolversTypes['ClubWorkouts'], ParentType, ContextType, RequireFields<QueryClubWorkoutsArgs, 'clubId'>>;
   coreData?: Resolver<ResolversTypes['CoreData'], ParentType, ContextType>;
@@ -3682,7 +3659,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   gymProfiles?: Resolver<Array<ResolversTypes['GymProfile']>, ParentType, ContextType>;
   lifetimeLogStatsSummary?: Resolver<ResolversTypes['LifetimeLogStatsSummary'], ParentType, ContextType, RequireFields<QueryLifetimeLogStatsSummaryArgs, 'userId'>>;
   logCountByWorkout?: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<QueryLogCountByWorkoutArgs, 'id'>>;
-  loggedWorkoutById?: Resolver<ResolversTypes['LoggedWorkout'], ParentType, ContextType, RequireFields<QueryLoggedWorkoutByIdArgs, 'id'>>;
+  loggedWorkoutById?: Resolver<Maybe<ResolversTypes['LoggedWorkout']>, ParentType, ContextType, RequireFields<QueryLoggedWorkoutByIdArgs, 'id'>>;
   publicClubs?: Resolver<Array<ResolversTypes['ClubSummary']>, ParentType, ContextType>;
   publicWorkoutPlans?: Resolver<Array<ResolversTypes['WorkoutPlanSummary']>, ParentType, ContextType, RequireFields<QueryPublicWorkoutPlansArgs, never>>;
   publicWorkouts?: Resolver<Array<ResolversTypes['WorkoutSummary']>, ParentType, ContextType, RequireFields<QueryPublicWorkoutsArgs, never>>;
@@ -3695,7 +3672,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   userArchivedCustomMoves?: Resolver<Array<ResolversTypes['Move']>, ParentType, ContextType>;
   userArchivedWorkoutPlans?: Resolver<Array<ResolversTypes['WorkoutPlan']>, ParentType, ContextType>;
   userArchivedWorkouts?: Resolver<Array<ResolversTypes['Workout']>, ParentType, ContextType>;
-  userAvatarById?: Resolver<ResolversTypes['UserAvatarData'], ParentType, ContextType, RequireFields<QueryUserAvatarByIdArgs, 'id'>>;
+  userAvatarById?: Resolver<Maybe<ResolversTypes['UserAvatarData']>, ParentType, ContextType, RequireFields<QueryUserAvatarByIdArgs, 'id'>>;
   userAvatars?: Resolver<Array<ResolversTypes['UserAvatarData']>, ParentType, ContextType, RequireFields<QueryUserAvatarsArgs, 'ids'>>;
   userBenchmark?: Resolver<ResolversTypes['UserBenchmark'], ParentType, ContextType, RequireFields<QueryUserBenchmarkArgs, 'id'>>;
   userBenchmarks?: Resolver<Array<ResolversTypes['UserBenchmark']>, ParentType, ContextType>;
@@ -3705,9 +3682,9 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   userDayLogMoods?: Resolver<Array<ResolversTypes['UserDayLogMood']>, ParentType, ContextType>;
   userEatWellLogs?: Resolver<Array<ResolversTypes['UserEatWellLog']>, ParentType, ContextType>;
   userGoals?: Resolver<Array<ResolversTypes['UserGoal']>, ParentType, ContextType>;
-  userLoggedWorkouts?: Resolver<Array<ResolversTypes['LoggedWorkout']>, ParentType, ContextType, RequireFields<QueryUserLoggedWorkoutsArgs, never>>;
+  userLoggedWorkouts?: Resolver<Array<ResolversTypes['LoggedWorkout']>, ParentType, ContextType>;
   userMeditationLogs?: Resolver<Array<ResolversTypes['UserMeditationLog']>, ParentType, ContextType>;
-  userProfile?: Resolver<ResolversTypes['UserProfile'], ParentType, ContextType, RequireFields<QueryUserProfileArgs, 'userId'>>;
+  userProfile?: Resolver<Maybe<ResolversTypes['UserProfile']>, ParentType, ContextType, RequireFields<QueryUserProfileArgs, 'userId'>>;
   userProfiles?: Resolver<Array<ResolversTypes['UserProfileSummary']>, ParentType, ContextType, RequireFields<QueryUserProfilesArgs, never>>;
   userPublicWorkoutPlans?: Resolver<Array<ResolversTypes['WorkoutPlanSummary']>, ParentType, ContextType, RequireFields<QueryUserPublicWorkoutPlansArgs, 'userId'>>;
   userPublicWorkouts?: Resolver<Array<ResolversTypes['WorkoutSummary']>, ParentType, ContextType, RequireFields<QueryUserPublicWorkoutsArgs, 'userId'>>;
@@ -3718,9 +3695,10 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   userWorkoutTags?: Resolver<Array<ResolversTypes['WorkoutTag']>, ParentType, ContextType>;
   userWorkouts?: Resolver<Array<ResolversTypes['WorkoutSummary']>, ParentType, ContextType>;
   validateToken?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  workoutById?: Resolver<ResolversTypes['Workout'], ParentType, ContextType, RequireFields<QueryWorkoutByIdArgs, 'id'>>;
-  workoutPlanById?: Resolver<ResolversTypes['WorkoutPlan'], ParentType, ContextType, RequireFields<QueryWorkoutPlanByIdArgs, 'id'>>;
-  workoutPlanEnrolmentById?: Resolver<ResolversTypes['WorkoutPlanEnrolmentWithPlan'], ParentType, ContextType, RequireFields<QueryWorkoutPlanEnrolmentByIdArgs, 'id'>>;
+  welcomeTodoItems?: Resolver<Array<ResolversTypes['WelcomeTodoItem']>, ParentType, ContextType>;
+  workoutById?: Resolver<Maybe<ResolversTypes['Workout']>, ParentType, ContextType, RequireFields<QueryWorkoutByIdArgs, 'id'>>;
+  workoutPlanById?: Resolver<Maybe<ResolversTypes['WorkoutPlan']>, ParentType, ContextType, RequireFields<QueryWorkoutPlanByIdArgs, 'id'>>;
+  workoutPlanEnrolmentById?: Resolver<Maybe<ResolversTypes['WorkoutPlanEnrolmentWithPlan']>, ParentType, ContextType, RequireFields<QueryWorkoutPlanEnrolmentByIdArgs, 'id'>>;
   workoutPlanEnrolments?: Resolver<Array<ResolversTypes['WorkoutPlanEnrolmentSummary']>, ParentType, ContextType>;
 }>;
 
@@ -3996,6 +3974,15 @@ export type UserSleepWellLogResolvers<ContextType = any, ParentType extends Reso
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type WelcomeTodoItemResolvers<ContextType = any, ParentType extends ResolversParentTypes['WelcomeTodoItem'] = ResolversParentTypes['WelcomeTodoItem']> = ResolversObject<{
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  routeTo?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  videoUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type WorkoutResolvers<ContextType = any, ParentType extends ResolversParentTypes['Workout'] = ResolversParentTypes['Workout']> = ResolversObject<{
   User?: Resolver<ResolversTypes['UserAvatarData'], ParentType, ContextType>;
   WorkoutGoals?: Resolver<Array<ResolversTypes['WorkoutGoal']>, ParentType, ContextType>;
@@ -4257,7 +4244,6 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   MoveHistoryTrackerWidget?: MoveHistoryTrackerWidgetResolvers<ContextType>;
   MoveType?: MoveTypeResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
-  OnboardingMessage?: OnboardingMessageResolvers<ContextType>;
   ProgressWidget?: ProgressWidgetResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   ScheduledWorkout?: ScheduledWorkoutResolvers<ContextType>;
@@ -4285,6 +4271,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   UserProfileSummary?: UserProfileSummaryResolvers<ContextType>;
   UserRecentlyViewedObject?: UserRecentlyViewedObjectResolvers<ContextType>;
   UserSleepWellLog?: UserSleepWellLogResolvers<ContextType>;
+  WelcomeTodoItem?: WelcomeTodoItemResolvers<ContextType>;
   Workout?: WorkoutResolvers<ContextType>;
   WorkoutGoal?: WorkoutGoalResolvers<ContextType>;
   WorkoutMetaDataAdmin?: WorkoutMetaDataAdminResolvers<ContextType>;
