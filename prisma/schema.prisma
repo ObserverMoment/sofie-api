@@ -157,15 +157,6 @@ model ProgressWidget {
   description String?
 }
 
-// Core Data - read only by clients. Definitions for a set of pre-built but selectable widgets that the user can choose to display.
-model LogDataWidget {
-  id          String   @id @default(uuid())
-  createdAt   DateTime @default(now())
-  name        String
-  subtitle    String?
-  description String?
-}
-
 // User defined data analysis widget that scans log history for moves that match the specs defined in this object and displays progress graph and top scores.
 model MoveHistoryTrackerWidget {
   id            String             @id @default(uuid())
