@@ -17,7 +17,6 @@ import {
   QueryLifetimeLogStatsSummaryArgs,
   QueryLogCountByWorkoutArgs,
   QueryLoggedWorkoutByIdArgs,
-  QueryUserLoggedWorkoutsArgs,
 } from '../../generated/graphql'
 import { notifyWorkoutOwnerOfLogEvent } from '../../lib/getStream'
 import { checkUserOwnsObject } from '../utils'
@@ -25,7 +24,7 @@ import { checkUserOwnsObject } from '../utils'
 //// Queries ////
 export const userLoggedWorkouts = async (
   r: any,
-  { take }: QueryUserLoggedWorkoutsArgs,
+  a: any,
   { authedUserId, select, prisma }: Context,
 ) => {
   const loggedWorkouts = await prisma.loggedWorkout.findMany({
@@ -35,7 +34,6 @@ export const userLoggedWorkouts = async (
     orderBy: {
       completedOn: 'desc',
     },
-    take: take ?? undefined,
     select,
   })
   return loggedWorkouts as LoggedWorkout[]
@@ -54,7 +52,8 @@ export const loggedWorkoutById = async (
   if (loggedWorkout) {
     return loggedWorkout as LoggedWorkout
   } else {
-    throw new ApolloError('loggedWorkoutById: There was an issue.')
+    console.error(`loggedWorkoutById: There was an issue - ID = ${id}.`)
+    return null
   }
 }
 

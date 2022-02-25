@@ -10,7 +10,6 @@ export default gql`
     workoutSectionTypes: [WorkoutSectionType!]!
     standardMoves: [Move!]!
     progressWidgets: [ProgressWidget!]!
-    logDataWidgets: [LogDataWidget!]!
   }
 
   type BodyArea {
@@ -128,15 +127,6 @@ export default gql`
   ### Widgets Data ####
   # Definitions for a set of pre-built but selectable widgets that the user can choose to display.
   type ProgressWidget {
-    id: ID!
-    createdAt: DateTime!
-    name: String!
-    subtitle: String
-    description: String
-  }
-
-  # Core Data - read only by clients. Definitions for a set of pre-built but selectable widgets that the user can choose to display.
-  type LogDataWidget {
     id: ID!
     createdAt: DateTime!
     name: String!

@@ -116,7 +116,8 @@ export const workoutPlanById = async (
   if (workoutPlan) {
     return workoutPlan as WorkoutPlan
   } else {
-    throw new ApolloError('workoutPlanById: There was an issue.')
+    console.error(`workoutPlanById: Could not find a workoutPlan with id ${id}`)
+    return null
   }
 }
 

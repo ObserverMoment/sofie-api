@@ -149,7 +149,10 @@ export const userAvatarById = async (
   if (userAvatar) {
     return userAvatar as UserAvatarData
   } else {
-    throw new ApolloError('userAvatarById: There was an issue.')
+    console.error(
+      `userAvatarById: Could not retrieve avatar data for user with id ${id}.`,
+    )
+    return null
   }
 }
 
@@ -375,7 +378,8 @@ export const userProfile = async (
           Skills: [],
         } as UserProfile)
   } else {
-    throw new AccessScopeError('userProfileById: There was an issue.')
+    console.error(`userProfileById: Could not retrieve User with id ${userId}.`)
+    return null
   }
 }
 

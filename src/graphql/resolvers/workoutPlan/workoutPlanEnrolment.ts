@@ -51,7 +51,10 @@ export const workoutPlanEnrolmentById = async (
       WorkoutPlanEnrolment: workoutPlanEnrolment,
     } as WorkoutPlanEnrolmentWithPlan
   } else {
-    throw new ApolloError('workoutPlanEnrolmentById: There was an issue.')
+    console.error(
+      `workoutPlanEnrolmentById: Could not find a workoutPlanEnrolment with id ${id}`,
+    )
+    return null
   }
 }
 
