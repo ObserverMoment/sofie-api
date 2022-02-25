@@ -282,7 +282,6 @@ export type CoreData = {
   __typename?: 'CoreData';
   bodyAreas: Array<BodyArea>;
   equipment: Array<Equipment>;
-  logDataWidgets: Array<LogDataWidget>;
   moveTypes: Array<MoveType>;
   progressWidgets: Array<ProgressWidget>;
   standardMoves: Array<Move>;
@@ -636,15 +635,6 @@ export type LoadUnit =
   | 'KG'
   | 'LB'
   | 'PERCENTMAX';
-
-export type LogDataWidget = {
-  __typename?: 'LogDataWidget';
-  createdAt: Scalars['DateTime'];
-  description?: Maybe<Scalars['String']>;
-  id: Scalars['ID'];
-  name: Scalars['String'];
-  subtitle?: Maybe<Scalars['String']>;
-};
 
 export type LoggedWorkout = {
   __typename?: 'LoggedWorkout';
@@ -2856,7 +2846,6 @@ export type ResolversTypes = ResolversObject<{
   JoinClubRequestStatus: JoinClubRequestStatus;
   LifetimeLogStatsSummary: ResolverTypeWrapper<LifetimeLogStatsSummary>;
   LoadUnit: LoadUnit;
-  LogDataWidget: ResolverTypeWrapper<LogDataWidget>;
   LoggedWorkout: ResolverTypeWrapper<LoggedWorkout>;
   LoggedWorkoutMove: ResolverTypeWrapper<LoggedWorkoutMove>;
   LoggedWorkoutSection: ResolverTypeWrapper<LoggedWorkoutSection>;
@@ -3049,7 +3038,6 @@ export type ResolversParentTypes = ResolversObject<{
   InviteTokenError: InviteTokenError;
   JSON: Scalars['JSON'];
   LifetimeLogStatsSummary: LifetimeLogStatsSummary;
-  LogDataWidget: LogDataWidget;
   LoggedWorkout: LoggedWorkout;
   LoggedWorkoutMove: LoggedWorkoutMove;
   LoggedWorkoutSection: LoggedWorkoutSection;
@@ -3354,7 +3342,6 @@ export type CompletedWorkoutPlanDayWorkoutResolvers<ContextType = any, ParentTyp
 export type CoreDataResolvers<ContextType = any, ParentType extends ResolversParentTypes['CoreData'] = ResolversParentTypes['CoreData']> = ResolversObject<{
   bodyAreas?: Resolver<Array<ResolversTypes['BodyArea']>, ParentType, ContextType>;
   equipment?: Resolver<Array<ResolversTypes['Equipment']>, ParentType, ContextType>;
-  logDataWidgets?: Resolver<Array<ResolversTypes['LogDataWidget']>, ParentType, ContextType>;
   moveTypes?: Resolver<Array<ResolversTypes['MoveType']>, ParentType, ContextType>;
   progressWidgets?: Resolver<Array<ResolversTypes['ProgressWidget']>, ParentType, ContextType>;
   standardMoves?: Resolver<Array<ResolversTypes['Move']>, ParentType, ContextType>;
@@ -3395,15 +3382,6 @@ export interface JsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
 export type LifetimeLogStatsSummaryResolvers<ContextType = any, ParentType extends ResolversParentTypes['LifetimeLogStatsSummary'] = ResolversParentTypes['LifetimeLogStatsSummary']> = ResolversObject<{
   minutesWorked?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   sessionsLogged?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type LogDataWidgetResolvers<ContextType = any, ParentType extends ResolversParentTypes['LogDataWidget'] = ResolversParentTypes['LogDataWidget']> = ResolversObject<{
-  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  subtitle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -4235,7 +4213,6 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   InviteTokenError?: InviteTokenErrorResolvers<ContextType>;
   JSON?: GraphQLScalarType;
   LifetimeLogStatsSummary?: LifetimeLogStatsSummaryResolvers<ContextType>;
-  LogDataWidget?: LogDataWidgetResolvers<ContextType>;
   LoggedWorkout?: LoggedWorkoutResolvers<ContextType>;
   LoggedWorkoutMove?: LoggedWorkoutMoveResolvers<ContextType>;
   LoggedWorkoutSection?: LoggedWorkoutSectionResolvers<ContextType>;
