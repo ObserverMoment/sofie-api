@@ -5,12 +5,12 @@ import club from './club'
 import collection from './collection'
 import coreData from './coreData'
 import enums from './enums'
+import exerciseWorkoutTrackers from './exerciseWorkoutTrackers'
 import filterInputs from './filterInputs'
 import gymProfile from './gymProfile'
 import invites from './invites'
 import loggedWorkout from './loggedWorkout'
 import main from './main'
-
 import scheduledWorkout from './scheduledWorkout'
 import skillsAndCertifications from './skillsAndCertifications'
 import timelineFeed from './timelineFeed'
@@ -35,6 +35,7 @@ const typeDefs = mergeTypeDefs([
   collection,
   coreData,
   enums,
+  exerciseWorkoutTrackers,
   filterInputs,
   gymProfile,
   invites,

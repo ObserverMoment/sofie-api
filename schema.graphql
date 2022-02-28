@@ -433,10 +433,36 @@ input CreateUserEatWellLogInput {
   year: Int!
 }
 
+input CreateUserFastestTimeExerciseTrackerInput {
+  Equipment: ConnectRelationInput
+  Move: ConnectRelationInput!
+  distanceUnit: DistanceUnit!
+  loadAmount: Float!
+  loadUnit: LoadUnit!
+  repType: WorkoutMoveRepType!
+  reps: Float!
+}
+
 input CreateUserGoalInput {
   deadline: DateTime
   description: String
   name: String!
+}
+
+input CreateUserMaxLoadExerciseTrackerInput {
+  Equipment: ConnectRelationInput
+  Move: ConnectRelationInput!
+  loadUnit: LoadUnit!
+  reps: Int!
+}
+
+input CreateUserMaxUnbrokenExerciseTrackerInput {
+  Equipment: ConnectRelationInput
+  Move: ConnectRelationInput!
+  distanceUnit: DistanceUnit!
+  loadAmount: Float!
+  loadUnit: LoadUnit!
+  repType: WorkoutMoveRepType!
 }
 
 input CreateUserMeditationLogInput {
@@ -446,12 +472,27 @@ input CreateUserMeditationLogInput {
   year: Int!
 }
 
+input CreateUserScoredWorkoutTrackerInput {
+  Workout: ConnectRelationInput!
+}
+
 input CreateUserSleepWellLogInput {
   dayNumber: Int!
   minutesSlept: Int
   note: String
   rating: UserDayLogRating!
   year: Int!
+}
+
+input CreateWorkoutExerciseTrackerManualEntryInput {
+  UserFastestTimeExerciseTracker: ConnectRelationInput
+  UserMaxLoadExerciseTracker: ConnectRelationInput
+  UserMaxUnbrokenExerciseTracker: ConnectRelationInput
+  UserScoredWorkoutTracker: ConnectRelationInput
+  completedOn: DateTime!
+  score: Float!
+  videoThumbUri: String
+  videoUri: String
 }
 
 input CreateWorkoutInput {
@@ -749,10 +790,15 @@ type Mutation {
   createUserBenchmarkEntry(data: CreateUserBenchmarkEntryInput!): UserBenchmarkEntry!
   createUserDayLogMood(data: CreateUserDayLogMoodInput!): UserDayLogMood!
   createUserEatWellLog(data: CreateUserEatWellLogInput!): UserEatWellLog!
+  createUserFastestTimeExerciseTracker(data: CreateUserFastestTimeExerciseTrackerInput!): UserFastestTimeExerciseTracker!
   createUserGoal(data: CreateUserGoalInput!): UserGoal!
+  createUserMaxLoadExerciseTracker(data: CreateUserMaxLoadExerciseTrackerInput!): UserMaxLoadExerciseTracker!
+  createUserMaxUnbrokenExerciseTracker(data: CreateUserMaxUnbrokenExerciseTrackerInput!): UserMaxUnbrokenExerciseTracker!
   createUserMeditationLog(data: CreateUserMeditationLogInput!): UserMeditationLog!
+  createUserScoredWorkoutTracker(data: CreateUserScoredWorkoutTrackerInput!): UserScoredWorkoutTracker!
   createUserSleepWellLog(data: CreateUserSleepWellLogInput!): UserSleepWellLog!
   createWorkout(data: CreateWorkoutInput!): Workout!
+  createWorkoutExerciseTrackerManualEntry(data: CreateWorkoutExerciseTrackerManualEntryInput!): WorkoutExerciseTrackerManualEntry!
   createWorkoutMove(data: CreateWorkoutMoveInput!): WorkoutMove!
   createWorkoutPlan(data: CreateWorkoutPlanInput!): WorkoutPlan!
   createWorkoutPlanDayWithWorkout(data: CreateWorkoutPlanDayWithWorkoutInput!): WorkoutPlanDay!
@@ -777,7 +823,12 @@ type Mutation {
   deleteUserBenchmark(id: ID!): ID!
   deleteUserBenchmarkEntry(id: ID!): ID!
   deleteUserDayLogMood(id: ID!): ID!
+  deleteUserFastestTimeExerciseTracker(id: ID!): ID!
   deleteUserGoal(id: ID!): ID!
+  deleteUserMaxLoadExerciseTracker(id: ID!): ID!
+  deleteUserMaxUnbrokenExerciseTracker(id: ID!): ID!
+  deleteUserScoredWorkoutTracker(id: ID!): ID!
+  deleteWorkoutExerciseTrackerManualEntry(id: ID!): ID!
   deleteWorkoutMoveById(id: ID!): ID!
   deleteWorkoutPlanDayWorkoutById(id: ID!): ID!
   deleteWorkoutPlanDaysById(ids: [ID!]!): [ID!]!
@@ -908,8 +959,11 @@ type Query {
   userCollections: [Collection!]!
   userDayLogMoods: [UserDayLogMood!]!
   userEatWellLogs: [UserEatWellLog!]!
+  userFastestTimeExerciseTrackers: [UserFastestTimeExerciseTracker!]!
   userGoals: [UserGoal!]!
   userLoggedWorkouts: [LoggedWorkout!]!
+  userMaxLoadExerciseTrackers: [UserMaxLoadExerciseTracker!]!
+  userMaxUnbrokenExerciseTrackers: [UserMaxUnbrokenExerciseTracker!]!
   userMeditationLogs: [UserMeditationLog!]!
   userProfile(userId: ID!): UserProfile
   userProfiles(cursor: ID, take: Int): [UserProfileSummary!]!
@@ -917,6 +971,7 @@ type Query {
   userPublicWorkouts(userId: ID!): [WorkoutSummary!]!
   userRecentlyViewedObjects: [UserRecentlyViewedObject!]!
   userScheduledWorkouts: [ScheduledWorkout!]!
+  userScoredWorkoutTrackers: [UserScoredWorkoutTracker!]!
   userSleepWellLogs: [UserSleepWellLog!]!
   userWorkoutPlans: [WorkoutPlanSummary!]!
   userWorkoutTags: [WorkoutTag!]!
@@ -1441,6 +1496,19 @@ type UserEatWellLog {
   year: Int!
 }
 
+type UserFastestTimeExerciseTracker {
+  Equipment: Equipment
+  Move: Move!
+  WorkoutExerciseTrackerManualEntries: [WorkoutExerciseTrackerManualEntry!]!
+  createdAt: DateTime!
+  distanceUnit: DistanceUnit!
+  id: ID!
+  loadAmount: Float!
+  loadUnit: LoadUnit!
+  repType: WorkoutMoveRepType!
+  reps: Float!
+}
+
 type UserGoal {
   completedDate: DateTime
   createdAt: DateTime!
@@ -1449,6 +1517,28 @@ type UserGoal {
   id: ID!
   name: String!
   updatedAt: DateTime!
+}
+
+type UserMaxLoadExerciseTracker {
+  Equipment: Equipment
+  Move: Move!
+  WorkoutExerciseTrackerManualEntries: [WorkoutExerciseTrackerManualEntry!]!
+  createdAt: DateTime!
+  id: ID!
+  loadUnit: LoadUnit!
+  reps: Int!
+}
+
+type UserMaxUnbrokenExerciseTracker {
+  Equipment: Equipment
+  Move: Move!
+  WorkoutExerciseTrackerManualEntries: [WorkoutExerciseTrackerManualEntry!]!
+  createdAt: DateTime!
+  distanceUnit: DistanceUnit!
+  id: ID!
+  loadAmount: Float!
+  loadUnit: LoadUnit!
+  repType: WorkoutMoveRepType!
 }
 
 type UserMeditationLog {
@@ -1514,6 +1604,13 @@ type UserRecentlyViewedObject {
   WorkoutPlan: WorkoutPlanSummary
 }
 
+type UserScoredWorkoutTracker {
+  Workout: WorkoutSummary!
+  WorkoutExerciseTrackerManualEntries: [WorkoutExerciseTrackerManualEntry!]!
+  createdAt: DateTime!
+  id: ID!
+}
+
 type UserSleepWellLog {
   createdAt: DateTime!
   dayNumber: Int!
@@ -1550,6 +1647,15 @@ type Workout {
   lengthMinutes: Int
   name: String!
   updatedAt: DateTime!
+}
+
+type WorkoutExerciseTrackerManualEntry {
+  completedOn: DateTime!
+  createdAt: DateTime!
+  id: ID!
+  score: Float!
+  videoThumbUri: String
+  videoUri: String
 }
 
 input WorkoutFiltersInput {
