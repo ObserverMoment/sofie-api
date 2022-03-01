@@ -2,40 +2,23 @@ import { PrismaClient } from '@prisma/client'
 import { ApolloError } from 'apollo-server-errors'
 import { Context } from '../..'
 import {
-  CreateWorkoutExerciseTrackerManualEntryInput,
+  CreateExerciseTrackerManualEntryInput,
+  ExerciseTrackerManualEntry,
+  MutationCreateExerciseTrackerManualEntryArgs,
   MutationCreateUserFastestTimeExerciseTrackerArgs,
   MutationCreateUserMaxLoadExerciseTrackerArgs,
   MutationCreateUserMaxUnbrokenExerciseTrackerArgs,
-  MutationCreateUserScoredWorkoutTrackerArgs,
-  MutationCreateWorkoutExerciseTrackerManualEntryArgs,
+  MutationDeleteExerciseTrackerManualEntryArgs,
   MutationDeleteUserFastestTimeExerciseTrackerArgs,
   MutationDeleteUserMaxLoadExerciseTrackerArgs,
   MutationDeleteUserMaxUnbrokenExerciseTrackerArgs,
-  MutationDeleteUserScoredWorkoutTrackerArgs,
-  MutationDeleteWorkoutExerciseTrackerManualEntryArgs,
   UserFastestTimeExerciseTracker,
   UserMaxLoadExerciseTracker,
   UserMaxUnbrokenExerciseTracker,
-  UserScoredWorkoutTracker,
-  WorkoutExerciseTrackerManualEntry,
 } from '../../generated/graphql'
 import { checkUserOwnsObject, ContentObjectType } from '../utils'
 
 //// Queries ////
-export const userScoredWorkoutTrackers = async (
-  r: any,
-  a: any,
-  { authedUserId, select, prisma }: Context,
-) => {
-  const trackers = await prisma.userScoredWorkoutTracker.findMany({
-    where: {
-      userId: authedUserId,
-    },
-    select,
-  })
-  return trackers as UserScoredWorkoutTracker[]
-}
-
 export const userMaxLoadExerciseTrackers = async (
   r: any,
   a: any,
@@ -79,52 +62,6 @@ export const userMaxUnbrokenExerciseTrackers = async (
 }
 
 //// Mutations ////
-export const createUserScoredWorkoutTracker = async (
-  r: any,
-  { data }: MutationCreateUserScoredWorkoutTrackerArgs,
-  { authedUserId, select, prisma }: Context,
-) => {
-  const tracker = await prisma.userScoredWorkoutTracker.create({
-    data: {
-      Workout: { connect: data.Workout },
-      User: { connect: { id: authedUserId } },
-    },
-    select,
-  })
-
-  if (tracker) {
-    return tracker as UserScoredWorkoutTracker
-  } else {
-    throw new ApolloError('createUserScoredWorkoutTracker: There was an issue.')
-  }
-}
-
-export const deleteUserScoredWorkoutTracker = async (
-  r: any,
-  { id }: MutationDeleteUserScoredWorkoutTrackerArgs,
-  { authedUserId, prisma }: Context,
-) => {
-  await checkUserOwnsObject(
-    id,
-    'userScoredWorkoutTracker',
-    authedUserId,
-    prisma,
-  )
-
-  const deleted = await prisma.userScoredWorkoutTracker.delete({
-    where: {
-      id,
-    },
-    select: { id: true },
-  })
-
-  if (deleted) {
-    return deleted.id
-  } else {
-    throw new ApolloError('deleteUserScoredWorkoutTracker: There was an issue.')
-  }
-}
-
 export const createUserMaxLoadExerciseTracker = async (
   r: any,
   { data }: MutationCreateUserMaxLoadExerciseTrackerArgs,
@@ -282,22 +219,19 @@ export const deleteUserMaxUnbrokenExerciseTracker = async (
 }
 
 ///// User Manual Entry for any tracker type /////
-export const createWorkoutExerciseTrackerManualEntry = async (
+export const createExerciseTrackerManualEntry = async (
   r: any,
-  { data }: MutationCreateWorkoutExerciseTrackerManualEntryArgs,
+  { data }: MutationCreateExerciseTrackerManualEntryArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
   /// Check that user is the owner of the parent ID being passed, and that only one parent is trying to be connected per call.
   await getParentTrackerIdAndCheckUserOwnership(authedUserId, data, prisma)
 
-  const entry = await prisma.workoutExerciseTrackerManualEntry.create({
+  const entry = await prisma.exerciseTrackerManualEntry.create({
     data: {
       ...data,
       User: { connect: { id: authedUserId } },
       // Attach to a parent tracker. Only one of these (XOR) should ever be present.
-      UserScoredWorkoutTracker: data.UserScoredWorkoutTracker
-        ? { connect: data.UserScoredWorkoutTracker }
-        : undefined,
       UserMaxLoadExerciseTracker: data.UserMaxLoadExerciseTracker
         ? { connect: data.UserMaxLoadExerciseTracker }
         : undefined,
@@ -312,17 +246,17 @@ export const createWorkoutExerciseTrackerManualEntry = async (
   })
 
   if (entry) {
-    return entry as WorkoutExerciseTrackerManualEntry
+    return entry as ExerciseTrackerManualEntry
   } else {
     throw new ApolloError(
-      'createWorkoutExerciseTrackerManualEntry: There was an issue.',
+      'createExerciseTrackerManualEntry: There was an issue.',
     )
   }
 }
 
-export const deleteWorkoutExerciseTrackerManualEntry = async (
+export const deleteExerciseTrackerManualEntry = async (
   r: any,
-  { id }: MutationDeleteWorkoutExerciseTrackerManualEntryArgs,
+  { id }: MutationDeleteExerciseTrackerManualEntryArgs,
   { authedUserId, prisma }: Context,
 ) => {
   await checkUserOwnsObject(
@@ -332,7 +266,7 @@ export const deleteWorkoutExerciseTrackerManualEntry = async (
     prisma,
   )
 
-  const deleted = await prisma.workoutExerciseTrackerManualEntry.delete({
+  const deleted = await prisma.exerciseTrackerManualEntry.delete({
     where: {
       id,
     },
@@ -343,7 +277,7 @@ export const deleteWorkoutExerciseTrackerManualEntry = async (
     return deleted.id
   } else {
     throw new ApolloError(
-      'deleteWorkoutExerciseTrackerManualEntry: There was an issue.',
+      'deleteExerciseTrackerManualEntry: There was an issue.',
     )
   }
 }
@@ -352,12 +286,11 @@ export const deleteWorkoutExerciseTrackerManualEntry = async (
 /// return [parentType, parentId]
 export const getParentTrackerIdAndCheckUserOwnership = async (
   authedUserId: string,
-  data: CreateWorkoutExerciseTrackerManualEntryInput,
+  data: CreateExerciseTrackerManualEntryInput,
   prisma: PrismaClient,
 ) => {
   /// One and only one of the following should be not null.
   const parentData = {
-    userScoredWorkoutTracker: data.UserScoredWorkoutTracker,
     userMaxLoadExerciseTracker: data.UserMaxLoadExerciseTracker,
     userFastestTimeExerciseTracker: data.UserFastestTimeExerciseTracker,
     userMaxUnbrokenExerciseTracker: data.UserMaxUnbrokenExerciseTracker,

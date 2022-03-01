@@ -223,21 +223,21 @@ model Skill {
 }
 
 model User {
-  id                                  String                              @id @default(uuid())
-  firebaseUid                         String                              @unique
-  createdAt                           DateTime                            @default(now())
-  hasOnboarded                        Boolean                             @default(false)
-  userProfileScope                    UserProfileScope                    @default(PRIVATE)
+  id                                  String                           @id @default(uuid())
+  firebaseUid                         String                           @unique
+  createdAt                           DateTime                         @default(now())
+  hasOnboarded                        Boolean                          @default(false)
+  userProfileScope                    UserProfileScope                 @default(PRIVATE)
   avatarUri                           String?
   introVideoUri                       String?
   introVideoThumbUri                  String?
-  displayName                         String                              @unique
+  displayName                         String                           @unique
   firstname                           String?
   lastname                            String?
   bio                                 String?
   tagline                             String?
   birthdate                           DateTime?
-  gender                              Gender                              @default(PNTS)
+  gender                              Gender                           @default(PNTS)
   townCity                            String?
   countryCode                         String?
   instagramHandle                     String?
@@ -249,14 +249,14 @@ model User {
   activeProgressWidgets               String[]
   activeLogDataWidgets                String[]
   // Log / Streak tracking settings.
-  workoutsPerWeekTarget               Int                                 @default(3)
+  workoutsPerWeekTarget               Int                              @default(3)
   // Object ids in the format [type:id]. Max of 20 (?). See [Utils.addObjectToUserRecentlyViewed].
   recentlyViewedObjects               String[]
   // When user marks as seen / got it / don't show again we add to here.
   SeenAnnouncementUpdates             AnnouncementUpdate[]
   // When user marks as seen / got it / don't show again we add to here.
   SeenWelcomeTodoItems                WelcomeTodoItem[]
-  ClubsWhereOwner                     Club[]                              @relation("owner")
+  ClubsWhereOwner                     Club[]                           @relation("owner")
   ClubInviteTokens                    ClubInviteToken[]
   Collections                         Collection[]
   GymProfiles                         GymProfile[]
@@ -277,93 +277,81 @@ model User {
   WorkoutSections                     WorkoutSection[]
   WorkoutSets                         WorkoutSet[]
   WorkoutTag                          WorkoutTag[]
-  ClubsWhereAdmin                     Club[]                              @relation("admin")
-  ClubsWhereMember                    Club[]                              @relation("member")
+  ClubsWhereAdmin                     Club[]                           @relation("admin")
+  ClubsWhereMember                    Club[]                           @relation("member")
   BodyTrackingEntry                   BodyTrackingEntry[]
   LoggedWorkoutSet                    LoggedWorkoutSet[]
   LoggedWorkoutMove                   LoggedWorkoutMove[]
-  ClubMemberNotesAsAuthor             ClubMemberNote[]                    @relation("note_author")
-  ClubMemberNotesAsMember             ClubMemberNote[]                    @relation("note_member")
+  ClubMemberNotesAsAuthor             ClubMemberNote[]                 @relation("note_author")
+  ClubMemberNotesAsMember             ClubMemberNote[]                 @relation("note_member")
   UserDayLogMoods                     UserDayLogMood[]
   UserGoals                           UserGoal[]
   UserMeditationLogs                  UserMeditationLog[]
   UserEatWellLogs                     UserEatWellLog[]
   UserSleepWellLogs                   UserSleepWellLog[]
-  UserScoredWorkoutTrackers           UserScoredWorkoutTracker[]
   UserMaxLoadExerciseTrackers         UserMaxLoadExerciseTracker[]
   UserFastestTimeExerciseTrackers     UserFastestTimeExerciseTracker[]
   UserMaxUnbrokenExerciseTrackers     UserMaxUnbrokenExerciseTracker[]
-  WorkoutExerciseTrackerManualEntries WorkoutExerciseTrackerManualEntry[]
+  WorkoutExerciseTrackerManualEntries ExerciseTrackerManualEntry[]
 }
 
 ////////////////////////////////////////////////
-///// User Workout and Exercise Trackers ///////
+///// User Exercise Trackers ///////
 ///// PBs / Benchmarks /////////////////////////
 ////////////////////////////////////////////////
-/// Defines widget settings for tracking scores logged for a specific workout.
-model UserScoredWorkoutTracker {
-  id                                  String                              @id @default(uuid())
-  createdAt                           DateTime                            @default(now())
-  User                                User                                @relation(fields: [userId], references: [id])
-  userId                              String
-  Workout                             Workout                             @relation(fields: [workoutId], references: [id])
-  workoutId                           String
-  WorkoutExerciseTrackerManualEntries WorkoutExerciseTrackerManualEntry[]
-}
-
 model UserMaxLoadExerciseTracker {
-  id                                  String                              @id @default(uuid())
-  createdAt                           DateTime                            @default(now())
-  User                                User                                @relation(fields: [userId], references: [id])
+  id                                  String                       @id @default(uuid())
+  createdAt                           DateTime                     @default(now())
+  User                                User                         @relation(fields: [userId], references: [id])
   userId                              String
   reps                                Int
-  LoadUnit                            LoadUnit                            @default(KG)
-  Move                                Move                                @relation(fields: [moveId], references: [id])
+  LoadUnit                            LoadUnit                     @default(KG)
+  Move                                Move                         @relation(fields: [moveId], references: [id])
   moveId                              String
-  Equipment                           Equipment?                          @relation(fields: [equipmentId], references: [id])
+  Equipment                           Equipment?                   @relation(fields: [equipmentId], references: [id])
   equipmentId                         String?
-  WorkoutExerciseTrackerManualEntries WorkoutExerciseTrackerManualEntry[]
+  WorkoutExerciseTrackerManualEntries ExerciseTrackerManualEntry[]
 }
 
 model UserFastestTimeExerciseTracker {
-  id                                  String                              @id @default(uuid())
-  createdAt                           DateTime                            @default(now())
-  User                                User                                @relation(fields: [userId], references: [id])
+  id                                  String                       @id @default(uuid())
+  createdAt                           DateTime                     @default(now())
+  User                                User                         @relation(fields: [userId], references: [id])
   userId                              String
-  repType                             WorkoutMoveRepType                  @default(REPS) // Should never be TIME!
+  repType                             WorkoutMoveRepType           @default(REPS) // Should never be TIME!
   reps                                Float
-  distanceUnit                        DistanceUnit                        @default(METRES)
-  loadAmount                          Float                               @default(0)
-  loadUnit                            LoadUnit                            @default(KG)
-  Move                                Move                                @relation(fields: [moveId], references: [id])
+  distanceUnit                        DistanceUnit                 @default(METRES)
+  loadAmount                          Float                        @default(0)
+  loadUnit                            LoadUnit                     @default(KG)
+  Move                                Move                         @relation(fields: [moveId], references: [id])
   moveId                              String
-  Equipment                           Equipment?                          @relation(fields: [equipmentId], references: [id])
+  Equipment                           Equipment?                   @relation(fields: [equipmentId], references: [id])
   equipmentId                         String?
-  WorkoutExerciseTrackerManualEntries WorkoutExerciseTrackerManualEntry[]
+  WorkoutExerciseTrackerManualEntries ExerciseTrackerManualEntry[]
 }
 
 model UserMaxUnbrokenExerciseTracker {
-  id                                  String                              @id @default(uuid())
-  createdAt                           DateTime                            @default(now())
-  User                                User                                @relation(fields: [userId], references: [id])
+  id                                  String                       @id @default(uuid())
+  createdAt                           DateTime                     @default(now())
+  User                                User                         @relation(fields: [userId], references: [id])
   userId                              String
   // When this is TIME - scores are logged as milliseconds. So no TimeUnit field is required on this model.
-  repType                             WorkoutMoveRepType                  @default(REPS)
-  distanceUnit                        DistanceUnit                        @default(METRES)
-  loadAmount                          Float                               @default(0)
-  loadUnit                            LoadUnit                            @default(KG)
-  Move                                Move                                @relation(fields: [moveId], references: [id])
+  repType                             WorkoutMoveRepType           @default(REPS)
+  distanceUnit                        DistanceUnit                 @default(METRES)
+  loadAmount                          Float                        @default(0)
+  loadUnit                            LoadUnit                     @default(KG)
+  Move                                Move                         @relation(fields: [moveId], references: [id])
   moveId                              String
-  Equipment                           Equipment?                          @relation(fields: [equipmentId], references: [id])
+  Equipment                           Equipment?                   @relation(fields: [equipmentId], references: [id])
   equipmentId                         String?
-  WorkoutExerciseTrackerManualEntries WorkoutExerciseTrackerManualEntry[]
+  WorkoutExerciseTrackerManualEntries ExerciseTrackerManualEntry[]
 }
 
 /// Generally, exercise tracking widgets auto calc best scores based on user's log history.
 /// However, users can also add manual entries which will be included in the generated PB reports.
 /// So that they can add scores achieved outside of the app / not in a workout setting.
 /// Should only ever have one parent tracker relationship connected.
-model WorkoutExerciseTrackerManualEntry {
+model ExerciseTrackerManualEntry {
   id                               String                          @id @default(uuid())
   createdAt                        DateTime                        @default(now())
   User                             User                            @relation(fields: [userId], references: [id])
@@ -372,8 +360,6 @@ model WorkoutExerciseTrackerManualEntry {
   score                            Float
   videoUri                         String?
   videoThumbUri                    String?
-  UserScoredWorkoutTracker         UserScoredWorkoutTracker?       @relation(fields: [userScoredWorkoutTrackerId], references: [id])
-  userScoredWorkoutTrackerId       String?
   UserMaxLoadExerciseTracker       UserMaxLoadExerciseTracker?     @relation(fields: [userExerciseTrackerMaxLoadId], references: [id])
   userExerciseTrackerMaxLoadId     String?
   UserFastestTimeExerciseTracker   UserFastestTimeExerciseTracker? @relation(fields: [userFastestTimeExerciseTrackerId], references: [id])
@@ -475,35 +461,34 @@ model ClubInviteToken {
 /// // Workout Related Models and Children //////////
 /// /////////////////////////////////////////////////
 model Workout {
-  id                        String                        @id @default(uuid())
-  createdAt                 DateTime                      @default(now())
-  updatedAt                 DateTime                      @updatedAt
-  name                      String
-  description               String?
-  introVideoUri             String?
-  introAudioUri             String?
-  coverImageUri             String?
-  contentAccessScope        ContentAccessScope            @default(PRIVATE)
-  userId                    String
-  introVideoThumbUri        String?
-  archived                  Boolean                       @default(false)
-  lengthMinutes             Int?
-  metaData                  Json? /// Meta data about the content of the workout.
-  User                      User                          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  LoggedWorkouts            LoggedWorkout[]
-  ScheduledWorkouts         ScheduledWorkout[]
-  WorkoutPlanDayWorkout     WorkoutPlanDayWorkout[]
-  WorkoutSections           WorkoutSection[]
-  Clubs                     Club[]
-  Collections               Collection[]
-  WorkoutGoals              WorkoutGoal[]
-  WorkoutTags               WorkoutTag[]
+  id                    String                        @id @default(uuid())
+  createdAt             DateTime                      @default(now())
+  updatedAt             DateTime                      @updatedAt
+  name                  String
+  description           String?
+  introVideoUri         String?
+  introAudioUri         String?
+  coverImageUri         String?
+  contentAccessScope    ContentAccessScope            @default(PRIVATE)
+  userId                String
+  introVideoThumbUri    String?
+  archived              Boolean                       @default(false)
+  lengthMinutes         Int?
+  metaData              Json? /// Meta data about the content of the workout.
+  User                  User                          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  LoggedWorkouts        LoggedWorkout[]
+  ScheduledWorkouts     ScheduledWorkout[]
+  WorkoutPlanDayWorkout WorkoutPlanDayWorkout[]
+  WorkoutSections       WorkoutSection[]
+  Clubs                 Club[]
+  Collections           Collection[]
+  WorkoutGoals          WorkoutGoal[]
+  WorkoutTags           WorkoutTag[]
   ////// Admin access only - admin / search / app level meta data //////
-  validated                 PublicContentValidationStatus @default(PENDING) // For public display
-  reasonNotValidated        String?
-  metaTags                  String[]
-  difficultyLevel           DifficultyLevel?
-  UserScoredWorkoutTrackers UserScoredWorkoutTracker[]
+  validated             PublicContentValidationStatus @default(PENDING) // For public display
+  reasonNotValidated    String?
+  metaTags              String[]
+  difficultyLevel       DifficultyLevel?
 }
 
 /// Used on both workouts and workout plans + maybe others (events, challenges) in the future. Free text tag for the USER to tag their content. Difrerent from the meta tags, which are added by admins only.

@@ -178,21 +178,18 @@ import {
 } from './userBenchmark'
 
 import {
-  userScoredWorkoutTrackers,
   userMaxLoadExerciseTrackers,
   userFastestTimeExerciseTrackers,
   userMaxUnbrokenExerciseTrackers,
-  createUserScoredWorkoutTracker,
-  deleteUserScoredWorkoutTracker,
   createUserMaxLoadExerciseTracker,
   deleteUserMaxLoadExerciseTracker,
   createUserFastestTimeExerciseTracker,
   deleteUserFastestTimeExerciseTracker,
   createUserMaxUnbrokenExerciseTracker,
   deleteUserMaxUnbrokenExerciseTracker,
-  createWorkoutExerciseTrackerManualEntry,
-  deleteWorkoutExerciseTrackerManualEntry,
-} from './userExerciseWorkoutTrackers'
+  createExerciseTrackerManualEntry,
+  deleteExerciseTrackerManualEntry,
+} from './userExerciseScoreTrackers'
 
 import {
   userCollections,
@@ -398,7 +395,6 @@ const resolvers: Resolvers = {
     userCollections,
     userCollectionById,
     /// User Exercise and Scored Workout Trackers ///
-    userScoredWorkoutTrackers,
     userMaxLoadExerciseTrackers,
     userFastestTimeExerciseTrackers,
     userMaxUnbrokenExerciseTrackers,
@@ -539,16 +535,14 @@ const resolvers: Resolvers = {
     ///////////////////////////////////////////////////
     //// User Exercise and Scored Workout Trackers ////
     ///////////////////////////////////////////////////
-    createUserScoredWorkoutTracker,
-    deleteUserScoredWorkoutTracker,
     createUserMaxLoadExerciseTracker,
     deleteUserMaxLoadExerciseTracker,
     createUserFastestTimeExerciseTracker,
     deleteUserFastestTimeExerciseTracker,
     createUserMaxUnbrokenExerciseTracker,
     deleteUserMaxUnbrokenExerciseTracker,
-    createWorkoutExerciseTrackerManualEntry,
-    deleteWorkoutExerciseTrackerManualEntry,
+    createExerciseTrackerManualEntry,
+    deleteExerciseTrackerManualEntry,
     ////////////////////////
     //// User Collection ////
     ////////////////////////

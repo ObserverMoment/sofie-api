@@ -333,6 +333,16 @@ export type CreateEquipmentInput = {
   name: Scalars['String'];
 };
 
+export type CreateExerciseTrackerManualEntryInput = {
+  UserFastestTimeExerciseTracker?: InputMaybe<ConnectRelationInput>;
+  UserMaxLoadExerciseTracker?: InputMaybe<ConnectRelationInput>;
+  UserMaxUnbrokenExerciseTracker?: InputMaybe<ConnectRelationInput>;
+  completedOn: Scalars['DateTime'];
+  score: Scalars['Float'];
+  videoThumbUri?: InputMaybe<Scalars['String']>;
+  videoUri?: InputMaybe<Scalars['String']>;
+};
+
 export type CreateGymProfileInput = {
   Equipments?: InputMaybe<Array<ConnectRelationInput>>;
   description?: InputMaybe<Scalars['String']>;
@@ -502,27 +512,12 @@ export type CreateUserMeditationLogInput = {
   year: Scalars['Int'];
 };
 
-export type CreateUserScoredWorkoutTrackerInput = {
-  Workout: ConnectRelationInput;
-};
-
 export type CreateUserSleepWellLogInput = {
   dayNumber: Scalars['Int'];
   minutesSlept?: InputMaybe<Scalars['Int']>;
   note?: InputMaybe<Scalars['String']>;
   rating: UserDayLogRating;
   year: Scalars['Int'];
-};
-
-export type CreateWorkoutExerciseTrackerManualEntryInput = {
-  UserFastestTimeExerciseTracker?: InputMaybe<ConnectRelationInput>;
-  UserMaxLoadExerciseTracker?: InputMaybe<ConnectRelationInput>;
-  UserMaxUnbrokenExerciseTracker?: InputMaybe<ConnectRelationInput>;
-  UserScoredWorkoutTracker?: InputMaybe<ConnectRelationInput>;
-  completedOn: Scalars['DateTime'];
-  score: Scalars['Float'];
-  videoThumbUri?: InputMaybe<Scalars['String']>;
-  videoUri?: InputMaybe<Scalars['String']>;
 };
 
 export type CreateWorkoutInput = {
@@ -639,6 +634,16 @@ export type Equipment = {
   id: Scalars['ID'];
   loadAdjustable: Scalars['Boolean'];
   name: Scalars['String'];
+};
+
+export type ExerciseTrackerManualEntry = {
+  __typename?: 'ExerciseTrackerManualEntry';
+  completedOn: Scalars['DateTime'];
+  createdAt: Scalars['DateTime'];
+  id: Scalars['ID'];
+  score: Scalars['Float'];
+  videoThumbUri?: Maybe<Scalars['String']>;
+  videoUri?: Maybe<Scalars['String']>;
 };
 
 export type Gender =
@@ -812,6 +817,7 @@ export type Mutation = {
   createCollection: Collection;
   createCompletedWorkoutPlanDayWorkout: WorkoutPlanEnrolment;
   createEquipment?: Maybe<Equipment>;
+  createExerciseTrackerManualEntry: ExerciseTrackerManualEntry;
   createGymProfile: GymProfile;
   createLoggedWorkout: LoggedWorkout;
   createMove: Move;
@@ -827,10 +833,8 @@ export type Mutation = {
   createUserMaxLoadExerciseTracker: UserMaxLoadExerciseTracker;
   createUserMaxUnbrokenExerciseTracker: UserMaxUnbrokenExerciseTracker;
   createUserMeditationLog: UserMeditationLog;
-  createUserScoredWorkoutTracker: UserScoredWorkoutTracker;
   createUserSleepWellLog: UserSleepWellLog;
   createWorkout: Workout;
-  createWorkoutExerciseTrackerManualEntry: WorkoutExerciseTrackerManualEntry;
   createWorkoutMove: WorkoutMove;
   createWorkoutPlan: WorkoutPlan;
   createWorkoutPlanDayWithWorkout: WorkoutPlanDay;
@@ -847,6 +851,7 @@ export type Mutation = {
   deleteClubMembersFeedPost: Scalars['ID'];
   deleteCollectionById: Scalars['ID'];
   deleteCompletedWorkoutPlanDayWorkout: WorkoutPlanEnrolment;
+  deleteExerciseTrackerManualEntry: Scalars['ID'];
   deleteGymProfileById?: Maybe<Scalars['ID']>;
   deleteLoggedWorkoutById: Scalars['ID'];
   deleteLoggedWorkoutMove: Scalars['ID'];
@@ -859,8 +864,6 @@ export type Mutation = {
   deleteUserGoal: Scalars['ID'];
   deleteUserMaxLoadExerciseTracker: Scalars['ID'];
   deleteUserMaxUnbrokenExerciseTracker: Scalars['ID'];
-  deleteUserScoredWorkoutTracker: Scalars['ID'];
-  deleteWorkoutExerciseTrackerManualEntry: Scalars['ID'];
   deleteWorkoutMoveById: Scalars['ID'];
   deleteWorkoutPlanDayWorkoutById: Scalars['ID'];
   deleteWorkoutPlanDaysById: Array<Scalars['ID']>;
@@ -1035,6 +1038,11 @@ export type MutationCreateEquipmentArgs = {
 };
 
 
+export type MutationCreateExerciseTrackerManualEntryArgs = {
+  data: CreateExerciseTrackerManualEntryInput;
+};
+
+
 export type MutationCreateGymProfileArgs = {
   data: CreateGymProfileInput;
 };
@@ -1110,11 +1118,6 @@ export type MutationCreateUserMeditationLogArgs = {
 };
 
 
-export type MutationCreateUserScoredWorkoutTrackerArgs = {
-  data: CreateUserScoredWorkoutTrackerInput;
-};
-
-
 export type MutationCreateUserSleepWellLogArgs = {
   data: CreateUserSleepWellLogInput;
 };
@@ -1122,11 +1125,6 @@ export type MutationCreateUserSleepWellLogArgs = {
 
 export type MutationCreateWorkoutArgs = {
   data: CreateWorkoutInput;
-};
-
-
-export type MutationCreateWorkoutExerciseTrackerManualEntryArgs = {
-  data: CreateWorkoutExerciseTrackerManualEntryInput;
 };
 
 
@@ -1210,6 +1208,11 @@ export type MutationDeleteCompletedWorkoutPlanDayWorkoutArgs = {
 };
 
 
+export type MutationDeleteExerciseTrackerManualEntryArgs = {
+  id: Scalars['ID'];
+};
+
+
 export type MutationDeleteGymProfileByIdArgs = {
   id: Scalars['ID'];
 };
@@ -1266,16 +1269,6 @@ export type MutationDeleteUserMaxLoadExerciseTrackerArgs = {
 
 
 export type MutationDeleteUserMaxUnbrokenExerciseTrackerArgs = {
-  id: Scalars['ID'];
-};
-
-
-export type MutationDeleteUserScoredWorkoutTrackerArgs = {
-  id: Scalars['ID'];
-};
-
-
-export type MutationDeleteWorkoutExerciseTrackerManualEntryArgs = {
   id: Scalars['ID'];
 };
 
@@ -1693,7 +1686,6 @@ export type Query = {
   userPublicWorkouts: Array<WorkoutSummary>;
   userRecentlyViewedObjects: Array<UserRecentlyViewedObject>;
   userScheduledWorkouts: Array<ScheduledWorkout>;
-  userScoredWorkoutTrackers: Array<UserScoredWorkoutTracker>;
   userSleepWellLogs: Array<UserSleepWellLog>;
   userWorkoutPlans: Array<WorkoutPlanSummary>;
   userWorkoutTags: Array<WorkoutTag>;
@@ -2437,8 +2429,8 @@ export type UserEatWellLog = {
 export type UserFastestTimeExerciseTracker = {
   __typename?: 'UserFastestTimeExerciseTracker';
   Equipment?: Maybe<Equipment>;
+  ExerciseTrackerManualEntries: Array<ExerciseTrackerManualEntry>;
   Move: Move;
-  WorkoutExerciseTrackerManualEntries: Array<WorkoutExerciseTrackerManualEntry>;
   createdAt: Scalars['DateTime'];
   distanceUnit: DistanceUnit;
   id: Scalars['ID'];
@@ -2462,8 +2454,8 @@ export type UserGoal = {
 export type UserMaxLoadExerciseTracker = {
   __typename?: 'UserMaxLoadExerciseTracker';
   Equipment?: Maybe<Equipment>;
+  ExerciseTrackerManualEntries: Array<ExerciseTrackerManualEntry>;
   Move: Move;
-  WorkoutExerciseTrackerManualEntries: Array<WorkoutExerciseTrackerManualEntry>;
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
   loadUnit: LoadUnit;
@@ -2473,8 +2465,8 @@ export type UserMaxLoadExerciseTracker = {
 export type UserMaxUnbrokenExerciseTracker = {
   __typename?: 'UserMaxUnbrokenExerciseTracker';
   Equipment?: Maybe<Equipment>;
+  ExerciseTrackerManualEntries: Array<ExerciseTrackerManualEntry>;
   Move: Move;
-  WorkoutExerciseTrackerManualEntries: Array<WorkoutExerciseTrackerManualEntry>;
   createdAt: Scalars['DateTime'];
   distanceUnit: DistanceUnit;
   id: Scalars['ID'];
@@ -2549,14 +2541,6 @@ export type UserRecentlyViewedObject = {
   WorkoutPlan?: Maybe<WorkoutPlanSummary>;
 };
 
-export type UserScoredWorkoutTracker = {
-  __typename?: 'UserScoredWorkoutTracker';
-  Workout: WorkoutSummary;
-  WorkoutExerciseTrackerManualEntries: Array<WorkoutExerciseTrackerManualEntry>;
-  createdAt: Scalars['DateTime'];
-  id: Scalars['ID'];
-};
-
 export type UserSleepWellLog = {
   __typename?: 'UserSleepWellLog';
   createdAt: Scalars['DateTime'];
@@ -2596,16 +2580,6 @@ export type Workout = {
   lengthMinutes?: Maybe<Scalars['Int']>;
   name: Scalars['String'];
   updatedAt: Scalars['DateTime'];
-};
-
-export type WorkoutExerciseTrackerManualEntry = {
-  __typename?: 'WorkoutExerciseTrackerManualEntry';
-  completedOn: Scalars['DateTime'];
-  createdAt: Scalars['DateTime'];
-  id: Scalars['ID'];
-  score: Scalars['Float'];
-  videoThumbUri?: Maybe<Scalars['String']>;
-  videoUri?: Maybe<Scalars['String']>;
 };
 
 export type WorkoutFiltersInput = {
@@ -2962,6 +2936,7 @@ export type ResolversTypes = ResolversObject<{
   CreateCollectionInput: CreateCollectionInput;
   CreateCompletedWorkoutPlanDayWorkoutInput: CreateCompletedWorkoutPlanDayWorkoutInput;
   CreateEquipmentInput: CreateEquipmentInput;
+  CreateExerciseTrackerManualEntryInput: CreateExerciseTrackerManualEntryInput;
   CreateGymProfileInput: CreateGymProfileInput;
   CreateLoggedWorkoutInput: CreateLoggedWorkoutInput;
   CreateLoggedWorkoutMoveInLoggedWorkoutSetInput: CreateLoggedWorkoutMoveInLoggedWorkoutSetInput;
@@ -2982,9 +2957,7 @@ export type ResolversTypes = ResolversObject<{
   CreateUserMaxLoadExerciseTrackerInput: CreateUserMaxLoadExerciseTrackerInput;
   CreateUserMaxUnbrokenExerciseTrackerInput: CreateUserMaxUnbrokenExerciseTrackerInput;
   CreateUserMeditationLogInput: CreateUserMeditationLogInput;
-  CreateUserScoredWorkoutTrackerInput: CreateUserScoredWorkoutTrackerInput;
   CreateUserSleepWellLogInput: CreateUserSleepWellLogInput;
-  CreateWorkoutExerciseTrackerManualEntryInput: CreateWorkoutExerciseTrackerManualEntryInput;
   CreateWorkoutInput: CreateWorkoutInput;
   CreateWorkoutMoveInSetInput: CreateWorkoutMoveInSetInput;
   CreateWorkoutMoveInput: CreateWorkoutMoveInput;
@@ -3002,6 +2975,7 @@ export type ResolversTypes = ResolversObject<{
   DifficultyLevel: DifficultyLevel;
   DistanceUnit: DistanceUnit;
   Equipment: ResolverTypeWrapper<Equipment>;
+  ExerciseTrackerManualEntry: ResolverTypeWrapper<ExerciseTrackerManualEntry>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
   Gender: Gender;
   GymProfile: ResolverTypeWrapper<GymProfile>;
@@ -3098,11 +3072,9 @@ export type ResolversTypes = ResolversObject<{
   UserProfileScope: UserProfileScope;
   UserProfileSummary: ResolverTypeWrapper<UserProfileSummary>;
   UserRecentlyViewedObject: ResolverTypeWrapper<UserRecentlyViewedObject>;
-  UserScoredWorkoutTracker: ResolverTypeWrapper<UserScoredWorkoutTracker>;
   UserSleepWellLog: ResolverTypeWrapper<UserSleepWellLog>;
   WelcomeTodoItem: ResolverTypeWrapper<WelcomeTodoItem>;
   Workout: ResolverTypeWrapper<Workout>;
-  WorkoutExerciseTrackerManualEntry: ResolverTypeWrapper<WorkoutExerciseTrackerManualEntry>;
   WorkoutFiltersInput: WorkoutFiltersInput;
   WorkoutGoal: ResolverTypeWrapper<WorkoutGoal>;
   WorkoutMetaDataAdmin: ResolverTypeWrapper<WorkoutMetaDataAdmin>;
@@ -3169,6 +3141,7 @@ export type ResolversParentTypes = ResolversObject<{
   CreateCollectionInput: CreateCollectionInput;
   CreateCompletedWorkoutPlanDayWorkoutInput: CreateCompletedWorkoutPlanDayWorkoutInput;
   CreateEquipmentInput: CreateEquipmentInput;
+  CreateExerciseTrackerManualEntryInput: CreateExerciseTrackerManualEntryInput;
   CreateGymProfileInput: CreateGymProfileInput;
   CreateLoggedWorkoutInput: CreateLoggedWorkoutInput;
   CreateLoggedWorkoutMoveInLoggedWorkoutSetInput: CreateLoggedWorkoutMoveInLoggedWorkoutSetInput;
@@ -3189,9 +3162,7 @@ export type ResolversParentTypes = ResolversObject<{
   CreateUserMaxLoadExerciseTrackerInput: CreateUserMaxLoadExerciseTrackerInput;
   CreateUserMaxUnbrokenExerciseTrackerInput: CreateUserMaxUnbrokenExerciseTrackerInput;
   CreateUserMeditationLogInput: CreateUserMeditationLogInput;
-  CreateUserScoredWorkoutTrackerInput: CreateUserScoredWorkoutTrackerInput;
   CreateUserSleepWellLogInput: CreateUserSleepWellLogInput;
-  CreateWorkoutExerciseTrackerManualEntryInput: CreateWorkoutExerciseTrackerManualEntryInput;
   CreateWorkoutInput: CreateWorkoutInput;
   CreateWorkoutMoveInSetInput: CreateWorkoutMoveInSetInput;
   CreateWorkoutMoveInput: CreateWorkoutMoveInput;
@@ -3207,6 +3178,7 @@ export type ResolversParentTypes = ResolversObject<{
   DeleteClubInviteTokenInput: DeleteClubInviteTokenInput;
   DeleteCompletedWorkoutPlanDayWorkoutInput: DeleteCompletedWorkoutPlanDayWorkoutInput;
   Equipment: Equipment;
+  ExerciseTrackerManualEntry: ExerciseTrackerManualEntry;
   Float: Scalars['Float'];
   GymProfile: GymProfile;
   ID: Scalars['ID'];
@@ -3294,11 +3266,9 @@ export type ResolversParentTypes = ResolversObject<{
   UserProfile: UserProfile;
   UserProfileSummary: UserProfileSummary;
   UserRecentlyViewedObject: UserRecentlyViewedObject;
-  UserScoredWorkoutTracker: UserScoredWorkoutTracker;
   UserSleepWellLog: UserSleepWellLog;
   WelcomeTodoItem: WelcomeTodoItem;
   Workout: Workout;
-  WorkoutExerciseTrackerManualEntry: WorkoutExerciseTrackerManualEntry;
   WorkoutFiltersInput: WorkoutFiltersInput;
   WorkoutGoal: WorkoutGoal;
   WorkoutMetaDataAdmin: WorkoutMetaDataAdmin;
@@ -3543,6 +3513,16 @@ export type EquipmentResolvers<ContextType = any, ParentType extends ResolversPa
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type ExerciseTrackerManualEntryResolvers<ContextType = any, ParentType extends ResolversParentTypes['ExerciseTrackerManualEntry'] = ResolversParentTypes['ExerciseTrackerManualEntry']> = ResolversObject<{
+  completedOn?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  score?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  videoThumbUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  videoUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type GymProfileResolvers<ContextType = any, ParentType extends ResolversParentTypes['GymProfile'] = ResolversParentTypes['GymProfile']> = ResolversObject<{
   Equipments?: Resolver<Array<ResolversTypes['Equipment']>, ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -3677,6 +3657,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createCollection?: Resolver<ResolversTypes['Collection'], ParentType, ContextType, RequireFields<MutationCreateCollectionArgs, 'data'>>;
   createCompletedWorkoutPlanDayWorkout?: Resolver<ResolversTypes['WorkoutPlanEnrolment'], ParentType, ContextType, RequireFields<MutationCreateCompletedWorkoutPlanDayWorkoutArgs, 'data'>>;
   createEquipment?: Resolver<Maybe<ResolversTypes['Equipment']>, ParentType, ContextType, RequireFields<MutationCreateEquipmentArgs, 'data'>>;
+  createExerciseTrackerManualEntry?: Resolver<ResolversTypes['ExerciseTrackerManualEntry'], ParentType, ContextType, RequireFields<MutationCreateExerciseTrackerManualEntryArgs, 'data'>>;
   createGymProfile?: Resolver<ResolversTypes['GymProfile'], ParentType, ContextType, RequireFields<MutationCreateGymProfileArgs, 'data'>>;
   createLoggedWorkout?: Resolver<ResolversTypes['LoggedWorkout'], ParentType, ContextType, RequireFields<MutationCreateLoggedWorkoutArgs, 'data'>>;
   createMove?: Resolver<ResolversTypes['Move'], ParentType, ContextType, RequireFields<MutationCreateMoveArgs, 'data'>>;
@@ -3692,10 +3673,8 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createUserMaxLoadExerciseTracker?: Resolver<ResolversTypes['UserMaxLoadExerciseTracker'], ParentType, ContextType, RequireFields<MutationCreateUserMaxLoadExerciseTrackerArgs, 'data'>>;
   createUserMaxUnbrokenExerciseTracker?: Resolver<ResolversTypes['UserMaxUnbrokenExerciseTracker'], ParentType, ContextType, RequireFields<MutationCreateUserMaxUnbrokenExerciseTrackerArgs, 'data'>>;
   createUserMeditationLog?: Resolver<ResolversTypes['UserMeditationLog'], ParentType, ContextType, RequireFields<MutationCreateUserMeditationLogArgs, 'data'>>;
-  createUserScoredWorkoutTracker?: Resolver<ResolversTypes['UserScoredWorkoutTracker'], ParentType, ContextType, RequireFields<MutationCreateUserScoredWorkoutTrackerArgs, 'data'>>;
   createUserSleepWellLog?: Resolver<ResolversTypes['UserSleepWellLog'], ParentType, ContextType, RequireFields<MutationCreateUserSleepWellLogArgs, 'data'>>;
   createWorkout?: Resolver<ResolversTypes['Workout'], ParentType, ContextType, RequireFields<MutationCreateWorkoutArgs, 'data'>>;
-  createWorkoutExerciseTrackerManualEntry?: Resolver<ResolversTypes['WorkoutExerciseTrackerManualEntry'], ParentType, ContextType, RequireFields<MutationCreateWorkoutExerciseTrackerManualEntryArgs, 'data'>>;
   createWorkoutMove?: Resolver<ResolversTypes['WorkoutMove'], ParentType, ContextType, RequireFields<MutationCreateWorkoutMoveArgs, 'data'>>;
   createWorkoutPlan?: Resolver<ResolversTypes['WorkoutPlan'], ParentType, ContextType, RequireFields<MutationCreateWorkoutPlanArgs, 'data'>>;
   createWorkoutPlanDayWithWorkout?: Resolver<ResolversTypes['WorkoutPlanDay'], ParentType, ContextType, RequireFields<MutationCreateWorkoutPlanDayWithWorkoutArgs, 'data'>>;
@@ -3712,6 +3691,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   deleteClubMembersFeedPost?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteClubMembersFeedPostArgs, 'activityId'>>;
   deleteCollectionById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteCollectionByIdArgs, 'id'>>;
   deleteCompletedWorkoutPlanDayWorkout?: Resolver<ResolversTypes['WorkoutPlanEnrolment'], ParentType, ContextType, RequireFields<MutationDeleteCompletedWorkoutPlanDayWorkoutArgs, 'data'>>;
+  deleteExerciseTrackerManualEntry?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteExerciseTrackerManualEntryArgs, 'id'>>;
   deleteGymProfileById?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType, RequireFields<MutationDeleteGymProfileByIdArgs, 'id'>>;
   deleteLoggedWorkoutById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteLoggedWorkoutByIdArgs, 'id'>>;
   deleteLoggedWorkoutMove?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteLoggedWorkoutMoveArgs, 'id'>>;
@@ -3724,8 +3704,6 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   deleteUserGoal?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteUserGoalArgs, 'id'>>;
   deleteUserMaxLoadExerciseTracker?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteUserMaxLoadExerciseTrackerArgs, 'id'>>;
   deleteUserMaxUnbrokenExerciseTracker?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteUserMaxUnbrokenExerciseTrackerArgs, 'id'>>;
-  deleteUserScoredWorkoutTracker?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteUserScoredWorkoutTrackerArgs, 'id'>>;
-  deleteWorkoutExerciseTrackerManualEntry?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteWorkoutExerciseTrackerManualEntryArgs, 'id'>>;
   deleteWorkoutMoveById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteWorkoutMoveByIdArgs, 'id'>>;
   deleteWorkoutPlanDayWorkoutById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteWorkoutPlanDayWorkoutByIdArgs, 'id'>>;
   deleteWorkoutPlanDaysById?: Resolver<Array<ResolversTypes['ID']>, ParentType, ContextType, RequireFields<MutationDeleteWorkoutPlanDaysByIdArgs, 'ids'>>;
@@ -3862,7 +3840,6 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   userPublicWorkouts?: Resolver<Array<ResolversTypes['WorkoutSummary']>, ParentType, ContextType, RequireFields<QueryUserPublicWorkoutsArgs, 'userId'>>;
   userRecentlyViewedObjects?: Resolver<Array<ResolversTypes['UserRecentlyViewedObject']>, ParentType, ContextType>;
   userScheduledWorkouts?: Resolver<Array<ResolversTypes['ScheduledWorkout']>, ParentType, ContextType>;
-  userScoredWorkoutTrackers?: Resolver<Array<ResolversTypes['UserScoredWorkoutTracker']>, ParentType, ContextType>;
   userSleepWellLogs?: Resolver<Array<ResolversTypes['UserSleepWellLog']>, ParentType, ContextType>;
   userWorkoutPlans?: Resolver<Array<ResolversTypes['WorkoutPlanSummary']>, ParentType, ContextType>;
   userWorkoutTags?: Resolver<Array<ResolversTypes['WorkoutTag']>, ParentType, ContextType>;
@@ -4065,8 +4042,8 @@ export type UserEatWellLogResolvers<ContextType = any, ParentType extends Resolv
 
 export type UserFastestTimeExerciseTrackerResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserFastestTimeExerciseTracker'] = ResolversParentTypes['UserFastestTimeExerciseTracker']> = ResolversObject<{
   Equipment?: Resolver<Maybe<ResolversTypes['Equipment']>, ParentType, ContextType>;
+  ExerciseTrackerManualEntries?: Resolver<Array<ResolversTypes['ExerciseTrackerManualEntry']>, ParentType, ContextType>;
   Move?: Resolver<ResolversTypes['Move'], ParentType, ContextType>;
-  WorkoutExerciseTrackerManualEntries?: Resolver<Array<ResolversTypes['WorkoutExerciseTrackerManualEntry']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   distanceUnit?: Resolver<ResolversTypes['DistanceUnit'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
@@ -4090,8 +4067,8 @@ export type UserGoalResolvers<ContextType = any, ParentType extends ResolversPar
 
 export type UserMaxLoadExerciseTrackerResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserMaxLoadExerciseTracker'] = ResolversParentTypes['UserMaxLoadExerciseTracker']> = ResolversObject<{
   Equipment?: Resolver<Maybe<ResolversTypes['Equipment']>, ParentType, ContextType>;
+  ExerciseTrackerManualEntries?: Resolver<Array<ResolversTypes['ExerciseTrackerManualEntry']>, ParentType, ContextType>;
   Move?: Resolver<ResolversTypes['Move'], ParentType, ContextType>;
-  WorkoutExerciseTrackerManualEntries?: Resolver<Array<ResolversTypes['WorkoutExerciseTrackerManualEntry']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   loadUnit?: Resolver<ResolversTypes['LoadUnit'], ParentType, ContextType>;
@@ -4101,8 +4078,8 @@ export type UserMaxLoadExerciseTrackerResolvers<ContextType = any, ParentType ex
 
 export type UserMaxUnbrokenExerciseTrackerResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserMaxUnbrokenExerciseTracker'] = ResolversParentTypes['UserMaxUnbrokenExerciseTracker']> = ResolversObject<{
   Equipment?: Resolver<Maybe<ResolversTypes['Equipment']>, ParentType, ContextType>;
+  ExerciseTrackerManualEntries?: Resolver<Array<ResolversTypes['ExerciseTrackerManualEntry']>, ParentType, ContextType>;
   Move?: Resolver<ResolversTypes['Move'], ParentType, ContextType>;
-  WorkoutExerciseTrackerManualEntries?: Resolver<Array<ResolversTypes['WorkoutExerciseTrackerManualEntry']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   distanceUnit?: Resolver<ResolversTypes['DistanceUnit'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
@@ -4174,14 +4151,6 @@ export type UserRecentlyViewedObjectResolvers<ContextType = any, ParentType exte
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export type UserScoredWorkoutTrackerResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserScoredWorkoutTracker'] = ResolversParentTypes['UserScoredWorkoutTracker']> = ResolversObject<{
-  Workout?: Resolver<ResolversTypes['WorkoutSummary'], ParentType, ContextType>;
-  WorkoutExerciseTrackerManualEntries?: Resolver<Array<ResolversTypes['WorkoutExerciseTrackerManualEntry']>, ParentType, ContextType>;
-  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
 export type UserSleepWellLogResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserSleepWellLog'] = ResolversParentTypes['UserSleepWellLog']> = ResolversObject<{
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   dayNumber?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -4220,16 +4189,6 @@ export type WorkoutResolvers<ContextType = any, ParentType extends ResolversPare
   lengthMinutes?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type WorkoutExerciseTrackerManualEntryResolvers<ContextType = any, ParentType extends ResolversParentTypes['WorkoutExerciseTrackerManualEntry'] = ResolversParentTypes['WorkoutExerciseTrackerManualEntry']> = ResolversObject<{
-  completedOn?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  score?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
-  videoThumbUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  videoUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -4460,6 +4419,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   CoreData?: CoreDataResolvers<ContextType>;
   DateTime?: GraphQLScalarType;
   Equipment?: EquipmentResolvers<ContextType>;
+  ExerciseTrackerManualEntry?: ExerciseTrackerManualEntryResolvers<ContextType>;
   GymProfile?: GymProfileResolvers<ContextType>;
   InviteTokenError?: InviteTokenErrorResolvers<ContextType>;
   JSON?: GraphQLScalarType;
@@ -4501,11 +4461,9 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   UserProfile?: UserProfileResolvers<ContextType>;
   UserProfileSummary?: UserProfileSummaryResolvers<ContextType>;
   UserRecentlyViewedObject?: UserRecentlyViewedObjectResolvers<ContextType>;
-  UserScoredWorkoutTracker?: UserScoredWorkoutTrackerResolvers<ContextType>;
   UserSleepWellLog?: UserSleepWellLogResolvers<ContextType>;
   WelcomeTodoItem?: WelcomeTodoItemResolvers<ContextType>;
   Workout?: WorkoutResolvers<ContextType>;
-  WorkoutExerciseTrackerManualEntry?: WorkoutExerciseTrackerManualEntryResolvers<ContextType>;
   WorkoutGoal?: WorkoutGoalResolvers<ContextType>;
   WorkoutMetaDataAdmin?: WorkoutMetaDataAdminResolvers<ContextType>;
   WorkoutMove?: WorkoutMoveResolvers<ContextType>;

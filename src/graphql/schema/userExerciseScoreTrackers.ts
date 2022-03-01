@@ -2,17 +2,6 @@ import { gql } from 'apollo-server-express'
 
 /// Models that a user can use to track their personal bests / scores for both exercises (1 rep max etc) and for scored workouts (AMRAPS).
 export default gql`
-  type UserScoredWorkoutTracker {
-    id: ID!
-    createdAt: DateTime!
-    Workout: WorkoutSummary!
-    WorkoutExerciseTrackerManualEntries: [WorkoutExerciseTrackerManualEntry!]!
-  }
-
-  input CreateUserScoredWorkoutTrackerInput {
-    Workout: ConnectRelationInput!
-  }
-
   type UserMaxLoadExerciseTracker {
     id: ID!
     createdAt: DateTime!
@@ -20,7 +9,7 @@ export default gql`
     loadUnit: LoadUnit!
     Move: Move!
     Equipment: Equipment
-    WorkoutExerciseTrackerManualEntries: [WorkoutExerciseTrackerManualEntry!]!
+    ExerciseTrackerManualEntries: [ExerciseTrackerManualEntry!]!
   }
 
   input CreateUserMaxLoadExerciseTrackerInput {
@@ -40,7 +29,7 @@ export default gql`
     loadUnit: LoadUnit!
     Move: Move!
     Equipment: Equipment
-    WorkoutExerciseTrackerManualEntries: [WorkoutExerciseTrackerManualEntry!]!
+    ExerciseTrackerManualEntries: [ExerciseTrackerManualEntry!]!
   }
 
   input CreateUserFastestTimeExerciseTrackerInput {
@@ -63,7 +52,7 @@ export default gql`
     loadUnit: LoadUnit!
     Move: Move!
     Equipment: Equipment
-    WorkoutExerciseTrackerManualEntries: [WorkoutExerciseTrackerManualEntry!]!
+    ExerciseTrackerManualEntries: [ExerciseTrackerManualEntry!]!
   }
 
   input CreateUserMaxUnbrokenExerciseTrackerInput {
@@ -79,7 +68,7 @@ export default gql`
   # Generally, exercise tracking widgets auto calc best scores based on user's log history.
   # However, users can also add manual entries which will be included in the generated PB reports.
   # They can add scores achieved outside of the app / not in a workout setting.
-  type WorkoutExerciseTrackerManualEntry {
+  type ExerciseTrackerManualEntry {
     id: ID!
     createdAt: DateTime!
     completedOn: DateTime!
@@ -88,14 +77,13 @@ export default gql`
     videoThumbUri: String
   }
 
-  input CreateWorkoutExerciseTrackerManualEntryInput {
+  input CreateExerciseTrackerManualEntryInput {
     completedOn: DateTime!
     # Will represent milliseconds, reps, cals or whatever the specified distance Unit of the parent tracker has been set as.
     score: Float!
     videoUri: String
     videoThumbUri: String
     # Attach to a parent tracker. Only one of these (XOR) should ever be present.
-    UserScoredWorkoutTracker: ConnectRelationInput
     UserMaxLoadExerciseTracker: ConnectRelationInput
     UserFastestTimeExerciseTracker: ConnectRelationInput
     UserMaxUnbrokenExerciseTracker: ConnectRelationInput
