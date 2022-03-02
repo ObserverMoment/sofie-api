@@ -293,10 +293,19 @@ export default gql`
       data: CreateUserMaxUnbrokenExerciseTrackerInput!
     ): UserMaxUnbrokenExerciseTracker!
     deleteUserMaxUnbrokenExerciseTracker(id: ID!): ID!
-    createExerciseTrackerManualEntry(
-      data: CreateExerciseTrackerManualEntryInput!
-    ): ExerciseTrackerManualEntry!
-    deleteExerciseTrackerManualEntry(id: ID!): ID!
+    # Manual Entries for each type #
+    createUserMaxLoadTrackerManualEntry(
+      data: CreateUserMaxLoadTrackerManualEntryInput!
+    ): UserMaxLoadTrackerManualEntry!
+    deleteUserMaxLoadTrackerManualEntry(id: ID!): ID!
+    createUserFastestTimeTrackerManualEntry(
+      data: CreateUserFastestTimeTrackerManualEntryInput!
+    ): UserFastestTimeTrackerManualEntry!
+    deleteUserFastestTimeTrackerManualEntry(id: ID!): ID!
+    createUserMaxUnbrokenTrackerManualEntry(
+      data: CreateUserMaxUnbrokenTrackerManualEntryInput!
+    ): UserMaxUnbrokenTrackerManualEntry!
+    deleteUserMaxUnbrokenTrackerManualEntry(id: ID!): ID!
     #### User Skills and Certifications ####
     createSkill(data: CreateSkillInput!): Skill!
     updateSkill(data: UpdateSkillInput!): Skill!

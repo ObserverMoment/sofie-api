@@ -187,8 +187,12 @@ import {
   deleteUserFastestTimeExerciseTracker,
   createUserMaxUnbrokenExerciseTracker,
   deleteUserMaxUnbrokenExerciseTracker,
-  createExerciseTrackerManualEntry,
-  deleteExerciseTrackerManualEntry,
+  createUserMaxLoadTrackerManualEntry,
+  deleteUserMaxLoadTrackerManualEntry,
+  createUserFastestTimeTrackerManualEntry,
+  deleteUserFastestTimeTrackerManualEntry,
+  createUserMaxUnbrokenTrackerManualEntry,
+  deleteUserMaxUnbrokenTrackerManualEntry,
 } from './userExerciseScoreTrackers'
 
 import {
@@ -541,8 +545,13 @@ const resolvers: Resolvers = {
     deleteUserFastestTimeExerciseTracker,
     createUserMaxUnbrokenExerciseTracker,
     deleteUserMaxUnbrokenExerciseTracker,
-    createExerciseTrackerManualEntry,
-    deleteExerciseTrackerManualEntry,
+    /// Manual Entries for each tracker type ///
+    createUserMaxLoadTrackerManualEntry,
+    deleteUserMaxLoadTrackerManualEntry,
+    createUserFastestTimeTrackerManualEntry,
+    deleteUserFastestTimeTrackerManualEntry,
+    createUserMaxUnbrokenTrackerManualEntry,
+    deleteUserMaxUnbrokenTrackerManualEntry,
     ////////////////////////
     //// User Collection ////
     ////////////////////////

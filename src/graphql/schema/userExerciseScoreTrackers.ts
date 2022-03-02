@@ -9,7 +9,7 @@ export default gql`
     loadUnit: LoadUnit!
     Move: Move!
     Equipment: Equipment
-    ExerciseTrackerManualEntries: [ExerciseTrackerManualEntry!]!
+    ManualEntries: [UserMaxLoadTrackerManualEntry!]!
   }
 
   input CreateUserMaxLoadExerciseTrackerInput {
@@ -29,7 +29,7 @@ export default gql`
     loadUnit: LoadUnit!
     Move: Move!
     Equipment: Equipment
-    ExerciseTrackerManualEntries: [ExerciseTrackerManualEntry!]!
+    ManualEntries: [UserFastestTimeTrackerManualEntry!]!
   }
 
   input CreateUserFastestTimeExerciseTrackerInput {
@@ -52,7 +52,7 @@ export default gql`
     loadUnit: LoadUnit!
     Move: Move!
     Equipment: Equipment
-    ExerciseTrackerManualEntries: [ExerciseTrackerManualEntry!]!
+    ManualEntries: [UserMaxUnbrokenTrackerManualEntry!]!
   }
 
   input CreateUserMaxUnbrokenExerciseTrackerInput {
@@ -68,24 +68,48 @@ export default gql`
   # Generally, exercise tracking widgets auto calc best scores based on user's log history.
   # However, users can also add manual entries which will be included in the generated PB reports.
   # They can add scores achieved outside of the app / not in a workout setting.
-  type ExerciseTrackerManualEntry {
+  type UserMaxLoadTrackerManualEntry {
     id: ID!
     createdAt: DateTime!
     completedOn: DateTime!
-    score: Float! # Will represent milliseconds, reps, cals or whatever the specified distance Unit of the parent tracker has been set as.
+    loadAmount: Float!
     videoUri: String
-    videoThumbUri: String
   }
 
-  input CreateExerciseTrackerManualEntryInput {
+  input CreateUserMaxLoadTrackerManualEntryInput {
     completedOn: DateTime!
-    # Will represent milliseconds, reps, cals or whatever the specified distance Unit of the parent tracker has been set as.
-    score: Float!
+    loadAmount: Float!
     videoUri: String
-    videoThumbUri: String
-    # Attach to a parent tracker. Only one of these (XOR) should ever be present.
-    UserMaxLoadExerciseTracker: ConnectRelationInput
-    UserFastestTimeExerciseTracker: ConnectRelationInput
-    UserMaxUnbrokenExerciseTracker: ConnectRelationInput
+    UserMaxLoadExerciseTracker: ConnectRelationInput!
+  }
+
+  type UserFastestTimeTrackerManualEntry {
+    id: ID!
+    createdAt: DateTime!
+    completedOn: DateTime!
+    timeTakenMs: Int!
+    videoUri: String
+  }
+
+  input CreateUserFastestTimeTrackerManualEntryInput {
+    completedOn: DateTime!
+    timeTakenMs: Int!
+    videoUri: String
+    UserFastestTimeExerciseTracker: ConnectRelationInput!
+  }
+
+  type UserMaxUnbrokenTrackerManualEntry {
+    id: ID!
+    createdAt: DateTime!
+    completedOn: DateTime!
+    score: Int! # Could be REPS, CALS or milliseconds depending on the parent tracker settings.
+    videoUri: String
+  }
+
+  input CreateUserMaxUnbrokenTrackerManualEntryInput {
+    completedOn: DateTime!
+    score: Int! # Could be REPS, CALS or milliseconds depending on the parent tracker settings.
+    videoUri: String
+    UserMaxUnbrokenExerciseTracker: ConnectRelationInput!
   }
 `
