@@ -74,12 +74,14 @@ export default gql`
     completedOn: DateTime!
     loadAmount: Float!
     videoUri: String
+    videoThumbUri: String
   }
 
   input CreateUserMaxLoadTrackerManualEntryInput {
     completedOn: DateTime!
     loadAmount: Float!
     videoUri: String
+    videoThumbUri: String
     UserMaxLoadExerciseTracker: ConnectRelationInput!
   }
 
@@ -89,12 +91,14 @@ export default gql`
     completedOn: DateTime!
     timeTakenMs: Int!
     videoUri: String
+    videoThumbUri: String
   }
 
   input CreateUserFastestTimeTrackerManualEntryInput {
     completedOn: DateTime!
     timeTakenMs: Int!
     videoUri: String
+    videoThumbUri: String
     UserFastestTimeExerciseTracker: ConnectRelationInput!
   }
 
@@ -104,12 +108,14 @@ export default gql`
     completedOn: DateTime!
     score: Int! # Could be REPS, CALS or milliseconds depending on the parent tracker settings.
     videoUri: String
+    videoThumbUri: String
   }
 
   input CreateUserMaxUnbrokenTrackerManualEntryInput {
     completedOn: DateTime!
     score: Int! # Could be REPS, CALS or milliseconds depending on the parent tracker settings.
     videoUri: String
+    videoThumbUri: String
     UserMaxUnbrokenExerciseTracker: ConnectRelationInput!
   }
 `

@@ -477,6 +477,7 @@ export type CreateUserFastestTimeTrackerManualEntryInput = {
   UserFastestTimeExerciseTracker: ConnectRelationInput;
   completedOn: Scalars['DateTime'];
   timeTakenMs: Scalars['Int'];
+  videoThumbUri?: InputMaybe<Scalars['String']>;
   videoUri?: InputMaybe<Scalars['String']>;
 };
 
@@ -497,6 +498,7 @@ export type CreateUserMaxLoadTrackerManualEntryInput = {
   UserMaxLoadExerciseTracker: ConnectRelationInput;
   completedOn: Scalars['DateTime'];
   loadAmount: Scalars['Float'];
+  videoThumbUri?: InputMaybe<Scalars['String']>;
   videoUri?: InputMaybe<Scalars['String']>;
 };
 
@@ -513,6 +515,7 @@ export type CreateUserMaxUnbrokenTrackerManualEntryInput = {
   UserMaxUnbrokenExerciseTracker: ConnectRelationInput;
   completedOn: Scalars['DateTime'];
   score: Scalars['Int'];
+  videoThumbUri?: InputMaybe<Scalars['String']>;
   videoUri?: InputMaybe<Scalars['String']>;
 };
 
@@ -829,12 +832,12 @@ export type Mutation = {
   createUserDayLogMood: UserDayLogMood;
   createUserEatWellLog: UserEatWellLog;
   createUserFastestTimeExerciseTracker: UserFastestTimeExerciseTracker;
-  createUserFastestTimeTrackerManualEntry: UserFastestTimeTrackerManualEntry;
+  createUserFastestTimeTrackerManualEntry: UserFastestTimeExerciseTracker;
   createUserGoal: UserGoal;
   createUserMaxLoadExerciseTracker: UserMaxLoadExerciseTracker;
-  createUserMaxLoadTrackerManualEntry: UserMaxLoadTrackerManualEntry;
+  createUserMaxLoadTrackerManualEntry: UserMaxLoadExerciseTracker;
   createUserMaxUnbrokenExerciseTracker: UserMaxUnbrokenExerciseTracker;
-  createUserMaxUnbrokenTrackerManualEntry: UserMaxUnbrokenTrackerManualEntry;
+  createUserMaxUnbrokenTrackerManualEntry: UserMaxUnbrokenExerciseTracker;
   createUserMeditationLog: UserMeditationLog;
   createUserSleepWellLog: UserSleepWellLog;
   createWorkout: Workout;
@@ -863,12 +866,12 @@ export type Mutation = {
   deleteUserBenchmarkEntry: Scalars['ID'];
   deleteUserDayLogMood: Scalars['ID'];
   deleteUserFastestTimeExerciseTracker: Scalars['ID'];
-  deleteUserFastestTimeTrackerManualEntry: Scalars['ID'];
+  deleteUserFastestTimeTrackerManualEntry: UserFastestTimeExerciseTracker;
   deleteUserGoal: Scalars['ID'];
   deleteUserMaxLoadExerciseTracker: Scalars['ID'];
-  deleteUserMaxLoadTrackerManualEntry: Scalars['ID'];
+  deleteUserMaxLoadTrackerManualEntry: UserMaxLoadExerciseTracker;
   deleteUserMaxUnbrokenExerciseTracker: Scalars['ID'];
-  deleteUserMaxUnbrokenTrackerManualEntry: Scalars['ID'];
+  deleteUserMaxUnbrokenTrackerManualEntry: UserMaxUnbrokenExerciseTracker;
   deleteWorkoutMoveById: Scalars['ID'];
   deleteWorkoutPlanDayWorkoutById: Scalars['ID'];
   deleteWorkoutPlanDaysById: Array<Scalars['ID']>;
@@ -1269,7 +1272,8 @@ export type MutationDeleteUserFastestTimeExerciseTrackerArgs = {
 
 
 export type MutationDeleteUserFastestTimeTrackerManualEntryArgs = {
-  id: Scalars['ID'];
+  entryId: Scalars['ID'];
+  parentId: Scalars['ID'];
 };
 
 
@@ -1284,7 +1288,8 @@ export type MutationDeleteUserMaxLoadExerciseTrackerArgs = {
 
 
 export type MutationDeleteUserMaxLoadTrackerManualEntryArgs = {
-  id: Scalars['ID'];
+  entryId: Scalars['ID'];
+  parentId: Scalars['ID'];
 };
 
 
@@ -1294,7 +1299,8 @@ export type MutationDeleteUserMaxUnbrokenExerciseTrackerArgs = {
 
 
 export type MutationDeleteUserMaxUnbrokenTrackerManualEntryArgs = {
-  id: Scalars['ID'];
+  entryId: Scalars['ID'];
+  parentId: Scalars['ID'];
 };
 
 
@@ -2471,6 +2477,7 @@ export type UserFastestTimeTrackerManualEntry = {
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
   timeTakenMs: Scalars['Int'];
+  videoThumbUri?: Maybe<Scalars['String']>;
   videoUri?: Maybe<Scalars['String']>;
 };
 
@@ -2502,6 +2509,7 @@ export type UserMaxLoadTrackerManualEntry = {
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
   loadAmount: Scalars['Float'];
+  videoThumbUri?: Maybe<Scalars['String']>;
   videoUri?: Maybe<Scalars['String']>;
 };
 
@@ -2524,6 +2532,7 @@ export type UserMaxUnbrokenTrackerManualEntry = {
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
   score: Scalars['Int'];
+  videoThumbUri?: Maybe<Scalars['String']>;
   videoUri?: Maybe<Scalars['String']>;
 };
 
@@ -3718,12 +3727,12 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createUserDayLogMood?: Resolver<ResolversTypes['UserDayLogMood'], ParentType, ContextType, RequireFields<MutationCreateUserDayLogMoodArgs, 'data'>>;
   createUserEatWellLog?: Resolver<ResolversTypes['UserEatWellLog'], ParentType, ContextType, RequireFields<MutationCreateUserEatWellLogArgs, 'data'>>;
   createUserFastestTimeExerciseTracker?: Resolver<ResolversTypes['UserFastestTimeExerciseTracker'], ParentType, ContextType, RequireFields<MutationCreateUserFastestTimeExerciseTrackerArgs, 'data'>>;
-  createUserFastestTimeTrackerManualEntry?: Resolver<ResolversTypes['UserFastestTimeTrackerManualEntry'], ParentType, ContextType, RequireFields<MutationCreateUserFastestTimeTrackerManualEntryArgs, 'data'>>;
+  createUserFastestTimeTrackerManualEntry?: Resolver<ResolversTypes['UserFastestTimeExerciseTracker'], ParentType, ContextType, RequireFields<MutationCreateUserFastestTimeTrackerManualEntryArgs, 'data'>>;
   createUserGoal?: Resolver<ResolversTypes['UserGoal'], ParentType, ContextType, RequireFields<MutationCreateUserGoalArgs, 'data'>>;
   createUserMaxLoadExerciseTracker?: Resolver<ResolversTypes['UserMaxLoadExerciseTracker'], ParentType, ContextType, RequireFields<MutationCreateUserMaxLoadExerciseTrackerArgs, 'data'>>;
-  createUserMaxLoadTrackerManualEntry?: Resolver<ResolversTypes['UserMaxLoadTrackerManualEntry'], ParentType, ContextType, RequireFields<MutationCreateUserMaxLoadTrackerManualEntryArgs, 'data'>>;
+  createUserMaxLoadTrackerManualEntry?: Resolver<ResolversTypes['UserMaxLoadExerciseTracker'], ParentType, ContextType, RequireFields<MutationCreateUserMaxLoadTrackerManualEntryArgs, 'data'>>;
   createUserMaxUnbrokenExerciseTracker?: Resolver<ResolversTypes['UserMaxUnbrokenExerciseTracker'], ParentType, ContextType, RequireFields<MutationCreateUserMaxUnbrokenExerciseTrackerArgs, 'data'>>;
-  createUserMaxUnbrokenTrackerManualEntry?: Resolver<ResolversTypes['UserMaxUnbrokenTrackerManualEntry'], ParentType, ContextType, RequireFields<MutationCreateUserMaxUnbrokenTrackerManualEntryArgs, 'data'>>;
+  createUserMaxUnbrokenTrackerManualEntry?: Resolver<ResolversTypes['UserMaxUnbrokenExerciseTracker'], ParentType, ContextType, RequireFields<MutationCreateUserMaxUnbrokenTrackerManualEntryArgs, 'data'>>;
   createUserMeditationLog?: Resolver<ResolversTypes['UserMeditationLog'], ParentType, ContextType, RequireFields<MutationCreateUserMeditationLogArgs, 'data'>>;
   createUserSleepWellLog?: Resolver<ResolversTypes['UserSleepWellLog'], ParentType, ContextType, RequireFields<MutationCreateUserSleepWellLogArgs, 'data'>>;
   createWorkout?: Resolver<ResolversTypes['Workout'], ParentType, ContextType, RequireFields<MutationCreateWorkoutArgs, 'data'>>;
@@ -3752,12 +3761,12 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   deleteUserBenchmarkEntry?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteUserBenchmarkEntryArgs, 'id'>>;
   deleteUserDayLogMood?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteUserDayLogMoodArgs, 'id'>>;
   deleteUserFastestTimeExerciseTracker?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteUserFastestTimeExerciseTrackerArgs, 'id'>>;
-  deleteUserFastestTimeTrackerManualEntry?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteUserFastestTimeTrackerManualEntryArgs, 'id'>>;
+  deleteUserFastestTimeTrackerManualEntry?: Resolver<ResolversTypes['UserFastestTimeExerciseTracker'], ParentType, ContextType, RequireFields<MutationDeleteUserFastestTimeTrackerManualEntryArgs, 'entryId' | 'parentId'>>;
   deleteUserGoal?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteUserGoalArgs, 'id'>>;
   deleteUserMaxLoadExerciseTracker?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteUserMaxLoadExerciseTrackerArgs, 'id'>>;
-  deleteUserMaxLoadTrackerManualEntry?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteUserMaxLoadTrackerManualEntryArgs, 'id'>>;
+  deleteUserMaxLoadTrackerManualEntry?: Resolver<ResolversTypes['UserMaxLoadExerciseTracker'], ParentType, ContextType, RequireFields<MutationDeleteUserMaxLoadTrackerManualEntryArgs, 'entryId' | 'parentId'>>;
   deleteUserMaxUnbrokenExerciseTracker?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteUserMaxUnbrokenExerciseTrackerArgs, 'id'>>;
-  deleteUserMaxUnbrokenTrackerManualEntry?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteUserMaxUnbrokenTrackerManualEntryArgs, 'id'>>;
+  deleteUserMaxUnbrokenTrackerManualEntry?: Resolver<ResolversTypes['UserMaxUnbrokenExerciseTracker'], ParentType, ContextType, RequireFields<MutationDeleteUserMaxUnbrokenTrackerManualEntryArgs, 'entryId' | 'parentId'>>;
   deleteWorkoutMoveById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteWorkoutMoveByIdArgs, 'id'>>;
   deleteWorkoutPlanDayWorkoutById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteWorkoutPlanDayWorkoutByIdArgs, 'id'>>;
   deleteWorkoutPlanDaysById?: Resolver<Array<ResolversTypes['ID']>, ParentType, ContextType, RequireFields<MutationDeleteWorkoutPlanDaysByIdArgs, 'ids'>>;
@@ -4113,6 +4122,7 @@ export type UserFastestTimeTrackerManualEntryResolvers<ContextType = any, Parent
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   timeTakenMs?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  videoThumbUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   videoUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
@@ -4144,6 +4154,7 @@ export type UserMaxLoadTrackerManualEntryResolvers<ContextType = any, ParentType
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   loadAmount?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  videoThumbUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   videoUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
@@ -4166,6 +4177,7 @@ export type UserMaxUnbrokenTrackerManualEntryResolvers<ContextType = any, Parent
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   score?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  videoThumbUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   videoUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;

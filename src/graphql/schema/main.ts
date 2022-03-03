@@ -294,18 +294,29 @@ export default gql`
     ): UserMaxUnbrokenExerciseTracker!
     deleteUserMaxUnbrokenExerciseTracker(id: ID!): ID!
     # Manual Entries for each type #
+    # These updates return the updated parent tracker #
+    # including the newly updated manual entries #
     createUserMaxLoadTrackerManualEntry(
       data: CreateUserMaxLoadTrackerManualEntryInput!
-    ): UserMaxLoadTrackerManualEntry!
-    deleteUserMaxLoadTrackerManualEntry(id: ID!): ID!
+    ): UserMaxLoadExerciseTracker!
+    deleteUserMaxLoadTrackerManualEntry(
+      entryId: ID!
+      parentId: ID!
+    ): UserMaxLoadExerciseTracker!
     createUserFastestTimeTrackerManualEntry(
       data: CreateUserFastestTimeTrackerManualEntryInput!
-    ): UserFastestTimeTrackerManualEntry!
-    deleteUserFastestTimeTrackerManualEntry(id: ID!): ID!
+    ): UserFastestTimeExerciseTracker!
+    deleteUserFastestTimeTrackerManualEntry(
+      entryId: ID!
+      parentId: ID!
+    ): UserFastestTimeExerciseTracker!
     createUserMaxUnbrokenTrackerManualEntry(
       data: CreateUserMaxUnbrokenTrackerManualEntryInput!
-    ): UserMaxUnbrokenTrackerManualEntry!
-    deleteUserMaxUnbrokenTrackerManualEntry(id: ID!): ID!
+    ): UserMaxUnbrokenExerciseTracker!
+    deleteUserMaxUnbrokenTrackerManualEntry(
+      entryId: ID!
+      parentId: ID!
+    ): UserMaxUnbrokenExerciseTracker!
     #### User Skills and Certifications ####
     createSkill(data: CreateSkillInput!): Skill!
     updateSkill(data: UpdateSkillInput!): Skill!

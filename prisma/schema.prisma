@@ -360,6 +360,7 @@ model UserMaxLoadTrackerManualEntry {
   completedOn                  DateTime
   loadAmount                   Float
   videoUri                     String?
+  videoThumbUri                String?
   UserMaxLoadExerciseTracker   UserMaxLoadExerciseTracker @relation(fields: [userMaxLoadExerciseTrackerId], references: [id])
   userMaxLoadExerciseTrackerId String
 }
@@ -372,6 +373,7 @@ model UserFastestTimeTrackerManualEntry {
   completedOn                      DateTime
   timeTakenMs                      Int
   videoUri                         String?
+  videoThumbUri                    String?
   UserFastestTimeExerciseTracker   UserFastestTimeExerciseTracker @relation(fields: [userFastestTimeExerciseTrackerId], references: [id])
   userFastestTimeExerciseTrackerId String
 }
@@ -384,6 +386,7 @@ model UserMaxUnbrokenTrackerManualEntry {
   completedOn                      DateTime
   score                            Int
   videoUri                         String?
+  videoThumbUri                    String?
   UserMaxUnbrokenExerciseTracker   UserMaxUnbrokenExerciseTracker @relation(fields: [userMaxUnbrokenExerciseTrackerId], references: [id])
   userMaxUnbrokenExerciseTrackerId String
 }

@@ -20,6 +20,7 @@ import {
   UserMaxUnbrokenExerciseTracker,
   UserMaxUnbrokenTrackerManualEntry,
 } from '../../generated/graphql'
+import { deleteFiles } from '../../lib/uploadcare'
 import { checkUserOwnsObject } from '../utils'
 
 //// Queries ////
@@ -230,22 +231,31 @@ export const createUserMaxLoadTrackerManualEntry = async (
 ) => {
   await checkUserOwnsObject(
     data.UserMaxLoadExerciseTracker.id,
-    'userMaxLoadTrackerManualEntry',
+    'userMaxLoadExerciseTracker',
     authedUserId,
     prisma,
   )
 
-  const entry = await prisma.userMaxLoadTrackerManualEntry.create({
+  /// Create the new entry.
+  await prisma.userMaxLoadTrackerManualEntry.create({
     data: {
       ...data,
       User: { connect: { id: authedUserId } },
       UserMaxLoadExerciseTracker: { connect: data.UserMaxLoadExerciseTracker },
     },
+  })
+
+  /// Get the updated parent.
+  const tracker = await prisma.userMaxLoadExerciseTracker.findUnique({
+    where: {
+      id: data.UserMaxLoadExerciseTracker.id,
+    },
     select,
   })
 
-  if (entry) {
-    return entry as UserMaxLoadTrackerManualEntry
+  if (tracker) {
+    /// return the full updated parent.
+    return tracker as UserMaxLoadExerciseTracker
   } else {
     throw new ApolloError(
       'createUserMaxLoadTrackerManualEntry: There was an issue.',
@@ -255,25 +265,44 @@ export const createUserMaxLoadTrackerManualEntry = async (
 
 export const deleteUserMaxLoadTrackerManualEntry = async (
   r: any,
-  { id }: MutationDeleteUserMaxLoadTrackerManualEntryArgs,
-  { authedUserId, prisma }: Context,
+  { entryId, parentId }: MutationDeleteUserMaxLoadTrackerManualEntryArgs,
+  { authedUserId, select, prisma }: Context,
 ) => {
   await checkUserOwnsObject(
-    id,
+    entryId,
     'userMaxLoadTrackerManualEntry',
     authedUserId,
     prisma,
   )
 
+  /// Delete the entry.
   const deleted = await prisma.userMaxLoadTrackerManualEntry.delete({
     where: {
-      id,
+      id: entryId,
     },
-    select: { id: true },
+    select: { videoUri: true, videoThumbUri: true },
   })
 
-  if (deleted) {
-    return deleted.id
+  const filesTodelete = []
+  if (deleted.videoUri) filesTodelete.push(deleted.videoUri)
+  if (deleted.videoThumbUri) filesTodelete.push(deleted.videoThumbUri)
+
+  /// Media clean up.
+  if (filesTodelete.length) {
+    await deleteFiles(filesTodelete)
+  }
+
+  /// Get the updated parent.
+  const tracker = await prisma.userMaxLoadExerciseTracker.findUnique({
+    where: {
+      id: parentId,
+    },
+    select,
+  })
+
+  if (tracker) {
+    /// return the full updated parent.
+    return tracker as UserMaxLoadExerciseTracker
   } else {
     throw new ApolloError(
       'deleteUserMaxLoadTrackerManualEntry: There was an issue.',
@@ -288,12 +317,13 @@ export const createUserFastestTimeTrackerManualEntry = async (
 ) => {
   await checkUserOwnsObject(
     data.UserFastestTimeExerciseTracker.id,
-    'userFastestTimeTrackerManualEntry',
+    'userFastestTimeExerciseTracker',
     authedUserId,
     prisma,
   )
 
-  const entry = await prisma.userFastestTimeTrackerManualEntry.create({
+  /// Create the new entry.
+  await prisma.userFastestTimeTrackerManualEntry.create({
     data: {
       ...data,
       User: { connect: { id: authedUserId } },
@@ -301,11 +331,18 @@ export const createUserFastestTimeTrackerManualEntry = async (
         connect: data.UserFastestTimeExerciseTracker,
       },
     },
+  })
+
+  /// Get the now updated parent.
+  const tracker = await prisma.userFastestTimeExerciseTracker.findUnique({
+    where: {
+      id: data.UserFastestTimeExerciseTracker.id,
+    },
     select,
   })
 
-  if (entry) {
-    return entry as UserFastestTimeTrackerManualEntry
+  if (tracker) {
+    return tracker as UserFastestTimeExerciseTracker
   } else {
     throw new ApolloError(
       'createUserFastestTimeTrackerManualEntry: There was an issue.',
@@ -315,25 +352,43 @@ export const createUserFastestTimeTrackerManualEntry = async (
 
 export const deleteUserFastestTimeTrackerManualEntry = async (
   r: any,
-  { id }: MutationDeleteUserFastestTimeTrackerManualEntryArgs,
-  { authedUserId, prisma }: Context,
+  { entryId, parentId }: MutationDeleteUserFastestTimeTrackerManualEntryArgs,
+  { authedUserId, select, prisma }: Context,
 ) => {
   await checkUserOwnsObject(
-    id,
+    entryId,
     'userFastestTimeTrackerManualEntry',
     authedUserId,
     prisma,
   )
 
+  /// Delete the entry.
   const deleted = await prisma.userFastestTimeTrackerManualEntry.delete({
     where: {
-      id,
+      id: entryId,
     },
-    select: { id: true },
+    select: { videoUri: true, videoThumbUri: true },
   })
 
-  if (deleted) {
-    return deleted.id
+  const filesTodelete = []
+  if (deleted.videoUri) filesTodelete.push(deleted.videoUri)
+  if (deleted.videoThumbUri) filesTodelete.push(deleted.videoThumbUri)
+
+  /// Media clean up.
+  if (filesTodelete.length) {
+    await deleteFiles(filesTodelete)
+  }
+
+  /// Get the updated parent.
+  const tracker = await prisma.userFastestTimeExerciseTracker.findUnique({
+    where: {
+      id: parentId,
+    },
+    select,
+  })
+
+  if (tracker) {
+    return tracker as UserFastestTimeExerciseTracker
   } else {
     throw new ApolloError(
       'deleteUserFastestTimeTrackerManualEntry: There was an issue.',
@@ -348,12 +403,13 @@ export const createUserMaxUnbrokenTrackerManualEntry = async (
 ) => {
   await checkUserOwnsObject(
     data.UserMaxUnbrokenExerciseTracker.id,
-    'userMaxUnbrokenTrackerManualEntry',
+    'userMaxUnbrokenExerciseTracker',
     authedUserId,
     prisma,
   )
 
-  const entry = await prisma.userMaxUnbrokenTrackerManualEntry.create({
+  /// Create the new entry.
+  await prisma.userMaxUnbrokenTrackerManualEntry.create({
     data: {
       ...data,
       User: { connect: { id: authedUserId } },
@@ -361,11 +417,18 @@ export const createUserMaxUnbrokenTrackerManualEntry = async (
         connect: data.UserMaxUnbrokenExerciseTracker,
       },
     },
+  })
+
+  /// Get the updated parent.
+  const tracker = await prisma.userMaxUnbrokenExerciseTracker.findUnique({
+    where: {
+      id: data.UserMaxUnbrokenExerciseTracker.id,
+    },
     select,
   })
 
-  if (entry) {
-    return entry as UserMaxUnbrokenTrackerManualEntry
+  if (tracker) {
+    return tracker as UserMaxUnbrokenExerciseTracker
   } else {
     throw new ApolloError(
       'createUserMaxUnbrokenTrackerManualEntry: There was an issue.',
@@ -375,25 +438,43 @@ export const createUserMaxUnbrokenTrackerManualEntry = async (
 
 export const deleteUserMaxUnbrokenTrackerManualEntry = async (
   r: any,
-  { id }: MutationDeleteUserMaxUnbrokenTrackerManualEntryArgs,
-  { authedUserId, prisma }: Context,
+  { entryId, parentId }: MutationDeleteUserMaxUnbrokenTrackerManualEntryArgs,
+  { authedUserId, select, prisma }: Context,
 ) => {
   await checkUserOwnsObject(
-    id,
+    entryId,
     'userMaxUnbrokenTrackerManualEntry',
     authedUserId,
     prisma,
   )
 
+  /// Delete the entry.
   const deleted = await prisma.userMaxUnbrokenTrackerManualEntry.delete({
     where: {
-      id,
+      id: entryId,
     },
-    select: { id: true },
+    select: { videoUri: true, videoThumbUri: true },
   })
 
-  if (deleted) {
-    return deleted.id
+  const filesTodelete = []
+  if (deleted.videoUri) filesTodelete.push(deleted.videoUri)
+  if (deleted.videoThumbUri) filesTodelete.push(deleted.videoThumbUri)
+
+  /// Media clean up.
+  if (filesTodelete.length) {
+    await deleteFiles(filesTodelete)
+  }
+
+  /// Get the updated parent.
+  const tracker = await prisma.userMaxUnbrokenExerciseTracker.findUnique({
+    where: {
+      id: parentId,
+    },
+    select,
+  })
+
+  if (tracker) {
+    return tracker as UserMaxUnbrokenExerciseTracker
   } else {
     throw new ApolloError(
       'deleteUserMaxUnbrokenTrackerManualEntry: There was an issue.',
