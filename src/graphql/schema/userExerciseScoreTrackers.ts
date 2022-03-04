@@ -45,22 +45,24 @@ export default gql`
   type UserMaxUnbrokenExerciseTracker {
     id: ID!
     createdAt: DateTime!
-    # When this is TIME - scores are logged as / converted to milliseconds. So no TimeUnit field is required on this model.
+    # When repType is TIME - scores are logged as / converted to milliseconds.
+    # When repType is DISTANCE - scores are logged as distanceUnit.
     repType: WorkoutMoveRepType!
-    distanceUnit: DistanceUnit!
     loadAmount: Float!
     loadUnit: LoadUnit!
+    distanceUnit: DistanceUnit!
     Move: Move!
     Equipment: Equipment
     ManualEntries: [UserMaxUnbrokenTrackerManualEntry!]!
   }
 
   input CreateUserMaxUnbrokenExerciseTrackerInput {
-    # When this is TIME - scores are logged as / converted to milliseconds. So no TimeUnit field is required on this model.
+    # When repType is TIME - scores are logged as / converted to milliseconds.
+    # When repType is DISTANCE - scores are logged as distanceUnit.
     repType: WorkoutMoveRepType!
-    distanceUnit: DistanceUnit!
     loadAmount: Float!
     loadUnit: LoadUnit!
+    distanceUnit: DistanceUnit!
     Move: ConnectRelationInput!
     Equipment: ConnectRelationInput
   }
@@ -106,14 +108,16 @@ export default gql`
     id: ID!
     createdAt: DateTime!
     completedOn: DateTime!
-    score: Int! # Could be REPS, CALS or milliseconds depending on the parent tracker settings.
+    # Could be REPS, CALS, METRES or MILLISECONDS depending on the parent tracker repType settings.
+    score: Int!
     videoUri: String
     videoThumbUri: String
   }
 
   input CreateUserMaxUnbrokenTrackerManualEntryInput {
     completedOn: DateTime!
-    score: Int! # Could be REPS, CALS or milliseconds depending on the parent tracker settings.
+    # Could be REPS, CALS, METRES or MILLISECONDS depending on the parent tracker repType settings.
+    score: Int!
     videoUri: String
     videoThumbUri: String
     UserMaxUnbrokenExerciseTracker: ConnectRelationInput!
