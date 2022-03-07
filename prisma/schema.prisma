@@ -280,6 +280,8 @@ model User {
   ClubsWhereAdmin                     Club[]                              @relation("admin")
   ClubsWhereMember                    Club[]                              @relation("member")
   BodyTrackingEntry                   BodyTrackingEntry[]
+  /// NOTE: These loggedWorkout sub fields should be plural.
+  /// TODO: Rename them.
   LoggedWorkoutSet                    LoggedWorkoutSet[]
   LoggedWorkoutMove                   LoggedWorkoutMove[]
   ClubMemberNotesAsAuthor             ClubMemberNote[]                    @relation("note_author")

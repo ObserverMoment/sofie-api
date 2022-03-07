@@ -2548,7 +2548,6 @@ export type UserMeditationLog = {
 
 export type UserProfile = {
   __typename?: 'UserProfile';
-  BenchmarksWithBestEntries: Array<UserBenchmarkWithBestEntry>;
   Clubs: Array<ClubSummary>;
   LifetimeLogStatsSummary?: Maybe<LifetimeLogStatsSummary>;
   Skills: Array<Skill>;
@@ -4193,7 +4192,6 @@ export type UserMeditationLogResolvers<ContextType = any, ParentType extends Res
 }>;
 
 export type UserProfileResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserProfile'] = ResolversParentTypes['UserProfile']> = ResolversObject<{
-  BenchmarksWithBestEntries?: Resolver<Array<ResolversTypes['UserBenchmarkWithBestEntry']>, ParentType, ContextType>;
   Clubs?: Resolver<Array<ResolversTypes['ClubSummary']>, ParentType, ContextType>;
   LifetimeLogStatsSummary?: Resolver<Maybe<ResolversTypes['LifetimeLogStatsSummary']>, ParentType, ContextType>;
   Skills?: Resolver<Array<ResolversTypes['Skill']>, ParentType, ContextType>;
