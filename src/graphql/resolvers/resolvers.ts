@@ -178,6 +178,24 @@ import {
 } from './userBenchmark'
 
 import {
+  userMaxLoadExerciseTrackers,
+  userFastestTimeExerciseTrackers,
+  userMaxUnbrokenExerciseTrackers,
+  createUserMaxLoadExerciseTracker,
+  deleteUserMaxLoadExerciseTracker,
+  createUserFastestTimeExerciseTracker,
+  deleteUserFastestTimeExerciseTracker,
+  createUserMaxUnbrokenExerciseTracker,
+  deleteUserMaxUnbrokenExerciseTracker,
+  createUserMaxLoadTrackerManualEntry,
+  deleteUserMaxLoadTrackerManualEntry,
+  createUserFastestTimeTrackerManualEntry,
+  deleteUserFastestTimeTrackerManualEntry,
+  createUserMaxUnbrokenTrackerManualEntry,
+  deleteUserMaxUnbrokenTrackerManualEntry,
+} from './userExerciseScoreTrackers'
+
+import {
   userCollections,
   userCollectionById,
   createCollection,
@@ -380,6 +398,10 @@ const resolvers: Resolvers = {
     /// User Collections ////
     userCollections,
     userCollectionById,
+    /// User Exercise and Scored Workout Trackers ///
+    userMaxLoadExerciseTrackers,
+    userFastestTimeExerciseTrackers,
+    userMaxUnbrokenExerciseTrackers,
     //// Workouts ////
     publicWorkouts,
     userWorkouts, // Authed user.
@@ -514,6 +536,22 @@ const resolvers: Resolvers = {
     createUserBenchmarkEntry,
     updateUserBenchmarkEntry,
     deleteUserBenchmarkEntry,
+    ///////////////////////////////////////////////////
+    //// User Exercise and Scored Workout Trackers ////
+    ///////////////////////////////////////////////////
+    createUserMaxLoadExerciseTracker,
+    deleteUserMaxLoadExerciseTracker,
+    createUserFastestTimeExerciseTracker,
+    deleteUserFastestTimeExerciseTracker,
+    createUserMaxUnbrokenExerciseTracker,
+    deleteUserMaxUnbrokenExerciseTracker,
+    /// Manual Entries for each tracker type ///
+    createUserMaxLoadTrackerManualEntry,
+    deleteUserMaxLoadTrackerManualEntry,
+    createUserFastestTimeTrackerManualEntry,
+    deleteUserFastestTimeTrackerManualEntry,
+    createUserMaxUnbrokenTrackerManualEntry,
+    deleteUserMaxUnbrokenTrackerManualEntry,
     ////////////////////////
     //// User Collection ////
     ////////////////////////

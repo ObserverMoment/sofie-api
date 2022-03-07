@@ -10,13 +10,13 @@ import gymProfile from './gymProfile'
 import invites from './invites'
 import loggedWorkout from './loggedWorkout'
 import main from './main'
-
 import scheduledWorkout from './scheduledWorkout'
 import skillsAndCertifications from './skillsAndCertifications'
 import timelineFeed from './timelineFeed'
 import user from './user'
 import userBenchmark from './userBenchmark'
 import userDayLogTracking from './userDayLogTracking'
+import userExerciseScoreTrackers from './userExerciseScoreTrackers'
 import userProgressTracking from './userProgressTracking'
 import welcomeTodoItem from './welcomeTodoItem'
 import workout from './workout/workout'
@@ -47,6 +47,7 @@ const typeDefs = mergeTypeDefs([
   user,
   userBenchmark,
   userDayLogTracking,
+  userExerciseScoreTrackers,
   userProgressTracking,
   workout,
   workoutMetaData,
