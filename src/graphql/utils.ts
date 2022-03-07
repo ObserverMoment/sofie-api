@@ -59,6 +59,12 @@ export type ContentObjectType =
   | 'userGoal'
   | 'userMeditationLog'
   | 'userSleepWellLog'
+  | 'userMaxLoadExerciseTracker'
+  | 'userMaxLoadTrackerManualEntry'
+  | 'userFastestTimeExerciseTracker'
+  | 'userFastestTimeTrackerManualEntry'
+  | 'userMaxUnbrokenExerciseTracker'
+  | 'userMaxUnbrokenTrackerManualEntry'
 
 /// Checks that a user has access to a single object in the database.
 /// Checks for ownership so cannot use this cor checking, for example, access to group scoped content.

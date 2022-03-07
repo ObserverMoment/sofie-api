@@ -18,7 +18,6 @@ import {
 import { checkUserOwnsObject } from '../utils'
 
 //// Queries ////
-/// Aka 'Personal Bests' ///
 export const userBenchmarks = async (
   r: any,
   a: any,

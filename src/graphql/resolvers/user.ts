@@ -272,11 +272,6 @@ export const userProfile = async (
       activeProgressWidgets: isAuthedUser,
       activeLogDataWidgets: isAuthedUser,
       Skills: true,
-      UserBenchmarks: {
-        include: {
-          UserBenchmarkEntries: true,
-        },
-      },
       ClubsWhereOwner: isPublic
         ? {
             select: selectForClubSummary,
@@ -363,10 +358,6 @@ export const userProfile = async (
             user.id,
             prisma,
           ),
-          BenchmarksWithBestEntries: user.UserBenchmarks.map((b) => ({
-            UserBenchmarkSummary: b,
-            BestEntry: findBestUserBenchmarkEntry(b),
-          })),
         } as UserProfile)
       : ({
           id: user.id,

@@ -90,11 +90,16 @@ export default gql`
     userAvatars(ids: [ID!]!): [UserAvatarData!]!
     userAvatarById(id: ID!): UserAvatarData
     #### User Benchmark (aka Personal Best) ####
+    #### DEPRECATED ####
     userBenchmarks: [UserBenchmark!]!
     userBenchmark(id: ID!): UserBenchmark!
     #### User Collection ####
     userCollections: [Collection!]!
     userCollectionById(id: ID!): Collection!
+    #### User Exercise Score Trackers ####
+    userMaxLoadExerciseTrackers: [UserMaxLoadExerciseTracker!]!
+    userFastestTimeExerciseTrackers: [UserFastestTimeExerciseTracker!]!
+    userMaxUnbrokenExerciseTrackers: [UserMaxUnbrokenExerciseTracker!]!
     #### User Public Profiles ####
     userProfiles(cursor: ID, take: Int): [UserProfileSummary!]!
     userProfile(userId: ID!): UserProfile
@@ -250,6 +255,7 @@ export default gql`
     updateWorkoutTag(data: UpdateWorkoutTagInput!): WorkoutTag!
     deleteWorkoutTagById(id: ID!): ID!
     #### User Benchmark ####
+    #### DEPRECATED ####
     createUserBenchmark(data: CreateUserBenchmarkInput!): UserBenchmark!
     updateUserBenchmark(data: UpdateUserBenchmarkInput!): UserBenchmark!
     deleteUserBenchmark(id: ID!): ID!
@@ -274,6 +280,43 @@ export default gql`
     removeWorkoutPlanFromCollection(
       data: RemoveWorkoutPlanFromCollectionInput!
     ): Collection!
+    #### User Exercise Score Trackers ####
+    createUserMaxLoadExerciseTracker(
+      data: CreateUserMaxLoadExerciseTrackerInput!
+    ): UserMaxLoadExerciseTracker!
+    deleteUserMaxLoadExerciseTracker(id: ID!): ID!
+    createUserFastestTimeExerciseTracker(
+      data: CreateUserFastestTimeExerciseTrackerInput!
+    ): UserFastestTimeExerciseTracker!
+    deleteUserFastestTimeExerciseTracker(id: ID!): ID!
+    createUserMaxUnbrokenExerciseTracker(
+      data: CreateUserMaxUnbrokenExerciseTrackerInput!
+    ): UserMaxUnbrokenExerciseTracker!
+    deleteUserMaxUnbrokenExerciseTracker(id: ID!): ID!
+    # Manual Entries for each type #
+    # These updates return the updated parent tracker #
+    # including the newly updated manual entries #
+    createUserMaxLoadTrackerManualEntry(
+      data: CreateUserMaxLoadTrackerManualEntryInput!
+    ): UserMaxLoadExerciseTracker!
+    deleteUserMaxLoadTrackerManualEntry(
+      entryId: ID!
+      parentId: ID!
+    ): UserMaxLoadExerciseTracker!
+    createUserFastestTimeTrackerManualEntry(
+      data: CreateUserFastestTimeTrackerManualEntryInput!
+    ): UserFastestTimeExerciseTracker!
+    deleteUserFastestTimeTrackerManualEntry(
+      entryId: ID!
+      parentId: ID!
+    ): UserFastestTimeExerciseTracker!
+    createUserMaxUnbrokenTrackerManualEntry(
+      data: CreateUserMaxUnbrokenTrackerManualEntryInput!
+    ): UserMaxUnbrokenExerciseTracker!
+    deleteUserMaxUnbrokenTrackerManualEntry(
+      entryId: ID!
+      parentId: ID!
+    ): UserMaxUnbrokenExerciseTracker!
     #### User Skills and Certifications ####
     createSkill(data: CreateSkillInput!): Skill!
     updateSkill(data: UpdateSkillInput!): Skill!

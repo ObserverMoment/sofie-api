@@ -40,7 +40,6 @@ export default gql`
     activeLogDataWidgets: [String!] # Null when not requested by authed user.
     Clubs: [ClubSummary!]! # If UserProfile is Private this must be empty.
     LifetimeLogStatsSummary: LifetimeLogStatsSummary
-    BenchmarksWithBestEntries: [UserBenchmarkWithBestEntry!]!
     Skills: [Skill!]!
   }
 

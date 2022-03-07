@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client'
+import { LoadUnit, Prisma } from '@prisma/client'
 
 export type ClubWithMemberIdsPayload = Prisma.ClubGetPayload<{
   select: {
