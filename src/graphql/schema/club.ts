@@ -3,11 +3,24 @@ import { gql } from 'apollo-server-express'
 export default gql`
   ## Admin use only ##
   type ClubWithMetaDataAdmin {
-    Club: Club!
-    metaData: ClubMetaDataAdmin!
-  }
-
-  type ClubMetaDataAdmin {
+    id: ID!
+    createdAt: DateTime!
+    Owner: UserAvatarData!
+    Admins: [UserAvatarData!]!
+    Members: [UserAvatarData!]!
+    name: String!
+    description: String
+    location: String
+    coverImageUri: String
+    introVideoUri: String
+    introVideoThumbUri: String
+    introAudioUri: String
+    contentAccessScope: ContentAccessScope!
+    # Data should be viewable by club members only. Return null if not.
+    Workouts: [WorkoutSummary!]
+    WorkoutPlans: [WorkoutPlanSummary!]
+    # Data should be viewable by club members, admins and owners only. Return null if not.
+    ClubInviteTokens: [ClubInviteToken!]
     validated: PublicContentValidationStatus!
     reasonNotValidated: String
     metaTags: [String!]!

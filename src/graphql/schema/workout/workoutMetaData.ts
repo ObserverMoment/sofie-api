@@ -3,11 +3,22 @@ import { gql } from 'apollo-server-express'
 /// ADMIN USE ONLY ///
 export default gql`
   type WorkoutWithMetaDataAdmin {
-    Workout: Workout!
-    metaData: WorkoutMetaDataAdmin!
-  }
-
-  type WorkoutMetaDataAdmin {
+    id: ID!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+    User: UserAvatarData!
+    archived: Boolean!
+    name: String!
+    description: String
+    lengthMinutes: Int
+    introVideoUri: String
+    introVideoThumbUri: String
+    introAudioUri: String
+    coverImageUri: String
+    contentAccessScope: ContentAccessScope!
+    WorkoutGoals: [WorkoutGoal!]!
+    WorkoutTags: [WorkoutTag!]!
+    WorkoutSections: [WorkoutSection!]!
     validated: PublicContentValidationStatus!
     reasonNotValidated: String
     difficultyLevel: DifficultyLevel

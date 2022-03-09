@@ -1,4 +1,4 @@
-import { PrismaClient, UserBenchmark, UserBenchmarkEntry } from '.prisma/client'
+import { PrismaClient } from '.prisma/client'
 import { ApolloError } from 'apollo-server-express'
 import { Context } from '../..'
 import {
@@ -24,7 +24,7 @@ import {
   updateStreamFeedUser,
 } from '../../lib/getStream'
 import { checkUserMediaForDeletion, deleteFiles } from '../../lib/uploadcare'
-import { AccessScopeError, checkUserOwnsObject } from '../utils'
+import { checkUserOwnsObject } from '../utils'
 import { formatClubSummaries } from './club/utils'
 import { calcLifetimeLogStatsSummary } from './loggedWorkout'
 import {
@@ -372,22 +372,6 @@ export const userProfile = async (
     console.error(`userProfileById: Could not retrieve User with id ${userId}.`)
     return null
   }
-}
-
-//////// Util - Finds the best score from a UserBenchmark based on its type ////////
-export function findBestUserBenchmarkEntry(
-  userBenchmark: UserBenchmark & { UserBenchmarkEntries: UserBenchmarkEntry[] },
-): UserBenchmarkEntry | null {
-  if (!userBenchmark.UserBenchmarkEntries.length) {
-    return null
-  }
-  const entries = userBenchmark.UserBenchmarkEntries.sort(
-    (a, b) => a.score - b.score,
-  )
-
-  return userBenchmark.benchmarkType === 'FASTESTTIME'
-    ? entries[0]
-    : entries.reverse()[0]
 }
 
 //// Mutations ////

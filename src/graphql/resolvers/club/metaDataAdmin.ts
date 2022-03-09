@@ -1,7 +1,6 @@
 import { ApolloError } from 'apollo-server-errors'
 import { Context } from '../../..'
 import {
-  ClubMetaDataAdmin,
   ClubWithMetaDataAdmin,
   MutationUpdateClubMetaDataAdminArgs,
   QueryAdminPublicWorkoutPlansArgs,
@@ -35,7 +34,7 @@ export const adminPublicClubs = async (
 export const updateClubMetaDataAdmin = async (
   r: any,
   { data }: MutationUpdateClubMetaDataAdminArgs,
-  { prisma, userType }: Context,
+  { prisma, select, userType }: Context,
 ) => {
   if (userType !== 'ADMIN') {
     throw new AccessScopeError()
@@ -48,16 +47,11 @@ export const updateClubMetaDataAdmin = async (
       validated: data.validated || undefined,
       metaTags: data.metaTags || undefined,
     },
-    select: {
-      id: true,
-      validated: true,
-      metaTags: true,
-      reasonNotValidated: true,
-    },
+    select,
   })
 
   if (updated) {
-    return updated as ClubMetaDataAdmin
+    return updated as ClubWithMetaDataAdmin
   } else {
     throw new ApolloError('updateClubMetaDataAdmin: There was an issue.')
   }

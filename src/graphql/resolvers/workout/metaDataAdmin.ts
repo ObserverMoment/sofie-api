@@ -3,14 +3,12 @@ import { Context } from '../../..'
 import {
   MutationUpdateWorkoutMetaDataAdminArgs,
   QueryAdminPublicWorkoutsArgs,
-  WorkoutMetaDataAdmin,
   WorkoutWithMetaDataAdmin,
 } from '../../../generated/graphql'
 import { AccessScopeError } from '../../utils'
 
 //// NOTE: Admin Only Access to these resolvers ////
 //// Queries ////
-
 /// https://www.prisma.io/docs/concepts/components/prisma-client/pagination
 export const adminPublicWorkouts = async (
   r: any,
@@ -40,7 +38,7 @@ export const adminPublicWorkouts = async (
 export const updateWorkoutMetaDataAdmin = async (
   r: any,
   { data }: MutationUpdateWorkoutMetaDataAdminArgs,
-  { prisma, userType }: Context,
+  { prisma, select, userType }: Context,
 ) => {
   if (userType !== 'ADMIN') {
     throw new AccessScopeError()
@@ -53,17 +51,11 @@ export const updateWorkoutMetaDataAdmin = async (
       validated: data.validated || undefined,
       metaTags: data.metaTags || undefined,
     },
-    select: {
-      id: true,
-      validated: true,
-      metaTags: true,
-      reasonNotValidated: true,
-      difficultyLevel: true,
-    },
+    select,
   })
 
   if (updated) {
-    return updated as WorkoutMetaDataAdmin
+    return updated as WorkoutWithMetaDataAdmin
   } else {
     throw new ApolloError('updateWorkoutMetaDataAdmin: There was an issue.')
   }

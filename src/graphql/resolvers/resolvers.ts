@@ -1,6 +1,5 @@
 import {
   ClubInviteTokenData,
-  ClubSummary,
   InviteTokenError,
   Resolvers,
 } from '../../generated/graphql'
@@ -167,33 +166,10 @@ import {
 } from './skillsAndCertifications'
 
 import {
-  userBenchmarks,
-  userBenchmark,
-  createUserBenchmark,
-  updateUserBenchmark,
-  deleteUserBenchmark,
-  createUserBenchmarkEntry,
-  updateUserBenchmarkEntry,
-  deleteUserBenchmarkEntry,
-} from './userBenchmark'
-
-import {
-  userMaxLoadExerciseTrackers,
-  userFastestTimeExerciseTrackers,
-  userMaxUnbrokenExerciseTrackers,
-  createUserMaxLoadExerciseTracker,
-  deleteUserMaxLoadExerciseTracker,
-  createUserFastestTimeExerciseTracker,
-  deleteUserFastestTimeExerciseTracker,
-  createUserMaxUnbrokenExerciseTracker,
-  deleteUserMaxUnbrokenExerciseTracker,
-  createUserMaxLoadTrackerManualEntry,
-  deleteUserMaxLoadTrackerManualEntry,
-  createUserFastestTimeTrackerManualEntry,
-  deleteUserFastestTimeTrackerManualEntry,
-  createUserMaxUnbrokenTrackerManualEntry,
-  deleteUserMaxUnbrokenTrackerManualEntry,
-} from './userExerciseScoreTrackers'
+  userExerciseLoadTrackers,
+  createUserExerciseLoadTracker,
+  deleteUserExerciseLoadTracker,
+} from './UserExerciseLoadTracker'
 
 import {
   userCollections,
@@ -392,16 +368,11 @@ const resolvers: Resolvers = {
     //// User Avatars ////
     userAvatars,
     userAvatarById,
-    /// User Benchmarks ////
-    userBenchmarks,
-    userBenchmark,
     /// User Collections ////
     userCollections,
     userCollectionById,
     /// User Exercise and Scored Workout Trackers ///
-    userMaxLoadExerciseTrackers,
-    userFastestTimeExerciseTrackers,
-    userMaxUnbrokenExerciseTrackers,
+    userExerciseLoadTrackers,
     //// Workouts ////
     publicWorkouts,
     userWorkouts, // Authed user.
@@ -527,31 +498,11 @@ const resolvers: Resolvers = {
     unarchiveWorkoutPlanById,
     archiveCustomMoveById,
     unarchiveCustomMoveById,
-    ////////////////////////
-    //// User Benchmark ////
-    ////////////////////////
-    createUserBenchmark,
-    updateUserBenchmark,
-    deleteUserBenchmark,
-    createUserBenchmarkEntry,
-    updateUserBenchmarkEntry,
-    deleteUserBenchmarkEntry,
-    ///////////////////////////////////////////////////
-    //// User Exercise and Scored Workout Trackers ////
-    ///////////////////////////////////////////////////
-    createUserMaxLoadExerciseTracker,
-    deleteUserMaxLoadExerciseTracker,
-    createUserFastestTimeExerciseTracker,
-    deleteUserFastestTimeExerciseTracker,
-    createUserMaxUnbrokenExerciseTracker,
-    deleteUserMaxUnbrokenExerciseTracker,
-    /// Manual Entries for each tracker type ///
-    createUserMaxLoadTrackerManualEntry,
-    deleteUserMaxLoadTrackerManualEntry,
-    createUserFastestTimeTrackerManualEntry,
-    deleteUserFastestTimeTrackerManualEntry,
-    createUserMaxUnbrokenTrackerManualEntry,
-    deleteUserMaxUnbrokenTrackerManualEntry,
+    ////////////////////////////////
+    //// User Exercise Trackers ////
+    ////////////////////////////////
+    createUserExerciseLoadTracker,
+    deleteUserExerciseLoadTracker,
     ////////////////////////
     //// User Collection ////
     ////////////////////////

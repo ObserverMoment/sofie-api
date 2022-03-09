@@ -6,7 +6,6 @@ import {
   UpdateWorkoutPlanInput,
   UpdateMoveInput,
   UpdateWorkoutInput,
-  UpdateUserBenchmarkEntryInput,
   UpdateClubSummaryInput,
   UpdateBodyTrackingEntryInput,
   UpdateUserProfileInput,
@@ -276,39 +275,6 @@ export async function checkMoveMediaForDeletion(
   } else {
     const fileIdsForDeletion: string[] = Object.keys(oldMove)
       .map((key: string) => getFileIdForDeleteOrNull(oldMove, data, key))
-      .filter((x) => !!x) as string[]
-
-    return fileIdsForDeletion
-  }
-}
-
-/** Checks if there are any media (hosted) files being changed.
- * Returns an array of fileIds (strings) which should be deleted.
- */
-export async function checkUserBenchmarkEntryMediaForDeletion(
-  prisma: PrismaClient,
-  data: UpdateUserBenchmarkEntryInput,
-): Promise<string[]> {
-  // Get the old data first.
-  const oldBenchmarkEntry = await prisma.userBenchmarkEntry.findUnique({
-    where: {
-      id: data.id,
-    },
-    select: {
-      videoUri: true,
-      videoThumbUri: true,
-    },
-  })
-
-  if (!oldBenchmarkEntry) {
-    throw new AccessScopeError(
-      'checkUserBenchmarkEntryMediaForDeletion: Unable to find object to check',
-    )
-  } else {
-    const fileIdsForDeletion: string[] = Object.keys(oldBenchmarkEntry)
-      .map((key: string) =>
-        getFileIdForDeleteOrNull(oldBenchmarkEntry, data, key),
-      )
       .filter((x) => !!x) as string[]
 
     return fileIdsForDeletion

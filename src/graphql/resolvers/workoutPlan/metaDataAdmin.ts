@@ -3,7 +3,6 @@ import { Context } from '../../..'
 import {
   MutationUpdateWorkoutPlanMetaDataAdminArgs,
   QueryAdminPublicWorkoutPlansArgs,
-  WorkoutPlanMetaDataAdmin,
   WorkoutPlanWithMetaDataAdmin,
 } from '../../../generated/graphql'
 import { AccessScopeError } from '../../utils'
@@ -36,7 +35,7 @@ export const adminPublicWorkoutPlans = async (
 export const updateWorkoutPlanMetaDataAdmin = async (
   r: any,
   { data }: MutationUpdateWorkoutPlanMetaDataAdminArgs,
-  { prisma, userType }: Context,
+  { prisma, select, userType }: Context,
 ) => {
   if (userType !== 'ADMIN') {
     throw new AccessScopeError()
@@ -49,17 +48,11 @@ export const updateWorkoutPlanMetaDataAdmin = async (
       validated: data.validated || undefined,
       metaTags: data.metaTags || undefined,
     },
-    select: {
-      id: true,
-      validated: true,
-      metaTags: true,
-      reasonNotValidated: true,
-      difficultyLevel: true,
-    },
+    select,
   })
 
   if (updated) {
-    return updated as WorkoutPlanMetaDataAdmin
+    return updated as WorkoutPlanWithMetaDataAdmin
   } else {
     throw new ApolloError('updateWorkoutPlanMetaDataAdmin: There was an issue.')
   }
