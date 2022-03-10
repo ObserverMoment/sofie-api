@@ -9,6 +9,8 @@ import {
   UpdateClubSummaryInput,
   UpdateBodyTrackingEntryInput,
   UpdateUserProfileInput,
+  UpdateFitnessBenchmarkInput,
+  UpdateFitnessBenchmarkWorkoutInput,
 } from '../generated/graphql'
 import { AccessScopeError } from '../graphql/utils'
 
@@ -108,6 +110,73 @@ export async function checkClubMediaForDeletion(
   } else {
     const fileIdsForDeletion: string[] = Object.keys(oldClub)
       .map((key: string) => getFileIdForDeleteOrNull(oldClub, data, key))
+      .filter((x) => !!x) as string[]
+
+    return fileIdsForDeletion
+  }
+}
+
+/** Checks if there are any media (hosted) files being changed.
+ * Returns an array of fileIds (strings) which should be deleted.
+ */
+export async function checkFitnessBenchmarkMediaForDeletion(
+  prisma: PrismaClient,
+  data: UpdateFitnessBenchmarkInput,
+): Promise<string[]> {
+  // Get the old data first.
+  const oldFitnessBenchmark = await prisma.fitnessBenchmark.findUnique({
+    where: {
+      id: data.id,
+    },
+    select: {
+      instructionalVideoUri: true,
+      instructionalVideoThumbUri: true,
+    },
+  })
+
+  if (!oldFitnessBenchmark) {
+    throw new AccessScopeError(
+      'checkFitnessBenchmarkMediaForDeletion: Unable to find object to check',
+    )
+  } else {
+    const fileIdsForDeletion: string[] = Object.keys(oldFitnessBenchmark)
+      .map((key: string) =>
+        getFileIdForDeleteOrNull(oldFitnessBenchmark, data, key),
+      )
+      .filter((x) => !!x) as string[]
+
+    return fileIdsForDeletion
+  }
+}
+
+/** Checks if there are any media (hosted) files being changed.
+ * Returns an array of fileIds (strings) which should be deleted.
+ */
+export async function checkFitnessBenchmarkWorkoutMediaForDeletion(
+  prisma: PrismaClient,
+  data: UpdateFitnessBenchmarkWorkoutInput,
+): Promise<string[]> {
+  // Get the old data first.
+  const oldFitnessBenchmarkWorkout =
+    await prisma.fitnessBenchmarkWorkout.findUnique({
+      where: {
+        id: data.id,
+      },
+      select: {
+        instructionalVideoUri: true,
+        instructionalVideoThumbUri: true,
+      },
+    })
+
+  if (!oldFitnessBenchmarkWorkout) {
+    throw new AccessScopeError(
+      'checkFitnessBenchmarkWorkoutMediaForDeletion: Unable to find object to check',
+    )
+  } else {
+    const fileIdsForDeletion: string[] = Object.keys(oldFitnessBenchmarkWorkout)
+      .map((key: string) =>
+        getFileIdForDeleteOrNull(oldFitnessBenchmarkWorkout, data, key),
+      )
       .filter((x) => !!x) as string[]
 
     return fileIdsForDeletion

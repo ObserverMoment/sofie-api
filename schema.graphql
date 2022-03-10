@@ -255,6 +255,9 @@ input CopyWorkoutPlanDayToAnotherDayInput {
 type CoreData {
   bodyAreas: [BodyArea!]!
   equipment: [Equipment!]!
+  fitnessBenchmarkCategories: [FitnessBenchmarkCategory!]!
+  fitnessBenchmarkWorkouts: [FitnessBenchmarkWorkout!]!
+  fitnessBenchmarks: [FitnessBenchmark!]!
   moveTypes: [MoveType!]!
   progressWidgets: [ProgressWidget!]!
   standardMoves: [Move!]!
@@ -304,6 +307,43 @@ input CreateEquipmentInput {
   altNames: String
   loadAdjustable: Boolean!
   name: String!
+}
+
+input CreateFitnessBenchmarkInput {
+  FitnessBenchmarkCategory: ConnectRelationInput!
+  description: String!
+  instructionalVideoThumbUri: String
+  instructionalVideoUri: String
+  instructions: String
+  name: String!
+  scope: FitnessBenchmarkScope!
+  type: FitnessBenchmarkScoreType!
+}
+
+input CreateFitnessBenchmarkScoreInput {
+  FitnessBenchmark: ConnectRelationInput!
+  completedOn: DateTime!
+  note: String
+  score: Float!
+  videoThumbUri: String
+  videoUri: String
+}
+
+input CreateFitnessBenchmarkWorkoutInput {
+  FitnessBenchmarkWorkout: ConnectRelationInput!
+  completedOn: DateTime!
+  description: String!
+  instructionalVideoThumbUri: String
+  instructionalVideoUri: String
+  instructions: String
+  moveDescriptions: [String!]!
+  name: String!
+  note: String
+  pointsForMoveCompleted: [Int!]!
+  rounds: Int!
+  scope: FitnessBenchmarkScope!
+  score: Int!
+  type: FitnessBenchmarkWorkoutScoreType!
 }
 
 input CreateGymProfileInput {
@@ -567,8 +607,8 @@ type Equipment {
 }
 
 type FitnessBenchmark {
-  FitnessBenchmarkScores: [FitnessBenchmarkScore!]!
-  createdA: DateTime!
+  FitnessBenchmarkCategory: FitnessBenchmarkCategory!
+  createdAt: DateTime!
   description: String!
   id: ID!
   instructionalVideoThumbUri: String
@@ -577,6 +617,13 @@ type FitnessBenchmark {
   name: String!
   scope: FitnessBenchmarkScope!
   type: FitnessBenchmarkScoreType!
+}
+
+type FitnessBenchmarkCategory {
+  createdAt: DateTime!
+  description: String!
+  id: ID!
+  name: String!
 }
 
 enum FitnessBenchmarkScope {
@@ -605,7 +652,6 @@ enum FitnessBenchmarkScoreType {
 }
 
 type FitnessBenchmarkWorkout {
-  FitnessBenchmarkWorkoutScores: [FitnessBenchmarkWorkoutScore!]!
   createdAt: DateTime!
   description: String!
   id: ID!
@@ -782,6 +828,8 @@ type Mutation {
   createCollection(data: CreateCollectionInput!): Collection!
   createCompletedWorkoutPlanDayWorkout(data: CreateCompletedWorkoutPlanDayWorkoutInput!): WorkoutPlanEnrolment!
   createEquipment(data: CreateEquipmentInput!): Equipment
+  createFitnessBenchmark(data: CreateFitnessBenchmarkInput!): FitnessBenchmark!
+  createFitnessBenchmarkWorkout(data: CreateFitnessBenchmarkWorkoutInput!): FitnessBenchmarkWorkout!
   createGymProfile(data: CreateGymProfileInput!): GymProfile!
   createLoggedWorkout(data: CreateLoggedWorkoutInput!): LoggedWorkout!
   createMove(data: CreateMoveInput!): Move!
@@ -811,6 +859,8 @@ type Mutation {
   deleteClubMembersFeedPost(activityId: ID!): ID!
   deleteCollectionById(id: ID!): ID!
   deleteCompletedWorkoutPlanDayWorkout(data: DeleteCompletedWorkoutPlanDayWorkoutInput!): WorkoutPlanEnrolment!
+  deleteFitnessBenchmark(id: ID!): ID!
+  deleteFitnessBenchmarkWorkout(id: ID!): ID!
   deleteGymProfileById(id: ID!): ID
   deleteLoggedWorkoutById(id: ID!): ID!
   deleteLoggedWorkoutMove(id: ID!): ID!
@@ -858,6 +908,8 @@ type Mutation {
   updateClubSummary(data: UpdateClubSummaryInput!): ClubSummary!
   updateCollection(data: UpdateCollectionInput!): Collection!
   updateEquipment(data: UpdateEquipmentInput!): Equipment
+  updateFitnessBenchmark(data: UpdateFitnessBenchmarkInput!): FitnessBenchmark!
+  updateFitnessBenchmarkWorkout(data: UpdateFitnessBenchmarkWorkoutInput!): FitnessBenchmarkWorkout!
   updateGymProfile(data: UpdateGymProfileInput!): GymProfile!
   updateLoggedWorkout(data: UpdateLoggedWorkoutInput!): LoggedWorkout!
   updateLoggedWorkoutMove(data: UpdateLoggedWorkoutMoveInput!): LoggedWorkoutMove!
@@ -1134,6 +1186,32 @@ input UpdateEquipmentInput {
   id: ID!
   loadAdjustable: Boolean
   name: String
+}
+
+input UpdateFitnessBenchmarkInput {
+  FitnessBenchmarkCategory: ConnectRelationInput
+  description: String
+  id: ID!
+  instructionalVideoThumbUri: String
+  instructionalVideoUri: String
+  instructions: String
+  name: String
+  scope: FitnessBenchmarkScope
+  type: FitnessBenchmarkScoreType
+}
+
+input UpdateFitnessBenchmarkWorkoutInput {
+  description: String
+  id: ID!
+  instructionalVideoThumbUri: String
+  instructionalVideoUri: String
+  instructions: String
+  moveDescriptions: [String!]
+  name: String
+  pointsForMoveCompleted: [Int!]
+  rounds: Int
+  scope: FitnessBenchmarkScope
+  type: FitnessBenchmarkWorkoutScoreType
 }
 
 input UpdateGymProfileInput {

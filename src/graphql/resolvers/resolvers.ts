@@ -75,6 +75,15 @@ import {
 } from './coreData'
 
 import {
+  createFitnessBenchmark,
+  updateFitnessBenchmark,
+  deleteFitnessBenchmark,
+  createFitnessBenchmarkWorkout,
+  updateFitnessBenchmarkWorkout,
+  deleteFitnessBenchmarkWorkout,
+} from './fitnessBenchmark'
+
+import {
   gymProfiles,
   createGymProfile,
   updateGymProfile,
@@ -435,6 +444,15 @@ const resolvers: Resolvers = {
     ///////////////////
     createEquipment,
     updateEquipment,
+    //////////////////////////////////////////////
+    //// Fitness Benchmarks and Workouts /////////
+    //////////////////////////////////////////////
+    createFitnessBenchmark,
+    updateFitnessBenchmark,
+    deleteFitnessBenchmark,
+    createFitnessBenchmarkWorkout,
+    updateFitnessBenchmarkWorkout,
+    deleteFitnessBenchmarkWorkout,
     //////////////////////////
     //// Gym Profile /////////
     //////////////////////////

@@ -32,6 +32,8 @@ export type ContentObjectType =
   | 'clubAnnouncement'
   | 'clubMemberNote'
   | 'collection'
+  | 'fitnessBenchmark'
+  | 'fitnessBenchmarkWorkout'
   | 'gymProfile'
   | 'loggedWorkout'
   | 'loggedWorkoutSection'

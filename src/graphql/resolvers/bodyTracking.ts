@@ -10,7 +10,7 @@ import {
   checkBodyTrackingEntryMediaForDeletion,
   deleteFiles,
 } from '../../lib/uploadcare'
-import { checkUserAccessScopeMulti, checkUserOwnsObject } from '../utils'
+import { checkUserOwnsObject } from '../utils'
 
 //// Queries ////
 export const bodyTrackingEntries = async (

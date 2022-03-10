@@ -178,6 +178,21 @@ export default gql`
     #### Equipment ####
     createEquipment(data: CreateEquipmentInput!): Equipment
     updateEquipment(data: UpdateEquipmentInput!): Equipment
+    #### Fitness Benchmarks and Workouts ####
+    createFitnessBenchmark(
+      data: CreateFitnessBenchmarkInput!
+    ): FitnessBenchmark!
+    updateFitnessBenchmark(
+      data: UpdateFitnessBenchmarkInput!
+    ): FitnessBenchmark!
+    deleteFitnessBenchmark(id: ID!): ID!
+    createFitnessBenchmarkWorkout(
+      data: CreateFitnessBenchmarkWorkoutInput!
+    ): FitnessBenchmarkWorkout!
+    updateFitnessBenchmarkWorkout(
+      data: UpdateFitnessBenchmarkWorkoutInput!
+    ): FitnessBenchmarkWorkout!
+    deleteFitnessBenchmarkWorkout(id: ID!): ID!
     #### Gym profile ####
     createGymProfile(data: CreateGymProfileInput!): GymProfile!
     updateGymProfile(data: UpdateGymProfileInput!): GymProfile!
