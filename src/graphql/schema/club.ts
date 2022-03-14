@@ -2,6 +2,13 @@ import { gql } from 'apollo-server-express'
 
 export default gql`
   ## Admin use only ##
+  type PublicClubSummaryAdmin {
+    id: ID!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+    name: String!
+  }
+
   type ClubWithMetaDataAdmin {
     id: ID!
     createdAt: DateTime!

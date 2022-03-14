@@ -946,6 +946,13 @@ type ProgressWidget {
   subtitle: String
 }
 
+type PublicClubSummaryAdmin {
+  createdAt: DateTime!
+  id: ID!
+  name: String!
+  updatedAt: DateTime!
+}
+
 enum PublicContentValidationStatus {
   INVALID
   PENDING
@@ -953,10 +960,30 @@ enum PublicContentValidationStatus {
   VALID
 }
 
+type PublicWorkoutPlanSummaryAdmin {
+  createdAt: DateTime!
+  id: ID!
+  name: String!
+  updatedAt: DateTime!
+}
+
+type PublicWorkoutSummaryAdmin {
+  createdAt: DateTime!
+  id: ID!
+  name: String!
+  updatedAt: DateTime!
+}
+
 type Query {
-  adminPublicClubs(status: PublicContentValidationStatus!): [ClubWithMetaDataAdmin!]!
-  adminPublicWorkoutPlans(status: PublicContentValidationStatus!): [WorkoutPlanWithMetaDataAdmin!]!
-  adminPublicWorkouts(status: PublicContentValidationStatus!): [WorkoutWithMetaDataAdmin!]!
+  adminPublicClubById(id: ID!): ClubWithMetaDataAdmin!
+  adminPublicClubSummaries(status: PublicContentValidationStatus!): [PublicClubSummaryAdmin!]!
+  adminPublicClubsCount(status: PublicContentValidationStatus!): Int!
+  adminPublicWorkoutById(id: ID!): WorkoutWithMetaDataAdmin!
+  adminPublicWorkoutPlanById(id: ID!): WorkoutPlanWithMetaDataAdmin!
+  adminPublicWorkoutPlanSummaries(status: PublicContentValidationStatus!): [PublicWorkoutPlanSummaryAdmin!]!
+  adminPublicWorkoutPlansCount(status: PublicContentValidationStatus!): Int!
+  adminPublicWorkoutSummaries(status: PublicContentValidationStatus!): [PublicWorkoutSummaryAdmin!]!
+  adminPublicWorkoutsCount(status: PublicContentValidationStatus!): Int!
   announcementUpdates: [AnnouncementUpdate!]!
   bodyTrackingEntries: [BodyTrackingEntry!]!
   checkClubInviteToken(id: ID!): CheckClubInviteTokenResult!

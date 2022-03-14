@@ -7,15 +7,21 @@ export default gql`
   type Query {
     #### ADMIN ONLY QUERIES ####
     # Content Requiring Validation #
-    adminPublicWorkouts(
+    adminPublicWorkoutsCount(status: PublicContentValidationStatus!): Int!
+    adminPublicWorkoutSummaries(
       status: PublicContentValidationStatus!
-    ): [WorkoutWithMetaDataAdmin!]!
-    adminPublicWorkoutPlans(
+    ): [PublicWorkoutSummaryAdmin!]!
+    adminPublicWorkoutById(id: ID!): WorkoutWithMetaDataAdmin!
+    adminPublicWorkoutPlansCount(status: PublicContentValidationStatus!): Int!
+    adminPublicWorkoutPlanSummaries(
       status: PublicContentValidationStatus!
-    ): [WorkoutPlanWithMetaDataAdmin!]!
-    adminPublicClubs(
+    ): [PublicWorkoutPlanSummaryAdmin!]!
+    adminPublicWorkoutPlanById(id: ID!): WorkoutPlanWithMetaDataAdmin!
+    adminPublicClubsCount(status: PublicContentValidationStatus!): Int!
+    adminPublicClubSummaries(
       status: PublicContentValidationStatus!
-    ): [ClubWithMetaDataAdmin!]!
+    ): [PublicClubSummaryAdmin!]!
+    adminPublicClubById(id: ID!): ClubWithMetaDataAdmin!
     #### END OF ADMIN ONLY QUERIES ####
     announcementUpdates: [AnnouncementUpdate!]!
     welcomeTodoItems: [WelcomeTodoItem!]!

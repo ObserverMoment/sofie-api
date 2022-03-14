@@ -1,3 +1,4 @@
+import { PublicContentValidationStatus } from '@prisma/client'
 import { ApolloError } from 'apollo-server-express'
 import { Context } from '../../..'
 import {
@@ -70,7 +71,10 @@ export const userClubs = async (
 // ClubFinder functionality - filtering and ranking etc.
 export const publicClubs = async (r: any, a: any, { prisma }: Context) => {
   const clubs = await prisma.club.findMany({
-    where: { contentAccessScope: 'PUBLIC' },
+    where: {
+      contentAccessScope: 'PUBLIC',
+      validated: PublicContentValidationStatus.VALID,
+    },
     select: selectForClubSummary,
   })
 

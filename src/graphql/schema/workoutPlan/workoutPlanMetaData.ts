@@ -2,6 +2,13 @@ import { gql } from 'apollo-server-express'
 
 // Admin use only //
 export default gql`
+  type PublicWorkoutPlanSummaryAdmin {
+    id: ID!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+    name: String!
+  }
+
   type WorkoutPlanWithMetaDataAdmin {
     id: ID!
     createdAt: DateTime!

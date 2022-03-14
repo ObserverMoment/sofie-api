@@ -1629,17 +1629,47 @@ export type ProgressWidget = {
   subtitle?: Maybe<Scalars['String']>;
 };
 
+export type PublicClubSummaryAdmin = {
+  __typename?: 'PublicClubSummaryAdmin';
+  createdAt: Scalars['DateTime'];
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+};
+
 export type PublicContentValidationStatus =
   | 'INVALID'
   | 'PENDING'
   | 'PENDINGUPDATED'
   | 'VALID';
 
+export type PublicWorkoutPlanSummaryAdmin = {
+  __typename?: 'PublicWorkoutPlanSummaryAdmin';
+  createdAt: Scalars['DateTime'];
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export type PublicWorkoutSummaryAdmin = {
+  __typename?: 'PublicWorkoutSummaryAdmin';
+  createdAt: Scalars['DateTime'];
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+};
+
 export type Query = {
   __typename?: 'Query';
-  adminPublicClubs: Array<ClubWithMetaDataAdmin>;
-  adminPublicWorkoutPlans: Array<WorkoutPlanWithMetaDataAdmin>;
-  adminPublicWorkouts: Array<WorkoutWithMetaDataAdmin>;
+  adminPublicClubById: ClubWithMetaDataAdmin;
+  adminPublicClubSummaries: Array<PublicClubSummaryAdmin>;
+  adminPublicClubsCount: Scalars['Int'];
+  adminPublicWorkoutById: WorkoutWithMetaDataAdmin;
+  adminPublicWorkoutPlanById: WorkoutPlanWithMetaDataAdmin;
+  adminPublicWorkoutPlanSummaries: Array<PublicWorkoutPlanSummaryAdmin>;
+  adminPublicWorkoutPlansCount: Scalars['Int'];
+  adminPublicWorkoutSummaries: Array<PublicWorkoutSummaryAdmin>;
+  adminPublicWorkoutsCount: Scalars['Int'];
   announcementUpdates: Array<AnnouncementUpdate>;
   bodyTrackingEntries: Array<BodyTrackingEntry>;
   checkClubInviteToken: CheckClubInviteTokenResult;
@@ -1703,17 +1733,47 @@ export type Query = {
 };
 
 
-export type QueryAdminPublicClubsArgs = {
+export type QueryAdminPublicClubByIdArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type QueryAdminPublicClubSummariesArgs = {
   status: PublicContentValidationStatus;
 };
 
 
-export type QueryAdminPublicWorkoutPlansArgs = {
+export type QueryAdminPublicClubsCountArgs = {
   status: PublicContentValidationStatus;
 };
 
 
-export type QueryAdminPublicWorkoutsArgs = {
+export type QueryAdminPublicWorkoutByIdArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type QueryAdminPublicWorkoutPlanByIdArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type QueryAdminPublicWorkoutPlanSummariesArgs = {
+  status: PublicContentValidationStatus;
+};
+
+
+export type QueryAdminPublicWorkoutPlansCountArgs = {
+  status: PublicContentValidationStatus;
+};
+
+
+export type QueryAdminPublicWorkoutSummariesArgs = {
+  status: PublicContentValidationStatus;
+};
+
+
+export type QueryAdminPublicWorkoutsCountArgs = {
   status: PublicContentValidationStatus;
 };
 
@@ -2961,7 +3021,10 @@ export type ResolversTypes = ResolversObject<{
   MoveWorkoutPlanDayToAnotherDayInput: MoveWorkoutPlanDayToAnotherDayInput;
   Mutation: ResolverTypeWrapper<{}>;
   ProgressWidget: ResolverTypeWrapper<ProgressWidget>;
+  PublicClubSummaryAdmin: ResolverTypeWrapper<PublicClubSummaryAdmin>;
   PublicContentValidationStatus: PublicContentValidationStatus;
+  PublicWorkoutPlanSummaryAdmin: ResolverTypeWrapper<PublicWorkoutPlanSummaryAdmin>;
+  PublicWorkoutSummaryAdmin: ResolverTypeWrapper<PublicWorkoutSummaryAdmin>;
   Query: ResolverTypeWrapper<{}>;
   RemoveDocumentFromSkillInput: RemoveDocumentFromSkillInput;
   RemoveWorkoutFromClubInput: RemoveWorkoutFromClubInput;
@@ -3152,6 +3215,9 @@ export type ResolversParentTypes = ResolversObject<{
   MoveWorkoutPlanDayToAnotherDayInput: MoveWorkoutPlanDayToAnotherDayInput;
   Mutation: {};
   ProgressWidget: ProgressWidget;
+  PublicClubSummaryAdmin: PublicClubSummaryAdmin;
+  PublicWorkoutPlanSummaryAdmin: PublicWorkoutPlanSummaryAdmin;
+  PublicWorkoutSummaryAdmin: PublicWorkoutSummaryAdmin;
   Query: {};
   RemoveDocumentFromSkillInput: RemoveDocumentFromSkillInput;
   RemoveWorkoutFromClubInput: RemoveWorkoutFromClubInput;
@@ -3765,10 +3831,40 @@ export type ProgressWidgetResolvers<ContextType = any, ParentType extends Resolv
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type PublicClubSummaryAdminResolvers<ContextType = any, ParentType extends ResolversParentTypes['PublicClubSummaryAdmin'] = ResolversParentTypes['PublicClubSummaryAdmin']> = ResolversObject<{
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type PublicWorkoutPlanSummaryAdminResolvers<ContextType = any, ParentType extends ResolversParentTypes['PublicWorkoutPlanSummaryAdmin'] = ResolversParentTypes['PublicWorkoutPlanSummaryAdmin']> = ResolversObject<{
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type PublicWorkoutSummaryAdminResolvers<ContextType = any, ParentType extends ResolversParentTypes['PublicWorkoutSummaryAdmin'] = ResolversParentTypes['PublicWorkoutSummaryAdmin']> = ResolversObject<{
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
-  adminPublicClubs?: Resolver<Array<ResolversTypes['ClubWithMetaDataAdmin']>, ParentType, ContextType, RequireFields<QueryAdminPublicClubsArgs, 'status'>>;
-  adminPublicWorkoutPlans?: Resolver<Array<ResolversTypes['WorkoutPlanWithMetaDataAdmin']>, ParentType, ContextType, RequireFields<QueryAdminPublicWorkoutPlansArgs, 'status'>>;
-  adminPublicWorkouts?: Resolver<Array<ResolversTypes['WorkoutWithMetaDataAdmin']>, ParentType, ContextType, RequireFields<QueryAdminPublicWorkoutsArgs, 'status'>>;
+  adminPublicClubById?: Resolver<ResolversTypes['ClubWithMetaDataAdmin'], ParentType, ContextType, RequireFields<QueryAdminPublicClubByIdArgs, 'id'>>;
+  adminPublicClubSummaries?: Resolver<Array<ResolversTypes['PublicClubSummaryAdmin']>, ParentType, ContextType, RequireFields<QueryAdminPublicClubSummariesArgs, 'status'>>;
+  adminPublicClubsCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<QueryAdminPublicClubsCountArgs, 'status'>>;
+  adminPublicWorkoutById?: Resolver<ResolversTypes['WorkoutWithMetaDataAdmin'], ParentType, ContextType, RequireFields<QueryAdminPublicWorkoutByIdArgs, 'id'>>;
+  adminPublicWorkoutPlanById?: Resolver<ResolversTypes['WorkoutPlanWithMetaDataAdmin'], ParentType, ContextType, RequireFields<QueryAdminPublicWorkoutPlanByIdArgs, 'id'>>;
+  adminPublicWorkoutPlanSummaries?: Resolver<Array<ResolversTypes['PublicWorkoutPlanSummaryAdmin']>, ParentType, ContextType, RequireFields<QueryAdminPublicWorkoutPlanSummariesArgs, 'status'>>;
+  adminPublicWorkoutPlansCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<QueryAdminPublicWorkoutPlansCountArgs, 'status'>>;
+  adminPublicWorkoutSummaries?: Resolver<Array<ResolversTypes['PublicWorkoutSummaryAdmin']>, ParentType, ContextType, RequireFields<QueryAdminPublicWorkoutSummariesArgs, 'status'>>;
+  adminPublicWorkoutsCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<QueryAdminPublicWorkoutsCountArgs, 'status'>>;
   announcementUpdates?: Resolver<Array<ResolversTypes['AnnouncementUpdate']>, ParentType, ContextType>;
   bodyTrackingEntries?: Resolver<Array<ResolversTypes['BodyTrackingEntry']>, ParentType, ContextType>;
   checkClubInviteToken?: Resolver<ResolversTypes['CheckClubInviteTokenResult'], ParentType, ContextType, RequireFields<QueryCheckClubInviteTokenArgs, 'id'>>;
@@ -4367,6 +4463,9 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   MoveType?: MoveTypeResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   ProgressWidget?: ProgressWidgetResolvers<ContextType>;
+  PublicClubSummaryAdmin?: PublicClubSummaryAdminResolvers<ContextType>;
+  PublicWorkoutPlanSummaryAdmin?: PublicWorkoutPlanSummaryAdminResolvers<ContextType>;
+  PublicWorkoutSummaryAdmin?: PublicWorkoutSummaryAdminResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   ScheduledWorkout?: ScheduledWorkoutResolvers<ContextType>;
   Skill?: SkillResolvers<ContextType>;

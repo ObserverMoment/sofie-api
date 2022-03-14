@@ -40,7 +40,12 @@ import {
   deleteClub,
 } from './club/club'
 
-import { adminPublicClubs, updateClubMetaDataAdmin } from './club/metaDataAdmin'
+import {
+  adminPublicClubsCount,
+  adminPublicClubSummaries,
+  adminPublicClubById,
+  updateClubMetaDataAdmin,
+} from './club/metaDataAdmin'
 
 import {
   checkUserClubMemberStatus,
@@ -205,7 +210,9 @@ import {
 } from './workout/workout'
 
 import {
-  adminPublicWorkouts,
+  adminPublicWorkoutsCount,
+  adminPublicWorkoutSummaries,
+  adminPublicWorkoutById,
   updateWorkoutMetaDataAdmin,
 } from './workout/metaDataAdmin'
 
@@ -256,7 +263,9 @@ import {
 } from './workoutPlan/workoutPlan'
 
 import {
-  adminPublicWorkoutPlans,
+  adminPublicWorkoutPlansCount,
+  adminPublicWorkoutPlanSummaries,
+  adminPublicWorkoutPlanById,
   updateWorkoutPlanMetaDataAdmin,
 } from './workoutPlan/metaDataAdmin'
 
@@ -311,9 +320,15 @@ const resolvers: Resolvers = {
   Query: {
     validateToken: () => true, // Empty Resolver - call it and it will throw auth error if token is not valid / expired or if an associated user does not exist in the database.
     //// ADMIN ONLY QUERIES ////
-    adminPublicWorkouts,
-    adminPublicWorkoutPlans,
-    adminPublicClubs,
+    adminPublicWorkoutsCount,
+    adminPublicWorkoutSummaries,
+    adminPublicWorkoutById,
+    adminPublicWorkoutPlansCount,
+    adminPublicWorkoutPlanSummaries,
+    adminPublicWorkoutPlanById,
+    adminPublicClubsCount,
+    adminPublicClubSummaries,
+    adminPublicClubById,
     //// END OF ADMIN ONLY QUERIES ////
     //// Core Data ////
     announcementUpdates,
