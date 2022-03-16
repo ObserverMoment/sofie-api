@@ -1,4 +1,4 @@
-import { PrismaClient, UserBenchmark, UserBenchmarkEntry } from '.prisma/client'
+import { PrismaClient } from '.prisma/client'
 import { ApolloError } from 'apollo-server-express'
 import { Context } from '../..'
 import {
@@ -36,6 +36,76 @@ import { formatWorkoutSummaries } from './workout/utils'
 import { formatWorkoutPlanSummaries } from './workoutPlan/utils'
 
 //// Queries ////
+//// Admin Only Queries ////
+export const adminAllUsers = async (
+  r: any,
+  a: any,
+  { select, prisma, userType }: Context,
+) => {
+  if (userType !== 'ADMIN') {
+    throw new AccessScopeError('Only admins can access this data')
+  }
+
+  const users = await prisma.user.findMany({
+    select: {
+      id: true,
+      userProfileScope: true,
+      avatarUri: true,
+      tagline: true,
+      townCity: true,
+      countryCode: true,
+      displayName: true,
+      Skills: {
+        select: {
+          name: true,
+        },
+      },
+      Workouts: {
+        where: {
+          archived: false,
+          contentAccessScope: 'PUBLIC',
+        },
+        select: {
+          id: true,
+        },
+      },
+      WorkoutPlans: {
+        where: {
+          archived: false,
+          contentAccessScope: 'PUBLIC',
+        },
+        select: {
+          id: true,
+        },
+      },
+      ClubsWhereOwner: {
+        select: selectForClubSummary,
+      },
+    },
+  })
+
+  if (users) {
+    const publicProfileSummaries = users.map((u) => ({
+      id: u.id,
+      userProfileScope: u.userProfileScope,
+      avatarUri: u.avatarUri,
+      tagline: u.tagline,
+      townCity: u.townCity,
+      countryCode: u.countryCode,
+      displayName: u.displayName,
+      skills: u.Skills.map((s) => s.name),
+      workoutCount: u.Workouts.length,
+      planCount: u.WorkoutPlans.length,
+      Clubs: formatClubSummaries(u.ClubsWhereOwner),
+    }))
+
+    return publicProfileSummaries as UserProfileSummary[]
+  } else {
+    throw new ApolloError('adminAllUsers: There was an issue.')
+  }
+}
+//// End of Admin Only Queries ////
+
 export const checkUniqueDisplayName = async (
   r: any,
   { displayName }: QueryCheckUniqueDisplayNameArgs,
@@ -372,22 +442,6 @@ export const userProfile = async (
     console.error(`userProfileById: Could not retrieve User with id ${userId}.`)
     return null
   }
-}
-
-//////// Util - Finds the best score from a UserBenchmark based on its type ////////
-export function findBestUserBenchmarkEntry(
-  userBenchmark: UserBenchmark & { UserBenchmarkEntries: UserBenchmarkEntry[] },
-): UserBenchmarkEntry | null {
-  if (!userBenchmark.UserBenchmarkEntries.length) {
-    return null
-  }
-  const entries = userBenchmark.UserBenchmarkEntries.sort(
-    (a, b) => a.score - b.score,
-  )
-
-  return userBenchmark.benchmarkType === 'FASTESTTIME'
-    ? entries[0]
-    : entries.reverse()[0]
 }
 
 //// Mutations ////

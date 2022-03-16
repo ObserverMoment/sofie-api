@@ -10,6 +10,9 @@ export default gql`
     workoutSectionTypes: [WorkoutSectionType!]!
     standardMoves: [Move!]!
     progressWidgets: [ProgressWidget!]!
+    fitnessBenchmarkCategories: [FitnessBenchmarkCategory!]!
+    fitnessBenchmarks: [FitnessBenchmark!]!
+    fitnessBenchmarkWorkouts: [FitnessBenchmarkWorkout!]!
   }
 
   type BodyArea {

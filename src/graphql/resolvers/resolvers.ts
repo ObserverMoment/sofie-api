@@ -1,6 +1,5 @@
 import {
   ClubInviteTokenData,
-  ClubSummary,
   InviteTokenError,
   Resolvers,
 } from '../../generated/graphql'
@@ -41,7 +40,12 @@ import {
   deleteClub,
 } from './club/club'
 
-import { adminPublicClubs, updateClubMetaDataAdmin } from './club/metaDataAdmin'
+import {
+  adminPublicClubCounts,
+  adminPublicClubSummaries,
+  adminPublicClubById,
+  updateClubMetaDataAdmin,
+} from './club/metaDataAdmin'
 
 import {
   checkUserClubMemberStatus,
@@ -74,6 +78,15 @@ import {
   createEquipment, // Admin only
   updateEquipment, // Admin only
 } from './coreData'
+
+import {
+  createFitnessBenchmark,
+  updateFitnessBenchmark,
+  deleteFitnessBenchmark,
+  createFitnessBenchmarkWorkout,
+  updateFitnessBenchmarkWorkout,
+  deleteFitnessBenchmarkWorkout,
+} from './fitnessBenchmark'
 
 import {
   gymProfiles,
@@ -123,6 +136,7 @@ import {
 } from './timelineFeed'
 
 import {
+  adminAllUsers,
   checkUniqueDisplayName,
   userRecentlyViewedObjects,
   userAvatars,
@@ -167,33 +181,10 @@ import {
 } from './skillsAndCertifications'
 
 import {
-  userBenchmarks,
-  userBenchmark,
-  createUserBenchmark,
-  updateUserBenchmark,
-  deleteUserBenchmark,
-  createUserBenchmarkEntry,
-  updateUserBenchmarkEntry,
-  deleteUserBenchmarkEntry,
-} from './userBenchmark'
-
-import {
-  userMaxLoadExerciseTrackers,
-  userFastestTimeExerciseTrackers,
-  userMaxUnbrokenExerciseTrackers,
-  createUserMaxLoadExerciseTracker,
-  deleteUserMaxLoadExerciseTracker,
-  createUserFastestTimeExerciseTracker,
-  deleteUserFastestTimeExerciseTracker,
-  createUserMaxUnbrokenExerciseTracker,
-  deleteUserMaxUnbrokenExerciseTracker,
-  createUserMaxLoadTrackerManualEntry,
-  deleteUserMaxLoadTrackerManualEntry,
-  createUserFastestTimeTrackerManualEntry,
-  deleteUserFastestTimeTrackerManualEntry,
-  createUserMaxUnbrokenTrackerManualEntry,
-  deleteUserMaxUnbrokenTrackerManualEntry,
-} from './userExerciseScoreTrackers'
+  userExerciseLoadTrackers,
+  createUserExerciseLoadTracker,
+  deleteUserExerciseLoadTracker,
+} from './UserExerciseLoadTracker'
 
 import {
   userCollections,
@@ -220,7 +211,9 @@ import {
 } from './workout/workout'
 
 import {
-  adminPublicWorkouts,
+  adminPublicWorkoutCounts,
+  adminPublicWorkoutSummaries,
+  adminPublicWorkoutById,
   updateWorkoutMetaDataAdmin,
 } from './workout/metaDataAdmin'
 
@@ -271,7 +264,9 @@ import {
 } from './workoutPlan/workoutPlan'
 
 import {
-  adminPublicWorkoutPlans,
+  adminPublicWorkoutPlanCounts,
+  adminPublicWorkoutPlanSummaries,
+  adminPublicWorkoutPlanById,
   updateWorkoutPlanMetaDataAdmin,
 } from './workoutPlan/metaDataAdmin'
 
@@ -326,9 +321,18 @@ const resolvers: Resolvers = {
   Query: {
     validateToken: () => true, // Empty Resolver - call it and it will throw auth error if token is not valid / expired or if an associated user does not exist in the database.
     //// ADMIN ONLY QUERIES ////
-    adminPublicWorkouts,
-    adminPublicWorkoutPlans,
-    adminPublicClubs,
+    //// Public Content ////
+    adminPublicWorkoutCounts,
+    adminPublicWorkoutSummaries,
+    adminPublicWorkoutById,
+    adminPublicWorkoutPlanCounts,
+    adminPublicWorkoutPlanSummaries,
+    adminPublicWorkoutPlanById,
+    adminPublicClubCounts,
+    adminPublicClubSummaries,
+    adminPublicClubById,
+    //// User Data Analysis ////
+    adminAllUsers,
     //// END OF ADMIN ONLY QUERIES ////
     //// Core Data ////
     announcementUpdates,
@@ -392,16 +396,11 @@ const resolvers: Resolvers = {
     //// User Avatars ////
     userAvatars,
     userAvatarById,
-    /// User Benchmarks ////
-    userBenchmarks,
-    userBenchmark,
     /// User Collections ////
     userCollections,
     userCollectionById,
     /// User Exercise and Scored Workout Trackers ///
-    userMaxLoadExerciseTrackers,
-    userFastestTimeExerciseTrackers,
-    userMaxUnbrokenExerciseTrackers,
+    userExerciseLoadTrackers,
     //// Workouts ////
     publicWorkouts,
     userWorkouts, // Authed user.
@@ -464,6 +463,15 @@ const resolvers: Resolvers = {
     ///////////////////
     createEquipment,
     updateEquipment,
+    //////////////////////////////////////////////
+    //// Fitness Benchmarks and Workouts /////////
+    //////////////////////////////////////////////
+    createFitnessBenchmark,
+    updateFitnessBenchmark,
+    deleteFitnessBenchmark,
+    createFitnessBenchmarkWorkout,
+    updateFitnessBenchmarkWorkout,
+    deleteFitnessBenchmarkWorkout,
     //////////////////////////
     //// Gym Profile /////////
     //////////////////////////
@@ -527,31 +535,11 @@ const resolvers: Resolvers = {
     unarchiveWorkoutPlanById,
     archiveCustomMoveById,
     unarchiveCustomMoveById,
-    ////////////////////////
-    //// User Benchmark ////
-    ////////////////////////
-    createUserBenchmark,
-    updateUserBenchmark,
-    deleteUserBenchmark,
-    createUserBenchmarkEntry,
-    updateUserBenchmarkEntry,
-    deleteUserBenchmarkEntry,
-    ///////////////////////////////////////////////////
-    //// User Exercise and Scored Workout Trackers ////
-    ///////////////////////////////////////////////////
-    createUserMaxLoadExerciseTracker,
-    deleteUserMaxLoadExerciseTracker,
-    createUserFastestTimeExerciseTracker,
-    deleteUserFastestTimeExerciseTracker,
-    createUserMaxUnbrokenExerciseTracker,
-    deleteUserMaxUnbrokenExerciseTracker,
-    /// Manual Entries for each tracker type ///
-    createUserMaxLoadTrackerManualEntry,
-    deleteUserMaxLoadTrackerManualEntry,
-    createUserFastestTimeTrackerManualEntry,
-    deleteUserFastestTimeTrackerManualEntry,
-    createUserMaxUnbrokenTrackerManualEntry,
-    deleteUserMaxUnbrokenTrackerManualEntry,
+    ////////////////////////////////
+    //// User Exercise Trackers ////
+    ////////////////////////////////
+    createUserExerciseLoadTracker,
+    deleteUserExerciseLoadTracker,
     ////////////////////////
     //// User Collection ////
     ////////////////////////

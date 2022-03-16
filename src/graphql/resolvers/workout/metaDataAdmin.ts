@@ -1,24 +1,66 @@
+import { PublicContentValidationStatus } from '@prisma/client'
 import { ApolloError } from 'apollo-server-errors'
 import { Context } from '../../..'
 import {
   MutationUpdateWorkoutMetaDataAdminArgs,
-  QueryAdminPublicWorkoutsArgs,
-  WorkoutMetaDataAdmin,
+  PublicWorkoutSummaryAdmin,
+  QueryAdminPublicWorkoutByIdArgs,
+  QueryAdminPublicWorkoutSummariesArgs,
   WorkoutWithMetaDataAdmin,
 } from '../../../generated/graphql'
 import { AccessScopeError } from '../../utils'
 
 //// NOTE: Admin Only Access to these resolvers ////
 //// Queries ////
-
 /// https://www.prisma.io/docs/concepts/components/prisma-client/pagination
-export const adminPublicWorkouts = async (
+export const adminPublicWorkoutCounts = async (
   r: any,
-  { status }: QueryAdminPublicWorkoutsArgs,
+  a: any,
+  { prisma, userType }: Context,
+) => {
+  if (userType !== 'ADMIN') {
+    throw new AccessScopeError('Only admins can access this data')
+  }
+
+  const counts = await Promise.all([
+    prisma.workout.count({
+      where: {
+        contentAccessScope: 'PUBLIC',
+        archived: false,
+        validated: PublicContentValidationStatus.PENDING,
+      },
+    }),
+    prisma.workout.count({
+      where: {
+        contentAccessScope: 'PUBLIC',
+        archived: false,
+        validated: PublicContentValidationStatus.VALID,
+      },
+    }),
+    prisma.workout.count({
+      where: {
+        contentAccessScope: 'PUBLIC',
+        archived: false,
+        validated: PublicContentValidationStatus.INVALID,
+      },
+    }),
+  ])
+
+  return {
+    pending: counts[0],
+    valid: counts[1],
+    invalid: counts[2],
+  }
+}
+
+/// Just the workout name is returned. Use for lists.
+export const adminPublicWorkoutSummaries = async (
+  r: any,
+  { status }: QueryAdminPublicWorkoutSummariesArgs,
   { prisma, select, userType }: Context,
 ) => {
   if (userType !== 'ADMIN') {
-    throw new AccessScopeError()
+    throw new AccessScopeError('Only admins can access this data')
   }
 
   const publicWorkouts = await prisma.workout.findMany({
@@ -27,23 +69,41 @@ export const adminPublicWorkouts = async (
       archived: false,
       validated: status,
     },
-    take: 10,
     orderBy: {
-      id: 'desc',
+      createdAt: 'asc',
     },
-    select,
+    select: select,
   })
 
-  return publicWorkouts as WorkoutWithMetaDataAdmin[]
+  return publicWorkouts as PublicWorkoutSummaryAdmin[]
+}
+
+export const adminPublicWorkoutById = async (
+  r: any,
+  { id }: QueryAdminPublicWorkoutByIdArgs,
+  { prisma, select, userType }: Context,
+) => {
+  if (userType !== 'ADMIN') {
+    throw new AccessScopeError('Only admins can access this data')
+  }
+
+  const workout = await prisma.workout.findUnique({
+    where: {
+      id,
+    },
+    select: select,
+  })
+
+  return workout as WorkoutWithMetaDataAdmin
 }
 
 export const updateWorkoutMetaDataAdmin = async (
   r: any,
   { data }: MutationUpdateWorkoutMetaDataAdminArgs,
-  { prisma, userType }: Context,
+  { prisma, select, userType }: Context,
 ) => {
   if (userType !== 'ADMIN') {
-    throw new AccessScopeError()
+    throw new AccessScopeError('Only admins can access this data')
   }
 
   const updated = await prisma.workout.update({
@@ -53,17 +113,11 @@ export const updateWorkoutMetaDataAdmin = async (
       validated: data.validated || undefined,
       metaTags: data.metaTags || undefined,
     },
-    select: {
-      id: true,
-      validated: true,
-      metaTags: true,
-      reasonNotValidated: true,
-      difficultyLevel: true,
-    },
+    select,
   })
 
   if (updated) {
-    return updated as WorkoutMetaDataAdmin
+    return updated as WorkoutWithMetaDataAdmin
   } else {
     throw new ApolloError('updateWorkoutMetaDataAdmin: There was an issue.')
   }
