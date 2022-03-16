@@ -136,6 +136,7 @@ import {
 } from './timelineFeed'
 
 import {
+  adminAllUsers,
   checkUniqueDisplayName,
   userRecentlyViewedObjects,
   userAvatars,
@@ -320,6 +321,7 @@ const resolvers: Resolvers = {
   Query: {
     validateToken: () => true, // Empty Resolver - call it and it will throw auth error if token is not valid / expired or if an associated user does not exist in the database.
     //// ADMIN ONLY QUERIES ////
+    //// Public Content ////
     adminPublicWorkoutCounts,
     adminPublicWorkoutSummaries,
     adminPublicWorkoutById,
@@ -329,6 +331,8 @@ const resolvers: Resolvers = {
     adminPublicClubCounts,
     adminPublicClubSummaries,
     adminPublicClubById,
+    //// User Data Analysis ////
+    adminAllUsers,
     //// END OF ADMIN ONLY QUERIES ////
     //// Core Data ////
     announcementUpdates,

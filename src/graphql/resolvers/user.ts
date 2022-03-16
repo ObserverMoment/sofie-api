@@ -24,7 +24,7 @@ import {
   updateStreamFeedUser,
 } from '../../lib/getStream'
 import { checkUserMediaForDeletion, deleteFiles } from '../../lib/uploadcare'
-import { checkUserOwnsObject } from '../utils'
+import { AccessScopeError, checkUserOwnsObject } from '../utils'
 import { formatClubSummaries } from './club/utils'
 import { calcLifetimeLogStatsSummary } from './loggedWorkout'
 import {
@@ -36,6 +36,76 @@ import { formatWorkoutSummaries } from './workout/utils'
 import { formatWorkoutPlanSummaries } from './workoutPlan/utils'
 
 //// Queries ////
+//// Admin Only Queries ////
+export const adminAllUsers = async (
+  r: any,
+  a: any,
+  { select, prisma, userType }: Context,
+) => {
+  if (userType !== 'ADMIN') {
+    throw new AccessScopeError('Only admins can access this data')
+  }
+
+  const users = await prisma.user.findMany({
+    select: {
+      id: true,
+      userProfileScope: true,
+      avatarUri: true,
+      tagline: true,
+      townCity: true,
+      countryCode: true,
+      displayName: true,
+      Skills: {
+        select: {
+          name: true,
+        },
+      },
+      Workouts: {
+        where: {
+          archived: false,
+          contentAccessScope: 'PUBLIC',
+        },
+        select: {
+          id: true,
+        },
+      },
+      WorkoutPlans: {
+        where: {
+          archived: false,
+          contentAccessScope: 'PUBLIC',
+        },
+        select: {
+          id: true,
+        },
+      },
+      ClubsWhereOwner: {
+        select: selectForClubSummary,
+      },
+    },
+  })
+
+  if (users) {
+    const publicProfileSummaries = users.map((u) => ({
+      id: u.id,
+      userProfileScope: u.userProfileScope,
+      avatarUri: u.avatarUri,
+      tagline: u.tagline,
+      townCity: u.townCity,
+      countryCode: u.countryCode,
+      displayName: u.displayName,
+      skills: u.Skills.map((s) => s.name),
+      workoutCount: u.Workouts.length,
+      planCount: u.WorkoutPlans.length,
+      Clubs: formatClubSummaries(u.ClubsWhereOwner),
+    }))
+
+    return publicProfileSummaries as UserProfileSummary[]
+  } else {
+    throw new ApolloError('adminAllUsers: There was an issue.')
+  }
+}
+//// End of Admin Only Queries ////
+
 export const checkUniqueDisplayName = async (
   r: any,
   { displayName }: QueryCheckUniqueDisplayNameArgs,

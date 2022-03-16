@@ -1682,6 +1682,7 @@ export type PublicWorkoutSummaryAdmin = {
 
 export type Query = {
   __typename?: 'Query';
+  adminAllUsers: Array<UserProfileSummary>;
   adminPublicClubById: ClubWithMetaDataAdmin;
   adminPublicClubCounts: PublicClubCountsAdmin;
   adminPublicClubSummaries: Array<PublicClubSummaryAdmin>;
@@ -3889,6 +3890,7 @@ export type PublicWorkoutSummaryAdminResolvers<ContextType = any, ParentType ext
 }>;
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
+  adminAllUsers?: Resolver<Array<ResolversTypes['UserProfileSummary']>, ParentType, ContextType>;
   adminPublicClubById?: Resolver<ResolversTypes['ClubWithMetaDataAdmin'], ParentType, ContextType, RequireFields<QueryAdminPublicClubByIdArgs, 'id'>>;
   adminPublicClubCounts?: Resolver<ResolversTypes['PublicClubCountsAdmin'], ParentType, ContextType>;
   adminPublicClubSummaries?: Resolver<Array<ResolversTypes['PublicClubSummaryAdmin']>, ParentType, ContextType, RequireFields<QueryAdminPublicClubSummariesArgs, 'status'>>;

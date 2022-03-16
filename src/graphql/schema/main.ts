@@ -6,6 +6,7 @@ export default gql`
 
   type Query {
     #### ADMIN ONLY QUERIES ####
+    # User Data Analysis #
     # Content Requiring Validation #
     adminPublicWorkoutCounts: PublicWorkoutCountsAdmin!
     adminPublicWorkoutSummaries(
@@ -22,6 +23,8 @@ export default gql`
       status: PublicContentValidationStatus!
     ): [PublicClubSummaryAdmin!]!
     adminPublicClubById(id: ID!): ClubWithMetaDataAdmin!
+    # User Data Analysis #
+    adminAllUsers: [UserProfileSummary!]!
     #### END OF ADMIN ONLY QUERIES ####
     announcementUpdates: [AnnouncementUpdate!]!
     welcomeTodoItems: [WelcomeTodoItem!]!

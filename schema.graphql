@@ -993,6 +993,7 @@ type PublicWorkoutSummaryAdmin {
 }
 
 type Query {
+  adminAllUsers: [UserProfileSummary!]!
   adminPublicClubById(id: ID!): ClubWithMetaDataAdmin!
   adminPublicClubCounts: PublicClubCountsAdmin!
   adminPublicClubSummaries(status: PublicContentValidationStatus!): [PublicClubSummaryAdmin!]!
