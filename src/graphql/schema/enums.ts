@@ -4,14 +4,6 @@ export default gql`
   """
   Enums
   """
-  enum BenchmarkType {
-    AMRAP
-    MAXLOAD
-    FASTESTTIME
-    UNBROKENREPS
-    UNBROKENTIME
-  }
-
   enum BodyAreaFrontBack {
     BACK
     FRONT
@@ -47,6 +39,42 @@ export default gql`
     KILOMETRES
     YARDS
     MILES
+  }
+
+  enum FitnessBenchmarkScope {
+    STANDARD # In-built
+    CUSTOM # User defined
+  }
+
+  enum FitnessBenchmarkScoreType {
+    # ms. 100m sprint. WorkoutMoveRepType == DISTANCE
+    # Implementation: Stopwatch Timer + input
+    FASTESTTIMEDISTANCE
+    # ms. 100 burpees. WorkoutMoveRepType == REPS
+    # Implementation: Stopwatch Timer + input
+    # AKA ForTime
+    FASTESTTIMEREPS
+    # m. Standing Broad Jump. Farmers Carry. WorkoutMoveRepType == NA / IGNORED
+    # Implementation: Distance Input
+    LONGESTDISTANCE
+    # kg. 1 rep bench press. WorkoutMoveRepType == REPS
+    # Implementation: Load Input
+    MAXLOAD
+    # 2 minute air squat. WorkoutMoveRepType == TIME
+    # Implementation: Countdown Timer + Reps Input
+    # AKA AMRAP
+    TIMEDMAXREPS
+    # max unbroken pull ups. WorkoutMoveRepType == REPS
+    # Implementation: Reps Input
+    UNBROKENMAXREPS
+    # ms plank hold. WorkoutMoveRepType == TIME
+    # Implementation: Stopwatch Timer + input
+    UNBROKENMAXTIME
+  }
+
+  enum FitnessBenchmarkWorkoutScoreType {
+    AMRAP
+    FORTIME
   }
 
   enum Gender {

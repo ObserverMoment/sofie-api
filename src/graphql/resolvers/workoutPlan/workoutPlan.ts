@@ -1,3 +1,4 @@
+import { PublicContentValidationStatus } from '@prisma/client'
 import { ApolloError } from 'apollo-server-express'
 import { Context } from '../../..'
 import {
@@ -48,6 +49,7 @@ export const publicWorkoutPlans = async (
 ) => {
   const workoutPlans = await prisma.workoutPlan.findMany({
     where: {
+      validated: PublicContentValidationStatus.VALID,
       contentAccessScope: 'PUBLIC',
       archived: false,
       AND: filters ? formatWorkoutPlanFiltersInput(filters) : [],

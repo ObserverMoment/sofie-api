@@ -1,41 +1,102 @@
+import { PublicContentValidationStatus } from '@prisma/client'
 import { ApolloError } from 'apollo-server-errors'
 import { Context } from '../../..'
 import {
-  ClubMetaDataAdmin,
   ClubWithMetaDataAdmin,
   MutationUpdateClubMetaDataAdminArgs,
-  QueryAdminPublicWorkoutPlansArgs,
+  PublicClubSummaryAdmin,
+  QueryAdminPublicClubByIdArgs,
+  QueryAdminPublicClubSummariesArgs,
 } from '../../../generated/graphql'
 import { AccessScopeError } from '../../utils'
 
 //// NOTE: Admin Only Access to these resolvers ////
 
 //// Queries ////
-/// https://www.prisma.io/docs/concepts/components/prisma-client/pagination
-export const adminPublicClubs = async (
+export const adminPublicClubCounts = async (
   r: any,
-  { status }: QueryAdminPublicWorkoutPlansArgs,
-  { prisma, select }: Context,
+  a: any,
+  { prisma, userType }: Context,
 ) => {
+  if (userType !== 'ADMIN') {
+    throw new AccessScopeError('Only admins can access this data')
+  }
+
+  const counts = await Promise.all([
+    prisma.club.count({
+      where: {
+        contentAccessScope: 'PUBLIC',
+        validated: PublicContentValidationStatus.PENDING,
+      },
+    }),
+    prisma.club.count({
+      where: {
+        contentAccessScope: 'PUBLIC',
+        validated: PublicContentValidationStatus.VALID,
+      },
+    }),
+    prisma.club.count({
+      where: {
+        contentAccessScope: 'PUBLIC',
+        validated: PublicContentValidationStatus.INVALID,
+      },
+    }),
+  ])
+
+  return {
+    pending: counts[0],
+    valid: counts[1],
+    invalid: counts[2],
+  }
+}
+
+/// https://www.prisma.io/docs/concepts/components/prisma-client/pagination
+export const adminPublicClubSummaries = async (
+  r: any,
+  { status }: QueryAdminPublicClubSummariesArgs,
+  { prisma, userType, select }: Context,
+) => {
+  if (userType !== 'ADMIN') {
+    throw new AccessScopeError('Only admins can access this data')
+  }
+
   const publicClubs = await prisma.club.findMany({
     where: {
       contentAccessScope: 'PUBLIC',
       validated: status,
     },
-    take: 10,
     orderBy: {
-      id: 'desc',
+      createdAt: 'asc',
     },
     select,
   })
 
-  return publicClubs as ClubWithMetaDataAdmin[]
+  return publicClubs as PublicClubSummaryAdmin[]
+}
+
+export const adminPublicClubById = async (
+  r: any,
+  { id }: QueryAdminPublicClubByIdArgs,
+  { prisma, userType, select }: Context,
+) => {
+  if (userType !== 'ADMIN') {
+    throw new AccessScopeError('Only admins can access this data')
+  }
+
+  const club = await prisma.club.findUnique({
+    where: {
+      id,
+    },
+    select,
+  })
+
+  return club as ClubWithMetaDataAdmin
 }
 
 export const updateClubMetaDataAdmin = async (
   r: any,
   { data }: MutationUpdateClubMetaDataAdminArgs,
-  { prisma, userType }: Context,
+  { prisma, select, userType }: Context,
 ) => {
   if (userType !== 'ADMIN') {
     throw new AccessScopeError()
@@ -48,16 +109,11 @@ export const updateClubMetaDataAdmin = async (
       validated: data.validated || undefined,
       metaTags: data.metaTags || undefined,
     },
-    select: {
-      id: true,
-      validated: true,
-      metaTags: true,
-      reasonNotValidated: true,
-    },
+    select,
   })
 
   if (updated) {
-    return updated as ClubMetaDataAdmin
+    return updated as ClubWithMetaDataAdmin
   } else {
     throw new ApolloError('updateClubMetaDataAdmin: There was an issue.')
   }

@@ -15,7 +15,7 @@ import {
   checkWorkoutMediaForDeletion,
   deleteFiles,
 } from '../../../lib/uploadcare'
-import { Prisma } from '@prisma/client'
+import { Prisma, PublicContentValidationStatus } from '@prisma/client'
 import {
   formatWorkoutFiltersInput,
   formatWorkoutSectionFiltersInput,
@@ -34,6 +34,7 @@ export const publicWorkouts = async (
 ) => {
   const publicWorkouts = await prisma.workout.findMany({
     where: {
+      validated: PublicContentValidationStatus.VALID,
       contentAccessScope: 'PUBLIC',
       archived: false,
       AND: filters ? formatWorkoutFiltersInput(filters) : [],

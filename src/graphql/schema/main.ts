@@ -6,16 +6,25 @@ export default gql`
 
   type Query {
     #### ADMIN ONLY QUERIES ####
+    # User Data Analysis #
     # Content Requiring Validation #
-    adminPublicWorkouts(
+    adminPublicWorkoutCounts: PublicWorkoutCountsAdmin!
+    adminPublicWorkoutSummaries(
       status: PublicContentValidationStatus!
-    ): [WorkoutWithMetaDataAdmin!]!
-    adminPublicWorkoutPlans(
+    ): [PublicWorkoutSummaryAdmin!]!
+    adminPublicWorkoutById(id: ID!): WorkoutWithMetaDataAdmin!
+    adminPublicWorkoutPlanCounts: PublicWorkoutPlanCountsAdmin!
+    adminPublicWorkoutPlanSummaries(
       status: PublicContentValidationStatus!
-    ): [WorkoutPlanWithMetaDataAdmin!]!
-    adminPublicClubs(
+    ): [PublicWorkoutPlanSummaryAdmin!]!
+    adminPublicWorkoutPlanById(id: ID!): WorkoutPlanWithMetaDataAdmin!
+    adminPublicClubCounts: PublicClubCountsAdmin!
+    adminPublicClubSummaries(
       status: PublicContentValidationStatus!
-    ): [ClubWithMetaDataAdmin!]!
+    ): [PublicClubSummaryAdmin!]!
+    adminPublicClubById(id: ID!): ClubWithMetaDataAdmin!
+    # User Data Analysis #
+    adminAllUsers: [UserProfileSummary!]!
     #### END OF ADMIN ONLY QUERIES ####
     announcementUpdates: [AnnouncementUpdate!]!
     welcomeTodoItems: [WelcomeTodoItem!]!
@@ -89,17 +98,11 @@ export default gql`
     #### User Avatars ####
     userAvatars(ids: [ID!]!): [UserAvatarData!]!
     userAvatarById(id: ID!): UserAvatarData
-    #### User Benchmark (aka Personal Best) ####
-    #### DEPRECATED ####
-    userBenchmarks: [UserBenchmark!]!
-    userBenchmark(id: ID!): UserBenchmark!
     #### User Collection ####
     userCollections: [Collection!]!
     userCollectionById(id: ID!): Collection!
     #### User Exercise Score Trackers ####
-    userMaxLoadExerciseTrackers: [UserMaxLoadExerciseTracker!]!
-    userFastestTimeExerciseTrackers: [UserFastestTimeExerciseTracker!]!
-    userMaxUnbrokenExerciseTrackers: [UserMaxUnbrokenExerciseTracker!]!
+    userExerciseLoadTrackers: [UserExerciseLoadTracker!]!
     #### User Public Profiles ####
     userProfiles(cursor: ID, take: Int): [UserProfileSummary!]!
     userProfile(userId: ID!): UserProfile
@@ -130,13 +133,13 @@ export default gql`
     #### ADMIN ONLY MUTATIONS ####
     updateWorkoutMetaDataAdmin(
       data: UpdateWorkoutMetaDataAdminInput!
-    ): WorkoutMetaDataAdmin!
+    ): WorkoutWithMetaDataAdmin!
     updateWorkoutPlanMetaDataAdmin(
       data: UpdateWorkoutPlanMetaDataAdminInput!
-    ): WorkoutPlanMetaDataAdmin
+    ): WorkoutPlanWithMetaDataAdmin
     updateClubMetaDataAdmin(
       data: UpdateClubMetaDataAdminInput!
-    ): ClubMetaDataAdmin!
+    ): ClubWithMetaDataAdmin!
     #### END OF ADMIN ONLY MUTATIONS ####
     #### AnnouncementUpdate ####
     markAnnouncementUpdateAsSeen(data: MarkAnnouncementUpdateAsSeenInput!): ID!
@@ -184,6 +187,21 @@ export default gql`
     #### Equipment ####
     createEquipment(data: CreateEquipmentInput!): Equipment
     updateEquipment(data: UpdateEquipmentInput!): Equipment
+    #### Fitness Benchmarks and Workouts ####
+    createFitnessBenchmark(
+      data: CreateFitnessBenchmarkInput!
+    ): FitnessBenchmark!
+    updateFitnessBenchmark(
+      data: UpdateFitnessBenchmarkInput!
+    ): FitnessBenchmark!
+    deleteFitnessBenchmark(id: ID!): ID!
+    createFitnessBenchmarkWorkout(
+      data: CreateFitnessBenchmarkWorkoutInput!
+    ): FitnessBenchmarkWorkout!
+    updateFitnessBenchmarkWorkout(
+      data: UpdateFitnessBenchmarkWorkoutInput!
+    ): FitnessBenchmarkWorkout!
+    deleteFitnessBenchmarkWorkout(id: ID!): ID!
     #### Gym profile ####
     createGymProfile(data: CreateGymProfileInput!): GymProfile!
     updateGymProfile(data: UpdateGymProfileInput!): GymProfile!
@@ -254,18 +272,6 @@ export default gql`
     createWorkoutTag(data: CreateWorkoutTagInput!): WorkoutTag!
     updateWorkoutTag(data: UpdateWorkoutTagInput!): WorkoutTag!
     deleteWorkoutTagById(id: ID!): ID!
-    #### User Benchmark ####
-    #### DEPRECATED ####
-    createUserBenchmark(data: CreateUserBenchmarkInput!): UserBenchmark!
-    updateUserBenchmark(data: UpdateUserBenchmarkInput!): UserBenchmark!
-    deleteUserBenchmark(id: ID!): ID!
-    createUserBenchmarkEntry(
-      data: CreateUserBenchmarkEntryInput!
-    ): UserBenchmarkEntry!
-    updateUserBenchmarkEntry(
-      data: UpdateUserBenchmarkEntryInput!
-    ): UserBenchmarkEntry!
-    deleteUserBenchmarkEntry(id: ID!): ID!
     #### User Collection ####
     createCollection(data: CreateCollectionInput!): Collection!
     updateCollection(data: UpdateCollectionInput!): Collection!
@@ -280,43 +286,11 @@ export default gql`
     removeWorkoutPlanFromCollection(
       data: RemoveWorkoutPlanFromCollectionInput!
     ): Collection!
-    #### User Exercise Score Trackers ####
-    createUserMaxLoadExerciseTracker(
-      data: CreateUserMaxLoadExerciseTrackerInput!
-    ): UserMaxLoadExerciseTracker!
-    deleteUserMaxLoadExerciseTracker(id: ID!): ID!
-    createUserFastestTimeExerciseTracker(
-      data: CreateUserFastestTimeExerciseTrackerInput!
-    ): UserFastestTimeExerciseTracker!
-    deleteUserFastestTimeExerciseTracker(id: ID!): ID!
-    createUserMaxUnbrokenExerciseTracker(
-      data: CreateUserMaxUnbrokenExerciseTrackerInput!
-    ): UserMaxUnbrokenExerciseTracker!
-    deleteUserMaxUnbrokenExerciseTracker(id: ID!): ID!
-    # Manual Entries for each type #
-    # These updates return the updated parent tracker #
-    # including the newly updated manual entries #
-    createUserMaxLoadTrackerManualEntry(
-      data: CreateUserMaxLoadTrackerManualEntryInput!
-    ): UserMaxLoadExerciseTracker!
-    deleteUserMaxLoadTrackerManualEntry(
-      entryId: ID!
-      parentId: ID!
-    ): UserMaxLoadExerciseTracker!
-    createUserFastestTimeTrackerManualEntry(
-      data: CreateUserFastestTimeTrackerManualEntryInput!
-    ): UserFastestTimeExerciseTracker!
-    deleteUserFastestTimeTrackerManualEntry(
-      entryId: ID!
-      parentId: ID!
-    ): UserFastestTimeExerciseTracker!
-    createUserMaxUnbrokenTrackerManualEntry(
-      data: CreateUserMaxUnbrokenTrackerManualEntryInput!
-    ): UserMaxUnbrokenExerciseTracker!
-    deleteUserMaxUnbrokenTrackerManualEntry(
-      entryId: ID!
-      parentId: ID!
-    ): UserMaxUnbrokenExerciseTracker!
+    #### UserExerciseLoadTracker ####
+    createUserExerciseLoadTracker(
+      data: CreateUserExerciseLoadTrackerInput!
+    ): UserExerciseLoadTracker!
+    deleteUserExerciseLoadTracker(id: ID!): ID!
     #### User Skills and Certifications ####
     createSkill(data: CreateSkillInput!): Skill!
     updateSkill(data: UpdateSkillInput!): Skill!
