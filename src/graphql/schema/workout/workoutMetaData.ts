@@ -2,6 +2,12 @@ import { gql } from 'apollo-server-express'
 
 /// ADMIN USE ONLY ///
 export default gql`
+  type PublicWorkoutCountsAdmin {
+    pending: Int!
+    valid: Int!
+    invalid: Int!
+  }
+
   type PublicWorkoutSummaryAdmin {
     id: ID!
     createdAt: DateTime!

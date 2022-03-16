@@ -946,6 +946,12 @@ type ProgressWidget {
   subtitle: String
 }
 
+type PublicClubCountsAdmin {
+  invalid: Int!
+  pending: Int!
+  valid: Int!
+}
+
 type PublicClubSummaryAdmin {
   createdAt: DateTime!
   id: ID!
@@ -958,6 +964,18 @@ enum PublicContentValidationStatus {
   PENDING
   PENDINGUPDATED
   VALID
+}
+
+type PublicWorkoutCountsAdmin {
+  invalid: Int!
+  pending: Int!
+  valid: Int!
+}
+
+type PublicWorkoutPlanCountsAdmin {
+  invalid: Int!
+  pending: Int!
+  valid: Int!
 }
 
 type PublicWorkoutPlanSummaryAdmin {
@@ -976,14 +994,14 @@ type PublicWorkoutSummaryAdmin {
 
 type Query {
   adminPublicClubById(id: ID!): ClubWithMetaDataAdmin!
+  adminPublicClubCounts: PublicClubCountsAdmin!
   adminPublicClubSummaries(status: PublicContentValidationStatus!): [PublicClubSummaryAdmin!]!
-  adminPublicClubsCount(status: PublicContentValidationStatus!): Int!
   adminPublicWorkoutById(id: ID!): WorkoutWithMetaDataAdmin!
+  adminPublicWorkoutCounts: PublicWorkoutCountsAdmin!
   adminPublicWorkoutPlanById(id: ID!): WorkoutPlanWithMetaDataAdmin!
+  adminPublicWorkoutPlanCounts: PublicWorkoutPlanCountsAdmin!
   adminPublicWorkoutPlanSummaries(status: PublicContentValidationStatus!): [PublicWorkoutPlanSummaryAdmin!]!
-  adminPublicWorkoutPlansCount(status: PublicContentValidationStatus!): Int!
   adminPublicWorkoutSummaries(status: PublicContentValidationStatus!): [PublicWorkoutSummaryAdmin!]!
-  adminPublicWorkoutsCount(status: PublicContentValidationStatus!): Int!
   announcementUpdates: [AnnouncementUpdate!]!
   bodyTrackingEntries: [BodyTrackingEntry!]!
   checkClubInviteToken(id: ID!): CheckClubInviteTokenResult!

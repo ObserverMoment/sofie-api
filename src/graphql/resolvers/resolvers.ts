@@ -41,7 +41,7 @@ import {
 } from './club/club'
 
 import {
-  adminPublicClubsCount,
+  adminPublicClubCounts,
   adminPublicClubSummaries,
   adminPublicClubById,
   updateClubMetaDataAdmin,
@@ -210,7 +210,7 @@ import {
 } from './workout/workout'
 
 import {
-  adminPublicWorkoutsCount,
+  adminPublicWorkoutCounts,
   adminPublicWorkoutSummaries,
   adminPublicWorkoutById,
   updateWorkoutMetaDataAdmin,
@@ -263,7 +263,7 @@ import {
 } from './workoutPlan/workoutPlan'
 
 import {
-  adminPublicWorkoutPlansCount,
+  adminPublicWorkoutPlanCounts,
   adminPublicWorkoutPlanSummaries,
   adminPublicWorkoutPlanById,
   updateWorkoutPlanMetaDataAdmin,
@@ -320,13 +320,13 @@ const resolvers: Resolvers = {
   Query: {
     validateToken: () => true, // Empty Resolver - call it and it will throw auth error if token is not valid / expired or if an associated user does not exist in the database.
     //// ADMIN ONLY QUERIES ////
-    adminPublicWorkoutsCount,
+    adminPublicWorkoutCounts,
     adminPublicWorkoutSummaries,
     adminPublicWorkoutById,
-    adminPublicWorkoutPlansCount,
+    adminPublicWorkoutPlanCounts,
     adminPublicWorkoutPlanSummaries,
     adminPublicWorkoutPlanById,
-    adminPublicClubsCount,
+    adminPublicClubCounts,
     adminPublicClubSummaries,
     adminPublicClubById,
     //// END OF ADMIN ONLY QUERIES ////

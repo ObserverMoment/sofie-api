@@ -2,6 +2,12 @@ import { gql } from 'apollo-server-express'
 
 export default gql`
   ## Admin use only ##
+  type PublicClubCountsAdmin {
+    pending: Int!
+    valid: Int!
+    invalid: Int!
+  }
+
   type PublicClubSummaryAdmin {
     id: ID!
     createdAt: DateTime!

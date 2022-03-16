@@ -1,3 +1,4 @@
+import { PublicContentValidationStatus } from '@prisma/client'
 import { ApolloError } from 'apollo-server-errors'
 import { Context } from '../../..'
 import {
@@ -5,7 +6,6 @@ import {
   MutationUpdateClubMetaDataAdminArgs,
   PublicClubSummaryAdmin,
   QueryAdminPublicClubByIdArgs,
-  QueryAdminPublicClubsCountArgs,
   QueryAdminPublicClubSummariesArgs,
 } from '../../../generated/graphql'
 import { AccessScopeError } from '../../utils'
@@ -13,23 +13,41 @@ import { AccessScopeError } from '../../utils'
 //// NOTE: Admin Only Access to these resolvers ////
 
 //// Queries ////
-export const adminPublicClubsCount = async (
+export const adminPublicClubCounts = async (
   r: any,
-  { status }: QueryAdminPublicClubsCountArgs,
+  a: any,
   { prisma, userType }: Context,
 ) => {
   if (userType !== 'ADMIN') {
     throw new AccessScopeError('Only admins can access this data')
   }
 
-  const count = await prisma.club.count({
-    where: {
-      contentAccessScope: 'PUBLIC',
-      validated: status,
-    },
-  })
+  const counts = await Promise.all([
+    prisma.club.count({
+      where: {
+        contentAccessScope: 'PUBLIC',
+        validated: PublicContentValidationStatus.PENDING,
+      },
+    }),
+    prisma.club.count({
+      where: {
+        contentAccessScope: 'PUBLIC',
+        validated: PublicContentValidationStatus.VALID,
+      },
+    }),
+    prisma.club.count({
+      where: {
+        contentAccessScope: 'PUBLIC',
+        validated: PublicContentValidationStatus.INVALID,
+      },
+    }),
+  ])
 
-  return count
+  return {
+    pending: counts[0],
+    valid: counts[1],
+    invalid: counts[2],
+  }
 }
 
 /// https://www.prisma.io/docs/concepts/components/prisma-client/pagination

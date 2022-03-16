@@ -46,7 +46,7 @@ model AnnouncementUpdateAction {
   announcementUpdateId String
 }
 
-/// Items for new users to do / dismiss whe they first start using the app.
+/// Items for new users to do / dismiss when they first start using the app.
 /// Tapping the list either routes to a new page or opens a video.
 model WelcomeTodoItem {
   id              String   @id @default(uuid())

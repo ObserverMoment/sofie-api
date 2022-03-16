@@ -73,7 +73,9 @@ export const updateFitnessBenchmark = async (
       description: data.description || undefined,
       scope: data.scope || undefined,
       type: data.type || undefined,
-      FitnessBenchmarkCategory: undefined,
+      FitnessBenchmarkCategory: data.FitnessBenchmarkCategory
+        ? { connect: data.FitnessBenchmarkCategory }
+        : undefined,
     },
     select,
   })

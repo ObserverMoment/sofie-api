@@ -1,10 +1,10 @@
+import { PublicContentValidationStatus } from '@prisma/client'
 import { ApolloError } from 'apollo-server-errors'
 import { Context } from '../../..'
 import {
   MutationUpdateWorkoutMetaDataAdminArgs,
   PublicWorkoutSummaryAdmin,
   QueryAdminPublicWorkoutByIdArgs,
-  QueryAdminPublicWorkoutsCountArgs,
   QueryAdminPublicWorkoutSummariesArgs,
   WorkoutWithMetaDataAdmin,
 } from '../../../generated/graphql'
@@ -13,24 +13,44 @@ import { AccessScopeError } from '../../utils'
 //// NOTE: Admin Only Access to these resolvers ////
 //// Queries ////
 /// https://www.prisma.io/docs/concepts/components/prisma-client/pagination
-export const adminPublicWorkoutsCount = async (
+export const adminPublicWorkoutCounts = async (
   r: any,
-  { status }: QueryAdminPublicWorkoutsCountArgs,
+  a: any,
   { prisma, userType }: Context,
 ) => {
   if (userType !== 'ADMIN') {
     throw new AccessScopeError('Only admins can access this data')
   }
 
-  const count = await prisma.workout.count({
-    where: {
-      contentAccessScope: 'PUBLIC',
-      archived: false,
-      validated: status,
-    },
-  })
+  const counts = await Promise.all([
+    prisma.workout.count({
+      where: {
+        contentAccessScope: 'PUBLIC',
+        archived: false,
+        validated: PublicContentValidationStatus.PENDING,
+      },
+    }),
+    prisma.workout.count({
+      where: {
+        contentAccessScope: 'PUBLIC',
+        archived: false,
+        validated: PublicContentValidationStatus.VALID,
+      },
+    }),
+    prisma.workout.count({
+      where: {
+        contentAccessScope: 'PUBLIC',
+        archived: false,
+        validated: PublicContentValidationStatus.INVALID,
+      },
+    }),
+  ])
 
-  return count
+  return {
+    pending: counts[0],
+    valid: counts[1],
+    invalid: counts[2],
+  }
 }
 
 /// Just the workout name is returned. Use for lists.
