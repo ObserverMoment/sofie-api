@@ -837,15 +837,6 @@ model UserSleepWellLog {
 //////////////////////////////////
 //// ENUMS ///////////////////////
 //////////////////////////////////
-/// @deprecated
-enum BenchmarkType {
-  UNBROKENREPS
-  UNBROKENTIME
-  MAXLOAD
-  FASTESTTIME
-  AMRAP
-}
-
 enum BodyAreaFrontBack {
   BACK
   FRONT
