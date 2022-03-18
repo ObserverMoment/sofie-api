@@ -2295,7 +2295,7 @@ export type UpdateUserMeditationLogInput = {
 };
 
 export type UpdateUserProfileInput = {
-  activeLogDataWidgets?: InputMaybe<Array<Scalars['String']>>;
+  activeFitnessBenchmarks?: InputMaybe<Array<Scalars['String']>>;
   activeProgressWidgets?: InputMaybe<Array<Scalars['String']>>;
   avatarUri?: InputMaybe<Scalars['String']>;
   bio?: InputMaybe<Scalars['String']>;
@@ -2320,7 +2320,7 @@ export type UpdateUserProfileInput = {
 
 export type UpdateUserProfileResult = {
   __typename?: 'UpdateUserProfileResult';
-  activeLogDataWidgets?: Maybe<Array<Scalars['String']>>;
+  activeFitnessBenchmarks?: Maybe<Array<Scalars['String']>>;
   activeProgressWidgets?: Maybe<Array<Scalars['String']>>;
   avatarUri?: Maybe<Scalars['String']>;
   bio?: Maybe<Scalars['String']>;
@@ -2525,7 +2525,7 @@ export type UserProfile = {
   Clubs: Array<ClubSummary>;
   LifetimeLogStatsSummary?: Maybe<LifetimeLogStatsSummary>;
   Skills: Array<Skill>;
-  activeLogDataWidgets?: Maybe<Array<Scalars['String']>>;
+  activeFitnessBenchmarks?: Maybe<Array<Scalars['String']>>;
   activeProgressWidgets?: Maybe<Array<Scalars['String']>>;
   avatarUri?: Maybe<Scalars['String']>;
   bio?: Maybe<Scalars['String']>;
@@ -4094,7 +4094,7 @@ export type TextSearchResultResolvers<ContextType = any, ParentType extends Reso
 }>;
 
 export type UpdateUserProfileResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['UpdateUserProfileResult'] = ResolversParentTypes['UpdateUserProfileResult']> = ResolversObject<{
-  activeLogDataWidgets?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
+  activeFitnessBenchmarks?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   activeProgressWidgets?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   avatarUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   bio?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -4181,7 +4181,7 @@ export type UserProfileResolvers<ContextType = any, ParentType extends Resolvers
   Clubs?: Resolver<Array<ResolversTypes['ClubSummary']>, ParentType, ContextType>;
   LifetimeLogStatsSummary?: Resolver<Maybe<ResolversTypes['LifetimeLogStatsSummary']>, ParentType, ContextType>;
   Skills?: Resolver<Array<ResolversTypes['Skill']>, ParentType, ContextType>;
-  activeLogDataWidgets?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
+  activeFitnessBenchmarks?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   activeProgressWidgets?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   avatarUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   bio?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;

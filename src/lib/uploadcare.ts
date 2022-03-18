@@ -1,5 +1,6 @@
 import crypto from 'crypto'
 import { PrismaClient } from '@prisma/client'
+import fetch from 'node-fetch'
 import {
   UpdateWorkoutSectionInput,
   UpdateWorkoutPlanInput,
@@ -67,6 +68,7 @@ export async function deleteFiles(fileIds: string[]): Promise<boolean> {
     headers: prepareHeaders('DELETE', '/files/storage/', requestBody),
     body: requestBody,
   })
+
   const json = await res.json()
   return (json as any).status == 'ok'
 }
