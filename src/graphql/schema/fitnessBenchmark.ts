@@ -19,6 +19,8 @@ export default gql`
     instructionalVideoUri: String
     instructionalVideoThumbUri: String
     FitnessBenchmarkCategory: FitnessBenchmarkCategory!
+    # Nullable when scores are not needed.
+    FitnessBenchmarkScores: [FitnessBenchmarkScore!]
   }
 
   input CreateFitnessBenchmarkInput {
@@ -65,6 +67,16 @@ export default gql`
     FitnessBenchmark: ConnectRelationInput!
   }
 
+  input UpdateFitnessBenchmarkScoreInput {
+    id: ID!
+    completedOn: DateTime
+    # Units that this represents depends on FitnessBenchmarkScoreType.
+    score: Float
+    note: String
+    videoUri: String
+    videoThumbUri: String
+  }
+
   type FitnessBenchmarkWorkout {
     id: ID!
     createdAt: DateTime!
@@ -83,6 +95,8 @@ export default gql`
     # E.g. [10, 5, 10, 10]
     # Must be same length as moveDescriptions[]
     pointsForMoveCompleted: [Int!]!
+    # Nullable when scores are not needed.
+    FitnessBenchmarkWorkoutScores: [FitnessBenchmarkWorkoutScore!]
   }
 
   input CreateFitnessBenchmarkWorkoutInput {

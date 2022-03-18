@@ -80,9 +80,14 @@ import {
 } from './coreData'
 
 import {
+  userFitnessBenchmarks,
+  userBenchmarkWorkouts,
   createFitnessBenchmark,
   updateFitnessBenchmark,
   deleteFitnessBenchmark,
+  createFitnessBenchmarkScore,
+  updateFitnessBenchmarkScore,
+  deleteFitnessBenchmarkScore,
   createFitnessBenchmarkWorkout,
   updateFitnessBenchmarkWorkout,
   deleteFitnessBenchmarkWorkout,
@@ -373,6 +378,9 @@ const resolvers: Resolvers = {
     userLoggedWorkouts,
     //// User Custom Move ////
     customMoves,
+    //// Standard + Custom Benchmarks + User Scores ////
+    userFitnessBenchmarks,
+    userBenchmarkWorkouts,
     //// Scheduled Workouts ////
     userScheduledWorkouts,
     //// Text Search ////
@@ -469,6 +477,9 @@ const resolvers: Resolvers = {
     createFitnessBenchmark,
     updateFitnessBenchmark,
     deleteFitnessBenchmark,
+    createFitnessBenchmarkScore,
+    updateFitnessBenchmarkScore,
+    deleteFitnessBenchmarkScore,
     createFitnessBenchmarkWorkout,
     updateFitnessBenchmarkWorkout,
     deleteFitnessBenchmarkWorkout,

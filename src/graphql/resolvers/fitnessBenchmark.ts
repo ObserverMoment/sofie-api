@@ -3,21 +3,63 @@ import { ApolloError } from 'apollo-server-errors'
 import { Context } from '../..'
 import {
   FitnessBenchmark,
+  FitnessBenchmarkScore,
   FitnessBenchmarkWorkout,
   MutationCreateFitnessBenchmarkArgs,
+  MutationCreateFitnessBenchmarkScoreArgs,
   MutationCreateFitnessBenchmarkWorkoutArgs,
   MutationDeleteFitnessBenchmarkArgs,
+  MutationDeleteFitnessBenchmarkScoreArgs,
   MutationDeleteFitnessBenchmarkWorkoutArgs,
   MutationUpdateFitnessBenchmarkArgs,
+  MutationUpdateFitnessBenchmarkScoreArgs,
   MutationUpdateFitnessBenchmarkWorkoutArgs,
 } from '../../generated/graphql'
 import {
   checkFitnessBenchmarkMediaForDeletion,
+  checkFitnessBenchmarkScoreMediaForDeletion,
   checkFitnessBenchmarkWorkoutMediaForDeletion,
   deleteFiles,
 } from '../../lib/uploadcare'
 import { AccessScopeError, checkUserOwnsObject } from '../utils'
 
+//// Queries ////
+/// Gets all the standard benchmarks, plus the user custom ones.
+/// Plus user scores for all of the above.
+export const userFitnessBenchmarks = async (
+  r: any,
+  a: any,
+  { authedUserId, select, prisma }: Context,
+) => {
+  const benchmarks = await prisma.fitnessBenchmark.findMany({
+    where: {
+      OR: [{ userId: authedUserId }, { scope: FitnessBenchmarkScope.STANDARD }],
+    },
+    select,
+  })
+
+  return benchmarks as FitnessBenchmark[]
+}
+
+/// Gets all the standard benchmark workouts, plus the user custom ones.
+/// Plus user scores for all of the above.
+export const userBenchmarkWorkouts = async (
+  r: any,
+  a: any,
+  { authedUserId, select, prisma }: Context,
+) => {
+  const benchmarkWorkouts = await prisma.fitnessBenchmarkWorkout.findMany({
+    where: {
+      OR: [{ userId: authedUserId }, { scope: FitnessBenchmarkScope.STANDARD }],
+    },
+    select,
+  })
+
+  return benchmarkWorkouts as FitnessBenchmarkWorkout[]
+}
+
+//// Mutations ////
+//// Fitness Benchmarks ////
 export const createFitnessBenchmark = async (
   r: any,
   { data }: MutationCreateFitnessBenchmarkArgs,
@@ -123,6 +165,158 @@ export const deleteFitnessBenchmark = async (
   }
 }
 
+//// Fitness Benchmark Scores ////
+export const createFitnessBenchmarkScore = async (
+  r: any,
+  { data }: MutationCreateFitnessBenchmarkScoreArgs,
+  { authedUserId, select, prisma }: Context,
+) => {
+  /// Check if benchmark is either standard, or owned by the authed user.
+  /// If not then throw.
+  const benchmark = await prisma.fitnessBenchmark.findUnique({
+    where: { id: data.FitnessBenchmark.id },
+    select: {
+      userId: true,
+      scope: true,
+    },
+  })
+
+  if (
+    !benchmark ||
+    (benchmark.scope === FitnessBenchmarkScope.CUSTOM &&
+      benchmark.userId !== authedUserId)
+  ) {
+    throw new AccessScopeError(
+      'This benchmark is CUSTOM and you are not the owner of it.',
+    )
+  }
+
+  /// Side post the score onto the benchmark and get the full benchmark back again.
+  const updated = await prisma.fitnessBenchmark.update({
+    where: {
+      id: data.FitnessBenchmark.id,
+    },
+    data: {
+      FitnessBenchmarkScores: {
+        create: {
+          completedOn: data.completedOn || undefined,
+          score: data.score,
+          note: data.note,
+          videoUri: data.videoUri,
+          videoThumbUri: data.videoThumbUri,
+          User: {
+            connect: { id: authedUserId },
+          },
+        },
+      },
+    },
+    select,
+  })
+
+  if (updated) {
+    return updated as FitnessBenchmark
+  } else {
+    throw new ApolloError('createFitnessBenchmarkScore: There was an issue.')
+  }
+}
+
+export const updateFitnessBenchmarkScore = async (
+  r: any,
+  { data }: MutationUpdateFitnessBenchmarkScoreArgs,
+  { authedUserId, select, prisma }: Context,
+) => {
+  await checkUserOwnsObject(
+    data.id,
+    'fitnessBenchmarkScore',
+    authedUserId,
+    prisma,
+  )
+
+  /// Get the parent benchmark's ID
+  const score = await prisma.fitnessBenchmarkScore.findUnique({
+    where: { id: data.id },
+    select: {
+      fitnessBenchmarkId: true,
+    },
+  })
+
+  /// Get any media that needs to be deleted.
+  const mediaFileUrisForDeletion: string[] =
+    await checkFitnessBenchmarkScoreMediaForDeletion(prisma, data)
+
+  /// Side post the update onto the parent benchmark and get the full benchmark back again.
+  const updated = await prisma.fitnessBenchmark.update({
+    where: {
+      id: score?.fitnessBenchmarkId,
+    },
+    data: {
+      FitnessBenchmarkScores: {
+        update: {
+          where: {
+            id: data.id,
+          },
+          data: {
+            completedOn: data.completedOn || undefined,
+            score: data.score || undefined,
+            note: data.note,
+            videoUri: data.videoUri,
+            videoThumbUri: data.videoThumbUri,
+          },
+        },
+      },
+    },
+    select,
+  })
+
+  if (updated) {
+    if (mediaFileUrisForDeletion.length > 0) {
+      await deleteFiles(mediaFileUrisForDeletion)
+    }
+    return updated as FitnessBenchmark
+  } else {
+    throw new ApolloError('createFitnessBenchmarkScore: There was an issue.')
+  }
+}
+
+export const deleteFitnessBenchmarkScore = async (
+  r: any,
+  { id }: MutationDeleteFitnessBenchmarkScoreArgs,
+  { authedUserId, select, prisma }: Context,
+) => {
+  await checkUserOwnsObject(id, 'fitnessBenchmarkScore', authedUserId, prisma)
+
+  const deleted = await prisma.fitnessBenchmarkScore.delete({
+    where: { id },
+    select: {
+      id: true,
+      videoUri: true,
+      videoThumbUri: true,
+      fitnessBenchmarkId: true,
+    },
+  })
+
+  const mediaFileUrisForDeletion = [
+    deleted.videoUri,
+    deleted.videoThumbUri,
+  ].filter((x) => !!x) as string[]
+
+  /// This resolver needs to return the full parent benchmark
+  const updated = await prisma.fitnessBenchmark.findUnique({
+    where: { id: deleted.fitnessBenchmarkId },
+    select,
+  })
+
+  if (deleted) {
+    if (mediaFileUrisForDeletion.length > 0) {
+      await deleteFiles(mediaFileUrisForDeletion)
+    }
+    return updated as FitnessBenchmark
+  } else {
+    throw new ApolloError('deleteFitnessBenchmarkScore: There was an issue.')
+  }
+}
+
+//// Fitness Benchmark Workouts ////
 export const createFitnessBenchmarkWorkout = async (
   r: any,
   { data }: MutationCreateFitnessBenchmarkWorkoutArgs,

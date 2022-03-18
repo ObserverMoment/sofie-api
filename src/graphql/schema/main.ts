@@ -69,6 +69,9 @@ export default gql`
     loggedWorkoutById(id: ID!): LoggedWorkout
     #### User Custom Moves ####
     customMoves: [Move!]!
+    #### Standard + Custom Benchmarks + User Scores ####
+    userFitnessBenchmarks: [FitnessBenchmark!]!
+    userBenchmarkWorkouts: [FitnessBenchmarkWorkout!]!
     #### User Progress Tracking ####
     userGoals: [UserGoal!]!
     bodyTrackingEntries: [BodyTrackingEntry!]!
@@ -187,7 +190,7 @@ export default gql`
     #### Equipment ####
     createEquipment(data: CreateEquipmentInput!): Equipment
     updateEquipment(data: UpdateEquipmentInput!): Equipment
-    #### Fitness Benchmarks and Workouts ####
+    #### Fitness Benchmarks ####
     createFitnessBenchmark(
       data: CreateFitnessBenchmarkInput!
     ): FitnessBenchmark!
@@ -195,6 +198,14 @@ export default gql`
       data: UpdateFitnessBenchmarkInput!
     ): FitnessBenchmark!
     deleteFitnessBenchmark(id: ID!): ID!
+    createFitnessBenchmarkScore(
+      data: CreateFitnessBenchmarkScoreInput!
+    ): FitnessBenchmark!
+    updateFitnessBenchmarkScore(
+      data: UpdateFitnessBenchmarkScoreInput!
+    ): FitnessBenchmark!
+    deleteFitnessBenchmarkScore(id: ID!): FitnessBenchmark!
+    #### Fitness Benchmarks Workouts ####
     createFitnessBenchmarkWorkout(
       data: CreateFitnessBenchmarkWorkoutInput!
     ): FitnessBenchmarkWorkout!

@@ -256,8 +256,6 @@ type CoreData {
   bodyAreas: [BodyArea!]!
   equipment: [Equipment!]!
   fitnessBenchmarkCategories: [FitnessBenchmarkCategory!]!
-  fitnessBenchmarkWorkouts: [FitnessBenchmarkWorkout!]!
-  fitnessBenchmarks: [FitnessBenchmark!]!
   moveTypes: [MoveType!]!
   progressWidgets: [ProgressWidget!]!
   standardMoves: [Move!]!
@@ -608,6 +606,7 @@ type Equipment {
 
 type FitnessBenchmark {
   FitnessBenchmarkCategory: FitnessBenchmarkCategory!
+  FitnessBenchmarkScores: [FitnessBenchmarkScore!]
   createdAt: DateTime!
   description: String!
   id: ID!
@@ -652,6 +651,7 @@ enum FitnessBenchmarkScoreType {
 }
 
 type FitnessBenchmarkWorkout {
+  FitnessBenchmarkWorkoutScores: [FitnessBenchmarkWorkoutScore!]
   createdAt: DateTime!
   description: String!
   id: ID!
@@ -829,6 +829,7 @@ type Mutation {
   createCompletedWorkoutPlanDayWorkout(data: CreateCompletedWorkoutPlanDayWorkoutInput!): WorkoutPlanEnrolment!
   createEquipment(data: CreateEquipmentInput!): Equipment
   createFitnessBenchmark(data: CreateFitnessBenchmarkInput!): FitnessBenchmark!
+  createFitnessBenchmarkScore(data: CreateFitnessBenchmarkScoreInput!): FitnessBenchmark!
   createFitnessBenchmarkWorkout(data: CreateFitnessBenchmarkWorkoutInput!): FitnessBenchmarkWorkout!
   createGymProfile(data: CreateGymProfileInput!): GymProfile!
   createLoggedWorkout(data: CreateLoggedWorkoutInput!): LoggedWorkout!
@@ -860,6 +861,7 @@ type Mutation {
   deleteCollectionById(id: ID!): ID!
   deleteCompletedWorkoutPlanDayWorkout(data: DeleteCompletedWorkoutPlanDayWorkoutInput!): WorkoutPlanEnrolment!
   deleteFitnessBenchmark(id: ID!): ID!
+  deleteFitnessBenchmarkScore(id: ID!): FitnessBenchmark!
   deleteFitnessBenchmarkWorkout(id: ID!): ID!
   deleteGymProfileById(id: ID!): ID
   deleteLoggedWorkoutById(id: ID!): ID!
@@ -909,6 +911,7 @@ type Mutation {
   updateCollection(data: UpdateCollectionInput!): Collection!
   updateEquipment(data: UpdateEquipmentInput!): Equipment
   updateFitnessBenchmark(data: UpdateFitnessBenchmarkInput!): FitnessBenchmark!
+  updateFitnessBenchmarkScore(data: UpdateFitnessBenchmarkScoreInput!): FitnessBenchmark!
   updateFitnessBenchmarkWorkout(data: UpdateFitnessBenchmarkWorkoutInput!): FitnessBenchmarkWorkout!
   updateGymProfile(data: UpdateGymProfileInput!): GymProfile!
   updateLoggedWorkout(data: UpdateLoggedWorkoutInput!): LoggedWorkout!
@@ -1038,12 +1041,14 @@ type Query {
   userArchivedWorkouts: [Workout!]!
   userAvatarById(id: ID!): UserAvatarData
   userAvatars(ids: [ID!]!): [UserAvatarData!]!
+  userBenchmarkWorkouts: [FitnessBenchmarkWorkout!]!
   userClubs: [ClubSummary!]!
   userCollectionById(id: ID!): Collection!
   userCollections: [Collection!]!
   userDayLogMoods: [UserDayLogMood!]!
   userEatWellLogs: [UserEatWellLog!]!
   userExerciseLoadTrackers: [UserExerciseLoadTracker!]!
+  userFitnessBenchmarks: [FitnessBenchmark!]!
   userGoals: [UserGoal!]!
   userLoggedWorkouts: [LoggedWorkout!]!
   userMeditationLogs: [UserMeditationLog!]!
@@ -1246,6 +1251,15 @@ input UpdateFitnessBenchmarkInput {
   type: FitnessBenchmarkScoreType
 }
 
+input UpdateFitnessBenchmarkScoreInput {
+  completedOn: DateTime
+  id: ID!
+  note: String
+  score: Float
+  videoThumbUri: String
+  videoUri: String
+}
+
 input UpdateFitnessBenchmarkWorkoutInput {
   description: String
   id: ID!
@@ -1357,7 +1371,7 @@ input UpdateUserMeditationLogInput {
 }
 
 input UpdateUserProfileInput {
-  activeLogDataWidgets: [String!]
+  activeFitnessBenchmarks: [String!]
   activeProgressWidgets: [String!]
   avatarUri: String
   bio: String
@@ -1381,7 +1395,7 @@ input UpdateUserProfileInput {
 }
 
 type UpdateUserProfileResult {
-  activeLogDataWidgets: [String!]
+  activeFitnessBenchmarks: [String!]
   activeProgressWidgets: [String!]
   avatarUri: String
   bio: String
@@ -1581,7 +1595,7 @@ type UserProfile {
   Clubs: [ClubSummary!]!
   LifetimeLogStatsSummary: LifetimeLogStatsSummary
   Skills: [Skill!]!
-  activeLogDataWidgets: [String!]
+  activeFitnessBenchmarks: [String!]
   activeProgressWidgets: [String!]
   avatarUri: String
   bio: String
