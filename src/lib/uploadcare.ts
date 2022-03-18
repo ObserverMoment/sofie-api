@@ -1,6 +1,6 @@
-import fetch from 'node-fetch'
 import crypto from 'crypto'
 import { PrismaClient } from '@prisma/client'
+import fetch from 'node-fetch'
 import {
   UpdateWorkoutSectionInput,
   UpdateWorkoutPlanInput,
@@ -11,6 +11,7 @@ import {
   UpdateUserProfileInput,
   UpdateFitnessBenchmarkInput,
   UpdateFitnessBenchmarkWorkoutInput,
+  UpdateFitnessBenchmarkScoreInput,
 } from '../generated/graphql'
 import { AccessScopeError } from '../graphql/utils'
 
@@ -67,6 +68,7 @@ export async function deleteFiles(fileIds: string[]): Promise<boolean> {
     headers: prepareHeaders('DELETE', '/files/storage/', requestBody),
     body: requestBody,
   })
+
   const json = await res.json()
   return (json as any).status == 'ok'
 }
@@ -142,6 +144,40 @@ export async function checkFitnessBenchmarkMediaForDeletion(
     const fileIdsForDeletion: string[] = Object.keys(oldFitnessBenchmark)
       .map((key: string) =>
         getFileIdForDeleteOrNull(oldFitnessBenchmark, data, key),
+      )
+      .filter((x) => !!x) as string[]
+
+    return fileIdsForDeletion
+  }
+}
+
+/** Checks if there are any media (hosted) files being changed.
+ * Returns an array of fileIds (strings) which should be deleted.
+ */
+export async function checkFitnessBenchmarkScoreMediaForDeletion(
+  prisma: PrismaClient,
+  data: UpdateFitnessBenchmarkScoreInput,
+): Promise<string[]> {
+  // Get the old data first.
+  const oldFitnessBenchmarkScore =
+    await prisma.fitnessBenchmarkScore.findUnique({
+      where: {
+        id: data.id,
+      },
+      select: {
+        videoUri: true,
+        videoThumbUri: true,
+      },
+    })
+
+  if (!oldFitnessBenchmarkScore) {
+    throw new AccessScopeError(
+      'checkFitnessBenchmarkScoreMediaForDeletion: Unable to find object to check',
+    )
+  } else {
+    const fileIdsForDeletion: string[] = Object.keys(oldFitnessBenchmarkScore)
+      .map((key: string) =>
+        getFileIdForDeleteOrNull(oldFitnessBenchmarkScore, data, key),
       )
       .filter((x) => !!x) as string[]
 

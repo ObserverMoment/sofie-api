@@ -40,7 +40,7 @@ import { formatWorkoutPlanSummaries } from './workoutPlan/utils'
 export const adminAllUsers = async (
   r: any,
   a: any,
-  { select, prisma, userType }: Context,
+  { prisma, userType }: Context,
 ) => {
   if (userType !== 'ADMIN') {
     throw new AccessScopeError('Only admins can access this data')
@@ -340,7 +340,7 @@ export const userProfile = async (
       // Only return this info if the user is retrieving their own data.
       workoutsPerWeekTarget: isAuthedUser,
       activeProgressWidgets: isAuthedUser,
-      activeLogDataWidgets: isAuthedUser,
+      activeFitnessBenchmarks: isAuthedUser,
       Skills: true,
       ClubsWhereOwner: isPublic
         ? {
@@ -394,7 +394,9 @@ export const userProfile = async (
           activeProgressWidgets: isAuthedUser
             ? user.activeProgressWidgets
             : null,
-          activeLogDataWidgets: isAuthedUser ? user.activeLogDataWidgets : null,
+          activeFitnessBenchmarks: isAuthedUser
+            ? user.activeFitnessBenchmarks
+            : null,
           Skills: user.Skills,
           // TODO: Casting as any because [ClubsWhereOwner] was being returned as [Club]
           // The isPublic tiernary is causing some type weirdness?
@@ -470,7 +472,7 @@ export const updateUserProfile = async (
       gender: data.gender || undefined,
       workoutsPerWeekTarget: data.workoutsPerWeekTarget || undefined,
       activeProgressWidgets: data.activeProgressWidgets || undefined,
-      activeLogDataWidgets: data.activeLogDataWidgets || undefined,
+      activeFitnessBenchmarks: data.activeFitnessBenchmarks || undefined,
     },
     // Selects only the updated fields plus the ID.
     select: Object.keys(data).reduce(

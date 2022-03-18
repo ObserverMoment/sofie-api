@@ -37,7 +37,7 @@ export default gql`
     planCount: Int
     workoutsPerWeekTarget: Int # Null when not requested by authed user.
     activeProgressWidgets: [String!] # Null when not requested by authed user.
-    activeLogDataWidgets: [String!] # Null when not requested by authed user.
+    activeFitnessBenchmarks: [String!] # Null when not requested by authed user.
     Clubs: [ClubSummary!]! # If UserProfile is Private this must be empty.
     LifetimeLogStatsSummary: LifetimeLogStatsSummary
     Skills: [Skill!]!
@@ -80,7 +80,7 @@ export default gql`
     lastname: String
     workoutsPerWeekTarget: Int
     activeProgressWidgets: [String!]
-    activeLogDataWidgets: [String!]
+    activeFitnessBenchmarks: [String!]
   }
 
   # User can only update their own profile - so no ID required.
@@ -106,6 +106,6 @@ export default gql`
     lastname: String
     workoutsPerWeekTarget: Int
     activeProgressWidgets: [String!]
-    activeLogDataWidgets: [String!]
+    activeFitnessBenchmarks: [String!]
   }
 `

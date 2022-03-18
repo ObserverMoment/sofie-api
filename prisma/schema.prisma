@@ -243,7 +243,8 @@ model User {
   // Ids of widgets that the user has added / enabled on the client (Progress page)
   // The sort order of these Ids determines the position that the widgets sit on the screen
   activeProgressWidgets         String[]
-  activeLogDataWidgets          String[]
+  // Ids of benchmarks that the user wants to see in their Benchmarks dashboard
+  activeFitnessBenchmarks       String[]
   // Log / Streak tracking settings.
   workoutsPerWeekTarget         Int                            @default(3)
   // Object ids in the format [type:id]. Max of 20 (?). See [Utils.addObjectToUserRecentlyViewed].
@@ -837,15 +838,6 @@ model UserSleepWellLog {
 //////////////////////////////////
 //// ENUMS ///////////////////////
 //////////////////////////////////
-/// @deprecated
-enum BenchmarkType {
-  UNBROKENREPS
-  UNBROKENTIME
-  MAXLOAD
-  FASTESTTIME
-  AMRAP
-}
-
 enum BodyAreaFrontBack {
   BACK
   FRONT
