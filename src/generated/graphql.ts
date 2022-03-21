@@ -65,6 +65,14 @@ export type AnnouncementUpdateAction = {
   text: Scalars['String'];
 };
 
+export type BestBenchmarkScoreSummary = {
+  __typename?: 'BestBenchmarkScoreSummary';
+  benchmarkName: Scalars['String'];
+  benchmarkType: FitnessBenchmarkScoreType;
+  bestScore: Scalars['Float'];
+  videoUri?: Maybe<Scalars['String']>;
+};
+
 export type BodyArea = {
   __typename?: 'BodyArea';
   altNames?: Maybe<Scalars['String']>;
@@ -339,7 +347,7 @@ export type CreateEquipmentInput = {
 
 export type CreateFitnessBenchmarkInput = {
   FitnessBenchmarkCategory: ConnectRelationInput;
-  description: Scalars['String'];
+  description?: InputMaybe<Scalars['String']>;
   instructionalVideoThumbUri?: InputMaybe<Scalars['String']>;
   instructionalVideoUri?: InputMaybe<Scalars['String']>;
   instructions?: InputMaybe<Scalars['String']>;
@@ -360,7 +368,7 @@ export type CreateFitnessBenchmarkScoreInput = {
 export type CreateFitnessBenchmarkWorkoutInput = {
   FitnessBenchmarkWorkout: ConnectRelationInput;
   completedOn: Scalars['DateTime'];
-  description: Scalars['String'];
+  description?: InputMaybe<Scalars['String']>;
   instructionalVideoThumbUri?: InputMaybe<Scalars['String']>;
   instructionalVideoUri?: InputMaybe<Scalars['String']>;
   instructions?: InputMaybe<Scalars['String']>;
@@ -636,7 +644,7 @@ export type FitnessBenchmark = {
   FitnessBenchmarkCategory: FitnessBenchmarkCategory;
   FitnessBenchmarkScores?: Maybe<Array<FitnessBenchmarkScore>>;
   createdAt: Scalars['DateTime'];
-  description: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
   instructionalVideoThumbUri?: Maybe<Scalars['String']>;
   instructionalVideoUri?: Maybe<Scalars['String']>;
@@ -682,7 +690,7 @@ export type FitnessBenchmarkWorkout = {
   __typename?: 'FitnessBenchmarkWorkout';
   FitnessBenchmarkWorkoutScores?: Maybe<Array<FitnessBenchmarkWorkoutScore>>;
   createdAt: Scalars['DateTime'];
-  description: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
   instructionalVideoThumbUri?: Maybe<Scalars['String']>;
   instructionalVideoUri?: Maybe<Scalars['String']>;
@@ -1710,6 +1718,8 @@ export type Query = {
   adminPublicWorkoutPlanCounts: PublicWorkoutPlanCountsAdmin;
   adminPublicWorkoutPlanSummaries: Array<PublicWorkoutPlanSummaryAdmin>;
   adminPublicWorkoutSummaries: Array<PublicWorkoutSummaryAdmin>;
+  adminStandardFitnessBenchmarkWorkouts: Array<FitnessBenchmarkWorkout>;
+  adminStandardFitnessBenchmarks: Array<FitnessBenchmark>;
   announcementUpdates: Array<AnnouncementUpdate>;
   bodyTrackingEntries: Array<BodyTrackingEntry>;
   checkClubInviteToken: CheckClubInviteTokenResult;
@@ -2528,6 +2538,7 @@ export type UserProfile = {
   activeFitnessBenchmarks?: Maybe<Array<Scalars['String']>>;
   activeProgressWidgets?: Maybe<Array<Scalars['String']>>;
   avatarUri?: Maybe<Scalars['String']>;
+  bestBenchmarkScores?: Maybe<Array<BestBenchmarkScoreSummary>>;
   bio?: Maybe<Scalars['String']>;
   birthdate?: Maybe<Scalars['DateTime']>;
   countryCode?: Maybe<Scalars['String']>;
@@ -2956,6 +2967,7 @@ export type ResolversTypes = ResolversObject<{
   AddWorkoutToCollectionInput: AddWorkoutToCollectionInput;
   AnnouncementUpdate: ResolverTypeWrapper<AnnouncementUpdate>;
   AnnouncementUpdateAction: ResolverTypeWrapper<AnnouncementUpdateAction>;
+  BestBenchmarkScoreSummary: ResolverTypeWrapper<BestBenchmarkScoreSummary>;
   BodyArea: ResolverTypeWrapper<BodyArea>;
   BodyAreaFrontBack: BodyAreaFrontBack;
   BodyAreaMoveScore: ResolverTypeWrapper<BodyAreaMoveScore>;
@@ -3167,6 +3179,7 @@ export type ResolversParentTypes = ResolversObject<{
   AddWorkoutToCollectionInput: AddWorkoutToCollectionInput;
   AnnouncementUpdate: AnnouncementUpdate;
   AnnouncementUpdateAction: AnnouncementUpdateAction;
+  BestBenchmarkScoreSummary: BestBenchmarkScoreSummary;
   BodyArea: BodyArea;
   BodyAreaMoveScore: BodyAreaMoveScore;
   BodyAreaMoveScoreInput: BodyAreaMoveScoreInput;
@@ -3368,6 +3381,14 @@ export type AnnouncementUpdateActionResolvers<ContextType = any, ParentType exte
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   routeTo?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   text?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type BestBenchmarkScoreSummaryResolvers<ContextType = any, ParentType extends ResolversParentTypes['BestBenchmarkScoreSummary'] = ResolversParentTypes['BestBenchmarkScoreSummary']> = ResolversObject<{
+  benchmarkName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  benchmarkType?: Resolver<ResolversTypes['FitnessBenchmarkScoreType'], ParentType, ContextType>;
+  bestScore?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  videoUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -3584,7 +3605,7 @@ export type FitnessBenchmarkResolvers<ContextType = any, ParentType extends Reso
   FitnessBenchmarkCategory?: Resolver<ResolversTypes['FitnessBenchmarkCategory'], ParentType, ContextType>;
   FitnessBenchmarkScores?: Resolver<Maybe<Array<ResolversTypes['FitnessBenchmarkScore']>>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   instructionalVideoThumbUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   instructionalVideoUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -3617,7 +3638,7 @@ export type FitnessBenchmarkScoreResolvers<ContextType = any, ParentType extends
 export type FitnessBenchmarkWorkoutResolvers<ContextType = any, ParentType extends ResolversParentTypes['FitnessBenchmarkWorkout'] = ResolversParentTypes['FitnessBenchmarkWorkout']> = ResolversObject<{
   FitnessBenchmarkWorkoutScores?: Resolver<Maybe<Array<ResolversTypes['FitnessBenchmarkWorkoutScore']>>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   instructionalVideoThumbUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   instructionalVideoUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -3934,6 +3955,8 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   adminPublicWorkoutPlanCounts?: Resolver<ResolversTypes['PublicWorkoutPlanCountsAdmin'], ParentType, ContextType>;
   adminPublicWorkoutPlanSummaries?: Resolver<Array<ResolversTypes['PublicWorkoutPlanSummaryAdmin']>, ParentType, ContextType, RequireFields<QueryAdminPublicWorkoutPlanSummariesArgs, 'status'>>;
   adminPublicWorkoutSummaries?: Resolver<Array<ResolversTypes['PublicWorkoutSummaryAdmin']>, ParentType, ContextType, RequireFields<QueryAdminPublicWorkoutSummariesArgs, 'status'>>;
+  adminStandardFitnessBenchmarkWorkouts?: Resolver<Array<ResolversTypes['FitnessBenchmarkWorkout']>, ParentType, ContextType>;
+  adminStandardFitnessBenchmarks?: Resolver<Array<ResolversTypes['FitnessBenchmark']>, ParentType, ContextType>;
   announcementUpdates?: Resolver<Array<ResolversTypes['AnnouncementUpdate']>, ParentType, ContextType>;
   bodyTrackingEntries?: Resolver<Array<ResolversTypes['BodyTrackingEntry']>, ParentType, ContextType>;
   checkClubInviteToken?: Resolver<ResolversTypes['CheckClubInviteTokenResult'], ParentType, ContextType, RequireFields<QueryCheckClubInviteTokenArgs, 'id'>>;
@@ -4184,6 +4207,7 @@ export type UserProfileResolvers<ContextType = any, ParentType extends Resolvers
   activeFitnessBenchmarks?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   activeProgressWidgets?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   avatarUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  bestBenchmarkScores?: Resolver<Maybe<Array<ResolversTypes['BestBenchmarkScoreSummary']>>, ParentType, ContextType>;
   bio?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   birthdate?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   countryCode?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -4496,6 +4520,7 @@ export type WorkoutWithMetaDataAdminResolvers<ContextType = any, ParentType exte
 export type Resolvers<ContextType = any> = ResolversObject<{
   AnnouncementUpdate?: AnnouncementUpdateResolvers<ContextType>;
   AnnouncementUpdateAction?: AnnouncementUpdateActionResolvers<ContextType>;
+  BestBenchmarkScoreSummary?: BestBenchmarkScoreSummaryResolvers<ContextType>;
   BodyArea?: BodyAreaResolvers<ContextType>;
   BodyAreaMoveScore?: BodyAreaMoveScoreResolvers<ContextType>;
   BodyTrackingEntry?: BodyTrackingEntryResolvers<ContextType>;

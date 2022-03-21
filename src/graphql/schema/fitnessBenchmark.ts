@@ -14,7 +14,7 @@ export default gql`
     scope: FitnessBenchmarkScope!
     type: FitnessBenchmarkScoreType!
     name: String!
-    description: String!
+    description: String
     instructions: String
     instructionalVideoUri: String
     instructionalVideoThumbUri: String
@@ -27,7 +27,7 @@ export default gql`
     scope: FitnessBenchmarkScope!
     type: FitnessBenchmarkScoreType!
     name: String!
-    description: String!
+    description: String
     instructions: String
     instructionalVideoUri: String
     instructionalVideoThumbUri: String
@@ -83,7 +83,7 @@ export default gql`
     scope: FitnessBenchmarkScope!
     type: FitnessBenchmarkWorkoutScoreType!
     name: String!
-    description: String!
+    description: String
     instructions: String
     instructionalVideoUri: String
     instructionalVideoThumbUri: String
@@ -103,7 +103,7 @@ export default gql`
     scope: FitnessBenchmarkScope!
     type: FitnessBenchmarkWorkoutScoreType!
     name: String!
-    description: String!
+    description: String
     instructions: String
     instructionalVideoUri: String
     instructionalVideoThumbUri: String

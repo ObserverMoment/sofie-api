@@ -49,6 +49,13 @@ type AnnouncementUpdateAction {
   text: String!
 }
 
+type BestBenchmarkScoreSummary {
+  benchmarkName: String!
+  benchmarkType: FitnessBenchmarkScoreType!
+  bestScore: Float!
+  videoUri: String
+}
+
 type BodyArea {
   altNames: String
   frontBack: BodyAreaFrontBack!
@@ -309,7 +316,7 @@ input CreateEquipmentInput {
 
 input CreateFitnessBenchmarkInput {
   FitnessBenchmarkCategory: ConnectRelationInput!
-  description: String!
+  description: String
   instructionalVideoThumbUri: String
   instructionalVideoUri: String
   instructions: String
@@ -330,7 +337,7 @@ input CreateFitnessBenchmarkScoreInput {
 input CreateFitnessBenchmarkWorkoutInput {
   FitnessBenchmarkWorkout: ConnectRelationInput!
   completedOn: DateTime!
-  description: String!
+  description: String
   instructionalVideoThumbUri: String
   instructionalVideoUri: String
   instructions: String
@@ -608,7 +615,7 @@ type FitnessBenchmark {
   FitnessBenchmarkCategory: FitnessBenchmarkCategory!
   FitnessBenchmarkScores: [FitnessBenchmarkScore!]
   createdAt: DateTime!
-  description: String!
+  description: String
   id: ID!
   instructionalVideoThumbUri: String
   instructionalVideoUri: String
@@ -653,7 +660,7 @@ enum FitnessBenchmarkScoreType {
 type FitnessBenchmarkWorkout {
   FitnessBenchmarkWorkoutScores: [FitnessBenchmarkWorkoutScore!]
   createdAt: DateTime!
-  description: String!
+  description: String
   id: ID!
   instructionalVideoThumbUri: String
   instructionalVideoUri: String
@@ -1006,6 +1013,8 @@ type Query {
   adminPublicWorkoutPlanCounts: PublicWorkoutPlanCountsAdmin!
   adminPublicWorkoutPlanSummaries(status: PublicContentValidationStatus!): [PublicWorkoutPlanSummaryAdmin!]!
   adminPublicWorkoutSummaries(status: PublicContentValidationStatus!): [PublicWorkoutSummaryAdmin!]!
+  adminStandardFitnessBenchmarkWorkouts: [FitnessBenchmarkWorkout!]!
+  adminStandardFitnessBenchmarks: [FitnessBenchmark!]!
   announcementUpdates: [AnnouncementUpdate!]!
   bodyTrackingEntries: [BodyTrackingEntry!]!
   checkClubInviteToken(id: ID!): CheckClubInviteTokenResult!
@@ -1598,6 +1607,7 @@ type UserProfile {
   activeFitnessBenchmarks: [String!]
   activeProgressWidgets: [String!]
   avatarUri: String
+  bestBenchmarkScores: [BestBenchmarkScoreSummary!]
   bio: String
   birthdate: DateTime
   countryCode: String

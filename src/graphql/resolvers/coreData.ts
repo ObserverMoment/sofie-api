@@ -1,4 +1,4 @@
-import { MoveScope } from '@prisma/client'
+import { FitnessBenchmarkScope, MoveScope } from '@prisma/client'
 import { Context } from '../..'
 import {
   CoreData,

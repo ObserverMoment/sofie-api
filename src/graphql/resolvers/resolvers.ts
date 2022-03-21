@@ -80,6 +80,8 @@ import {
 } from './coreData'
 
 import {
+  adminStandardFitnessBenchmarks,
+  adminStandardFitnessBenchmarkWorkouts,
   userFitnessBenchmarks,
   userBenchmarkWorkouts,
   createFitnessBenchmark,
@@ -338,6 +340,9 @@ const resolvers: Resolvers = {
     adminPublicClubById,
     //// User Data Analysis ////
     adminAllUsers,
+    //// Benchmarks + All Scores ////
+    adminStandardFitnessBenchmarks,
+    adminStandardFitnessBenchmarkWorkouts,
     //// END OF ADMIN ONLY QUERIES ////
     //// Core Data ////
     announcementUpdates,
