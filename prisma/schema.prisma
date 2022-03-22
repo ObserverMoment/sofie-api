@@ -343,14 +343,14 @@ model FitnessBenchmark {
   scope                      FitnessBenchmarkScope
   type                       FitnessBenchmarkScoreType
   name                       String
-  description                String
+  description                String?
   instructions               String?
   instructionalVideoUri      String?
   instructionalVideoThumbUri String?
-  FitnessBenchmarkCategory   FitnessBenchmarkCategory  @relation(fields: [fitnessBenchmarkCategoryId], references: [id])
+  FitnessBenchmarkCategory   FitnessBenchmarkCategory  @relation(fields: [fitnessBenchmarkCategoryId], references: [id], onDelete: Cascade)
   fitnessBenchmarkCategoryId String
   // Must not be null when FitnessBenchmarkScope == CUSTOM.
-  User                       User?                     @relation(fields: [userId], references: [id])
+  User                       User?                     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId                     String?
   FitnessBenchmarkScores     FitnessBenchmarkScore[]
 }
@@ -364,9 +364,9 @@ model FitnessBenchmarkScore {
   note               String?
   videoUri           String?
   videoThumbUri      String?
-  User               User             @relation(fields: [userId], references: [id])
+  User               User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId             String
-  FitnessBenchmark   FitnessBenchmark @relation(fields: [fitnessBenchmarkId], references: [id])
+  FitnessBenchmark   FitnessBenchmark @relation(fields: [fitnessBenchmarkId], references: [id], onDelete: Cascade)
   fitnessBenchmarkId String
 }
 
@@ -381,7 +381,7 @@ model FitnessBenchmarkWorkout {
   scope                         FitnessBenchmarkScope
   type                          FitnessBenchmarkWorkoutScoreType
   name                          String
-  description                   String
+  description                   String?
   instructions                  String?
   instructionalVideoUri         String?
   instructionalVideoThumbUri    String?
@@ -394,7 +394,7 @@ model FitnessBenchmarkWorkout {
   // Must be same length as moveDescriptions[]
   pointsForMoveCompleted        Int[]
   // Must not be null when FitnessBenchmarkScope == CUSTOM.
-  User                          User?                            @relation(fields: [userId], references: [id])
+  User                          User?                            @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId                        String?
   FitnessBenchmarkWorkoutScores FitnessBenchmarkWorkoutScore[]
 }
@@ -406,9 +406,9 @@ model FitnessBenchmarkWorkoutScore {
   // If AMRAP, this is REPS. If FORTIME, this is ms.
   score                     Int
   note                      String?
-  FitnessBenchmarkWorkout   FitnessBenchmarkWorkout @relation(fields: [fitnessBenchmarkWorkoutId], references: [id])
+  FitnessBenchmarkWorkout   FitnessBenchmarkWorkout @relation(fields: [fitnessBenchmarkWorkoutId], references: [id], onDelete: Cascade)
   fitnessBenchmarkWorkoutId String
-  User                      User                    @relation(fields: [userId], references: [id])
+  User                      User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId                    String
 }
 
@@ -417,7 +417,7 @@ model FitnessBenchmarkWorkoutScore {
 model UserExerciseLoadTracker {
   id          String     @id @default(uuid())
   createdAt   DateTime   @default(now())
-  User        User       @relation(fields: [userId], references: [id])
+  User        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      String
   reps        Int
   loadUnit    LoadUnit   @default(KG)

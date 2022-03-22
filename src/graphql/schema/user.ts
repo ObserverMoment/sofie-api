@@ -35,12 +35,22 @@ export default gql`
     followerCount: Int
     workoutCount: Int
     planCount: Int
-    workoutsPerWeekTarget: Int # Null when not requested by authed user.
-    activeProgressWidgets: [String!] # Null when not requested by authed user.
-    activeFitnessBenchmarks: [String!] # Null when not requested by authed user.
+    workoutsPerWeekTarget: Int # Null when requested by non-authed user.
+    activeProgressWidgets: [String!] # Null when requested by non-authed user.
+    activeFitnessBenchmarks: [String!] # Null when requested by non-authed user.
     Clubs: [ClubSummary!]! # If UserProfile is Private this must be empty.
     LifetimeLogStatsSummary: LifetimeLogStatsSummary
     Skills: [Skill!]!
+    # If being requested for a public profile, this can be null when the user has opted to not display these scores on their profile.
+    bestBenchmarkScores: [BestBenchmarkScoreSummary!]
+  }
+
+  # Data to display top scores for benchmarks with scores submitted.
+  type BestBenchmarkScoreSummary {
+    benchmarkName: String!
+    benchmarkType: FitnessBenchmarkScoreType!
+    bestScore: Float!
+    videoUri: String
   }
 
   type UserProfileSummary {

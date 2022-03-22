@@ -14,7 +14,7 @@ export default gql`
     scope: FitnessBenchmarkScope!
     type: FitnessBenchmarkScoreType!
     name: String!
-    description: String!
+    description: String
     instructions: String
     instructionalVideoUri: String
     instructionalVideoThumbUri: String
@@ -27,7 +27,7 @@ export default gql`
     scope: FitnessBenchmarkScope!
     type: FitnessBenchmarkScoreType!
     name: String!
-    description: String!
+    description: String
     instructions: String
     instructionalVideoUri: String
     instructionalVideoThumbUri: String
@@ -55,6 +55,7 @@ export default gql`
     note: String
     videoUri: String
     videoThumbUri: String
+    User: UserAvatarData
   }
 
   input CreateFitnessBenchmarkScoreInput {
@@ -83,7 +84,7 @@ export default gql`
     scope: FitnessBenchmarkScope!
     type: FitnessBenchmarkWorkoutScoreType!
     name: String!
-    description: String!
+    description: String
     instructions: String
     instructionalVideoUri: String
     instructionalVideoThumbUri: String
@@ -103,7 +104,7 @@ export default gql`
     scope: FitnessBenchmarkScope!
     type: FitnessBenchmarkWorkoutScoreType!
     name: String!
-    description: String!
+    description: String
     instructions: String
     instructionalVideoUri: String
     instructionalVideoThumbUri: String
@@ -143,6 +144,7 @@ export default gql`
     # If AMRAP, this is REPS. If FORTIME, this is ms.
     score: Int!
     note: String
+    User: UserAvatarData
   }
 
   input CreateFitnessBenchmarkWorkoutInput {
