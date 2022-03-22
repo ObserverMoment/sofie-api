@@ -26,6 +26,7 @@ import {
 import { checkUserMediaForDeletion, deleteFiles } from '../../lib/uploadcare'
 import { AccessScopeError, checkUserOwnsObject } from '../utils'
 import { formatClubSummaries } from './club/utils'
+import { formatBenchmarkScoreSummaries } from './fitnessBenchmark'
 import { calcLifetimeLogStatsSummary } from './loggedWorkout'
 import {
   selectForClubSummary,
@@ -301,7 +302,7 @@ export const userProfiles = async (
   return publicProfileSummaries as UserProfileSummary[]
 }
 
-// Get a single user profile, based on the user id - fields returned will depend on the user's privacy settings and if they are the one making the request.
+// Get a single user profile, based on the user id - fields returned will depend on the user's privacy settings, profile settings and if they are the one making the request.
 export const userProfile = async (
   r: any,
   { userId }: QueryUserProfileArgs,
@@ -365,8 +366,25 @@ export const userProfile = async (
           id: true,
         },
       },
+      // Getting data via scores rather than benchmarks as the user will not own the 'standard' in built benchmarks and we would have to make a separate call here to retrieve them.
+      // This also ensure that we can ignore benchmarks that have no submitted scores.
+      FitnessBenchmarkScores: {
+        select: {
+          score: true,
+          videoUri: true,
+          FitnessBenchmark: {
+            select: {
+              id: true,
+              name: true,
+              type: true,
+            },
+          },
+        },
+      },
     },
   })
+
+  console.log(formatBenchmarkScoreSummaries(user!.FitnessBenchmarkScores))
 
   if (user) {
     return isPublic || isAuthedUser
@@ -398,6 +416,9 @@ export const userProfile = async (
             ? user.activeFitnessBenchmarks
             : null,
           Skills: user.Skills,
+          bestBenchmarkScores: formatBenchmarkScoreSummaries(
+            user.FitnessBenchmarkScores,
+          ),
           // TODO: Casting as any because [ClubsWhereOwner] was being returned as [Club]
           // The isPublic tiernary is causing some type weirdness?
           // Also stopping me from using [formatClubSummaries] function.

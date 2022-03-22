@@ -25,6 +25,9 @@ export default gql`
     adminPublicClubById(id: ID!): ClubWithMetaDataAdmin!
     # User Data Analysis #
     adminAllUsers: [UserProfileSummary!]!
+    #### Standard Benchmarks + Scores ####
+    adminStandardFitnessBenchmarks: [FitnessBenchmark!]!
+    adminStandardFitnessBenchmarkWorkouts: [FitnessBenchmarkWorkout!]!
     #### END OF ADMIN ONLY QUERIES ####
     announcementUpdates: [AnnouncementUpdate!]!
     welcomeTodoItems: [WelcomeTodoItem!]!

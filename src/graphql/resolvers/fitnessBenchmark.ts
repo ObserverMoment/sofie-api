@@ -1,9 +1,12 @@
-import { FitnessBenchmarkScope } from '@prisma/client'
-import { ApolloError } from 'apollo-server-errors'
-import { Context } from '../..'
 import {
+  FitnessBenchmarkScope,
+  FitnessBenchmarkScoreType,
+} from '@prisma/client'
+import { ApolloError } from 'apollo-server-errors'
+import { Context, ContextUserType } from '../..'
+import {
+  BestBenchmarkScoreSummary,
   FitnessBenchmark,
-  FitnessBenchmarkScore,
   FitnessBenchmarkWorkout,
   MutationCreateFitnessBenchmarkArgs,
   MutationCreateFitnessBenchmarkScoreArgs,
@@ -24,6 +27,47 @@ import {
 import { AccessScopeError, checkUserOwnsObject } from '../utils'
 
 //// Queries ////
+//// ADMIN USE ONLY ////
+/// Gets benchmarks plus scores for all users
+export const adminStandardFitnessBenchmarks = async (
+  r: any,
+  a: any,
+  { userType, select, prisma }: Context,
+) => {
+  if (userType !== 'ADMIN') {
+    throw new AccessScopeError('Only admins can access this data')
+  }
+
+  const fitnessBenchmarks = await prisma.fitnessBenchmark.findMany({
+    where: {
+      scope: FitnessBenchmarkScope.STANDARD,
+    },
+    select,
+  })
+
+  return fitnessBenchmarks as FitnessBenchmark[]
+}
+
+export const adminStandardFitnessBenchmarkWorkouts = async (
+  r: any,
+  a: any,
+  { userType, select, prisma }: Context,
+) => {
+  if (userType !== 'ADMIN') {
+    throw new AccessScopeError('Only admins can access this data')
+  }
+
+  const benchmarkWorkouts = await prisma.fitnessBenchmarkWorkout.findMany({
+    where: {
+      scope: FitnessBenchmarkScope.STANDARD,
+    },
+    select,
+  })
+
+  return benchmarkWorkouts as FitnessBenchmarkWorkout[]
+}
+////END OF ADMIN USE ONLY ////
+
 /// Gets all the standard benchmarks, plus the user custom ones.
 /// Plus user scores for all of the above.
 export const userFitnessBenchmarks = async (
@@ -35,7 +79,7 @@ export const userFitnessBenchmarks = async (
     where: {
       OR: [{ userId: authedUserId }, { scope: FitnessBenchmarkScope.STANDARD }],
     },
-    select,
+    select: genSelectForFitnessBenchmark(select, authedUserId, 'USER'),
   })
 
   return benchmarks as FitnessBenchmark[]
@@ -52,7 +96,7 @@ export const userBenchmarkWorkouts = async (
     where: {
       OR: [{ userId: authedUserId }, { scope: FitnessBenchmarkScope.STANDARD }],
     },
-    select,
+    select: genSelectForBenchmarkWorkout(select, authedUserId, 'USER'),
   })
 
   return benchmarkWorkouts as FitnessBenchmarkWorkout[]
@@ -100,6 +144,7 @@ export const updateFitnessBenchmark = async (
   { data }: MutationUpdateFitnessBenchmarkArgs,
   { authedUserId, select, prisma, userType }: Context,
 ) => {
+  console.log(select)
   if (userType !== 'ADMIN') {
     await checkUserOwnsObject(data.id, 'fitnessBenchmark', authedUserId, prisma)
   }
@@ -112,14 +157,14 @@ export const updateFitnessBenchmark = async (
     data: {
       ...data,
       name: data.name || undefined,
-      description: data.description || undefined,
+      description: data.description,
       scope: data.scope || undefined,
       type: data.type || undefined,
       FitnessBenchmarkCategory: data.FitnessBenchmarkCategory
         ? { connect: data.FitnessBenchmarkCategory }
         : undefined,
     },
-    select,
+    select: genSelectForFitnessBenchmark(select, authedUserId, userType),
   })
 
   if (updated) {
@@ -149,6 +194,27 @@ export const deleteFitnessBenchmark = async (
       instructionalVideoThumbUri: true,
     },
   })
+
+  if (deleted) {
+    // We need to delete the now deleted benchmark from the users list of activeBenchmarkIds (benchmarks which they have displaying on their dashboard) - if it is there.
+    const user = await prisma.user.findUnique({
+      where: { id: authedUserId },
+      select: {
+        activeFitnessBenchmarks: true,
+      },
+    })
+
+    if (user?.activeFitnessBenchmarks.includes(id)) {
+      await prisma.user.update({
+        where: { id: authedUserId },
+        data: {
+          activeFitnessBenchmarks: user?.activeFitnessBenchmarks.filter(
+            (activeId) => id !== activeId,
+          ),
+        },
+      })
+    }
+  }
 
   const mediaFileUrisForDeletion = [
     deleted.instructionalVideoUri,
@@ -371,7 +437,6 @@ export const updateFitnessBenchmarkWorkout = async (
     data: {
       ...data,
       name: data.name || undefined,
-      description: data.description || undefined,
       scope: data.scope || undefined,
       type: data.type || undefined,
       rounds: data.rounds || undefined,
@@ -382,7 +447,7 @@ export const updateFitnessBenchmarkWorkout = async (
           ? undefined
           : data.pointsForMoveCompleted,
     },
-    select,
+    select: genSelectForBenchmarkWorkout(select, authedUserId, userType),
   })
 
   if (updated) {
@@ -430,5 +495,129 @@ export const deleteFitnessBenchmarkWorkout = async (
     return deleted.id
   } else {
     throw new ApolloError('deleteFitnessBenchmarkWorkout: There was an issue.')
+  }
+}
+
+///// Utils //////
+/// Generates a select statement that retrieves a fitness benchmark plus scores for the [authedUserId]. Based on the original select statement from the client.
+function genSelectForFitnessBenchmark(
+  select: any,
+  authedUserId: string,
+  userType: ContextUserType,
+) {
+  return {
+    ...select,
+    // Admins get all scores, Users just get their own scores.
+    FitnessBenchmarkScores: select.FitnessBenchmarkScores
+      ? userType === 'ADMIN'
+        ? select.FitnessBenchmarkScores
+        : {
+            where: { userId: authedUserId },
+            ...select.FitnessBenchmarkScores,
+          }
+      : undefined,
+  }
+}
+
+function genSelectForBenchmarkWorkout(
+  select: any,
+  authedUserId: string,
+  userType: ContextUserType,
+) {
+  return {
+    ...select,
+    // Admins get all scores, Users just get their own scores.
+    FitnessBenchmarkWorkoutScores: select.FitnessBenchmarkWorkoutScores
+      ? userType === 'ADMIN'
+        ? select.FitnessBenchmarkWorkoutScores
+        : {
+            where: { userId: authedUserId },
+            ...select.FitnessBenchmarkWorkoutScores,
+          }
+      : undefined,
+  }
+}
+
+// Given a list of all the user benchmark scores, group them into parent benchmarks then format them into [UserBenchmarkScoreSummary] objects for serialisation.
+interface FitnessBenchmarkScoreDBResponse {
+  FitnessBenchmark: FitnessBenchmarkDBResponse
+  score: number
+  videoUri: string | null
+}
+
+interface FitnessBenchmarkDBResponse {
+  id: string
+  name: string
+  type: FitnessBenchmarkScoreType
+}
+
+export function formatBenchmarkScoreSummaries(
+  scores: FitnessBenchmarkScoreDBResponse[],
+) {
+  console.log(scores)
+  const benchmarks = scores.reduce((acum, next) => {
+    if (acum.some((b) => b.id === next.FitnessBenchmark.id)) {
+      return acum
+    } else {
+      acum.push(next.FitnessBenchmark)
+      return acum
+    }
+  }, [] as FitnessBenchmarkDBResponse[])
+
+  console.log(
+    benchmarks.map((b) =>
+      fitnessBenchmarkBestScoreSummaryByType(
+        b,
+        scores.filter((s) => s.FitnessBenchmark.id === b.id),
+      ),
+    ),
+  )
+
+  return benchmarks.map((b) =>
+    fitnessBenchmarkBestScoreSummaryByType(
+      b,
+      scores.filter((s) => s.FitnessBenchmark.id === b.id),
+    ),
+  )
+}
+
+export function fitnessBenchmarkBestScoreSummaryByType(
+  benchmark: FitnessBenchmarkDBResponse,
+  scores: FitnessBenchmarkScoreDBResponse[],
+): BestBenchmarkScoreSummary | null {
+  const bestScore = bestScoreByType(scores, benchmark.type)
+  return bestScore
+    ? {
+        benchmarkName: benchmark.name,
+        benchmarkType: benchmark.type,
+        bestScore: bestScore.score,
+        videoUri: bestScore.videoUri,
+      }
+    : null
+}
+
+export function bestScoreByType(
+  scores: FitnessBenchmarkScoreDBResponse[],
+  type: FitnessBenchmarkScoreType,
+): FitnessBenchmarkScoreDBResponse | null {
+  if (!scores.length) {
+    return null
+  }
+
+  switch (type) {
+    // Lowest score is best
+    case FitnessBenchmarkScoreType.FASTESTTIMEDISTANCE:
+    case FitnessBenchmarkScoreType.FASTESTTIMEREPS:
+      return scores.sort((a, b) => a.score - b.score)[0]
+    // Highest score is best.
+    case FitnessBenchmarkScoreType.UNBROKENMAXTIME:
+    case FitnessBenchmarkScoreType.LONGESTDISTANCE:
+    case FitnessBenchmarkScoreType.MAXLOAD:
+    case FitnessBenchmarkScoreType.TIMEDMAXREPS:
+    case FitnessBenchmarkScoreType.UNBROKENMAXREPS:
+      return scores.sort((a, b) => a.score - b.score).reverse()[0]
+
+    default:
+      throw new ApolloError(`bestScoreByType: No branch defined for ${type}`)
   }
 }
