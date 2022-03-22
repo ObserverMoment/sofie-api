@@ -3,7 +3,7 @@ import {
   FitnessBenchmarkScoreType,
 } from '@prisma/client'
 import { ApolloError } from 'apollo-server-errors'
-import { Context } from '../..'
+import { Context, ContextUserType } from '../..'
 import {
   BestBenchmarkScoreSummary,
   FitnessBenchmark,
@@ -79,7 +79,7 @@ export const userFitnessBenchmarks = async (
     where: {
       OR: [{ userId: authedUserId }, { scope: FitnessBenchmarkScope.STANDARD }],
     },
-    select: genSelectForFitnessBenchmark(select, authedUserId),
+    select: genSelectForFitnessBenchmark(select, authedUserId, 'USER'),
   })
 
   return benchmarks as FitnessBenchmark[]
@@ -96,7 +96,7 @@ export const userBenchmarkWorkouts = async (
     where: {
       OR: [{ userId: authedUserId }, { scope: FitnessBenchmarkScope.STANDARD }],
     },
-    select: genSelectForBenchmarkWorkout(select, authedUserId),
+    select: genSelectForBenchmarkWorkout(select, authedUserId, 'USER'),
   })
 
   return benchmarkWorkouts as FitnessBenchmarkWorkout[]
@@ -144,6 +144,7 @@ export const updateFitnessBenchmark = async (
   { data }: MutationUpdateFitnessBenchmarkArgs,
   { authedUserId, select, prisma, userType }: Context,
 ) => {
+  console.log(select)
   if (userType !== 'ADMIN') {
     await checkUserOwnsObject(data.id, 'fitnessBenchmark', authedUserId, prisma)
   }
@@ -163,7 +164,7 @@ export const updateFitnessBenchmark = async (
         ? { connect: data.FitnessBenchmarkCategory }
         : undefined,
     },
-    select: genSelectForFitnessBenchmark(select, authedUserId),
+    select: genSelectForFitnessBenchmark(select, authedUserId, userType),
   })
 
   if (updated) {
@@ -446,7 +447,7 @@ export const updateFitnessBenchmarkWorkout = async (
           ? undefined
           : data.pointsForMoveCompleted,
     },
-    select: genSelectForBenchmarkWorkout(select, authedUserId),
+    select: genSelectForBenchmarkWorkout(select, authedUserId, userType),
   })
 
   if (updated) {
@@ -499,27 +500,41 @@ export const deleteFitnessBenchmarkWorkout = async (
 
 ///// Utils //////
 /// Generates a select statement that retrieves a fitness benchmark plus scores for the [authedUserId]. Based on the original select statement from the client.
-function genSelectForFitnessBenchmark(select: any, authedUserId: string) {
+function genSelectForFitnessBenchmark(
+  select: any,
+  authedUserId: string,
+  userType: ContextUserType,
+) {
   return {
     ...select,
-    FitnessBenchmarkScores: {
-      where: { userId: authedUserId },
-      select: {
-        ...select.FitnessBenchmarkScores,
-      },
-    },
+    // Admins get all scores, Users just get their own scores.
+    FitnessBenchmarkScores: select.FitnessBenchmarkScores
+      ? userType === 'ADMIN'
+        ? select.FitnessBenchmarkScores
+        : {
+            where: { userId: authedUserId },
+            ...select.FitnessBenchmarkScores,
+          }
+      : undefined,
   }
 }
 
-function genSelectForBenchmarkWorkout(select: any, authedUserId: string) {
+function genSelectForBenchmarkWorkout(
+  select: any,
+  authedUserId: string,
+  userType: ContextUserType,
+) {
   return {
     ...select,
-    FitnessBenchmarkWorkoutScores: {
-      where: { userId: authedUserId },
-      select: {
-        ...select.FitnessBenchmarkWorkoutScores,
-      },
-    },
+    // Admins get all scores, Users just get their own scores.
+    FitnessBenchmarkWorkoutScores: select.FitnessBenchmarkWorkoutScores
+      ? userType === 'ADMIN'
+        ? select.FitnessBenchmarkWorkoutScores
+        : {
+            where: { userId: authedUserId },
+            ...select.FitnessBenchmarkWorkoutScores,
+          }
+      : undefined,
   }
 }
 

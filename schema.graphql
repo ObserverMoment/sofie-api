@@ -638,6 +638,7 @@ enum FitnessBenchmarkScope {
 }
 
 type FitnessBenchmarkScore {
+  User: UserAvatarData
   completedOn: DateTime!
   createdAt: DateTime!
   id: ID!
@@ -674,6 +675,7 @@ type FitnessBenchmarkWorkout {
 }
 
 type FitnessBenchmarkWorkoutScore {
+  User: UserAvatarData
   completedOn: DateTime!
   createdAt: DateTime!
   id: ID!

@@ -55,6 +55,7 @@ export default gql`
     note: String
     videoUri: String
     videoThumbUri: String
+    User: UserAvatarData
   }
 
   input CreateFitnessBenchmarkScoreInput {
@@ -143,6 +144,7 @@ export default gql`
     # If AMRAP, this is REPS. If FORTIME, this is ms.
     score: Int!
     note: String
+    User: UserAvatarData
   }
 
   input CreateFitnessBenchmarkWorkoutInput {

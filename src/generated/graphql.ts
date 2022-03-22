@@ -668,6 +668,7 @@ export type FitnessBenchmarkScope =
 
 export type FitnessBenchmarkScore = {
   __typename?: 'FitnessBenchmarkScore';
+  User?: Maybe<UserAvatarData>;
   completedOn: Scalars['DateTime'];
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
@@ -705,6 +706,7 @@ export type FitnessBenchmarkWorkout = {
 
 export type FitnessBenchmarkWorkoutScore = {
   __typename?: 'FitnessBenchmarkWorkoutScore';
+  User?: Maybe<UserAvatarData>;
   completedOn: Scalars['DateTime'];
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
@@ -3625,6 +3627,7 @@ export type FitnessBenchmarkCategoryResolvers<ContextType = any, ParentType exte
 }>;
 
 export type FitnessBenchmarkScoreResolvers<ContextType = any, ParentType extends ResolversParentTypes['FitnessBenchmarkScore'] = ResolversParentTypes['FitnessBenchmarkScore']> = ResolversObject<{
+  User?: Resolver<Maybe<ResolversTypes['UserAvatarData']>, ParentType, ContextType>;
   completedOn?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
@@ -3653,6 +3656,7 @@ export type FitnessBenchmarkWorkoutResolvers<ContextType = any, ParentType exten
 }>;
 
 export type FitnessBenchmarkWorkoutScoreResolvers<ContextType = any, ParentType extends ResolversParentTypes['FitnessBenchmarkWorkoutScore'] = ResolversParentTypes['FitnessBenchmarkWorkoutScore']> = ResolversObject<{
+  User?: Resolver<Maybe<ResolversTypes['UserAvatarData']>, ParentType, ContextType>;
   completedOn?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
