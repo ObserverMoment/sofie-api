@@ -90,6 +90,7 @@ model Equipment {
   SelectableForMoves       Move[]                    @relation("moveToSelectableEquipments")
   LoggedWorkoutMoves       LoggedWorkoutMove[]
   UserExerciseLoadTrackers UserExerciseLoadTracker[]
+  TrainingMove             TrainingMove[]
 }
 
 model Move {
@@ -113,8 +114,10 @@ model Move {
   SelectableEquipments     Equipment[]               @relation("moveToSelectableEquipments")
   LoggedWorkoutMoves       LoggedWorkoutMove[]
   UserExerciseLoadTrackers UserExerciseLoadTracker[]
+  TrainingMove             TrainingMove[]
 }
 
+// Plyometric, Resistance, Cardio
 model MoveType {
   id          String   @id @default(uuid())
   createdAt   DateTime @default(now())
@@ -122,6 +125,33 @@ model MoveType {
   description String?
   imageUri    String?
   Moves       Move[]
+}
+
+model MobilityMove {
+  id                 String            @id @default(uuid())
+  createdAt          DateTime          @default(now())
+  archived           Boolean           @default(false)
+  scope              MoveScope         @default(CUSTOM)
+  name               String
+  searchTerms        String?
+  description        String?
+  demoVideoUri       String?
+  demoVideoThumbUri  String?
+  User               User?             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId             String?
+  MobilityMoveType   MobilityMoveType? @relation(fields: [mobilityMoveTypeId], references: [id])
+  mobilityMoveTypeId String?
+  MobilitySession    MobilitySession[]
+}
+
+// Flexibility, Yoga, Range of Motion
+model MobilityMoveType {
+  id            String         @id @default(uuid())
+  createdAt     DateTime       @default(now())
+  name          String
+  description   String?
+  imageUri      String?
+  MobilityMoves MobilityMove[]
 }
 
 model WorkoutGoal {
@@ -219,78 +249,82 @@ model Skill {
 }
 
 model User {
-  id                            String                         @id @default(uuid())
-  firebaseUid                   String                         @unique
-  createdAt                     DateTime                       @default(now())
-  hasOnboarded                  Boolean                        @default(false)
-  userProfileScope              UserProfileScope               @default(PRIVATE)
-  avatarUri                     String?
-  introVideoUri                 String?
-  introVideoThumbUri            String?
-  displayName                   String                         @unique
-  firstname                     String?
-  lastname                      String?
-  bio                           String?
-  tagline                       String?
-  birthdate                     DateTime?
-  gender                        Gender                         @default(PNTS)
-  townCity                      String?
-  countryCode                   String?
-  instagramHandle               String?
-  tiktokHandle                  String?
-  youtubeHandle                 String?
-  linkedinHandle                String?
+  id                       String                    @id @default(uuid())
+  firebaseUid              String                    @unique
+  createdAt                DateTime                  @default(now())
+  hasOnboarded             Boolean                   @default(false)
+  userProfileScope         UserProfileScope          @default(PRIVATE)
+  avatarUri                String?
+  introVideoUri            String?
+  introVideoThumbUri       String?
+  displayName              String                    @unique
+  firstname                String?
+  lastname                 String?
+  bio                      String?
+  tagline                  String?
+  birthdate                DateTime?
+  gender                   Gender                    @default(PNTS)
+  townCity                 String?
+  countryCode              String?
+  instagramHandle          String?
+  tiktokHandle             String?
+  youtubeHandle            String?
+  linkedinHandle           String?
   // Ids of widgets that the user has added / enabled on the client (Progress page)
   // The sort order of these Ids determines the position that the widgets sit on the screen
-  activeProgressWidgets         String[]
+  activeProgressWidgets    String[]
   // Ids of benchmarks that the user wants to see in their Benchmarks dashboard
-  activeFitnessBenchmarks       String[]
+  activeFitnessBenchmarks  String[]
   // Log / Streak tracking settings.
-  workoutsPerWeekTarget         Int                            @default(3)
+  workoutsPerWeekTarget    Int                       @default(3)
   // Object ids in the format [type:id]. Max of 20 (?). See [Utils.addObjectToUserRecentlyViewed].
-  recentlyViewedObjects         String[]
+  recentlyViewedObjects    String[]
   // When user marks as seen / got it / don't show again we add to here.
-  SeenAnnouncementUpdates       AnnouncementUpdate[]
+  SeenAnnouncementUpdates  AnnouncementUpdate[]
   // When user marks as seen / got it / don't show again we add to here.
-  SeenWelcomeTodoItems          WelcomeTodoItem[]
-  ClubsWhereOwner               Club[]                         @relation("owner")
-  ClubInviteTokens              ClubInviteToken[]
-  Collections                   Collection[]
-  GymProfiles                   GymProfile[]
-  LoggedWorkouts                LoggedWorkout[]
-  LoggedWorkoutSections         LoggedWorkoutSection[]
-  CustomMoves                   Move[]
-  ScheduledWorkouts             ScheduledWorkout[]
-  Skills                        Skill[]
-  Workouts                      Workout[]
-  WorkoutMoves                  WorkoutMove[]
-  WorkoutPlans                  WorkoutPlan[]
-  WorkoutPlanDays               WorkoutPlanDay[]
-  WorkoutPlanDayWorkouts        WorkoutPlanDayWorkout[]
-  WorkoutPlanEnrolments         WorkoutPlanEnrolment[]
-  WorkoutPlanReviews            WorkoutPlanReview[]
-  WorkoutSections               WorkoutSection[]
-  WorkoutSets                   WorkoutSet[]
-  WorkoutTag                    WorkoutTag[]
-  ClubsWhereAdmin               Club[]                         @relation("admin")
-  ClubsWhereMember              Club[]                         @relation("member")
-  BodyTrackingEntry             BodyTrackingEntry[]
+  SeenWelcomeTodoItems     WelcomeTodoItem[]
+  ClubsWhereOwner          Club[]                    @relation("owner")
+  ClubInviteTokens         ClubInviteToken[]
+  Collections              Collection[]
+  GymProfiles              GymProfile[]
+  LoggedWorkouts           LoggedWorkout[]
+  LoggedWorkoutSections    LoggedWorkoutSection[]
+  CustomMoves              Move[]
+  ScheduledWorkouts        ScheduledWorkout[]
+  Skills                   Skill[]
+  Workouts                 Workout[]
+  WorkoutMoves             WorkoutMove[]
+  WorkoutPlans             WorkoutPlan[]
+  WorkoutPlanDays          WorkoutPlanDay[]
+  WorkoutPlanDayWorkouts   WorkoutPlanDayWorkout[]
+  WorkoutPlanEnrolments    WorkoutPlanEnrolment[]
+  WorkoutPlanReviews       WorkoutPlanReview[]
+  WorkoutSections          WorkoutSection[]
+  WorkoutSets              WorkoutSet[]
+  WorkoutTag               WorkoutTag[]
+  ClubsWhereAdmin          Club[]                    @relation("admin")
+  ClubsWhereMember         Club[]                    @relation("member")
+  BodyTrackingEntry        BodyTrackingEntry[]
   /// NOTE: These loggedWorkout sub fields should be plural.
   /// TODO: Rename them without dropping data.
-  LoggedWorkoutSet              LoggedWorkoutSet[]
-  LoggedWorkoutMove             LoggedWorkoutMove[]
-  ClubMemberNotesAsAuthor       ClubMemberNote[]               @relation("note_author")
-  ClubMemberNotesAsMember       ClubMemberNote[]               @relation("note_member")
-  UserDayLogMoods               UserDayLogMood[]
-  UserGoals                     UserGoal[]
-  UserMeditationLogs            UserMeditationLog[]
-  UserEatWellLogs               UserEatWellLog[]
-  UserSleepWellLogs             UserSleepWellLog[]
-  UserExerciseLoadTrackers      UserExerciseLoadTracker[]
-  FitnessBenchmarks             FitnessBenchmark[]
-  FitnessBenchmarkScores        FitnessBenchmarkScore[]
-  FitnessBenchmarkWorkouts      FitnessBenchmarkWorkout[]
-  FitnessBenchmarkWorkoutScores FitnessBenchmarkWorkoutScore[]
+  LoggedWorkoutSet         LoggedWorkoutSet[]
+  LoggedWorkoutMove        LoggedWorkoutMove[]
+  ClubMemberNotesAsAuthor  ClubMemberNote[]          @relation("note_author")
+  ClubMemberNotesAsMember  ClubMemberNote[]          @relation("note_member")
+  UserDayLogMoods          UserDayLogMood[]
+  UserGoals                UserGoal[]
+  UserMeditationLogs       UserMeditationLog[]
+  UserEatWellLogs          UserEatWellLog[]
+  UserSleepWellLogs        UserSleepWellLog[]
+  UserExerciseLoadTrackers UserExerciseLoadTracker[]
+  FitnessBenchmarks        FitnessBenchmark[]
+  FitnessBenchmarkScores   FitnessBenchmarkScore[]
+  TrainingMove             TrainingMove[]
+  TrainingSet              TrainingSet[]
+  ScoredWorkout            ScoredWorkout[]
+  ScoredWorkoutStandard    ScoredWorkoutStandard[]
+  ScoredWorkoutScore       ScoredWorkoutScore[]
+  MobilityMove             MobilityMove[]
 }
 
 //////////////////////////////////////////////
@@ -370,46 +404,64 @@ model FitnessBenchmarkScore {
   fitnessBenchmarkId String
 }
 
-enum FitnessBenchmarkWorkoutScoreType {
+//// Scored Workouts used for benchmarking and for competition ////
+enum ScoredWorkoutType {
   AMRAP
   FORTIME
+  LASTSTANDING
 }
 
-model FitnessBenchmarkWorkout {
-  id                            String                           @id @default(uuid())
-  createdAt                     DateTime                         @default(now())
-  scope                         FitnessBenchmarkScope
-  type                          FitnessBenchmarkWorkoutScoreType
-  name                          String
-  description                   String?
-  instructions                  String?
-  instructionalVideoUri         String?
-  instructionalVideoThumbUri    String?
-  // Must be 1 for AMRAPS. Can be > 1 for FORTIME.
-  rounds                        Int                              @default(1)
-  // E.g. [10 calories air bike, 20m forward lunge, 10 muscle snatch, 10 air squats]
+model ScoredWorkout {
+  id                         String                  @id @default(uuid())
+  createdAt                  DateTime                @default(now())
+  scope                      FitnessBenchmarkScope
+  type                       ScoredWorkoutType
+  name                       String
+  description                String?
+  instructions               String?
+  instructionalVideoUri      String?
+  instructionalVideoThumbUri String?
+  ScoredWorkoutStandards     ScoredWorkoutStandard[]
+  User                       User?                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId                     String?
+  WorkoutSession             WorkoutSession?         @relation(fields: [workoutSessionId], references: [id])
+  workoutSessionId           String?
+}
+
+model ScoredWorkoutStandard {
+  id                    String               @id @default(uuid())
+  createdAt             DateTime             @default(now())
+  name                  String // Eg. Rx, scaled, beginner, elite...
+  description           String?
+  group                 String? // Can be used for age range or whetever further grouping is needed.
+  // Must be 1 for AMRAPS, LASTSTANDING. Can be > 1 for FORTIME.
+  rounds                Int                  @default(1)
   // Must be same length as pointsForMoveCompleted[]
-  moveDescriptions              String[]
+  TrainingSets          TrainingSet[]
   // E.g. [10, 5, 10, 10]
-  // Must be same length as moveDescriptions[]
-  pointsForMoveCompleted        Int[]
+  // Must be same length as TrainingSets[]
+  pointsForSetCompleted Int[]
   // Must not be null when FitnessBenchmarkScope == CUSTOM.
-  User                          User?                            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId                        String?
-  FitnessBenchmarkWorkoutScores FitnessBenchmarkWorkoutScore[]
+  User                  User?                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId                String?
+  ScoredWorkoutScores   ScoredWorkoutScore[]
+  ScoredWorkout         ScoredWorkout        @relation(fields: [scoredWorkoutId], references: [id])
+  scoredWorkoutId       String
 }
 
-model FitnessBenchmarkWorkoutScore {
-  id                        String                  @id @default(uuid())
-  createdAt                 DateTime                @default(now())
-  completedOn               DateTime                @default(now())
-  // If AMRAP, this is REPS. If FORTIME, this is ms.
-  score                     Int
-  note                      String?
-  FitnessBenchmarkWorkout   FitnessBenchmarkWorkout @relation(fields: [fitnessBenchmarkWorkoutId], references: [id], onDelete: Cascade)
-  fitnessBenchmarkWorkoutId String
-  User                      User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId                    String
+model ScoredWorkoutScore {
+  id                      String                @id @default(uuid())
+  createdAt               DateTime              @default(now())
+  completedOn             DateTime              @default(now())
+  // If AMRAP, this is REPS (Points). If FORTIME, this is ms. If LASTSTANDING this is completed rounds.
+  score                   Int
+  note                    String?
+  videoUri                String?
+  videoThumbUri           String?
+  ScoredWorkoutStandard   ScoredWorkoutStandard @relation(fields: [scoredWorkoutStandardId], references: [id], onDelete: Cascade)
+  scoredWorkoutStandardId String
+  User                    User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId                  String
 }
 
 /// Parses Log History and displays a graph of load over time for specified moves ////
@@ -486,6 +538,115 @@ model ClubInviteToken {
   User          User     @relation(fields: [userId], references: [id])
 }
 
+/////////////////////////////////////////////////////
+////// Workout V2 Related Models and Children ///////
+/////////////////////////////////////////////////////
+model WorkoutSession {
+  id               String            @id @default(uuid())
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  name             String
+  description      String?
+  sessionOrder     String[]
+  TrainingSessions TrainingSession[]
+  IntervalSessions IntervalSession[]
+  MobilitySessions MobilitySession[]
+  ScoredWorkouts   ScoredWorkout[]
+}
+
+model TrainingSession {
+  id               String         @id @default(uuid())
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  name             String
+  description      String?
+  durationMinutes  Int
+  repeats          Int            @default(1) // Run through all sets this many times
+  setRestSeconds   Int? // Rest this many seconds before starting the next set.
+  setOrder         String[]
+  TrainingSets     TrainingSet[]
+  WorkoutSession   WorkoutSession @relation(fields: [workoutSessionId], references: [id])
+  workoutSessionId String
+}
+
+enum IntervalSessionType {
+  HIIT
+  EMOM
+  TABATA
+}
+
+model IntervalSession {
+  id               String              @id @default(uuid())
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+  name             String
+  type             IntervalSessionType
+  description      String?
+  repeats          Int                 @default(1) // Run through all sets this many times
+  // For rest intervals add 'rest' to the array.
+  // E.g. [setId, setId, rest, setId, setId, rest, setId]
+  setOrder         String[]
+  // Align with setOrder. Interval length in seconds.
+  // E.g [60, 60, 30, 60, 60, 30, 60]
+  intervals        Int[]
+  TrainingSets     TrainingSet[]
+  WorkoutSession   WorkoutSession      @relation(fields: [workoutSessionId], references: [id])
+  workoutSessionId String
+}
+
+model TrainingSet {
+  id                      String                 @id @default(uuid())
+  createdAt               DateTime               @default(now())
+  updatedAt               DateTime               @updatedAt
+  moveOrder               String[]
+  TrainingMoves           TrainingMove[]
+  User                    User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId                  String
+  TrainingSession         TrainingSession?       @relation(fields: [trainingSessionId], references: [id])
+  trainingSessionId       String?
+  IntervalSession         IntervalSession?       @relation(fields: [intervalSessionId], references: [id])
+  intervalSessionId       String?
+  ScoredWorkoutStandard   ScoredWorkoutStandard? @relation(fields: [scoredWorkoutStandardId], references: [id])
+  scoredWorkoutStandardId String?
+}
+
+model TrainingMove {
+  id           String             @id @default(uuid())
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+  // Reps / Quantity of work //
+  repType      WorkoutMoveRepType
+  reps         Float
+  distanceUnit DistanceUnit       @default(METRES)
+  timeUnit     TimeUnit           @default(SECONDS)
+
+  // Load (Precise or Approx) //
+  loadAmount Float?
+  loadUnit   LoadUnit   @default(KG)
+  loadLevel  LoadLevel?
+
+  Equipment     Equipment?  @relation(fields: [equipmentId], references: [id])
+  equipmentId   String?
+  Move          Move        @relation(fields: [moveId], references: [id], onDelete: Cascade)
+  moveId        String
+  User          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        String
+  TrainingSet   TrainingSet @relation(fields: [trainingSetId], references: [id])
+  trainingSetId String
+}
+
+model MobilitySession {
+  id               String         @id @default(uuid())
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  description      String?
+  durationMinutes  Int
+  moveOrder        String[]
+  MobilityMoves    MobilityMove[]
+  WorkoutSession   WorkoutSession @relation(fields: [workoutSessionId], references: [id])
+  workoutSessionId String
+}
+
 /// /////////////////////////////////////////////////
 /// // Workout Related Models and Children //////////
 /// /////////////////////////////////////////////////
@@ -493,18 +654,18 @@ model Workout {
   id                    String                        @id @default(uuid())
   createdAt             DateTime                      @default(now())
   updatedAt             DateTime                      @updatedAt
+  contentAccessScope    ContentAccessScope            @default(PRIVATE)
   name                  String
   description           String?
   introVideoUri         String?
   introAudioUri         String?
   coverImageUri         String?
-  contentAccessScope    ContentAccessScope            @default(PRIVATE)
-  userId                String
   introVideoThumbUri    String?
-  archived              Boolean                       @default(false)
   lengthMinutes         Int?
+  archived              Boolean                       @default(false)
   metaData              Json? /// Meta data about the content of the workout.
   User                  User                          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId                String
   LoggedWorkouts        LoggedWorkout[]
   ScheduledWorkouts     ScheduledWorkout[]
   WorkoutPlanDayWorkout WorkoutPlanDayWorkout[]
@@ -535,22 +696,22 @@ model WorkoutSection {
   id                   String             @id @default(uuid())
   createdAt            DateTime           @default(now())
   sortPosition         Int
+  name                 String?
   introVideoUri        String?
   introAudioUri        String?
   classAudioUri        String?
-  workoutId            String
-  name                 String?
   classVideoUri        String?
   introVideoThumbUri   String?
   workoutSectionTypeId String
   classVideoThumbUri   String?
   rounds               Int                @default(1)
-  userId               String
   archived             Boolean            @default(false)
   note                 String?
   timecap              Int                @default(0)
   User                 User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId               String
   Workout              Workout            @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+  workoutId            String
   WorkoutSectionType   WorkoutSectionType @relation(fields: [workoutSectionTypeId], references: [id])
   WorkoutSets          WorkoutSet[]
 }
@@ -891,6 +1052,13 @@ enum JoinClubRequestStatus {
   PENDING
   ACCEPTED
   REJECTED
+}
+
+enum LoadLevel {
+  NONE
+  LIGHT
+  MEDIUM
+  HEAVY
 }
 
 enum LoadUnit {
