@@ -48,31 +48,6 @@ export function formatClubSummary(club: ClubSummaryPayload): ClubSummary {
   }
 }
 
-export function formatClubChatSummary(
-  club: ClubChatSummaryPayload,
-): ClubChatSummary {
-  return {
-    id: club.id,
-    name: club.name,
-    coverImageUri: club.coverImageUri,
-    Owner: {
-      id: club.Owner.id,
-      displayName: club.Owner.displayName,
-      avatarUri: club.Owner.avatarUri,
-    },
-    Admins: club.Admins.map((a) => ({
-      id: a.id,
-      displayName: a.displayName,
-      avatarUri: a.avatarUri,
-    })),
-    Members: club.Members.map((m) => ({
-      id: m.id,
-      displayName: m.displayName,
-      avatarUri: m.avatarUri,
-    })),
-  }
-}
-
 export function formatClubMembers(
   clubId: string,
   club: ClubMembersPayload,

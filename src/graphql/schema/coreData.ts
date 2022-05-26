@@ -104,6 +104,28 @@ export default gql`
     BodyAreaMoveScores: [BodyAreaMoveScoreInput!]
   }
 
+  type MobilityMove {
+    id: ID!
+    createdAt: DateTime!
+    archived: Boolean!
+    scope: MoveScope!
+    name: String!
+    searchTerms: String
+    description: String
+    demoVideoUri: String
+    demoVideoThumbUri: String
+    MobilityMoveType: MobilityMoveType!
+  }
+
+  # Flexibility, Yoga, Range of Motion
+  type MobilityMoveType {
+    id: ID!
+    createdAt: DateTime!
+    name: String!
+    description: String
+    imageUri: String
+  }
+
   # Input for a bodyAreaMoveScore - to update scores against a specified move ID.
   input BodyAreaMoveScoreInput {
     BodyArea: ConnectRelationInput!

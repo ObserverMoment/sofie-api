@@ -31,17 +31,6 @@ export const selectForClubSummary = {
   },
 }
 
-export const selectForClubChatSummary = {
-  id: true,
-  name: true,
-  coverImageUri: true,
-  Owner: {
-    select: selectForUserAvatarData,
-  },
-  Admins: { select: selectForUserAvatarData },
-  Members: { select: selectForUserAvatarData },
-}
-
 export const selectForClubMemberSummary = {
   id: true,
   displayName: true,

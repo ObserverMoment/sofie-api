@@ -4,8 +4,6 @@ import { Context } from '../../..'
 import {
   MutationUpdateWorkoutPlanMetaDataAdminArgs,
   PublicWorkoutPlanSummaryAdmin,
-  QueryAdminPublicWorkoutPlanByIdArgs,
-  QueryAdminPublicWorkoutPlanSummariesArgs,
   WorkoutPlanWithMetaDataAdmin,
 } from '../../../generated/graphql'
 import { AccessScopeError } from '../../utils'
@@ -51,50 +49,6 @@ export const adminPublicWorkoutPlanCounts = async (
     valid: counts[1],
     invalid: counts[2],
   }
-}
-
-/// https://www.prisma.io/docs/concepts/components/prisma-client/pagination
-export const adminPublicWorkoutPlanSummaries = async (
-  r: any,
-  { status }: QueryAdminPublicWorkoutPlanSummariesArgs,
-  { prisma, userType, select }: Context,
-) => {
-  if (userType !== 'ADMIN') {
-    throw new AccessScopeError('Only admins can access this data')
-  }
-
-  const publicWorkoutPlans = await prisma.workoutPlan.findMany({
-    where: {
-      contentAccessScope: 'PUBLIC',
-      archived: false,
-      validated: status,
-    },
-    orderBy: {
-      createdAt: 'asc',
-    },
-    select,
-  })
-
-  return publicWorkoutPlans as PublicWorkoutPlanSummaryAdmin[]
-}
-
-export const adminPublicWorkoutPlanById = async (
-  r: any,
-  { id }: QueryAdminPublicWorkoutPlanByIdArgs,
-  { prisma, userType, select }: Context,
-) => {
-  if (userType !== 'ADMIN') {
-    throw new AccessScopeError('Only admins can access this data')
-  }
-
-  const plan = await prisma.workoutPlan.findUnique({
-    where: {
-      id,
-    },
-    select,
-  })
-
-  return plan as WorkoutPlanWithMetaDataAdmin
 }
 
 export const updateWorkoutPlanMetaDataAdmin = async (

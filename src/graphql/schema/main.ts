@@ -8,16 +8,6 @@ export default gql`
     #### ADMIN ONLY QUERIES ####
     # User Data Analysis #
     # Content Requiring Validation #
-    adminPublicWorkoutCounts: PublicWorkoutCountsAdmin!
-    adminPublicWorkoutSummaries(
-      status: PublicContentValidationStatus!
-    ): [PublicWorkoutSummaryAdmin!]!
-    adminPublicWorkoutById(id: ID!): WorkoutWithMetaDataAdmin!
-    adminPublicWorkoutPlanCounts: PublicWorkoutPlanCountsAdmin!
-    adminPublicWorkoutPlanSummaries(
-      status: PublicContentValidationStatus!
-    ): [PublicWorkoutPlanSummaryAdmin!]!
-    adminPublicWorkoutPlanById(id: ID!): WorkoutPlanWithMetaDataAdmin!
     adminPublicClubCounts: PublicClubCountsAdmin!
     adminPublicClubSummaries(
       status: PublicContentValidationStatus!
@@ -41,8 +31,6 @@ export default gql`
     # ClubFinder functionality.
     publicClubs: [ClubSummary!]!
     userClubs: [ClubSummary!]!
-    # For displaying within the Club chat. Each person is a UserAvatarData plus there is some extra club data which is needed for displaying the chat.
-    clubChatSummary(clubId: ID!): ClubChatSummary
     clubSummary(id: ID!): ClubSummary
     clubInviteTokens(clubId: ID!): ClubInviteTokens!
     # For displaying within the Club/People section. Each person is a ClubMemberSummary
@@ -59,12 +47,6 @@ export default gql`
     #### Invite Tokens ####
     # The ID is the token string, we pass it to check that it is valid #
     checkClubInviteToken(id: ID!): CheckClubInviteTokenResult!
-    #### Club Feeds ####
-    clubMembersFeedPosts(
-      clubId: ID!
-      limit: Int!
-      offset: Int!
-    ): [StreamEnrichedActivity!]!
     #### Logged Workouts ####
     logCountByWorkout(id: ID!): Int!
     lifetimeLogStatsSummary(userId: ID!): LifetimeLogStatsSummary!
@@ -74,7 +56,6 @@ export default gql`
     customMoves: [Move!]!
     #### Standard + Custom Benchmarks + User Scores ####
     userFitnessBenchmarks: [FitnessBenchmark!]!
-    userBenchmarkWorkouts: [FitnessBenchmarkWorkout!]!
     #### User Progress Tracking ####
     userGoals: [UserGoal!]!
     bodyTrackingEntries: [BodyTrackingEntry!]!
@@ -86,7 +67,7 @@ export default gql`
     userRecentlyViewedObjects: [UserRecentlyViewedObject!]!
     #### Scheduled Workouts ####
     userScheduledWorkouts: [ScheduledWorkout!]!
-    #### Text Search ####
+    #### Text Search - PROBABLY DEPRECATED ####
     textSearchWorkouts(text: String!): [WorkoutSummary!]
     textSearchWorkoutNames(text: String!): [TextSearchResult!]
     textSearchWorkoutPlans(text: String!): [WorkoutPlanSummary!]
@@ -101,7 +82,7 @@ export default gql`
     userArchivedWorkouts: [Workout!]!
     userArchivedWorkoutPlans: [WorkoutPlan!]!
     userArchivedCustomMoves: [Move!]!
-    #### User Avatars ####
+    #### User Avatars - PROBABLY DEPRECATED ####
     userAvatars(ids: [ID!]!): [UserAvatarData!]!
     userAvatarById(id: ID!): UserAvatarData
     #### User Collection ####
@@ -112,7 +93,10 @@ export default gql`
     #### User Public Profiles ####
     userProfiles(cursor: ID, take: Int): [UserProfileSummary!]!
     userProfile(userId: ID!): UserProfile
-    #### Workouts ####
+    #### WorkoutSessions ####
+    workoutSessionById(id: ID!): WorkoutSession
+    userWorkoutSessions: [WorkoutSessionSummary!]! # Authed user created.
+    #### Workouts - DEPRECATED ####
     publicWorkouts(
       cursor: ID
       filters: WorkoutFiltersInput
@@ -121,7 +105,13 @@ export default gql`
     userWorkouts: [WorkoutSummary!]! # Authed user.
     userPublicWorkouts(userId: ID!): [WorkoutSummary!]! # Public users (profiles).
     workoutById(id: ID!): Workout
-    #### Workout Plans ####
+    #### TrainingPlans ####
+    trainingPlanById(id: ID!): TrainingPlan
+    userTrainingPlans: [TrainingPlanSummary!]! # Authed user.
+    #### TrainingPlanEnrolments ####
+    trainingPlanEnrolmentById(id: ID!): TrainingPlanEnrolmentWithPlan
+    trainingPlanEnrolments: [TrainingPlanEnrolmentSummary!]!
+    #### Workout Plans - DEPRECATED ####
     publicWorkoutPlans(
       cursor: ID
       filters: WorkoutPlanFiltersInput
@@ -130,7 +120,7 @@ export default gql`
     workoutPlanById(id: ID!): WorkoutPlan
     userWorkoutPlans: [WorkoutPlanSummary!]! # Authed user.
     userPublicWorkoutPlans(userId: ID!): [WorkoutPlanSummary!]! # Public users (profiles).
-    #### Workout Plan Enrolments ####
+    #### Workout Plan Enrolments - DEPRECATED ####
     workoutPlanEnrolmentById(id: ID!): WorkoutPlanEnrolmentWithPlan
     workoutPlanEnrolments: [WorkoutPlanEnrolmentSummary!]!
   }

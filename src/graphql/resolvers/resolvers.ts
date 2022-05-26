@@ -33,7 +33,6 @@ import {
   userClubs,
   publicClubs,
   clubSummaries,
-  clubChatSummary,
   clubSummary,
   createClub,
   updateClubSummary,
@@ -83,7 +82,6 @@ import {
   adminStandardFitnessBenchmarks,
   adminStandardFitnessBenchmarkWorkouts,
   userFitnessBenchmarks,
-  userBenchmarkWorkouts,
   createFitnessBenchmark,
   updateFitnessBenchmark,
   deleteFitnessBenchmark,
@@ -139,7 +137,6 @@ import {
 import {
   createClubMembersFeedPost,
   deleteClubMembersFeedPost,
-  clubMembersFeedPosts,
 } from './timelineFeed'
 
 import {
@@ -208,6 +205,12 @@ import {
 import { checkClubInviteToken } from './invites'
 
 import {
+  userWorkoutSessions,
+  workoutSessionById,
+} from './workoutSession/workoutSession'
+
+/// DEPRECATED
+import {
   publicWorkouts,
   userWorkouts,
   userPublicWorkouts,
@@ -217,13 +220,10 @@ import {
   duplicateWorkoutById,
 } from './workout/workout'
 
-import {
-  adminPublicWorkoutCounts,
-  adminPublicWorkoutSummaries,
-  adminPublicWorkoutById,
-  updateWorkoutMetaDataAdmin,
-} from './workout/metaDataAdmin'
+/// DEPRECATED
+import { updateWorkoutMetaDataAdmin } from './workout/metaDataAdmin'
 
+/// DEPRECATED
 import {
   createWorkoutSection,
   updateWorkoutSection,
@@ -231,6 +231,7 @@ import {
   reorderWorkoutSections,
 } from './workout/workoutSection'
 
+/// DEPRECATED
 import {
   createWorkoutSetWithWorkoutMoves,
   createWorkoutSet,
@@ -240,6 +241,7 @@ import {
   reorderWorkoutSets,
 } from './workout/workoutSet'
 
+/// DEPRECATED
 import {
   createWorkoutMove,
   updateWorkoutMove,
@@ -249,6 +251,12 @@ import {
   reorderWorkoutMoves,
 } from './workout/workoutMove'
 
+import {
+  userTrainingPlans,
+  trainingPlanById,
+} from './trainingPlan/trainingPlan'
+
+/// DEPRECATED
 import {
   publicWorkoutPlans,
   userWorkoutPlans,
@@ -270,12 +278,7 @@ import {
   deleteWorkoutPlanReviewById,
 } from './workoutPlan/workoutPlan'
 
-import {
-  adminPublicWorkoutPlanCounts,
-  adminPublicWorkoutPlanSummaries,
-  adminPublicWorkoutPlanById,
-  updateWorkoutPlanMetaDataAdmin,
-} from './workoutPlan/metaDataAdmin'
+import { updateWorkoutPlanMetaDataAdmin } from './workoutPlan/metaDataAdmin'
 
 import {
   workoutPlanEnrolments,
@@ -299,17 +302,28 @@ const resolvers: Resolvers = {
     name: 'DateTime',
     description:
       'DateTime which assumes UTC is being sent to and from the DB as ms since epoch.',
-    parseValue(value: number) {
-      return new Date(value) // value from the client
+    // Receiving from the client
+    parseValue(value) {
+      if (typeof value === 'number') {
+        return new Date(value)
+      } else {
+        return null
+      }
     },
-    serialize(value: Date) {
-      return value.getTime() // value sent to the client
+    // Sending to the client
+    serialize(value) {
+      if (value instanceof Date) {
+        return value.getTime()
+      } else {
+        return null
+      }
     },
     parseLiteral(ast) {
       if (ast.kind === Kind.INT) {
-        return parseInt(ast.value, 10) // ast value is always in string format
+        return new Date(parseInt(ast.value, 10)) // ast value is always in string format
+      } else {
+        return null
       }
-      return null
     },
   }),
   // Resolve Types or Unions
@@ -329,12 +343,6 @@ const resolvers: Resolvers = {
     validateToken: () => true, // Empty Resolver - call it and it will throw auth error if token is not valid / expired or if an associated user does not exist in the database.
     //// ADMIN ONLY QUERIES ////
     //// Public Content ////
-    adminPublicWorkoutCounts,
-    adminPublicWorkoutSummaries,
-    adminPublicWorkoutById,
-    adminPublicWorkoutPlanCounts,
-    adminPublicWorkoutPlanSummaries,
-    adminPublicWorkoutPlanById,
     adminPublicClubCounts,
     adminPublicClubSummaries,
     adminPublicClubById,
@@ -354,13 +362,11 @@ const resolvers: Resolvers = {
     publicClubs,
     clubSummaries,
     userClubs,
-    clubChatSummary,
     clubSummary,
     clubInviteTokens,
     clubMembers,
     clubWorkouts,
     clubWorkoutPlans,
-    clubMembersFeedPosts,
     ///// Notes ////
     clubMemberNotes,
     ///// Invites ////
@@ -385,7 +391,6 @@ const resolvers: Resolvers = {
     customMoves,
     //// Standard + Custom Benchmarks + User Scores ////
     userFitnessBenchmarks,
-    userBenchmarkWorkouts,
     //// Scheduled Workouts ////
     userScheduledWorkouts,
     //// Text Search ////
@@ -414,12 +419,18 @@ const resolvers: Resolvers = {
     userCollectionById,
     /// User Exercise and Scored Workout Trackers ///
     userExerciseLoadTrackers,
-    //// Workouts ////
+    //// WorkoutSessions ////
+    userWorkoutSessions,
+    workoutSessionById,
+    //// Workouts - DEPRECATED////
     publicWorkouts,
     userWorkouts, // Authed user.
     userPublicWorkouts, // Public users (profiles)
     workoutById,
-    //// WorkoutPlans ////
+    //// TrainingPlans ////
+    userTrainingPlans,
+    trainingPlanById,
+    //// WorkoutPlans - DEPRECATED ////
     publicWorkoutPlans,
     userWorkoutPlans, // Authed user.
     userPublicWorkoutPlans, // Public users (profiles)

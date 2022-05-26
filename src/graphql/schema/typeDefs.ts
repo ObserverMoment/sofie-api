@@ -27,6 +27,16 @@ import workoutPlanMetaData from './workoutPlan/workoutPlanMetaData'
 import workoutPlanEnrolment from './workoutPlan/workoutPlanEnrolment'
 import workoutSection from './workout/workoutSection'
 import workoutSet from './workout/workoutSet'
+// New models May 2022
+import workoutSession from './workoutSession/workoutSession'
+import amrapSession from './workoutSession/amrapSession'
+import cardioSession from './workoutSession/cardioSession'
+import forTimeSession from './workoutSession/forTimeSession'
+import intervalSession from './workoutSession/intervalSession'
+import mobilitySession from './workoutSession/mobilitySession'
+import resistanceSession from './workoutSession/resistanceSession'
+import trainingPlan from './trainingPlan/trainingPlan'
+import trainingPlanEnrolment from './trainingPlan/trainingPlanEnrolment'
 
 const typeDefs = mergeTypeDefs([
   announcementUpdate,
@@ -57,6 +67,16 @@ const typeDefs = mergeTypeDefs([
   workoutPlanEnrolment,
   workoutSection,
   workoutSet,
+  // New models May 2022
+  workoutSession,
+  amrapSession,
+  cardioSession,
+  forTimeSession,
+  intervalSession,
+  mobilitySession,
+  resistanceSession,
+  trainingPlan,
+  trainingPlanEnrolment,
 ])
 
 export default typeDefs

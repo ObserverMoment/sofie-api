@@ -2,7 +2,6 @@ import { Context } from '../..'
 import {
   MutationCreateClubMembersFeedPostArgs,
   MutationDeleteClubMembersFeedPostArgs,
-  QueryClubMembersFeedPostsArgs,
 } from '../../generated/graphql'
 import {
   createStreamClubMembersFeedActivity,
@@ -16,15 +15,15 @@ import {
 
 //// Queries ////
 // Calls Stream.io to get the activities and formats data into GQL types.
-export const clubMembersFeedPosts = async (
-  r: any,
-  { clubId, limit, offset }: QueryClubMembersFeedPostsArgs,
-  { authedUserId, prisma }: Context,
-) => {
-  await checkUserIsMemberOfClub(clubId, authedUserId, prisma)
+// export const clubMembersFeedPosts = async (
+//   r: any,
+//   { clubId, limit, offset }: QueryClubMembersFeedPostsArgs,
+//   { authedUserId, prisma }: Context,
+// ) => {
+//   await checkUserIsMemberOfClub(clubId, authedUserId, prisma)
 
-  return getStreamClubMembersFeedActivities(authedUserId, clubId, limit, offset)
-}
+//   return getStreamClubMembersFeedActivities(authedUserId, clubId, limit, offset)
+// }
 
 //// Mutations ////
 export const createClubMembersFeedPost = async (

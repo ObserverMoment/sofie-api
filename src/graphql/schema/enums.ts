@@ -21,6 +21,14 @@ export default gql`
     LB
   }
 
+  enum CardioZone {
+    ONE
+    TWO
+    THREE
+    FOUR
+    FIVE
+  }
+
   enum ContentAccessScope {
     PRIVATE
     PUBLIC

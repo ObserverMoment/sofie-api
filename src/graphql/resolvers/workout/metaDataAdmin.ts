@@ -4,8 +4,6 @@ import { Context } from '../../..'
 import {
   MutationUpdateWorkoutMetaDataAdminArgs,
   PublicWorkoutSummaryAdmin,
-  QueryAdminPublicWorkoutByIdArgs,
-  QueryAdminPublicWorkoutSummariesArgs,
   WorkoutWithMetaDataAdmin,
 } from '../../../generated/graphql'
 import { AccessScopeError } from '../../utils'
@@ -51,50 +49,6 @@ export const adminPublicWorkoutCounts = async (
     valid: counts[1],
     invalid: counts[2],
   }
-}
-
-/// Just the workout name is returned. Use for lists.
-export const adminPublicWorkoutSummaries = async (
-  r: any,
-  { status }: QueryAdminPublicWorkoutSummariesArgs,
-  { prisma, select, userType }: Context,
-) => {
-  if (userType !== 'ADMIN') {
-    throw new AccessScopeError('Only admins can access this data')
-  }
-
-  const publicWorkouts = await prisma.workout.findMany({
-    where: {
-      contentAccessScope: 'PUBLIC',
-      archived: false,
-      validated: status,
-    },
-    orderBy: {
-      createdAt: 'asc',
-    },
-    select: select,
-  })
-
-  return publicWorkouts as PublicWorkoutSummaryAdmin[]
-}
-
-export const adminPublicWorkoutById = async (
-  r: any,
-  { id }: QueryAdminPublicWorkoutByIdArgs,
-  { prisma, select, userType }: Context,
-) => {
-  if (userType !== 'ADMIN') {
-    throw new AccessScopeError('Only admins can access this data')
-  }
-
-  const workout = await prisma.workout.findUnique({
-    where: {
-      id,
-    },
-    select: select,
-  })
-
-  return workout as WorkoutWithMetaDataAdmin
 }
 
 export const updateWorkoutMetaDataAdmin = async (

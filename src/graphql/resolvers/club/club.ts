@@ -6,7 +6,6 @@ import {
   MutationDeleteClubArgs,
   MutationUpdateClubSummaryArgs,
   QueryCheckUniqueClubNameArgs,
-  QueryClubChatSummaryArgs,
   QueryClubSummariesArgs,
   QueryClubSummaryArgs,
 } from '../../../generated/graphql'
@@ -18,13 +17,9 @@ import {
 } from '../../../lib/getStream'
 import { checkClubMediaForDeletion, deleteFiles } from '../../../lib/uploadcare'
 import { addObjectToUserRecentlyViewed } from '../../utils'
-import {
-  selectForClubChatSummary,
-  selectForClubSummary,
-} from '../selectDefinitions'
+import { selectForClubSummary } from '../selectDefinitions'
 import {
   checkUserIsOwnerOrAdminOfClub,
-  formatClubChatSummary,
   formatClubSummaries,
   formatClubSummary,
 } from './utils'
@@ -98,25 +93,6 @@ export const clubSummaries = async (
   const formattedClubs = formatClubSummaries(clubs)
 
   return formattedClubs
-}
-
-/// Basic sparse data for displaying in the Club chat. Name, avatar + basic users data.
-export const clubChatSummary = async (
-  r: any,
-  { clubId }: QueryClubChatSummaryArgs,
-  { prisma }: Context,
-) => {
-  const club = await prisma.club.findUnique({
-    where: { id: clubId },
-    select: selectForClubChatSummary,
-  })
-
-  if (!club) {
-    console.error(`clubChatSummary: Could not find a club with ID ${clubId}.`)
-    return null
-  }
-
-  return formatClubChatSummary(club)
 }
 
 /// A single ClubSummary for displaying on the Club details page.

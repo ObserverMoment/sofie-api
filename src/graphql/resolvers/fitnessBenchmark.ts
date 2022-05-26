@@ -85,23 +85,6 @@ export const userFitnessBenchmarks = async (
   return benchmarks as FitnessBenchmark[]
 }
 
-/// Gets all the standard benchmark workouts, plus the user custom ones.
-/// Plus user scores for all of the above.
-export const userBenchmarkWorkouts = async (
-  r: any,
-  a: any,
-  { authedUserId, select, prisma }: Context,
-) => {
-  const benchmarkWorkouts = await prisma.fitnessBenchmarkWorkout.findMany({
-    where: {
-      OR: [{ userId: authedUserId }, { scope: FitnessBenchmarkScope.STANDARD }],
-    },
-    select: genSelectForBenchmarkWorkout(select, authedUserId, 'USER'),
-  })
-
-  return benchmarkWorkouts as FitnessBenchmarkWorkout[]
-}
-
 //// Mutations ////
 //// Fitness Benchmarks ////
 export const createFitnessBenchmark = async (
