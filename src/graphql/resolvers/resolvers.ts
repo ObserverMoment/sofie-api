@@ -207,6 +207,9 @@ import { checkClubInviteToken } from './invites'
 import {
   userWorkoutSessions,
   workoutSessionById,
+  createWorkoutSession,
+  updateWorkoutSession,
+  duplicateWorkoutSession,
 } from './workoutSession/workoutSession'
 
 /// DEPRECATED
@@ -585,6 +588,12 @@ const resolvers: Resolvers = {
     deleteSkillById,
     addDocumentToSkill,
     removeDocumentFromSkill,
+    ////////////////////////
+    //// WorkoutSession ////
+    ///////////////////////
+    createWorkoutSession,
+    updateWorkoutSession,
+    duplicateWorkoutSession,
     /////////////////
     //// Workout ////
     /////////////////

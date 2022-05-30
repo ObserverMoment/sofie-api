@@ -95,7 +95,7 @@ export default gql`
     userProfile(userId: ID!): UserProfile
     #### WorkoutSessions ####
     workoutSessionById(id: ID!): WorkoutSession
-    userWorkoutSessions: [WorkoutSessionSummary!]! # Authed user created.
+    userWorkoutSessions: [WorkoutSession!]! # Authed user created.
     #### Workouts - DEPRECATED ####
     publicWorkouts(
       cursor: ID
@@ -301,7 +301,13 @@ export default gql`
     deleteSkillById(id: ID!): ID!
     addDocumentToSkill(data: AddDocumentToSkillInput!): Skill!
     removeDocumentFromSkill(data: RemoveDocumentFromSkillInput!): Skill!
-    #################
+    #### WorkoutSession ####
+    createWorkoutSession(data: CreateWorkoutSessionInput!): WorkoutSession!
+    updateWorkoutSession(data: UpdateWorkoutSessionInput!): WorkoutSession!
+    duplicateWorkoutSession(id: ID!): WorkoutSession!
+    ####################
+    #### DEPRECATED ####
+    ####################
     #### Workout ####
     makeCopyWorkoutById(id: ID!): Workout! # Note: Media should not be copied
     createWorkout(data: CreateWorkoutInput!): Workout!

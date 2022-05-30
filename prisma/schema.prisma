@@ -391,31 +391,27 @@ model ClubInviteToken {
 ////// Workout V2 Related Models and Children ///////
 /////////////////////////////////////////////////////
 model WorkoutSession {
-  id                 String              @id @default(uuid())
-  createdAt          DateTime            @default(now())
-  updatedAt          DateTime            @updatedAt
-  name               String
-  description        String?
-  introVideoUri      String?
-  introAudioUri      String?
-  coverImageUri      String?
-  introVideoThumbUri String?
-  archived           Boolean             @default(false)
-  sessionOrder       String[] // Session IDs.
-  CardioSessions     CardioSession[] // Monostructural, zones 2 (steady state) -> 5
-  ResistanceSessions ResistanceSession[] // Strength, hypertrophy, muscle endurance.
-  IntervalSessions   IntervalSession[] // HIIT, Tabata
-  MobilitySessions   MobilitySession[] // Yoga, ROM, Flexibility, Stability.
-  AmrapSessions      AmrapSession[] // Scored
-  ForTimeSessions    ForTimeSession[] // Scored
-  User               User                @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId             String
-
-  ////// Admin access only - admin / search / app level meta data //////
-  metaTags                 String[]
-  difficultyLevel          DifficultyLevel?
-  Club                     Club?                     @relation(fields: [clubId], references: [id])
-  clubId                   String?
+  id                       String                    @id @default(uuid())
+  createdAt                DateTime                  @default(now())
+  updatedAt                DateTime                  @updatedAt
+  name                     String
+  description              String?
+  introVideoUri            String?
+  introAudioUri            String?
+  coverImageUri            String?
+  introVideoThumbUri       String?
+  tags                     String[]
+  archived                 Boolean                   @default(false)
+  sessionOrder             String[] // Session IDs.
+  CardioSessions           CardioSession[] // Monostructural, zones 2 (steady state) -> 5
+  ResistanceSessions       ResistanceSession[] // Strength, hypertrophy, muscle endurance.
+  IntervalSessions         IntervalSession[] // HIIT, Tabata
+  MobilitySessions         MobilitySession[] // Yoga, ROM, Flexibility, Stability.
+  AmrapSessions            AmrapSession[] // Scored
+  ForTimeSessions          ForTimeSession[] // Scored
+  User                     User                      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId                   String
+  Clubs                    Club[]
   ScheduledWorkoutSessions ScheduledWorkoutSession[]
   LoggedWorkoutSessions    LoggedWorkoutSession[]
   TrainingPlanDayWorkouts  TrainingPlanDayWorkout[]
@@ -694,9 +690,6 @@ model TrainingPlan {
   Clubs                  Club[]
   Collections            Collection[]
   WorkoutTags            WorkoutTag[]
-  ////// Admin access only - meta data //////
-  metaTags               String[]
-  difficultyLevel        DifficultyLevel?
 }
 
 model TrainingPlanDay {

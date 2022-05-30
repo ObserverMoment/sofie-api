@@ -699,6 +699,10 @@ export type CreateWorkoutSectionInput = {
   timecap?: InputMaybe<Scalars['Int']>;
 };
 
+export type CreateWorkoutSessionInput = {
+  name: Scalars['String'];
+};
+
 export type CreateWorkoutSetInput = {
   WorkoutSection: ConnectRelationInput;
   duration?: InputMaybe<Scalars['Int']>;
@@ -1111,6 +1115,7 @@ export type Mutation = {
   createWorkoutPlanEnrolment: WorkoutPlanEnrolmentWithPlan;
   createWorkoutPlanReview: WorkoutPlanReview;
   createWorkoutSection: WorkoutSection;
+  createWorkoutSession: WorkoutSession;
   createWorkoutSet: WorkoutSet;
   createWorkoutSetWithWorkoutMoves: WorkoutSet;
   createWorkoutTag: WorkoutTag;
@@ -1141,6 +1146,7 @@ export type Mutation = {
   deleteWorkoutTagById: Scalars['ID'];
   duplicateWorkoutById: Workout;
   duplicateWorkoutMoveById: WorkoutMove;
+  duplicateWorkoutSession: WorkoutSession;
   duplicateWorkoutSetById: WorkoutSet;
   giveMemberAdminStatus: ClubMembers;
   makeCopyWorkoutById: Workout;
@@ -1196,6 +1202,7 @@ export type Mutation = {
   updateWorkoutPlanMetaDataAdmin?: Maybe<WorkoutPlanWithMetaDataAdmin>;
   updateWorkoutPlanReview: WorkoutPlanReview;
   updateWorkoutSection: WorkoutSection;
+  updateWorkoutSession: WorkoutSession;
   updateWorkoutSet: WorkoutSet;
   updateWorkoutTag: WorkoutTag;
   userJoinPublicClub: Scalars['ID'];
@@ -1421,6 +1428,11 @@ export type MutationCreateWorkoutSectionArgs = {
 };
 
 
+export type MutationCreateWorkoutSessionArgs = {
+  data: CreateWorkoutSessionInput;
+};
+
+
 export type MutationCreateWorkoutSetArgs = {
   data: CreateWorkoutSetInput;
 };
@@ -1567,6 +1579,11 @@ export type MutationDuplicateWorkoutByIdArgs = {
 
 
 export type MutationDuplicateWorkoutMoveByIdArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationDuplicateWorkoutSessionArgs = {
   id: Scalars['ID'];
 };
 
@@ -1851,6 +1868,11 @@ export type MutationUpdateWorkoutSectionArgs = {
 };
 
 
+export type MutationUpdateWorkoutSessionArgs = {
+  data: UpdateWorkoutSessionInput;
+};
+
+
 export type MutationUpdateWorkoutSetArgs = {
   data: UpdateWorkoutSetInput;
 };
@@ -1988,7 +2010,7 @@ export type Query = {
   userSleepWellLogs: Array<UserSleepWellLog>;
   userTrainingPlans: Array<TrainingPlanSummary>;
   userWorkoutPlans: Array<WorkoutPlanSummary>;
-  userWorkoutSessions: Array<WorkoutSessionSummary>;
+  userWorkoutSessions: Array<WorkoutSession>;
   userWorkoutTags: Array<WorkoutTag>;
   userWorkouts: Array<WorkoutSummary>;
   validateToken: Scalars['Boolean'];
@@ -2803,6 +2825,19 @@ export type UpdateWorkoutSectionInput = {
   timecap?: InputMaybe<Scalars['Int']>;
 };
 
+export type UpdateWorkoutSessionInput = {
+  archived?: InputMaybe<Scalars['Boolean']>;
+  coverImageUri?: InputMaybe<Scalars['String']>;
+  description?: InputMaybe<Scalars['String']>;
+  id: Scalars['ID'];
+  introAudioUri?: InputMaybe<Scalars['String']>;
+  introVideoThumbUri?: InputMaybe<Scalars['String']>;
+  introVideoUri?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
+  sessionOrder?: InputMaybe<Array<Scalars['String']>>;
+  tags?: InputMaybe<Array<Scalars['String']>>;
+};
+
 export type UpdateWorkoutSetInput = {
   duration?: InputMaybe<Scalars['Int']>;
   id: Scalars['ID'];
@@ -3191,6 +3226,7 @@ export type WorkoutSession = {
   introVideoUri?: Maybe<Scalars['String']>;
   name: Scalars['String'];
   sessionOrder: Array<Scalars['String']>;
+  tags: Array<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
 };
 
@@ -3432,6 +3468,7 @@ export type ResolversTypes = ResolversObject<{
   CreateWorkoutPlanInput: CreateWorkoutPlanInput;
   CreateWorkoutPlanReviewInput: CreateWorkoutPlanReviewInput;
   CreateWorkoutSectionInput: CreateWorkoutSectionInput;
+  CreateWorkoutSessionInput: CreateWorkoutSessionInput;
   CreateWorkoutSetInput: CreateWorkoutSetInput;
   CreateWorkoutSetWithWorkoutMovesInput: CreateWorkoutSetWithWorkoutMovesInput;
   CreateWorkoutTagInput: CreateWorkoutTagInput;
@@ -3557,6 +3594,7 @@ export type ResolversTypes = ResolversObject<{
   UpdateWorkoutPlanMetaDataAdminInput: UpdateWorkoutPlanMetaDataAdminInput;
   UpdateWorkoutPlanReviewInput: UpdateWorkoutPlanReviewInput;
   UpdateWorkoutSectionInput: UpdateWorkoutSectionInput;
+  UpdateWorkoutSessionInput: UpdateWorkoutSessionInput;
   UpdateWorkoutSetInput: UpdateWorkoutSetInput;
   UpdateWorkoutTagInput: UpdateWorkoutTagInput;
   UserAvatarData: ResolverTypeWrapper<UserAvatarData>;
@@ -3680,6 +3718,7 @@ export type ResolversParentTypes = ResolversObject<{
   CreateWorkoutPlanInput: CreateWorkoutPlanInput;
   CreateWorkoutPlanReviewInput: CreateWorkoutPlanReviewInput;
   CreateWorkoutSectionInput: CreateWorkoutSectionInput;
+  CreateWorkoutSessionInput: CreateWorkoutSessionInput;
   CreateWorkoutSetInput: CreateWorkoutSetInput;
   CreateWorkoutSetWithWorkoutMovesInput: CreateWorkoutSetWithWorkoutMovesInput;
   CreateWorkoutTagInput: CreateWorkoutTagInput;
@@ -3794,6 +3833,7 @@ export type ResolversParentTypes = ResolversObject<{
   UpdateWorkoutPlanMetaDataAdminInput: UpdateWorkoutPlanMetaDataAdminInput;
   UpdateWorkoutPlanReviewInput: UpdateWorkoutPlanReviewInput;
   UpdateWorkoutSectionInput: UpdateWorkoutSectionInput;
+  UpdateWorkoutSessionInput: UpdateWorkoutSessionInput;
   UpdateWorkoutSetInput: UpdateWorkoutSetInput;
   UpdateWorkoutTagInput: UpdateWorkoutTagInput;
   UserAvatarData: UserAvatarData;
@@ -4437,6 +4477,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createWorkoutPlanEnrolment?: Resolver<ResolversTypes['WorkoutPlanEnrolmentWithPlan'], ParentType, ContextType, RequireFields<MutationCreateWorkoutPlanEnrolmentArgs, 'workoutPlanId'>>;
   createWorkoutPlanReview?: Resolver<ResolversTypes['WorkoutPlanReview'], ParentType, ContextType, RequireFields<MutationCreateWorkoutPlanReviewArgs, 'data'>>;
   createWorkoutSection?: Resolver<ResolversTypes['WorkoutSection'], ParentType, ContextType, RequireFields<MutationCreateWorkoutSectionArgs, 'data'>>;
+  createWorkoutSession?: Resolver<ResolversTypes['WorkoutSession'], ParentType, ContextType, RequireFields<MutationCreateWorkoutSessionArgs, 'data'>>;
   createWorkoutSet?: Resolver<ResolversTypes['WorkoutSet'], ParentType, ContextType, RequireFields<MutationCreateWorkoutSetArgs, 'data'>>;
   createWorkoutSetWithWorkoutMoves?: Resolver<ResolversTypes['WorkoutSet'], ParentType, ContextType, RequireFields<MutationCreateWorkoutSetWithWorkoutMovesArgs, 'data'>>;
   createWorkoutTag?: Resolver<ResolversTypes['WorkoutTag'], ParentType, ContextType, RequireFields<MutationCreateWorkoutTagArgs, 'data'>>;
@@ -4467,6 +4508,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   deleteWorkoutTagById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteWorkoutTagByIdArgs, 'id'>>;
   duplicateWorkoutById?: Resolver<ResolversTypes['Workout'], ParentType, ContextType, RequireFields<MutationDuplicateWorkoutByIdArgs, 'id'>>;
   duplicateWorkoutMoveById?: Resolver<ResolversTypes['WorkoutMove'], ParentType, ContextType, RequireFields<MutationDuplicateWorkoutMoveByIdArgs, 'id'>>;
+  duplicateWorkoutSession?: Resolver<ResolversTypes['WorkoutSession'], ParentType, ContextType, RequireFields<MutationDuplicateWorkoutSessionArgs, 'id'>>;
   duplicateWorkoutSetById?: Resolver<ResolversTypes['WorkoutSet'], ParentType, ContextType, RequireFields<MutationDuplicateWorkoutSetByIdArgs, 'id'>>;
   giveMemberAdminStatus?: Resolver<ResolversTypes['ClubMembers'], ParentType, ContextType, RequireFields<MutationGiveMemberAdminStatusArgs, 'clubId' | 'userId'>>;
   makeCopyWorkoutById?: Resolver<ResolversTypes['Workout'], ParentType, ContextType, RequireFields<MutationMakeCopyWorkoutByIdArgs, 'id'>>;
@@ -4522,6 +4564,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   updateWorkoutPlanMetaDataAdmin?: Resolver<Maybe<ResolversTypes['WorkoutPlanWithMetaDataAdmin']>, ParentType, ContextType, RequireFields<MutationUpdateWorkoutPlanMetaDataAdminArgs, 'data'>>;
   updateWorkoutPlanReview?: Resolver<ResolversTypes['WorkoutPlanReview'], ParentType, ContextType, RequireFields<MutationUpdateWorkoutPlanReviewArgs, 'data'>>;
   updateWorkoutSection?: Resolver<ResolversTypes['WorkoutSection'], ParentType, ContextType, RequireFields<MutationUpdateWorkoutSectionArgs, 'data'>>;
+  updateWorkoutSession?: Resolver<ResolversTypes['WorkoutSession'], ParentType, ContextType, RequireFields<MutationUpdateWorkoutSessionArgs, 'data'>>;
   updateWorkoutSet?: Resolver<ResolversTypes['WorkoutSet'], ParentType, ContextType, RequireFields<MutationUpdateWorkoutSetArgs, 'data'>>;
   updateWorkoutTag?: Resolver<ResolversTypes['WorkoutTag'], ParentType, ContextType, RequireFields<MutationUpdateWorkoutTagArgs, 'data'>>;
   userJoinPublicClub?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationUserJoinPublicClubArgs, 'clubId'>>;
@@ -4643,7 +4686,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   userSleepWellLogs?: Resolver<Array<ResolversTypes['UserSleepWellLog']>, ParentType, ContextType>;
   userTrainingPlans?: Resolver<Array<ResolversTypes['TrainingPlanSummary']>, ParentType, ContextType>;
   userWorkoutPlans?: Resolver<Array<ResolversTypes['WorkoutPlanSummary']>, ParentType, ContextType>;
-  userWorkoutSessions?: Resolver<Array<ResolversTypes['WorkoutSessionSummary']>, ParentType, ContextType>;
+  userWorkoutSessions?: Resolver<Array<ResolversTypes['WorkoutSession']>, ParentType, ContextType>;
   userWorkoutTags?: Resolver<Array<ResolversTypes['WorkoutTag']>, ParentType, ContextType>;
   userWorkouts?: Resolver<Array<ResolversTypes['WorkoutSummary']>, ParentType, ContextType>;
   validateToken?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -5229,6 +5272,7 @@ export type WorkoutSessionResolvers<ContextType = any, ParentType extends Resolv
   introVideoUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   sessionOrder?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
+  tags?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;

@@ -240,6 +240,83 @@ export type WorkoutPlanSummaryPayload = Prisma.WorkoutPlanGetPayload<{
   }
 }>
 
+/// For creating a duplicate of a workoutSession.
+export type WorkoutSessionFullDataPayload = Prisma.WorkoutSessionGetPayload<{
+  include: {
+    CardioSessions: {
+      include: {
+        CardioExercises: {
+          include: {
+            Move: true
+          }
+        }
+      }
+    }
+    ResistanceSessions: {
+      include: {
+        ResistanceExercises: {
+          include: {
+            ResistanceSets: {
+              include: {
+                Move: true
+                Equipment: true
+              }
+            }
+          }
+        }
+      }
+    }
+    IntervalSessions: {
+      include: {
+        IntervalExercises: {
+          include: {
+            IntervalSets: {
+              include: {
+                Move: true
+                Equipment: true
+              }
+            }
+          }
+        }
+      }
+    }
+    AmrapSessions: {
+      include: {
+        AmrapSections: {
+          include: {
+            AmrapMoves: {
+              include: {
+                Move: true
+                Equipment: true
+              }
+            }
+          }
+        }
+      }
+    }
+    ForTimeSessions: {
+      include: {
+        ForTimeSections: {
+          include: {
+            ForTimeMoves: {
+              include: {
+                Move: true
+                Equipment: true
+              }
+            }
+          }
+        }
+      }
+    }
+    MobilitySessions: {
+      include: {
+        MobilityMoves: true
+      }
+    }
+  }
+}>
+
+///// DEPRECATED ////
 /// For creating a duplicate of a workout.
 export type WorkoutFullDataPayload = Prisma.WorkoutGetPayload<{
   include: {

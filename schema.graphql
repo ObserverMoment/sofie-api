@@ -663,6 +663,10 @@ input CreateWorkoutSectionInput {
   timecap: Int
 }
 
+input CreateWorkoutSessionInput {
+  name: String!
+}
+
 input CreateWorkoutSetInput {
   WorkoutSection: ConnectRelationInput!
   duration: Int
@@ -1063,6 +1067,7 @@ type Mutation {
   createWorkoutPlanEnrolment(workoutPlanId: ID!): WorkoutPlanEnrolmentWithPlan!
   createWorkoutPlanReview(data: CreateWorkoutPlanReviewInput!): WorkoutPlanReview!
   createWorkoutSection(data: CreateWorkoutSectionInput!): WorkoutSection!
+  createWorkoutSession(data: CreateWorkoutSessionInput!): WorkoutSession!
   createWorkoutSet(data: CreateWorkoutSetInput!): WorkoutSet!
   createWorkoutSetWithWorkoutMoves(data: CreateWorkoutSetWithWorkoutMovesInput!): WorkoutSet!
   createWorkoutTag(data: CreateWorkoutTagInput!): WorkoutTag!
@@ -1093,6 +1098,7 @@ type Mutation {
   deleteWorkoutTagById(id: ID!): ID!
   duplicateWorkoutById(id: ID!): Workout!
   duplicateWorkoutMoveById(id: ID!): WorkoutMove!
+  duplicateWorkoutSession(id: ID!): WorkoutSession!
   duplicateWorkoutSetById(id: ID!): WorkoutSet!
   giveMemberAdminStatus(clubId: ID!, userId: ID!): ClubMembers!
   makeCopyWorkoutById(id: ID!): Workout!
@@ -1148,6 +1154,7 @@ type Mutation {
   updateWorkoutPlanMetaDataAdmin(data: UpdateWorkoutPlanMetaDataAdminInput!): WorkoutPlanWithMetaDataAdmin
   updateWorkoutPlanReview(data: UpdateWorkoutPlanReviewInput!): WorkoutPlanReview!
   updateWorkoutSection(data: UpdateWorkoutSectionInput!): WorkoutSection!
+  updateWorkoutSession(data: UpdateWorkoutSessionInput!): WorkoutSession!
   updateWorkoutSet(data: UpdateWorkoutSetInput!): WorkoutSet!
   updateWorkoutTag(data: UpdateWorkoutTagInput!): WorkoutTag!
   userJoinPublicClub(clubId: ID!): ID!
@@ -1269,7 +1276,7 @@ type Query {
   userSleepWellLogs: [UserSleepWellLog!]!
   userTrainingPlans: [TrainingPlanSummary!]!
   userWorkoutPlans: [WorkoutPlanSummary!]!
-  userWorkoutSessions: [WorkoutSessionSummary!]!
+  userWorkoutSessions: [WorkoutSession!]!
   userWorkoutTags: [WorkoutTag!]!
   userWorkouts: [WorkoutSummary!]!
   validateToken: Boolean!
@@ -1869,6 +1876,19 @@ input UpdateWorkoutSectionInput {
   timecap: Int
 }
 
+input UpdateWorkoutSessionInput {
+  archived: Boolean
+  coverImageUri: String
+  description: String
+  id: ID!
+  introAudioUri: String
+  introVideoThumbUri: String
+  introVideoUri: String
+  name: String
+  sessionOrder: [String!]
+  tags: [String!]
+}
+
 input UpdateWorkoutSetInput {
   duration: Int
   id: ID!
@@ -2235,6 +2255,7 @@ type WorkoutSession {
   introVideoUri: String
   name: String!
   sessionOrder: [String!]!
+  tags: [String!]!
   updatedAt: DateTime!
 }
 

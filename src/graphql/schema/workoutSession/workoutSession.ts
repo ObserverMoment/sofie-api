@@ -1,20 +1,6 @@
 import { gql } from 'apollo-server-express'
 
 export default gql`
-  type WorkoutSessionSummary {
-    id: ID!
-    createdAt: DateTime!
-    updatedAt: DateTime!
-    archived: Boolean!
-    name: String!
-    description: String
-    introVideoUri: String
-    introAudioUri: String
-    coverImageUri: String
-    introVideoThumbUri: String
-    User: UserAvatarData!
-  }
-
   type WorkoutSession {
     id: ID!
     createdAt: DateTime!
@@ -25,6 +11,7 @@ export default gql`
     introAudioUri: String
     coverImageUri: String
     introVideoThumbUri: String
+    tags: [String!]!
     archived: Boolean!
     sessionOrder: [String!]!
     CardioSessions: [CardioSession!]!
@@ -34,5 +21,23 @@ export default gql`
     AmrapSessions: [AmrapSession!]!
     ForTimeSessions: [ForTimeSession!]!
     User: UserAvatarData!
+  }
+
+  # Just creates the basic required fields.
+  input CreateWorkoutSessionInput {
+    name: String!
+  }
+
+  input UpdateWorkoutSessionInput {
+    id: ID!
+    name: String
+    description: String
+    introVideoUri: String
+    introAudioUri: String
+    coverImageUri: String
+    introVideoThumbUri: String
+    archived: Boolean
+    tags: [String!]
+    sessionOrder: [String!]
   }
 `

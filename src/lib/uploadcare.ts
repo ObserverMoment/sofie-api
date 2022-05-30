@@ -12,6 +12,7 @@ import {
   UpdateFitnessBenchmarkInput,
   UpdateFitnessBenchmarkWorkoutInput,
   UpdateFitnessBenchmarkScoreInput,
+  UpdateWorkoutSessionInput,
 } from '../generated/graphql'
 import { AccessScopeError } from '../graphql/utils'
 
@@ -256,12 +257,12 @@ export async function checkUserMediaForDeletion(
 /** Checks if there are any media (hosted) files being changed.
  * Returns an array of fileIds (strings) which should be deleted.
  */
-export async function checkWorkoutMediaForDeletion(
+export async function checkWorkoutSessionMediaForDeletion(
   prisma: PrismaClient,
-  data: UpdateWorkoutInput,
+  data: UpdateWorkoutSessionInput,
 ): Promise<string[]> {
-  // Get the old workout data first.
-  const oldWorkout = await prisma.workout.findUnique({
+  // Get the old data first.
+  const old = await prisma.workoutSession.findUnique({
     where: {
       id: data.id,
     },
@@ -273,13 +274,13 @@ export async function checkWorkoutMediaForDeletion(
     },
   })
 
-  if (!oldWorkout) {
+  if (!old) {
     throw new AccessScopeError(
-      'checkWorkoutMediaForDeletion: Unable to find object to check',
+      'checkWorkoutSessionMediaForDeletion: Unable to find object to check',
     )
   } else {
-    const fileIdsForDeletion: string[] = Object.keys(oldWorkout)
-      .map((key: string) => getFileIdForDeleteOrNull(oldWorkout, data, key))
+    const fileIdsForDeletion: string[] = Object.keys(old)
+      .map((key: string) => getFileIdForDeleteOrNull(old, data, key))
       .filter((x) => !!x) as string[]
 
     return fileIdsForDeletion
@@ -411,6 +412,40 @@ export async function checkBodyTrackingEntryMediaForDeletion(
     const fileIdsForDeletion: string[] = oldEntry.photoUris.filter(
       (oldUri) => !data.photoUris?.includes(oldUri),
     )
+
+    return fileIdsForDeletion
+  }
+}
+
+/////////// DEPRECATED ///////////
+/** Checks if there are any media (hosted) files being changed.
+ * Returns an array of fileIds (strings) which should be deleted.
+ */
+export async function checkWorkoutMediaForDeletion(
+  prisma: PrismaClient,
+  data: UpdateWorkoutInput,
+): Promise<string[]> {
+  // Get the old workout data first.
+  const oldWorkout = await prisma.workout.findUnique({
+    where: {
+      id: data.id,
+    },
+    select: {
+      coverImageUri: true,
+      introAudioUri: true,
+      introVideoUri: true,
+      introVideoThumbUri: true,
+    },
+  })
+
+  if (!oldWorkout) {
+    throw new AccessScopeError(
+      'checkWorkoutMediaForDeletion: Unable to find object to check',
+    )
+  } else {
+    const fileIdsForDeletion: string[] = Object.keys(oldWorkout)
+      .map((key: string) => getFileIdForDeleteOrNull(oldWorkout, data, key))
+      .filter((x) => !!x) as string[]
 
     return fileIdsForDeletion
   }
