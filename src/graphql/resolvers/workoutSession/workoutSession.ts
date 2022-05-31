@@ -1,8 +1,8 @@
-import { Prisma } from '@prisma/client'
 import { ApolloError } from 'apollo-server-errors'
 import { Context } from '../../..'
 import {
   MutationCreateWorkoutSessionArgs,
+  MutationDeleteWorkoutSessionArgs,
   MutationDuplicateWorkoutSessionArgs,
   MutationUpdateWorkoutSessionArgs,
   QueryWorkoutSessionByIdArgs,
@@ -12,7 +12,7 @@ import {
   checkWorkoutSessionMediaForDeletion,
   deleteFiles,
 } from '../../../lib/uploadcare'
-import { WorkoutSessionFullDataPayload } from '../../../types'
+import { WorkoutSessionFullDataPayload } from '../../../../types/workoutSessionTypes'
 import {
   addObjectToUserRecentlyViewed,
   checkUserOwnsObject,
@@ -21,22 +21,18 @@ import {
 
 //// Queries ////
 /// https://www.prisma.io/docs/concepts/components/prisma-client/pagination
-
-// Logged in user only. Never retrieve archived.
+// Logged in user only.
 export const userWorkoutSessions = async (
   r: any,
   a: any,
-  { authedUserId, prisma }: Context,
+  { select, authedUserId, prisma }: Context,
 ) => {
   const userWorkoutSessions = await prisma.workoutSession.findMany({
     where: {
       userId: authedUserId,
-      archived: false,
     },
     orderBy: [{ updatedAt: 'desc' }, { id: 'desc' }],
-    select: {
-      id: true,
-    },
+    select,
   })
 
   return userWorkoutSessions as WorkoutSession[]
@@ -77,7 +73,6 @@ export const createWorkoutSession = async (
   })
 
   if (workoutSession) {
-    // await updateWorkoutMetaData(prisma, (workout as Workout).id)
     await addObjectToUserRecentlyViewed(
       'createWorkoutSession',
       { id: (workoutSession as WorkoutSession).id },
@@ -115,23 +110,15 @@ export const updateWorkoutSession = async (
     if (mediaFileUrisForDeletion.length > 0) {
       await deleteFiles(mediaFileUrisForDeletion)
     }
-    await addObjectToUserRecentlyViewed(
-      'updateWorkoutSession',
-      { id: (updated as WorkoutSession).id },
-      authedUserId,
-      prisma,
-    )
-
     return updated as WorkoutSession
   } else {
     throw new ApolloError('updateWorkoutSession: There was an issue.')
   }
 }
 
-// Makes a full copy of the workout and returns it.
-// Adds '- copy' to the name.
+// Makes a full copy of the object and returns it.
 // Does not copy across any media.
-// Functionality is only available on workoutSessions that the user owns.
+// Functionality is only available on objects that the user owns.
 export const duplicateWorkoutSession = async (
   r: any,
   { id }: MutationDuplicateWorkoutSessionArgs,
@@ -228,10 +215,182 @@ export const duplicateWorkoutSession = async (
     data: {
       name: `${original.name} - copy`,
       description: original.description,
+      tags: original.tags,
+      sessionOrder: original.sessionOrder,
+      CardioSessions: {
+        create: original.CardioSessions.map((s) => ({
+          name: s.name,
+          note: s.note,
+          exerciseOrder: s.exerciseOrder,
+          User: {
+            connect: { id: authedUserId },
+          },
+          CardioExercises: {
+            create: s.CardioExercises.map((e) => ({
+              note: e.note,
+              time: e.time,
+              timeUnit: e.timeUnit,
+              distance: e.distance,
+              distanceUnit: e.distanceUnit,
+              cardioZone: e.cardioZone,
+              Move: {
+                connect: { id: e.moveId },
+              },
+              User: {
+                connect: { id: authedUserId },
+              },
+            })),
+          },
+        })),
+      },
+      ResistanceSessions: {
+        create: original.ResistanceSessions.map((s) => ({
+          name: s.name,
+          note: s.note,
+          setOrder: s.setOrder,
+          User: {
+            connect: { id: authedUserId },
+          },
+          ResistanceExercises: {
+            create: s.ResistanceExercises.map((e) => ({
+              note: e.note,
+              setOrder: e.setOrder,
+              User: {
+                connect: { id: authedUserId },
+              },
+              ResistanceSets: {
+                create: e.ResistanceSets.map((s) => ({
+                  note: s.note,
+                  reps: s.reps,
+                  Move: {
+                    connect: { id: s.moveId },
+                  },
+                  Equipment: { connect: s.equipmentId || undefined },
+                  User: {
+                    connect: { id: authedUserId },
+                  },
+                })),
+              },
+            })),
+          },
+        })),
+      },
+      IntervalSessions: {
+        create: original.IntervalSessions.map((s) => ({
+          name: s.name,
+          note: s.note,
+          repeats: s.repeats,
+          intervalExerciseOrder: s.intervalExerciseOrder,
+          intervals: s.intervals,
+          User: {
+            connect: { id: authedUserId },
+          },
+          IntervalExercises: {
+            create: s.IntervalExercises.map((e) => ({
+              note: e.note,
+              intervalSetOrder: e.intervalSetOrder,
+              User: {
+                connect: { id: authedUserId },
+              },
+              IntervalSets: {
+                create: e.IntervalSets.map((s) => ({
+                  note: s.note,
+                  Move: {
+                    connect: { id: s.moveId },
+                  },
+                  Equipment: { connect: s.equipmentId || undefined },
+                  User: {
+                    connect: { id: authedUserId },
+                  },
+                })),
+              },
+            })),
+          },
+        })),
+      },
+      AmrapSessions: {
+        create: original.AmrapSessions.map((s) => ({
+          name: s.name,
+          note: s.note,
+          sectionOrder: s.sectionOrder,
+          User: {
+            connect: { id: authedUserId },
+          },
+          AmrapSections: {
+            create: s.AmrapSections.map((s) => ({
+              name: s.name,
+              note: s.note,
+              moveOrder: s.moveOrder,
+              User: {
+                connect: { id: authedUserId },
+              },
+              AmrapMoves: s.AmrapMoves.map((m) => ({
+                note: m.note,
+                Move: {
+                  connect: { id: m.moveId },
+                },
+                Equipment: { connect: m.equipmentId || undefined },
+                User: {
+                  connect: { id: authedUserId },
+                },
+              })),
+            })),
+          },
+        })),
+      },
+      ForTimeSessions: {
+        create: original.ForTimeSessions.map((s) => ({
+          name: s.name,
+          note: s.note,
+          repeats: s.repeats,
+          timecapSeconds: s.timecapSeconds,
+          sectionOrder: s.sectionOrder,
+          User: {
+            connect: { id: authedUserId },
+          },
+          ForTimeSections: {
+            create: s.ForTimeSections.map((s) => ({
+              name: s.name,
+              note: s.note,
+              moveOrder: s.moveOrder,
+              User: {
+                connect: { id: authedUserId },
+              },
+              ForTimeMoves: {
+                create: s.ForTimeMoves.map((m) => ({
+                  note: m.note,
+                  Move: {
+                    connect: { id: m.moveId },
+                  },
+                  Equipment: { connect: m.equipmentId || undefined },
+                  User: {
+                    connect: { id: authedUserId },
+                  },
+                })),
+              },
+            })),
+          },
+        })),
+      },
+      MobilitySessions: {
+        create: original.MobilitySessions.map((s) => ({
+          name: s.name,
+          note: s.note,
+          moveOrder: s.moveOrder,
+          User: {
+            connect: { id: authedUserId },
+          },
+          MobilityMoves: {
+            connect: s.MobilityMoves.map((m) => ({
+              id: m.id,
+            })),
+          },
+        })),
+      },
       User: {
         connect: { id: authedUserId },
       },
-    } as Prisma.WorkoutSessionCreateInput,
+    },
     select,
   })
 
@@ -239,5 +398,78 @@ export const duplicateWorkoutSession = async (
     return copy as WorkoutSession
   } else {
     throw new ApolloError('duplicateWorkoutSession: There was an issue.')
+  }
+}
+
+export const deleteWorkoutSession = async (
+  r: any,
+  { id }: MutationDeleteWorkoutSessionArgs,
+  { authedUserId, prisma }: Context,
+) => {
+  await checkUserOwnsObject(id, 'workoutSession', authedUserId, prisma)
+
+  /// 1. Get all media uris from the session and children.
+  const original = await prisma.workoutSession.findUnique({
+    where: { id },
+    select: {
+      coverImageUri: true,
+      introAudioUri: true,
+      introVideoUri: true,
+      introVideoThumbUri: true,
+      IntervalSessions: {
+        select: {
+          audioUri: true,
+          videoUri: true,
+          videoThumbUri: true,
+        },
+      },
+      MobilitySessions: {
+        select: {
+          audioUri: true,
+          videoUri: true,
+          videoThumbUri: true,
+        },
+      },
+    },
+  })
+
+  if (!original) {
+    throw new ApolloError(
+      'deleteWorkoutSession: Could not retrieve media data for this workoutSession.',
+    )
+  }
+
+  const mediaFiles = [
+    original.coverImageUri,
+    original.introAudioUri,
+    original.introVideoUri,
+    original.introVideoThumbUri,
+    ...original.IntervalSessions.flatMap((s) => [
+      s.audioUri,
+      s.videoUri,
+      s.videoThumbUri,
+    ]),
+    ...original.MobilitySessions.flatMap((s) => [
+      s.audioUri,
+      s.videoUri,
+      s.videoThumbUri,
+    ]),
+  ].filter((x) => x) as string[]
+
+  if (mediaFiles.length) {
+    await deleteFiles(mediaFiles)
+  }
+
+  /// 2. Delete the workout session which will cascade delete all children.
+  const deleted = await prisma.workoutSession.delete({
+    where: { id },
+    select: { id: true },
+  })
+
+  if (deleted) {
+    return deleted.id
+  } else {
+    console.error(`deleteWorkoutSession: There was an issue.`)
+    throw new ApolloError('deleteWorkoutSession: There was an issue.')
   }
 }

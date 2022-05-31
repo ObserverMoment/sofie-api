@@ -96,6 +96,9 @@ export default gql`
     #### WorkoutSessions ####
     workoutSessionById(id: ID!): WorkoutSession
     userWorkoutSessions: [WorkoutSession!]! # Authed user created.
+    #### CardioSessions ####
+    cardioSessionById(id: ID!): CardioSession
+    cardioExerciseById(id: ID!): CardioExercise
     #### Workouts - DEPRECATED ####
     publicWorkouts(
       cursor: ID
@@ -305,6 +308,29 @@ export default gql`
     createWorkoutSession(data: CreateWorkoutSessionInput!): WorkoutSession!
     updateWorkoutSession(data: UpdateWorkoutSessionInput!): WorkoutSession!
     duplicateWorkoutSession(id: ID!): WorkoutSession!
+    deleteWorkoutSession(id: ID!): ID!
+    #### AmrapSession ####
+    createAmrapSession(data: CreateAmrapSessionInput!): AmrapSession!
+    updateAmrapSession(data: UpdateAmrapSessionInput!): AmrapSession!
+    duplicateAmrapSession(id: ID!): AmrapSession!
+    deleteAmrapSession(id: ID!): ID!
+    createAmrapSection(data: CreateAmrapSectionInput!): AmrapSection!
+    updateAmrapSection(data: UpdateAmrapSectionInput!): AmrapSection!
+    duplicateAmrapSection(id: ID!): AmrapSection!
+    deleteAmrapSection(id: ID!): ID!
+    createAmrapMove(data: CreateAmrapMoveInput!): AmrapMove!
+    updateAmrapMove(data: UpdateAmrapMoveInput!): AmrapMove!
+    duplicateAmrapMove(id: ID!): AmrapMove!
+    deleteAmrapMove(id: ID!): ID!
+    #### CardioSession ####
+    createCardioSession(data: CreateCardioSessionInput!): CardioSession!
+    updateCardioSession(data: UpdateCardioSessionInput!): CardioSession!
+    duplicateCardioSession(id: ID!): CardioSession!
+    deleteCardioSession(id: ID!): ID!
+    createCardioExercise(data: CreateCardioExerciseInput!): CardioExercise!
+    updateCardioExercise(data: UpdateCardioExerciseInput!): CardioExercise!
+    duplicateCardioExercise(id: ID!): CardioExercise!
+    deleteCardioExercise(id: ID!): ID!
     ####################
     #### DEPRECATED ####
     ####################

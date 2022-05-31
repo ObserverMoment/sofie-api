@@ -7,6 +7,9 @@ export default gql`
     updatedAt: DateTime!
     name: String
     note: String
+    audioUri: String
+    videoUri: String
+    videoThumbUri: String
     repeats: Int!
     # For rest intervals add 'rest' to the array.
     # E.g. [IntervalExerciseId, IntervalExerciseId, rest, IntervalExerciseId, IntervalExerciseId, rest]

@@ -45,6 +45,9 @@ export type ContentObjectType =
   | 'scheduledWorkout'
   | 'skill'
   | 'workoutSession'
+  | 'cardioSession'
+  | 'cardioExercise'
+  | 'amrapSession'
   | 'workoutTag'
   | 'userDayLogMood'
   | 'userEatWellLog'
@@ -139,20 +142,8 @@ export async function addObjectToUserRecentlyViewed(
     case 'workoutPlanById':
       typeAndId = `workoutPlanSummary:${resolverArgs.id}`
       break
-    /// These create branches should only get hit when the method is being called from the resolvers themselves, not via middleware.
-    /// Make sure you are passing an object like {id: newObjectId} as [resolverArgs].
-    case 'createClub':
-      typeAndId = `clubSummary:${resolverArgs.id}`
-      break
-    case 'createWorkout':
-      typeAndId = `workoutSummary:${resolverArgs.id}`
-      break
-    case 'createWorkoutPlan':
-      typeAndId = `workoutPlanSummary:${resolverArgs.id}`
-      break
 
-    case 'createWorkoutSession':
-    case 'updateWorkoutSession':
+    case 'workoutSessionById':
       typeAndId = `workoutSession:${resolverArgs.id}`
       break
 

@@ -13,6 +13,17 @@ export default gql`
     AmrapSections: [AmrapSection!]!
   }
 
+  input CreateAmrapSessionInput {
+    WorkoutSession: ConnectRelationInput!
+  }
+
+  input UpdateAmrapSessionInput {
+    id: ID!
+    name: String
+    note: String
+    sectionOrder: [String!]
+  }
+
   type AmrapSection {
     id: ID!
     createdAt: DateTime!
@@ -23,6 +34,17 @@ export default gql`
     AmrapMoves: [AmrapMove!]!
   }
 
+  input CreateAmrapSectionInput {
+    AmrapSession: ConnectRelationInput!
+  }
+
+  input UpdateAmrapSectionInput {
+    id: ID!
+    name: String
+    note: String
+    moveOrder: [String!]
+  }
+
   type AmrapMove {
     id: ID!
     createdAt: DateTime!
@@ -30,5 +52,16 @@ export default gql`
     note: String
     Move: Move!
     Equipment: Equipment
+  }
+
+  input CreateAmrapMoveInput {
+    AmrapSection: ConnectRelationInput!
+  }
+
+  input UpdateAmrapMoveInput {
+    id: ID!
+    note: String
+    Move: ConnectRelationInput!
+    Equipment: ConnectRelationInput
   }
 `

@@ -3,7 +3,7 @@ import {
   WorkoutPlanFiltersInput,
   WorkoutPlanSummary,
 } from '../../../generated/graphql'
-import { WorkoutPlanSummaryPayload } from '../../../types'
+import { WorkoutPlanSummaryPayload } from '../../../../types/types'
 
 export function formatWorkoutPlanSummaries(
   plans: WorkoutPlanSummaryPayload[],

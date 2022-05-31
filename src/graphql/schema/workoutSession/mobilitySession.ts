@@ -7,6 +7,9 @@ export default gql`
     updatedAt: DateTime!
     name: String
     note: String
+    audioUri: String
+    videoUri: String
+    videoThumbUri: String
     moveOrder: [String!]!
     MobilityMoves: [MobilityMove!]!
   }

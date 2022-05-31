@@ -11,7 +11,7 @@ import {
   ClubMembersPayload,
   ClubSummaryPayload,
   ClubWithMemberIdsPayload,
-} from '../../../types'
+} from '../../../../types/types'
 import { AccessScopeError } from '../../utils'
 
 export function formatClubSummaries(

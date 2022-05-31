@@ -9,7 +9,7 @@ import {
   WorkoutMetaData,
   WorkoutMetaDataPayload,
   WorkoutSummaryPayload,
-} from '../../../types'
+} from '../../../../types/types'
 
 export function formatWorkoutSummaries(
   workouts: WorkoutSummaryPayload[],

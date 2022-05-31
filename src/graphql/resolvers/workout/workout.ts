@@ -22,7 +22,7 @@ import {
   updateWorkoutMetaData,
   formatWorkoutSummaries,
 } from './utils'
-import { WorkoutFullDataPayload } from '../../../types'
+import { WorkoutFullDataPayload } from '../../../../types/types'
 import { selectForWorkoutSummary } from '../selectDefinitions'
 
 //// Queries ////

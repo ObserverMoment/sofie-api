@@ -11,6 +11,17 @@ export default gql`
     CardioExercises: [CardioExercise!]!
   }
 
+  input CreateCardioSessionInput {
+    WorkoutSession: ConnectRelationInput!
+  }
+
+  input UpdateCardioSessionInput {
+    id: ID!
+    name: String
+    note: String
+    exerciseOrder: [String!]
+  }
+
   type CardioExercise {
     id: ID!
     createdAt: DateTime!
@@ -22,5 +33,21 @@ export default gql`
     distanceUnit: DistanceUnit!
     cardioZone: CardioZone!
     Move: Move
+  }
+
+  input CreateCardioExerciseInput {
+    CardioSession: ConnectRelationInput!
+    Move: ConnectRelationInput!
+  }
+
+  input UpdateCardioExerciseInput {
+    id: ID!
+    note: String
+    time: Float
+    timeUnit: TimeUnit
+    distance: Float
+    distanceUnit: DistanceUnit
+    cardioZone: CardioZone
+    Move: ConnectRelationInput
   }
 `

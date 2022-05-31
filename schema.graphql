@@ -341,12 +341,33 @@ type CoreData {
   workoutSectionTypes: [WorkoutSectionType!]!
 }
 
+input CreateAmrapMoveInput {
+  AmrapSection: ConnectRelationInput!
+}
+
+input CreateAmrapSectionInput {
+  AmrapSession: ConnectRelationInput!
+}
+
+input CreateAmrapSessionInput {
+  WorkoutSession: ConnectRelationInput!
+}
+
 input CreateBodyTrackingEntryInput {
   bodyweight: Float
   bodyweightUnit: BodyweightUnit
   fatPercent: Float
   note: String
   photoUris: [String!]
+}
+
+input CreateCardioExerciseInput {
+  CardioSession: ConnectRelationInput!
+  Move: ConnectRelationInput!
+}
+
+input CreateCardioSessionInput {
+  WorkoutSession: ConnectRelationInput!
 }
 
 input CreateClubInput {
@@ -854,6 +875,7 @@ type IntervalExercise {
 
 type IntervalSession {
   IntervalExercises: [IntervalExercise!]!
+  audioUri: String
   createdAt: DateTime!
   id: ID!
   intervalExerciseOrder: [String!]!
@@ -862,6 +884,8 @@ type IntervalSession {
   note: String
   repeats: Int!
   updatedAt: DateTime!
+  videoThumbUri: String
+  videoUri: String
 }
 
 type IntervalSet {
@@ -973,12 +997,15 @@ type MobilityMoveType {
 
 type MobilitySession {
   MobilityMoves: [MobilityMove!]!
+  audioUri: String
   createdAt: DateTime!
   id: ID!
   moveOrder: [String!]!
   name: String
   note: String
   updatedAt: DateTime!
+  videoThumbUri: String
+  videoUri: String
 }
 
 type Move {
@@ -1036,7 +1063,12 @@ type Mutation {
   clearScheduleForPlanEnrolment(enrolmentId: ID!): WorkoutPlanEnrolment!
   clearWorkoutPlanEnrolmentProgress(enrolmentId: ID!): WorkoutPlanEnrolment!
   copyWorkoutPlanDayToAnotherDay(data: CopyWorkoutPlanDayToAnotherDayInput!): WorkoutPlanDay!
+  createAmrapMove(data: CreateAmrapMoveInput!): AmrapMove!
+  createAmrapSection(data: CreateAmrapSectionInput!): AmrapSection!
+  createAmrapSession(data: CreateAmrapSessionInput!): AmrapSession!
   createBodyTrackingEntry(data: CreateBodyTrackingEntryInput!): BodyTrackingEntry!
+  createCardioExercise(data: CreateCardioExerciseInput!): CardioExercise!
+  createCardioSession(data: CreateCardioSessionInput!): CardioSession!
   createClub(data: CreateClubInput!): ClubSummary!
   createClubInviteToken(data: CreateClubInviteTokenInput!): ClubInviteTokens!
   createClubMemberNote(data: CreateClubMemberNoteInput!): ClubMemberNote!
@@ -1071,7 +1103,12 @@ type Mutation {
   createWorkoutSet(data: CreateWorkoutSetInput!): WorkoutSet!
   createWorkoutSetWithWorkoutMoves(data: CreateWorkoutSetWithWorkoutMovesInput!): WorkoutSet!
   createWorkoutTag(data: CreateWorkoutTagInput!): WorkoutTag!
+  deleteAmrapMove(id: ID!): ID!
+  deleteAmrapSection(id: ID!): ID!
+  deleteAmrapSession(id: ID!): ID!
   deleteBodyTrackingEntryById(id: ID!): ID!
+  deleteCardioExercise(id: ID!): ID!
+  deleteCardioSession(id: ID!): ID!
   deleteClub(id: ID!): ID!
   deleteClubInviteToken(data: DeleteClubInviteTokenInput!): ClubInviteTokens!
   deleteClubMembersFeedPost(activityId: ID!): ID!
@@ -1094,8 +1131,14 @@ type Mutation {
   deleteWorkoutPlanEnrolmentById(id: ID!): ID!
   deleteWorkoutPlanReviewById(id: ID!): ID!
   deleteWorkoutSectionById(id: ID!): ID!
+  deleteWorkoutSession(id: ID!): ID!
   deleteWorkoutSetById(id: ID!): ID!
   deleteWorkoutTagById(id: ID!): ID!
+  duplicateAmrapMove(id: ID!): AmrapMove!
+  duplicateAmrapSection(id: ID!): AmrapSection!
+  duplicateAmrapSession(id: ID!): AmrapSession!
+  duplicateCardioExercise(id: ID!): CardioExercise!
+  duplicateCardioSession(id: ID!): CardioSession!
   duplicateWorkoutById(id: ID!): Workout!
   duplicateWorkoutMoveById(id: ID!): WorkoutMove!
   duplicateWorkoutSession(id: ID!): WorkoutSession!
@@ -1121,7 +1164,12 @@ type Mutation {
   unarchiveCustomMoveById(id: ID!): Move!
   unarchiveWorkoutById(id: ID!): Workout!
   unarchiveWorkoutPlanById(id: ID!): WorkoutPlan!
+  updateAmrapMove(data: UpdateAmrapMoveInput!): AmrapMove!
+  updateAmrapSection(data: UpdateAmrapSectionInput!): AmrapSection!
+  updateAmrapSession(data: UpdateAmrapSessionInput!): AmrapSession!
   updateBodyTrackingEntry(data: UpdateBodyTrackingEntryInput!): BodyTrackingEntry!
+  updateCardioExercise(data: UpdateCardioExerciseInput!): CardioExercise!
+  updateCardioSession(data: UpdateCardioSessionInput!): CardioSession!
   updateClubInviteToken(data: UpdateClubInviteTokenInput!): ClubInviteTokens!
   updateClubMemberNote(data: UpdateClubMemberNoteInput!): ClubMemberNote!
   updateClubMetaDataAdmin(data: UpdateClubMetaDataAdminInput!): ClubWithMetaDataAdmin!
@@ -1223,6 +1271,8 @@ type Query {
   adminStandardFitnessBenchmarks: [FitnessBenchmark!]!
   announcementUpdates: [AnnouncementUpdate!]!
   bodyTrackingEntries: [BodyTrackingEntry!]!
+  cardioExerciseById(id: ID!): CardioExercise
+  cardioSessionById(id: ID!): CardioSession
   checkClubInviteToken(id: ID!): CheckClubInviteTokenResult!
   checkUniqueClubName(name: String!): Boolean!
   checkUniqueDisplayName(displayName: String!): Boolean!
@@ -1511,6 +1561,27 @@ type TrainingPlanSummary {
   workoutsCount: Int!
 }
 
+input UpdateAmrapMoveInput {
+  Equipment: ConnectRelationInput
+  Move: ConnectRelationInput!
+  id: ID!
+  note: String
+}
+
+input UpdateAmrapSectionInput {
+  id: ID!
+  moveOrder: [String!]
+  name: String
+  note: String
+}
+
+input UpdateAmrapSessionInput {
+  id: ID!
+  name: String
+  note: String
+  sectionOrder: [String!]
+}
+
 input UpdateBodyTrackingEntryInput {
   bodyweight: Float
   bodyweightUnit: BodyweightUnit
@@ -1518,6 +1589,24 @@ input UpdateBodyTrackingEntryInput {
   id: ID!
   note: String
   photoUris: [String!]
+}
+
+input UpdateCardioExerciseInput {
+  Move: ConnectRelationInput
+  cardioZone: CardioZone
+  distance: Float
+  distanceUnit: DistanceUnit
+  id: ID!
+  note: String
+  time: Float
+  timeUnit: TimeUnit
+}
+
+input UpdateCardioSessionInput {
+  exerciseOrder: [String!]
+  id: ID!
+  name: String
+  note: String
 }
 
 input UpdateClubInviteTokenInput {
@@ -2256,20 +2345,6 @@ type WorkoutSession {
   name: String!
   sessionOrder: [String!]!
   tags: [String!]!
-  updatedAt: DateTime!
-}
-
-type WorkoutSessionSummary {
-  User: UserAvatarData!
-  archived: Boolean!
-  coverImageUri: String
-  createdAt: DateTime!
-  description: String
-  id: ID!
-  introAudioUri: String
-  introVideoThumbUri: String
-  introVideoUri: String
-  name: String!
   updatedAt: DateTime!
 }
 

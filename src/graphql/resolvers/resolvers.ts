@@ -204,13 +204,41 @@ import {
 
 import { checkClubInviteToken } from './invites'
 
+////// Workout Session and Children ///////
 import {
   userWorkoutSessions,
   workoutSessionById,
   createWorkoutSession,
   updateWorkoutSession,
   duplicateWorkoutSession,
+  deleteWorkoutSession,
 } from './workoutSession/workoutSession'
+
+import {
+  createAmrapSession,
+  updateAmrapSession,
+  duplicateAmrapSession,
+  deleteAmrapSession,
+  createAmrapSection,
+  updateAmrapSection,
+  duplicateAmrapSection,
+  deleteAmrapSection,
+  createAmrapMove,
+  updateAmrapMove,
+  duplicateAmrapMove,
+  deleteAmrapMove,
+} from './workoutSession/amrapSession'
+
+import {
+  createCardioSession,
+  updateCardioSession,
+  duplicateCardioSession,
+  deleteCardioSession,
+  createCardioExercise,
+  updateCardioExercise,
+  duplicateCardioExercise,
+  deleteCardioExercise,
+} from './workoutSession/cardioSession'
 
 /// DEPRECATED
 import {
@@ -594,6 +622,29 @@ const resolvers: Resolvers = {
     createWorkoutSession,
     updateWorkoutSession,
     duplicateWorkoutSession,
+    deleteWorkoutSession,
+    //// AmrapSession ////
+    createAmrapSession,
+    updateAmrapSession,
+    duplicateAmrapSession,
+    deleteAmrapSession,
+    createAmrapSection,
+    updateAmrapSection,
+    duplicateAmrapSection,
+    deleteAmrapSection,
+    createAmrapMove,
+    updateAmrapMove,
+    duplicateAmrapMove,
+    deleteAmrapMove,
+    //// CardioSession ////
+    createCardioSession,
+    updateCardioSession,
+    duplicateCardioSession,
+    deleteCardioSession,
+    createCardioExercise,
+    updateCardioExercise,
+    duplicateCardioExercise,
+    deleteCardioExercise,
     /////////////////
     //// Workout ////
     /////////////////

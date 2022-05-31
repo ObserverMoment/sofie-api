@@ -396,9 +396,9 @@ model WorkoutSession {
   updatedAt                DateTime                  @updatedAt
   name                     String
   description              String?
-  introVideoUri            String?
-  introAudioUri            String?
   coverImageUri            String?
+  introAudioUri            String?
+  introVideoUri            String?
   introVideoThumbUri       String?
   tags                     String[]
   archived                 Boolean                   @default(false)
@@ -426,7 +426,7 @@ model CardioSession {
   note             String?
   exerciseOrder    String[]
   CardioExercises  CardioExercise[]
-  WorkoutSession   WorkoutSession   @relation(fields: [workoutSessionId], references: [id])
+  WorkoutSession   WorkoutSession   @relation(fields: [workoutSessionId], references: [id], onDelete: Cascade)
   workoutSessionId String
   User             User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId           String
@@ -441,10 +441,10 @@ model CardioExercise {
   timeUnit        TimeUnit      @default(SECONDS)
   distance        Float?
   distanceUnit    DistanceUnit  @default(METRES)
-  cardioZone      CardioZone
+  cardioZone      CardioZone    @default(TWO)
   Move            Move          @relation(fields: [moveId], references: [id])
   moveId          String
-  CardioSession   CardioSession @relation(fields: [cardioSessionId], references: [id])
+  CardioSession   CardioSession @relation(fields: [cardioSessionId], references: [id], onDelete: Cascade)
   cardioSessionId String
   User            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId          String
@@ -458,7 +458,7 @@ model ResistanceSession {
   note                String?
   setOrder            String[]
   ResistanceExercises ResistanceExercise[]
-  WorkoutSession      WorkoutSession       @relation(fields: [workoutSessionId], references: [id])
+  WorkoutSession      WorkoutSession       @relation(fields: [workoutSessionId], references: [id], onDelete: Cascade)
   workoutSessionId    String
   User                User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId              String
@@ -471,7 +471,7 @@ model ResistanceExercise {
   note                String?
   setOrder            String[]
   ResistanceSets      ResistanceSet[]
-  ResistanceSession   ResistanceSession @relation(fields: [resistanceSessionId], references: [id])
+  ResistanceSession   ResistanceSession @relation(fields: [resistanceSessionId], references: [id], onDelete: Cascade)
   resistanceSessionId String
   User                User              @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId              String
@@ -487,7 +487,7 @@ model ResistanceSet {
   moveId               String
   Equipment            Equipment?         @relation(fields: [equipmentId], references: [id])
   equipmentId          String?
-  ResistanceExercise   ResistanceExercise @relation(fields: [resistanceExerciseId], references: [id])
+  ResistanceExercise   ResistanceExercise @relation(fields: [resistanceExerciseId], references: [id], onDelete: Cascade)
   resistanceExerciseId String
   User                 User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId               String
@@ -499,6 +499,9 @@ model IntervalSession {
   updatedAt             DateTime           @updatedAt
   name                  String?
   note                  String?
+  audioUri              String?
+  videoUri              String?
+  videoThumbUri         String?
   repeats               Int                @default(1) // Run through all exercises this many times
   // For rest intervals add 'rest' to the array.
   // E.g. [IntervalExerciseId, IntervalExerciseId, rest, IntervalExerciseId, IntervalExerciseId, rest]
@@ -507,7 +510,7 @@ model IntervalSession {
   // E.g [60, 60, 30, 60, 60, 30]
   intervals             Int[]
   IntervalExercises     IntervalExercise[]
-  WorkoutSession        WorkoutSession     @relation(fields: [workoutSessionId], references: [id])
+  WorkoutSession        WorkoutSession     @relation(fields: [workoutSessionId], references: [id], onDelete: Cascade)
   workoutSessionId      String
   User                  User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId                String
@@ -520,7 +523,7 @@ model IntervalExercise {
   note              String?
   intervalSetOrder  String[]
   IntervalSets      IntervalSet[]
-  IntervalSession   IntervalSession @relation(fields: [intervalSessionId], references: [id])
+  IntervalSession   IntervalSession @relation(fields: [intervalSessionId], references: [id], onDelete: Cascade)
   intervalSessionId String
   User              User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId            String
@@ -535,7 +538,7 @@ model IntervalSet {
   moveId             String
   Equipment          Equipment?       @relation(fields: [equipmentId], references: [id])
   equipmentId        String?
-  IntervalExercise   IntervalExercise @relation(fields: [intervalExerciseId], references: [id])
+  IntervalExercise   IntervalExercise @relation(fields: [intervalExerciseId], references: [id], onDelete: Cascade)
   intervalExerciseId String
   User               User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId             String
@@ -551,7 +554,7 @@ model AmrapSession {
   /// [AMRAPSectionId, rest:60, AMRAPSection]
   sectionOrder     String[]
   AmrapSections    AmrapSection[]
-  WorkoutSession   WorkoutSession @relation(fields: [workoutSessionId], references: [id])
+  WorkoutSession   WorkoutSession @relation(fields: [workoutSessionId], references: [id], onDelete: Cascade)
   workoutSessionId String
   User             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId           String
@@ -565,7 +568,7 @@ model AmrapSection {
   note           String?
   moveOrder      String[]
   AmrapMoves     AmrapMove[]
-  AmrapSession   AmrapSession @relation(fields: [amrapSessionId], references: [id])
+  AmrapSession   AmrapSession @relation(fields: [amrapSessionId], references: [id], onDelete: Cascade)
   amrapSessionId String
   User           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId         String
@@ -580,7 +583,7 @@ model AmrapMove {
   moveId         String
   Equipment      Equipment?   @relation(fields: [equipmentId], references: [id])
   equipmentId    String?
-  AmrapSection   AmrapSection @relation(fields: [amrapSectionId], references: [id])
+  AmrapSection   AmrapSection @relation(fields: [amrapSectionId], references: [id], onDelete: Cascade)
   amrapSectionId String
   User           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId         String
@@ -598,7 +601,7 @@ model ForTimeSession {
   /// [ForTimeSectionId, rest:60, ForTimeSectionId]
   sectionOrder     String[]
   ForTimeSections  ForTimeSection[]
-  WorkoutSession   WorkoutSession   @relation(fields: [workoutSessionId], references: [id])
+  WorkoutSession   WorkoutSession   @relation(fields: [workoutSessionId], references: [id], onDelete: Cascade)
   workoutSessionId String
   User             User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId           String
@@ -612,7 +615,7 @@ model ForTimeSection {
   note             String?
   moveOrder        String[]
   ForTimeMoves     ForTimeMove[]
-  ForTimeSession   ForTimeSession @relation(fields: [forTimeSessionId], references: [id])
+  ForTimeSession   ForTimeSession @relation(fields: [forTimeSessionId], references: [id], onDelete: Cascade)
   forTimeSessionId String
   User             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId           String
@@ -627,7 +630,7 @@ model ForTimeMove {
   moveId           String
   Equipment        Equipment?     @relation(fields: [equipmentId], references: [id])
   equipmentId      String?
-  ForTimeSection   ForTimeSection @relation(fields: [forTimeSectionId], references: [id])
+  ForTimeSection   ForTimeSection @relation(fields: [forTimeSectionId], references: [id], onDelete: Cascade)
   forTimeSectionId String
   User             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId           String
@@ -639,6 +642,9 @@ model MobilitySession {
   updatedAt        DateTime       @updatedAt
   name             String?
   note             String?
+  audioUri         String?
+  videoUri         String?
+  videoThumbUri    String?
   moveOrder        String[]
   MobilityMoves    MobilityMove[]
   WorkoutSession   WorkoutSession @relation(fields: [workoutSessionId], references: [id])
