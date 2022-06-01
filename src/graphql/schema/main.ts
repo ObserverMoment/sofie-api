@@ -331,6 +331,62 @@ export default gql`
     updateCardioExercise(data: UpdateCardioExerciseInput!): CardioExercise!
     duplicateCardioExercise(id: ID!): CardioExercise!
     deleteCardioExercise(id: ID!): ID!
+    #### ForTimeSession ####
+    createForTimeSession(data: CreateForTimeSessionInput!): ForTimeSession!
+    updateForTimeSession(data: UpdateForTimeSessionInput!): ForTimeSession!
+    duplicateForTimeSession(id: ID!): ForTimeSession!
+    deleteForTimeSession(id: ID!): ID!
+    createForTimeSection(data: CreateForTimeSectionInput!): ForTimeSection!
+    updateForTimeSection(data: UpdateForTimeSectionInput!): ForTimeSection!
+    duplicateForTimeSection(id: ID!): ForTimeSection!
+    deleteForTimeSection(id: ID!): ID!
+    createForTimeMove(data: CreateForTimeMoveInput!): ForTimeMove!
+    updateForTimeMove(data: UpdateForTimeMoveInput!): ForTimeMove!
+    duplicateForTimeMove(id: ID!): ForTimeMove!
+    deleteForTimeMove(id: ID!): ID!
+    #### IntervalSession ####
+    createIntervalSession(data: CreateIntervalSessionInput!): IntervalSession!
+    updateIntervalSession(data: UpdateIntervalSessionInput!): IntervalSession!
+    duplicateIntervalSession(id: ID!): IntervalSession!
+    deleteIntervalSession(id: ID!): ID!
+    createIntervalExercise(
+      data: CreateIntervalExerciseInput!
+    ): IntervalExercise!
+    updateIntervalExercise(
+      data: UpdateIntervalExerciseInput!
+    ): IntervalExercise!
+    duplicateIntervalExercise(id: ID!): IntervalExercise!
+    deleteIntervalExercise(id: ID!): ID!
+    createIntervalSet(data: CreateIntervalSetInput!): IntervalSet!
+    updateIntervalSet(data: UpdateIntervalSetInput!): IntervalSet!
+    duplicateIntervalSet(id: ID!): IntervalSet!
+    deleteIntervalSet(id: ID!): ID!
+    #### MobilitySession ####
+    createMobilitySession(data: CreateMobilitySessionInput!): MobilitySession!
+    updateMobilitySession(data: UpdateMobilitySessionInput!): MobilitySession!
+    duplicateMobilitySession(id: ID!): MobilitySession!
+    deleteMobilitySession(id: ID!): ID!
+    #### ResistanceSession ####
+    createResistanceSession(
+      data: CreateResistanceSessionInput!
+    ): ResistanceSession!
+    updateResistanceSession(
+      data: UpdateResistanceSessionInput!
+    ): ResistanceSession!
+    duplicateResistanceSession(id: ID!): ResistanceSession!
+    deleteResistanceSession(id: ID!): ID!
+    createResistanceExercise(
+      data: CreateResistanceExerciseInput!
+    ): ResistanceExercise!
+    updateResistanceExercise(
+      data: UpdateResistanceExerciseInput!
+    ): ResistanceExercise!
+    duplicateResistanceExercise(id: ID!): ResistanceExercise!
+    deleteResistanceExercise(id: ID!): ID!
+    createResistanceSet(data: CreateResistanceSetInput!): ResistanceSet!
+    updateResistanceSet(data: UpdateResistanceSetInput!): ResistanceSet!
+    duplicateResistanceSet(id: ID!): ResistanceSet!
+    deleteResistanceSet(id: ID!): ID!
     ####################
     #### DEPRECATED ####
     ####################

@@ -379,6 +379,7 @@ export type CoreData = {
 
 export type CreateAmrapMoveInput = {
   AmrapSection: ConnectRelationInput;
+  Move: ConnectRelationInput;
 };
 
 export type CreateAmrapSectionInput = {
@@ -485,10 +486,36 @@ export type CreateFitnessBenchmarkWorkoutInput = {
   type: FitnessBenchmarkWorkoutScoreType;
 };
 
+export type CreateForTimeMoveInput = {
+  ForTimeSection: ConnectRelationInput;
+  Move: ConnectRelationInput;
+};
+
+export type CreateForTimeSectionInput = {
+  ForTimeSession: ConnectRelationInput;
+};
+
+export type CreateForTimeSessionInput = {
+  WorkoutSession: ConnectRelationInput;
+};
+
 export type CreateGymProfileInput = {
   Equipments?: InputMaybe<Array<ConnectRelationInput>>;
   description?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
+};
+
+export type CreateIntervalExerciseInput = {
+  IntervalSession: ConnectRelationInput;
+};
+
+export type CreateIntervalSessionInput = {
+  WorkoutSession: ConnectRelationInput;
+};
+
+export type CreateIntervalSetInput = {
+  IntervalExercise: ConnectRelationInput;
+  Move: ConnectRelationInput;
 };
 
 export type CreateLoggedWorkoutInput = {
@@ -532,6 +559,10 @@ export type CreateLoggedWorkoutSetInLoggedWorkoutSectionInput = {
   timeTakenSeconds?: InputMaybe<Scalars['Int']>;
 };
 
+export type CreateMobilitySessionInput = {
+  WorkoutSession: ConnectRelationInput;
+};
+
 export type CreateMoveInput = {
   BodyAreaMoveScores?: InputMaybe<Array<BodyAreaMoveScoreInput>>;
   MoveType: ConnectRelationInput;
@@ -544,6 +575,19 @@ export type CreateMoveInput = {
   scope?: InputMaybe<MoveScope>;
   searchTerms?: InputMaybe<Scalars['String']>;
   validRepTypes: Array<WorkoutMoveRepType>;
+};
+
+export type CreateResistanceExerciseInput = {
+  ResistanceSession: ConnectRelationInput;
+};
+
+export type CreateResistanceSessionInput = {
+  WorkoutSession: ConnectRelationInput;
+};
+
+export type CreateResistanceSetInput = {
+  Move: ConnectRelationInput;
+  ResistanceExercise: ConnectRelationInput;
 };
 
 export type CreateScheduleForPlanEnrolmentInput = {
@@ -1127,9 +1171,19 @@ export type Mutation = {
   createFitnessBenchmark: FitnessBenchmark;
   createFitnessBenchmarkScore: FitnessBenchmark;
   createFitnessBenchmarkWorkout: FitnessBenchmarkWorkout;
+  createForTimeMove: ForTimeMove;
+  createForTimeSection: ForTimeSection;
+  createForTimeSession: ForTimeSession;
   createGymProfile: GymProfile;
+  createIntervalExercise: IntervalExercise;
+  createIntervalSession: IntervalSession;
+  createIntervalSet: IntervalSet;
   createLoggedWorkout: LoggedWorkout;
+  createMobilitySession: MobilitySession;
   createMove: Move;
+  createResistanceExercise: ResistanceExercise;
+  createResistanceSession: ResistanceSession;
+  createResistanceSet: ResistanceSet;
   createScheduleForPlanEnrolment: WorkoutPlanEnrolment;
   createScheduledWorkout: ScheduledWorkout;
   createSkill: Skill;
@@ -1165,9 +1219,19 @@ export type Mutation = {
   deleteFitnessBenchmark: Scalars['ID'];
   deleteFitnessBenchmarkScore: FitnessBenchmark;
   deleteFitnessBenchmarkWorkout: Scalars['ID'];
+  deleteForTimeMove: Scalars['ID'];
+  deleteForTimeSection: Scalars['ID'];
+  deleteForTimeSession: Scalars['ID'];
   deleteGymProfileById?: Maybe<Scalars['ID']>;
+  deleteIntervalExercise: Scalars['ID'];
+  deleteIntervalSession: Scalars['ID'];
+  deleteIntervalSet: Scalars['ID'];
   deleteLoggedWorkoutById: Scalars['ID'];
   deleteLoggedWorkoutMove: Scalars['ID'];
+  deleteMobilitySession: Scalars['ID'];
+  deleteResistanceExercise: Scalars['ID'];
+  deleteResistanceSession: Scalars['ID'];
+  deleteResistanceSet: Scalars['ID'];
   deleteScheduledWorkoutById: Scalars['ID'];
   deleteSkillById: Scalars['ID'];
   deleteUserDayLogMood: Scalars['ID'];
@@ -1187,6 +1251,16 @@ export type Mutation = {
   duplicateAmrapSession: AmrapSession;
   duplicateCardioExercise: CardioExercise;
   duplicateCardioSession: CardioSession;
+  duplicateForTimeMove: ForTimeMove;
+  duplicateForTimeSection: ForTimeSection;
+  duplicateForTimeSession: ForTimeSession;
+  duplicateIntervalExercise: IntervalExercise;
+  duplicateIntervalSession: IntervalSession;
+  duplicateIntervalSet: IntervalSet;
+  duplicateMobilitySession: MobilitySession;
+  duplicateResistanceExercise: ResistanceExercise;
+  duplicateResistanceSession: ResistanceSession;
+  duplicateResistanceSet: ResistanceSet;
   duplicateWorkoutById: Workout;
   duplicateWorkoutMoveById: WorkoutMove;
   duplicateWorkoutSession: WorkoutSession;
@@ -1227,12 +1301,22 @@ export type Mutation = {
   updateFitnessBenchmark: FitnessBenchmark;
   updateFitnessBenchmarkScore: FitnessBenchmark;
   updateFitnessBenchmarkWorkout: FitnessBenchmarkWorkout;
+  updateForTimeMove: ForTimeMove;
+  updateForTimeSection: ForTimeSection;
+  updateForTimeSession: ForTimeSession;
   updateGymProfile: GymProfile;
+  updateIntervalExercise: IntervalExercise;
+  updateIntervalSession: IntervalSession;
+  updateIntervalSet: IntervalSet;
   updateLoggedWorkout: LoggedWorkout;
   updateLoggedWorkoutMove: LoggedWorkoutMove;
   updateLoggedWorkoutSection: LoggedWorkoutSection;
   updateLoggedWorkoutSet: LoggedWorkoutSet;
+  updateMobilitySession: MobilitySession;
   updateMove: Move;
+  updateResistanceExercise: ResistanceExercise;
+  updateResistanceSession: ResistanceSession;
+  updateResistanceSet: ResistanceSet;
   updateScheduledWorkout: ScheduledWorkout;
   updateSkill: Skill;
   updateUserEatWellLog: UserEatWellLog;
@@ -1401,8 +1485,38 @@ export type MutationCreateFitnessBenchmarkWorkoutArgs = {
 };
 
 
+export type MutationCreateForTimeMoveArgs = {
+  data: CreateForTimeMoveInput;
+};
+
+
+export type MutationCreateForTimeSectionArgs = {
+  data: CreateForTimeSectionInput;
+};
+
+
+export type MutationCreateForTimeSessionArgs = {
+  data: CreateForTimeSessionInput;
+};
+
+
 export type MutationCreateGymProfileArgs = {
   data: CreateGymProfileInput;
+};
+
+
+export type MutationCreateIntervalExerciseArgs = {
+  data: CreateIntervalExerciseInput;
+};
+
+
+export type MutationCreateIntervalSessionArgs = {
+  data: CreateIntervalSessionInput;
+};
+
+
+export type MutationCreateIntervalSetArgs = {
+  data: CreateIntervalSetInput;
 };
 
 
@@ -1411,8 +1525,28 @@ export type MutationCreateLoggedWorkoutArgs = {
 };
 
 
+export type MutationCreateMobilitySessionArgs = {
+  data: CreateMobilitySessionInput;
+};
+
+
 export type MutationCreateMoveArgs = {
   data: CreateMoveInput;
+};
+
+
+export type MutationCreateResistanceExerciseArgs = {
+  data: CreateResistanceExerciseInput;
+};
+
+
+export type MutationCreateResistanceSessionArgs = {
+  data: CreateResistanceSessionInput;
+};
+
+
+export type MutationCreateResistanceSetArgs = {
+  data: CreateResistanceSetInput;
 };
 
 
@@ -1591,7 +1725,37 @@ export type MutationDeleteFitnessBenchmarkWorkoutArgs = {
 };
 
 
+export type MutationDeleteForTimeMoveArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationDeleteForTimeSectionArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationDeleteForTimeSessionArgs = {
+  id: Scalars['ID'];
+};
+
+
 export type MutationDeleteGymProfileByIdArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationDeleteIntervalExerciseArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationDeleteIntervalSessionArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationDeleteIntervalSetArgs = {
   id: Scalars['ID'];
 };
 
@@ -1602,6 +1766,26 @@ export type MutationDeleteLoggedWorkoutByIdArgs = {
 
 
 export type MutationDeleteLoggedWorkoutMoveArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationDeleteMobilitySessionArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationDeleteResistanceExerciseArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationDeleteResistanceSessionArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationDeleteResistanceSetArgs = {
   id: Scalars['ID'];
 };
 
@@ -1697,6 +1881,56 @@ export type MutationDuplicateCardioExerciseArgs = {
 
 
 export type MutationDuplicateCardioSessionArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationDuplicateForTimeMoveArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationDuplicateForTimeSectionArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationDuplicateForTimeSessionArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationDuplicateIntervalExerciseArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationDuplicateIntervalSessionArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationDuplicateIntervalSetArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationDuplicateMobilitySessionArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationDuplicateResistanceExerciseArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationDuplicateResistanceSessionArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationDuplicateResistanceSetArgs = {
   id: Scalars['ID'];
 };
 
@@ -1906,8 +2140,38 @@ export type MutationUpdateFitnessBenchmarkWorkoutArgs = {
 };
 
 
+export type MutationUpdateForTimeMoveArgs = {
+  data: UpdateForTimeMoveInput;
+};
+
+
+export type MutationUpdateForTimeSectionArgs = {
+  data: UpdateForTimeSectionInput;
+};
+
+
+export type MutationUpdateForTimeSessionArgs = {
+  data: UpdateForTimeSessionInput;
+};
+
+
 export type MutationUpdateGymProfileArgs = {
   data: UpdateGymProfileInput;
+};
+
+
+export type MutationUpdateIntervalExerciseArgs = {
+  data: UpdateIntervalExerciseInput;
+};
+
+
+export type MutationUpdateIntervalSessionArgs = {
+  data: UpdateIntervalSessionInput;
+};
+
+
+export type MutationUpdateIntervalSetArgs = {
+  data: UpdateIntervalSetInput;
 };
 
 
@@ -1931,8 +2195,28 @@ export type MutationUpdateLoggedWorkoutSetArgs = {
 };
 
 
+export type MutationUpdateMobilitySessionArgs = {
+  data: UpdateMobilitySessionInput;
+};
+
+
 export type MutationUpdateMoveArgs = {
   data: UpdateMoveInput;
+};
+
+
+export type MutationUpdateResistanceExerciseArgs = {
+  data: UpdateResistanceExerciseInput;
+};
+
+
+export type MutationUpdateResistanceSessionArgs = {
+  data: UpdateResistanceSessionInput;
+};
+
+
+export type MutationUpdateResistanceSetArgs = {
+  data: UpdateResistanceSetInput;
 };
 
 
@@ -2418,10 +2702,10 @@ export type ResistanceSession = {
   __typename?: 'ResistanceSession';
   ResistanceExercises: Array<ResistanceExercise>;
   createdAt: Scalars['DateTime'];
+  exerciseOrder: Array<Scalars['String']>;
   id: Scalars['ID'];
   name?: Maybe<Scalars['String']>;
   note?: Maybe<Scalars['String']>;
-  setOrder: Array<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
 };
 
@@ -2753,11 +3037,59 @@ export type UpdateFitnessBenchmarkWorkoutInput = {
   type?: InputMaybe<FitnessBenchmarkWorkoutScoreType>;
 };
 
+export type UpdateForTimeMoveInput = {
+  Equipment?: InputMaybe<ConnectRelationInput>;
+  Move?: InputMaybe<ConnectRelationInput>;
+  id: Scalars['ID'];
+  note?: InputMaybe<Scalars['String']>;
+};
+
+export type UpdateForTimeSectionInput = {
+  id: Scalars['ID'];
+  moveOrder?: InputMaybe<Array<Scalars['String']>>;
+  name?: InputMaybe<Scalars['String']>;
+  note?: InputMaybe<Scalars['String']>;
+};
+
+export type UpdateForTimeSessionInput = {
+  id: Scalars['ID'];
+  name?: InputMaybe<Scalars['String']>;
+  note?: InputMaybe<Scalars['String']>;
+  repeats: Scalars['Int'];
+  sectionOrder?: InputMaybe<Array<Scalars['String']>>;
+  timecapSeconds?: InputMaybe<Scalars['Int']>;
+};
+
 export type UpdateGymProfileInput = {
   Equipments?: InputMaybe<Array<ConnectRelationInput>>;
   description?: InputMaybe<Scalars['String']>;
   id: Scalars['ID'];
   name?: InputMaybe<Scalars['String']>;
+};
+
+export type UpdateIntervalExerciseInput = {
+  id: Scalars['ID'];
+  intervalSetOrder?: InputMaybe<Array<Scalars['String']>>;
+  note?: InputMaybe<Scalars['String']>;
+};
+
+export type UpdateIntervalSessionInput = {
+  audioUri?: InputMaybe<Scalars['String']>;
+  id: Scalars['ID'];
+  intervalExerciseOrder?: InputMaybe<Array<Scalars['String']>>;
+  intervals?: InputMaybe<Array<Scalars['Int']>>;
+  name?: InputMaybe<Scalars['String']>;
+  note?: InputMaybe<Scalars['String']>;
+  repeats?: InputMaybe<Scalars['Int']>;
+  videoThumbUri?: InputMaybe<Scalars['String']>;
+  videoUri?: InputMaybe<Scalars['String']>;
+};
+
+export type UpdateIntervalSetInput = {
+  Equipment?: InputMaybe<ConnectRelationInput>;
+  Move?: InputMaybe<ConnectRelationInput>;
+  id: Scalars['ID'];
+  note?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateLoggedWorkoutInput = {
@@ -2791,6 +3123,17 @@ export type UpdateLoggedWorkoutSetInput = {
   timeTakenSeconds?: InputMaybe<Scalars['Int']>;
 };
 
+export type UpdateMobilitySessionInput = {
+  MobilityMoves?: InputMaybe<Array<ConnectRelationInput>>;
+  audioUri?: InputMaybe<Scalars['String']>;
+  id: Scalars['ID'];
+  moveOrder?: InputMaybe<Array<Scalars['String']>>;
+  name?: InputMaybe<Scalars['String']>;
+  note?: InputMaybe<Scalars['String']>;
+  videoThumbUri?: InputMaybe<Scalars['String']>;
+  videoUri?: InputMaybe<Scalars['String']>;
+};
+
 export type UpdateMoveInput = {
   BodyAreaMoveScores?: InputMaybe<Array<BodyAreaMoveScoreInput>>;
   MoveType?: InputMaybe<ConnectRelationInput>;
@@ -2804,6 +3147,27 @@ export type UpdateMoveInput = {
   scope?: InputMaybe<MoveScope>;
   searchTerms?: InputMaybe<Scalars['String']>;
   validRepTypes?: InputMaybe<Array<WorkoutMoveRepType>>;
+};
+
+export type UpdateResistanceExerciseInput = {
+  id: Scalars['ID'];
+  note?: InputMaybe<Scalars['String']>;
+  setOrder?: InputMaybe<Array<Scalars['String']>>;
+};
+
+export type UpdateResistanceSessionInput = {
+  exerciseOrder?: InputMaybe<Array<Scalars['String']>>;
+  id: Scalars['ID'];
+  name?: InputMaybe<Scalars['String']>;
+  note?: InputMaybe<Scalars['String']>;
+};
+
+export type UpdateResistanceSetInput = {
+  Equipment?: InputMaybe<ConnectRelationInput>;
+  Move?: InputMaybe<ConnectRelationInput>;
+  id: Scalars['ID'];
+  note?: InputMaybe<Scalars['String']>;
+  reps?: InputMaybe<Scalars['Int']>;
 };
 
 export type UpdateScheduledWorkoutInput = {
@@ -3633,12 +3997,22 @@ export type ResolversTypes = ResolversObject<{
   CreateFitnessBenchmarkInput: CreateFitnessBenchmarkInput;
   CreateFitnessBenchmarkScoreInput: CreateFitnessBenchmarkScoreInput;
   CreateFitnessBenchmarkWorkoutInput: CreateFitnessBenchmarkWorkoutInput;
+  CreateForTimeMoveInput: CreateForTimeMoveInput;
+  CreateForTimeSectionInput: CreateForTimeSectionInput;
+  CreateForTimeSessionInput: CreateForTimeSessionInput;
   CreateGymProfileInput: CreateGymProfileInput;
+  CreateIntervalExerciseInput: CreateIntervalExerciseInput;
+  CreateIntervalSessionInput: CreateIntervalSessionInput;
+  CreateIntervalSetInput: CreateIntervalSetInput;
   CreateLoggedWorkoutInput: CreateLoggedWorkoutInput;
   CreateLoggedWorkoutMoveInLoggedWorkoutSetInput: CreateLoggedWorkoutMoveInLoggedWorkoutSetInput;
   CreateLoggedWorkoutSectionInLoggedWorkoutInput: CreateLoggedWorkoutSectionInLoggedWorkoutInput;
   CreateLoggedWorkoutSetInLoggedWorkoutSectionInput: CreateLoggedWorkoutSetInLoggedWorkoutSectionInput;
+  CreateMobilitySessionInput: CreateMobilitySessionInput;
   CreateMoveInput: CreateMoveInput;
+  CreateResistanceExerciseInput: CreateResistanceExerciseInput;
+  CreateResistanceSessionInput: CreateResistanceSessionInput;
+  CreateResistanceSetInput: CreateResistanceSetInput;
   CreateScheduleForPlanEnrolmentInput: CreateScheduleForPlanEnrolmentInput;
   CreateScheduledWorkoutInput: CreateScheduledWorkoutInput;
   CreateSkillInput: CreateSkillInput;
@@ -3765,12 +4139,22 @@ export type ResolversTypes = ResolversObject<{
   UpdateFitnessBenchmarkInput: UpdateFitnessBenchmarkInput;
   UpdateFitnessBenchmarkScoreInput: UpdateFitnessBenchmarkScoreInput;
   UpdateFitnessBenchmarkWorkoutInput: UpdateFitnessBenchmarkWorkoutInput;
+  UpdateForTimeMoveInput: UpdateForTimeMoveInput;
+  UpdateForTimeSectionInput: UpdateForTimeSectionInput;
+  UpdateForTimeSessionInput: UpdateForTimeSessionInput;
   UpdateGymProfileInput: UpdateGymProfileInput;
+  UpdateIntervalExerciseInput: UpdateIntervalExerciseInput;
+  UpdateIntervalSessionInput: UpdateIntervalSessionInput;
+  UpdateIntervalSetInput: UpdateIntervalSetInput;
   UpdateLoggedWorkoutInput: UpdateLoggedWorkoutInput;
   UpdateLoggedWorkoutMoveInput: UpdateLoggedWorkoutMoveInput;
   UpdateLoggedWorkoutSectionInput: UpdateLoggedWorkoutSectionInput;
   UpdateLoggedWorkoutSetInput: UpdateLoggedWorkoutSetInput;
+  UpdateMobilitySessionInput: UpdateMobilitySessionInput;
   UpdateMoveInput: UpdateMoveInput;
+  UpdateResistanceExerciseInput: UpdateResistanceExerciseInput;
+  UpdateResistanceSessionInput: UpdateResistanceSessionInput;
+  UpdateResistanceSetInput: UpdateResistanceSetInput;
   UpdateScheduledWorkoutInput: UpdateScheduledWorkoutInput;
   UpdateSkillInput: UpdateSkillInput;
   UpdateSortPositionInput: UpdateSortPositionInput;
@@ -3892,12 +4276,22 @@ export type ResolversParentTypes = ResolversObject<{
   CreateFitnessBenchmarkInput: CreateFitnessBenchmarkInput;
   CreateFitnessBenchmarkScoreInput: CreateFitnessBenchmarkScoreInput;
   CreateFitnessBenchmarkWorkoutInput: CreateFitnessBenchmarkWorkoutInput;
+  CreateForTimeMoveInput: CreateForTimeMoveInput;
+  CreateForTimeSectionInput: CreateForTimeSectionInput;
+  CreateForTimeSessionInput: CreateForTimeSessionInput;
   CreateGymProfileInput: CreateGymProfileInput;
+  CreateIntervalExerciseInput: CreateIntervalExerciseInput;
+  CreateIntervalSessionInput: CreateIntervalSessionInput;
+  CreateIntervalSetInput: CreateIntervalSetInput;
   CreateLoggedWorkoutInput: CreateLoggedWorkoutInput;
   CreateLoggedWorkoutMoveInLoggedWorkoutSetInput: CreateLoggedWorkoutMoveInLoggedWorkoutSetInput;
   CreateLoggedWorkoutSectionInLoggedWorkoutInput: CreateLoggedWorkoutSectionInLoggedWorkoutInput;
   CreateLoggedWorkoutSetInLoggedWorkoutSectionInput: CreateLoggedWorkoutSetInLoggedWorkoutSectionInput;
+  CreateMobilitySessionInput: CreateMobilitySessionInput;
   CreateMoveInput: CreateMoveInput;
+  CreateResistanceExerciseInput: CreateResistanceExerciseInput;
+  CreateResistanceSessionInput: CreateResistanceSessionInput;
+  CreateResistanceSetInput: CreateResistanceSetInput;
   CreateScheduleForPlanEnrolmentInput: CreateScheduleForPlanEnrolmentInput;
   CreateScheduledWorkoutInput: CreateScheduledWorkoutInput;
   CreateSkillInput: CreateSkillInput;
@@ -4013,12 +4407,22 @@ export type ResolversParentTypes = ResolversObject<{
   UpdateFitnessBenchmarkInput: UpdateFitnessBenchmarkInput;
   UpdateFitnessBenchmarkScoreInput: UpdateFitnessBenchmarkScoreInput;
   UpdateFitnessBenchmarkWorkoutInput: UpdateFitnessBenchmarkWorkoutInput;
+  UpdateForTimeMoveInput: UpdateForTimeMoveInput;
+  UpdateForTimeSectionInput: UpdateForTimeSectionInput;
+  UpdateForTimeSessionInput: UpdateForTimeSessionInput;
   UpdateGymProfileInput: UpdateGymProfileInput;
+  UpdateIntervalExerciseInput: UpdateIntervalExerciseInput;
+  UpdateIntervalSessionInput: UpdateIntervalSessionInput;
+  UpdateIntervalSetInput: UpdateIntervalSetInput;
   UpdateLoggedWorkoutInput: UpdateLoggedWorkoutInput;
   UpdateLoggedWorkoutMoveInput: UpdateLoggedWorkoutMoveInput;
   UpdateLoggedWorkoutSectionInput: UpdateLoggedWorkoutSectionInput;
   UpdateLoggedWorkoutSetInput: UpdateLoggedWorkoutSetInput;
+  UpdateMobilitySessionInput: UpdateMobilitySessionInput;
   UpdateMoveInput: UpdateMoveInput;
+  UpdateResistanceExerciseInput: UpdateResistanceExerciseInput;
+  UpdateResistanceSessionInput: UpdateResistanceSessionInput;
+  UpdateResistanceSetInput: UpdateResistanceSetInput;
   UpdateScheduledWorkoutInput: UpdateScheduledWorkoutInput;
   UpdateSkillInput: UpdateSkillInput;
   UpdateSortPositionInput: UpdateSortPositionInput;
@@ -4675,9 +5079,19 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createFitnessBenchmark?: Resolver<ResolversTypes['FitnessBenchmark'], ParentType, ContextType, RequireFields<MutationCreateFitnessBenchmarkArgs, 'data'>>;
   createFitnessBenchmarkScore?: Resolver<ResolversTypes['FitnessBenchmark'], ParentType, ContextType, RequireFields<MutationCreateFitnessBenchmarkScoreArgs, 'data'>>;
   createFitnessBenchmarkWorkout?: Resolver<ResolversTypes['FitnessBenchmarkWorkout'], ParentType, ContextType, RequireFields<MutationCreateFitnessBenchmarkWorkoutArgs, 'data'>>;
+  createForTimeMove?: Resolver<ResolversTypes['ForTimeMove'], ParentType, ContextType, RequireFields<MutationCreateForTimeMoveArgs, 'data'>>;
+  createForTimeSection?: Resolver<ResolversTypes['ForTimeSection'], ParentType, ContextType, RequireFields<MutationCreateForTimeSectionArgs, 'data'>>;
+  createForTimeSession?: Resolver<ResolversTypes['ForTimeSession'], ParentType, ContextType, RequireFields<MutationCreateForTimeSessionArgs, 'data'>>;
   createGymProfile?: Resolver<ResolversTypes['GymProfile'], ParentType, ContextType, RequireFields<MutationCreateGymProfileArgs, 'data'>>;
+  createIntervalExercise?: Resolver<ResolversTypes['IntervalExercise'], ParentType, ContextType, RequireFields<MutationCreateIntervalExerciseArgs, 'data'>>;
+  createIntervalSession?: Resolver<ResolversTypes['IntervalSession'], ParentType, ContextType, RequireFields<MutationCreateIntervalSessionArgs, 'data'>>;
+  createIntervalSet?: Resolver<ResolversTypes['IntervalSet'], ParentType, ContextType, RequireFields<MutationCreateIntervalSetArgs, 'data'>>;
   createLoggedWorkout?: Resolver<ResolversTypes['LoggedWorkout'], ParentType, ContextType, RequireFields<MutationCreateLoggedWorkoutArgs, 'data'>>;
+  createMobilitySession?: Resolver<ResolversTypes['MobilitySession'], ParentType, ContextType, RequireFields<MutationCreateMobilitySessionArgs, 'data'>>;
   createMove?: Resolver<ResolversTypes['Move'], ParentType, ContextType, RequireFields<MutationCreateMoveArgs, 'data'>>;
+  createResistanceExercise?: Resolver<ResolversTypes['ResistanceExercise'], ParentType, ContextType, RequireFields<MutationCreateResistanceExerciseArgs, 'data'>>;
+  createResistanceSession?: Resolver<ResolversTypes['ResistanceSession'], ParentType, ContextType, RequireFields<MutationCreateResistanceSessionArgs, 'data'>>;
+  createResistanceSet?: Resolver<ResolversTypes['ResistanceSet'], ParentType, ContextType, RequireFields<MutationCreateResistanceSetArgs, 'data'>>;
   createScheduleForPlanEnrolment?: Resolver<ResolversTypes['WorkoutPlanEnrolment'], ParentType, ContextType, RequireFields<MutationCreateScheduleForPlanEnrolmentArgs, 'data'>>;
   createScheduledWorkout?: Resolver<ResolversTypes['ScheduledWorkout'], ParentType, ContextType, RequireFields<MutationCreateScheduledWorkoutArgs, 'data'>>;
   createSkill?: Resolver<ResolversTypes['Skill'], ParentType, ContextType, RequireFields<MutationCreateSkillArgs, 'data'>>;
@@ -4713,9 +5127,19 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   deleteFitnessBenchmark?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteFitnessBenchmarkArgs, 'id'>>;
   deleteFitnessBenchmarkScore?: Resolver<ResolversTypes['FitnessBenchmark'], ParentType, ContextType, RequireFields<MutationDeleteFitnessBenchmarkScoreArgs, 'id'>>;
   deleteFitnessBenchmarkWorkout?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteFitnessBenchmarkWorkoutArgs, 'id'>>;
+  deleteForTimeMove?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteForTimeMoveArgs, 'id'>>;
+  deleteForTimeSection?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteForTimeSectionArgs, 'id'>>;
+  deleteForTimeSession?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteForTimeSessionArgs, 'id'>>;
   deleteGymProfileById?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType, RequireFields<MutationDeleteGymProfileByIdArgs, 'id'>>;
+  deleteIntervalExercise?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteIntervalExerciseArgs, 'id'>>;
+  deleteIntervalSession?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteIntervalSessionArgs, 'id'>>;
+  deleteIntervalSet?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteIntervalSetArgs, 'id'>>;
   deleteLoggedWorkoutById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteLoggedWorkoutByIdArgs, 'id'>>;
   deleteLoggedWorkoutMove?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteLoggedWorkoutMoveArgs, 'id'>>;
+  deleteMobilitySession?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteMobilitySessionArgs, 'id'>>;
+  deleteResistanceExercise?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteResistanceExerciseArgs, 'id'>>;
+  deleteResistanceSession?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteResistanceSessionArgs, 'id'>>;
+  deleteResistanceSet?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteResistanceSetArgs, 'id'>>;
   deleteScheduledWorkoutById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteScheduledWorkoutByIdArgs, 'id'>>;
   deleteSkillById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteSkillByIdArgs, 'id'>>;
   deleteUserDayLogMood?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteUserDayLogMoodArgs, 'id'>>;
@@ -4735,6 +5159,16 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   duplicateAmrapSession?: Resolver<ResolversTypes['AmrapSession'], ParentType, ContextType, RequireFields<MutationDuplicateAmrapSessionArgs, 'id'>>;
   duplicateCardioExercise?: Resolver<ResolversTypes['CardioExercise'], ParentType, ContextType, RequireFields<MutationDuplicateCardioExerciseArgs, 'id'>>;
   duplicateCardioSession?: Resolver<ResolversTypes['CardioSession'], ParentType, ContextType, RequireFields<MutationDuplicateCardioSessionArgs, 'id'>>;
+  duplicateForTimeMove?: Resolver<ResolversTypes['ForTimeMove'], ParentType, ContextType, RequireFields<MutationDuplicateForTimeMoveArgs, 'id'>>;
+  duplicateForTimeSection?: Resolver<ResolversTypes['ForTimeSection'], ParentType, ContextType, RequireFields<MutationDuplicateForTimeSectionArgs, 'id'>>;
+  duplicateForTimeSession?: Resolver<ResolversTypes['ForTimeSession'], ParentType, ContextType, RequireFields<MutationDuplicateForTimeSessionArgs, 'id'>>;
+  duplicateIntervalExercise?: Resolver<ResolversTypes['IntervalExercise'], ParentType, ContextType, RequireFields<MutationDuplicateIntervalExerciseArgs, 'id'>>;
+  duplicateIntervalSession?: Resolver<ResolversTypes['IntervalSession'], ParentType, ContextType, RequireFields<MutationDuplicateIntervalSessionArgs, 'id'>>;
+  duplicateIntervalSet?: Resolver<ResolversTypes['IntervalSet'], ParentType, ContextType, RequireFields<MutationDuplicateIntervalSetArgs, 'id'>>;
+  duplicateMobilitySession?: Resolver<ResolversTypes['MobilitySession'], ParentType, ContextType, RequireFields<MutationDuplicateMobilitySessionArgs, 'id'>>;
+  duplicateResistanceExercise?: Resolver<ResolversTypes['ResistanceExercise'], ParentType, ContextType, RequireFields<MutationDuplicateResistanceExerciseArgs, 'id'>>;
+  duplicateResistanceSession?: Resolver<ResolversTypes['ResistanceSession'], ParentType, ContextType, RequireFields<MutationDuplicateResistanceSessionArgs, 'id'>>;
+  duplicateResistanceSet?: Resolver<ResolversTypes['ResistanceSet'], ParentType, ContextType, RequireFields<MutationDuplicateResistanceSetArgs, 'id'>>;
   duplicateWorkoutById?: Resolver<ResolversTypes['Workout'], ParentType, ContextType, RequireFields<MutationDuplicateWorkoutByIdArgs, 'id'>>;
   duplicateWorkoutMoveById?: Resolver<ResolversTypes['WorkoutMove'], ParentType, ContextType, RequireFields<MutationDuplicateWorkoutMoveByIdArgs, 'id'>>;
   duplicateWorkoutSession?: Resolver<ResolversTypes['WorkoutSession'], ParentType, ContextType, RequireFields<MutationDuplicateWorkoutSessionArgs, 'id'>>;
@@ -4775,12 +5209,22 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   updateFitnessBenchmark?: Resolver<ResolversTypes['FitnessBenchmark'], ParentType, ContextType, RequireFields<MutationUpdateFitnessBenchmarkArgs, 'data'>>;
   updateFitnessBenchmarkScore?: Resolver<ResolversTypes['FitnessBenchmark'], ParentType, ContextType, RequireFields<MutationUpdateFitnessBenchmarkScoreArgs, 'data'>>;
   updateFitnessBenchmarkWorkout?: Resolver<ResolversTypes['FitnessBenchmarkWorkout'], ParentType, ContextType, RequireFields<MutationUpdateFitnessBenchmarkWorkoutArgs, 'data'>>;
+  updateForTimeMove?: Resolver<ResolversTypes['ForTimeMove'], ParentType, ContextType, RequireFields<MutationUpdateForTimeMoveArgs, 'data'>>;
+  updateForTimeSection?: Resolver<ResolversTypes['ForTimeSection'], ParentType, ContextType, RequireFields<MutationUpdateForTimeSectionArgs, 'data'>>;
+  updateForTimeSession?: Resolver<ResolversTypes['ForTimeSession'], ParentType, ContextType, RequireFields<MutationUpdateForTimeSessionArgs, 'data'>>;
   updateGymProfile?: Resolver<ResolversTypes['GymProfile'], ParentType, ContextType, RequireFields<MutationUpdateGymProfileArgs, 'data'>>;
+  updateIntervalExercise?: Resolver<ResolversTypes['IntervalExercise'], ParentType, ContextType, RequireFields<MutationUpdateIntervalExerciseArgs, 'data'>>;
+  updateIntervalSession?: Resolver<ResolversTypes['IntervalSession'], ParentType, ContextType, RequireFields<MutationUpdateIntervalSessionArgs, 'data'>>;
+  updateIntervalSet?: Resolver<ResolversTypes['IntervalSet'], ParentType, ContextType, RequireFields<MutationUpdateIntervalSetArgs, 'data'>>;
   updateLoggedWorkout?: Resolver<ResolversTypes['LoggedWorkout'], ParentType, ContextType, RequireFields<MutationUpdateLoggedWorkoutArgs, 'data'>>;
   updateLoggedWorkoutMove?: Resolver<ResolversTypes['LoggedWorkoutMove'], ParentType, ContextType, RequireFields<MutationUpdateLoggedWorkoutMoveArgs, 'data'>>;
   updateLoggedWorkoutSection?: Resolver<ResolversTypes['LoggedWorkoutSection'], ParentType, ContextType, RequireFields<MutationUpdateLoggedWorkoutSectionArgs, 'data'>>;
   updateLoggedWorkoutSet?: Resolver<ResolversTypes['LoggedWorkoutSet'], ParentType, ContextType, RequireFields<MutationUpdateLoggedWorkoutSetArgs, 'data'>>;
+  updateMobilitySession?: Resolver<ResolversTypes['MobilitySession'], ParentType, ContextType, RequireFields<MutationUpdateMobilitySessionArgs, 'data'>>;
   updateMove?: Resolver<ResolversTypes['Move'], ParentType, ContextType, RequireFields<MutationUpdateMoveArgs, 'data'>>;
+  updateResistanceExercise?: Resolver<ResolversTypes['ResistanceExercise'], ParentType, ContextType, RequireFields<MutationUpdateResistanceExerciseArgs, 'data'>>;
+  updateResistanceSession?: Resolver<ResolversTypes['ResistanceSession'], ParentType, ContextType, RequireFields<MutationUpdateResistanceSessionArgs, 'data'>>;
+  updateResistanceSet?: Resolver<ResolversTypes['ResistanceSet'], ParentType, ContextType, RequireFields<MutationUpdateResistanceSetArgs, 'data'>>;
   updateScheduledWorkout?: Resolver<ResolversTypes['ScheduledWorkout'], ParentType, ContextType, RequireFields<MutationUpdateScheduledWorkoutArgs, 'data'>>;
   updateSkill?: Resolver<ResolversTypes['Skill'], ParentType, ContextType, RequireFields<MutationUpdateSkillArgs, 'data'>>;
   updateUserEatWellLog?: Resolver<ResolversTypes['UserEatWellLog'], ParentType, ContextType, RequireFields<MutationUpdateUserEatWellLogArgs, 'data'>>;
@@ -4947,10 +5391,10 @@ export type ResistanceExerciseResolvers<ContextType = any, ParentType extends Re
 export type ResistanceSessionResolvers<ContextType = any, ParentType extends ResolversParentTypes['ResistanceSession'] = ResolversParentTypes['ResistanceSession']> = ResolversObject<{
   ResistanceExercises?: Resolver<Array<ResolversTypes['ResistanceExercise']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  exerciseOrder?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   note?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  setOrder?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;

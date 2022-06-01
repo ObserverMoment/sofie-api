@@ -45,9 +45,21 @@ export type ContentObjectType =
   | 'scheduledWorkout'
   | 'skill'
   | 'workoutSession'
+  | 'amrapSession'
+  | 'amrapSection'
+  | 'amrapMove'
   | 'cardioSession'
   | 'cardioExercise'
-  | 'amrapSession'
+  | 'forTimeSession'
+  | 'forTimeSection'
+  | 'forTimeMove'
+  | 'intervalSession'
+  | 'intervalExercise'
+  | 'intervalSet'
+  | 'mobilitySession'
+  | 'resistanceSession'
+  | 'resistanceExercise'
+  | 'resistanceSet'
   | 'workoutTag'
   | 'userDayLogMood'
   | 'userEatWellLog'
@@ -182,10 +194,27 @@ export async function addObjectToUserRecentlyViewed(
 }
 
 /// When updating objects that have scalar string lists as field. Eg sessionOrder, activeWidgets etc. We need to check first if the user has passed that field in the input data, and then handle the different ways in which the data could have been passed. i.e an empty list, filled list or null. Passing null and passing and empty list will both cause the list to be 'cleared'.
-export function processListUpdateInputData(
+export function processStringListUpdateInputData(
   data: any,
   propertyKey: string,
 ): string[] | undefined {
+  if (data.hasOwnProperty(propertyKey)) {
+    if (data[propertyKey]) {
+      /// Data is neither null nor an empty list.
+      return data[propertyKey]
+    } else {
+      /// Data is either null or an empty list.
+      return []
+    }
+  } else {
+    return undefined
+  }
+}
+
+export function processNumberListUpdateInputData(
+  data: any,
+  propertyKey: string,
+): number[] | undefined {
   if (data.hasOwnProperty(propertyKey)) {
     if (data[propertyKey]) {
       /// Data is neither null nor an empty list.

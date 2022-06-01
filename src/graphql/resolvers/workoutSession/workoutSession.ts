@@ -16,7 +16,7 @@ import { WorkoutSessionFullDataPayload } from '../../../../types/workoutSessionT
 import {
   addObjectToUserRecentlyViewed,
   checkUserOwnsObject,
-  processListUpdateInputData,
+  processStringListUpdateInputData,
 } from '../../utils'
 
 //// Queries ////
@@ -73,12 +73,6 @@ export const createWorkoutSession = async (
   })
 
   if (workoutSession) {
-    await addObjectToUserRecentlyViewed(
-      'createWorkoutSession',
-      { id: (workoutSession as WorkoutSession).id },
-      authedUserId,
-      prisma,
-    )
     return workoutSession as WorkoutSession
   } else {
     throw new ApolloError('createWorkoutSession: There was an issue.')
@@ -99,8 +93,8 @@ export const updateWorkoutSession = async (
     data: {
       ...data,
       name: data.name || undefined,
-      tags: processListUpdateInputData(data, 'tags'),
-      sessionOrder: processListUpdateInputData(data, 'sessionOrder'),
+      tags: processStringListUpdateInputData(data, 'tags'),
+      sessionOrder: processStringListUpdateInputData(data, 'sessionOrder'),
       archived: data.archived || undefined,
     },
     select,
@@ -247,7 +241,7 @@ export const duplicateWorkoutSession = async (
         create: original.ResistanceSessions.map((s) => ({
           name: s.name,
           note: s.note,
-          setOrder: s.setOrder,
+          exerciseOrder: s.exerciseOrder,
           User: {
             connect: { id: authedUserId },
           },
@@ -265,7 +259,9 @@ export const duplicateWorkoutSession = async (
                   Move: {
                     connect: { id: s.moveId },
                   },
-                  Equipment: { connect: s.equipmentId || undefined },
+                  Equipment: s.equipmentId
+                    ? { connect: { id: s.equipmentId } }
+                    : undefined,
                   User: {
                     connect: { id: authedUserId },
                   },
@@ -298,7 +294,9 @@ export const duplicateWorkoutSession = async (
                   Move: {
                     connect: { id: s.moveId },
                   },
-                  Equipment: { connect: s.equipmentId || undefined },
+                  Equipment: s.equipmentId
+                    ? { connect: { id: s.equipmentId } }
+                    : undefined,
                   User: {
                     connect: { id: authedUserId },
                   },
@@ -324,16 +322,20 @@ export const duplicateWorkoutSession = async (
               User: {
                 connect: { id: authedUserId },
               },
-              AmrapMoves: s.AmrapMoves.map((m) => ({
-                note: m.note,
-                Move: {
-                  connect: { id: m.moveId },
-                },
-                Equipment: { connect: m.equipmentId || undefined },
-                User: {
-                  connect: { id: authedUserId },
-                },
-              })),
+              AmrapMoves: {
+                create: s.AmrapMoves.map((m) => ({
+                  note: m.note,
+                  Move: {
+                    connect: { id: m.moveId },
+                  },
+                  Equipment: m.equipmentId
+                    ? { connect: { id: m.equipmentId } }
+                    : undefined,
+                  User: {
+                    connect: { id: authedUserId },
+                  },
+                })),
+              },
             })),
           },
         })),
@@ -362,7 +364,9 @@ export const duplicateWorkoutSession = async (
                   Move: {
                     connect: { id: m.moveId },
                   },
-                  Equipment: { connect: m.equipmentId || undefined },
+                  Equipment: m.equipmentId
+                    ? { connect: { id: m.equipmentId } }
+                    : undefined,
                   User: {
                     connect: { id: authedUserId },
                   },

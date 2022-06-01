@@ -12,7 +12,10 @@ import {
   MutationUpdateCardioExerciseArgs,
   MutationUpdateCardioSessionArgs,
 } from '../../../generated/graphql'
-import { checkUserOwnsObject, processListUpdateInputData } from '../../utils'
+import {
+  checkUserOwnsObject,
+  processStringListUpdateInputData,
+} from '../../utils'
 
 //// Mutations ////
 //// Cardio Session ////
@@ -51,7 +54,7 @@ export const updateCardioSession = async (
     where: { id: data.id },
     data: {
       ...data,
-      exerciseOrder: processListUpdateInputData(data, 'exerciseOrder'),
+      exerciseOrder: processStringListUpdateInputData(data, 'exerciseOrder'),
     },
     select,
   })

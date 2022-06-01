@@ -56,6 +56,7 @@ export default gql`
 
   input CreateAmrapMoveInput {
     AmrapSection: ConnectRelationInput!
+    Move: ConnectRelationInput!
   }
 
   input UpdateAmrapMoveInput {

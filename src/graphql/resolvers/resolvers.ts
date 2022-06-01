@@ -230,6 +230,58 @@ import {
 } from './workoutSession/amrapSession'
 
 import {
+  createForTimeSession,
+  updateForTimeSession,
+  duplicateForTimeSession,
+  deleteForTimeSession,
+  createForTimeSection,
+  updateForTimeSection,
+  duplicateForTimeSection,
+  deleteForTimeSection,
+  createForTimeMove,
+  updateForTimeMove,
+  duplicateForTimeMove,
+  deleteForTimeMove,
+} from './workoutSession/forTimeSession'
+
+import {
+  createIntervalSession,
+  updateIntervalSession,
+  duplicateIntervalSession,
+  deleteIntervalSession,
+  createIntervalExercise,
+  updateIntervalExercise,
+  duplicateIntervalExercise,
+  deleteIntervalExercise,
+  createIntervalSet,
+  updateIntervalSet,
+  duplicateIntervalSet,
+  deleteIntervalSet,
+} from './workoutSession/intervalSession'
+
+import {
+  createMobilitySession,
+  updateMobilitySession,
+  duplicateMobilitySession,
+  deleteMobilitySession,
+} from './workoutSession/mobilitySession'
+
+import {
+  createResistanceSession,
+  updateResistanceSession,
+  duplicateResistanceSession,
+  deleteResistanceSession,
+  createResistanceExercise,
+  updateResistanceExercise,
+  duplicateResistanceExercise,
+  deleteResistanceExercise,
+  createResistanceSet,
+  updateResistanceSet,
+  duplicateResistanceSet,
+  deleteResistanceSet,
+} from './workoutSession/resistanceSession'
+
+import {
   createCardioSession,
   updateCardioSession,
   duplicateCardioSession,
@@ -636,6 +688,37 @@ const resolvers: Resolvers = {
     updateAmrapMove,
     duplicateAmrapMove,
     deleteAmrapMove,
+    //// ForTimeSession ////
+    createForTimeSession,
+    updateForTimeSession,
+    duplicateForTimeSession,
+    deleteForTimeSession,
+    createForTimeSection,
+    updateForTimeSection,
+    duplicateForTimeSection,
+    deleteForTimeSection,
+    createForTimeMove,
+    updateForTimeMove,
+    duplicateForTimeMove,
+    deleteForTimeMove,
+    //// IntervalSession ////
+    createIntervalSession,
+    updateIntervalSession,
+    duplicateIntervalSession,
+    deleteIntervalSession,
+    createIntervalExercise,
+    updateIntervalExercise,
+    duplicateIntervalExercise,
+    deleteIntervalExercise,
+    createIntervalSet,
+    updateIntervalSet,
+    duplicateIntervalSet,
+    deleteIntervalSet,
+    //// MobilitySession ////
+    createMobilitySession,
+    updateMobilitySession,
+    duplicateMobilitySession,
+    deleteMobilitySession,
     //// CardioSession ////
     createCardioSession,
     updateCardioSession,
@@ -645,6 +728,19 @@ const resolvers: Resolvers = {
     updateCardioExercise,
     duplicateCardioExercise,
     deleteCardioExercise,
+    //// ResistanceSession ////
+    createResistanceSession,
+    updateResistanceSession,
+    duplicateResistanceSession,
+    deleteResistanceSession,
+    createResistanceExercise,
+    updateResistanceExercise,
+    duplicateResistanceExercise,
+    deleteResistanceExercise,
+    createResistanceSet,
+    updateResistanceSet,
+    duplicateResistanceSet,
+    deleteResistanceSet,
     /////////////////
     //// Workout ////
     /////////////////

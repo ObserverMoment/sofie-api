@@ -20,6 +20,22 @@ export default gql`
     IntervalExercises: [IntervalExercise!]!
   }
 
+  input CreateIntervalSessionInput {
+    WorkoutSession: ConnectRelationInput!
+  }
+
+  input UpdateIntervalSessionInput {
+    id: ID!
+    name: String
+    note: String
+    audioUri: String
+    videoUri: String
+    videoThumbUri: String
+    repeats: Int
+    intervalExerciseOrder: [String!]
+    intervals: [Int!]
+  }
+
   type IntervalExercise {
     id: ID!
     createdAt: DateTime!
@@ -29,6 +45,16 @@ export default gql`
     IntervalSets: [IntervalSet!]!
   }
 
+  input CreateIntervalExerciseInput {
+    IntervalSession: ConnectRelationInput!
+  }
+
+  input UpdateIntervalExerciseInput {
+    id: ID!
+    note: String
+    intervalSetOrder: [String!]
+  }
+
   type IntervalSet {
     id: ID!
     createdAt: DateTime!
@@ -36,5 +62,17 @@ export default gql`
     note: String
     Move: Move!
     Equipment: Equipment
+  }
+
+  input CreateIntervalSetInput {
+    IntervalExercise: ConnectRelationInput!
+    Move: ConnectRelationInput!
+  }
+
+  input UpdateIntervalSetInput {
+    id: ID!
+    note: String
+    Move: ConnectRelationInput
+    Equipment: ConnectRelationInput
   }
 `

@@ -13,4 +13,19 @@ export default gql`
     moveOrder: [String!]!
     MobilityMoves: [MobilityMove!]!
   }
+
+  input CreateMobilitySessionInput {
+    WorkoutSession: ConnectRelationInput!
+  }
+
+  input UpdateMobilitySessionInput {
+    id: ID!
+    name: String
+    note: String
+    audioUri: String
+    videoUri: String
+    videoThumbUri: String
+    moveOrder: [String!]
+    MobilityMoves: [ConnectRelationInput!]
+  }
 `
