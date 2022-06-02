@@ -7,7 +7,7 @@ export default gql`
     updatedAt: DateTime!
     name: String
     note: String
-    exerciseOrder: [String!]!
+    childrenOrder: [String!]!
     CardioExercises: [CardioExercise!]!
   }
 
@@ -19,7 +19,7 @@ export default gql`
     id: ID!
     name: String
     note: String
-    exerciseOrder: [String!]
+    childrenOrder: [String!]
   }
 
   type CardioExercise {

@@ -13,7 +13,7 @@ export default gql`
     repeats: Int!
     # For rest intervals add 'rest' to the array.
     # E.g. [IntervalExerciseId, IntervalExerciseId, rest, IntervalExerciseId, IntervalExerciseId, rest]
-    intervalExerciseOrder: [String!]!
+    childrenOrder: [String!]!
     # Align with setOrder. Interval length in seconds.
     # E.g [60, 60, 30, 60, 60, 30]
     intervals: [Int!]!
@@ -32,7 +32,7 @@ export default gql`
     videoUri: String
     videoThumbUri: String
     repeats: Int
-    intervalExerciseOrder: [String!]
+    childrenOrder: [String!]
     intervals: [Int!]
   }
 
@@ -41,7 +41,7 @@ export default gql`
     createdAt: DateTime!
     updatedAt: DateTime!
     note: String
-    intervalSetOrder: [String!]!
+    childrenOrder: [String!]!
     IntervalSets: [IntervalSet!]!
   }
 
@@ -52,7 +52,7 @@ export default gql`
   input UpdateIntervalExerciseInput {
     id: ID!
     note: String
-    intervalSetOrder: [String!]
+    childrenOrder: [String!]
   }
 
   type IntervalSet {

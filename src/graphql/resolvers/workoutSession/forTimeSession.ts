@@ -20,6 +20,11 @@ import {
   checkUserOwnsObject,
   processStringListUpdateInputData,
 } from '../../utils'
+import {
+  deleteChildFromOrder,
+  duplicateNewChildToOrder,
+  pushNewChildToOrder,
+} from './utils'
 
 //// Mutations ////
 //// ForTime Session ////
@@ -28,16 +33,34 @@ export const createForTimeSession = async (
   { data }: MutationCreateForTimeSessionArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  const forTimeSession = await prisma.forTimeSession.create({
-    data: {
-      WorkoutSession: {
-        connect: data.WorkoutSession,
+  await checkUserOwnsObject(
+    data.WorkoutSession.id,
+    'workoutSession',
+    authedUserId,
+    prisma,
+  )
+
+  const forTimeSession = await prisma.$transaction(async (prisma) => {
+    const forTimeSession = await prisma.forTimeSession.create({
+      data: {
+        WorkoutSession: {
+          connect: data.WorkoutSession,
+        },
+        User: {
+          connect: { id: authedUserId },
+        },
       },
-      User: {
-        connect: { id: authedUserId },
-      },
-    },
-    select,
+      select,
+    })
+
+    await pushNewChildToOrder(
+      'workoutSession',
+      data.WorkoutSession.id,
+      (forTimeSession as any).id,
+      prisma,
+    )
+
+    return forTimeSession
   })
 
   if (forTimeSession) {
@@ -59,7 +82,7 @@ export const updateForTimeSession = async (
     data: {
       ...data,
       timecapSeconds: data.timecapSeconds || undefined,
-      sectionOrder: processStringListUpdateInputData(data, 'sectionOrder'),
+      childrenOrder: processStringListUpdateInputData(data, 'childrenOrder'),
     },
     select,
   })
@@ -84,6 +107,7 @@ export const duplicateForTimeSession = async (
   const original = await prisma.forTimeSession.findUnique({
     where: { id },
     include: {
+      WorkoutSession: true, // Needed to get the original session position.
       ForTimeSections: {
         include: {
           ForTimeMoves: {
@@ -101,46 +125,59 @@ export const duplicateForTimeSession = async (
     throw new ApolloError('duplicateForTimeSession: Could not retrieve data.')
   }
 
-  // Create a new copy.
-  const copy = await prisma.forTimeSession.create({
-    data: {
-      name: original.name,
-      note: original.note,
-      repeats: original.repeats,
-      timecapSeconds: original.timecapSeconds,
-      sectionOrder: original.sectionOrder,
-      User: {
-        connect: { id: authedUserId },
+  const copy = await prisma.$transaction(async (prisma) => {
+    // Create a new copy.
+    const copy = await prisma.forTimeSession.create({
+      data: {
+        name: original.name,
+        note: original.note,
+        repeats: original.repeats,
+        timecapSeconds: original.timecapSeconds,
+        childrenOrder: original.childrenOrder,
+        User: {
+          connect: { id: authedUserId },
+        },
+        WorkoutSession: {
+          connect: { id: original.workoutSessionId },
+        },
+        ForTimeSections: {
+          create: original.ForTimeSections.map((s) => ({
+            name: s.name,
+            note: s.note,
+            childrenOrder: s.childrenOrder,
+            User: {
+              connect: { id: authedUserId },
+            },
+            ForTimeMoves: {
+              create: s.ForTimeMoves.map((m) => ({
+                note: m.note,
+                Move: {
+                  connect: { id: m.moveId },
+                },
+                Equipment: m.equipmentId
+                  ? { connect: { id: m.equipmentId } }
+                  : undefined,
+                User: {
+                  connect: { id: authedUserId },
+                },
+              })),
+            },
+          })),
+        },
       },
-      WorkoutSession: {
-        connect: { id: original.workoutSessionId },
-      },
-      ForTimeSections: {
-        create: original.ForTimeSections.map((s) => ({
-          name: s.name,
-          note: s.note,
-          moveOrder: s.moveOrder,
-          User: {
-            connect: { id: authedUserId },
-          },
-          ForTimeMoves: {
-            create: s.ForTimeMoves.map((m) => ({
-              note: m.note,
-              Move: {
-                connect: { id: m.moveId },
-              },
-              Equipment: m.equipmentId
-                ? { connect: { id: m.equipmentId } }
-                : undefined,
-              User: {
-                connect: { id: authedUserId },
-              },
-            })),
-          },
-        })),
-      },
-    },
-    select,
+      select,
+    })
+
+    await duplicateNewChildToOrder(
+      'workoutSession',
+      original.workoutSessionId,
+      original.WorkoutSession.childrenOrder,
+      original.id,
+      (copy as any).id,
+      prisma,
+    )
+
+    return copy
   })
 
   if (copy) {
@@ -157,9 +194,29 @@ export const deleteForTimeSession = async (
 ) => {
   await checkUserOwnsObject(id, 'forTimeSession', authedUserId, prisma)
 
-  const deleted = await prisma.forTimeSession.delete({
-    where: { id },
-    select: { id: true },
+  const deleted = await prisma.$transaction(async (prisma) => {
+    const deleted = await prisma.forTimeSession.delete({
+      where: { id },
+      select: {
+        id: true,
+        WorkoutSession: {
+          select: {
+            id: true,
+            childrenOrder: true,
+          },
+        },
+      },
+    })
+
+    await deleteChildFromOrder(
+      'workoutSession',
+      deleted.WorkoutSession.id,
+      deleted.WorkoutSession.childrenOrder,
+      deleted.id,
+      prisma,
+    )
+
+    return deleted
   })
 
   if (deleted) {
@@ -176,16 +233,34 @@ export const createForTimeSection = async (
   { data }: MutationCreateForTimeSectionArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  const forTimeSection = await prisma.forTimeSection.create({
-    data: {
-      ForTimeSession: {
-        connect: data.ForTimeSession,
+  await checkUserOwnsObject(
+    data.ForTimeSession.id,
+    'forTimeSession',
+    authedUserId,
+    prisma,
+  )
+
+  const forTimeSection = await prisma.$transaction(async (prisma) => {
+    const forTimeSection = await prisma.forTimeSection.create({
+      data: {
+        ForTimeSession: {
+          connect: data.ForTimeSession,
+        },
+        User: {
+          connect: { id: authedUserId },
+        },
       },
-      User: {
-        connect: { id: authedUserId },
-      },
-    },
-    select,
+      select,
+    })
+
+    await pushNewChildToOrder(
+      'forTimeSession',
+      data.ForTimeSession.id,
+      (forTimeSection as any).id,
+      prisma,
+    )
+
+    return forTimeSection
   })
 
   if (forTimeSection) {
@@ -206,7 +281,7 @@ export const updateForTimeSection = async (
     where: { id: data.id },
     data: {
       ...data,
-      moveOrder: processStringListUpdateInputData(data, 'moveOrder'),
+      childrenOrder: processStringListUpdateInputData(data, 'childrenOrder'),
     },
     select,
   })
@@ -231,6 +306,7 @@ export const duplicateForTimeSection = async (
   const original = await prisma.forTimeSection.findUnique({
     where: { id },
     include: {
+      ForTimeSession: true,
       ForTimeMoves: {
         include: {
           Move: true,
@@ -244,32 +320,45 @@ export const duplicateForTimeSection = async (
     throw new ApolloError('duplicateForTimeSection: Could not retrieve data.')
   }
 
-  // Create a new copy.
-  const copy = await prisma.forTimeSection.create({
-    data: {
-      name: original.name,
-      note: original.note,
-      moveOrder: original.moveOrder,
-      User: {
-        connect: { id: authedUserId },
+  const copy = await prisma.$transaction(async (prisma) => {
+    // Create a new copy.
+    const copy = await prisma.forTimeSection.create({
+      data: {
+        name: original.name,
+        note: original.note,
+        childrenOrder: original.childrenOrder,
+        User: {
+          connect: { id: authedUserId },
+        },
+        ForTimeSession: { connect: { id: original.forTimeSessionId } },
+        ForTimeMoves: {
+          create: original.ForTimeMoves.map((m) => ({
+            note: m.note,
+            Move: {
+              connect: { id: m.moveId },
+            },
+            Equipment: m.equipmentId
+              ? { connect: { id: m.equipmentId } }
+              : undefined,
+            User: {
+              connect: { id: authedUserId },
+            },
+          })),
+        },
       },
-      ForTimeSession: { connect: { id: original.forTimeSessionId } },
-      ForTimeMoves: {
-        create: original.ForTimeMoves.map((m) => ({
-          note: m.note,
-          Move: {
-            connect: { id: m.moveId },
-          },
-          Equipment: m.equipmentId
-            ? { connect: { id: m.equipmentId } }
-            : undefined,
-          User: {
-            connect: { id: authedUserId },
-          },
-        })),
-      },
-    },
-    select,
+      select,
+    })
+
+    await duplicateNewChildToOrder(
+      'forTimeSession',
+      original.ForTimeSession.id,
+      original.ForTimeSession.childrenOrder,
+      original.id,
+      (copy as any).id,
+      prisma,
+    )
+
+    return copy
   })
 
   if (copy) {
@@ -286,9 +375,26 @@ export const deleteForTimeSection = async (
 ) => {
   await checkUserOwnsObject(id, 'forTimeSection', authedUserId, prisma)
 
-  const deleted = await prisma.forTimeSection.delete({
-    where: { id },
-    select: { id: true },
+  const deleted = await prisma.$transaction(async (prisma) => {
+    const deleted = await prisma.forTimeSection.delete({
+      where: { id },
+      select: {
+        id: true,
+        ForTimeSession: {
+          select: { id: true, childrenOrder: true },
+        },
+      },
+    })
+
+    await deleteChildFromOrder(
+      'forTimeSession',
+      deleted.ForTimeSession.id,
+      deleted.ForTimeSession.childrenOrder,
+      deleted.id,
+      prisma,
+    )
+
+    return deleted
   })
 
   if (deleted) {
@@ -305,17 +411,35 @@ export const createForTimeMove = async (
   { data }: MutationCreateForTimeMoveArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  const forTimeMove = await prisma.forTimeMove.create({
-    data: {
-      ForTimeSection: {
-        connect: data.ForTimeSection,
+  await checkUserOwnsObject(
+    data.ForTimeSection.id,
+    'forTimeSection',
+    authedUserId,
+    prisma,
+  )
+
+  const forTimeMove = await prisma.$transaction(async (prisma) => {
+    const forTimeMove = await prisma.forTimeMove.create({
+      data: {
+        ForTimeSection: {
+          connect: data.ForTimeSection,
+        },
+        Move: { connect: data.Move },
+        User: {
+          connect: { id: authedUserId },
+        },
       },
-      Move: { connect: data.Move },
-      User: {
-        connect: { id: authedUserId },
-      },
-    },
-    select,
+      select,
+    })
+
+    await pushNewChildToOrder(
+      'forTimeSection',
+      data.ForTimeSection.id,
+      (forTimeMove as any).id,
+      prisma,
+    )
+
+    return forTimeMove
   })
 
   if (forTimeMove) {
@@ -362,6 +486,7 @@ export const duplicateForTimeMove = async (
   const original = await prisma.forTimeMove.findUnique({
     where: { id },
     include: {
+      ForTimeSection: true,
       Move: true,
       Equipment: true,
     },
@@ -371,22 +496,35 @@ export const duplicateForTimeMove = async (
     throw new ApolloError('duplicateForTimeMove: Could not retrieve data.')
   }
 
-  // Create a new copy.
-  const copy = await prisma.forTimeMove.create({
-    data: {
-      note: original.note,
-      ForTimeSection: { connect: { id: original.forTimeSectionId } },
-      Move: {
-        connect: { id: original.moveId },
+  const copy = await prisma.$transaction(async (prisma) => {
+    // Create a new copy.
+    const copy = await prisma.forTimeMove.create({
+      data: {
+        note: original.note,
+        ForTimeSection: { connect: { id: original.forTimeSectionId } },
+        Move: {
+          connect: { id: original.moveId },
+        },
+        Equipment: original.equipmentId
+          ? { connect: { id: original.equipmentId } }
+          : undefined,
+        User: {
+          connect: { id: authedUserId },
+        },
       },
-      Equipment: original.equipmentId
-        ? { connect: { id: original.equipmentId } }
-        : undefined,
-      User: {
-        connect: { id: authedUserId },
-      },
-    },
-    select,
+      select,
+    })
+
+    await duplicateNewChildToOrder(
+      'forTimeSection',
+      original.ForTimeSection.id,
+      original.ForTimeSection.childrenOrder,
+      original.id,
+      (copy as any).id,
+      prisma,
+    )
+
+    return copy
   })
 
   if (copy) {
@@ -403,9 +541,29 @@ export const deleteForTimeMove = async (
 ) => {
   await checkUserOwnsObject(id, 'forTimeMove', authedUserId, prisma)
 
-  const deleted = await prisma.forTimeMove.delete({
-    where: { id },
-    select: { id: true },
+  const deleted = await prisma.$transaction(async (prisma) => {
+    const deleted = await prisma.forTimeMove.delete({
+      where: { id },
+      select: {
+        id: true,
+        ForTimeSection: {
+          select: {
+            id: true,
+            childrenOrder: true,
+          },
+        },
+      },
+    })
+
+    await deleteChildFromOrder(
+      'forTimeSection',
+      deleted.ForTimeSection.id,
+      deleted.ForTimeSection.childrenOrder,
+      deleted.id,
+      prisma,
+    )
+
+    return deleted
   })
 
   if (deleted) {

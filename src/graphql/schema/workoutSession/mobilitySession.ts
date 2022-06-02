@@ -10,7 +10,7 @@ export default gql`
     audioUri: String
     videoUri: String
     videoThumbUri: String
-    moveOrder: [String!]!
+    childrenOrder: [String!]!
     MobilityMoves: [MobilityMove!]!
   }
 
@@ -25,7 +25,7 @@ export default gql`
     audioUri: String
     videoUri: String
     videoThumbUri: String
-    moveOrder: [String!]
+    childrenOrder: [String!]
     MobilityMoves: [ConnectRelationInput!]
   }
 `

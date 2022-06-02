@@ -16,6 +16,11 @@ import {
   checkUserOwnsObject,
   processStringListUpdateInputData,
 } from '../../utils'
+import {
+  deleteChildFromOrder,
+  duplicateNewChildToOrder,
+  pushNewChildToOrder,
+} from './utils'
 
 //// Mutations ////
 //// Cardio Session ////
@@ -24,16 +29,34 @@ export const createCardioSession = async (
   { data }: MutationCreateCardioSessionArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  const cardioSession = await prisma.cardioSession.create({
-    data: {
-      WorkoutSession: {
-        connect: data.WorkoutSession,
+  await checkUserOwnsObject(
+    data.WorkoutSession.id,
+    'workoutSession',
+    authedUserId,
+    prisma,
+  )
+
+  const cardioSession = await prisma.$transaction(async (prisma) => {
+    const cardioSession = await prisma.cardioSession.create({
+      data: {
+        WorkoutSession: {
+          connect: data.WorkoutSession,
+        },
+        User: {
+          connect: { id: authedUserId },
+        },
       },
-      User: {
-        connect: { id: authedUserId },
-      },
-    },
-    select,
+      select,
+    })
+
+    await pushNewChildToOrder(
+      'workoutSession',
+      data.WorkoutSession.id,
+      (cardioSession as any).id,
+      prisma,
+    )
+
+    return cardioSession
   })
 
   if (cardioSession) {
@@ -54,7 +77,7 @@ export const updateCardioSession = async (
     where: { id: data.id },
     data: {
       ...data,
-      exerciseOrder: processStringListUpdateInputData(data, 'exerciseOrder'),
+      childrenOrder: processStringListUpdateInputData(data, 'childrenOrder'),
     },
     select,
   })
@@ -79,6 +102,7 @@ export const duplicateCardioSession = async (
   const original = await prisma.cardioSession.findUnique({
     where: { id },
     include: {
+      WorkoutSession: true,
       CardioExercises: {
         include: {
           Move: true,
@@ -91,36 +115,49 @@ export const duplicateCardioSession = async (
     throw new ApolloError('duplicateCardioSession: Could not retrieve data.')
   }
 
-  // Create a new copy.
-  const copy = await prisma.cardioSession.create({
-    data: {
-      name: original.name,
-      note: original.note,
-      exerciseOrder: original.exerciseOrder,
-      WorkoutSession: {
-        connect: { id: original.workoutSessionId },
+  const copy = await prisma.$transaction(async (prisma) => {
+    // Create a new copy.
+    const copy = await prisma.cardioSession.create({
+      data: {
+        name: original.name,
+        note: original.note,
+        childrenOrder: original.childrenOrder,
+        WorkoutSession: {
+          connect: { id: original.workoutSessionId },
+        },
+        User: {
+          connect: { id: authedUserId },
+        },
+        CardioExercises: {
+          create: original.CardioExercises.map((e) => ({
+            note: e.note,
+            time: e.time,
+            timeUnit: e.timeUnit,
+            distance: e.distance,
+            distanceUnit: e.distanceUnit,
+            cardioZone: e.cardioZone,
+            Move: {
+              connect: { id: e.moveId },
+            },
+            User: {
+              connect: { id: authedUserId },
+            },
+          })),
+        },
       },
-      User: {
-        connect: { id: authedUserId },
-      },
-      CardioExercises: {
-        create: original.CardioExercises.map((e) => ({
-          note: e.note,
-          time: e.time,
-          timeUnit: e.timeUnit,
-          distance: e.distance,
-          distanceUnit: e.distanceUnit,
-          cardioZone: e.cardioZone,
-          Move: {
-            connect: { id: e.moveId },
-          },
-          User: {
-            connect: { id: authedUserId },
-          },
-        })),
-      },
-    },
-    select,
+      select,
+    })
+
+    await duplicateNewChildToOrder(
+      'workoutSession',
+      original.workoutSessionId,
+      original.WorkoutSession.childrenOrder,
+      original.id,
+      (copy as any).id,
+      prisma,
+    )
+
+    return copy
   })
 
   if (copy) {
@@ -137,9 +174,29 @@ export const deleteCardioSession = async (
 ) => {
   await checkUserOwnsObject(id, 'cardioSession', authedUserId, prisma)
 
-  const deleted = await prisma.cardioSession.delete({
-    where: { id },
-    select: { id: true },
+  const deleted = await prisma.$transaction(async (prisma) => {
+    const deleted = await prisma.cardioSession.delete({
+      where: { id },
+      select: {
+        id: true,
+        WorkoutSession: {
+          select: {
+            id: true,
+            childrenOrder: true,
+          },
+        },
+      },
+    })
+
+    await deleteChildFromOrder(
+      'workoutSession',
+      deleted.WorkoutSession.id,
+      deleted.WorkoutSession.childrenOrder,
+      deleted.id,
+      prisma,
+    )
+
+    return deleted
   })
 
   if (deleted) {
@@ -156,19 +213,37 @@ export const createCardioExercise = async (
   { data }: MutationCreateCardioExerciseArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  const cardioExercise = await prisma.cardioExercise.create({
-    data: {
-      Move: {
-        connect: data.Move,
+  await checkUserOwnsObject(
+    data.CardioSession.id,
+    'cardioSession',
+    authedUserId,
+    prisma,
+  )
+
+  const cardioExercise = await prisma.$transaction(async (prisma) => {
+    const cardioExercise = await prisma.cardioExercise.create({
+      data: {
+        Move: {
+          connect: data.Move,
+        },
+        CardioSession: {
+          connect: data.CardioSession,
+        },
+        User: {
+          connect: { id: authedUserId },
+        },
       },
-      CardioSession: {
-        connect: data.CardioSession,
-      },
-      User: {
-        connect: { id: authedUserId },
-      },
-    },
-    select,
+      select,
+    })
+
+    await pushNewChildToOrder(
+      'cardioSession',
+      data.CardioSession.id,
+      (cardioExercise as any).id,
+      prisma,
+    )
+
+    return cardioExercise
   })
 
   if (cardioExercise) {
@@ -218,6 +293,7 @@ export const duplicateCardioExercise = async (
     where: { id },
     include: {
       Move: true,
+      CardioSession: true,
     },
   })
 
@@ -225,26 +301,39 @@ export const duplicateCardioExercise = async (
     throw new ApolloError('duplicateCardioExercise: Could not retrieve data.')
   }
 
-  // Create a new copy. Do not copy across the media or meta data and adjust the name.
-  const copy = await prisma.cardioExercise.create({
-    data: {
-      note: original.note,
-      time: original.time,
-      timeUnit: original.timeUnit,
-      distance: original.distance,
-      distanceUnit: original.distanceUnit,
-      cardioZone: original.cardioZone,
-      Move: {
-        connect: { id: original.moveId },
+  const copy = await prisma.$transaction(async (prisma) => {
+    // Create a new copy. Do not copy across the media or meta data and adjust the name.
+    const copy = await prisma.cardioExercise.create({
+      data: {
+        note: original.note,
+        time: original.time,
+        timeUnit: original.timeUnit,
+        distance: original.distance,
+        distanceUnit: original.distanceUnit,
+        cardioZone: original.cardioZone,
+        Move: {
+          connect: { id: original.moveId },
+        },
+        User: {
+          connect: { id: authedUserId },
+        },
+        CardioSession: {
+          connect: { id: original.cardioSessionId },
+        },
       },
-      User: {
-        connect: { id: authedUserId },
-      },
-      CardioSession: {
-        connect: { id: original.cardioSessionId },
-      },
-    },
-    select,
+      select,
+    })
+
+    await duplicateNewChildToOrder(
+      'cardioSession',
+      original.CardioSession.id,
+      original.CardioSession.childrenOrder,
+      original.id,
+      (copy as any).id,
+      prisma,
+    )
+
+    return copy
   })
 
   if (copy) {
@@ -261,9 +350,26 @@ export const deleteCardioExercise = async (
 ) => {
   await checkUserOwnsObject(id, 'cardioExercise', authedUserId, prisma)
 
-  const deleted = await prisma.cardioExercise.delete({
-    where: { id },
-    select: { id: true },
+  const deleted = await prisma.$transaction(async (prisma) => {
+    const deleted = await prisma.cardioExercise.delete({
+      where: { id },
+      select: {
+        id: true,
+        CardioSession: {
+          select: { id: true, childrenOrder: true },
+        },
+      },
+    })
+
+    await deleteChildFromOrder(
+      'cardioSession',
+      deleted.CardioSession.id,
+      deleted.CardioSession.childrenOrder,
+      deleted.id,
+      prisma,
+    )
+
+    return deleted
   })
 
   if (deleted) {

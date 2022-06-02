@@ -7,7 +7,7 @@ export default gql`
     updatedAt: DateTime!
     name: String
     note: String
-    exerciseOrder: [String!]!
+    childrenOrder: [String!]!
     ResistanceExercises: [ResistanceExercise!]!
   }
 
@@ -19,7 +19,7 @@ export default gql`
     id: ID!
     name: String
     note: String
-    exerciseOrder: [String!]
+    childrenOrder: [String!]
   }
 
   type ResistanceExercise {
@@ -27,18 +27,25 @@ export default gql`
     createdAt: DateTime!
     updatedAt: DateTime!
     note: String
-    setOrder: [String!]!
+    childrenOrder: [String!]!
     ResistanceSets: [ResistanceSet!]!
   }
 
   input CreateResistanceExerciseInput {
     ResistanceSession: ConnectRelationInput!
+    ResistanceSets: [CreateResistanceSetInExerciseInput!]
+  }
+
+  input CreateResistanceSetInExerciseInput {
+    reps: Int
+    Equipment: ConnectRelationInput
+    Move: ConnectRelationInput!
   }
 
   input UpdateResistanceExerciseInput {
     id: ID!
     note: String
-    setOrder: [String!]
+    childrenOrder: [String!]
   }
 
   type ResistanceSet {

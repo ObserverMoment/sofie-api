@@ -20,8 +20,12 @@ import {
 import {
   checkUserOwnsObject,
   processStringListUpdateInputData,
-  processNumberListUpdateInputData,
 } from '../../utils'
+import {
+  deleteChildFromOrder,
+  duplicateNewChildToOrder,
+  pushNewChildToOrder,
+} from './utils'
 
 //// Mutations ////
 //// Resistance Session ////
@@ -30,16 +34,34 @@ export const createResistanceSession = async (
   { data }: MutationCreateResistanceSessionArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  const resistanceSession = await prisma.resistanceSession.create({
-    data: {
-      WorkoutSession: {
-        connect: data.WorkoutSession,
+  await checkUserOwnsObject(
+    data.WorkoutSession.id,
+    'workoutSession',
+    authedUserId,
+    prisma,
+  )
+
+  const resistanceSession = await prisma.$transaction(async (prisma) => {
+    const resistanceSession = await prisma.resistanceSession.create({
+      data: {
+        WorkoutSession: {
+          connect: data.WorkoutSession,
+        },
+        User: {
+          connect: { id: authedUserId },
+        },
       },
-      User: {
-        connect: { id: authedUserId },
-      },
-    },
-    select,
+      select,
+    })
+
+    await pushNewChildToOrder(
+      'workoutSession',
+      data.WorkoutSession.id,
+      (resistanceSession as any).id,
+      prisma,
+    )
+
+    return resistanceSession
   })
 
   if (resistanceSession) {
@@ -60,7 +82,7 @@ export const updateResistanceSession = async (
     where: { id: data.id },
     data: {
       ...data,
-      exerciseOrder: processStringListUpdateInputData(data, 'exerciseOrder'),
+      childrenOrder: processStringListUpdateInputData(data, 'childrenOrder'),
     },
     select,
   })
@@ -85,6 +107,7 @@ export const duplicateResistanceSession = async (
   const original = await prisma.resistanceSession.findUnique({
     where: { id },
     include: {
+      WorkoutSession: true,
       ResistanceExercises: {
         include: {
           ResistanceSets: {
@@ -104,42 +127,55 @@ export const duplicateResistanceSession = async (
     )
   }
 
-  // Create a new copy.
-  const copy = await prisma.resistanceSession.create({
-    data: {
-      name: original.name,
-      note: original.note,
-      exerciseOrder: original.exerciseOrder,
-      User: {
-        connect: { id: authedUserId },
+  const copy = await prisma.$transaction(async (prisma) => {
+    // Create a new copy.
+    const copy = await prisma.resistanceSession.create({
+      data: {
+        name: original.name,
+        note: original.note,
+        childrenOrder: original.childrenOrder,
+        User: {
+          connect: { id: authedUserId },
+        },
+        WorkoutSession: { connect: { id: original.workoutSessionId } },
+        ResistanceExercises: {
+          create: original.ResistanceExercises.map((e) => ({
+            note: e.note,
+            childrenOrder: e.childrenOrder,
+            User: {
+              connect: { id: authedUserId },
+            },
+            ResistanceSets: {
+              create: e.ResistanceSets.map((s) => ({
+                note: s.note,
+                reps: s.reps,
+                Move: {
+                  connect: { id: s.moveId },
+                },
+                Equipment: s.equipmentId
+                  ? { connect: { id: s.equipmentId } }
+                  : undefined,
+                User: {
+                  connect: { id: authedUserId },
+                },
+              })),
+            },
+          })),
+        },
       },
-      WorkoutSession: { connect: { id: original.workoutSessionId } },
-      ResistanceExercises: {
-        create: original.ResistanceExercises.map((e) => ({
-          note: e.note,
-          setOrder: e.setOrder,
-          User: {
-            connect: { id: authedUserId },
-          },
-          ResistanceSets: {
-            create: e.ResistanceSets.map((s) => ({
-              note: s.note,
-              reps: s.reps,
-              Move: {
-                connect: { id: s.moveId },
-              },
-              Equipment: s.equipmentId
-                ? { connect: { id: s.equipmentId } }
-                : undefined,
-              User: {
-                connect: { id: authedUserId },
-              },
-            })),
-          },
-        })),
-      },
-    },
-    select,
+      select,
+    })
+
+    await duplicateNewChildToOrder(
+      'workoutSession',
+      original.workoutSessionId,
+      original.WorkoutSession.childrenOrder,
+      original.id,
+      (copy as any).id,
+      prisma,
+    )
+
+    return copy
   })
 
   if (copy) {
@@ -156,9 +192,29 @@ export const deleteResistanceSession = async (
 ) => {
   await checkUserOwnsObject(id, 'resistanceSession', authedUserId, prisma)
 
-  const deleted = await prisma.resistanceSession.delete({
-    where: { id },
-    select: { id: true },
+  const deleted = await prisma.$transaction(async (prisma) => {
+    const deleted = await prisma.resistanceSession.delete({
+      where: { id },
+      select: {
+        id: true,
+        WorkoutSession: {
+          select: {
+            id: true,
+            childrenOrder: true,
+          },
+        },
+      },
+    })
+
+    await deleteChildFromOrder(
+      'workoutSession',
+      deleted.WorkoutSession.id,
+      deleted.WorkoutSession.childrenOrder,
+      deleted.id,
+      prisma,
+    )
+
+    return deleted
   })
 
   if (deleted) {
@@ -175,16 +231,50 @@ export const createResistanceExercise = async (
   { data }: MutationCreateResistanceExerciseArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  const resistanceExercise = await prisma.resistanceExercise.create({
-    data: {
-      ResistanceSession: {
-        connect: data.ResistanceSession,
+  await checkUserOwnsObject(
+    data.ResistanceSession.id,
+    'resistanceSession',
+    authedUserId,
+    prisma,
+  )
+
+  const resistanceExercise = await prisma.$transaction(async (prisma) => {
+    const resistanceExercise = await prisma.resistanceExercise.create({
+      data: {
+        ResistanceSets: data.ResistanceSets
+          ? {
+              create: data.ResistanceSets.map((s) => ({
+                reps: s.reps || undefined,
+                Move: {
+                  connect: { id: s.Move.id },
+                },
+                Equipment: s.Equipment
+                  ? { connect: { id: s.Equipment.id } }
+                  : undefined,
+                User: {
+                  connect: { id: authedUserId },
+                },
+              })),
+            }
+          : undefined,
+        ResistanceSession: {
+          connect: data.ResistanceSession,
+        },
+        User: {
+          connect: { id: authedUserId },
+        },
       },
-      User: {
-        connect: { id: authedUserId },
-      },
-    },
-    select,
+      select,
+    })
+
+    await pushNewChildToOrder(
+      'resistanceSession',
+      data.ResistanceSession.id,
+      (resistanceExercise as any).id,
+      prisma,
+    )
+
+    return resistanceExercise
   })
 
   if (resistanceExercise) {
@@ -205,7 +295,7 @@ export const updateResistanceExercise = async (
     where: { id: data.id },
     data: {
       ...data,
-      setOrder: processStringListUpdateInputData(data, 'setOrder'),
+      childrenOrder: processStringListUpdateInputData(data, 'childrenOrder'),
     },
     select,
   })
@@ -230,6 +320,7 @@ export const duplicateResistanceExercise = async (
   const original = await prisma.resistanceExercise.findUnique({
     where: { id },
     include: {
+      ResistanceSession: true,
       ResistanceSets: {
         include: {
           Move: true,
@@ -245,32 +336,45 @@ export const duplicateResistanceExercise = async (
     )
   }
 
-  // Create a new copy.
-  const copy = await prisma.resistanceExercise.create({
-    data: {
-      note: original.note,
-      setOrder: original.setOrder,
-      ResistanceSession: { connect: { id: original.resistanceSessionId } },
-      User: {
-        connect: { id: authedUserId },
+  const copy = await prisma.$transaction(async (prisma) => {
+    // Create a new copy.
+    const copy = await prisma.resistanceExercise.create({
+      data: {
+        note: original.note,
+        childrenOrder: original.childrenOrder,
+        ResistanceSession: { connect: { id: original.resistanceSessionId } },
+        User: {
+          connect: { id: authedUserId },
+        },
+        ResistanceSets: {
+          create: original.ResistanceSets.map((s) => ({
+            note: s.note,
+            reps: s.reps,
+            Move: {
+              connect: { id: s.moveId },
+            },
+            Equipment: s.equipmentId
+              ? { connect: { id: s.equipmentId } }
+              : undefined,
+            User: {
+              connect: { id: authedUserId },
+            },
+          })),
+        },
       },
-      ResistanceSets: {
-        create: original.ResistanceSets.map((s) => ({
-          note: s.note,
-          reps: s.reps,
-          Move: {
-            connect: { id: s.moveId },
-          },
-          Equipment: s.equipmentId
-            ? { connect: { id: s.equipmentId } }
-            : undefined,
-          User: {
-            connect: { id: authedUserId },
-          },
-        })),
-      },
-    },
-    select,
+      select,
+    })
+
+    await duplicateNewChildToOrder(
+      'resistanceSession',
+      original.ResistanceSession.id,
+      original.ResistanceSession.childrenOrder,
+      original.id,
+      (copy as any).id,
+      prisma,
+    )
+
+    return copy
   })
 
   if (copy) {
@@ -287,9 +391,24 @@ export const deleteResistanceExercise = async (
 ) => {
   await checkUserOwnsObject(id, 'resistanceExercise', authedUserId, prisma)
 
-  const deleted = await prisma.resistanceExercise.delete({
-    where: { id },
-    select: { id: true },
+  const deleted = await prisma.$transaction(async (prisma) => {
+    const deleted = await prisma.resistanceExercise.delete({
+      where: { id },
+      select: {
+        id: true,
+        ResistanceSession: { select: { id: true, childrenOrder: true } },
+      },
+    })
+
+    await deleteChildFromOrder(
+      'resistanceSession',
+      deleted.ResistanceSession.id,
+      deleted.ResistanceSession.childrenOrder,
+      deleted.id,
+      prisma,
+    )
+
+    return deleted
   })
 
   if (deleted) {
@@ -306,17 +425,35 @@ export const createResistanceSet = async (
   { data }: MutationCreateResistanceSetArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  const resistanceSet = await prisma.resistanceSet.create({
-    data: {
-      ResistanceExercise: {
-        connect: data.ResistanceExercise,
+  await checkUserOwnsObject(
+    data.ResistanceExercise.id,
+    'resistanceExercise',
+    authedUserId,
+    prisma,
+  )
+
+  const resistanceSet = await prisma.$transaction(async (prisma) => {
+    const resistanceSet = await prisma.resistanceSet.create({
+      data: {
+        ResistanceExercise: {
+          connect: data.ResistanceExercise,
+        },
+        Move: { connect: data.Move },
+        User: {
+          connect: { id: authedUserId },
+        },
       },
-      Move: { connect: data.Move },
-      User: {
-        connect: { id: authedUserId },
-      },
-    },
-    select,
+      select,
+    })
+
+    await pushNewChildToOrder(
+      'resistanceExercise',
+      data.ResistanceExercise.id,
+      (resistanceSet as any).id,
+      prisma,
+    )
+
+    return resistanceSet
   })
 
   if (resistanceSet) {
@@ -364,6 +501,7 @@ export const duplicateResistanceSet = async (
   const original = await prisma.resistanceSet.findUnique({
     where: { id },
     include: {
+      ResistanceExercise: true,
       Move: true,
       Equipment: true,
     },
@@ -373,23 +511,36 @@ export const duplicateResistanceSet = async (
     throw new ApolloError('duplicateResistanceSet: Could not retrieve data.')
   }
 
-  // Create a new copy.
-  const copy = await prisma.resistanceSet.create({
-    data: {
-      note: original.note,
-      reps: original.reps,
-      ResistanceExercise: { connect: { id: original.resistanceExerciseId } },
-      Move: {
-        connect: { id: original.moveId },
+  const copy = await prisma.$transaction(async (prisma) => {
+    // Create a new copy.
+    const copy = await prisma.resistanceSet.create({
+      data: {
+        note: original.note,
+        reps: original.reps,
+        ResistanceExercise: { connect: { id: original.resistanceExerciseId } },
+        Move: {
+          connect: { id: original.moveId },
+        },
+        Equipment: original.equipmentId
+          ? { connect: { id: original.equipmentId } }
+          : undefined,
+        User: {
+          connect: { id: authedUserId },
+        },
       },
-      Equipment: original.equipmentId
-        ? { connect: { id: original.equipmentId } }
-        : undefined,
-      User: {
-        connect: { id: authedUserId },
-      },
-    },
-    select,
+      select,
+    })
+
+    await duplicateNewChildToOrder(
+      'resistanceExercise',
+      original.ResistanceExercise.id,
+      original.ResistanceExercise.childrenOrder,
+      original.id,
+      (copy as any).id,
+      prisma,
+    )
+
+    return copy
   })
 
   if (copy) {
@@ -406,9 +557,29 @@ export const deleteResistanceSet = async (
 ) => {
   await checkUserOwnsObject(id, 'resistanceSet', authedUserId, prisma)
 
-  const deleted = await prisma.resistanceSet.delete({
-    where: { id },
-    select: { id: true },
+  const deleted = await prisma.$transaction(async (prisma) => {
+    const deleted = await prisma.resistanceSet.delete({
+      where: { id },
+      select: {
+        id: true,
+        ResistanceExercise: {
+          select: {
+            id: true,
+            childrenOrder: true,
+          },
+        },
+      },
+    })
+
+    await deleteChildFromOrder(
+      'resistanceExercise',
+      deleted.ResistanceExercise.id,
+      deleted.ResistanceExercise.childrenOrder,
+      deleted.id,
+      prisma,
+    )
+
+    return deleted
   })
 
   if (deleted) {

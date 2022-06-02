@@ -39,9 +39,9 @@ type AmrapMove {
 
 type AmrapSection {
   AmrapMoves: [AmrapMove!]!
+  childrenOrder: [String!]!
   createdAt: DateTime!
   id: ID!
-  moveOrder: [String!]!
   name: String
   note: String
   updatedAt: DateTime!
@@ -49,11 +49,11 @@ type AmrapSection {
 
 type AmrapSession {
   AmrapSections: [AmrapSection!]!
+  childrenOrder: [String!]!
   createdAt: DateTime!
   id: ID!
   name: String
   note: String
-  sectionOrder: [String!]!
   updatedAt: DateTime!
 }
 
@@ -146,8 +146,8 @@ type CardioExercise {
 
 type CardioSession {
   CardioExercises: [CardioExercise!]!
+  childrenOrder: [String!]!
   createdAt: DateTime!
-  exerciseOrder: [String!]!
   id: ID!
   name: String
   note: String
@@ -543,10 +543,17 @@ input CreateMoveInput {
 
 input CreateResistanceExerciseInput {
   ResistanceSession: ConnectRelationInput!
+  ResistanceSets: [CreateResistanceSetInExerciseInput!]
 }
 
 input CreateResistanceSessionInput {
   WorkoutSession: ConnectRelationInput!
+}
+
+input CreateResistanceSetInExerciseInput {
+  Equipment: ConnectRelationInput
+  Move: ConnectRelationInput!
+  reps: Int
 }
 
 input CreateResistanceSetInput {
@@ -874,9 +881,9 @@ type ForTimeMove {
 
 type ForTimeSection {
   ForTimeMoves: [ForTimeMove!]!
+  childrenOrder: [String!]!
   createdAt: DateTime!
   id: ID!
-  moveOrder: [String!]!
   name: String
   note: String
   updatedAt: DateTime!
@@ -884,12 +891,12 @@ type ForTimeSection {
 
 type ForTimeSession {
   ForTimeSections: [ForTimeSection!]!
+  childrenOrder: [String!]!
   createdAt: DateTime!
   id: ID!
   name: String
   note: String
   repeats: Int!
-  sectionOrder: [String!]!
   timecapSeconds: Int!
   updatedAt: DateTime!
 }
@@ -910,9 +917,9 @@ type GymProfile {
 
 type IntervalExercise {
   IntervalSets: [IntervalSet!]!
+  childrenOrder: [String!]!
   createdAt: DateTime!
   id: ID!
-  intervalSetOrder: [String!]!
   note: String
   updatedAt: DateTime!
 }
@@ -920,9 +927,9 @@ type IntervalExercise {
 type IntervalSession {
   IntervalExercises: [IntervalExercise!]!
   audioUri: String
+  childrenOrder: [String!]!
   createdAt: DateTime!
   id: ID!
-  intervalExerciseOrder: [String!]!
   intervals: [Int!]!
   name: String
   note: String
@@ -1042,9 +1049,9 @@ type MobilityMoveType {
 type MobilitySession {
   MobilityMoves: [MobilityMove!]!
   audioUri: String
+  childrenOrder: [String!]!
   createdAt: DateTime!
   id: ID!
-  moveOrder: [String!]!
   name: String
   note: String
   updatedAt: DateTime!
@@ -1448,17 +1455,17 @@ input RemoveWorkoutPlanFromCollectionInput {
 
 type ResistanceExercise {
   ResistanceSets: [ResistanceSet!]!
+  childrenOrder: [String!]!
   createdAt: DateTime!
   id: ID!
   note: String
-  setOrder: [String!]!
   updatedAt: DateTime!
 }
 
 type ResistanceSession {
   ResistanceExercises: [ResistanceExercise!]!
+  childrenOrder: [String!]!
   createdAt: DateTime!
-  exerciseOrder: [String!]!
   id: ID!
   name: String
   note: String
@@ -1653,17 +1660,17 @@ input UpdateAmrapMoveInput {
 }
 
 input UpdateAmrapSectionInput {
+  childrenOrder: [String!]
   id: ID!
-  moveOrder: [String!]
   name: String
   note: String
 }
 
 input UpdateAmrapSessionInput {
+  childrenOrder: [String!]
   id: ID!
   name: String
   note: String
-  sectionOrder: [String!]
 }
 
 input UpdateBodyTrackingEntryInput {
@@ -1687,7 +1694,7 @@ input UpdateCardioExerciseInput {
 }
 
 input UpdateCardioSessionInput {
-  exerciseOrder: [String!]
+  childrenOrder: [String!]
   id: ID!
   name: String
   note: String
@@ -1782,18 +1789,18 @@ input UpdateForTimeMoveInput {
 }
 
 input UpdateForTimeSectionInput {
+  childrenOrder: [String!]
   id: ID!
-  moveOrder: [String!]
   name: String
   note: String
 }
 
 input UpdateForTimeSessionInput {
+  childrenOrder: [String!]
   id: ID!
   name: String
   note: String
   repeats: Int!
-  sectionOrder: [String!]
   timecapSeconds: Int
 }
 
@@ -1805,15 +1812,15 @@ input UpdateGymProfileInput {
 }
 
 input UpdateIntervalExerciseInput {
+  childrenOrder: [String!]
   id: ID!
-  intervalSetOrder: [String!]
   note: String
 }
 
 input UpdateIntervalSessionInput {
   audioUri: String
+  childrenOrder: [String!]
   id: ID!
-  intervalExerciseOrder: [String!]
   intervals: [Int!]
   name: String
   note: String
@@ -1863,8 +1870,8 @@ input UpdateLoggedWorkoutSetInput {
 input UpdateMobilitySessionInput {
   MobilityMoves: [ConnectRelationInput!]
   audioUri: String
+  childrenOrder: [String!]
   id: ID!
-  moveOrder: [String!]
   name: String
   note: String
   videoThumbUri: String
@@ -1887,13 +1894,13 @@ input UpdateMoveInput {
 }
 
 input UpdateResistanceExerciseInput {
+  childrenOrder: [String!]
   id: ID!
   note: String
-  setOrder: [String!]
 }
 
 input UpdateResistanceSessionInput {
-  exerciseOrder: [String!]
+  childrenOrder: [String!]
   id: ID!
   name: String
   note: String
@@ -2131,6 +2138,7 @@ input UpdateWorkoutSectionInput {
 
 input UpdateWorkoutSessionInput {
   archived: Boolean
+  childrenOrder: [String!]
   coverImageUri: String
   description: String
   id: ID!
@@ -2138,7 +2146,6 @@ input UpdateWorkoutSessionInput {
   introVideoThumbUri: String
   introVideoUri: String
   name: String
-  sessionOrder: [String!]
   tags: [String!]
 }
 
@@ -2499,6 +2506,7 @@ type WorkoutSession {
   ResistanceSessions: [ResistanceSession!]!
   User: UserAvatarData!
   archived: Boolean!
+  childrenOrder: [String!]!
   coverImageUri: String
   createdAt: DateTime!
   description: String
@@ -2507,7 +2515,6 @@ type WorkoutSession {
   introVideoThumbUri: String
   introVideoUri: String
   name: String!
-  sessionOrder: [String!]!
   tags: [String!]!
   updatedAt: DateTime!
 }

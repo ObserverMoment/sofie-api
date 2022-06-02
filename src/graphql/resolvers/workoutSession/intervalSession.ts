@@ -61,10 +61,7 @@ export const updateIntervalSession = async (
     data: {
       ...data,
       repeats: data.repeats || undefined,
-      intervalExerciseOrder: processStringListUpdateInputData(
-        data,
-        'intervalExerciseOrder',
-      ),
+      childrenOrder: processStringListUpdateInputData(data, 'childrenOrder'),
       intervals: processNumberListUpdateInputData(data, 'intervals'),
     },
     select,
@@ -113,7 +110,7 @@ export const duplicateIntervalSession = async (
       name: original.name,
       note: original.note,
       repeats: original.repeats,
-      intervalExerciseOrder: original.intervalExerciseOrder,
+      childrenOrder: original.childrenOrder,
       intervals: original.intervals,
       WorkoutSession: { connect: { id: original.workoutSessionId } },
       User: {
@@ -122,7 +119,7 @@ export const duplicateIntervalSession = async (
       IntervalExercises: {
         create: original.IntervalExercises.map((e) => ({
           note: e.note,
-          intervalSetOrder: e.intervalSetOrder,
+          childrenOrder: e.childrenOrder,
           User: {
             connect: { id: authedUserId },
           },
@@ -209,10 +206,7 @@ export const updateIntervalExercise = async (
     where: { id: data.id },
     data: {
       ...data,
-      intervalSetOrder: processStringListUpdateInputData(
-        data,
-        'intervalSetOrder',
-      ),
+      childrenOrder: processStringListUpdateInputData(data, 'childrenOrder'),
     },
     select,
   })
@@ -254,7 +248,7 @@ export const duplicateIntervalExercise = async (
   const copy = await prisma.intervalExercise.create({
     data: {
       note: original.note,
-      intervalSetOrder: original.intervalSetOrder,
+      childrenOrder: original.childrenOrder,
       IntervalSession: { connect: { id: original.intervalSessionId } },
       User: {
         connect: { id: authedUserId },

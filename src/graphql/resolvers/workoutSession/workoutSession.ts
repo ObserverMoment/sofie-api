@@ -14,10 +14,10 @@ import {
 } from '../../../lib/uploadcare'
 import { WorkoutSessionFullDataPayload } from '../../../../types/workoutSessionTypes'
 import {
-  addObjectToUserRecentlyViewed,
   checkUserOwnsObject,
   processStringListUpdateInputData,
 } from '../../utils'
+import { Prisma } from '@prisma/client'
 
 //// Queries ////
 /// https://www.prisma.io/docs/concepts/components/prisma-client/pagination
@@ -94,7 +94,7 @@ export const updateWorkoutSession = async (
       ...data,
       name: data.name || undefined,
       tags: processStringListUpdateInputData(data, 'tags'),
-      sessionOrder: processStringListUpdateInputData(data, 'sessionOrder'),
+      childrenOrder: processStringListUpdateInputData(data, 'childrenOrder'),
       archived: data.archived || undefined,
     },
     select,
@@ -210,12 +210,12 @@ export const duplicateWorkoutSession = async (
       name: `${original.name} - copy`,
       description: original.description,
       tags: original.tags,
-      sessionOrder: original.sessionOrder,
+      childrenOrder: original.childrenOrder,
       CardioSessions: {
         create: original.CardioSessions.map((s) => ({
           name: s.name,
           note: s.note,
-          exerciseOrder: s.exerciseOrder,
+          childrenOrder: s.childrenOrder,
           User: {
             connect: { id: authedUserId },
           },
@@ -241,14 +241,14 @@ export const duplicateWorkoutSession = async (
         create: original.ResistanceSessions.map((s) => ({
           name: s.name,
           note: s.note,
-          exerciseOrder: s.exerciseOrder,
+          childrenOrder: s.childrenOrder,
           User: {
             connect: { id: authedUserId },
           },
           ResistanceExercises: {
             create: s.ResistanceExercises.map((e) => ({
               note: e.note,
-              setOrder: e.setOrder,
+              childrenOrder: e.childrenOrder,
               User: {
                 connect: { id: authedUserId },
               },
@@ -276,7 +276,7 @@ export const duplicateWorkoutSession = async (
           name: s.name,
           note: s.note,
           repeats: s.repeats,
-          intervalExerciseOrder: s.intervalExerciseOrder,
+          childrenOrder: s.childrenOrder,
           intervals: s.intervals,
           User: {
             connect: { id: authedUserId },
@@ -284,7 +284,7 @@ export const duplicateWorkoutSession = async (
           IntervalExercises: {
             create: s.IntervalExercises.map((e) => ({
               note: e.note,
-              intervalSetOrder: e.intervalSetOrder,
+              childrenOrder: e.childrenOrder,
               User: {
                 connect: { id: authedUserId },
               },
@@ -310,7 +310,7 @@ export const duplicateWorkoutSession = async (
         create: original.AmrapSessions.map((s) => ({
           name: s.name,
           note: s.note,
-          sectionOrder: s.sectionOrder,
+          childrenOrder: s.childrenOrder,
           User: {
             connect: { id: authedUserId },
           },
@@ -318,7 +318,7 @@ export const duplicateWorkoutSession = async (
             create: s.AmrapSections.map((s) => ({
               name: s.name,
               note: s.note,
-              moveOrder: s.moveOrder,
+              childrenOrder: s.childrenOrder,
               User: {
                 connect: { id: authedUserId },
               },
@@ -346,7 +346,7 @@ export const duplicateWorkoutSession = async (
           note: s.note,
           repeats: s.repeats,
           timecapSeconds: s.timecapSeconds,
-          sectionOrder: s.sectionOrder,
+          childrenOrder: s.childrenOrder,
           User: {
             connect: { id: authedUserId },
           },
@@ -354,7 +354,7 @@ export const duplicateWorkoutSession = async (
             create: s.ForTimeSections.map((s) => ({
               name: s.name,
               note: s.note,
-              moveOrder: s.moveOrder,
+              childrenOrder: s.childrenOrder,
               User: {
                 connect: { id: authedUserId },
               },
@@ -380,7 +380,7 @@ export const duplicateWorkoutSession = async (
         create: original.MobilitySessions.map((s) => ({
           name: s.name,
           note: s.note,
-          moveOrder: s.moveOrder,
+          childrenOrder: s.childrenOrder,
           User: {
             connect: { id: authedUserId },
           },

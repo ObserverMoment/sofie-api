@@ -13,7 +13,7 @@ export default gql`
     introVideoThumbUri: String
     tags: [String!]!
     archived: Boolean!
-    sessionOrder: [String!]!
+    childrenOrder: [String!]!
     CardioSessions: [CardioSession!]!
     ResistanceSessions: [ResistanceSession!]!
     IntervalSessions: [IntervalSession!]!
@@ -38,6 +38,6 @@ export default gql`
     introVideoThumbUri: String
     archived: Boolean
     tags: [String!]
-    sessionOrder: [String!]
+    childrenOrder: [String!]
   }
 `

@@ -55,9 +55,9 @@ export type AmrapMove = {
 export type AmrapSection = {
   __typename?: 'AmrapSection';
   AmrapMoves: Array<AmrapMove>;
+  childrenOrder: Array<Scalars['String']>;
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
-  moveOrder: Array<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
   note?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
@@ -66,11 +66,11 @@ export type AmrapSection = {
 export type AmrapSession = {
   __typename?: 'AmrapSession';
   AmrapSections: Array<AmrapSection>;
+  childrenOrder: Array<Scalars['String']>;
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
   name?: Maybe<Scalars['String']>;
   note?: Maybe<Scalars['String']>;
-  sectionOrder: Array<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
 };
 
@@ -168,8 +168,8 @@ export type CardioExercise = {
 export type CardioSession = {
   __typename?: 'CardioSession';
   CardioExercises: Array<CardioExercise>;
+  childrenOrder: Array<Scalars['String']>;
   createdAt: Scalars['DateTime'];
-  exerciseOrder: Array<Scalars['String']>;
   id: Scalars['ID'];
   name?: Maybe<Scalars['String']>;
   note?: Maybe<Scalars['String']>;
@@ -579,10 +579,17 @@ export type CreateMoveInput = {
 
 export type CreateResistanceExerciseInput = {
   ResistanceSession: ConnectRelationInput;
+  ResistanceSets?: InputMaybe<Array<CreateResistanceSetInExerciseInput>>;
 };
 
 export type CreateResistanceSessionInput = {
   WorkoutSession: ConnectRelationInput;
+};
+
+export type CreateResistanceSetInExerciseInput = {
+  Equipment?: InputMaybe<ConnectRelationInput>;
+  Move: ConnectRelationInput;
+  reps?: InputMaybe<Scalars['Int']>;
 };
 
 export type CreateResistanceSetInput = {
@@ -911,9 +918,9 @@ export type ForTimeMove = {
 export type ForTimeSection = {
   __typename?: 'ForTimeSection';
   ForTimeMoves: Array<ForTimeMove>;
+  childrenOrder: Array<Scalars['String']>;
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
-  moveOrder: Array<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
   note?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
@@ -922,12 +929,12 @@ export type ForTimeSection = {
 export type ForTimeSession = {
   __typename?: 'ForTimeSession';
   ForTimeSections: Array<ForTimeSection>;
+  childrenOrder: Array<Scalars['String']>;
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
   name?: Maybe<Scalars['String']>;
   note?: Maybe<Scalars['String']>;
   repeats: Scalars['Int'];
-  sectionOrder: Array<Scalars['String']>;
   timecapSeconds: Scalars['Int'];
   updatedAt: Scalars['DateTime'];
 };
@@ -949,9 +956,9 @@ export type GymProfile = {
 export type IntervalExercise = {
   __typename?: 'IntervalExercise';
   IntervalSets: Array<IntervalSet>;
+  childrenOrder: Array<Scalars['String']>;
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
-  intervalSetOrder: Array<Scalars['String']>;
   note?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
 };
@@ -960,9 +967,9 @@ export type IntervalSession = {
   __typename?: 'IntervalSession';
   IntervalExercises: Array<IntervalExercise>;
   audioUri?: Maybe<Scalars['String']>;
+  childrenOrder: Array<Scalars['String']>;
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
-  intervalExerciseOrder: Array<Scalars['String']>;
   intervals: Array<Scalars['Int']>;
   name?: Maybe<Scalars['String']>;
   note?: Maybe<Scalars['String']>;
@@ -1088,9 +1095,9 @@ export type MobilitySession = {
   __typename?: 'MobilitySession';
   MobilityMoves: Array<MobilityMove>;
   audioUri?: Maybe<Scalars['String']>;
+  childrenOrder: Array<Scalars['String']>;
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
-  moveOrder: Array<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
   note?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
@@ -2691,18 +2698,18 @@ export type RemoveWorkoutPlanFromCollectionInput = {
 export type ResistanceExercise = {
   __typename?: 'ResistanceExercise';
   ResistanceSets: Array<ResistanceSet>;
+  childrenOrder: Array<Scalars['String']>;
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
   note?: Maybe<Scalars['String']>;
-  setOrder: Array<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
 };
 
 export type ResistanceSession = {
   __typename?: 'ResistanceSession';
   ResistanceExercises: Array<ResistanceExercise>;
+  childrenOrder: Array<Scalars['String']>;
   createdAt: Scalars['DateTime'];
-  exerciseOrder: Array<Scalars['String']>;
   id: Scalars['ID'];
   name?: Maybe<Scalars['String']>;
   note?: Maybe<Scalars['String']>;
@@ -2916,17 +2923,17 @@ export type UpdateAmrapMoveInput = {
 };
 
 export type UpdateAmrapSectionInput = {
+  childrenOrder?: InputMaybe<Array<Scalars['String']>>;
   id: Scalars['ID'];
-  moveOrder?: InputMaybe<Array<Scalars['String']>>;
   name?: InputMaybe<Scalars['String']>;
   note?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateAmrapSessionInput = {
+  childrenOrder?: InputMaybe<Array<Scalars['String']>>;
   id: Scalars['ID'];
   name?: InputMaybe<Scalars['String']>;
   note?: InputMaybe<Scalars['String']>;
-  sectionOrder?: InputMaybe<Array<Scalars['String']>>;
 };
 
 export type UpdateBodyTrackingEntryInput = {
@@ -2950,7 +2957,7 @@ export type UpdateCardioExerciseInput = {
 };
 
 export type UpdateCardioSessionInput = {
-  exerciseOrder?: InputMaybe<Array<Scalars['String']>>;
+  childrenOrder?: InputMaybe<Array<Scalars['String']>>;
   id: Scalars['ID'];
   name?: InputMaybe<Scalars['String']>;
   note?: InputMaybe<Scalars['String']>;
@@ -3045,18 +3052,18 @@ export type UpdateForTimeMoveInput = {
 };
 
 export type UpdateForTimeSectionInput = {
+  childrenOrder?: InputMaybe<Array<Scalars['String']>>;
   id: Scalars['ID'];
-  moveOrder?: InputMaybe<Array<Scalars['String']>>;
   name?: InputMaybe<Scalars['String']>;
   note?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateForTimeSessionInput = {
+  childrenOrder?: InputMaybe<Array<Scalars['String']>>;
   id: Scalars['ID'];
   name?: InputMaybe<Scalars['String']>;
   note?: InputMaybe<Scalars['String']>;
   repeats: Scalars['Int'];
-  sectionOrder?: InputMaybe<Array<Scalars['String']>>;
   timecapSeconds?: InputMaybe<Scalars['Int']>;
 };
 
@@ -3068,15 +3075,15 @@ export type UpdateGymProfileInput = {
 };
 
 export type UpdateIntervalExerciseInput = {
+  childrenOrder?: InputMaybe<Array<Scalars['String']>>;
   id: Scalars['ID'];
-  intervalSetOrder?: InputMaybe<Array<Scalars['String']>>;
   note?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateIntervalSessionInput = {
   audioUri?: InputMaybe<Scalars['String']>;
+  childrenOrder?: InputMaybe<Array<Scalars['String']>>;
   id: Scalars['ID'];
-  intervalExerciseOrder?: InputMaybe<Array<Scalars['String']>>;
   intervals?: InputMaybe<Array<Scalars['Int']>>;
   name?: InputMaybe<Scalars['String']>;
   note?: InputMaybe<Scalars['String']>;
@@ -3126,8 +3133,8 @@ export type UpdateLoggedWorkoutSetInput = {
 export type UpdateMobilitySessionInput = {
   MobilityMoves?: InputMaybe<Array<ConnectRelationInput>>;
   audioUri?: InputMaybe<Scalars['String']>;
+  childrenOrder?: InputMaybe<Array<Scalars['String']>>;
   id: Scalars['ID'];
-  moveOrder?: InputMaybe<Array<Scalars['String']>>;
   name?: InputMaybe<Scalars['String']>;
   note?: InputMaybe<Scalars['String']>;
   videoThumbUri?: InputMaybe<Scalars['String']>;
@@ -3150,13 +3157,13 @@ export type UpdateMoveInput = {
 };
 
 export type UpdateResistanceExerciseInput = {
+  childrenOrder?: InputMaybe<Array<Scalars['String']>>;
   id: Scalars['ID'];
   note?: InputMaybe<Scalars['String']>;
-  setOrder?: InputMaybe<Array<Scalars['String']>>;
 };
 
 export type UpdateResistanceSessionInput = {
-  exerciseOrder?: InputMaybe<Array<Scalars['String']>>;
+  childrenOrder?: InputMaybe<Array<Scalars['String']>>;
   id: Scalars['ID'];
   name?: InputMaybe<Scalars['String']>;
   note?: InputMaybe<Scalars['String']>;
@@ -3395,6 +3402,7 @@ export type UpdateWorkoutSectionInput = {
 
 export type UpdateWorkoutSessionInput = {
   archived?: InputMaybe<Scalars['Boolean']>;
+  childrenOrder?: InputMaybe<Array<Scalars['String']>>;
   coverImageUri?: InputMaybe<Scalars['String']>;
   description?: InputMaybe<Scalars['String']>;
   id: Scalars['ID'];
@@ -3402,7 +3410,6 @@ export type UpdateWorkoutSessionInput = {
   introVideoThumbUri?: InputMaybe<Scalars['String']>;
   introVideoUri?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
-  sessionOrder?: InputMaybe<Array<Scalars['String']>>;
   tags?: InputMaybe<Array<Scalars['String']>>;
 };
 
@@ -3785,6 +3792,7 @@ export type WorkoutSession = {
   ResistanceSessions: Array<ResistanceSession>;
   User: UserAvatarData;
   archived: Scalars['Boolean'];
+  childrenOrder: Array<Scalars['String']>;
   coverImageUri?: Maybe<Scalars['String']>;
   createdAt: Scalars['DateTime'];
   description?: Maybe<Scalars['String']>;
@@ -3793,7 +3801,6 @@ export type WorkoutSession = {
   introVideoThumbUri?: Maybe<Scalars['String']>;
   introVideoUri?: Maybe<Scalars['String']>;
   name: Scalars['String'];
-  sessionOrder: Array<Scalars['String']>;
   tags: Array<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
 };
@@ -4012,6 +4019,7 @@ export type ResolversTypes = ResolversObject<{
   CreateMoveInput: CreateMoveInput;
   CreateResistanceExerciseInput: CreateResistanceExerciseInput;
   CreateResistanceSessionInput: CreateResistanceSessionInput;
+  CreateResistanceSetInExerciseInput: CreateResistanceSetInExerciseInput;
   CreateResistanceSetInput: CreateResistanceSetInput;
   CreateScheduleForPlanEnrolmentInput: CreateScheduleForPlanEnrolmentInput;
   CreateScheduledWorkoutInput: CreateScheduledWorkoutInput;
@@ -4291,6 +4299,7 @@ export type ResolversParentTypes = ResolversObject<{
   CreateMoveInput: CreateMoveInput;
   CreateResistanceExerciseInput: CreateResistanceExerciseInput;
   CreateResistanceSessionInput: CreateResistanceSessionInput;
+  CreateResistanceSetInExerciseInput: CreateResistanceSetInExerciseInput;
   CreateResistanceSetInput: CreateResistanceSetInput;
   CreateScheduleForPlanEnrolmentInput: CreateScheduleForPlanEnrolmentInput;
   CreateScheduledWorkoutInput: CreateScheduledWorkoutInput;
@@ -4494,9 +4503,9 @@ export type AmrapMoveResolvers<ContextType = any, ParentType extends ResolversPa
 
 export type AmrapSectionResolvers<ContextType = any, ParentType extends ResolversParentTypes['AmrapSection'] = ResolversParentTypes['AmrapSection']> = ResolversObject<{
   AmrapMoves?: Resolver<Array<ResolversTypes['AmrapMove']>, ParentType, ContextType>;
+  childrenOrder?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  moveOrder?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   note?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
@@ -4505,11 +4514,11 @@ export type AmrapSectionResolvers<ContextType = any, ParentType extends Resolver
 
 export type AmrapSessionResolvers<ContextType = any, ParentType extends ResolversParentTypes['AmrapSession'] = ResolversParentTypes['AmrapSession']> = ResolversObject<{
   AmrapSections?: Resolver<Array<ResolversTypes['AmrapSection']>, ParentType, ContextType>;
+  childrenOrder?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   note?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  sectionOrder?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
@@ -4587,8 +4596,8 @@ export type CardioExerciseResolvers<ContextType = any, ParentType extends Resolv
 
 export type CardioSessionResolvers<ContextType = any, ParentType extends ResolversParentTypes['CardioSession'] = ResolversParentTypes['CardioSession']> = ResolversObject<{
   CardioExercises?: Resolver<Array<ResolversTypes['CardioExercise']>, ParentType, ContextType>;
+  childrenOrder?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  exerciseOrder?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   note?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -4860,9 +4869,9 @@ export type ForTimeMoveResolvers<ContextType = any, ParentType extends Resolvers
 
 export type ForTimeSectionResolvers<ContextType = any, ParentType extends ResolversParentTypes['ForTimeSection'] = ResolversParentTypes['ForTimeSection']> = ResolversObject<{
   ForTimeMoves?: Resolver<Array<ResolversTypes['ForTimeMove']>, ParentType, ContextType>;
+  childrenOrder?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  moveOrder?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   note?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
@@ -4871,12 +4880,12 @@ export type ForTimeSectionResolvers<ContextType = any, ParentType extends Resolv
 
 export type ForTimeSessionResolvers<ContextType = any, ParentType extends ResolversParentTypes['ForTimeSession'] = ResolversParentTypes['ForTimeSession']> = ResolversObject<{
   ForTimeSections?: Resolver<Array<ResolversTypes['ForTimeSection']>, ParentType, ContextType>;
+  childrenOrder?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   note?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   repeats?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  sectionOrder?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   timecapSeconds?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -4892,9 +4901,9 @@ export type GymProfileResolvers<ContextType = any, ParentType extends ResolversP
 
 export type IntervalExerciseResolvers<ContextType = any, ParentType extends ResolversParentTypes['IntervalExercise'] = ResolversParentTypes['IntervalExercise']> = ResolversObject<{
   IntervalSets?: Resolver<Array<ResolversTypes['IntervalSet']>, ParentType, ContextType>;
+  childrenOrder?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  intervalSetOrder?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   note?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -4903,9 +4912,9 @@ export type IntervalExerciseResolvers<ContextType = any, ParentType extends Reso
 export type IntervalSessionResolvers<ContextType = any, ParentType extends ResolversParentTypes['IntervalSession'] = ResolversParentTypes['IntervalSession']> = ResolversObject<{
   IntervalExercises?: Resolver<Array<ResolversTypes['IntervalExercise']>, ParentType, ContextType>;
   audioUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  childrenOrder?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  intervalExerciseOrder?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   intervals?: Resolver<Array<ResolversTypes['Int']>, ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   note?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -5014,9 +5023,9 @@ export type MobilityMoveTypeResolvers<ContextType = any, ParentType extends Reso
 export type MobilitySessionResolvers<ContextType = any, ParentType extends ResolversParentTypes['MobilitySession'] = ResolversParentTypes['MobilitySession']> = ResolversObject<{
   MobilityMoves?: Resolver<Array<ResolversTypes['MobilityMove']>, ParentType, ContextType>;
   audioUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  childrenOrder?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  moveOrder?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   note?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
@@ -5380,18 +5389,18 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
 
 export type ResistanceExerciseResolvers<ContextType = any, ParentType extends ResolversParentTypes['ResistanceExercise'] = ResolversParentTypes['ResistanceExercise']> = ResolversObject<{
   ResistanceSets?: Resolver<Array<ResolversTypes['ResistanceSet']>, ParentType, ContextType>;
+  childrenOrder?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   note?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  setOrder?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type ResistanceSessionResolvers<ContextType = any, ParentType extends ResolversParentTypes['ResistanceSession'] = ResolversParentTypes['ResistanceSession']> = ResolversObject<{
   ResistanceExercises?: Resolver<Array<ResolversTypes['ResistanceExercise']>, ParentType, ContextType>;
+  childrenOrder?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  exerciseOrder?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   note?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -5943,6 +5952,7 @@ export type WorkoutSessionResolvers<ContextType = any, ParentType extends Resolv
   ResistanceSessions?: Resolver<Array<ResolversTypes['ResistanceSession']>, ParentType, ContextType>;
   User?: Resolver<ResolversTypes['UserAvatarData'], ParentType, ContextType>;
   archived?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  childrenOrder?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   coverImageUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -5951,7 +5961,6 @@ export type WorkoutSessionResolvers<ContextType = any, ParentType extends Resolv
   introVideoThumbUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   introVideoUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  sessionOrder?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   tags?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;

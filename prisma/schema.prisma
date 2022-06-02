@@ -402,7 +402,7 @@ model WorkoutSession {
   introVideoThumbUri       String?
   tags                     String[]
   archived                 Boolean                   @default(false)
-  sessionOrder             String[] // Session IDs.
+  childrenOrder            String[] // Session IDs.
   CardioSessions           CardioSession[] // Monostructural, zones 2 (steady state) -> 5
   ResistanceSessions       ResistanceSession[] // Strength, hypertrophy, muscle endurance.
   IntervalSessions         IntervalSession[] // HIIT, Tabata
@@ -424,7 +424,7 @@ model CardioSession {
   updatedAt        DateTime         @updatedAt
   name             String?
   note             String?
-  exerciseOrder    String[]
+  childrenOrder    String[]
   CardioExercises  CardioExercise[]
   WorkoutSession   WorkoutSession   @relation(fields: [workoutSessionId], references: [id], onDelete: Cascade)
   workoutSessionId String
@@ -456,7 +456,7 @@ model ResistanceSession {
   updatedAt           DateTime             @updatedAt
   name                String?
   note                String?
-  exerciseOrder       String[]
+  childrenOrder       String[]
   ResistanceExercises ResistanceExercise[]
   WorkoutSession      WorkoutSession       @relation(fields: [workoutSessionId], references: [id], onDelete: Cascade)
   workoutSessionId    String
@@ -469,7 +469,7 @@ model ResistanceExercise {
   createdAt           DateTime          @default(now())
   updatedAt           DateTime          @updatedAt
   note                String?
-  setOrder            String[]
+  childrenOrder       String[]
   ResistanceSets      ResistanceSet[]
   ResistanceSession   ResistanceSession @relation(fields: [resistanceSessionId], references: [id], onDelete: Cascade)
   resistanceSessionId String
@@ -494,26 +494,26 @@ model ResistanceSet {
 }
 
 model IntervalSession {
-  id                    String             @id @default(uuid())
-  createdAt             DateTime           @default(now())
-  updatedAt             DateTime           @updatedAt
-  name                  String?
-  note                  String?
-  audioUri              String?
-  videoUri              String?
-  videoThumbUri         String?
-  repeats               Int                @default(1) // Run through all exercises this many times
+  id                String             @id @default(uuid())
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  name              String?
+  note              String?
+  audioUri          String?
+  videoUri          String?
+  videoThumbUri     String?
+  repeats           Int                @default(1) // Run through all exercises this many times
   // For rest intervals add 'rest' to the array.
   // E.g. [IntervalExerciseId, IntervalExerciseId, rest, IntervalExerciseId, IntervalExerciseId, rest]
-  intervalExerciseOrder String[]
+  childrenOrder     String[]
   // Align with setOrder. Interval length in seconds.
   // E.g [60, 60, 30, 60, 60, 30]
-  intervals             Int[]
-  IntervalExercises     IntervalExercise[]
-  WorkoutSession        WorkoutSession     @relation(fields: [workoutSessionId], references: [id], onDelete: Cascade)
-  workoutSessionId      String
-  User                  User               @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId                String
+  intervals         Int[]
+  IntervalExercises IntervalExercise[]
+  WorkoutSession    WorkoutSession     @relation(fields: [workoutSessionId], references: [id], onDelete: Cascade)
+  workoutSessionId  String
+  User              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId            String
 }
 
 model IntervalExercise {
@@ -521,7 +521,7 @@ model IntervalExercise {
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @updatedAt
   note              String?
-  intervalSetOrder  String[]
+  childrenOrder     String[]
   IntervalSets      IntervalSet[]
   IntervalSession   IntervalSession @relation(fields: [intervalSessionId], references: [id], onDelete: Cascade)
   intervalSessionId String
@@ -552,7 +552,7 @@ model AmrapSession {
   note             String?
   /// If forced rests are required between sections then add [rest:seconds].
   /// [AMRAPSectionId, rest:60, AMRAPSection]
-  sectionOrder     String[]
+  childrenOrder    String[]
   AmrapSections    AmrapSection[]
   WorkoutSession   WorkoutSession @relation(fields: [workoutSessionId], references: [id], onDelete: Cascade)
   workoutSessionId String
@@ -566,7 +566,7 @@ model AmrapSection {
   updatedAt      DateTime     @updatedAt
   name           String?
   note           String?
-  moveOrder      String[]
+  childrenOrder  String[]
   AmrapMoves     AmrapMove[]
   AmrapSession   AmrapSession @relation(fields: [amrapSessionId], references: [id], onDelete: Cascade)
   amrapSessionId String
@@ -599,7 +599,7 @@ model ForTimeSession {
   timecapSeconds   Int              @default(0) // 0 is no timecap
   /// If forced rests are required between sections then add [rest:seconds].
   /// [ForTimeSectionId, rest:60, ForTimeSectionId]
-  sectionOrder     String[]
+  childrenOrder    String[]
   ForTimeSections  ForTimeSection[]
   WorkoutSession   WorkoutSession   @relation(fields: [workoutSessionId], references: [id], onDelete: Cascade)
   workoutSessionId String
@@ -613,7 +613,7 @@ model ForTimeSection {
   updatedAt        DateTime       @updatedAt
   name             String?
   note             String?
-  moveOrder        String[]
+  childrenOrder    String[]
   ForTimeMoves     ForTimeMove[]
   ForTimeSession   ForTimeSession @relation(fields: [forTimeSessionId], references: [id], onDelete: Cascade)
   forTimeSessionId String
@@ -645,7 +645,7 @@ model MobilitySession {
   audioUri         String?
   videoUri         String?
   videoThumbUri    String?
-  moveOrder        String[]
+  childrenOrder    String[]
   MobilityMoves    MobilityMove[]
   WorkoutSession   WorkoutSession @relation(fields: [workoutSessionId], references: [id])
   workoutSessionId String

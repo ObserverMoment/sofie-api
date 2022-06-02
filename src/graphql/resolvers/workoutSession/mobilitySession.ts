@@ -49,7 +49,7 @@ export const updateMobilitySession = async (
     where: { id: data.id },
     data: {
       ...data,
-      moveOrder: processStringListUpdateInputData(data, 'moveOrder'),
+      childrenOrder: processStringListUpdateInputData(data, 'childrenOrder'),
       MobilityMoves: data.hasOwnProperty('MobilityMoves')
         ? data.MobilityMoves
           ? { connect: data.MobilityMoves }
@@ -92,7 +92,7 @@ export const duplicateMobilitySession = async (
     data: {
       name: original.name,
       note: original.note,
-      moveOrder: original.moveOrder,
+      childrenOrder: original.childrenOrder,
       WorkoutSession: { connect: { id: original.workoutSessionId } },
       User: {
         connect: { id: authedUserId },

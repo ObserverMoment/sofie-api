@@ -15,12 +15,16 @@ import {
   MutationUpdateAmrapMoveArgs,
   MutationUpdateAmrapSectionArgs,
   MutationUpdateAmrapSessionArgs,
-  WorkoutSession,
 } from '../../../generated/graphql'
 import {
   checkUserOwnsObject,
   processStringListUpdateInputData,
 } from '../../utils'
+import {
+  deleteChildFromOrder,
+  duplicateNewChildToOrder,
+  pushNewChildToOrder,
+} from './utils'
 
 //// Mutations ////
 //// Amrap Session ////
@@ -29,6 +33,13 @@ export const createAmrapSession = async (
   { data }: MutationCreateAmrapSessionArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
+  await checkUserOwnsObject(
+    data.WorkoutSession.id,
+    'workoutSession',
+    authedUserId,
+    prisma,
+  )
+
   const amrapSession = await prisma.$transaction(async (prisma) => {
     const amrapSession = await prisma.amrapSession.create({
       data: {
@@ -39,20 +50,15 @@ export const createAmrapSession = async (
           connect: { id: authedUserId },
         },
       },
-      select: {
-        id: true,
-      },
-    })
-
-    await prisma.workoutSession.update({
-      where: data.WorkoutSession,
-      data: {
-        sessionOrder: {
-          push: amrapSession.id,
-        },
-      },
       select,
     })
+
+    await pushNewChildToOrder(
+      'workoutSession',
+      data.WorkoutSession.id,
+      (amrapSession as any).id,
+      prisma,
+    )
 
     return amrapSession as AmrapSession
   })
@@ -75,7 +81,7 @@ export const updateAmrapSession = async (
     where: { id: data.id },
     data: {
       ...data,
-      sectionOrder: processStringListUpdateInputData(data, 'sectionOrder'),
+      childrenOrder: processStringListUpdateInputData(data, 'childrenOrder'),
     },
     select,
   })
@@ -96,10 +102,11 @@ export const duplicateAmrapSession = async (
 ) => {
   await checkUserOwnsObject(id, 'amrapSession', authedUserId, prisma)
 
-  // Get original full data
+  // Get original full data.
   const original = await prisma.amrapSession.findUnique({
     where: { id },
     include: {
+      WorkoutSession: true, // Needed to get the original session position.
       AmrapSections: {
         include: {
           AmrapMoves: {
@@ -117,44 +124,57 @@ export const duplicateAmrapSession = async (
     throw new ApolloError('duplicateAmrapSession: Could not retrieve data.')
   }
 
-  // Create a new copy.
-  const copy = await prisma.amrapSession.create({
-    data: {
-      name: original.name,
-      note: original.note,
-      sectionOrder: original.sectionOrder,
-      User: {
-        connect: { id: authedUserId },
+  const copy = await prisma.$transaction(async (prisma) => {
+    // Create a new copy.
+    const copy = await prisma.amrapSession.create({
+      data: {
+        name: original.name,
+        note: original.note,
+        childrenOrder: original.childrenOrder,
+        User: {
+          connect: { id: authedUserId },
+        },
+        WorkoutSession: {
+          connect: { id: original.workoutSessionId },
+        },
+        AmrapSections: {
+          create: original.AmrapSections.map((s) => ({
+            name: s.name,
+            note: s.note,
+            childrenOrder: s.childrenOrder,
+            User: {
+              connect: { id: authedUserId },
+            },
+            AmrapMoves: {
+              create: s.AmrapMoves.map((m) => ({
+                note: m.note,
+                Move: {
+                  connect: { id: m.moveId },
+                },
+                Equipment: m.equipmentId
+                  ? { connect: { id: m.equipmentId } }
+                  : undefined,
+                User: {
+                  connect: { id: authedUserId },
+                },
+              })),
+            },
+          })),
+        },
       },
-      WorkoutSession: {
-        connect: { id: original.workoutSessionId },
-      },
-      AmrapSections: {
-        create: original.AmrapSections.map((s) => ({
-          name: s.name,
-          note: s.note,
-          moveOrder: s.moveOrder,
-          User: {
-            connect: { id: authedUserId },
-          },
-          AmrapMoves: {
-            create: s.AmrapMoves.map((m) => ({
-              note: m.note,
-              Move: {
-                connect: { id: m.moveId },
-              },
-              Equipment: m.equipmentId
-                ? { connect: { id: m.equipmentId } }
-                : undefined,
-              User: {
-                connect: { id: authedUserId },
-              },
-            })),
-          },
-        })),
-      },
-    },
-    select,
+      select,
+    })
+
+    await duplicateNewChildToOrder(
+      'workoutSession',
+      original.workoutSessionId,
+      original.WorkoutSession.childrenOrder,
+      original.id,
+      (copy as any).id,
+      prisma,
+    )
+
+    return copy
   })
 
   if (copy) {
@@ -171,9 +191,29 @@ export const deleteAmrapSession = async (
 ) => {
   await checkUserOwnsObject(id, 'amrapSession', authedUserId, prisma)
 
-  const deleted = await prisma.amrapSession.delete({
-    where: { id },
-    select: { id: true },
+  const deleted = await prisma.$transaction(async (prisma) => {
+    const deleted = await prisma.amrapSession.delete({
+      where: { id },
+      select: {
+        id: true,
+        WorkoutSession: {
+          select: {
+            id: true,
+            childrenOrder: true,
+          },
+        },
+      },
+    })
+
+    await deleteChildFromOrder(
+      'workoutSession',
+      deleted.WorkoutSession.id,
+      deleted.WorkoutSession.childrenOrder,
+      deleted.id,
+      prisma,
+    )
+
+    return deleted
   })
 
   if (deleted) {
@@ -190,16 +230,34 @@ export const createAmrapSection = async (
   { data }: MutationCreateAmrapSectionArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  const amrapSection = await prisma.amrapSection.create({
-    data: {
-      AmrapSession: {
-        connect: data.AmrapSession,
+  await checkUserOwnsObject(
+    data.AmrapSession.id,
+    'amrapSession',
+    authedUserId,
+    prisma,
+  )
+
+  const amrapSection = await prisma.$transaction(async (prisma) => {
+    const amrapSection = await prisma.amrapSection.create({
+      data: {
+        AmrapSession: {
+          connect: data.AmrapSession,
+        },
+        User: {
+          connect: { id: authedUserId },
+        },
       },
-      User: {
-        connect: { id: authedUserId },
-      },
-    },
-    select,
+      select,
+    })
+
+    await pushNewChildToOrder(
+      'amrapSession',
+      data.AmrapSession.id,
+      (amrapSection as any).id,
+      prisma,
+    )
+
+    return amrapSection
   })
 
   if (amrapSection) {
@@ -220,7 +278,7 @@ export const updateAmrapSection = async (
     where: { id: data.id },
     data: {
       ...data,
-      moveOrder: processStringListUpdateInputData(data, 'moveOrder'),
+      childrenOrder: processStringListUpdateInputData(data, 'childrenOrder'),
     },
     select,
   })
@@ -245,6 +303,7 @@ export const duplicateAmrapSection = async (
   const original = await prisma.amrapSection.findUnique({
     where: { id },
     include: {
+      AmrapSession: true,
       AmrapMoves: {
         include: {
           Move: true,
@@ -258,32 +317,45 @@ export const duplicateAmrapSection = async (
     throw new ApolloError('duplicateAmrapSection: Could not retrieve data.')
   }
 
-  // Create a new copy.
-  const copy = await prisma.amrapSection.create({
-    data: {
-      name: original.name,
-      note: original.note,
-      moveOrder: original.moveOrder,
-      User: {
-        connect: { id: authedUserId },
+  const copy = await prisma.$transaction(async (prisma) => {
+    // Create a new copy.
+    const copy = await prisma.amrapSection.create({
+      data: {
+        name: original.name,
+        note: original.note,
+        childrenOrder: original.childrenOrder,
+        User: {
+          connect: { id: authedUserId },
+        },
+        AmrapSession: { connect: { id: original.amrapSessionId } },
+        AmrapMoves: {
+          create: original.AmrapMoves.map((m) => ({
+            note: m.note,
+            Move: {
+              connect: { id: m.moveId },
+            },
+            Equipment: m.equipmentId
+              ? { connect: { id: m.equipmentId } }
+              : undefined,
+            User: {
+              connect: { id: authedUserId },
+            },
+          })),
+        },
       },
-      AmrapSession: { connect: { id: original.amrapSessionId } },
-      AmrapMoves: {
-        create: original.AmrapMoves.map((m) => ({
-          note: m.note,
-          Move: {
-            connect: { id: m.moveId },
-          },
-          Equipment: m.equipmentId
-            ? { connect: { id: m.equipmentId } }
-            : undefined,
-          User: {
-            connect: { id: authedUserId },
-          },
-        })),
-      },
-    },
-    select,
+      select,
+    })
+
+    await duplicateNewChildToOrder(
+      'amrapSession',
+      original.AmrapSession.id,
+      original.AmrapSession.childrenOrder,
+      original.id,
+      (copy as any).id,
+      prisma,
+    )
+
+    return copy
   })
 
   if (copy) {
@@ -300,9 +372,26 @@ export const deleteAmrapSection = async (
 ) => {
   await checkUserOwnsObject(id, 'amrapSection', authedUserId, prisma)
 
-  const deleted = await prisma.amrapSection.delete({
-    where: { id },
-    select: { id: true },
+  const deleted = await prisma.$transaction(async (prisma) => {
+    const deleted = await prisma.amrapSection.delete({
+      where: { id },
+      select: {
+        id: true,
+        AmrapSession: {
+          select: { id: true, childrenOrder: true },
+        },
+      },
+    })
+
+    await deleteChildFromOrder(
+      'amrapSession',
+      deleted.AmrapSession.id,
+      deleted.AmrapSession.childrenOrder,
+      deleted.id,
+      prisma,
+    )
+
+    return deleted
   })
 
   if (deleted) {
@@ -319,17 +408,35 @@ export const createAmrapMove = async (
   { data }: MutationCreateAmrapMoveArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  const amrapMove = await prisma.amrapMove.create({
-    data: {
-      AmrapSection: {
-        connect: data.AmrapSection,
+  await checkUserOwnsObject(
+    data.AmrapSection.id,
+    'amrapSection',
+    authedUserId,
+    prisma,
+  )
+
+  const amrapMove = await prisma.$transaction(async (prisma) => {
+    const amrapMove = await prisma.amrapMove.create({
+      data: {
+        AmrapSection: {
+          connect: data.AmrapSection,
+        },
+        Move: { connect: data.Move },
+        User: {
+          connect: { id: authedUserId },
+        },
       },
-      Move: { connect: data.Move },
-      User: {
-        connect: { id: authedUserId },
-      },
-    },
-    select,
+      select,
+    })
+
+    await pushNewChildToOrder(
+      'amrapSection',
+      data.AmrapSection.id,
+      (amrapMove as any).id,
+      prisma,
+    )
+
+    return amrapMove
   })
 
   if (amrapMove) {
@@ -376,6 +483,7 @@ export const duplicateAmrapMove = async (
   const original = await prisma.amrapMove.findUnique({
     where: { id },
     include: {
+      AmrapSection: true,
       Move: true,
       Equipment: true,
     },
@@ -385,22 +493,35 @@ export const duplicateAmrapMove = async (
     throw new ApolloError('duplicateAmrapMove: Could not retrieve data.')
   }
 
-  // Create a new copy.
-  const copy = await prisma.amrapMove.create({
-    data: {
-      note: original.note,
-      AmrapSection: { connect: { id: original.amrapSectionId } },
-      Move: {
-        connect: { id: original.moveId },
+  const copy = await prisma.$transaction(async (prisma) => {
+    // Create a new copy.
+    const copy = await prisma.amrapMove.create({
+      data: {
+        note: original.note,
+        AmrapSection: { connect: { id: original.amrapSectionId } },
+        Move: {
+          connect: { id: original.moveId },
+        },
+        Equipment: original.equipmentId
+          ? { connect: { id: original.equipmentId } }
+          : undefined,
+        User: {
+          connect: { id: authedUserId },
+        },
       },
-      Equipment: original.equipmentId
-        ? { connect: { id: original.equipmentId } }
-        : undefined,
-      User: {
-        connect: { id: authedUserId },
-      },
-    },
-    select,
+      select,
+    })
+
+    await duplicateNewChildToOrder(
+      'amrapSection',
+      original.AmrapSection.id,
+      original.AmrapSection.childrenOrder,
+      original.id,
+      (copy as any).id,
+      prisma,
+    )
+
+    return copy
   })
 
   if (copy) {
@@ -417,9 +538,29 @@ export const deleteAmrapMove = async (
 ) => {
   await checkUserOwnsObject(id, 'amrapMove', authedUserId, prisma)
 
-  const deleted = await prisma.amrapMove.delete({
-    where: { id },
-    select: { id: true },
+  const deleted = await prisma.$transaction(async (prisma) => {
+    const deleted = await prisma.amrapMove.delete({
+      where: { id },
+      select: {
+        id: true,
+        AmrapSection: {
+          select: {
+            id: true,
+            childrenOrder: true,
+          },
+        },
+      },
+    })
+
+    await deleteChildFromOrder(
+      'amrapSection',
+      deleted.AmrapSection.id,
+      deleted.AmrapSection.childrenOrder,
+      deleted.id,
+      prisma,
+    )
+
+    return deleted
   })
 
   if (deleted) {

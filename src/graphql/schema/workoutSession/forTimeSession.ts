@@ -12,7 +12,7 @@ export default gql`
     timecapSeconds: Int!
     # If forced rests are required between sections then add [rest:seconds].
     # [ForTimeSectionId, rest:60, ForTimeSectionId]
-    sectionOrder: [String!]!
+    childrenOrder: [String!]!
     ForTimeSections: [ForTimeSection!]!
   }
 
@@ -26,7 +26,7 @@ export default gql`
     note: String
     repeats: Int!
     timecapSeconds: Int
-    sectionOrder: [String!]
+    childrenOrder: [String!]
   }
 
   type ForTimeSection {
@@ -35,7 +35,7 @@ export default gql`
     updatedAt: DateTime!
     name: String
     note: String
-    moveOrder: [String!]!
+    childrenOrder: [String!]!
     ForTimeMoves: [ForTimeMove!]!
   }
 
@@ -47,7 +47,7 @@ export default gql`
     id: ID!
     name: String
     note: String
-    moveOrder: [String!]
+    childrenOrder: [String!]
   }
 
   type ForTimeMove {

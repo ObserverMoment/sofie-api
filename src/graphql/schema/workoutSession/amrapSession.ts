@@ -9,7 +9,7 @@ export default gql`
     note: String
     # If forced rests are required between sections then add [rest:seconds].
     # [AMRAPSectionId, rest:60, AMRAPSection]
-    sectionOrder: [String!]!
+    childrenOrder: [String!]!
     AmrapSections: [AmrapSection!]!
   }
 
@@ -21,7 +21,7 @@ export default gql`
     id: ID!
     name: String
     note: String
-    sectionOrder: [String!]
+    childrenOrder: [String!]
   }
 
   type AmrapSection {
@@ -30,7 +30,7 @@ export default gql`
     updatedAt: DateTime!
     name: String
     note: String
-    moveOrder: [String!]!
+    childrenOrder: [String!]!
     AmrapMoves: [AmrapMove!]!
   }
 
@@ -42,7 +42,7 @@ export default gql`
     id: ID!
     name: String
     note: String
-    moveOrder: [String!]
+    childrenOrder: [String!]
   }
 
   type AmrapMove {
