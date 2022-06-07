@@ -16,15 +16,16 @@ import {
   MutationUpdateResistanceExerciseArgs,
   MutationUpdateResistanceSessionArgs,
   MutationUpdateResistanceSetArgs,
+  MutationReorderResistanceExerciseArgs,
+  MutationReorderResistanceSetArgs,
 } from '../../../generated/graphql'
-import {
-  checkUserOwnsObject,
-  processStringListUpdateInputData,
-} from '../../utils'
+import { checkUserOwnsObject } from '../../utils'
 import {
   deleteChildFromOrder,
   duplicateNewChildToOrder,
+  insertObjectAndReorderSiblings,
   pushNewChildToOrder,
+  reorderSortableObject,
 } from './utils'
 
 //// Mutations ////
@@ -55,7 +56,6 @@ export const createResistanceSession = async (
     })
 
     await pushNewChildToOrder(
-      'workoutSession',
       data.WorkoutSession.id,
       (resistanceSession as any).id,
       prisma,
@@ -80,10 +80,7 @@ export const updateResistanceSession = async (
 
   const updated = await prisma.resistanceSession.update({
     where: { id: data.id },
-    data: {
-      ...data,
-      childrenOrder: processStringListUpdateInputData(data, 'childrenOrder'),
-    },
+    data,
     select,
   })
 
@@ -133,7 +130,6 @@ export const duplicateResistanceSession = async (
       data: {
         name: original.name,
         note: original.note,
-        childrenOrder: original.childrenOrder,
         User: {
           connect: { id: authedUserId },
         },
@@ -141,14 +137,16 @@ export const duplicateResistanceSession = async (
         ResistanceExercises: {
           create: original.ResistanceExercises.map((e) => ({
             note: e.note,
-            childrenOrder: e.childrenOrder,
+            sortPosition: e.sortPosition,
             User: {
               connect: { id: authedUserId },
             },
             ResistanceSets: {
               create: e.ResistanceSets.map((s) => ({
                 note: s.note,
+                sortPosition: s.sortPosition,
                 reps: s.reps,
+                repType: s.repType,
                 Move: {
                   connect: { id: s.moveId },
                 },
@@ -167,7 +165,6 @@ export const duplicateResistanceSession = async (
     })
 
     await duplicateNewChildToOrder(
-      'workoutSession',
       original.workoutSessionId,
       original.WorkoutSession.childrenOrder,
       original.id,
@@ -207,7 +204,6 @@ export const deleteResistanceSession = async (
     })
 
     await deleteChildFromOrder(
-      'workoutSession',
       deleted.WorkoutSession.id,
       deleted.WorkoutSession.childrenOrder,
       deleted.id,
@@ -225,7 +221,10 @@ export const deleteResistanceSession = async (
   }
 }
 
-//// Resistance Section ////
+//// Resistance Exercise ////
+//// Create, Duplicate and Delete ops return the updated parent.
+//// Returns parent ResistanceSession which has childrenOrder info
+//// Always created with child resistanceSets sideposted (nested writes)
 export const createResistanceExercise = async (
   r: any,
   { data }: MutationCreateResistanceExerciseArgs,
@@ -238,27 +237,35 @@ export const createResistanceExercise = async (
     prisma,
   )
 
-  const resistanceExercise = await prisma.$transaction(async (prisma) => {
-    const resistanceExercise = await prisma.resistanceExercise.create({
+  const created = await prisma.$transaction(async (prisma) => {
+    /// How many exercises are the already in this session. Use this to calculate the new exercise [sortPosition]. sortPosition should be zero indexed.
+    const prevExerciseCount = await prisma.resistanceExercise.count({
+      where: {
+        resistanceSessionId: data.ResistanceSession.id,
+      },
+    })
+
+    const created = await prisma.resistanceExercise.create({
       data: {
-        ResistanceSets: data.ResistanceSets
-          ? {
-              create: data.ResistanceSets.map((s) => ({
-                reps: s.reps || undefined,
-                Move: {
-                  connect: { id: s.Move.id },
-                },
-                Equipment: s.Equipment
-                  ? { connect: { id: s.Equipment.id } }
-                  : undefined,
-                User: {
-                  connect: { id: authedUserId },
-                },
-              })),
-            }
-          : undefined,
+        sortPosition: prevExerciseCount,
         ResistanceSession: {
           connect: data.ResistanceSession,
+        },
+        ResistanceSets: {
+          create: data.ResistanceSets.map((s, i) => ({
+            sortPosition: i,
+            repType: s.repType,
+            reps: s.reps,
+            Move: {
+              connect: { id: s.Move.id },
+            },
+            Equipment: s.Equipment
+              ? { connect: { id: s.Equipment.id } }
+              : undefined,
+            User: {
+              connect: { id: authedUserId },
+            },
+          })),
         },
         User: {
           connect: { id: authedUserId },
@@ -267,48 +274,19 @@ export const createResistanceExercise = async (
       select,
     })
 
-    await pushNewChildToOrder(
-      'resistanceSession',
-      data.ResistanceSession.id,
-      (resistanceExercise as any).id,
-      prisma,
-    )
-
-    return resistanceExercise
+    return created
   })
 
-  if (resistanceExercise) {
-    return resistanceExercise as ResistanceExercise
+  if (created) {
+    return created as ResistanceExercise
   } else {
     throw new ApolloError('createResistanceExercise: There was an issue.')
   }
 }
 
-export const updateResistanceExercise = async (
-  r: any,
-  { data }: MutationUpdateResistanceExerciseArgs,
-  { authedUserId, select, prisma }: Context,
-) => {
-  await checkUserOwnsObject(data.id, 'resistanceExercise', authedUserId, prisma)
-
-  const updated = await prisma.resistanceExercise.update({
-    where: { id: data.id },
-    data: {
-      ...data,
-      childrenOrder: processStringListUpdateInputData(data, 'childrenOrder'),
-    },
-    select,
-  })
-
-  if (updated) {
-    return updated as ResistanceExercise
-  } else {
-    throw new ApolloError('updateResistanceExercise: There was an issue.')
-  }
-}
-
 // Makes a full copy of the object and returns it.
 // Functionality is only available on objects that the user owns.
+// NOTE: [select] object must include [id] and [sortPosition]
 export const duplicateResistanceExercise = async (
   r: any,
   { id }: MutationDuplicateResistanceExerciseArgs,
@@ -336,20 +314,34 @@ export const duplicateResistanceExercise = async (
     )
   }
 
-  const copy = await prisma.$transaction(async (prisma) => {
+  const updatedExercises = await prisma.$transaction(async (prisma) => {
+    const prevExercises = await prisma.resistanceExercise.findMany({
+      where: {
+        resistanceSessionId: original.ResistanceSession.id,
+      },
+      select: {
+        id: true,
+        sortPosition: true,
+      },
+    })
+
+    const newItemSortPosition = original.sortPosition + 1
+
     // Create a new copy.
     const copy = await prisma.resistanceExercise.create({
       data: {
+        sortPosition: newItemSortPosition,
         note: original.note,
-        childrenOrder: original.childrenOrder,
         ResistanceSession: { connect: { id: original.resistanceSessionId } },
         User: {
           connect: { id: authedUserId },
         },
         ResistanceSets: {
           create: original.ResistanceSets.map((s) => ({
+            sortPosition: s.sortPosition,
             note: s.note,
             reps: s.reps,
+            repType: s.repType,
             Move: {
               connect: { id: s.moveId },
             },
@@ -362,25 +354,57 @@ export const duplicateResistanceExercise = async (
           })),
         },
       },
-      select,
+      select: {
+        id: true,
+        sortPosition: true,
+      },
     })
 
-    await duplicateNewChildToOrder(
-      'resistanceSession',
-      original.ResistanceSession.id,
-      original.ResistanceSession.childrenOrder,
-      original.id,
-      (copy as any).id,
+    await insertObjectAndReorderSiblings(
+      'resistanceExercise',
+      prevExercises,
+      {
+        id: copy.id,
+        sortPosition: copy.sortPosition,
+      },
+      newItemSortPosition,
       prisma,
     )
 
-    return copy
+    const updated = await prisma.resistanceExercise.findMany({
+      where: {
+        resistanceSessionId: original.ResistanceSession.id,
+      },
+      select,
+    })
+
+    return updated
   })
 
-  if (copy) {
-    return copy as ResistanceExercise
+  if (updatedExercises) {
+    return updatedExercises as ResistanceExercise[]
   } else {
     throw new ApolloError('duplicateResistanceExercise: There was an issue.')
+  }
+}
+
+export const updateResistanceExercise = async (
+  r: any,
+  { data }: MutationUpdateResistanceExerciseArgs,
+  { authedUserId, select, prisma }: Context,
+) => {
+  await checkUserOwnsObject(data.id, 'resistanceExercise', authedUserId, prisma)
+
+  const updated = await prisma.resistanceExercise.update({
+    where: { id: data.id },
+    data,
+    select,
+  })
+
+  if (updated) {
+    return updated as ResistanceExercise
+  } else {
+    throw new ApolloError('updateResistanceExercise: There was an issue.')
   }
 }
 
@@ -391,24 +415,9 @@ export const deleteResistanceExercise = async (
 ) => {
   await checkUserOwnsObject(id, 'resistanceExercise', authedUserId, prisma)
 
-  const deleted = await prisma.$transaction(async (prisma) => {
-    const deleted = await prisma.resistanceExercise.delete({
-      where: { id },
-      select: {
-        id: true,
-        ResistanceSession: { select: { id: true, childrenOrder: true } },
-      },
-    })
-
-    await deleteChildFromOrder(
-      'resistanceSession',
-      deleted.ResistanceSession.id,
-      deleted.ResistanceSession.childrenOrder,
-      deleted.id,
-      prisma,
-    )
-
-    return deleted
+  const deleted = await prisma.resistanceExercise.delete({
+    where: { id },
+    select: { id: true },
   })
 
   if (deleted) {
@@ -419,7 +428,55 @@ export const deleteResistanceExercise = async (
   }
 }
 
+export const reorderResistanceExercise = async (
+  r: any,
+  { id, moveTo }: MutationReorderResistanceExerciseArgs,
+  { authedUserId, select, prisma }: Context,
+) => {
+  await checkUserOwnsObject(id, 'resistanceExercise', authedUserId, prisma)
+
+  const withParent = await prisma.resistanceExercise.findUnique({
+    where: { id },
+    select: {
+      resistanceSessionId: true,
+    },
+  })
+
+  if (!withParent) {
+    throw new ApolloError(
+      'reorderResistanceExercise: Could not retrieve parent data.',
+    )
+  }
+
+  const parentId = withParent.resistanceSessionId
+
+  await reorderSortableObject(
+    'resistanceExercise',
+    id,
+    'resistanceSession',
+    parentId,
+    moveTo,
+    prisma,
+  )
+
+  const updated = await prisma.resistanceExercise.findMany({
+    where: {
+      resistanceSessionId: parentId,
+    },
+    select,
+  })
+
+  if (updated) {
+    return updated as ResistanceExercise[]
+  } else {
+    console.error(`reorderResistanceExercise: There was an issue.`)
+    throw new ApolloError('reorderResistanceExercise: There was an issue.')
+  }
+}
+
 //// Resistance Set ////
+//// Create, Duplicate and Delete ops return the updated parent.
+//// Returns parent ResistanceSession which has childrenOrder info
 export const createResistanceSet = async (
   r: any,
   { data }: MutationCreateResistanceSetArgs,
@@ -433,8 +490,17 @@ export const createResistanceSet = async (
   )
 
   const resistanceSet = await prisma.$transaction(async (prisma) => {
+    /// How many sets are the already in this exercise. Use this to calculate the new set [sortPosition]. sortPosition should be zero indexed.
+    const prevSetCount = await prisma.resistanceSet.count({
+      where: {
+        resistanceExerciseId: data.ResistanceExercise.id,
+      },
+    })
+
     const resistanceSet = await prisma.resistanceSet.create({
       data: {
+        sortPosition: prevSetCount,
+        repType: 'REPS',
         ResistanceExercise: {
           connect: data.ResistanceExercise,
         },
@@ -446,13 +512,6 @@ export const createResistanceSet = async (
       select,
     })
 
-    await pushNewChildToOrder(
-      'resistanceExercise',
-      data.ResistanceExercise.id,
-      (resistanceSet as any).id,
-      prisma,
-    )
-
     return resistanceSet
   })
 
@@ -463,33 +522,9 @@ export const createResistanceSet = async (
   }
 }
 
-export const updateResistanceSet = async (
-  r: any,
-  { data }: MutationUpdateResistanceSetArgs,
-  { authedUserId, select, prisma }: Context,
-) => {
-  await checkUserOwnsObject(data.id, 'resistanceSet', authedUserId, prisma)
-
-  const updated = await prisma.resistanceSet.update({
-    where: { id: data.id },
-    data: {
-      ...data,
-      reps: data.reps || undefined,
-      Move: data.Move ? { connect: data.Move } : undefined,
-      Equipment: data.Equipment ? { connect: data.Equipment } : undefined,
-    },
-    select,
-  })
-
-  if (updated) {
-    return updated as ResistanceSet
-  } else {
-    throw new ApolloError('updateResistanceSet: There was an issue.')
-  }
-}
-
 // Makes a full copy of the object and returns it.
 // Functionality is only available on objects that the user owns.
+// NOTE: {select} object must include [id] and [sortPosition]
 export const duplicateResistanceSet = async (
   r: any,
   { id }: MutationDuplicateResistanceSetArgs,
@@ -511,12 +546,26 @@ export const duplicateResistanceSet = async (
     throw new ApolloError('duplicateResistanceSet: Could not retrieve data.')
   }
 
-  const copy = await prisma.$transaction(async (prisma) => {
+  const updatedSets = await prisma.$transaction(async (prisma) => {
+    const prevSets = await prisma.resistanceSet.findMany({
+      where: {
+        resistanceExerciseId: original.ResistanceExercise.id,
+      },
+      select: {
+        id: true,
+        sortPosition: true,
+      },
+    })
+
+    const newItemSortPosition = original.sortPosition + 1
+
     // Create a new copy.
     const copy = await prisma.resistanceSet.create({
       data: {
+        sortPosition: newItemSortPosition,
         note: original.note,
         reps: original.reps,
+        repType: original.repType,
         ResistanceExercise: { connect: { id: original.resistanceExerciseId } },
         Move: {
           connect: { id: original.moveId },
@@ -528,25 +577,67 @@ export const duplicateResistanceSet = async (
           connect: { id: authedUserId },
         },
       },
-      select,
+      select: {
+        id: true,
+        sortPosition: true,
+      },
     })
 
-    await duplicateNewChildToOrder(
-      'resistanceExercise',
-      original.ResistanceExercise.id,
-      original.ResistanceExercise.childrenOrder,
-      original.id,
-      (copy as any).id,
+    await insertObjectAndReorderSiblings(
+      'resistanceSet',
+      prevSets,
+      {
+        id: copy.id,
+        sortPosition: copy.sortPosition,
+      },
+      newItemSortPosition,
       prisma,
     )
 
-    return copy
+    const updated = await prisma.resistanceSet.findMany({
+      where: {
+        resistanceExerciseId: original.ResistanceExercise.id,
+      },
+      select,
+    })
+
+    return updated
   })
 
-  if (copy) {
-    return copy as ResistanceSet
+  if (updatedSets) {
+    return updatedSets as ResistanceSet[]
   } else {
     throw new ApolloError('duplicateResistanceSet: There was an issue.')
+  }
+}
+
+export const updateResistanceSet = async (
+  r: any,
+  { data }: MutationUpdateResistanceSetArgs,
+  { authedUserId, select, prisma }: Context,
+) => {
+  await checkUserOwnsObject(data.id, 'resistanceSet', authedUserId, prisma)
+
+  const updated = await prisma.resistanceSet.update({
+    where: { id: data.id },
+    data: {
+      ...data,
+      reps: data.reps || undefined,
+      repType: data.repType || undefined,
+      Move: data.Move ? { connect: data.Move } : undefined,
+      Equipment: data.hasOwnProperty('Equipment')
+        ? data.Equipment
+          ? { connect: data.Equipment }
+          : { disconnect: true }
+        : undefined,
+    },
+    select,
+  })
+
+  if (updated) {
+    return updated as ResistanceSet
+  } else {
+    throw new ApolloError('updateResistanceSet: There was an issue.')
   }
 }
 
@@ -557,29 +648,9 @@ export const deleteResistanceSet = async (
 ) => {
   await checkUserOwnsObject(id, 'resistanceSet', authedUserId, prisma)
 
-  const deleted = await prisma.$transaction(async (prisma) => {
-    const deleted = await prisma.resistanceSet.delete({
-      where: { id },
-      select: {
-        id: true,
-        ResistanceExercise: {
-          select: {
-            id: true,
-            childrenOrder: true,
-          },
-        },
-      },
-    })
-
-    await deleteChildFromOrder(
-      'resistanceExercise',
-      deleted.ResistanceExercise.id,
-      deleted.ResistanceExercise.childrenOrder,
-      deleted.id,
-      prisma,
-    )
-
-    return deleted
+  const deleted = await prisma.resistanceSet.delete({
+    where: { id },
+    select: { id: true },
   })
 
   if (deleted) {
@@ -587,5 +658,51 @@ export const deleteResistanceSet = async (
   } else {
     console.error(`deleteResistanceSet: There was an issue.`)
     throw new ApolloError('deleteResistanceSet: There was an issue.')
+  }
+}
+
+export const reorderResistanceSet = async (
+  r: any,
+  { id, moveTo }: MutationReorderResistanceSetArgs,
+  { authedUserId, select, prisma }: Context,
+) => {
+  await checkUserOwnsObject(id, 'resistanceSet', authedUserId, prisma)
+
+  const withParent = await prisma.resistanceSet.findUnique({
+    where: { id },
+    select: {
+      resistanceExerciseId: true,
+    },
+  })
+
+  if (!withParent) {
+    throw new ApolloError(
+      'reorderResistanceSet: Could not retrieve parent data.',
+    )
+  }
+
+  const parentId = withParent.resistanceExerciseId
+
+  await reorderSortableObject(
+    'resistanceSet',
+    id,
+    'resistanceExercise',
+    parentId,
+    moveTo,
+    prisma,
+  )
+
+  const updated = await prisma.resistanceSet.findMany({
+    where: {
+      resistanceExerciseId: parentId,
+    },
+    select,
+  })
+
+  if (updated) {
+    return updated as ResistanceSet[]
+  } else {
+    console.error(`reorderResistanceSet: There was an issue.`)
+    throw new ApolloError('reorderResistanceSet: There was an issue.')
   }
 }

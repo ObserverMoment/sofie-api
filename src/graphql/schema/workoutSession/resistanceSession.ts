@@ -7,7 +7,6 @@ export default gql`
     updatedAt: DateTime!
     name: String
     note: String
-    childrenOrder: [String!]!
     ResistanceExercises: [ResistanceExercise!]!
   }
 
@@ -19,25 +18,25 @@ export default gql`
     id: ID!
     name: String
     note: String
-    childrenOrder: [String!]
   }
 
   type ResistanceExercise {
     id: ID!
     createdAt: DateTime!
     updatedAt: DateTime!
+    sortPosition: Int!
     note: String
-    childrenOrder: [String!]!
     ResistanceSets: [ResistanceSet!]!
   }
 
   input CreateResistanceExerciseInput {
     ResistanceSession: ConnectRelationInput!
-    ResistanceSets: [CreateResistanceSetInExerciseInput!]
+    ResistanceSets: [CreateResistanceSetInExerciseInput!]!
   }
 
   input CreateResistanceSetInExerciseInput {
-    reps: Int
+    reps: [Int!]!
+    repType: ResistanceSetRepType!
     Equipment: ConnectRelationInput
     Move: ConnectRelationInput!
   }
@@ -45,17 +44,26 @@ export default gql`
   input UpdateResistanceExerciseInput {
     id: ID!
     note: String
-    childrenOrder: [String!]
   }
 
   type ResistanceSet {
     id: ID!
     createdAt: DateTime!
     updatedAt: DateTime!
+    sortPosition: Int!
     note: String
-    reps: Int
+    reps: [Int!]!
+    repType: ResistanceSetRepType!
     Move: Move!
     Equipment: Equipment
+  }
+
+  enum ResistanceSetRepType {
+    REPS
+    SECONDS
+    MINUTES
+    CALORIES
+    METRES
   }
 
   input CreateResistanceSetInput {
@@ -66,7 +74,8 @@ export default gql`
   input UpdateResistanceSetInput {
     id: ID!
     note: String
-    reps: Int
+    reps: [Int!]
+    repType: ResistanceSetRepType
     Move: ConnectRelationInput
     Equipment: ConnectRelationInput
   }

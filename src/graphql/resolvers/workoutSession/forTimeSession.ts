@@ -54,7 +54,6 @@ export const createForTimeSession = async (
     })
 
     await pushNewChildToOrder(
-      'workoutSession',
       data.WorkoutSession.id,
       (forTimeSession as any).id,
       prisma,
@@ -169,7 +168,6 @@ export const duplicateForTimeSession = async (
     })
 
     await duplicateNewChildToOrder(
-      'workoutSession',
       original.workoutSessionId,
       original.WorkoutSession.childrenOrder,
       original.id,
@@ -209,7 +207,6 @@ export const deleteForTimeSession = async (
     })
 
     await deleteChildFromOrder(
-      'workoutSession',
       deleted.WorkoutSession.id,
       deleted.WorkoutSession.childrenOrder,
       deleted.id,
@@ -252,13 +249,6 @@ export const createForTimeSection = async (
       },
       select,
     })
-
-    await pushNewChildToOrder(
-      'forTimeSession',
-      data.ForTimeSession.id,
-      (forTimeSection as any).id,
-      prisma,
-    )
 
     return forTimeSection
   })
@@ -349,15 +339,6 @@ export const duplicateForTimeSection = async (
       select,
     })
 
-    await duplicateNewChildToOrder(
-      'forTimeSession',
-      original.ForTimeSession.id,
-      original.ForTimeSession.childrenOrder,
-      original.id,
-      (copy as any).id,
-      prisma,
-    )
-
     return copy
   })
 
@@ -385,14 +366,6 @@ export const deleteForTimeSection = async (
         },
       },
     })
-
-    await deleteChildFromOrder(
-      'forTimeSession',
-      deleted.ForTimeSession.id,
-      deleted.ForTimeSession.childrenOrder,
-      deleted.id,
-      prisma,
-    )
 
     return deleted
   })
@@ -431,13 +404,6 @@ export const createForTimeMove = async (
       },
       select,
     })
-
-    await pushNewChildToOrder(
-      'forTimeSection',
-      data.ForTimeSection.id,
-      (forTimeMove as any).id,
-      prisma,
-    )
 
     return forTimeMove
   })
@@ -515,15 +481,6 @@ export const duplicateForTimeMove = async (
       select,
     })
 
-    await duplicateNewChildToOrder(
-      'forTimeSection',
-      original.ForTimeSection.id,
-      original.ForTimeSection.childrenOrder,
-      original.id,
-      (copy as any).id,
-      prisma,
-    )
-
     return copy
   })
 
@@ -554,14 +511,6 @@ export const deleteForTimeMove = async (
         },
       },
     })
-
-    await deleteChildFromOrder(
-      'forTimeSection',
-      deleted.ForTimeSection.id,
-      deleted.ForTimeSection.childrenOrder,
-      deleted.id,
-      prisma,
-    )
 
     return deleted
   })

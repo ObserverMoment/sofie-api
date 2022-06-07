@@ -22,6 +22,11 @@ import {
   processStringListUpdateInputData,
   processNumberListUpdateInputData,
 } from '../../utils'
+import {
+  deleteChildFromOrder,
+  duplicateNewChildToOrder,
+  pushNewChildToOrder,
+} from './utils'
 
 //// Mutations ////
 //// Interval Session ////
@@ -30,16 +35,33 @@ export const createIntervalSession = async (
   { data }: MutationCreateIntervalSessionArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  const intervalSession = await prisma.intervalSession.create({
-    data: {
-      WorkoutSession: {
-        connect: data.WorkoutSession,
+  await checkUserOwnsObject(
+    data.WorkoutSession.id,
+    'workoutSession',
+    authedUserId,
+    prisma,
+  )
+
+  const intervalSession = await prisma.$transaction(async (prisma) => {
+    const intervalSession = await prisma.intervalSession.create({
+      data: {
+        WorkoutSession: {
+          connect: data.WorkoutSession,
+        },
+        User: {
+          connect: { id: authedUserId },
+        },
       },
-      User: {
-        connect: { id: authedUserId },
-      },
-    },
-    select,
+      select,
+    })
+
+    await pushNewChildToOrder(
+      data.WorkoutSession.id,
+      (intervalSession as any).id,
+      prisma,
+    )
+
+    return intervalSession
   })
 
   if (intervalSession) {
@@ -87,6 +109,7 @@ export const duplicateIntervalSession = async (
   const original = await prisma.intervalSession.findUnique({
     where: { id },
     include: {
+      WorkoutSession: true,
       IntervalExercises: {
         include: {
           IntervalSets: {
@@ -104,43 +127,55 @@ export const duplicateIntervalSession = async (
     throw new ApolloError('duplicateIntervalSession: Could not retrieve data.')
   }
 
-  // Create a new copy.
-  const copy = await prisma.intervalSession.create({
-    data: {
-      name: original.name,
-      note: original.note,
-      repeats: original.repeats,
-      childrenOrder: original.childrenOrder,
-      intervals: original.intervals,
-      WorkoutSession: { connect: { id: original.workoutSessionId } },
-      User: {
-        connect: { id: authedUserId },
+  const copy = await prisma.$transaction(async (prisma) => {
+    // Create a new copy.
+    const copy = await prisma.intervalSession.create({
+      data: {
+        name: original.name,
+        note: original.note,
+        repeats: original.repeats,
+        childrenOrder: original.childrenOrder,
+        intervals: original.intervals,
+        WorkoutSession: { connect: { id: original.workoutSessionId } },
+        User: {
+          connect: { id: authedUserId },
+        },
+        IntervalExercises: {
+          create: original.IntervalExercises.map((e) => ({
+            note: e.note,
+            childrenOrder: e.childrenOrder,
+            User: {
+              connect: { id: authedUserId },
+            },
+            IntervalSets: {
+              create: e.IntervalSets.map((s) => ({
+                note: s.note,
+                Move: {
+                  connect: { id: s.moveId },
+                },
+                Equipment: s.equipmentId
+                  ? { connect: { id: s.equipmentId } }
+                  : undefined,
+                User: {
+                  connect: { id: authedUserId },
+                },
+              })),
+            },
+          })),
+        },
       },
-      IntervalExercises: {
-        create: original.IntervalExercises.map((e) => ({
-          note: e.note,
-          childrenOrder: e.childrenOrder,
-          User: {
-            connect: { id: authedUserId },
-          },
-          IntervalSets: {
-            create: e.IntervalSets.map((s) => ({
-              note: s.note,
-              Move: {
-                connect: { id: s.moveId },
-              },
-              Equipment: s.equipmentId
-                ? { connect: { id: s.equipmentId } }
-                : undefined,
-              User: {
-                connect: { id: authedUserId },
-              },
-            })),
-          },
-        })),
-      },
-    },
-    select,
+      select,
+    })
+
+    await duplicateNewChildToOrder(
+      original.workoutSessionId,
+      original.WorkoutSession.childrenOrder,
+      original.id,
+      (copy as any).id,
+      prisma,
+    )
+
+    return copy
   })
 
   if (copy) {
@@ -157,9 +192,28 @@ export const deleteIntervalSession = async (
 ) => {
   await checkUserOwnsObject(id, 'intervalSession', authedUserId, prisma)
 
-  const deleted = await prisma.intervalSession.delete({
-    where: { id },
-    select: { id: true },
+  const deleted = await prisma.$transaction(async (prisma) => {
+    const deleted = await prisma.intervalSession.delete({
+      where: { id },
+      select: {
+        id: true,
+        WorkoutSession: {
+          select: {
+            id: true,
+            childrenOrder: true,
+          },
+        },
+      },
+    })
+
+    await deleteChildFromOrder(
+      deleted.WorkoutSession.id,
+      deleted.WorkoutSession.childrenOrder,
+      deleted.id,
+      prisma,
+    )
+
+    return deleted
   })
 
   if (deleted) {
@@ -176,16 +230,26 @@ export const createIntervalExercise = async (
   { data }: MutationCreateIntervalExerciseArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  const intervalExercise = await prisma.intervalExercise.create({
-    data: {
-      IntervalSession: {
-        connect: data.IntervalSession,
+  await checkUserOwnsObject(
+    data.IntervalSession.id,
+    'intervalSession',
+    authedUserId,
+    prisma,
+  )
+
+  const intervalExercise = await prisma.$transaction(async (prisma) => {
+    const intervalExercise = await prisma.intervalExercise.create({
+      data: {
+        IntervalSession: {
+          connect: data.IntervalSession,
+        },
+        User: {
+          connect: { id: authedUserId },
+        },
       },
-      User: {
-        connect: { id: authedUserId },
-      },
-    },
-    select,
+      select,
+    })
+    return intervalExercise
   })
 
   if (intervalExercise) {
@@ -231,6 +295,7 @@ export const duplicateIntervalExercise = async (
   const original = await prisma.intervalExercise.findUnique({
     where: { id },
     include: {
+      IntervalSession: true,
       IntervalSets: {
         include: {
           Move: true,
@@ -244,31 +309,35 @@ export const duplicateIntervalExercise = async (
     throw new ApolloError('duplicateIntervalExercise: Could not retrieve data.')
   }
 
-  // Create a new copy.
-  const copy = await prisma.intervalExercise.create({
-    data: {
-      note: original.note,
-      childrenOrder: original.childrenOrder,
-      IntervalSession: { connect: { id: original.intervalSessionId } },
-      User: {
-        connect: { id: authedUserId },
+  const copy = await prisma.$transaction(async (prisma) => {
+    // Create a new copy.
+    const copy = await prisma.intervalExercise.create({
+      data: {
+        note: original.note,
+        childrenOrder: original.childrenOrder,
+        IntervalSession: { connect: { id: original.intervalSessionId } },
+        User: {
+          connect: { id: authedUserId },
+        },
+        IntervalSets: {
+          create: original.IntervalSets.map((s) => ({
+            note: s.note,
+            Move: {
+              connect: { id: s.moveId },
+            },
+            Equipment: s.equipmentId
+              ? { connect: { id: s.equipmentId } }
+              : undefined,
+            User: {
+              connect: { id: authedUserId },
+            },
+          })),
+        },
       },
-      IntervalSets: {
-        create: original.IntervalSets.map((s) => ({
-          note: s.note,
-          Move: {
-            connect: { id: s.moveId },
-          },
-          Equipment: s.equipmentId
-            ? { connect: { id: s.equipmentId } }
-            : undefined,
-          User: {
-            connect: { id: authedUserId },
-          },
-        })),
-      },
-    },
-    select,
+      select,
+    })
+
+    return copy
   })
 
   if (copy) {
@@ -285,9 +354,16 @@ export const deleteIntervalExercise = async (
 ) => {
   await checkUserOwnsObject(id, 'intervalExercise', authedUserId, prisma)
 
-  const deleted = await prisma.intervalExercise.delete({
-    where: { id },
-    select: { id: true },
+  const deleted = await prisma.$transaction(async (prisma) => {
+    const deleted = await prisma.intervalExercise.delete({
+      where: { id },
+      select: {
+        id: true,
+        IntervalSession: { select: { id: true, childrenOrder: true } },
+      },
+    })
+
+    return deleted
   })
 
   if (deleted) {
@@ -304,17 +380,28 @@ export const createIntervalSet = async (
   { data }: MutationCreateIntervalSetArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  const intervalSet = await prisma.intervalSet.create({
-    data: {
-      IntervalExercise: {
-        connect: data.IntervalExercise,
+  await checkUserOwnsObject(
+    data.IntervalExercise.id,
+    'intervalExercise',
+    authedUserId,
+    prisma,
+  )
+
+  const intervalSet = await prisma.$transaction(async (prisma) => {
+    const intervalSet = await prisma.intervalSet.create({
+      data: {
+        IntervalExercise: {
+          connect: data.IntervalExercise,
+        },
+        Move: { connect: data.Move },
+        User: {
+          connect: { id: authedUserId },
+        },
       },
-      Move: { connect: data.Move },
-      User: {
-        connect: { id: authedUserId },
-      },
-    },
-    select,
+      select,
+    })
+
+    return intervalSet
   })
 
   if (intervalSet) {
@@ -361,6 +448,7 @@ export const duplicateIntervalSet = async (
   const original = await prisma.intervalSet.findUnique({
     where: { id },
     include: {
+      IntervalExercise: true,
       Move: true,
       Equipment: true,
     },
@@ -370,22 +458,26 @@ export const duplicateIntervalSet = async (
     throw new ApolloError('duplicateIntervalSet: Could not retrieve data.')
   }
 
-  // Create a new copy.
-  const copy = await prisma.intervalSet.create({
-    data: {
-      note: original.note,
-      IntervalExercise: { connect: { id: original.intervalExerciseId } },
-      Move: {
-        connect: { id: original.moveId },
+  const copy = await prisma.$transaction(async (prisma) => {
+    // Create a new copy.
+    const copy = await prisma.intervalSet.create({
+      data: {
+        note: original.note,
+        IntervalExercise: { connect: { id: original.intervalExerciseId } },
+        Move: {
+          connect: { id: original.moveId },
+        },
+        Equipment: original.equipmentId
+          ? { connect: { id: original.equipmentId } }
+          : undefined,
+        User: {
+          connect: { id: authedUserId },
+        },
       },
-      Equipment: original.equipmentId
-        ? { connect: { id: original.equipmentId } }
-        : undefined,
-      User: {
-        connect: { id: authedUserId },
-      },
-    },
-    select,
+      select,
+    })
+
+    return copy
   })
 
   if (copy) {
@@ -402,9 +494,16 @@ export const deleteIntervalSet = async (
 ) => {
   await checkUserOwnsObject(id, 'intervalSet', authedUserId, prisma)
 
-  const deleted = await prisma.intervalSet.delete({
-    where: { id },
-    select: { id: true },
+  const deleted = await prisma.$transaction(async (prisma) => {
+    const deleted = await prisma.intervalSet.delete({
+      where: { id },
+      select: {
+        id: true,
+        IntervalExercise: { select: { id: true, childrenOrder: true } },
+      },
+    })
+
+    return deleted
   })
 
   if (deleted) {

@@ -54,7 +54,6 @@ export const createAmrapSession = async (
     })
 
     await pushNewChildToOrder(
-      'workoutSession',
       data.WorkoutSession.id,
       (amrapSession as any).id,
       prisma,
@@ -166,7 +165,6 @@ export const duplicateAmrapSession = async (
     })
 
     await duplicateNewChildToOrder(
-      'workoutSession',
       original.workoutSessionId,
       original.WorkoutSession.childrenOrder,
       original.id,
@@ -206,7 +204,6 @@ export const deleteAmrapSession = async (
     })
 
     await deleteChildFromOrder(
-      'workoutSession',
       deleted.WorkoutSession.id,
       deleted.WorkoutSession.childrenOrder,
       deleted.id,
@@ -249,13 +246,6 @@ export const createAmrapSection = async (
       },
       select,
     })
-
-    await pushNewChildToOrder(
-      'amrapSession',
-      data.AmrapSession.id,
-      (amrapSection as any).id,
-      prisma,
-    )
 
     return amrapSection
   })
@@ -346,15 +336,6 @@ export const duplicateAmrapSection = async (
       select,
     })
 
-    await duplicateNewChildToOrder(
-      'amrapSession',
-      original.AmrapSession.id,
-      original.AmrapSession.childrenOrder,
-      original.id,
-      (copy as any).id,
-      prisma,
-    )
-
     return copy
   })
 
@@ -382,14 +363,6 @@ export const deleteAmrapSection = async (
         },
       },
     })
-
-    await deleteChildFromOrder(
-      'amrapSession',
-      deleted.AmrapSession.id,
-      deleted.AmrapSession.childrenOrder,
-      deleted.id,
-      prisma,
-    )
 
     return deleted
   })
@@ -428,13 +401,6 @@ export const createAmrapMove = async (
       },
       select,
     })
-
-    await pushNewChildToOrder(
-      'amrapSection',
-      data.AmrapSection.id,
-      (amrapMove as any).id,
-      prisma,
-    )
 
     return amrapMove
   })
@@ -512,15 +478,6 @@ export const duplicateAmrapMove = async (
       select,
     })
 
-    await duplicateNewChildToOrder(
-      'amrapSection',
-      original.AmrapSection.id,
-      original.AmrapSection.childrenOrder,
-      original.id,
-      (copy as any).id,
-      prisma,
-    )
-
     return copy
   })
 
@@ -551,14 +508,6 @@ export const deleteAmrapMove = async (
         },
       },
     })
-
-    await deleteChildFromOrder(
-      'amrapSection',
-      deleted.AmrapSection.id,
-      deleted.AmrapSection.childrenOrder,
-      deleted.id,
-      prisma,
-    )
 
     return deleted
   })

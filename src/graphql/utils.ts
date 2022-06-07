@@ -289,7 +289,7 @@ export async function reorderItemsForInsertDelete({
 }: ReorderItemsForInsertDeleteProps) {
   const parentIdKey = `${parentType}Id`
   try {
-    // All items with sortPosition greater than or equal to the new section will be affected.
+    // All items with sortPosition greater than or equal to the new object will be affected.
     // When creating a new item at the end of the list, [affected] will be empty.
     const affected: AffectedItem[] = await prisma[objectType].findMany({
       where: {

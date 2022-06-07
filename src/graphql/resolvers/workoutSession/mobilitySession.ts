@@ -11,6 +11,11 @@ import {
   checkUserOwnsObject,
   processStringListUpdateInputData,
 } from '../../utils'
+import {
+  deleteChildFromOrder,
+  duplicateNewChildToOrder,
+  pushNewChildToOrder,
+} from './utils'
 
 //// Mutations ////
 //// Mobility Session ////
@@ -19,16 +24,33 @@ export const createMobilitySession = async (
   { data }: MutationCreateMobilitySessionArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  const mobilitySession = await prisma.mobilitySession.create({
-    data: {
-      WorkoutSession: {
-        connect: data.WorkoutSession,
+  await checkUserOwnsObject(
+    data.WorkoutSession.id,
+    'workoutSession',
+    authedUserId,
+    prisma,
+  )
+
+  const mobilitySession = await prisma.$transaction(async (prisma) => {
+    const mobilitySession = await prisma.mobilitySession.create({
+      data: {
+        WorkoutSession: {
+          connect: data.WorkoutSession,
+        },
+        User: {
+          connect: { id: authedUserId },
+        },
       },
-      User: {
-        connect: { id: authedUserId },
-      },
-    },
-    select,
+      select,
+    })
+
+    await pushNewChildToOrder(
+      data.WorkoutSession.id,
+      (mobilitySession as any).id,
+      prisma,
+    )
+
+    return mobilitySession
   })
 
   if (mobilitySession) {
@@ -79,6 +101,7 @@ export const duplicateMobilitySession = async (
   const original = await prisma.mobilitySession.findUnique({
     where: { id },
     include: {
+      WorkoutSession: true,
       MobilityMoves: true,
     },
   })
@@ -87,23 +110,35 @@ export const duplicateMobilitySession = async (
     throw new ApolloError('duplicateMobilitySession: Could not retrieve data.')
   }
 
-  // Create a new copy.
-  const copy = await prisma.mobilitySession.create({
-    data: {
-      name: original.name,
-      note: original.note,
-      childrenOrder: original.childrenOrder,
-      WorkoutSession: { connect: { id: original.workoutSessionId } },
-      User: {
-        connect: { id: authedUserId },
+  const copy = await prisma.$transaction(async (prisma) => {
+    // Create a new copy.
+    const copy = await prisma.mobilitySession.create({
+      data: {
+        name: original.name,
+        note: original.note,
+        childrenOrder: original.childrenOrder,
+        WorkoutSession: { connect: { id: original.workoutSessionId } },
+        User: {
+          connect: { id: authedUserId },
+        },
+        MobilityMoves: {
+          connect: original.MobilityMoves.map((m) => ({
+            id: m.id,
+          })),
+        },
       },
-      MobilityMoves: {
-        connect: original.MobilityMoves.map((m) => ({
-          id: m.id,
-        })),
-      },
-    },
-    select,
+      select,
+    })
+
+    await duplicateNewChildToOrder(
+      original.workoutSessionId,
+      original.WorkoutSession.childrenOrder,
+      original.id,
+      (copy as any).id,
+      prisma,
+    )
+
+    return copy
   })
 
   if (copy) {
@@ -120,9 +155,23 @@ export const deleteMobilitySession = async (
 ) => {
   await checkUserOwnsObject(id, 'mobilitySession', authedUserId, prisma)
 
-  const deleted = await prisma.mobilitySession.delete({
-    where: { id },
-    select: { id: true },
+  const deleted = await prisma.$transaction(async (prisma) => {
+    const deleted = await prisma.mobilitySession.delete({
+      where: { id },
+      select: {
+        id: true,
+        WorkoutSession: { select: { id: true, childrenOrder: true } },
+      },
+    })
+
+    await deleteChildFromOrder(
+      deleted.WorkoutSession.id,
+      deleted.WorkoutSession.childrenOrder,
+      deleted.id,
+      prisma,
+    )
+
+    return deleted
   })
 
   if (deleted) {

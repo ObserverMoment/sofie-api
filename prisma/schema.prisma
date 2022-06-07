@@ -456,7 +456,6 @@ model ResistanceSession {
   updatedAt           DateTime             @updatedAt
   name                String?
   note                String?
-  childrenOrder       String[]
   ResistanceExercises ResistanceExercise[]
   WorkoutSession      WorkoutSession       @relation(fields: [workoutSessionId], references: [id], onDelete: Cascade)
   workoutSessionId    String
@@ -468,8 +467,8 @@ model ResistanceExercise {
   id                  String            @id @default(uuid())
   createdAt           DateTime          @default(now())
   updatedAt           DateTime          @updatedAt
+  sortPosition        Int
   note                String?
-  childrenOrder       String[]
   ResistanceSets      ResistanceSet[]
   ResistanceSession   ResistanceSession @relation(fields: [resistanceSessionId], references: [id], onDelete: Cascade)
   resistanceSessionId String
@@ -478,19 +477,29 @@ model ResistanceExercise {
 }
 
 model ResistanceSet {
-  id                   String             @id @default(uuid())
-  createdAt            DateTime           @default(now())
-  updatedAt            DateTime           @updatedAt
+  id                   String               @id @default(uuid())
+  createdAt            DateTime             @default(now())
+  updatedAt            DateTime             @updatedAt
+  sortPosition         Int
   note                 String?
-  reps                 Int                @default(10)
-  Move                 Move               @relation(fields: [moveId], references: [id])
+  reps                 Int[]
+  repType              ResistanceSetRepType
+  Move                 Move                 @relation(fields: [moveId], references: [id])
   moveId               String
-  Equipment            Equipment?         @relation(fields: [equipmentId], references: [id])
+  Equipment            Equipment?           @relation(fields: [equipmentId], references: [id])
   equipmentId          String?
-  ResistanceExercise   ResistanceExercise @relation(fields: [resistanceExerciseId], references: [id], onDelete: Cascade)
+  ResistanceExercise   ResistanceExercise   @relation(fields: [resistanceExerciseId], references: [id], onDelete: Cascade)
   resistanceExerciseId String
-  User                 User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  User                 User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId               String
+}
+
+enum ResistanceSetRepType {
+  REPS
+  SECONDS
+  MINUTES
+  CALORIES
+  METRES
 }
 
 model IntervalSession {

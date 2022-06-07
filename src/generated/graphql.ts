@@ -579,7 +579,7 @@ export type CreateMoveInput = {
 
 export type CreateResistanceExerciseInput = {
   ResistanceSession: ConnectRelationInput;
-  ResistanceSets?: InputMaybe<Array<CreateResistanceSetInExerciseInput>>;
+  ResistanceSets: Array<CreateResistanceSetInExerciseInput>;
 };
 
 export type CreateResistanceSessionInput = {
@@ -589,7 +589,8 @@ export type CreateResistanceSessionInput = {
 export type CreateResistanceSetInExerciseInput = {
   Equipment?: InputMaybe<ConnectRelationInput>;
   Move: ConnectRelationInput;
-  reps?: InputMaybe<Scalars['Int']>;
+  repType: ResistanceSetRepType;
+  reps: Array<Scalars['Int']>;
 };
 
 export type CreateResistanceSetInput = {
@@ -1265,9 +1266,9 @@ export type Mutation = {
   duplicateIntervalSession: IntervalSession;
   duplicateIntervalSet: IntervalSet;
   duplicateMobilitySession: MobilitySession;
-  duplicateResistanceExercise: ResistanceExercise;
+  duplicateResistanceExercise: Array<ResistanceExercise>;
   duplicateResistanceSession: ResistanceSession;
-  duplicateResistanceSet: ResistanceSet;
+  duplicateResistanceSet: Array<ResistanceSet>;
   duplicateWorkoutById: Workout;
   duplicateWorkoutMoveById: WorkoutMove;
   duplicateWorkoutSession: WorkoutSession;
@@ -1284,6 +1285,8 @@ export type Mutation = {
   removeWorkoutFromCollection: Collection;
   removeWorkoutPlanFromClub: ClubWorkoutPlans;
   removeWorkoutPlanFromCollection: Collection;
+  reorderResistanceExercise: Array<ResistanceExercise>;
+  reorderResistanceSet: Array<ResistanceSet>;
   reorderWorkoutMoves: Array<SortPositionUpdated>;
   reorderWorkoutPlanDayWorkouts: Array<SortPositionUpdated>;
   reorderWorkoutSections: Array<SortPositionUpdated>;
@@ -2027,6 +2030,18 @@ export type MutationRemoveWorkoutPlanFromCollectionArgs = {
 };
 
 
+export type MutationReorderResistanceExerciseArgs = {
+  id: Scalars['ID'];
+  moveTo: Scalars['Int'];
+};
+
+
+export type MutationReorderResistanceSetArgs = {
+  id: Scalars['ID'];
+  moveTo: Scalars['Int'];
+};
+
+
 export type MutationReorderWorkoutMovesArgs = {
   data: Array<UpdateSortPositionInput>;
 };
@@ -2698,17 +2713,16 @@ export type RemoveWorkoutPlanFromCollectionInput = {
 export type ResistanceExercise = {
   __typename?: 'ResistanceExercise';
   ResistanceSets: Array<ResistanceSet>;
-  childrenOrder: Array<Scalars['String']>;
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
   note?: Maybe<Scalars['String']>;
+  sortPosition: Scalars['Int'];
   updatedAt: Scalars['DateTime'];
 };
 
 export type ResistanceSession = {
   __typename?: 'ResistanceSession';
   ResistanceExercises: Array<ResistanceExercise>;
-  childrenOrder: Array<Scalars['String']>;
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
   name?: Maybe<Scalars['String']>;
@@ -2723,9 +2737,18 @@ export type ResistanceSet = {
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
   note?: Maybe<Scalars['String']>;
-  reps?: Maybe<Scalars['Int']>;
+  repType: ResistanceSetRepType;
+  reps: Array<Scalars['Int']>;
+  sortPosition: Scalars['Int'];
   updatedAt: Scalars['DateTime'];
 };
+
+export type ResistanceSetRepType =
+  | 'CALORIES'
+  | 'METRES'
+  | 'MINUTES'
+  | 'REPS'
+  | 'SECONDS';
 
 export type ScheduledWorkout = {
   __typename?: 'ScheduledWorkout';
@@ -3157,13 +3180,11 @@ export type UpdateMoveInput = {
 };
 
 export type UpdateResistanceExerciseInput = {
-  childrenOrder?: InputMaybe<Array<Scalars['String']>>;
   id: Scalars['ID'];
   note?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateResistanceSessionInput = {
-  childrenOrder?: InputMaybe<Array<Scalars['String']>>;
   id: Scalars['ID'];
   name?: InputMaybe<Scalars['String']>;
   note?: InputMaybe<Scalars['String']>;
@@ -3174,7 +3195,8 @@ export type UpdateResistanceSetInput = {
   Move?: InputMaybe<ConnectRelationInput>;
   id: Scalars['ID'];
   note?: InputMaybe<Scalars['String']>;
-  reps?: InputMaybe<Scalars['Int']>;
+  repType?: InputMaybe<ResistanceSetRepType>;
+  reps?: InputMaybe<Array<Scalars['Int']>>;
 };
 
 export type UpdateScheduledWorkoutInput = {
@@ -4111,6 +4133,7 @@ export type ResolversTypes = ResolversObject<{
   ResistanceExercise: ResolverTypeWrapper<ResistanceExercise>;
   ResistanceSession: ResolverTypeWrapper<ResistanceSession>;
   ResistanceSet: ResolverTypeWrapper<ResistanceSet>;
+  ResistanceSetRepType: ResistanceSetRepType;
   ScheduledWorkout: ResolverTypeWrapper<ScheduledWorkout>;
   Skill: ResolverTypeWrapper<Skill>;
   SortPositionUpdated: ResolverTypeWrapper<SortPositionUpdated>;
@@ -5175,9 +5198,9 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   duplicateIntervalSession?: Resolver<ResolversTypes['IntervalSession'], ParentType, ContextType, RequireFields<MutationDuplicateIntervalSessionArgs, 'id'>>;
   duplicateIntervalSet?: Resolver<ResolversTypes['IntervalSet'], ParentType, ContextType, RequireFields<MutationDuplicateIntervalSetArgs, 'id'>>;
   duplicateMobilitySession?: Resolver<ResolversTypes['MobilitySession'], ParentType, ContextType, RequireFields<MutationDuplicateMobilitySessionArgs, 'id'>>;
-  duplicateResistanceExercise?: Resolver<ResolversTypes['ResistanceExercise'], ParentType, ContextType, RequireFields<MutationDuplicateResistanceExerciseArgs, 'id'>>;
+  duplicateResistanceExercise?: Resolver<Array<ResolversTypes['ResistanceExercise']>, ParentType, ContextType, RequireFields<MutationDuplicateResistanceExerciseArgs, 'id'>>;
   duplicateResistanceSession?: Resolver<ResolversTypes['ResistanceSession'], ParentType, ContextType, RequireFields<MutationDuplicateResistanceSessionArgs, 'id'>>;
-  duplicateResistanceSet?: Resolver<ResolversTypes['ResistanceSet'], ParentType, ContextType, RequireFields<MutationDuplicateResistanceSetArgs, 'id'>>;
+  duplicateResistanceSet?: Resolver<Array<ResolversTypes['ResistanceSet']>, ParentType, ContextType, RequireFields<MutationDuplicateResistanceSetArgs, 'id'>>;
   duplicateWorkoutById?: Resolver<ResolversTypes['Workout'], ParentType, ContextType, RequireFields<MutationDuplicateWorkoutByIdArgs, 'id'>>;
   duplicateWorkoutMoveById?: Resolver<ResolversTypes['WorkoutMove'], ParentType, ContextType, RequireFields<MutationDuplicateWorkoutMoveByIdArgs, 'id'>>;
   duplicateWorkoutSession?: Resolver<ResolversTypes['WorkoutSession'], ParentType, ContextType, RequireFields<MutationDuplicateWorkoutSessionArgs, 'id'>>;
@@ -5194,6 +5217,8 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   removeWorkoutFromCollection?: Resolver<ResolversTypes['Collection'], ParentType, ContextType, RequireFields<MutationRemoveWorkoutFromCollectionArgs, 'data'>>;
   removeWorkoutPlanFromClub?: Resolver<ResolversTypes['ClubWorkoutPlans'], ParentType, ContextType, RequireFields<MutationRemoveWorkoutPlanFromClubArgs, 'clubId' | 'workoutPlanId'>>;
   removeWorkoutPlanFromCollection?: Resolver<ResolversTypes['Collection'], ParentType, ContextType, RequireFields<MutationRemoveWorkoutPlanFromCollectionArgs, 'data'>>;
+  reorderResistanceExercise?: Resolver<Array<ResolversTypes['ResistanceExercise']>, ParentType, ContextType, RequireFields<MutationReorderResistanceExerciseArgs, 'id' | 'moveTo'>>;
+  reorderResistanceSet?: Resolver<Array<ResolversTypes['ResistanceSet']>, ParentType, ContextType, RequireFields<MutationReorderResistanceSetArgs, 'id' | 'moveTo'>>;
   reorderWorkoutMoves?: Resolver<Array<ResolversTypes['SortPositionUpdated']>, ParentType, ContextType, RequireFields<MutationReorderWorkoutMovesArgs, 'data'>>;
   reorderWorkoutPlanDayWorkouts?: Resolver<Array<ResolversTypes['SortPositionUpdated']>, ParentType, ContextType, RequireFields<MutationReorderWorkoutPlanDayWorkoutsArgs, 'data'>>;
   reorderWorkoutSections?: Resolver<Array<ResolversTypes['SortPositionUpdated']>, ParentType, ContextType, RequireFields<MutationReorderWorkoutSectionsArgs, 'data'>>;
@@ -5389,17 +5414,16 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
 
 export type ResistanceExerciseResolvers<ContextType = any, ParentType extends ResolversParentTypes['ResistanceExercise'] = ResolversParentTypes['ResistanceExercise']> = ResolversObject<{
   ResistanceSets?: Resolver<Array<ResolversTypes['ResistanceSet']>, ParentType, ContextType>;
-  childrenOrder?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   note?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  sortPosition?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type ResistanceSessionResolvers<ContextType = any, ParentType extends ResolversParentTypes['ResistanceSession'] = ResolversParentTypes['ResistanceSession']> = ResolversObject<{
   ResistanceExercises?: Resolver<Array<ResolversTypes['ResistanceExercise']>, ParentType, ContextType>;
-  childrenOrder?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -5414,7 +5438,9 @@ export type ResistanceSetResolvers<ContextType = any, ParentType extends Resolve
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   note?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  reps?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  repType?: Resolver<ResolversTypes['ResistanceSetRepType'], ParentType, ContextType>;
+  reps?: Resolver<Array<ResolversTypes['Int']>, ParentType, ContextType>;
+  sortPosition?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;

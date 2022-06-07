@@ -275,10 +275,12 @@ import {
   updateResistanceExercise,
   duplicateResistanceExercise,
   deleteResistanceExercise,
+  reorderResistanceExercise,
   createResistanceSet,
   updateResistanceSet,
   duplicateResistanceSet,
   deleteResistanceSet,
+  reorderResistanceSet,
 } from './workoutSession/resistanceSession'
 
 import {
@@ -737,10 +739,12 @@ const resolvers: Resolvers = {
     updateResistanceExercise,
     duplicateResistanceExercise,
     deleteResistanceExercise,
+    reorderResistanceExercise,
     createResistanceSet,
     updateResistanceSet,
     duplicateResistanceSet,
     deleteResistanceSet,
+    reorderResistanceSet,
     /////////////////
     //// Workout ////
     /////////////////

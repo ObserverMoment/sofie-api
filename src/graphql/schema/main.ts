@@ -370,23 +370,25 @@ export default gql`
     createResistanceSession(
       data: CreateResistanceSessionInput!
     ): ResistanceSession!
+    duplicateResistanceSession(id: ID!): ResistanceSession!
     updateResistanceSession(
       data: UpdateResistanceSessionInput!
     ): ResistanceSession!
-    duplicateResistanceSession(id: ID!): ResistanceSession!
     deleteResistanceSession(id: ID!): ID!
     createResistanceExercise(
       data: CreateResistanceExerciseInput!
     ): ResistanceExercise!
+    duplicateResistanceExercise(id: ID!): [ResistanceExercise!]!
     updateResistanceExercise(
       data: UpdateResistanceExerciseInput!
     ): ResistanceExercise!
-    duplicateResistanceExercise(id: ID!): ResistanceExercise!
     deleteResistanceExercise(id: ID!): ID!
+    reorderResistanceExercise(id: ID!, moveTo: Int!): [ResistanceExercise!]!
     createResistanceSet(data: CreateResistanceSetInput!): ResistanceSet!
+    duplicateResistanceSet(id: ID!): [ResistanceSet!]!
     updateResistanceSet(data: UpdateResistanceSetInput!): ResistanceSet!
-    duplicateResistanceSet(id: ID!): ResistanceSet!
     deleteResistanceSet(id: ID!): ID!
+    reorderResistanceSet(id: ID!, moveTo: Int!): [ResistanceSet!]!
     ####################
     #### DEPRECATED ####
     ####################

@@ -50,7 +50,6 @@ export const createCardioSession = async (
     })
 
     await pushNewChildToOrder(
-      'workoutSession',
       data.WorkoutSession.id,
       (cardioSession as any).id,
       prisma,
@@ -149,7 +148,6 @@ export const duplicateCardioSession = async (
     })
 
     await duplicateNewChildToOrder(
-      'workoutSession',
       original.workoutSessionId,
       original.WorkoutSession.childrenOrder,
       original.id,
@@ -189,7 +187,6 @@ export const deleteCardioSession = async (
     })
 
     await deleteChildFromOrder(
-      'workoutSession',
       deleted.WorkoutSession.id,
       deleted.WorkoutSession.childrenOrder,
       deleted.id,
@@ -235,13 +232,6 @@ export const createCardioExercise = async (
       },
       select,
     })
-
-    await pushNewChildToOrder(
-      'cardioSession',
-      data.CardioSession.id,
-      (cardioExercise as any).id,
-      prisma,
-    )
 
     return cardioExercise
   })
@@ -324,15 +314,6 @@ export const duplicateCardioExercise = async (
       select,
     })
 
-    await duplicateNewChildToOrder(
-      'cardioSession',
-      original.CardioSession.id,
-      original.CardioSession.childrenOrder,
-      original.id,
-      (copy as any).id,
-      prisma,
-    )
-
     return copy
   })
 
@@ -360,14 +341,6 @@ export const deleteCardioExercise = async (
         },
       },
     })
-
-    await deleteChildFromOrder(
-      'cardioSession',
-      deleted.CardioSession.id,
-      deleted.CardioSession.childrenOrder,
-      deleted.id,
-      prisma,
-    )
 
     return deleted
   })

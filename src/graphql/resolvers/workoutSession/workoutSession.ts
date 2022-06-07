@@ -241,21 +241,23 @@ export const duplicateWorkoutSession = async (
         create: original.ResistanceSessions.map((s) => ({
           name: s.name,
           note: s.note,
-          childrenOrder: s.childrenOrder,
+
           User: {
             connect: { id: authedUserId },
           },
           ResistanceExercises: {
             create: s.ResistanceExercises.map((e) => ({
+              sortPosition: e.sortPosition,
               note: e.note,
-              childrenOrder: e.childrenOrder,
               User: {
                 connect: { id: authedUserId },
               },
               ResistanceSets: {
                 create: e.ResistanceSets.map((s) => ({
+                  sortPosition: s.sortPosition,
                   note: s.note,
                   reps: s.reps,
+                  repType: s.repType,
                   Move: {
                     connect: { id: s.moveId },
                   },
