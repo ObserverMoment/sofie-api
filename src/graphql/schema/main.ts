@@ -93,9 +93,12 @@ export default gql`
     #### User Public Profiles ####
     userProfiles(cursor: ID, take: Int): [UserProfileSummary!]!
     userProfile(userId: ID!): UserProfile
-    #### WorkoutSessions ####
-    workoutSessionById(id: ID!): WorkoutSession
-    userWorkoutSessions: [WorkoutSession!]! # Authed user created.
+    # #### WorkoutSessions ####
+    # workoutSessionById(id: ID!): WorkoutSession
+    # userWorkoutSessions: [WorkoutSession!]! # Authed user created.
+    #### ResistanceSessions ####
+    userResistanceSessions: [ResistanceSession!]!
+    resistanceSessionById(id: ID!): ResistanceSession
     #### CardioSessions ####
     cardioSessionById(id: ID!): CardioSession
     cardioExerciseById(id: ID!): CardioExercise
@@ -304,11 +307,11 @@ export default gql`
     deleteSkillById(id: ID!): ID!
     addDocumentToSkill(data: AddDocumentToSkillInput!): Skill!
     removeDocumentFromSkill(data: RemoveDocumentFromSkillInput!): Skill!
-    #### WorkoutSession ####
-    createWorkoutSession(data: CreateWorkoutSessionInput!): WorkoutSession!
-    updateWorkoutSession(data: UpdateWorkoutSessionInput!): WorkoutSession!
-    duplicateWorkoutSession(id: ID!): WorkoutSession!
-    deleteWorkoutSession(id: ID!): ID!
+    #### DEPRECATED - WorkoutSession ####
+    # createWorkoutSession(data: CreateWorkoutSessionInput!): WorkoutSession!
+    # updateWorkoutSession(data: UpdateWorkoutSessionInput!): WorkoutSession!
+    # duplicateWorkoutSession(id: ID!): WorkoutSession!
+    # deleteWorkoutSession(id: ID!): ID!
     #### AmrapSession ####
     createAmrapSession(data: CreateAmrapSessionInput!): AmrapSession!
     updateAmrapSession(data: UpdateAmrapSessionInput!): AmrapSession!

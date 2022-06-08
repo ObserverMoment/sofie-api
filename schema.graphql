@@ -52,7 +52,7 @@ type AmrapSession {
   childrenOrder: [String!]!
   createdAt: DateTime!
   id: ID!
-  name: String
+  name: String!
   note: String
   updatedAt: DateTime!
 }
@@ -149,7 +149,7 @@ type CardioSession {
   childrenOrder: [String!]!
   createdAt: DateTime!
   id: ID!
-  name: String
+  name: String!
   note: String
   updatedAt: DateTime!
 }
@@ -351,7 +351,7 @@ input CreateAmrapSectionInput {
 }
 
 input CreateAmrapSessionInput {
-  WorkoutSession: ConnectRelationInput!
+  name: String!
 }
 
 input CreateBodyTrackingEntryInput {
@@ -368,7 +368,7 @@ input CreateCardioExerciseInput {
 }
 
 input CreateCardioSessionInput {
-  WorkoutSession: ConnectRelationInput!
+  name: String!
 }
 
 input CreateClubInput {
@@ -460,7 +460,7 @@ input CreateForTimeSectionInput {
 }
 
 input CreateForTimeSessionInput {
-  WorkoutSession: ConnectRelationInput!
+  name: String!
 }
 
 input CreateGymProfileInput {
@@ -474,7 +474,7 @@ input CreateIntervalExerciseInput {
 }
 
 input CreateIntervalSessionInput {
-  WorkoutSession: ConnectRelationInput!
+  name: String!
 }
 
 input CreateIntervalSetInput {
@@ -524,7 +524,7 @@ input CreateLoggedWorkoutSetInLoggedWorkoutSectionInput {
 }
 
 input CreateMobilitySessionInput {
-  WorkoutSession: ConnectRelationInput!
+  name: String!
 }
 
 input CreateMoveInput {
@@ -547,7 +547,7 @@ input CreateResistanceExerciseInput {
 }
 
 input CreateResistanceSessionInput {
-  WorkoutSession: ConnectRelationInput!
+  name: String!
 }
 
 input CreateResistanceSetInExerciseInput {
@@ -895,7 +895,7 @@ type ForTimeSession {
   childrenOrder: [String!]!
   createdAt: DateTime!
   id: ID!
-  name: String
+  name: String!
   note: String
   repeats: Int!
   timecapSeconds: Int!
@@ -932,7 +932,7 @@ type IntervalSession {
   createdAt: DateTime!
   id: ID!
   intervals: [Int!]!
-  name: String
+  name: String!
   note: String
   repeats: Int!
   updatedAt: DateTime!
@@ -1053,7 +1053,7 @@ type MobilitySession {
   childrenOrder: [String!]!
   createdAt: DateTime!
   id: ID!
-  name: String
+  name: String!
   note: String
   updatedAt: DateTime!
   videoThumbUri: String
@@ -1161,7 +1161,6 @@ type Mutation {
   createWorkoutPlanEnrolment(workoutPlanId: ID!): WorkoutPlanEnrolmentWithPlan!
   createWorkoutPlanReview(data: CreateWorkoutPlanReviewInput!): WorkoutPlanReview!
   createWorkoutSection(data: CreateWorkoutSectionInput!): WorkoutSection!
-  createWorkoutSession(data: CreateWorkoutSessionInput!): WorkoutSession!
   createWorkoutSet(data: CreateWorkoutSetInput!): WorkoutSet!
   createWorkoutSetWithWorkoutMoves(data: CreateWorkoutSetWithWorkoutMovesInput!): WorkoutSet!
   createWorkoutTag(data: CreateWorkoutTagInput!): WorkoutTag!
@@ -1203,7 +1202,6 @@ type Mutation {
   deleteWorkoutPlanEnrolmentById(id: ID!): ID!
   deleteWorkoutPlanReviewById(id: ID!): ID!
   deleteWorkoutSectionById(id: ID!): ID!
-  deleteWorkoutSession(id: ID!): ID!
   deleteWorkoutSetById(id: ID!): ID!
   deleteWorkoutTagById(id: ID!): ID!
   duplicateAmrapMove(id: ID!): AmrapMove!
@@ -1223,7 +1221,6 @@ type Mutation {
   duplicateResistanceSet(id: ID!): [ResistanceSet!]!
   duplicateWorkoutById(id: ID!): Workout!
   duplicateWorkoutMoveById(id: ID!): WorkoutMove!
-  duplicateWorkoutSession(id: ID!): WorkoutSession!
   duplicateWorkoutSetById(id: ID!): WorkoutSet!
   giveMemberAdminStatus(clubId: ID!, userId: ID!): ClubMembers!
   makeCopyWorkoutById(id: ID!): Workout!
@@ -1296,7 +1293,6 @@ type Mutation {
   updateWorkoutPlanMetaDataAdmin(data: UpdateWorkoutPlanMetaDataAdminInput!): WorkoutPlanWithMetaDataAdmin
   updateWorkoutPlanReview(data: UpdateWorkoutPlanReviewInput!): WorkoutPlanReview!
   updateWorkoutSection(data: UpdateWorkoutSectionInput!): WorkoutSection!
-  updateWorkoutSession(data: UpdateWorkoutSessionInput!): WorkoutSession!
   updateWorkoutSet(data: UpdateWorkoutSetInput!): WorkoutSet!
   updateWorkoutTag(data: UpdateWorkoutTagInput!): WorkoutTag!
   userJoinPublicClub(clubId: ID!): ID!
@@ -1387,6 +1383,7 @@ type Query {
   publicClubs: [ClubSummary!]!
   publicWorkoutPlans(cursor: ID, filters: WorkoutPlanFiltersInput, take: Int): [WorkoutPlanSummary!]!
   publicWorkouts(cursor: ID, filters: WorkoutFiltersInput, take: Int): [WorkoutSummary!]!
+  resistanceSessionById(id: ID!): ResistanceSession
   textSearchUserNames(text: String!): [TextSearchResult!]
   textSearchUserProfiles(text: String!): [UserProfileSummary!]
   textSearchWorkoutNames(text: String!): [TextSearchResult!]
@@ -1416,11 +1413,11 @@ type Query {
   userPublicWorkoutPlans(userId: ID!): [WorkoutPlanSummary!]!
   userPublicWorkouts(userId: ID!): [WorkoutSummary!]!
   userRecentlyViewedObjects: [UserRecentlyViewedObject!]!
+  userResistanceSessions: [ResistanceSession!]!
   userScheduledWorkouts: [ScheduledWorkout!]!
   userSleepWellLogs: [UserSleepWellLog!]!
   userTrainingPlans: [TrainingPlanSummary!]!
   userWorkoutPlans: [WorkoutPlanSummary!]!
-  userWorkoutSessions: [WorkoutSession!]!
   userWorkoutTags: [WorkoutTag!]!
   userWorkouts: [WorkoutSummary!]!
   validateToken: Boolean!
@@ -1429,7 +1426,6 @@ type Query {
   workoutPlanById(id: ID!): WorkoutPlan
   workoutPlanEnrolmentById(id: ID!): WorkoutPlanEnrolmentWithPlan
   workoutPlanEnrolments: [WorkoutPlanEnrolmentSummary!]!
-  workoutSessionById(id: ID!): WorkoutSession
 }
 
 input RemoveDocumentFromSkillInput {
@@ -1469,7 +1465,7 @@ type ResistanceSession {
   ResistanceExercises: [ResistanceExercise!]!
   createdAt: DateTime!
   id: ID!
-  name: String
+  name: String!
   note: String
   updatedAt: DateTime!
 }

@@ -204,15 +204,15 @@ import {
 
 import { checkClubInviteToken } from './invites'
 
-////// Workout Session and Children ///////
-import {
-  userWorkoutSessions,
-  workoutSessionById,
-  createWorkoutSession,
-  updateWorkoutSession,
-  duplicateWorkoutSession,
-  deleteWorkoutSession,
-} from './workoutSession/workoutSession'
+////// Workout Session Types ///////
+// import {
+//   userWorkoutSessions,
+//   workoutSessionById,
+//   createWorkoutSession,
+//   updateWorkoutSession,
+//   duplicateWorkoutSession,
+//   deleteWorkoutSession,
+// } from './workoutSession/workoutSession-deprecated'
 
 import {
   createAmrapSession,
@@ -267,6 +267,8 @@ import {
 } from './workoutSession/mobilitySession'
 
 import {
+  userResistanceSessions,
+  resistanceSessionById,
   createResistanceSession,
   updateResistanceSession,
   duplicateResistanceSession,
@@ -505,8 +507,11 @@ const resolvers: Resolvers = {
     /// User Exercise and Scored Workout Trackers ///
     userExerciseLoadTrackers,
     //// WorkoutSessions ////
-    userWorkoutSessions,
-    workoutSessionById,
+    // userWorkoutSessions,
+    // workoutSessionById,
+    //// ResistanceSessions ////
+    userResistanceSessions,
+    resistanceSessionById,
     //// Workouts - DEPRECATED////
     publicWorkouts,
     userWorkouts, // Authed user.
@@ -673,10 +678,10 @@ const resolvers: Resolvers = {
     ////////////////////////
     //// WorkoutSession ////
     ///////////////////////
-    createWorkoutSession,
-    updateWorkoutSession,
-    duplicateWorkoutSession,
-    deleteWorkoutSession,
+    // createWorkoutSession,
+    // updateWorkoutSession,
+    // duplicateWorkoutSession,
+    // deleteWorkoutSession,
     //// AmrapSession ////
     createAmrapSession,
     updateAmrapSession,

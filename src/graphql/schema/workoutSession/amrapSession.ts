@@ -5,7 +5,7 @@ export default gql`
     id: ID!
     createdAt: DateTime!
     updatedAt: DateTime!
-    name: String
+    name: String!
     note: String
     # If forced rests are required between sections then add [rest:seconds].
     # [AMRAPSectionId, rest:60, AMRAPSection]
@@ -14,7 +14,7 @@ export default gql`
   }
 
   input CreateAmrapSessionInput {
-    WorkoutSession: ConnectRelationInput!
+    name: String!
   }
 
   input UpdateAmrapSessionInput {

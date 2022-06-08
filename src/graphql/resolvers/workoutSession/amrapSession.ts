@@ -33,32 +33,16 @@ export const createAmrapSession = async (
   { data }: MutationCreateAmrapSessionArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  await checkUserOwnsObject(
-    data.WorkoutSession.id,
-    'workoutSession',
-    authedUserId,
-    prisma,
-  )
-
   const amrapSession = await prisma.$transaction(async (prisma) => {
     const amrapSession = await prisma.amrapSession.create({
       data: {
-        WorkoutSession: {
-          connect: data.WorkoutSession,
-        },
+        name: data.name,
         User: {
           connect: { id: authedUserId },
         },
       },
       select,
     })
-
-    await pushNewChildToOrder(
-      data.WorkoutSession.id,
-      (amrapSession as any).id,
-      prisma,
-    )
-
     return amrapSession as AmrapSession
   })
 
@@ -80,6 +64,7 @@ export const updateAmrapSession = async (
     where: { id: data.id },
     data: {
       ...data,
+      name: data.name || undefined,
       childrenOrder: processStringListUpdateInputData(data, 'childrenOrder'),
     },
     select,
@@ -105,7 +90,6 @@ export const duplicateAmrapSession = async (
   const original = await prisma.amrapSession.findUnique({
     where: { id },
     include: {
-      WorkoutSession: true, // Needed to get the original session position.
       AmrapSections: {
         include: {
           AmrapMoves: {
@@ -133,9 +117,7 @@ export const duplicateAmrapSession = async (
         User: {
           connect: { id: authedUserId },
         },
-        WorkoutSession: {
-          connect: { id: original.workoutSessionId },
-        },
+
         AmrapSections: {
           create: original.AmrapSections.map((s) => ({
             name: s.name,
@@ -164,14 +146,6 @@ export const duplicateAmrapSession = async (
       select,
     })
 
-    await duplicateNewChildToOrder(
-      original.workoutSessionId,
-      original.WorkoutSession.childrenOrder,
-      original.id,
-      (copy as any).id,
-      prisma,
-    )
-
     return copy
   })
 
@@ -194,22 +168,8 @@ export const deleteAmrapSession = async (
       where: { id },
       select: {
         id: true,
-        WorkoutSession: {
-          select: {
-            id: true,
-            childrenOrder: true,
-          },
-        },
       },
     })
-
-    await deleteChildFromOrder(
-      deleted.WorkoutSession.id,
-      deleted.WorkoutSession.childrenOrder,
-      deleted.id,
-      prisma,
-    )
-
     return deleted
   })
 

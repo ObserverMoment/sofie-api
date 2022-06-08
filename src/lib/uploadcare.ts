@@ -257,35 +257,35 @@ export async function checkUserMediaForDeletion(
 /** Checks if there are any media (hosted) files being changed.
  * Returns an array of fileIds (strings) which should be deleted.
  */
-export async function checkWorkoutSessionMediaForDeletion(
-  prisma: PrismaClient,
-  data: UpdateWorkoutSessionInput,
-): Promise<string[]> {
-  // Get the old data first.
-  const old = await prisma.workoutSession.findUnique({
-    where: {
-      id: data.id,
-    },
-    select: {
-      coverImageUri: true,
-      introAudioUri: true,
-      introVideoUri: true,
-      introVideoThumbUri: true,
-    },
-  })
+// export async function checkWorkoutSessionMediaForDeletion(
+//   prisma: PrismaClient,
+//   data: UpdateWorkoutSessionInput,
+// ): Promise<string[]> {
+//   // Get the old data first.
+//   const old = await prisma.workoutSession.findUnique({
+//     where: {
+//       id: data.id,
+//     },
+//     select: {
+//       coverImageUri: true,
+//       introAudioUri: true,
+//       introVideoUri: true,
+//       introVideoThumbUri: true,
+//     },
+//   })
 
-  if (!old) {
-    throw new AccessScopeError(
-      'checkWorkoutSessionMediaForDeletion: Unable to find object to check',
-    )
-  } else {
-    const fileIdsForDeletion: string[] = Object.keys(old)
-      .map((key: string) => getFileIdForDeleteOrNull(old, data, key))
-      .filter((x) => !!x) as string[]
+//   if (!old) {
+//     throw new AccessScopeError(
+//       'checkWorkoutSessionMediaForDeletion: Unable to find object to check',
+//     )
+//   } else {
+//     const fileIdsForDeletion: string[] = Object.keys(old)
+//       .map((key: string) => getFileIdForDeleteOrNull(old, data, key))
+//       .filter((x) => !!x) as string[]
 
-    return fileIdsForDeletion
-  }
-}
+//     return fileIdsForDeletion
+//   }
+// }
 
 /** Checks if there are any media (hosted) files being changed.
  * Returns an array of fileIds (strings) which should be deleted.

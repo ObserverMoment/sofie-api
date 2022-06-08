@@ -5,13 +5,13 @@ export default gql`
     id: ID!
     createdAt: DateTime!
     updatedAt: DateTime!
-    name: String
+    name: String!
     note: String
     ResistanceExercises: [ResistanceExercise!]!
   }
 
   input CreateResistanceSessionInput {
-    WorkoutSession: ConnectRelationInput!
+    name: String!
   }
 
   input UpdateResistanceSessionInput {

@@ -33,31 +33,16 @@ export const createForTimeSession = async (
   { data }: MutationCreateForTimeSessionArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  await checkUserOwnsObject(
-    data.WorkoutSession.id,
-    'workoutSession',
-    authedUserId,
-    prisma,
-  )
-
   const forTimeSession = await prisma.$transaction(async (prisma) => {
     const forTimeSession = await prisma.forTimeSession.create({
       data: {
-        WorkoutSession: {
-          connect: data.WorkoutSession,
-        },
+        name: data.name,
         User: {
           connect: { id: authedUserId },
         },
       },
       select,
     })
-
-    await pushNewChildToOrder(
-      data.WorkoutSession.id,
-      (forTimeSession as any).id,
-      prisma,
-    )
 
     return forTimeSession
   })
@@ -80,6 +65,7 @@ export const updateForTimeSession = async (
     where: { id: data.id },
     data: {
       ...data,
+      name: data.name || undefined,
       timecapSeconds: data.timecapSeconds || undefined,
       childrenOrder: processStringListUpdateInputData(data, 'childrenOrder'),
     },
@@ -106,7 +92,6 @@ export const duplicateForTimeSession = async (
   const original = await prisma.forTimeSession.findUnique({
     where: { id },
     include: {
-      WorkoutSession: true, // Needed to get the original session position.
       ForTimeSections: {
         include: {
           ForTimeMoves: {
@@ -136,9 +121,7 @@ export const duplicateForTimeSession = async (
         User: {
           connect: { id: authedUserId },
         },
-        WorkoutSession: {
-          connect: { id: original.workoutSessionId },
-        },
+
         ForTimeSections: {
           create: original.ForTimeSections.map((s) => ({
             name: s.name,
@@ -167,14 +150,6 @@ export const duplicateForTimeSession = async (
       select,
     })
 
-    await duplicateNewChildToOrder(
-      original.workoutSessionId,
-      original.WorkoutSession.childrenOrder,
-      original.id,
-      (copy as any).id,
-      prisma,
-    )
-
     return copy
   })
 
@@ -197,21 +172,8 @@ export const deleteForTimeSession = async (
       where: { id },
       select: {
         id: true,
-        WorkoutSession: {
-          select: {
-            id: true,
-            childrenOrder: true,
-          },
-        },
       },
     })
-
-    await deleteChildFromOrder(
-      deleted.WorkoutSession.id,
-      deleted.WorkoutSession.childrenOrder,
-      deleted.id,
-      prisma,
-    )
 
     return deleted
   })

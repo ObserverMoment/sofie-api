@@ -18,15 +18,49 @@ import {
   MutationUpdateResistanceSetArgs,
   MutationReorderResistanceExerciseArgs,
   MutationReorderResistanceSetArgs,
+  QueryResistanceSessionByIdArgs,
 } from '../../../generated/graphql'
 import { checkUserOwnsObject } from '../../utils'
-import {
-  deleteChildFromOrder,
-  duplicateNewChildToOrder,
-  insertObjectAndReorderSiblings,
-  pushNewChildToOrder,
-  reorderSortableObject,
-} from './utils'
+import { insertObjectAndReorderSiblings, reorderSortableObject } from './utils'
+
+// //// Queries ////
+// /// https://www.prisma.io/docs/concepts/components/prisma-client/pagination
+// // Logged in user only.
+export const userResistanceSessions = async (
+  r: any,
+  a: any,
+  { select, authedUserId, prisma }: Context,
+) => {
+  const userWorkoutSessions = await prisma.resistanceSession.findMany({
+    where: {
+      userId: authedUserId,
+    },
+    orderBy: [{ updatedAt: 'desc' }, { id: 'desc' }],
+    select,
+  })
+
+  return userWorkoutSessions as ResistanceSession[]
+}
+
+export const resistanceSessionById = async (
+  r: any,
+  { id }: QueryResistanceSessionByIdArgs,
+  { select, prisma }: Context,
+) => {
+  const workoutSession = await prisma.resistanceSession.findUnique({
+    where: { id },
+    select,
+  })
+
+  if (workoutSession) {
+    return workoutSession as ResistanceSession
+  } else {
+    console.error(
+      `resistanceSessionById: Could not find a session with id ${id}`,
+    )
+    return null
+  }
+}
 
 //// Mutations ////
 //// Resistance Session ////
@@ -35,31 +69,16 @@ export const createResistanceSession = async (
   { data }: MutationCreateResistanceSessionArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  await checkUserOwnsObject(
-    data.WorkoutSession.id,
-    'workoutSession',
-    authedUserId,
-    prisma,
-  )
-
   const resistanceSession = await prisma.$transaction(async (prisma) => {
     const resistanceSession = await prisma.resistanceSession.create({
       data: {
-        WorkoutSession: {
-          connect: data.WorkoutSession,
-        },
+        ...data,
         User: {
           connect: { id: authedUserId },
         },
       },
       select,
     })
-
-    await pushNewChildToOrder(
-      data.WorkoutSession.id,
-      (resistanceSession as any).id,
-      prisma,
-    )
 
     return resistanceSession
   })
@@ -80,7 +99,10 @@ export const updateResistanceSession = async (
 
   const updated = await prisma.resistanceSession.update({
     where: { id: data.id },
-    data,
+    data: {
+      ...data,
+      name: data.name || undefined,
+    },
     select,
   })
 
@@ -104,7 +126,6 @@ export const duplicateResistanceSession = async (
   const original = await prisma.resistanceSession.findUnique({
     where: { id },
     include: {
-      WorkoutSession: true,
       ResistanceExercises: {
         include: {
           ResistanceSets: {
@@ -133,7 +154,6 @@ export const duplicateResistanceSession = async (
         User: {
           connect: { id: authedUserId },
         },
-        WorkoutSession: { connect: { id: original.workoutSessionId } },
         ResistanceExercises: {
           create: original.ResistanceExercises.map((e) => ({
             note: e.note,
@@ -164,14 +184,6 @@ export const duplicateResistanceSession = async (
       select,
     })
 
-    await duplicateNewChildToOrder(
-      original.workoutSessionId,
-      original.WorkoutSession.childrenOrder,
-      original.id,
-      (copy as any).id,
-      prisma,
-    )
-
     return copy
   })
 
@@ -194,21 +206,8 @@ export const deleteResistanceSession = async (
       where: { id },
       select: {
         id: true,
-        WorkoutSession: {
-          select: {
-            id: true,
-            childrenOrder: true,
-          },
-        },
       },
     })
-
-    await deleteChildFromOrder(
-      deleted.WorkoutSession.id,
-      deleted.WorkoutSession.childrenOrder,
-      deleted.id,
-      prisma,
-    )
 
     return deleted
   })
@@ -491,16 +490,25 @@ export const createResistanceSet = async (
 
   const resistanceSet = await prisma.$transaction(async (prisma) => {
     /// How many sets are the already in this exercise. Use this to calculate the new set [sortPosition]. sortPosition should be zero indexed.
-    const prevSetCount = await prisma.resistanceSet.count({
+    /// This resolver will create a new set with the same settings as the last set in the exercise, except with the specified move. i.e. same repType and same reps.
+    const prevSets = await prisma.resistanceSet.findMany({
       where: {
         resistanceExerciseId: data.ResistanceExercise.id,
       },
+      select: {
+        reps: true,
+        repType: true,
+        sortPosition: true,
+      },
     })
+
+    const sorted = prevSets.sort((a, b) => a.sortPosition - b.sortPosition)
 
     const resistanceSet = await prisma.resistanceSet.create({
       data: {
-        sortPosition: prevSetCount,
-        repType: 'REPS',
+        sortPosition: prevSets.length,
+        reps: sorted[sorted.length - 1].reps,
+        repType: sorted[sorted.length - 1].repType,
         ResistanceExercise: {
           connect: data.ResistanceExercise,
         },

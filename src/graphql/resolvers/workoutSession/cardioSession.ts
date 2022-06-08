@@ -29,31 +29,16 @@ export const createCardioSession = async (
   { data }: MutationCreateCardioSessionArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  await checkUserOwnsObject(
-    data.WorkoutSession.id,
-    'workoutSession',
-    authedUserId,
-    prisma,
-  )
-
   const cardioSession = await prisma.$transaction(async (prisma) => {
     const cardioSession = await prisma.cardioSession.create({
       data: {
-        WorkoutSession: {
-          connect: data.WorkoutSession,
-        },
+        name: data.name,
         User: {
           connect: { id: authedUserId },
         },
       },
       select,
     })
-
-    await pushNewChildToOrder(
-      data.WorkoutSession.id,
-      (cardioSession as any).id,
-      prisma,
-    )
 
     return cardioSession
   })
@@ -76,6 +61,7 @@ export const updateCardioSession = async (
     where: { id: data.id },
     data: {
       ...data,
+      name: data.name || undefined,
       childrenOrder: processStringListUpdateInputData(data, 'childrenOrder'),
     },
     select,
@@ -101,7 +87,6 @@ export const duplicateCardioSession = async (
   const original = await prisma.cardioSession.findUnique({
     where: { id },
     include: {
-      WorkoutSession: true,
       CardioExercises: {
         include: {
           Move: true,
@@ -121,9 +106,7 @@ export const duplicateCardioSession = async (
         name: original.name,
         note: original.note,
         childrenOrder: original.childrenOrder,
-        WorkoutSession: {
-          connect: { id: original.workoutSessionId },
-        },
+
         User: {
           connect: { id: authedUserId },
         },
@@ -147,14 +130,6 @@ export const duplicateCardioSession = async (
       select,
     })
 
-    await duplicateNewChildToOrder(
-      original.workoutSessionId,
-      original.WorkoutSession.childrenOrder,
-      original.id,
-      (copy as any).id,
-      prisma,
-    )
-
     return copy
   })
 
@@ -177,21 +152,8 @@ export const deleteCardioSession = async (
       where: { id },
       select: {
         id: true,
-        WorkoutSession: {
-          select: {
-            id: true,
-            childrenOrder: true,
-          },
-        },
       },
     })
-
-    await deleteChildFromOrder(
-      deleted.WorkoutSession.id,
-      deleted.WorkoutSession.childrenOrder,
-      deleted.id,
-      prisma,
-    )
 
     return deleted
   })

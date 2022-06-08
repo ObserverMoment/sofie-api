@@ -165,38 +165,38 @@ model ProgressWidget {
 //// User and User Related ////////////
 ///////////////////////////////////////
 model GymProfile {
-  id                       String                    @id @default(uuid())
-  createdAt                DateTime                  @default(now())
-  updatedAt                DateTime                  @updatedAt
-  name                     String
-  description              String?
-  userId                   String
-  User                     User                      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  LoggedWorkouts           LoggedWorkout[]
-  ScheduledWorkouts        ScheduledWorkout[]
-  Equipments               Equipment[]
-  ScheduledWorkoutSessions ScheduledWorkoutSession[]
-  LoggedWorkoutSessions    LoggedWorkoutSession[]
+  id                    String                 @id @default(uuid())
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+  name                  String
+  description           String?
+  userId                String
+  User                  User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  LoggedWorkouts        LoggedWorkout[]
+  ScheduledWorkouts     ScheduledWorkout[]
+  Equipments            Equipment[]
+  // ScheduledWorkoutSessions ScheduledWorkoutSession[]
+  LoggedWorkoutSessions LoggedWorkoutSession[]
 }
 
-model ScheduledWorkoutSession {
-  id                       String                  @id @default(uuid())
-  createdAt                DateTime                @default(now())
-  scheduledAt              DateTime                @default(now())
-  note                     String?
-  GymProfile               GymProfile?             @relation(fields: [gymProfileId], references: [id])
-  gymProfileId             String?
-  LoggedWorkoutSession     LoggedWorkoutSession?   @relation(fields: [loggedWorkoutSessionId], references: [id])
-  loggedWorkoutSessionId   String?                 @unique
-  User                     User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId                   String
-  WorkoutSession           WorkoutSession?         @relation(fields: [workoutSessionId], references: [id])
-  workoutSessionId         String?
-  TrainingPlanEnrolment    TrainingPlanEnrolment?  @relation(fields: [trainingPlanEnrolmentId], references: [id])
-  trainingPlanEnrolmentId  String?
-  TrainingPlanDayWorkout   TrainingPlanDayWorkout? @relation(fields: [trainingPlanDayWorkoutId], references: [id])
-  trainingPlanDayWorkoutId String?
-}
+// model ScheduledWorkoutSession {
+//   id                       String                 @id @default(uuid())
+//   createdAt                DateTime               @default(now())
+//   scheduledAt              DateTime               @default(now())
+//   note                     String?
+//   GymProfile               GymProfile?            @relation(fields: [gymProfileId], references: [id])
+//   gymProfileId             String?
+//   LoggedWorkoutSession     LoggedWorkoutSession?  @relation(fields: [loggedWorkoutSessionId], references: [id])
+//   loggedWorkoutSessionId   String?                @unique
+//   User                     User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+//   userId                   String
+//   // WorkoutSession           WorkoutSession?         @relation(fields: [workoutSessionId], references: [id])
+//   // workoutSessionId         String?
+//   TrainingPlanEnrolment    TrainingPlanEnrolment? @relation(fields: [trainingPlanEnrolmentId], references: [id])
+//   trainingPlanEnrolmentId  String?
+//   // TrainingPlanDayWorkout   TrainingPlanDayWorkout? @relation(fields: [trainingPlanDayWorkoutId], references: [id])
+//   trainingPlanDayWorkoutId String?
+// }
 
 model Skill {
   id             String   @id @default(uuid())
@@ -286,7 +286,7 @@ model User {
   FitnessBenchmarkWorkouts      FitnessBenchmarkWorkout[]
   FitnessBenchmarkWorkoutScores FitnessBenchmarkWorkoutScore[]
   MobilityMoves                 MobilityMove[]
-  WorkoutSessions               WorkoutSession[]
+  // WorkoutSessions               WorkoutSession[]
   CardioSessions                CardioSession[]
   CardioExercises               CardioExercise[]
   ResistanceSessions            ResistanceSession[]
@@ -302,27 +302,40 @@ model User {
   ForTimeSections               ForTimeSection[]
   ForTimeMoves                  ForTimeMove[]
   MobilitySessions              MobilitySession[]
-  ScheduledWorkoutSessions      ScheduledWorkoutSession[]
+  // ScheduledWorkoutSessions      ScheduledWorkoutSession[]
   LoggedWorkoutSessions         LoggedWorkoutSession[]
   TrainingPlans                 TrainingPlan[]
   TrainingPlanDays              TrainingPlanDay[]
-  TrainingPlanDayWorkouts       TrainingPlanDayWorkout[]
+  // TrainingPlanDayWorkouts       TrainingPlanDayWorkout[]
   TrainingPlanEnrolments        TrainingPlanEnrolment[]
   TrainingPlanReviews           TrainingPlanReview[]
+  Events                        Event[]
+}
+
+/// Calendar event for a specific user.
+model Event {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  dateTime  DateTime
+  note      String
+  objects   String[] // Where each string is "[type]:[id]"
+  User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
 }
 
 model Collection {
-  id              String           @id @default(uuid())
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-  userId          String
-  description     String?
-  name            String
-  User            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  Workouts        Workout[]
-  WorkoutPlans    WorkoutPlan[]
-  WorkoutSessions WorkoutSession[]
-  TrainingPlan    TrainingPlan[]
+  id           String         @id @default(uuid())
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  userId       String
+  description  String?
+  name         String
+  User         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Workouts     Workout[]
+  WorkoutPlans WorkoutPlan[]
+  // WorkoutSessions WorkoutSession[]
+  TrainingPlan TrainingPlan[]
 }
 
 ////////////////////////////////////////////////
@@ -348,7 +361,7 @@ model Club {
   Workouts           Workout[]
   WorkoutPlans       WorkoutPlan[]
   /// New models May 2022
-  WorkoutSessions    WorkoutSession[]
+  // WorkoutSessions    WorkoutSession[]
   TrainingPlan       TrainingPlan[]
   ////// Admin access only - meta data //////
   validated          PublicContentValidationStatus @default(VALID) // For public display
@@ -390,46 +403,46 @@ model ClubInviteToken {
 /////////////////////////////////////////////////////
 ////// Workout V2 Related Models and Children ///////
 /////////////////////////////////////////////////////
-model WorkoutSession {
-  id                       String                    @id @default(uuid())
-  createdAt                DateTime                  @default(now())
-  updatedAt                DateTime                  @updatedAt
-  name                     String
-  description              String?
-  coverImageUri            String?
-  introAudioUri            String?
-  introVideoUri            String?
-  introVideoThumbUri       String?
-  tags                     String[]
-  archived                 Boolean                   @default(false)
-  childrenOrder            String[] // Session IDs.
-  CardioSessions           CardioSession[] // Monostructural, zones 2 (steady state) -> 5
-  ResistanceSessions       ResistanceSession[] // Strength, hypertrophy, muscle endurance.
-  IntervalSessions         IntervalSession[] // HIIT, Tabata
-  MobilitySessions         MobilitySession[] // Yoga, ROM, Flexibility, Stability.
-  AmrapSessions            AmrapSession[] // Scored
-  ForTimeSessions          ForTimeSession[] // Scored
-  User                     User                      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId                   String
-  Clubs                    Club[]
-  ScheduledWorkoutSessions ScheduledWorkoutSession[]
-  LoggedWorkoutSessions    LoggedWorkoutSession[]
-  TrainingPlanDayWorkouts  TrainingPlanDayWorkout[]
-  Collections              Collection[]
-}
+// model WorkoutSession {
+//   id                       String                    @id @default(uuid())
+//   createdAt                DateTime                  @default(now())
+//   updatedAt                DateTime                  @updatedAt
+//   name                     String
+//   description              String?
+//   coverImageUri            String?
+//   introAudioUri            String?
+//   introVideoUri            String?
+//   introVideoThumbUri       String?
+//   tags                     String[]
+//   archived                 Boolean                   @default(false)
+//   childrenOrder            String[] // Session IDs.
+//   CardioSessions           CardioSession[] // Monostructural, zones 2 (steady state) -> 5
+//   ResistanceSessions       ResistanceSession[] // Strength, hypertrophy, muscle endurance.
+//   IntervalSessions         IntervalSession[] // HIIT, Tabata
+//   MobilitySessions         MobilitySession[] // Yoga, ROM, Flexibility, Stability.
+//   AmrapSessions            AmrapSession[] // Scored
+//   ForTimeSessions          ForTimeSession[] // Scored
+//   User                     User                      @relation(fields: [userId], references: [id], onDelete: Cascade)
+//   userId                   String
+//   Clubs                    Club[]
+//   ScheduledWorkoutSessions ScheduledWorkoutSession[]
+//   LoggedWorkoutSessions    LoggedWorkoutSession[]
+//   TrainingPlanDayWorkouts  TrainingPlanDayWorkout[]
+//   Collections              Collection[]
+// }
 
 model CardioSession {
-  id               String           @id @default(uuid())
-  createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt
-  name             String?
-  note             String?
-  childrenOrder    String[]
-  CardioExercises  CardioExercise[]
-  WorkoutSession   WorkoutSession   @relation(fields: [workoutSessionId], references: [id], onDelete: Cascade)
-  workoutSessionId String
-  User             User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId           String
+  id              String           @id @default(uuid())
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  name            String
+  note            String?
+  childrenOrder   String[]
+  CardioExercises CardioExercise[]
+  // WorkoutSession   WorkoutSession   @relation(fields: [workoutSessionId], references: [id], onDelete: Cascade)
+  // workoutSessionId String
+  User            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId          String
 }
 
 model CardioExercise {
@@ -454,11 +467,11 @@ model ResistanceSession {
   id                  String               @id @default(uuid())
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
-  name                String?
+  name                String
   note                String?
   ResistanceExercises ResistanceExercise[]
-  WorkoutSession      WorkoutSession       @relation(fields: [workoutSessionId], references: [id], onDelete: Cascade)
-  workoutSessionId    String
+  // WorkoutSession      WorkoutSession       @relation(fields: [workoutSessionId], references: [id], onDelete: Cascade)
+  // workoutSessionId    String
   User                User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId              String
 }
@@ -506,7 +519,7 @@ model IntervalSession {
   id                String             @id @default(uuid())
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @updatedAt
-  name              String?
+  name              String
   note              String?
   audioUri          String?
   videoUri          String?
@@ -519,8 +532,8 @@ model IntervalSession {
   // E.g [60, 60, 30, 60, 60, 30]
   intervals         Int[]
   IntervalExercises IntervalExercise[]
-  WorkoutSession    WorkoutSession     @relation(fields: [workoutSessionId], references: [id], onDelete: Cascade)
-  workoutSessionId  String
+  // WorkoutSession    WorkoutSession     @relation(fields: [workoutSessionId], references: [id], onDelete: Cascade)
+  // workoutSessionId  String
   User              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId            String
 }
@@ -554,19 +567,19 @@ model IntervalSet {
 }
 
 model AmrapSession {
-  id               String         @id @default(uuid())
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
-  name             String?
-  note             String?
+  id            String         @id @default(uuid())
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  name          String
+  note          String?
   /// If forced rests are required between sections then add [rest:seconds].
   /// [AMRAPSectionId, rest:60, AMRAPSection]
-  childrenOrder    String[]
-  AmrapSections    AmrapSection[]
-  WorkoutSession   WorkoutSession @relation(fields: [workoutSessionId], references: [id], onDelete: Cascade)
-  workoutSessionId String
-  User             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId           String
+  childrenOrder String[]
+  AmrapSections AmrapSection[]
+  // WorkoutSession   WorkoutSession @relation(fields: [workoutSessionId], references: [id], onDelete: Cascade)
+  // workoutSessionId String
+  User          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        String
 }
 
 model AmrapSection {
@@ -599,21 +612,21 @@ model AmrapMove {
 }
 
 model ForTimeSession {
-  id               String           @id @default(uuid())
-  createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt
-  name             String?
-  note             String?
-  repeats          Int              @default(1) // Repeat the whole thing x times
-  timecapSeconds   Int              @default(0) // 0 is no timecap
+  id              String           @id @default(uuid())
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  name            String
+  note            String?
+  repeats         Int              @default(1) // Repeat the whole thing x times
+  timecapSeconds  Int              @default(0) // 0 is no timecap
   /// If forced rests are required between sections then add [rest:seconds].
   /// [ForTimeSectionId, rest:60, ForTimeSectionId]
-  childrenOrder    String[]
-  ForTimeSections  ForTimeSection[]
-  WorkoutSession   WorkoutSession   @relation(fields: [workoutSessionId], references: [id], onDelete: Cascade)
-  workoutSessionId String
-  User             User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId           String
+  childrenOrder   String[]
+  ForTimeSections ForTimeSection[]
+  // WorkoutSession   WorkoutSession   @relation(fields: [workoutSessionId], references: [id], onDelete: Cascade)
+  // workoutSessionId String
+  User            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId          String
 }
 
 model ForTimeSection {
@@ -646,39 +659,39 @@ model ForTimeMove {
 }
 
 model MobilitySession {
-  id               String         @id @default(uuid())
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
-  name             String?
-  note             String?
-  audioUri         String?
-  videoUri         String?
-  videoThumbUri    String?
-  childrenOrder    String[]
-  MobilityMoves    MobilityMove[]
-  WorkoutSession   WorkoutSession @relation(fields: [workoutSessionId], references: [id])
-  workoutSessionId String
-  User             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId           String
+  id            String         @id @default(uuid())
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  name          String
+  note          String?
+  audioUri      String?
+  videoUri      String?
+  videoThumbUri String?
+  childrenOrder String[]
+  MobilityMoves MobilityMove[]
+  // WorkoutSession   WorkoutSession @relation(fields: [workoutSessionId], references: [id])
+  // workoutSessionId String
+  User          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        String
 }
 
 ///////////////////////////////////////
 /////// Logged Workout Session ////////
 ///////////////////////////////////////
 model LoggedWorkoutSession {
-  id                              String                           @id @default(uuid())
-  createdAt                       DateTime                         @default(now())
-  completedOn                     DateTime
-  name                            String
-  note                            String?
-  GymProfile                      GymProfile?                      @relation(fields: [gymProfileId], references: [id])
-  gymProfileId                    String?
-  User                            User                             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId                          String
-  WorkoutSession                  WorkoutSession?                  @relation(fields: [workoutSessionId], references: [id])
-  workoutSessionId                String?
-  ScheduledWorkoutSession         ScheduledWorkoutSession?
-  CompletedTrainingPlanDayWorkout CompletedTrainingPlanDayWorkout?
+  id           String      @id @default(uuid())
+  createdAt    DateTime    @default(now())
+  completedOn  DateTime
+  name         String
+  note         String?
+  GymProfile   GymProfile? @relation(fields: [gymProfileId], references: [id])
+  gymProfileId String?
+  User         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       String
+  // WorkoutSession                  WorkoutSession?                  @relation(fields: [workoutSessionId], references: [id])
+  // workoutSessionId                String?
+  // ScheduledWorkoutSession ScheduledWorkoutSession?
+  // CompletedTrainingPlanDayWorkout CompletedTrainingPlanDayWorkout?
 }
 
 //////////////////////////////
@@ -708,54 +721,54 @@ model TrainingPlan {
 }
 
 model TrainingPlanDay {
-  id                      String                   @id @default(uuid())
-  createdAt               DateTime                 @default(now())
-  note                    String?
-  dayNumber               Int
-  User                    User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId                  String
-  TrainingPlan            TrainingPlan             @relation(fields: [trainingPlanId], references: [id], onDelete: Cascade)
-  trainingPlanId          String
-  TrainingPlanDayWorkouts TrainingPlanDayWorkout[]
+  id             String       @id @default(uuid())
+  createdAt      DateTime     @default(now())
+  note           String?
+  dayNumber      Int
+  User           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         String
+  TrainingPlan   TrainingPlan @relation(fields: [trainingPlanId], references: [id], onDelete: Cascade)
+  trainingPlanId String
+  // TrainingPlanDayWorkouts TrainingPlanDayWorkout[]
 }
 
-model TrainingPlanDayWorkout {
-  id                               String                            @id @default(uuid())
-  createdAt                        DateTime                          @default(now())
-  note                             String?
-  sortPosition                     Int
-  User                             User                              @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId                           String
-  WorkoutSession                   WorkoutSession                    @relation(fields: [workoutSessionId], references: [id], onDelete: Cascade)
-  workoutSessionId                 String
-  TrainingPlanDay                  TrainingPlanDay                   @relation(fields: [trainingPlanDayId], references: [id], onDelete: Cascade)
-  trainingPlanDayId                String
-  CompletedTrainingPlanDayWorkouts CompletedTrainingPlanDayWorkout[]
-  ScheduledWorkoutSessions         ScheduledWorkoutSession[]
-}
+// model TrainingPlanDayWorkout {
+//   id                               String                            @id @default(uuid())
+//   createdAt                        DateTime                          @default(now())
+//   note                             String?
+//   sortPosition                     Int
+//   User                             User                              @relation(fields: [userId], references: [id], onDelete: Cascade)
+//   userId                           String
+//   WorkoutSession                   WorkoutSession                    @relation(fields: [workoutSessionId], references: [id], onDelete: Cascade)
+//   workoutSessionId                 String
+//   TrainingPlanDay                  TrainingPlanDay                   @relation(fields: [trainingPlanDayId], references: [id], onDelete: Cascade)
+//   trainingPlanDayId                String
+//   CompletedTrainingPlanDayWorkouts CompletedTrainingPlanDayWorkout[]
+//   ScheduledWorkoutSessions         ScheduledWorkoutSession[]
+// }
 
 model TrainingPlanEnrolment {
-  id                               String                            @id @default(uuid())
-  createdAt                        DateTime                          @default(now())
-  startDate                        DateTime?
-  User                             User                              @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId                           String
-  TrainingPlan                     TrainingPlan                      @relation(fields: [trainingPlanId], references: [id], onDelete: Cascade)
-  trainingPlanId                   String
-  ScheduledWorkoutSessions         ScheduledWorkoutSession[]
-  CompletedTrainingPlanDayWorkouts CompletedTrainingPlanDayWorkout[]
+  id             String       @id @default(uuid())
+  createdAt      DateTime     @default(now())
+  startDate      DateTime?
+  User           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         String
+  TrainingPlan   TrainingPlan @relation(fields: [trainingPlanId], references: [id], onDelete: Cascade)
+  trainingPlanId String
+  // ScheduledWorkoutSessions ScheduledWorkoutSession[]
+  // CompletedTrainingPlanDayWorkouts CompletedTrainingPlanDayWorkout[]
 }
 
-model CompletedTrainingPlanDayWorkout {
-  id                       String                 @id @default(uuid())
-  createdAt                DateTime               @default(now())
-  TrainingPlanDayWorkout   TrainingPlanDayWorkout @relation(fields: [trainingPlanDayWorkoutId], references: [id], onDelete: Cascade)
-  trainingPlanDayWorkoutId String
-  LoggedWorkoutSession     LoggedWorkoutSession?  @relation(fields: [loggedWorkoutSessionId], references: [id])
-  loggedWorkoutSessionId   String?                @unique
-  TrainingPlanEnrolment    TrainingPlanEnrolment  @relation(fields: [trainingPlanEnrolmentId], references: [id], onDelete: Cascade)
-  trainingPlanEnrolmentId  String
-}
+// model CompletedTrainingPlanDayWorkout {
+//   id                       String                 @id @default(uuid())
+//   createdAt                DateTime               @default(now())
+//   TrainingPlanDayWorkout   TrainingPlanDayWorkout @relation(fields: [trainingPlanDayWorkoutId], references: [id], onDelete: Cascade)
+//   trainingPlanDayWorkoutId String
+//   LoggedWorkoutSession     LoggedWorkoutSession?  @relation(fields: [loggedWorkoutSessionId], references: [id])
+//   loggedWorkoutSessionId   String?                @unique
+//   TrainingPlanEnrolment    TrainingPlanEnrolment  @relation(fields: [trainingPlanEnrolmentId], references: [id], onDelete: Cascade)
+//   trainingPlanEnrolmentId  String
+// }
 
 model TrainingPlanReview {
   id             String       @id @default(uuid())

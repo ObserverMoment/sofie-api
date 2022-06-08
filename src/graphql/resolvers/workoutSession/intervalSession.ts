@@ -35,31 +35,16 @@ export const createIntervalSession = async (
   { data }: MutationCreateIntervalSessionArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  await checkUserOwnsObject(
-    data.WorkoutSession.id,
-    'workoutSession',
-    authedUserId,
-    prisma,
-  )
-
   const intervalSession = await prisma.$transaction(async (prisma) => {
     const intervalSession = await prisma.intervalSession.create({
       data: {
-        WorkoutSession: {
-          connect: data.WorkoutSession,
-        },
+        name: data.name,
         User: {
           connect: { id: authedUserId },
         },
       },
       select,
     })
-
-    await pushNewChildToOrder(
-      data.WorkoutSession.id,
-      (intervalSession as any).id,
-      prisma,
-    )
 
     return intervalSession
   })
@@ -82,6 +67,7 @@ export const updateIntervalSession = async (
     where: { id: data.id },
     data: {
       ...data,
+      name: data.name || undefined,
       repeats: data.repeats || undefined,
       childrenOrder: processStringListUpdateInputData(data, 'childrenOrder'),
       intervals: processNumberListUpdateInputData(data, 'intervals'),
@@ -109,7 +95,6 @@ export const duplicateIntervalSession = async (
   const original = await prisma.intervalSession.findUnique({
     where: { id },
     include: {
-      WorkoutSession: true,
       IntervalExercises: {
         include: {
           IntervalSets: {
@@ -136,7 +121,6 @@ export const duplicateIntervalSession = async (
         repeats: original.repeats,
         childrenOrder: original.childrenOrder,
         intervals: original.intervals,
-        WorkoutSession: { connect: { id: original.workoutSessionId } },
         User: {
           connect: { id: authedUserId },
         },
@@ -167,14 +151,6 @@ export const duplicateIntervalSession = async (
       select,
     })
 
-    await duplicateNewChildToOrder(
-      original.workoutSessionId,
-      original.WorkoutSession.childrenOrder,
-      original.id,
-      (copy as any).id,
-      prisma,
-    )
-
     return copy
   })
 
@@ -197,21 +173,8 @@ export const deleteIntervalSession = async (
       where: { id },
       select: {
         id: true,
-        WorkoutSession: {
-          select: {
-            id: true,
-            childrenOrder: true,
-          },
-        },
       },
     })
-
-    await deleteChildFromOrder(
-      deleted.WorkoutSession.id,
-      deleted.WorkoutSession.childrenOrder,
-      deleted.id,
-      prisma,
-    )
 
     return deleted
   })
