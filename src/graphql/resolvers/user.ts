@@ -137,54 +137,29 @@ export const userRecentlyViewedObjects = async (
     return [] as UserRecentlyViewedObject[]
   }
 
-  /// Group the object types so we can make fewer DB calls.
-  const objectInfos = user.recentlyViewedObjects.reduce(
-    (acum, next) => {
-      const o = recentlyViewedObjectInfo(next)
-      acum[o.type].push(o.id)
-      acum.sortedIds.push(o.id)
-      return acum
-    },
-    {
-      sortedIds: [] as string[],
-      clubSummary: [] as string[],
-      workoutSummary: [] as string[],
-      workoutPlanSummary: [] as string[],
-    },
+  const objects: (UserRecentlyViewedObject | null)[] = await Promise.all(
+    user.recentlyViewedObjects.map(async (o) => {
+      const info = recentlyViewedObjectInfo(o)
+      const data = await prisma[info.type].findUnique({
+        where: { id: info.id },
+        select: {
+          id: true,
+          name: true,
+        },
+      })
+
+      return data
+        ? {
+            id: data.id,
+            name: data.name,
+            type: info.type,
+          }
+        : null
+    }),
   )
 
-  const objects = await Promise.all([
-    prisma.club.findMany({
-      where: { id: { in: objectInfos.clubSummary } },
-      select: selectForClubSummary,
-    }),
-    prisma.workout.findMany({
-      where: { id: { in: objectInfos.workoutSummary } },
-      select: selectForWorkoutSummary,
-    }),
-    prisma.workoutPlan.findMany({
-      where: { id: { in: objectInfos.workoutPlanSummary } },
-      select: selectForWorkoutPlanSummary,
-    }),
-  ])
-
-  const formattedClubSummaries = formatClubSummaries(objects[0])
-  const formattedWorkoutSummaries = formatWorkoutSummaries(objects[1])
-  const formattedWorkoutPlanSummaries = formatWorkoutPlanSummaries(objects[2])
-
-  /// Return in the same order as they are found in the db.
-  /// Had issues generating client side types (Dart) when trying to define [UserRecentlyViewedObject] as a union of types. Falling back on nullable fields option.
-  /// Currently no checks to make sure multiple objects aren't returned on a single [UserRecentlyViewedObject].
-  const data = objectInfos.sortedIds
-    .map((id) => ({
-      Club: formattedClubSummaries.find((o) => o.id === id),
-      Workout: formattedWorkoutSummaries.find((o) => o.id === id),
-      WorkoutPlan: formattedWorkoutPlanSummaries.find((o) => o.id === id),
-    }))
-    .filter((o) => o.Club?.id || o.Workout?.id || o.WorkoutPlan?.id)
-
-  if (data) {
-    return data
+  if (objects) {
+    return objects.filter((x) => x) as UserRecentlyViewedObject[]
   } else {
     throw new ApolloError('userRecentlyViewedObjects: There was an issue.')
   }
@@ -623,7 +598,7 @@ export async function displayNameIsAvailable(
   return users !== null && users.length === 0
 }
 
-type RecentObjectType = 'clubSummary' | 'workoutSummary' | 'workoutPlanSummary'
+type RecentObjectType = 'resistanceSession'
 
 interface RecentlyViewedObjectInfo {
   id: string

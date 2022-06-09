@@ -145,18 +145,8 @@ export async function addObjectToUserRecentlyViewed(
   let typeAndId: string
 
   switch (resolverName) {
-    case 'clubSummary':
-      typeAndId = `clubSummary:${resolverArgs.id}`
-      break
-    case 'workoutById':
-      typeAndId = `workoutSummary:${resolverArgs.id}`
-      break
-    case 'workoutPlanById':
-      typeAndId = `workoutPlanSummary:${resolverArgs.id}`
-      break
-
-    case 'workoutSessionById':
-      typeAndId = `workoutSession:${resolverArgs.id}`
+    case 'resistanceSessionById':
+      typeAndId = `resistanceSession:${resolverArgs.id}`
       break
 
     default:

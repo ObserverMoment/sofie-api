@@ -28,7 +28,7 @@ import workoutPlanEnrolment from './workoutPlan/workoutPlanEnrolment'
 import workoutSection from './workout/workoutSection'
 import workoutSet from './workout/workoutSet'
 // New models May 2022
-import workoutSession from './workoutSession/workoutSession'
+import workoutSessions from './workoutSession/workoutSessions'
 import amrapSession from './workoutSession/amrapSession'
 import cardioSession from './workoutSession/cardioSession'
 import forTimeSession from './workoutSession/forTimeSession'
@@ -68,7 +68,7 @@ const typeDefs = mergeTypeDefs([
   workoutSection,
   workoutSet,
   // New models May 2022
-  workoutSession,
+  workoutSessions,
   amrapSession,
   cardioSession,
   forTimeSession,

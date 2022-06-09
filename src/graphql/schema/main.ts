@@ -94,14 +94,11 @@ export default gql`
     userProfiles(cursor: ID, take: Int): [UserProfileSummary!]!
     userProfile(userId: ID!): UserProfile
     # #### WorkoutSessions ####
-    # workoutSessionById(id: ID!): WorkoutSession
-    # userWorkoutSessions: [WorkoutSession!]! # Authed user created.
+    userWorkoutSessions: UserWorkoutSessions! # Authed user created and saved.
     #### ResistanceSessions ####
-    userResistanceSessions: [ResistanceSession!]!
     resistanceSessionById(id: ID!): ResistanceSession
     #### CardioSessions ####
     cardioSessionById(id: ID!): CardioSession
-    cardioExerciseById(id: ID!): CardioExercise
     #### Workouts - DEPRECATED ####
     publicWorkouts(
       cursor: ID

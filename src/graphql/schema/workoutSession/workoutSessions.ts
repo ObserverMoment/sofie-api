@@ -1,6 +1,23 @@
 import { gql } from 'apollo-server-express'
 
 export default gql`
+  # All their created and saved workouts of all types.
+  type UserWorkoutSessions {
+    ResistanceSessions: [ResistanceSession!]!
+    SavedResistanceSessions: [ResistanceSession!]!
+    CardioSessions: [CardioSession!]!
+    SavedCardioSessions: [CardioSession!]!
+    AmrapSessions: [AmrapSession!]!
+    SavedAmrapSessions: [AmrapSession!]!
+    ForTimeSessions: [ForTimeSession!]!
+    SavedForTimeSessions: [ForTimeSession!]!
+    IntervalSessions: [IntervalSession!]!
+    SavedIntervalSessions: [IntervalSession!]!
+    MobilitySessions: [MobilitySession!]!
+    SavedMobilitySessions: [MobilitySession!]!
+  }
+
+  ###### DEPRECATED ######
   type WorkoutSession {
     id: ID!
     createdAt: DateTime!

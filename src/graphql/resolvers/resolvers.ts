@@ -205,14 +205,7 @@ import {
 import { checkClubInviteToken } from './invites'
 
 ////// Workout Session Types ///////
-// import {
-//   userWorkoutSessions,
-//   workoutSessionById,
-//   createWorkoutSession,
-//   updateWorkoutSession,
-//   duplicateWorkoutSession,
-//   deleteWorkoutSession,
-// } from './workoutSession/workoutSession-deprecated'
+import { userWorkoutSessions } from './workoutSession/workoutSessions'
 
 import {
   createAmrapSession,
@@ -507,10 +500,9 @@ const resolvers: Resolvers = {
     /// User Exercise and Scored Workout Trackers ///
     userExerciseLoadTrackers,
     //// WorkoutSessions ////
-    // userWorkoutSessions,
-    // workoutSessionById,
+    userWorkoutSessions,
     //// ResistanceSessions ////
-    userResistanceSessions,
+    // userResistanceSessions,
     resistanceSessionById,
     //// Workouts - DEPRECATED////
     publicWorkouts,

@@ -59,19 +59,9 @@ const recentMiddlewareWrapper = async (
 }
 
 /// For certain queries we want to update the users recently viewed items list.
-/// Add throwdowns and events once they are built.
 const recentsMiddleware = {
   Query: {
-    clubSummary: recentMiddlewareWrapper,
-    workoutById: recentMiddlewareWrapper,
-    workoutPlanById: recentMiddlewareWrapper,
-  },
-  Mutation: {
-    /// NOTE: We can not update "Create" recents from middleware as no object exists until AFTER the create op has completed. Check the actual resolvers for implementation of this where the function will be run.
-    /// Keep listed here as reference.
-    // createClub: recentMiddlewareWrapper,
-    // createWorkout: recentMiddlewareWrapper,
-    // createWorkoutPlan: recentMiddlewareWrapper,
+    resistanceSessionById: recentMiddlewareWrapper,
   },
 }
 

@@ -11,7 +11,7 @@ import { checkIsAdmin } from '../utils'
 //// Queries ////
 //// Run this on app load ////
 export const coreData = async (r: any, a: any, { prisma }: Context) => {
-  const coreData = await Promise.all([
+  const coreData = await prisma.$transaction([
     prisma.bodyArea.findMany(),
     prisma.equipment.findMany(),
     prisma.moveType.findMany(),

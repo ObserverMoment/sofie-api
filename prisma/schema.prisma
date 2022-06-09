@@ -310,6 +310,12 @@ model User {
   TrainingPlanEnrolments        TrainingPlanEnrolment[]
   TrainingPlanReviews           TrainingPlanReview[]
   Events                        Event[]
+  SavedCardioSessions           SavedCardioSession[]
+  SavedResistanceSessions       SavedResistanceSession[]
+  SavedIntervalSessions         SavedIntervalSession[]
+  SavedAmrapSessions            SavedAmrapSession[]
+  SavedForTimeSessions          SavedForTimeSession[]
+  SavedMobilitySessions         SavedMobilitySession[]
 }
 
 /// Calendar event for a specific user.
@@ -432,17 +438,31 @@ model ClubInviteToken {
 // }
 
 model CardioSession {
-  id              String           @id @default(uuid())
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-  name            String
-  note            String?
-  childrenOrder   String[]
-  CardioExercises CardioExercise[]
+  id                  String               @id @default(uuid())
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  name                String
+  note                String?
+  childrenOrder       String[]
+  CardioExercises     CardioExercise[]
   // WorkoutSession   WorkoutSession   @relation(fields: [workoutSessionId], references: [id], onDelete: Cascade)
   // workoutSessionId String
-  User            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  User                User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId              String
+  SavedCardioSessions SavedCardioSession[]
+}
+
+/// Saved by a specific user.
+model SavedCardioSession {
+  id              String        @id @default(uuid())
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  CardioSession   CardioSession @relation(fields: [cardioSessionId], references: [id], onDelete: Cascade)
+  cardioSessionId String
+  User            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId          String
+
+  @@unique([cardioSessionId, userId])
 }
 
 model CardioExercise {
@@ -464,16 +484,30 @@ model CardioExercise {
 }
 
 model ResistanceSession {
-  id                  String               @id @default(uuid())
-  createdAt           DateTime             @default(now())
-  updatedAt           DateTime             @updatedAt
-  name                String
-  note                String?
-  ResistanceExercises ResistanceExercise[]
+  id                      String                   @id @default(uuid())
+  createdAt               DateTime                 @default(now())
+  updatedAt               DateTime                 @updatedAt
+  name                    String
+  note                    String?
+  ResistanceExercises     ResistanceExercise[]
   // WorkoutSession      WorkoutSession       @relation(fields: [workoutSessionId], references: [id], onDelete: Cascade)
   // workoutSessionId    String
-  User                User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  User                    User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId                  String
+  SavedResistanceSessions SavedResistanceSession[]
+}
+
+/// Saved by a specific user.
+model SavedResistanceSession {
+  id                  String            @id @default(uuid())
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+  ResistanceSession   ResistanceSession @relation(fields: [resistanceSessionId], references: [id], onDelete: Cascade)
+  resistanceSessionId String
+  User                User              @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId              String
+
+  @@unique([resistanceSessionId, userId])
 }
 
 model ResistanceExercise {
@@ -516,26 +550,40 @@ enum ResistanceSetRepType {
 }
 
 model IntervalSession {
-  id                String             @id @default(uuid())
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
-  name              String
-  note              String?
-  audioUri          String?
-  videoUri          String?
-  videoThumbUri     String?
-  repeats           Int                @default(1) // Run through all exercises this many times
+  id                    String                 @id @default(uuid())
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+  name                  String
+  note                  String?
+  audioUri              String?
+  videoUri              String?
+  videoThumbUri         String?
+  repeats               Int                    @default(1) // Run through all exercises this many times
   // For rest intervals add 'rest' to the array.
   // E.g. [IntervalExerciseId, IntervalExerciseId, rest, IntervalExerciseId, IntervalExerciseId, rest]
-  childrenOrder     String[]
+  childrenOrder         String[]
   // Align with setOrder. Interval length in seconds.
   // E.g [60, 60, 30, 60, 60, 30]
-  intervals         Int[]
-  IntervalExercises IntervalExercise[]
+  intervals             Int[]
+  IntervalExercises     IntervalExercise[]
   // WorkoutSession    WorkoutSession     @relation(fields: [workoutSessionId], references: [id], onDelete: Cascade)
   // workoutSessionId  String
-  User              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  User                  User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId                String
+  SavedIntervalSessions SavedIntervalSession[]
+}
+
+/// Saved by a specific user.
+model SavedIntervalSession {
+  id                String          @id @default(uuid())
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  IntervalSession   IntervalSession @relation(fields: [intervalSessionId], references: [id], onDelete: Cascade)
+  intervalSessionId String
+  User              User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId            String
+
+  @@unique([intervalSessionId, userId])
 }
 
 model IntervalExercise {
@@ -567,19 +615,33 @@ model IntervalSet {
 }
 
 model AmrapSession {
-  id            String         @id @default(uuid())
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  name          String
-  note          String?
+  id                 String              @id @default(uuid())
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  name               String
+  note               String?
   /// If forced rests are required between sections then add [rest:seconds].
   /// [AMRAPSectionId, rest:60, AMRAPSection]
-  childrenOrder String[]
-  AmrapSections AmrapSection[]
+  childrenOrder      String[]
+  AmrapSections      AmrapSection[]
   // WorkoutSession   WorkoutSession @relation(fields: [workoutSessionId], references: [id], onDelete: Cascade)
   // workoutSessionId String
-  User          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId        String
+  User               User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId             String
+  SavedAmrapSessions SavedAmrapSession[]
+}
+
+/// Saved by a specific user.
+model SavedAmrapSession {
+  id             String       @id @default(uuid())
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  AmrapSession   AmrapSession @relation(fields: [amrapSessionId], references: [id], onDelete: Cascade)
+  amrapSessionId String
+  User           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         String
+
+  @@unique([amrapSessionId, userId])
 }
 
 model AmrapSection {
@@ -612,21 +674,35 @@ model AmrapMove {
 }
 
 model ForTimeSession {
-  id              String           @id @default(uuid())
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-  name            String
-  note            String?
-  repeats         Int              @default(1) // Repeat the whole thing x times
-  timecapSeconds  Int              @default(0) // 0 is no timecap
+  id                   String                @id @default(uuid())
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+  name                 String
+  note                 String?
+  repeats              Int                   @default(1) // Repeat the whole thing x times
+  timecapSeconds       Int                   @default(0) // 0 is no timecap
   /// If forced rests are required between sections then add [rest:seconds].
   /// [ForTimeSectionId, rest:60, ForTimeSectionId]
-  childrenOrder   String[]
-  ForTimeSections ForTimeSection[]
+  childrenOrder        String[]
+  ForTimeSections      ForTimeSection[]
   // WorkoutSession   WorkoutSession   @relation(fields: [workoutSessionId], references: [id], onDelete: Cascade)
   // workoutSessionId String
-  User            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId          String
+  User                 User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId               String
+  SavedForTimeSessions SavedForTimeSession[]
+}
+
+/// Saved by a specific user.
+model SavedForTimeSession {
+  id               String         @id @default(uuid())
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  ForTimeSession   ForTimeSession @relation(fields: [forTimeSessionId], references: [id], onDelete: Cascade)
+  forTimeSessionId String
+  User             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId           String
+
+  @@unique([forTimeSessionId, userId])
 }
 
 model ForTimeSection {
@@ -659,20 +735,34 @@ model ForTimeMove {
 }
 
 model MobilitySession {
-  id            String         @id @default(uuid())
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  name          String
-  note          String?
-  audioUri      String?
-  videoUri      String?
-  videoThumbUri String?
-  childrenOrder String[]
-  MobilityMoves MobilityMove[]
+  id                    String                 @id @default(uuid())
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+  name                  String
+  note                  String?
+  audioUri              String?
+  videoUri              String?
+  videoThumbUri         String?
+  childrenOrder         String[]
+  MobilityMoves         MobilityMove[]
   // WorkoutSession   WorkoutSession @relation(fields: [workoutSessionId], references: [id])
   // workoutSessionId String
-  User          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId        String
+  User                  User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId                String
+  SavedMobilitySessions SavedMobilitySession[]
+}
+
+/// Saved by a specific user.
+model SavedMobilitySession {
+  id                String          @id @default(uuid())
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  MobilitySession   MobilitySession @relation(fields: [mobilitySessionId], references: [id], onDelete: Cascade)
+  mobilitySessionId String
+  User              User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId            String
+
+  @@unique([mobilitySessionId, userId])
 }
 
 ///////////////////////////////////////
