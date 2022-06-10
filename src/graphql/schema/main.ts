@@ -24,6 +24,7 @@ export default gql`
     validateToken: Boolean!
     #### Core Data ####
     coreData: CoreData!
+    moveData: MoveData!
     #### Clubs ####
     checkUniqueClubName(name: String!): Boolean!
     checkUserClubMemberStatus(clubId: ID!): UserClubMemberStatus!
@@ -52,8 +53,6 @@ export default gql`
     lifetimeLogStatsSummary(userId: ID!): LifetimeLogStatsSummary!
     userLoggedWorkouts: [LoggedWorkout!]!
     loggedWorkoutById(id: ID!): LoggedWorkout
-    #### User Custom Moves ####
-    customMoves: [Move!]!
     #### Standard + Custom Benchmarks + User Scores ####
     userFitnessBenchmarks: [FitnessBenchmark!]!
     #### User Progress Tracking ####
@@ -94,8 +93,9 @@ export default gql`
     userProfiles(cursor: ID, take: Int): [UserProfileSummary!]!
     userProfile(userId: ID!): UserProfile
     # #### WorkoutSessions ####
-    userWorkoutSessions: UserWorkoutSessions! # Authed user created and saved.
     #### ResistanceSessions ####
+    userResistanceSessions: [ResistanceSession!]!
+    userSavedResistanceSessions: [ResistanceSession!]!
     resistanceSessionById(id: ID!): ResistanceSession
     #### CardioSessions ####
     cardioSessionById(id: ID!): CardioSession

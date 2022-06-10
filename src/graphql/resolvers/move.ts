@@ -1,4 +1,4 @@
-import { PrismaPromise } from '@prisma/client'
+import { MoveScope, PrismaPromise } from '@prisma/client'
 import { ApolloError } from 'apollo-server-express'
 import { Context, ContextUserType } from '../..'
 import {
@@ -8,28 +8,51 @@ import {
   MutationCreateMoveArgs,
   MutationUpdateMoveArgs,
   BodyAreaMoveScoreInput,
-  MoveScope,
   WorkoutMoveRepType,
+  MoveData,
 } from '../../generated/graphql'
 import { checkMoveMediaForDeletion, deleteFiles } from '../../lib/uploadcare'
 import { checkUserOwnsObject } from '../utils'
 
 //// Queries ////
-// Move scopes are 'STANDARD' or 'CUSTOM'.
-export const customMoves = async (
+//// Run this on app load ////
+export const moveData = async (
   r: any,
   a: any,
-  { authedUserId, prisma, select }: Context,
+  { authedUserId, prisma }: Context,
 ) => {
-  const moves = await prisma.move.findMany({
-    where: {
-      User: { id: authedUserId },
-      scope: 'CUSTOM',
-      archived: false,
+  const moveInclude = {
+    MoveType: true,
+    BodyAreaMoveScores: {
+      include: {
+        BodyArea: true,
+      },
     },
-    select,
-  })
-  return moves as Move[]
+    RequiredEquipments: true,
+    SelectableEquipments: true,
+  }
+
+  const coreData = await prisma.$transaction([
+    prisma.move.findMany({
+      where: { scope: MoveScope.STANDARD },
+      include: moveInclude,
+      orderBy: {
+        name: 'asc',
+      },
+    }),
+    prisma.move.findMany({
+      where: { scope: MoveScope.CUSTOM, id: authedUserId },
+      include: moveInclude,
+      orderBy: {
+        name: 'asc',
+      },
+    }),
+  ])
+
+  return {
+    standardMoves: coreData[0],
+    customMoves: coreData[1],
+  } as MoveData
 }
 
 //// Mutations ////

@@ -11,6 +11,7 @@ import gymProfile from './gymProfile'
 import invites from './invites'
 import loggedWorkout from './loggedWorkout'
 import main from './main'
+import move from './move'
 import scheduledWorkout from './scheduledWorkout'
 import skillsAndCertifications from './skillsAndCertifications'
 import timelineFeed from './timelineFeed'
@@ -51,6 +52,7 @@ const typeDefs = mergeTypeDefs([
   invites,
   loggedWorkout,
   main,
+  move,
   welcomeTodoItem,
   scheduledWorkout,
   skillsAndCertifications,

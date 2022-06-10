@@ -3,6 +3,8 @@ import { gql } from 'apollo-server-express'
 export default gql`
   type GymProfile {
     id: ID!
+    createdAt: DateTime!
+    updatedAt: DateTime!
     name: String!
     description: String
     Equipments: [Equipment!]!

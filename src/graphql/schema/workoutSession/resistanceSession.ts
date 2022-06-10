@@ -8,6 +8,7 @@ export default gql`
     name: String!
     note: String
     ResistanceExercises: [ResistanceExercise!]!
+    User: UserAvatarData!
   }
 
   input CreateResistanceSessionInput {

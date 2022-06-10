@@ -114,7 +114,7 @@ import {
   deleteLoggedWorkoutMove,
 } from './loggedWorkout'
 
-import { customMoves, createMove, updateMove } from './move'
+import { moveData, createMove, updateMove } from './move'
 
 import { welcomeTodoItems, markWelcomeTodoItemAsSeen } from './welcomeTodoItems'
 
@@ -204,9 +204,6 @@ import {
 
 import { checkClubInviteToken } from './invites'
 
-////// Workout Session Types ///////
-import { userWorkoutSessions } from './workoutSession/workoutSessions'
-
 import {
   createAmrapSession,
   updateAmrapSession,
@@ -261,6 +258,7 @@ import {
 
 import {
   userResistanceSessions,
+  userSavedResistanceSessions,
   resistanceSessionById,
   createResistanceSession,
   updateResistanceSession,
@@ -436,6 +434,7 @@ const resolvers: Resolvers = {
     announcementUpdates,
     welcomeTodoItems,
     coreData,
+    moveData,
     ///// Clubs ////
     checkUniqueClubName,
     checkUserClubMemberStatus,
@@ -467,8 +466,6 @@ const resolvers: Resolvers = {
     logCountByWorkout,
     loggedWorkoutById,
     userLoggedWorkouts,
-    //// User Custom Move ////
-    customMoves,
     //// Standard + Custom Benchmarks + User Scores ////
     userFitnessBenchmarks,
     //// Scheduled Workouts ////
@@ -500,9 +497,9 @@ const resolvers: Resolvers = {
     /// User Exercise and Scored Workout Trackers ///
     userExerciseLoadTrackers,
     //// WorkoutSessions ////
-    userWorkoutSessions,
     //// ResistanceSessions ////
-    // userResistanceSessions,
+    userResistanceSessions,
+    userSavedResistanceSessions,
     resistanceSessionById,
     //// Workouts - DEPRECATED////
     publicWorkouts,

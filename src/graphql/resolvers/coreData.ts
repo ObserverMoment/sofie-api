@@ -1,4 +1,3 @@
-import { FitnessBenchmarkScope, MoveScope } from '@prisma/client'
 import { Context } from '../..'
 import {
   CoreData,
@@ -15,37 +14,22 @@ export const coreData = async (r: any, a: any, { prisma }: Context) => {
     prisma.bodyArea.findMany(),
     prisma.equipment.findMany(),
     prisma.moveType.findMany(),
-    prisma.workoutGoal.findMany(),
-    prisma.workoutSectionType.findMany(),
-    prisma.move.findMany({
-      where: { scope: MoveScope.STANDARD },
-      include: {
-        MoveType: true,
-        BodyAreaMoveScores: {
-          include: {
-            BodyArea: true,
-          },
-        },
-        RequiredEquipments: true,
-        SelectableEquipments: true,
-      },
-      orderBy: {
-        name: 'asc',
-      },
-    }),
     prisma.progressWidget.findMany(),
     prisma.fitnessBenchmarkCategory.findMany(),
+    //// deprecated.
+    prisma.workoutGoal.findMany(),
+    prisma.workoutSectionType.findMany(),
   ])
 
   return {
     bodyAreas: coreData[0],
     equipment: coreData[1],
     moveTypes: coreData[2],
-    workoutGoals: coreData[3],
-    workoutSectionTypes: coreData[4],
-    standardMoves: coreData[5],
-    progressWidgets: coreData[6],
-    fitnessBenchmarkCategories: coreData[7],
+    progressWidgets: coreData[3],
+    fitnessBenchmarkCategories: coreData[4],
+    //// deprecated.
+    workoutGoals: coreData[5],
+    workoutSectionTypes: coreData[6],
   } as CoreData
 }
 

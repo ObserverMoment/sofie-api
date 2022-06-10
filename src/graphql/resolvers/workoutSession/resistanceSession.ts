@@ -31,7 +31,7 @@ export const userResistanceSessions = async (
   a: any,
   { select, authedUserId, prisma }: Context,
 ) => {
-  const userWorkoutSessions = await prisma.resistanceSession.findMany({
+  const sessions = await prisma.resistanceSession.findMany({
     where: {
       userId: authedUserId,
     },
@@ -39,7 +39,27 @@ export const userResistanceSessions = async (
     select,
   })
 
-  return userWorkoutSessions as ResistanceSession[]
+  return sessions as ResistanceSession[]
+}
+
+export const userSavedResistanceSessions = async (
+  r: any,
+  a: any,
+  { select, authedUserId, prisma }: Context,
+) => {
+  const saved = await prisma.savedResistanceSession.findMany({
+    where: {
+      userId: authedUserId,
+    },
+    orderBy: [{ updatedAt: 'desc' }, { id: 'desc' }],
+    select: {
+      ResistanceSession: {
+        select,
+      },
+    },
+  })
+
+  return saved.map((s) => s.ResistanceSession as any) as ResistanceSession[]
 }
 
 export const resistanceSessionById = async (
