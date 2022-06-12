@@ -2,12 +2,12 @@ import { gql } from 'apollo-server-express'
 
 export default gql`
   # All core / read only data that can be retrieved on app load
-  type MoveData {
-    standardMoves: [Move!]!
-    customMoves: [Move!]!
+  type AllMoves {
+    standardMoves: [MoveData!]!
+    customMoves: [MoveData!]!
   }
 
-  type Move {
+  type MoveData {
     id: ID!
     name: String!
     archived: Boolean!
@@ -21,6 +21,17 @@ export default gql`
     RequiredEquipments: [Equipment!]!
     SelectableEquipments: [Equipment!]!
     BodyAreaMoveScores: [BodyAreaMoveScore!]!
+  }
+
+  type Move {
+    id: ID!
+    name: String!
+    archived: Boolean!
+    searchTerms: String
+    description: String
+    demoVideoUri: String
+    demoVideoThumbUri: String
+    scope: MoveScope!
   }
 
   type MoveType {

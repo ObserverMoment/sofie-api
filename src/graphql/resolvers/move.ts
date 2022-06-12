@@ -10,6 +10,7 @@ import {
   BodyAreaMoveScoreInput,
   WorkoutMoveRepType,
   MoveData,
+  AllMoves,
 } from '../../generated/graphql'
 import { checkMoveMediaForDeletion, deleteFiles } from '../../lib/uploadcare'
 import { checkUserOwnsObject } from '../utils'
@@ -19,40 +20,29 @@ import { checkUserOwnsObject } from '../utils'
 export const moveData = async (
   r: any,
   a: any,
-  { authedUserId, prisma }: Context,
+  { select, authedUserId, prisma }: Context,
 ) => {
-  const moveInclude = {
-    MoveType: true,
-    BodyAreaMoveScores: {
-      include: {
-        BodyArea: true,
-      },
-    },
-    RequiredEquipments: true,
-    SelectableEquipments: true,
-  }
-
   const coreData = await prisma.$transaction([
     prisma.move.findMany({
       where: { scope: MoveScope.STANDARD },
-      include: moveInclude,
       orderBy: {
         name: 'asc',
       },
+      select: select.standardMoves.select,
     }),
     prisma.move.findMany({
       where: { scope: MoveScope.CUSTOM, id: authedUserId },
-      include: moveInclude,
       orderBy: {
         name: 'asc',
       },
+      select: select.customMoves.select,
     }),
   ])
 
   return {
-    standardMoves: coreData[0],
-    customMoves: coreData[1],
-  } as MoveData
+    standardMoves: coreData[0] as MoveData[],
+    customMoves: coreData[1] as MoveData[],
+  } as AllMoves
 }
 
 //// Mutations ////

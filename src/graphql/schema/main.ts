@@ -24,7 +24,7 @@ export default gql`
     validateToken: Boolean!
     #### Core Data ####
     coreData: CoreData!
-    moveData: MoveData!
+    moveData: AllMoves!
     #### Clubs ####
     checkUniqueClubName(name: String!): Boolean!
     checkUserClubMemberStatus(clubId: ID!): UserClubMemberStatus!

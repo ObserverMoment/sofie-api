@@ -42,6 +42,12 @@ export type AddWorkoutToCollectionInput = {
   collectionId: Scalars['ID'];
 };
 
+export type AllMoves = {
+  __typename?: 'AllMoves';
+  customMoves: Array<MoveData>;
+  standardMoves: Array<MoveData>;
+};
+
 export type AmrapMove = {
   __typename?: 'AmrapMove';
   Equipment?: Maybe<Equipment>;
@@ -1109,6 +1115,18 @@ export type MobilitySession = {
 
 export type Move = {
   __typename?: 'Move';
+  archived: Scalars['Boolean'];
+  demoVideoThumbUri?: Maybe<Scalars['String']>;
+  demoVideoUri?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  scope: MoveScope;
+  searchTerms?: Maybe<Scalars['String']>;
+};
+
+export type MoveData = {
+  __typename?: 'MoveData';
   BodyAreaMoveScores: Array<BodyAreaMoveScore>;
   MoveType: MoveType;
   RequiredEquipments: Array<Equipment>;
@@ -1122,12 +1140,6 @@ export type Move = {
   scope: MoveScope;
   searchTerms?: Maybe<Scalars['String']>;
   validRepTypes: Array<WorkoutMoveRepType>;
-};
-
-export type MoveData = {
-  __typename?: 'MoveData';
-  customMoves: Array<Move>;
-  standardMoves: Array<Move>;
 };
 
 /**
@@ -2416,7 +2428,7 @@ export type Query = {
   lifetimeLogStatsSummary: LifetimeLogStatsSummary;
   logCountByWorkout: Scalars['Int'];
   loggedWorkoutById?: Maybe<LoggedWorkout>;
-  moveData: MoveData;
+  moveData: AllMoves;
   publicClubs: Array<ClubSummary>;
   publicWorkoutPlans: Array<WorkoutPlanSummary>;
   publicWorkouts: Array<WorkoutSummary>;
@@ -3967,6 +3979,7 @@ export type ResolversTypes = ResolversObject<{
   AddWorkoutPlanToCollectionInput: AddWorkoutPlanToCollectionInput;
   AddWorkoutToClubInput: AddWorkoutToClubInput;
   AddWorkoutToCollectionInput: AddWorkoutToCollectionInput;
+  AllMoves: ResolverTypeWrapper<AllMoves>;
   AmrapMove: ResolverTypeWrapper<AmrapMove>;
   AmrapSection: ResolverTypeWrapper<AmrapSection>;
   AmrapSession: ResolverTypeWrapper<AmrapSession>;
@@ -4255,6 +4268,7 @@ export type ResolversParentTypes = ResolversObject<{
   AddWorkoutPlanToCollectionInput: AddWorkoutPlanToCollectionInput;
   AddWorkoutToClubInput: AddWorkoutToClubInput;
   AddWorkoutToCollectionInput: AddWorkoutToCollectionInput;
+  AllMoves: AllMoves;
   AmrapMove: AmrapMove;
   AmrapSection: AmrapSection;
   AmrapSession: AmrapSession;
@@ -4511,6 +4525,12 @@ export type ResolversParentTypes = ResolversObject<{
   WorkoutSummary: WorkoutSummary;
   WorkoutTag: WorkoutTag;
   WorkoutWithMetaDataAdmin: WorkoutWithMetaDataAdmin;
+}>;
+
+export type AllMovesResolvers<ContextType = any, ParentType extends ResolversParentTypes['AllMoves'] = ResolversParentTypes['AllMoves']> = ResolversObject<{
+  customMoves?: Resolver<Array<ResolversTypes['MoveData']>, ParentType, ContextType>;
+  standardMoves?: Resolver<Array<ResolversTypes['MoveData']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type AmrapMoveResolvers<ContextType = any, ParentType extends ResolversParentTypes['AmrapMove'] = ResolversParentTypes['AmrapMove']> = ResolversObject<{
@@ -5058,6 +5078,18 @@ export type MobilitySessionResolvers<ContextType = any, ParentType extends Resol
 }>;
 
 export type MoveResolvers<ContextType = any, ParentType extends ResolversParentTypes['Move'] = ResolversParentTypes['Move']> = ResolversObject<{
+  archived?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  demoVideoThumbUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  demoVideoUri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  scope?: Resolver<ResolversTypes['MoveScope'], ParentType, ContextType>;
+  searchTerms?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type MoveDataResolvers<ContextType = any, ParentType extends ResolversParentTypes['MoveData'] = ResolversParentTypes['MoveData']> = ResolversObject<{
   BodyAreaMoveScores?: Resolver<Array<ResolversTypes['BodyAreaMoveScore']>, ParentType, ContextType>;
   MoveType?: Resolver<ResolversTypes['MoveType'], ParentType, ContextType>;
   RequiredEquipments?: Resolver<Array<ResolversTypes['Equipment']>, ParentType, ContextType>;
@@ -5071,12 +5103,6 @@ export type MoveResolvers<ContextType = any, ParentType extends ResolversParentT
   scope?: Resolver<ResolversTypes['MoveScope'], ParentType, ContextType>;
   searchTerms?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   validRepTypes?: Resolver<Array<ResolversTypes['WorkoutMoveRepType']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type MoveDataResolvers<ContextType = any, ParentType extends ResolversParentTypes['MoveData'] = ResolversParentTypes['MoveData']> = ResolversObject<{
-  customMoves?: Resolver<Array<ResolversTypes['Move']>, ParentType, ContextType>;
-  standardMoves?: Resolver<Array<ResolversTypes['Move']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -5364,7 +5390,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   lifetimeLogStatsSummary?: Resolver<ResolversTypes['LifetimeLogStatsSummary'], ParentType, ContextType, RequireFields<QueryLifetimeLogStatsSummaryArgs, 'userId'>>;
   logCountByWorkout?: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<QueryLogCountByWorkoutArgs, 'id'>>;
   loggedWorkoutById?: Resolver<Maybe<ResolversTypes['LoggedWorkout']>, ParentType, ContextType, RequireFields<QueryLoggedWorkoutByIdArgs, 'id'>>;
-  moveData?: Resolver<ResolversTypes['MoveData'], ParentType, ContextType>;
+  moveData?: Resolver<ResolversTypes['AllMoves'], ParentType, ContextType>;
   publicClubs?: Resolver<Array<ResolversTypes['ClubSummary']>, ParentType, ContextType>;
   publicWorkoutPlans?: Resolver<Array<ResolversTypes['WorkoutPlanSummary']>, ParentType, ContextType, Partial<QueryPublicWorkoutPlansArgs>>;
   publicWorkouts?: Resolver<Array<ResolversTypes['WorkoutSummary']>, ParentType, ContextType, Partial<QueryPublicWorkoutsArgs>>;
@@ -6072,6 +6098,7 @@ export type WorkoutWithMetaDataAdminResolvers<ContextType = any, ParentType exte
 }>;
 
 export type Resolvers<ContextType = any> = ResolversObject<{
+  AllMoves?: AllMovesResolvers<ContextType>;
   AmrapMove?: AmrapMoveResolvers<ContextType>;
   AmrapSection?: AmrapSectionResolvers<ContextType>;
   AmrapSession?: AmrapSessionResolvers<ContextType>;
