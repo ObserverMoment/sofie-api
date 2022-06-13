@@ -1161,6 +1161,7 @@ type Mutation {
   createResistanceExercise(data: CreateResistanceExerciseInput!): ResistanceExercise!
   createResistanceSession(data: CreateResistanceSessionInput!): ResistanceSession!
   createResistanceSet(data: CreateResistanceSetInput!): ResistanceSet!
+  createSavedResistanceSession(id: ID!): ResistanceSession!
   createScheduleForPlanEnrolment(data: CreateScheduleForPlanEnrolmentInput!): WorkoutPlanEnrolment!
   createScheduledWorkout(data: CreateScheduledWorkoutInput!): ScheduledWorkout!
   createSkill(data: CreateSkillInput!): Skill!
@@ -1208,6 +1209,7 @@ type Mutation {
   deleteResistanceExercise(id: ID!): ID!
   deleteResistanceSession(id: ID!): ID!
   deleteResistanceSet(id: ID!): ID!
+  deleteSavedResistanceSession(savedResistanceSessionId: ID!): ID!
   deleteScheduledWorkoutById(id: ID!): ID!
   deleteSkillById(id: ID!): ID!
   deleteUserDayLogMood(id: ID!): ID!

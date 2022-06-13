@@ -1211,6 +1211,7 @@ export type Mutation = {
   createResistanceExercise: ResistanceExercise;
   createResistanceSession: ResistanceSession;
   createResistanceSet: ResistanceSet;
+  createSavedResistanceSession: ResistanceSession;
   createScheduleForPlanEnrolment: WorkoutPlanEnrolment;
   createScheduledWorkout: ScheduledWorkout;
   createSkill: Skill;
@@ -1258,6 +1259,7 @@ export type Mutation = {
   deleteResistanceExercise: Scalars['ID'];
   deleteResistanceSession: Scalars['ID'];
   deleteResistanceSet: Scalars['ID'];
+  deleteSavedResistanceSession: Scalars['ID'];
   deleteScheduledWorkoutById: Scalars['ID'];
   deleteSkillById: Scalars['ID'];
   deleteUserDayLogMood: Scalars['ID'];
@@ -1575,6 +1577,11 @@ export type MutationCreateResistanceSetArgs = {
 };
 
 
+export type MutationCreateSavedResistanceSessionArgs = {
+  id: Scalars['ID'];
+};
+
+
 export type MutationCreateScheduleForPlanEnrolmentArgs = {
   data: CreateScheduleForPlanEnrolmentInput;
 };
@@ -1807,6 +1814,11 @@ export type MutationDeleteResistanceSessionArgs = {
 
 export type MutationDeleteResistanceSetArgs = {
   id: Scalars['ID'];
+};
+
+
+export type MutationDeleteSavedResistanceSessionArgs = {
+  savedResistanceSessionId: Scalars['ID'];
 };
 
 
@@ -5156,6 +5168,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createResistanceExercise?: Resolver<ResolversTypes['ResistanceExercise'], ParentType, ContextType, RequireFields<MutationCreateResistanceExerciseArgs, 'data'>>;
   createResistanceSession?: Resolver<ResolversTypes['ResistanceSession'], ParentType, ContextType, RequireFields<MutationCreateResistanceSessionArgs, 'data'>>;
   createResistanceSet?: Resolver<ResolversTypes['ResistanceSet'], ParentType, ContextType, RequireFields<MutationCreateResistanceSetArgs, 'data'>>;
+  createSavedResistanceSession?: Resolver<ResolversTypes['ResistanceSession'], ParentType, ContextType, RequireFields<MutationCreateSavedResistanceSessionArgs, 'id'>>;
   createScheduleForPlanEnrolment?: Resolver<ResolversTypes['WorkoutPlanEnrolment'], ParentType, ContextType, RequireFields<MutationCreateScheduleForPlanEnrolmentArgs, 'data'>>;
   createScheduledWorkout?: Resolver<ResolversTypes['ScheduledWorkout'], ParentType, ContextType, RequireFields<MutationCreateScheduledWorkoutArgs, 'data'>>;
   createSkill?: Resolver<ResolversTypes['Skill'], ParentType, ContextType, RequireFields<MutationCreateSkillArgs, 'data'>>;
@@ -5203,6 +5216,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   deleteResistanceExercise?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteResistanceExerciseArgs, 'id'>>;
   deleteResistanceSession?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteResistanceSessionArgs, 'id'>>;
   deleteResistanceSet?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteResistanceSetArgs, 'id'>>;
+  deleteSavedResistanceSession?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteSavedResistanceSessionArgs, 'savedResistanceSessionId'>>;
   deleteScheduledWorkoutById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteScheduledWorkoutByIdArgs, 'id'>>;
   deleteSkillById?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteSkillByIdArgs, 'id'>>;
   deleteUserDayLogMood?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationDeleteUserDayLogMoodArgs, 'id'>>;

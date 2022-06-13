@@ -375,6 +375,9 @@ export default gql`
       data: UpdateResistanceSessionInput!
     ): ResistanceSession!
     deleteResistanceSession(id: ID!): ID!
+    createSavedResistanceSession(id: ID!): ResistanceSession! # ResistanceSession ID
+    # Returned id is of the ResistanceSession.
+    deleteSavedResistanceSession(savedResistanceSessionId: ID!): ID!
     createResistanceExercise(
       data: CreateResistanceExerciseInput!
     ): ResistanceExercise!

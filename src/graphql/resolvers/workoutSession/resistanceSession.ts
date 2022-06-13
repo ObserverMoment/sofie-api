@@ -19,6 +19,8 @@ import {
   MutationReorderResistanceExerciseArgs,
   MutationReorderResistanceSetArgs,
   QueryResistanceSessionByIdArgs,
+  MutationCreateSavedResistanceSessionArgs,
+  MutationDeleteSavedResistanceSessionArgs,
 } from '../../../generated/graphql'
 import { checkUserOwnsObject } from '../../utils'
 import { insertObjectAndReorderSiblings, reorderSortableObject } from './utils'
@@ -89,18 +91,14 @@ export const createResistanceSession = async (
   { data }: MutationCreateResistanceSessionArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  const resistanceSession = await prisma.$transaction(async (prisma) => {
-    const resistanceSession = await prisma.resistanceSession.create({
-      data: {
-        ...data,
-        User: {
-          connect: { id: authedUserId },
-        },
+  const resistanceSession = await prisma.resistanceSession.create({
+    data: {
+      ...data,
+      User: {
+        connect: { id: authedUserId },
       },
-      select,
-    })
-
-    return resistanceSession
+    },
+    select,
   })
 
   if (resistanceSession) {
@@ -165,46 +163,42 @@ export const duplicateResistanceSession = async (
     )
   }
 
-  const copy = await prisma.$transaction(async (prisma) => {
-    // Create a new copy.
-    const copy = await prisma.resistanceSession.create({
-      data: {
-        name: original.name,
-        note: original.note,
-        User: {
-          connect: { id: authedUserId },
-        },
-        ResistanceExercises: {
-          create: original.ResistanceExercises.map((e) => ({
-            note: e.note,
-            sortPosition: e.sortPosition,
-            User: {
-              connect: { id: authedUserId },
-            },
-            ResistanceSets: {
-              create: e.ResistanceSets.map((s) => ({
-                note: s.note,
-                sortPosition: s.sortPosition,
-                reps: s.reps,
-                repType: s.repType,
-                Move: {
-                  connect: { id: s.moveId },
-                },
-                Equipment: s.equipmentId
-                  ? { connect: { id: s.equipmentId } }
-                  : undefined,
-                User: {
-                  connect: { id: authedUserId },
-                },
-              })),
-            },
-          })),
-        },
+  // Create a new copy.
+  const copy = await prisma.resistanceSession.create({
+    data: {
+      name: `${original.name} - copy`,
+      note: original.note,
+      User: {
+        connect: { id: authedUserId },
       },
-      select,
-    })
-
-    return copy
+      ResistanceExercises: {
+        create: original.ResistanceExercises.map((e) => ({
+          note: e.note,
+          sortPosition: e.sortPosition,
+          User: {
+            connect: { id: authedUserId },
+          },
+          ResistanceSets: {
+            create: e.ResistanceSets.map((s) => ({
+              note: s.note,
+              sortPosition: s.sortPosition,
+              reps: s.reps,
+              repType: s.repType,
+              Move: {
+                connect: { id: s.moveId },
+              },
+              Equipment: s.equipmentId
+                ? { connect: { id: s.equipmentId } }
+                : undefined,
+              User: {
+                connect: { id: authedUserId },
+              },
+            })),
+          },
+        })),
+      },
+    },
+    select,
   })
 
   if (copy) {
@@ -221,15 +215,11 @@ export const deleteResistanceSession = async (
 ) => {
   await checkUserOwnsObject(id, 'resistanceSession', authedUserId, prisma)
 
-  const deleted = await prisma.$transaction(async (prisma) => {
-    const deleted = await prisma.resistanceSession.delete({
-      where: { id },
-      select: {
-        id: true,
-      },
-    })
-
-    return deleted
+  const deleted = await prisma.resistanceSession.delete({
+    where: { id },
+    select: {
+      id: true,
+    },
   })
 
   if (deleted) {
@@ -237,6 +227,76 @@ export const deleteResistanceSession = async (
   } else {
     console.error(`deleteResistanceSession: There was an issue.`)
     throw new ApolloError('deleteResistanceSession: There was an issue.')
+  }
+}
+
+export const createSavedResistanceSession = async (
+  r: any,
+  { id }: MutationCreateSavedResistanceSessionArgs,
+  { select, authedUserId, prisma }: Context,
+) => {
+  const session = await prisma.resistanceSession.findUnique({
+    where: { id },
+    select: {
+      userId: true,
+    },
+  })
+
+  if (!session) {
+    throw new ApolloError(
+      `toggleSaveResistanceSession: Could not find a session with ID ${id}`,
+    )
+  }
+
+  if (session.userId !== authedUserId) {
+    throw new ApolloError(
+      `toggleSaveResistanceSession: You cannot save your own created sessions.`,
+    )
+  }
+
+  const savedResistanceSession = await prisma.savedResistanceSession.create({
+    data: {
+      ResistanceSession: { connect: { id } },
+      User: { connect: { id: authedUserId } },
+    },
+    select: {
+      ResistanceSession: {
+        select,
+      },
+    },
+  })
+
+  if (savedResistanceSession) {
+    return savedResistanceSession.ResistanceSession as ResistanceSession
+  } else {
+    console.error(`toggleSaveResistanceSession: There was an issue.`)
+    throw new ApolloError('toggleSaveResistanceSession: There was an issue.')
+  }
+}
+
+export const deleteSavedResistanceSession = async (
+  r: any,
+  { savedResistanceSessionId }: MutationDeleteSavedResistanceSessionArgs,
+  { authedUserId, prisma }: Context,
+) => {
+  await checkUserOwnsObject(
+    savedResistanceSessionId,
+    'savedResistanceSession',
+    authedUserId,
+    prisma,
+  )
+  const deleted = await prisma.savedResistanceSession.delete({
+    where: { id: savedResistanceSessionId },
+    select: {
+      id: true,
+    },
+  })
+
+  if (deleted) {
+    return deleted.id
+  } else {
+    console.error(`deleteSavedResistanceSession: There was an issue.`)
+    throw new ApolloError('deleteSavedResistanceSession: There was an issue.')
   }
 }
 

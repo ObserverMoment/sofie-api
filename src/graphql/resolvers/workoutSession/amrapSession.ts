@@ -20,11 +20,6 @@ import {
   checkUserOwnsObject,
   processStringListUpdateInputData,
 } from '../../utils'
-import {
-  deleteChildFromOrder,
-  duplicateNewChildToOrder,
-  pushNewChildToOrder,
-} from './utils'
 
 //// Mutations ////
 //// Amrap Session ////
@@ -163,14 +158,11 @@ export const deleteAmrapSession = async (
 ) => {
   await checkUserOwnsObject(id, 'amrapSession', authedUserId, prisma)
 
-  const deleted = await prisma.$transaction(async (prisma) => {
-    const deleted = await prisma.amrapSession.delete({
-      where: { id },
-      select: {
-        id: true,
-      },
-    })
-    return deleted
+  const deleted = await prisma.amrapSession.delete({
+    where: { id },
+    select: {
+      id: true,
+    },
   })
 
   if (deleted) {
@@ -313,18 +305,14 @@ export const deleteAmrapSection = async (
 ) => {
   await checkUserOwnsObject(id, 'amrapSection', authedUserId, prisma)
 
-  const deleted = await prisma.$transaction(async (prisma) => {
-    const deleted = await prisma.amrapSection.delete({
-      where: { id },
-      select: {
-        id: true,
-        AmrapSession: {
-          select: { id: true, childrenOrder: true },
-        },
+  const deleted = await prisma.amrapSection.delete({
+    where: { id },
+    select: {
+      id: true,
+      AmrapSession: {
+        select: { id: true, childrenOrder: true },
       },
-    })
-
-    return deleted
+    },
   })
 
   if (deleted) {

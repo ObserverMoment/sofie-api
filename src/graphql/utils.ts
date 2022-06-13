@@ -58,6 +58,7 @@ export type ContentObjectType =
   | 'intervalSet'
   | 'mobilitySession'
   | 'resistanceSession'
+  | 'savedResistanceSession'
   | 'resistanceExercise'
   | 'resistanceSet'
   | 'workoutTag'

@@ -127,7 +127,6 @@ export const updateFitnessBenchmark = async (
   { data }: MutationUpdateFitnessBenchmarkArgs,
   { authedUserId, select, prisma, userType }: Context,
 ) => {
-  console.log(select)
   if (userType !== 'ADMIN') {
     await checkUserOwnsObject(data.id, 'fitnessBenchmark', authedUserId, prisma)
   }
@@ -537,7 +536,6 @@ interface FitnessBenchmarkDBResponse {
 export function formatBenchmarkScoreSummaries(
   scores: FitnessBenchmarkScoreDBResponse[],
 ) {
-  console.log(scores)
   const benchmarks = scores.reduce((acum, next) => {
     if (acum.some((b) => b.id === next.FitnessBenchmark.id)) {
       return acum
@@ -546,15 +544,6 @@ export function formatBenchmarkScoreSummaries(
       return acum
     }
   }, [] as FitnessBenchmarkDBResponse[])
-
-  console.log(
-    benchmarks.map((b) =>
-      fitnessBenchmarkBestScoreSummaryByType(
-        b,
-        scores.filter((s) => s.FitnessBenchmark.id === b.id),
-      ),
-    ),
-  )
 
   return benchmarks.map((b) =>
     fitnessBenchmarkBestScoreSummaryByType(
