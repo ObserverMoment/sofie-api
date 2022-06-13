@@ -64,13 +64,18 @@ import {
 } from './club/clubMembers'
 
 import {
+  addResistanceSessionToClub,
+  removeResistanceSessionFromClub,
+} from './club/clubWorkoutSessions'
+
+import {
   clubWorkouts,
   clubWorkoutPlans,
   addWorkoutToClub,
   removeWorkoutFromClub,
   addWorkoutPlanToClub,
   removeWorkoutPlanFromClub,
-} from './club/clubContent'
+} from './club/clubContent-deprecated'
 
 import {
   coreData,
@@ -553,6 +558,9 @@ const resolvers: Resolvers = {
     ///////////////////////
     //// Club Content /////
     ///////////////////////
+    addResistanceSessionToClub,
+    removeResistanceSessionFromClub,
+    ////// DEPRECATED ////
     addWorkoutToClub,
     removeWorkoutFromClub,
     addWorkoutPlanToClub,

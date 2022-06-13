@@ -169,6 +169,12 @@ export default gql`
     createClubMemberNote(data: CreateClubMemberNoteInput!): ClubMemberNote!
     updateClubMemberNote(data: UpdateClubMemberNoteInput!): ClubMemberNote!
     #### Club Content Management ####
+    addResistanceSessionToClub(sessionId: ID!, clubId: ID!): ResistanceSession!
+    removeResistanceSessionFromClub(
+      sessionId: ID!
+      clubId: ID!
+    ): ResistanceSession!
+    #### DEPRECATED ####
     # Returns the updated content / list of objects.
     addWorkoutToClub(workoutId: ID!, clubId: ID!): ClubWorkouts!
     removeWorkoutFromClub(workoutId: ID!, clubId: ID!): ClubWorkouts!

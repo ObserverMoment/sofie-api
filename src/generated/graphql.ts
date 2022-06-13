@@ -1171,6 +1171,7 @@ export type MoveWorkoutPlanDayToAnotherDayInput = {
 export type Mutation = {
   __typename?: 'Mutation';
   addDocumentToSkill: Skill;
+  addResistanceSessionToClub: ResistanceSession;
   addUserToClubViaInviteToken: Scalars['ID'];
   addWorkoutPlanToClub: ClubWorkoutPlans;
   addWorkoutPlanToCollection: Collection;
@@ -1298,6 +1299,7 @@ export type Mutation = {
   moveWorkoutPlanDayToAnotherDay: WorkoutPlanDay;
   removeDocumentFromSkill: Skill;
   removeMemberAdminStatus: ClubMembers;
+  removeResistanceSessionFromClub: ResistanceSession;
   removeUserFromClub: ClubMembers;
   removeWorkoutFromClub: ClubWorkouts;
   removeWorkoutFromCollection: Collection;
@@ -1370,6 +1372,12 @@ export type Mutation = {
 
 export type MutationAddDocumentToSkillArgs = {
   data: AddDocumentToSkillInput;
+};
+
+
+export type MutationAddResistanceSessionToClubArgs = {
+  clubId: Scalars['ID'];
+  sessionId: Scalars['ID'];
 };
 
 
@@ -2011,6 +2019,12 @@ export type MutationRemoveDocumentFromSkillArgs = {
 export type MutationRemoveMemberAdminStatusArgs = {
   clubId: Scalars['ID'];
   userId: Scalars['ID'];
+};
+
+
+export type MutationRemoveResistanceSessionFromClubArgs = {
+  clubId: Scalars['ID'];
+  sessionId: Scalars['ID'];
 };
 
 
@@ -5128,6 +5142,7 @@ export type MoveTypeResolvers<ContextType = any, ParentType extends ResolversPar
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
   addDocumentToSkill?: Resolver<ResolversTypes['Skill'], ParentType, ContextType, RequireFields<MutationAddDocumentToSkillArgs, 'data'>>;
+  addResistanceSessionToClub?: Resolver<ResolversTypes['ResistanceSession'], ParentType, ContextType, RequireFields<MutationAddResistanceSessionToClubArgs, 'clubId' | 'sessionId'>>;
   addUserToClubViaInviteToken?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationAddUserToClubViaInviteTokenArgs, 'clubInviteTokenId' | 'userId'>>;
   addWorkoutPlanToClub?: Resolver<ResolversTypes['ClubWorkoutPlans'], ParentType, ContextType, RequireFields<MutationAddWorkoutPlanToClubArgs, 'clubId' | 'workoutPlanId'>>;
   addWorkoutPlanToCollection?: Resolver<ResolversTypes['Collection'], ParentType, ContextType, RequireFields<MutationAddWorkoutPlanToCollectionArgs, 'data'>>;
@@ -5255,6 +5270,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   moveWorkoutPlanDayToAnotherDay?: Resolver<ResolversTypes['WorkoutPlanDay'], ParentType, ContextType, RequireFields<MutationMoveWorkoutPlanDayToAnotherDayArgs, 'data'>>;
   removeDocumentFromSkill?: Resolver<ResolversTypes['Skill'], ParentType, ContextType, RequireFields<MutationRemoveDocumentFromSkillArgs, 'data'>>;
   removeMemberAdminStatus?: Resolver<ResolversTypes['ClubMembers'], ParentType, ContextType, RequireFields<MutationRemoveMemberAdminStatusArgs, 'clubId' | 'userId'>>;
+  removeResistanceSessionFromClub?: Resolver<ResolversTypes['ResistanceSession'], ParentType, ContextType, RequireFields<MutationRemoveResistanceSessionFromClubArgs, 'clubId' | 'sessionId'>>;
   removeUserFromClub?: Resolver<ResolversTypes['ClubMembers'], ParentType, ContextType, RequireFields<MutationRemoveUserFromClubArgs, 'clubId' | 'userToRemoveId'>>;
   removeWorkoutFromClub?: Resolver<ResolversTypes['ClubWorkouts'], ParentType, ContextType, RequireFields<MutationRemoveWorkoutFromClubArgs, 'clubId' | 'workoutId'>>;
   removeWorkoutFromCollection?: Resolver<ResolversTypes['Collection'], ParentType, ContextType, RequireFields<MutationRemoveWorkoutFromCollectionArgs, 'data'>>;

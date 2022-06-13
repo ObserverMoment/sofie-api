@@ -367,12 +367,13 @@ model Club {
   Workouts           Workout[]
   WorkoutPlans       WorkoutPlan[]
   /// New models May 2022
-  // WorkoutSessions    WorkoutSession[]
+  ResistanceSessions ResistanceSession[]
   TrainingPlan       TrainingPlan[]
   ////// Admin access only - meta data //////
   validated          PublicContentValidationStatus @default(VALID) // For public display
   reasonNotValidated String?
   metaTags           String[]
+
 }
 
 /// Only owners or admins of the club should be able to CRUD.
@@ -495,6 +496,8 @@ model ResistanceSession {
   User                    User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId                  String
   SavedResistanceSessions SavedResistanceSession[]
+  Club                    Club?                    @relation(fields: [clubId], references: [id], onDelete: SetNull)
+  clubId                  String?
 }
 
 /// Saved by a specific user.

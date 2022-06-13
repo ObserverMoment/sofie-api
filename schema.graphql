@@ -1121,6 +1121,7 @@ input MoveWorkoutPlanDayToAnotherDayInput {
 
 type Mutation {
   addDocumentToSkill(data: AddDocumentToSkillInput!): Skill!
+  addResistanceSessionToClub(clubId: ID!, sessionId: ID!): ResistanceSession!
   addUserToClubViaInviteToken(clubInviteTokenId: ID!, userId: ID!): ID!
   addWorkoutPlanToClub(clubId: ID!, workoutPlanId: ID!): ClubWorkoutPlans!
   addWorkoutPlanToCollection(data: AddWorkoutPlanToCollectionInput!): Collection!
@@ -1248,6 +1249,7 @@ type Mutation {
   moveWorkoutPlanDayToAnotherDay(data: MoveWorkoutPlanDayToAnotherDayInput!): WorkoutPlanDay!
   removeDocumentFromSkill(data: RemoveDocumentFromSkillInput!): Skill!
   removeMemberAdminStatus(clubId: ID!, userId: ID!): ClubMembers!
+  removeResistanceSessionFromClub(clubId: ID!, sessionId: ID!): ResistanceSession!
   removeUserFromClub(clubId: ID!, userToRemoveId: ID!): ClubMembers!
   removeWorkoutFromClub(clubId: ID!, workoutId: ID!): ClubWorkouts!
   removeWorkoutFromCollection(data: RemoveWorkoutFromCollectionInput!): Collection!
