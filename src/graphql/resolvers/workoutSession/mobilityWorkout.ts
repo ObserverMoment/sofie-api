@@ -1,11 +1,11 @@
 import { ApolloError } from 'apollo-server-errors'
 import { Context } from '../../..'
 import {
-  MobilitySession,
-  MutationCreateMobilitySessionArgs,
-  MutationDeleteMobilitySessionArgs,
-  MutationDuplicateMobilitySessionArgs,
-  MutationUpdateMobilitySessionArgs,
+  MobilityWorkout,
+  MutationCreateMobilityWorkoutArgs,
+  MutationDeleteMobilityWorkoutArgs,
+  MutationDuplicateMobilityWorkoutArgs,
+  MutationUpdateMobilityWorkoutArgs,
 } from '../../../generated/graphql'
 import {
   checkUserOwnsObject,
@@ -19,13 +19,13 @@ import {
 
 //// Mutations ////
 //// Mobility Session ////
-export const createMobilitySession = async (
+export const createMobilityWorkout = async (
   r: any,
-  { data }: MutationCreateMobilitySessionArgs,
+  { data }: MutationCreateMobilityWorkoutArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  const mobilitySession = await prisma.$transaction(async (prisma) => {
-    const mobilitySession = await prisma.mobilitySession.create({
+  const mobilityWorkout = await prisma.$transaction(async (prisma) => {
+    const mobilityWorkout = await prisma.mobilityWorkout.create({
       data: {
         name: data.name,
         User: {
@@ -35,24 +35,24 @@ export const createMobilitySession = async (
       select,
     })
 
-    return mobilitySession
+    return mobilityWorkout
   })
 
-  if (mobilitySession) {
-    return mobilitySession as MobilitySession
+  if (mobilityWorkout) {
+    return mobilityWorkout as MobilityWorkout
   } else {
-    throw new ApolloError('createMobilitySession: There was an issue.')
+    throw new ApolloError('createMobilityWorkout: There was an issue.')
   }
 }
 
-export const updateMobilitySession = async (
+export const updateMobilityWorkout = async (
   r: any,
-  { data }: MutationUpdateMobilitySessionArgs,
+  { data }: MutationUpdateMobilityWorkoutArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  await checkUserOwnsObject(data.id, 'mobilitySession', authedUserId, prisma)
+  await checkUserOwnsObject(data.id, 'mobilityWorkout', authedUserId, prisma)
 
-  const updated = await prisma.mobilitySession.update({
+  const updated = await prisma.mobilityWorkout.update({
     where: { id: data.id },
     data: {
       ...data,
@@ -68,23 +68,23 @@ export const updateMobilitySession = async (
   })
 
   if (updated) {
-    return updated as MobilitySession
+    return updated as MobilityWorkout
   } else {
-    throw new ApolloError('updateMobilitySession: There was an issue.')
+    throw new ApolloError('updateMobilityWorkout: There was an issue.')
   }
 }
 
 // Makes a full copy of the object and returns it.
 // Functionality is only available on objects that the user owns.
-export const duplicateMobilitySession = async (
+export const duplicateMobilityWorkout = async (
   r: any,
-  { id }: MutationDuplicateMobilitySessionArgs,
+  { id }: MutationDuplicateMobilityWorkoutArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  await checkUserOwnsObject(id, 'mobilitySession', authedUserId, prisma)
+  await checkUserOwnsObject(id, 'mobilityWorkout', authedUserId, prisma)
 
   // Get original full data
-  const original = await prisma.mobilitySession.findUnique({
+  const original = await prisma.mobilityWorkout.findUnique({
     where: { id },
     include: {
       MobilityMoves: true,
@@ -92,12 +92,12 @@ export const duplicateMobilitySession = async (
   })
 
   if (!original) {
-    throw new ApolloError('duplicateMobilitySession: Could not retrieve data.')
+    throw new ApolloError('duplicateMobilityWorkout: Could not retrieve data.')
   }
 
   const copy = await prisma.$transaction(async (prisma) => {
     // Create a new copy.
-    const copy = await prisma.mobilitySession.create({
+    const copy = await prisma.mobilityWorkout.create({
       data: {
         name: original.name,
         note: original.note,
@@ -118,21 +118,21 @@ export const duplicateMobilitySession = async (
   })
 
   if (copy) {
-    return copy as MobilitySession
+    return copy as MobilityWorkout
   } else {
-    throw new ApolloError('duplicateMobilitySession: There was an issue.')
+    throw new ApolloError('duplicateMobilityWorkout: There was an issue.')
   }
 }
 
-export const deleteMobilitySession = async (
+export const deleteMobilityWorkout = async (
   r: any,
-  { id }: MutationDeleteMobilitySessionArgs,
+  { id }: MutationDeleteMobilityWorkoutArgs,
   { authedUserId, prisma }: Context,
 ) => {
-  await checkUserOwnsObject(id, 'mobilitySession', authedUserId, prisma)
+  await checkUserOwnsObject(id, 'mobilityWorkout', authedUserId, prisma)
 
   const deleted = await prisma.$transaction(async (prisma) => {
-    const deleted = await prisma.mobilitySession.delete({
+    const deleted = await prisma.mobilityWorkout.delete({
       where: { id },
       select: {
         id: true,
@@ -145,7 +145,7 @@ export const deleteMobilitySession = async (
   if (deleted) {
     return deleted.id
   } else {
-    console.error(`deleteMobilitySession: There was an issue.`)
-    throw new ApolloError('deleteMobilitySession: There was an issue.')
+    console.error(`deleteMobilityWorkout: There was an issue.`)
+    throw new ApolloError('deleteMobilityWorkout: There was an issue.')
   }
 }

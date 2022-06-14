@@ -69,7 +69,7 @@ export async function deleteChildFromOrder(
 }
 
 /// Also includes parents of sortable types.
-type SortableType = 'resistanceSession' | 'resistanceExercise' | 'resistanceSet'
+type SortableType = 'resistanceWorkout' | 'resistanceExercise' | 'resistanceSet'
 
 interface Sortable {
   id: string

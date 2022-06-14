@@ -1,7 +1,7 @@
 import { gql } from 'apollo-server-express'
 
 export default gql`
-  type CardioSession {
+  type CardioWorkout {
     id: ID!
     createdAt: DateTime!
     updatedAt: DateTime!
@@ -11,11 +11,11 @@ export default gql`
     CardioExercises: [CardioExercise!]!
   }
 
-  input CreateCardioSessionInput {
+  input CreateCardioWorkoutInput {
     name: String!
   }
 
-  input UpdateCardioSessionInput {
+  input UpdateCardioWorkoutInput {
     id: ID!
     name: String
     note: String
@@ -36,7 +36,7 @@ export default gql`
   }
 
   input CreateCardioExerciseInput {
-    CardioSession: ConnectRelationInput!
+    CardioWorkout: ConnectRelationInput!
     Move: ConnectRelationInput!
   }
 

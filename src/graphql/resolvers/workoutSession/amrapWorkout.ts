@@ -3,18 +3,18 @@ import { Context } from '../../..'
 import {
   AmrapMove,
   AmrapSection,
-  AmrapSession,
+  AmrapWorkout,
   MutationCreateAmrapMoveArgs,
   MutationCreateAmrapSectionArgs,
-  MutationCreateAmrapSessionArgs,
+  MutationCreateAmrapWorkoutArgs,
   MutationDeleteAmrapMoveArgs,
-  MutationDeleteAmrapSessionArgs,
+  MutationDeleteAmrapWorkoutArgs,
   MutationDuplicateAmrapMoveArgs,
   MutationDuplicateAmrapSectionArgs,
-  MutationDuplicateAmrapSessionArgs,
+  MutationDuplicateAmrapWorkoutArgs,
   MutationUpdateAmrapMoveArgs,
   MutationUpdateAmrapSectionArgs,
-  MutationUpdateAmrapSessionArgs,
+  MutationUpdateAmrapWorkoutArgs,
 } from '../../../generated/graphql'
 import {
   checkUserOwnsObject,
@@ -23,13 +23,13 @@ import {
 
 //// Mutations ////
 //// Amrap Session ////
-export const createAmrapSession = async (
+export const createAmrapWorkout = async (
   r: any,
-  { data }: MutationCreateAmrapSessionArgs,
+  { data }: MutationCreateAmrapWorkoutArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  const amrapSession = await prisma.$transaction(async (prisma) => {
-    const amrapSession = await prisma.amrapSession.create({
+  const amrapWorkout = await prisma.$transaction(async (prisma) => {
+    const amrapWorkout = await prisma.amrapWorkout.create({
       data: {
         name: data.name,
         User: {
@@ -38,24 +38,24 @@ export const createAmrapSession = async (
       },
       select,
     })
-    return amrapSession as AmrapSession
+    return amrapWorkout as AmrapWorkout
   })
 
-  if (amrapSession) {
-    return amrapSession as AmrapSession
+  if (amrapWorkout) {
+    return amrapWorkout as AmrapWorkout
   } else {
-    throw new ApolloError('createAmrapSession: There was an issue.')
+    throw new ApolloError('createAmrapWorkout: There was an issue.')
   }
 }
 
-export const updateAmrapSession = async (
+export const updateAmrapWorkout = async (
   r: any,
-  { data }: MutationUpdateAmrapSessionArgs,
+  { data }: MutationUpdateAmrapWorkoutArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  await checkUserOwnsObject(data.id, 'amrapSession', authedUserId, prisma)
+  await checkUserOwnsObject(data.id, 'amrapWorkout', authedUserId, prisma)
 
-  const updated = await prisma.amrapSession.update({
+  const updated = await prisma.amrapWorkout.update({
     where: { id: data.id },
     data: {
       ...data,
@@ -66,23 +66,23 @@ export const updateAmrapSession = async (
   })
 
   if (updated) {
-    return updated as AmrapSession
+    return updated as AmrapWorkout
   } else {
-    throw new ApolloError('updateAmrapSession: There was an issue.')
+    throw new ApolloError('updateAmrapWorkout: There was an issue.')
   }
 }
 
 // Makes a full copy of the object and returns it.
 // Functionality is only available on objects that the user owns.
-export const duplicateAmrapSession = async (
+export const duplicateAmrapWorkout = async (
   r: any,
-  { id }: MutationDuplicateAmrapSessionArgs,
+  { id }: MutationDuplicateAmrapWorkoutArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  await checkUserOwnsObject(id, 'amrapSession', authedUserId, prisma)
+  await checkUserOwnsObject(id, 'amrapWorkout', authedUserId, prisma)
 
   // Get original full data.
-  const original = await prisma.amrapSession.findUnique({
+  const original = await prisma.amrapWorkout.findUnique({
     where: { id },
     include: {
       AmrapSections: {
@@ -99,12 +99,12 @@ export const duplicateAmrapSession = async (
   })
 
   if (!original) {
-    throw new ApolloError('duplicateAmrapSession: Could not retrieve data.')
+    throw new ApolloError('duplicateAmrapWorkout: Could not retrieve data.')
   }
 
   const copy = await prisma.$transaction(async (prisma) => {
     // Create a new copy.
-    const copy = await prisma.amrapSession.create({
+    const copy = await prisma.amrapWorkout.create({
       data: {
         name: original.name,
         note: original.note,
@@ -145,20 +145,20 @@ export const duplicateAmrapSession = async (
   })
 
   if (copy) {
-    return copy as AmrapSession
+    return copy as AmrapWorkout
   } else {
-    throw new ApolloError('duplicateAmrapSession: There was an issue.')
+    throw new ApolloError('duplicateAmrapWorkout: There was an issue.')
   }
 }
 
-export const deleteAmrapSession = async (
+export const deleteAmrapWorkout = async (
   r: any,
-  { id }: MutationDeleteAmrapSessionArgs,
+  { id }: MutationDeleteAmrapWorkoutArgs,
   { authedUserId, prisma }: Context,
 ) => {
-  await checkUserOwnsObject(id, 'amrapSession', authedUserId, prisma)
+  await checkUserOwnsObject(id, 'amrapWorkout', authedUserId, prisma)
 
-  const deleted = await prisma.amrapSession.delete({
+  const deleted = await prisma.amrapWorkout.delete({
     where: { id },
     select: {
       id: true,
@@ -168,8 +168,8 @@ export const deleteAmrapSession = async (
   if (deleted) {
     return deleted.id
   } else {
-    console.error(`deleteAmrapSession: There was an issue.`)
-    throw new ApolloError('deleteAmrapSession: There was an issue.')
+    console.error(`deleteAmrapWorkout: There was an issue.`)
+    throw new ApolloError('deleteAmrapWorkout: There was an issue.')
   }
 }
 
@@ -180,8 +180,8 @@ export const createAmrapSection = async (
   { authedUserId, select, prisma }: Context,
 ) => {
   await checkUserOwnsObject(
-    data.AmrapSession.id,
-    'amrapSession',
+    data.AmrapWorkout.id,
+    'amrapWorkout',
     authedUserId,
     prisma,
   )
@@ -189,8 +189,8 @@ export const createAmrapSection = async (
   const amrapSection = await prisma.$transaction(async (prisma) => {
     const amrapSection = await prisma.amrapSection.create({
       data: {
-        AmrapSession: {
-          connect: data.AmrapSession,
+        AmrapWorkout: {
+          connect: data.AmrapWorkout,
         },
         User: {
           connect: { id: authedUserId },
@@ -245,7 +245,7 @@ export const duplicateAmrapSection = async (
   const original = await prisma.amrapSection.findUnique({
     where: { id },
     include: {
-      AmrapSession: true,
+      AmrapWorkout: true,
       AmrapMoves: {
         include: {
           Move: true,
@@ -269,7 +269,7 @@ export const duplicateAmrapSection = async (
         User: {
           connect: { id: authedUserId },
         },
-        AmrapSession: { connect: { id: original.amrapSessionId } },
+        AmrapWorkout: { connect: { id: original.amrapWorkoutId } },
         AmrapMoves: {
           create: original.AmrapMoves.map((m) => ({
             note: m.note,
@@ -300,7 +300,7 @@ export const duplicateAmrapSection = async (
 
 export const deleteAmrapSection = async (
   r: any,
-  { id }: MutationDeleteAmrapSessionArgs,
+  { id }: MutationDeleteAmrapWorkoutArgs,
   { authedUserId, prisma }: Context,
 ) => {
   await checkUserOwnsObject(id, 'amrapSection', authedUserId, prisma)
@@ -309,7 +309,7 @@ export const deleteAmrapSection = async (
     where: { id },
     select: {
       id: true,
-      AmrapSession: {
+      AmrapWorkout: {
         select: { id: true, childrenOrder: true },
       },
     },

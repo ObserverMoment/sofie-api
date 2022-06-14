@@ -92,13 +92,16 @@ export default gql`
     #### User Public Profiles ####
     userProfiles(cursor: ID, take: Int): [UserProfileSummary!]!
     userProfile(userId: ID!): UserProfile
-    # #### WorkoutSessions ####
-    #### ResistanceSessions ####
-    userResistanceSessions: [ResistanceSession!]!
-    userSavedResistanceSessions: [ResistanceSession!]!
-    resistanceSessionById(id: ID!): ResistanceSession
-    #### CardioSessions ####
-    cardioSessionById(id: ID!): CardioSession
+    #### ResistanceWorkouts ####
+    userResistanceWorkouts: [ResistanceWorkout!]!
+    userClubsResistanceWorkouts(
+      cursor: ID
+      take: Int
+    ): [ClubResistanceWorkout!]!
+    userSavedResistanceWorkouts: [ResistanceWorkout!]!
+    resistanceWorkoutById(id: ID!): ResistanceWorkout
+    #### CardioWorkouts ####
+    cardioWorkoutById(id: ID!): CardioWorkout
     #### Workouts - DEPRECATED ####
     publicWorkouts(
       cursor: ID
@@ -169,11 +172,11 @@ export default gql`
     createClubMemberNote(data: CreateClubMemberNoteInput!): ClubMemberNote!
     updateClubMemberNote(data: UpdateClubMemberNoteInput!): ClubMemberNote!
     #### Club Content Management ####
-    addResistanceSessionToClub(sessionId: ID!, clubId: ID!): ResistanceSession!
-    removeResistanceSessionFromClub(
-      sessionId: ID!
+    addResistanceWorkoutToClub(workoutId: ID!, clubId: ID!): ResistanceWorkout!
+    removeResistanceWorkoutFromClub(
+      workoutId: ID!
       clubId: ID!
-    ): ResistanceSession!
+    ): ResistanceWorkout!
     #### DEPRECATED ####
     # Returns the updated content / list of objects.
     addWorkoutToClub(workoutId: ID!, clubId: ID!): ClubWorkouts!
@@ -310,16 +313,16 @@ export default gql`
     deleteSkillById(id: ID!): ID!
     addDocumentToSkill(data: AddDocumentToSkillInput!): Skill!
     removeDocumentFromSkill(data: RemoveDocumentFromSkillInput!): Skill!
-    #### DEPRECATED - WorkoutSession ####
-    # createWorkoutSession(data: CreateWorkoutSessionInput!): WorkoutSession!
-    # updateWorkoutSession(data: UpdateWorkoutSessionInput!): WorkoutSession!
-    # duplicateWorkoutSession(id: ID!): WorkoutSession!
-    # deleteWorkoutSession(id: ID!): ID!
-    #### AmrapSession ####
-    createAmrapSession(data: CreateAmrapSessionInput!): AmrapSession!
-    updateAmrapSession(data: UpdateAmrapSessionInput!): AmrapSession!
-    duplicateAmrapSession(id: ID!): AmrapSession!
-    deleteAmrapSession(id: ID!): ID!
+    #### DEPRECATED - WorkoutWorkout ####
+    # createWorkoutWorkout(data: CreateWorkoutWorkoutInput!): WorkoutWorkout!
+    # updateWorkoutWorkout(data: UpdateWorkoutWorkoutInput!): WorkoutWorkout!
+    # duplicateWorkoutWorkout(id: ID!): WorkoutWorkout!
+    # deleteWorkoutWorkout(id: ID!): ID!
+    #### AmrapWorkout ####
+    createAmrapWorkout(data: CreateAmrapWorkoutInput!): AmrapWorkout!
+    updateAmrapWorkout(data: UpdateAmrapWorkoutInput!): AmrapWorkout!
+    duplicateAmrapWorkout(id: ID!): AmrapWorkout!
+    deleteAmrapWorkout(id: ID!): ID!
     createAmrapSection(data: CreateAmrapSectionInput!): AmrapSection!
     updateAmrapSection(data: UpdateAmrapSectionInput!): AmrapSection!
     duplicateAmrapSection(id: ID!): AmrapSection!
@@ -328,20 +331,20 @@ export default gql`
     updateAmrapMove(data: UpdateAmrapMoveInput!): AmrapMove!
     duplicateAmrapMove(id: ID!): AmrapMove!
     deleteAmrapMove(id: ID!): ID!
-    #### CardioSession ####
-    createCardioSession(data: CreateCardioSessionInput!): CardioSession!
-    updateCardioSession(data: UpdateCardioSessionInput!): CardioSession!
-    duplicateCardioSession(id: ID!): CardioSession!
-    deleteCardioSession(id: ID!): ID!
+    #### CardioWorkout ####
+    createCardioWorkout(data: CreateCardioWorkoutInput!): CardioWorkout!
+    updateCardioWorkout(data: UpdateCardioWorkoutInput!): CardioWorkout!
+    duplicateCardioWorkout(id: ID!): CardioWorkout!
+    deleteCardioWorkout(id: ID!): ID!
     createCardioExercise(data: CreateCardioExerciseInput!): CardioExercise!
     updateCardioExercise(data: UpdateCardioExerciseInput!): CardioExercise!
     duplicateCardioExercise(id: ID!): CardioExercise!
     deleteCardioExercise(id: ID!): ID!
-    #### ForTimeSession ####
-    createForTimeSession(data: CreateForTimeSessionInput!): ForTimeSession!
-    updateForTimeSession(data: UpdateForTimeSessionInput!): ForTimeSession!
-    duplicateForTimeSession(id: ID!): ForTimeSession!
-    deleteForTimeSession(id: ID!): ID!
+    #### ForTimeWorkout ####
+    createForTimeWorkout(data: CreateForTimeWorkoutInput!): ForTimeWorkout!
+    updateForTimeWorkout(data: UpdateForTimeWorkoutInput!): ForTimeWorkout!
+    duplicateForTimeWorkout(id: ID!): ForTimeWorkout!
+    deleteForTimeWorkout(id: ID!): ID!
     createForTimeSection(data: CreateForTimeSectionInput!): ForTimeSection!
     updateForTimeSection(data: UpdateForTimeSectionInput!): ForTimeSection!
     duplicateForTimeSection(id: ID!): ForTimeSection!
@@ -350,11 +353,11 @@ export default gql`
     updateForTimeMove(data: UpdateForTimeMoveInput!): ForTimeMove!
     duplicateForTimeMove(id: ID!): ForTimeMove!
     deleteForTimeMove(id: ID!): ID!
-    #### IntervalSession ####
-    createIntervalSession(data: CreateIntervalSessionInput!): IntervalSession!
-    updateIntervalSession(data: UpdateIntervalSessionInput!): IntervalSession!
-    duplicateIntervalSession(id: ID!): IntervalSession!
-    deleteIntervalSession(id: ID!): ID!
+    #### IntervalWorkout ####
+    createIntervalWorkout(data: CreateIntervalWorkoutInput!): IntervalWorkout!
+    updateIntervalWorkout(data: UpdateIntervalWorkoutInput!): IntervalWorkout!
+    duplicateIntervalWorkout(id: ID!): IntervalWorkout!
+    deleteIntervalWorkout(id: ID!): ID!
     createIntervalExercise(
       data: CreateIntervalExerciseInput!
     ): IntervalExercise!
@@ -367,23 +370,23 @@ export default gql`
     updateIntervalSet(data: UpdateIntervalSetInput!): IntervalSet!
     duplicateIntervalSet(id: ID!): IntervalSet!
     deleteIntervalSet(id: ID!): ID!
-    #### MobilitySession ####
-    createMobilitySession(data: CreateMobilitySessionInput!): MobilitySession!
-    updateMobilitySession(data: UpdateMobilitySessionInput!): MobilitySession!
-    duplicateMobilitySession(id: ID!): MobilitySession!
-    deleteMobilitySession(id: ID!): ID!
-    #### ResistanceSession ####
-    createResistanceSession(
-      data: CreateResistanceSessionInput!
-    ): ResistanceSession!
-    duplicateResistanceSession(id: ID!): ResistanceSession!
-    updateResistanceSession(
-      data: UpdateResistanceSessionInput!
-    ): ResistanceSession!
-    deleteResistanceSession(id: ID!): ID!
-    createSavedResistanceSession(id: ID!): ResistanceSession! # ResistanceSession ID
-    # Returned id is of the ResistanceSession.
-    deleteSavedResistanceSession(savedResistanceSessionId: ID!): ID!
+    #### MobilityWorkout ####
+    createMobilityWorkout(data: CreateMobilityWorkoutInput!): MobilityWorkout!
+    updateMobilityWorkout(data: UpdateMobilityWorkoutInput!): MobilityWorkout!
+    duplicateMobilityWorkout(id: ID!): MobilityWorkout!
+    deleteMobilityWorkout(id: ID!): ID!
+    #### ResistanceWorkout ####
+    createResistanceWorkout(
+      data: CreateResistanceWorkoutInput!
+    ): ResistanceWorkout!
+    duplicateResistanceWorkout(id: ID!): ResistanceWorkout!
+    updateResistanceWorkout(
+      data: UpdateResistanceWorkoutInput!
+    ): ResistanceWorkout!
+    deleteResistanceWorkout(id: ID!): ID!
+    createSavedResistanceWorkout(id: ID!): ResistanceWorkout! # ResistanceWorkout ID
+    # Returned id is of the ResistanceWorkout.
+    deleteSavedResistanceWorkout(savedResistanceWorkoutId: ID!): ID!
     createResistanceExercise(
       data: CreateResistanceExerciseInput!
     ): ResistanceExercise!

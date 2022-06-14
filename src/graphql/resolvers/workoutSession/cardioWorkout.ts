@@ -2,35 +2,30 @@ import { ApolloError } from 'apollo-server-errors'
 import { Context } from '../../..'
 import {
   CardioExercise,
-  CardioSession,
+  CardioWorkout,
   MutationCreateCardioExerciseArgs,
-  MutationCreateCardioSessionArgs,
+  MutationCreateCardioWorkoutArgs,
   MutationDeleteCardioExerciseArgs,
-  MutationDeleteCardioSessionArgs,
+  MutationDeleteCardioWorkoutArgs,
   MutationDuplicateCardioExerciseArgs,
-  MutationDuplicateCardioSessionArgs,
+  MutationDuplicateCardioWorkoutArgs,
   MutationUpdateCardioExerciseArgs,
-  MutationUpdateCardioSessionArgs,
+  MutationUpdateCardioWorkoutArgs,
 } from '../../../generated/graphql'
 import {
   checkUserOwnsObject,
   processStringListUpdateInputData,
 } from '../../utils'
-import {
-  deleteChildFromOrder,
-  duplicateNewChildToOrder,
-  pushNewChildToOrder,
-} from './utils'
 
 //// Mutations ////
 //// Cardio Session ////
-export const createCardioSession = async (
+export const createCardioWorkout = async (
   r: any,
-  { data }: MutationCreateCardioSessionArgs,
+  { data }: MutationCreateCardioWorkoutArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  const cardioSession = await prisma.$transaction(async (prisma) => {
-    const cardioSession = await prisma.cardioSession.create({
+  const cardioWorkout = await prisma.$transaction(async (prisma) => {
+    const cardioWorkout = await prisma.cardioWorkout.create({
       data: {
         name: data.name,
         User: {
@@ -40,24 +35,24 @@ export const createCardioSession = async (
       select,
     })
 
-    return cardioSession
+    return cardioWorkout
   })
 
-  if (cardioSession) {
-    return cardioSession as CardioSession
+  if (cardioWorkout) {
+    return cardioWorkout as CardioWorkout
   } else {
-    throw new ApolloError('createCardioSession: There was an issue.')
+    throw new ApolloError('createCardioWorkout: There was an issue.')
   }
 }
 
-export const updateCardioSession = async (
+export const updateCardioWorkout = async (
   r: any,
-  { data }: MutationUpdateCardioSessionArgs,
+  { data }: MutationUpdateCardioWorkoutArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  await checkUserOwnsObject(data.id, 'cardioSession', authedUserId, prisma)
+  await checkUserOwnsObject(data.id, 'cardioWorkout', authedUserId, prisma)
 
-  const updated = await prisma.cardioSession.update({
+  const updated = await prisma.cardioWorkout.update({
     where: { id: data.id },
     data: {
       ...data,
@@ -68,23 +63,23 @@ export const updateCardioSession = async (
   })
 
   if (updated) {
-    return updated as CardioSession
+    return updated as CardioWorkout
   } else {
-    throw new ApolloError('updateCardioSession: There was an issue.')
+    throw new ApolloError('updateCardioWorkout: There was an issue.')
   }
 }
 
 // Makes a full copy of the object and returns it.
 // Functionality is only available on objects that the user owns.
-export const duplicateCardioSession = async (
+export const duplicateCardioWorkout = async (
   r: any,
-  { id }: MutationDuplicateCardioSessionArgs,
+  { id }: MutationDuplicateCardioWorkoutArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  await checkUserOwnsObject(id, 'cardioSession', authedUserId, prisma)
+  await checkUserOwnsObject(id, 'cardioWorkout', authedUserId, prisma)
 
   // Get original full data
-  const original = await prisma.cardioSession.findUnique({
+  const original = await prisma.cardioWorkout.findUnique({
     where: { id },
     include: {
       CardioExercises: {
@@ -96,12 +91,12 @@ export const duplicateCardioSession = async (
   })
 
   if (!original) {
-    throw new ApolloError('duplicateCardioSession: Could not retrieve data.')
+    throw new ApolloError('duplicateCardioWorkout: Could not retrieve data.')
   }
 
   const copy = await prisma.$transaction(async (prisma) => {
     // Create a new copy.
-    const copy = await prisma.cardioSession.create({
+    const copy = await prisma.cardioWorkout.create({
       data: {
         name: original.name,
         note: original.note,
@@ -134,21 +129,21 @@ export const duplicateCardioSession = async (
   })
 
   if (copy) {
-    return copy as CardioSession
+    return copy as CardioWorkout
   } else {
-    throw new ApolloError('duplicateCardioSession: There was an issue.')
+    throw new ApolloError('duplicateCardioWorkout: There was an issue.')
   }
 }
 
-export const deleteCardioSession = async (
+export const deleteCardioWorkout = async (
   r: any,
-  { id }: MutationDeleteCardioSessionArgs,
+  { id }: MutationDeleteCardioWorkoutArgs,
   { authedUserId, prisma }: Context,
 ) => {
-  await checkUserOwnsObject(id, 'cardioSession', authedUserId, prisma)
+  await checkUserOwnsObject(id, 'cardioWorkout', authedUserId, prisma)
 
   const deleted = await prisma.$transaction(async (prisma) => {
-    const deleted = await prisma.cardioSession.delete({
+    const deleted = await prisma.cardioWorkout.delete({
       where: { id },
       select: {
         id: true,
@@ -161,8 +156,8 @@ export const deleteCardioSession = async (
   if (deleted) {
     return deleted.id
   } else {
-    console.error(`deleteCardioSession: There was an issue.`)
-    throw new ApolloError('deleteCardioSession: There was an issue.')
+    console.error(`deleteCardioWorkout: There was an issue.`)
+    throw new ApolloError('deleteCardioWorkout: There was an issue.')
   }
 }
 
@@ -173,8 +168,8 @@ export const createCardioExercise = async (
   { authedUserId, select, prisma }: Context,
 ) => {
   await checkUserOwnsObject(
-    data.CardioSession.id,
-    'cardioSession',
+    data.CardioWorkout.id,
+    'cardioWorkout',
     authedUserId,
     prisma,
   )
@@ -185,8 +180,8 @@ export const createCardioExercise = async (
         Move: {
           connect: data.Move,
         },
-        CardioSession: {
-          connect: data.CardioSession,
+        CardioWorkout: {
+          connect: data.CardioWorkout,
         },
         User: {
           connect: { id: authedUserId },
@@ -245,7 +240,7 @@ export const duplicateCardioExercise = async (
     where: { id },
     include: {
       Move: true,
-      CardioSession: true,
+      CardioWorkout: true,
     },
   })
 
@@ -269,8 +264,8 @@ export const duplicateCardioExercise = async (
         User: {
           connect: { id: authedUserId },
         },
-        CardioSession: {
-          connect: { id: original.cardioSessionId },
+        CardioWorkout: {
+          connect: { id: original.cardioWorkoutId },
         },
       },
       select,
@@ -298,7 +293,7 @@ export const deleteCardioExercise = async (
       where: { id },
       select: {
         id: true,
-        CardioSession: {
+        CardioWorkout: {
           select: { id: true, childrenOrder: true },
         },
       },

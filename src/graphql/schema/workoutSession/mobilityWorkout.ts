@@ -1,7 +1,7 @@
 import { gql } from 'apollo-server-express'
 
 export default gql`
-  type MobilitySession {
+  type MobilityWorkout {
     id: ID!
     createdAt: DateTime!
     updatedAt: DateTime!
@@ -14,11 +14,11 @@ export default gql`
     MobilityMoves: [MobilityMove!]!
   }
 
-  input CreateMobilitySessionInput {
+  input CreateMobilityWorkoutInput {
     name: String!
   }
 
-  input UpdateMobilitySessionInput {
+  input UpdateMobilityWorkoutInput {
     id: ID!
     name: String
     note: String

@@ -1,7 +1,7 @@
 import { gql } from 'apollo-server-express'
 
 export default gql`
-  type ForTimeSession {
+  type ForTimeWorkout {
     id: ID!
     createdAt: DateTime!
     updatedAt: DateTime!
@@ -16,11 +16,11 @@ export default gql`
     ForTimeSections: [ForTimeSection!]!
   }
 
-  input CreateForTimeSessionInput {
+  input CreateForTimeWorkoutInput {
     name: String!
   }
 
-  input UpdateForTimeSessionInput {
+  input UpdateForTimeWorkoutInput {
     id: ID!
     name: String
     note: String
@@ -40,7 +40,7 @@ export default gql`
   }
 
   input CreateForTimeSectionInput {
-    ForTimeSession: ConnectRelationInput!
+    ForTimeWorkout: ConnectRelationInput!
   }
 
   input UpdateForTimeSectionInput {

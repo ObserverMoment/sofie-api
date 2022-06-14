@@ -3,38 +3,33 @@ import { Context } from '../../..'
 import {
   ForTimeMove,
   ForTimeSection,
-  ForTimeSession,
+  ForTimeWorkout,
   MutationCreateForTimeMoveArgs,
   MutationCreateForTimeSectionArgs,
-  MutationCreateForTimeSessionArgs,
+  MutationCreateForTimeWorkoutArgs,
   MutationDeleteForTimeMoveArgs,
-  MutationDeleteForTimeSessionArgs,
+  MutationDeleteForTimeWorkoutArgs,
   MutationDuplicateForTimeMoveArgs,
   MutationDuplicateForTimeSectionArgs,
-  MutationDuplicateForTimeSessionArgs,
+  MutationDuplicateForTimeWorkoutArgs,
   MutationUpdateForTimeMoveArgs,
   MutationUpdateForTimeSectionArgs,
-  MutationUpdateForTimeSessionArgs,
+  MutationUpdateForTimeWorkoutArgs,
 } from '../../../generated/graphql'
 import {
   checkUserOwnsObject,
   processStringListUpdateInputData,
 } from '../../utils'
-import {
-  deleteChildFromOrder,
-  duplicateNewChildToOrder,
-  pushNewChildToOrder,
-} from './utils'
 
 //// Mutations ////
 //// ForTime Session ////
-export const createForTimeSession = async (
+export const createForTimeWorkout = async (
   r: any,
-  { data }: MutationCreateForTimeSessionArgs,
+  { data }: MutationCreateForTimeWorkoutArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  const forTimeSession = await prisma.$transaction(async (prisma) => {
-    const forTimeSession = await prisma.forTimeSession.create({
+  const forTimeWorkout = await prisma.$transaction(async (prisma) => {
+    const forTimeWorkout = await prisma.forTimeWorkout.create({
       data: {
         name: data.name,
         User: {
@@ -44,24 +39,24 @@ export const createForTimeSession = async (
       select,
     })
 
-    return forTimeSession
+    return forTimeWorkout
   })
 
-  if (forTimeSession) {
-    return forTimeSession as ForTimeSession
+  if (forTimeWorkout) {
+    return forTimeWorkout as ForTimeWorkout
   } else {
-    throw new ApolloError('createForTimeSession: There was an issue.')
+    throw new ApolloError('createForTimeWorkout: There was an issue.')
   }
 }
 
-export const updateForTimeSession = async (
+export const updateForTimeWorkout = async (
   r: any,
-  { data }: MutationUpdateForTimeSessionArgs,
+  { data }: MutationUpdateForTimeWorkoutArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  await checkUserOwnsObject(data.id, 'forTimeSession', authedUserId, prisma)
+  await checkUserOwnsObject(data.id, 'forTimeWorkout', authedUserId, prisma)
 
-  const updated = await prisma.forTimeSession.update({
+  const updated = await prisma.forTimeWorkout.update({
     where: { id: data.id },
     data: {
       ...data,
@@ -73,23 +68,23 @@ export const updateForTimeSession = async (
   })
 
   if (updated) {
-    return updated as ForTimeSession
+    return updated as ForTimeWorkout
   } else {
-    throw new ApolloError('updateForTimeSession: There was an issue.')
+    throw new ApolloError('updateForTimeWorkout: There was an issue.')
   }
 }
 
 // Makes a full copy of the object and returns it.
 // Functionality is only available on objects that the user owns.
-export const duplicateForTimeSession = async (
+export const duplicateForTimeWorkout = async (
   r: any,
-  { id }: MutationDuplicateForTimeSessionArgs,
+  { id }: MutationDuplicateForTimeWorkoutArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  await checkUserOwnsObject(id, 'forTimeSession', authedUserId, prisma)
+  await checkUserOwnsObject(id, 'forTimeWorkout', authedUserId, prisma)
 
   // Get original full data
-  const original = await prisma.forTimeSession.findUnique({
+  const original = await prisma.forTimeWorkout.findUnique({
     where: { id },
     include: {
       ForTimeSections: {
@@ -106,12 +101,12 @@ export const duplicateForTimeSession = async (
   })
 
   if (!original) {
-    throw new ApolloError('duplicateForTimeSession: Could not retrieve data.')
+    throw new ApolloError('duplicateForTimeWorkout: Could not retrieve data.')
   }
 
   const copy = await prisma.$transaction(async (prisma) => {
     // Create a new copy.
-    const copy = await prisma.forTimeSession.create({
+    const copy = await prisma.forTimeWorkout.create({
       data: {
         name: original.name,
         note: original.note,
@@ -154,21 +149,21 @@ export const duplicateForTimeSession = async (
   })
 
   if (copy) {
-    return copy as ForTimeSession
+    return copy as ForTimeWorkout
   } else {
-    throw new ApolloError('duplicateForTimeSession: There was an issue.')
+    throw new ApolloError('duplicateForTimeWorkout: There was an issue.')
   }
 }
 
-export const deleteForTimeSession = async (
+export const deleteForTimeWorkout = async (
   r: any,
-  { id }: MutationDeleteForTimeSessionArgs,
+  { id }: MutationDeleteForTimeWorkoutArgs,
   { authedUserId, prisma }: Context,
 ) => {
-  await checkUserOwnsObject(id, 'forTimeSession', authedUserId, prisma)
+  await checkUserOwnsObject(id, 'forTimeWorkout', authedUserId, prisma)
 
   const deleted = await prisma.$transaction(async (prisma) => {
-    const deleted = await prisma.forTimeSession.delete({
+    const deleted = await prisma.forTimeWorkout.delete({
       where: { id },
       select: {
         id: true,
@@ -181,8 +176,8 @@ export const deleteForTimeSession = async (
   if (deleted) {
     return deleted.id
   } else {
-    console.error(`deleteForTimeSession: There was an issue.`)
-    throw new ApolloError('deleteForTimeSession: There was an issue.')
+    console.error(`deleteForTimeWorkout: There was an issue.`)
+    throw new ApolloError('deleteForTimeWorkout: There was an issue.')
   }
 }
 
@@ -193,8 +188,8 @@ export const createForTimeSection = async (
   { authedUserId, select, prisma }: Context,
 ) => {
   await checkUserOwnsObject(
-    data.ForTimeSession.id,
-    'forTimeSession',
+    data.ForTimeWorkout.id,
+    'forTimeWorkout',
     authedUserId,
     prisma,
   )
@@ -202,8 +197,8 @@ export const createForTimeSection = async (
   const forTimeSection = await prisma.$transaction(async (prisma) => {
     const forTimeSection = await prisma.forTimeSection.create({
       data: {
-        ForTimeSession: {
-          connect: data.ForTimeSession,
+        ForTimeWorkout: {
+          connect: data.ForTimeWorkout,
         },
         User: {
           connect: { id: authedUserId },
@@ -258,7 +253,7 @@ export const duplicateForTimeSection = async (
   const original = await prisma.forTimeSection.findUnique({
     where: { id },
     include: {
-      ForTimeSession: true,
+      ForTimeWorkout: true,
       ForTimeMoves: {
         include: {
           Move: true,
@@ -282,7 +277,7 @@ export const duplicateForTimeSection = async (
         User: {
           connect: { id: authedUserId },
         },
-        ForTimeSession: { connect: { id: original.forTimeSessionId } },
+        ForTimeWorkout: { connect: { id: original.forTimeWorkoutId } },
         ForTimeMoves: {
           create: original.ForTimeMoves.map((m) => ({
             note: m.note,
@@ -313,7 +308,7 @@ export const duplicateForTimeSection = async (
 
 export const deleteForTimeSection = async (
   r: any,
-  { id }: MutationDeleteForTimeSessionArgs,
+  { id }: MutationDeleteForTimeWorkoutArgs,
   { authedUserId, prisma }: Context,
 ) => {
   await checkUserOwnsObject(id, 'forTimeSection', authedUserId, prisma)
@@ -323,7 +318,7 @@ export const deleteForTimeSection = async (
       where: { id },
       select: {
         id: true,
-        ForTimeSession: {
+        ForTimeWorkout: {
           select: { id: true, childrenOrder: true },
         },
       },

@@ -1,7 +1,7 @@
 import { gql } from 'apollo-server-express'
 
 export default gql`
-  type IntervalSession {
+  type IntervalWorkout {
     id: ID!
     createdAt: DateTime!
     updatedAt: DateTime!
@@ -20,11 +20,11 @@ export default gql`
     IntervalExercises: [IntervalExercise!]!
   }
 
-  input CreateIntervalSessionInput {
+  input CreateIntervalWorkoutInput {
     name: String!
   }
 
-  input UpdateIntervalSessionInput {
+  input UpdateIntervalWorkoutInput {
     id: ID!
     name: String
     note: String
@@ -46,7 +46,7 @@ export default gql`
   }
 
   input CreateIntervalExerciseInput {
-    IntervalSession: ConnectRelationInput!
+    IntervalWorkout: ConnectRelationInput!
   }
 
   input UpdateIntervalExerciseInput {

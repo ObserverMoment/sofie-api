@@ -1,20 +1,21 @@
 import { gql } from 'apollo-server-express'
 
 export default gql`
+  ###### DEPRECATED ######
   # All their created and saved workouts of all types.
   type UserWorkoutSessions {
-    ResistanceSessions: [ResistanceSession!]!
-    SavedResistanceSessions: [ResistanceSession!]!
-    CardioSessions: [CardioSession!]!
-    SavedCardioSessions: [CardioSession!]!
-    AmrapSessions: [AmrapSession!]!
-    SavedAmrapSessions: [AmrapSession!]!
-    ForTimeSessions: [ForTimeSession!]!
-    SavedForTimeSessions: [ForTimeSession!]!
-    IntervalSessions: [IntervalSession!]!
-    SavedIntervalSessions: [IntervalSession!]!
-    MobilitySessions: [MobilitySession!]!
-    SavedMobilitySessions: [MobilitySession!]!
+    ResistanceWorkouts: [ResistanceWorkout!]!
+    SavedResistanceWorkouts: [ResistanceWorkout!]!
+    CardioWorkouts: [CardioWorkout!]!
+    SavedCardioWorkouts: [CardioWorkout!]!
+    AmrapWorkouts: [AmrapWorkout!]!
+    SavedAmrapWorkouts: [AmrapWorkout!]!
+    ForTimeWorkouts: [ForTimeWorkout!]!
+    SavedForTimeWorkouts: [ForTimeWorkout!]!
+    IntervalWorkouts: [IntervalWorkout!]!
+    SavedIntervalWorkouts: [IntervalWorkout!]!
+    MobilityWorkouts: [MobilityWorkout!]!
+    SavedMobilityWorkouts: [MobilityWorkout!]!
   }
 
   ###### DEPRECATED ######
@@ -31,12 +32,12 @@ export default gql`
     tags: [String!]!
     archived: Boolean!
     childrenOrder: [String!]!
-    CardioSessions: [CardioSession!]!
-    ResistanceSessions: [ResistanceSession!]!
-    IntervalSessions: [IntervalSession!]!
-    MobilitySessions: [MobilitySession!]!
-    AmrapSessions: [AmrapSession!]!
-    ForTimeSessions: [ForTimeSession!]!
+    CardioWorkouts: [CardioWorkout!]!
+    ResistanceWorkouts: [ResistanceWorkout!]!
+    IntervalWorkouts: [IntervalWorkout!]!
+    MobilityWorkouts: [MobilityWorkout!]!
+    AmrapWorkouts: [AmrapWorkout!]!
+    ForTimeWorkouts: [ForTimeWorkout!]!
     User: UserAvatarData!
   }
 

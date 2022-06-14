@@ -598,7 +598,7 @@ export async function displayNameIsAvailable(
   return users !== null && users.length === 0
 }
 
-type RecentObjectType = 'resistanceSession'
+type RecentObjectType = 'resistanceWorkout'
 
 interface RecentlyViewedObjectInfo {
   id: string

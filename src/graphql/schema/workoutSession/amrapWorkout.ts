@@ -1,7 +1,7 @@
 import { gql } from 'apollo-server-express'
 
 export default gql`
-  type AmrapSession {
+  type AmrapWorkout {
     id: ID!
     createdAt: DateTime!
     updatedAt: DateTime!
@@ -13,11 +13,11 @@ export default gql`
     AmrapSections: [AmrapSection!]!
   }
 
-  input CreateAmrapSessionInput {
+  input CreateAmrapWorkoutInput {
     name: String!
   }
 
-  input UpdateAmrapSessionInput {
+  input UpdateAmrapWorkoutInput {
     id: ID!
     name: String
     note: String
@@ -35,7 +35,7 @@ export default gql`
   }
 
   input CreateAmrapSectionInput {
-    AmrapSession: ConnectRelationInput!
+    AmrapWorkout: ConnectRelationInput!
   }
 
   input UpdateAmrapSectionInput {

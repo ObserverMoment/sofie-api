@@ -1,7 +1,9 @@
 import { mergeTypeDefs } from '@graphql-tools/merge'
 import announcementUpdate from './announcementUpdate'
 import bodyTracking from './bodyTracking'
-import club from './club'
+import club from './club/club'
+import clubMembers from './club/clubMembers'
+import clubWorkoutSessions from './club/clubWorkoutSessions'
 import collection from './collection'
 import coreData from './coreData'
 import enums from './enums'
@@ -29,13 +31,13 @@ import workoutPlanEnrolment from './workoutPlan/workoutPlanEnrolment'
 import workoutSection from './workout/workoutSection'
 import workoutSet from './workout/workoutSet'
 // New models May 2022
-import workoutSessions from './workoutSession/workoutSessions'
-import amrapSession from './workoutSession/amrapSession'
-import cardioSession from './workoutSession/cardioSession'
-import forTimeSession from './workoutSession/forTimeSession'
-import intervalSession from './workoutSession/intervalSession'
-import mobilitySession from './workoutSession/mobilitySession'
-import resistanceSession from './workoutSession/resistanceSession'
+import workoutSession from './workoutSession/workoutSession-deprecated'
+import amrapWorkout from './workoutSession/amrapWorkout'
+import cardioWorkout from './workoutSession/cardioWorkout'
+import forTimeWorkout from './workoutSession/forTimeWorkout'
+import intervalWorkout from './workoutSession/intervalWorkout'
+import mobilityWorkout from './workoutSession/mobilityWorkout'
+import resistanceWorkout from './workoutSession/resistanceWorkout'
 import trainingPlan from './trainingPlan/trainingPlan'
 import trainingPlanEnrolment from './trainingPlan/trainingPlanEnrolment'
 
@@ -43,6 +45,8 @@ const typeDefs = mergeTypeDefs([
   announcementUpdate,
   bodyTracking,
   club,
+  clubMembers,
+  clubWorkoutSessions,
   collection,
   coreData,
   enums,
@@ -70,13 +74,13 @@ const typeDefs = mergeTypeDefs([
   workoutSection,
   workoutSet,
   // New models May 2022
-  workoutSessions,
-  amrapSession,
-  cardioSession,
-  forTimeSession,
-  intervalSession,
-  mobilitySession,
-  resistanceSession,
+  workoutSession, // Deprecated.
+  amrapWorkout,
+  cardioWorkout,
+  forTimeWorkout,
+  intervalWorkout,
+  mobilityWorkout,
+  resistanceWorkout,
   trainingPlan,
   trainingPlanEnrolment,
 ])

@@ -2,25 +2,25 @@ import { ApolloError } from 'apollo-server-errors'
 import { Context } from '../../..'
 import {
   ResistanceExercise,
-  ResistanceSession,
+  ResistanceWorkout,
   ResistanceSet,
   MutationCreateResistanceExerciseArgs,
-  MutationCreateResistanceSessionArgs,
+  MutationCreateResistanceWorkoutArgs,
   MutationCreateResistanceSetArgs,
   MutationDeleteResistanceExerciseArgs,
-  MutationDeleteResistanceSessionArgs,
+  MutationDeleteResistanceWorkoutArgs,
   MutationDeleteResistanceSetArgs,
   MutationDuplicateResistanceExerciseArgs,
-  MutationDuplicateResistanceSessionArgs,
+  MutationDuplicateResistanceWorkoutArgs,
   MutationDuplicateResistanceSetArgs,
   MutationUpdateResistanceExerciseArgs,
-  MutationUpdateResistanceSessionArgs,
+  MutationUpdateResistanceWorkoutArgs,
   MutationUpdateResistanceSetArgs,
   MutationReorderResistanceExerciseArgs,
   MutationReorderResistanceSetArgs,
-  QueryResistanceSessionByIdArgs,
-  MutationCreateSavedResistanceSessionArgs,
-  MutationDeleteSavedResistanceSessionArgs,
+  QueryResistanceWorkoutByIdArgs,
+  MutationCreateSavedResistanceWorkoutArgs,
+  MutationDeleteSavedResistanceWorkoutArgs,
 } from '../../../generated/graphql'
 import { checkUserOwnsObject } from '../../utils'
 import { insertObjectAndReorderSiblings, reorderSortableObject } from './utils'
@@ -28,12 +28,12 @@ import { insertObjectAndReorderSiblings, reorderSortableObject } from './utils'
 // //// Queries ////
 // /// https://www.prisma.io/docs/concepts/components/prisma-client/pagination
 // // Logged in user only.
-export const userResistanceSessions = async (
+export const userResistanceWorkouts = async (
   r: any,
   a: any,
   { select, authedUserId, prisma }: Context,
 ) => {
-  const sessions = await prisma.resistanceSession.findMany({
+  const sessions = await prisma.resistanceWorkout.findMany({
     where: {
       userId: authedUserId,
     },
@@ -41,44 +41,44 @@ export const userResistanceSessions = async (
     select,
   })
 
-  return sessions as ResistanceSession[]
+  return sessions as ResistanceWorkout[]
 }
 
-export const userSavedResistanceSessions = async (
+export const userSavedResistanceWorkouts = async (
   r: any,
   a: any,
   { select, authedUserId, prisma }: Context,
 ) => {
-  const saved = await prisma.savedResistanceSession.findMany({
+  const saved = await prisma.savedResistanceWorkout.findMany({
     where: {
       userId: authedUserId,
     },
     orderBy: [{ updatedAt: 'desc' }, { id: 'desc' }],
     select: {
-      ResistanceSession: {
+      ResistanceWorkout: {
         select,
       },
     },
   })
 
-  return saved.map((s) => s.ResistanceSession as any) as ResistanceSession[]
+  return saved.map((s) => s.ResistanceWorkout as any) as ResistanceWorkout[]
 }
 
-export const resistanceSessionById = async (
+export const resistanceWorkoutById = async (
   r: any,
-  { id }: QueryResistanceSessionByIdArgs,
+  { id }: QueryResistanceWorkoutByIdArgs,
   { select, prisma }: Context,
 ) => {
-  const workoutSession = await prisma.resistanceSession.findUnique({
+  const workoutSession = await prisma.resistanceWorkout.findUnique({
     where: { id },
     select,
   })
 
   if (workoutSession) {
-    return workoutSession as ResistanceSession
+    return workoutSession as ResistanceWorkout
   } else {
     console.error(
-      `resistanceSessionById: Could not find a session with id ${id}`,
+      `resistanceWorkoutById: Could not find a session with id ${id}`,
     )
     return null
   }
@@ -86,12 +86,12 @@ export const resistanceSessionById = async (
 
 //// Mutations ////
 //// Resistance Session ////
-export const createResistanceSession = async (
+export const createResistanceWorkout = async (
   r: any,
-  { data }: MutationCreateResistanceSessionArgs,
+  { data }: MutationCreateResistanceWorkoutArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  const resistanceSession = await prisma.resistanceSession.create({
+  const resistanceWorkout = await prisma.resistanceWorkout.create({
     data: {
       ...data,
       User: {
@@ -101,21 +101,21 @@ export const createResistanceSession = async (
     select,
   })
 
-  if (resistanceSession) {
-    return resistanceSession as ResistanceSession
+  if (resistanceWorkout) {
+    return resistanceWorkout as ResistanceWorkout
   } else {
-    throw new ApolloError('createResistanceSession: There was an issue.')
+    throw new ApolloError('createResistanceWorkout: There was an issue.')
   }
 }
 
-export const updateResistanceSession = async (
+export const updateResistanceWorkout = async (
   r: any,
-  { data }: MutationUpdateResistanceSessionArgs,
+  { data }: MutationUpdateResistanceWorkoutArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  await checkUserOwnsObject(data.id, 'resistanceSession', authedUserId, prisma)
+  await checkUserOwnsObject(data.id, 'resistanceWorkout', authedUserId, prisma)
 
-  const updated = await prisma.resistanceSession.update({
+  const updated = await prisma.resistanceWorkout.update({
     where: { id: data.id },
     data: {
       ...data,
@@ -125,23 +125,23 @@ export const updateResistanceSession = async (
   })
 
   if (updated) {
-    return updated as ResistanceSession
+    return updated as ResistanceWorkout
   } else {
-    throw new ApolloError('updateResistanceSession: There was an issue.')
+    throw new ApolloError('updateResistanceWorkout: There was an issue.')
   }
 }
 
 // Makes a full copy of the object and returns it.
 // Functionality is only available on objects that the user owns.
-export const duplicateResistanceSession = async (
+export const duplicateResistanceWorkout = async (
   r: any,
-  { id }: MutationDuplicateResistanceSessionArgs,
+  { id }: MutationDuplicateResistanceWorkoutArgs,
   { authedUserId, select, prisma }: Context,
 ) => {
-  await checkUserOwnsObject(id, 'resistanceSession', authedUserId, prisma)
+  await checkUserOwnsObject(id, 'resistanceWorkout', authedUserId, prisma)
 
   // Get original full data
-  const original = await prisma.resistanceSession.findUnique({
+  const original = await prisma.resistanceWorkout.findUnique({
     where: { id },
     include: {
       ResistanceExercises: {
@@ -159,12 +159,12 @@ export const duplicateResistanceSession = async (
 
   if (!original) {
     throw new ApolloError(
-      'duplicateResistanceSession: Could not retrieve data.',
+      'duplicateResistanceWorkout: Could not retrieve data.',
     )
   }
 
   // Create a new copy.
-  const copy = await prisma.resistanceSession.create({
+  const copy = await prisma.resistanceWorkout.create({
     data: {
       name: `${original.name} - copy`,
       note: original.note,
@@ -202,20 +202,20 @@ export const duplicateResistanceSession = async (
   })
 
   if (copy) {
-    return copy as ResistanceSession
+    return copy as ResistanceWorkout
   } else {
-    throw new ApolloError('duplicateResistanceSession: There was an issue.')
+    throw new ApolloError('duplicateResistanceWorkout: There was an issue.')
   }
 }
 
-export const deleteResistanceSession = async (
+export const deleteResistanceWorkout = async (
   r: any,
-  { id }: MutationDeleteResistanceSessionArgs,
+  { id }: MutationDeleteResistanceWorkoutArgs,
   { authedUserId, prisma }: Context,
 ) => {
-  await checkUserOwnsObject(id, 'resistanceSession', authedUserId, prisma)
+  await checkUserOwnsObject(id, 'resistanceWorkout', authedUserId, prisma)
 
-  const deleted = await prisma.resistanceSession.delete({
+  const deleted = await prisma.resistanceWorkout.delete({
     where: { id },
     select: {
       id: true,
@@ -225,17 +225,17 @@ export const deleteResistanceSession = async (
   if (deleted) {
     return deleted.id
   } else {
-    console.error(`deleteResistanceSession: There was an issue.`)
-    throw new ApolloError('deleteResistanceSession: There was an issue.')
+    console.error(`deleteResistanceWorkout: There was an issue.`)
+    throw new ApolloError('deleteResistanceWorkout: There was an issue.')
   }
 }
 
-export const createSavedResistanceSession = async (
+export const createSavedResistanceWorkout = async (
   r: any,
-  { id }: MutationCreateSavedResistanceSessionArgs,
+  { id }: MutationCreateSavedResistanceWorkoutArgs,
   { select, authedUserId, prisma }: Context,
 ) => {
-  const session = await prisma.resistanceSession.findUnique({
+  const session = await prisma.resistanceWorkout.findUnique({
     where: { id },
     select: {
       userId: true,
@@ -244,49 +244,49 @@ export const createSavedResistanceSession = async (
 
   if (!session) {
     throw new ApolloError(
-      `toggleSaveResistanceSession: Could not find a session with ID ${id}`,
+      `toggleSaveResistanceWorkout: Could not find a session with ID ${id}`,
     )
   }
 
   if (session.userId !== authedUserId) {
     throw new ApolloError(
-      `toggleSaveResistanceSession: You cannot save your own created sessions.`,
+      `toggleSaveResistanceWorkout: You cannot save your own created sessions.`,
     )
   }
 
-  const savedResistanceSession = await prisma.savedResistanceSession.create({
+  const savedResistanceWorkout = await prisma.savedResistanceWorkout.create({
     data: {
-      ResistanceSession: { connect: { id } },
+      ResistanceWorkout: { connect: { id } },
       User: { connect: { id: authedUserId } },
     },
     select: {
-      ResistanceSession: {
+      ResistanceWorkout: {
         select,
       },
     },
   })
 
-  if (savedResistanceSession) {
-    return savedResistanceSession.ResistanceSession as ResistanceSession
+  if (savedResistanceWorkout) {
+    return savedResistanceWorkout.ResistanceWorkout as ResistanceWorkout
   } else {
-    console.error(`toggleSaveResistanceSession: There was an issue.`)
-    throw new ApolloError('toggleSaveResistanceSession: There was an issue.')
+    console.error(`toggleSaveResistanceWorkout: There was an issue.`)
+    throw new ApolloError('toggleSaveResistanceWorkout: There was an issue.')
   }
 }
 
-export const deleteSavedResistanceSession = async (
+export const deleteSavedResistanceWorkout = async (
   r: any,
-  { savedResistanceSessionId }: MutationDeleteSavedResistanceSessionArgs,
+  { savedResistanceWorkoutId }: MutationDeleteSavedResistanceWorkoutArgs,
   { authedUserId, prisma }: Context,
 ) => {
   await checkUserOwnsObject(
-    savedResistanceSessionId,
-    'savedResistanceSession',
+    savedResistanceWorkoutId,
+    'savedResistanceWorkout',
     authedUserId,
     prisma,
   )
-  const deleted = await prisma.savedResistanceSession.delete({
-    where: { id: savedResistanceSessionId },
+  const deleted = await prisma.savedResistanceWorkout.delete({
+    where: { id: savedResistanceWorkoutId },
     select: {
       id: true,
     },
@@ -295,14 +295,14 @@ export const deleteSavedResistanceSession = async (
   if (deleted) {
     return deleted.id
   } else {
-    console.error(`deleteSavedResistanceSession: There was an issue.`)
-    throw new ApolloError('deleteSavedResistanceSession: There was an issue.')
+    console.error(`deleteSavedResistanceWorkout: There was an issue.`)
+    throw new ApolloError('deleteSavedResistanceWorkout: There was an issue.')
   }
 }
 
 //// Resistance Exercise ////
 //// Create, Duplicate and Delete ops return the updated parent.
-//// Returns parent ResistanceSession which has childrenOrder info
+//// Returns parent ResistanceWorkout which has childrenOrder info
 //// Always created with child resistanceSets sideposted (nested writes)
 export const createResistanceExercise = async (
   r: any,
@@ -310,8 +310,8 @@ export const createResistanceExercise = async (
   { authedUserId, select, prisma }: Context,
 ) => {
   await checkUserOwnsObject(
-    data.ResistanceSession.id,
-    'resistanceSession',
+    data.ResistanceWorkout.id,
+    'resistanceWorkout',
     authedUserId,
     prisma,
   )
@@ -320,15 +320,15 @@ export const createResistanceExercise = async (
     /// How many exercises are the already in this session. Use this to calculate the new exercise [sortPosition]. sortPosition should be zero indexed.
     const prevExerciseCount = await prisma.resistanceExercise.count({
       where: {
-        resistanceSessionId: data.ResistanceSession.id,
+        resistanceWorkoutId: data.ResistanceWorkout.id,
       },
     })
 
     const created = await prisma.resistanceExercise.create({
       data: {
         sortPosition: prevExerciseCount,
-        ResistanceSession: {
-          connect: data.ResistanceSession,
+        ResistanceWorkout: {
+          connect: data.ResistanceWorkout,
         },
         ResistanceSets: {
           create: data.ResistanceSets.map((s, i) => ({
@@ -377,7 +377,7 @@ export const duplicateResistanceExercise = async (
   const original = await prisma.resistanceExercise.findUnique({
     where: { id },
     include: {
-      ResistanceSession: true,
+      ResistanceWorkout: true,
       ResistanceSets: {
         include: {
           Move: true,
@@ -396,7 +396,7 @@ export const duplicateResistanceExercise = async (
   const updatedExercises = await prisma.$transaction(async (prisma) => {
     const prevExercises = await prisma.resistanceExercise.findMany({
       where: {
-        resistanceSessionId: original.ResistanceSession.id,
+        resistanceWorkoutId: original.ResistanceWorkout.id,
       },
       select: {
         id: true,
@@ -411,7 +411,7 @@ export const duplicateResistanceExercise = async (
       data: {
         sortPosition: newItemSortPosition,
         note: original.note,
-        ResistanceSession: { connect: { id: original.resistanceSessionId } },
+        ResistanceWorkout: { connect: { id: original.resistanceWorkoutId } },
         User: {
           connect: { id: authedUserId },
         },
@@ -452,7 +452,7 @@ export const duplicateResistanceExercise = async (
 
     const updated = await prisma.resistanceExercise.findMany({
       where: {
-        resistanceSessionId: original.ResistanceSession.id,
+        resistanceWorkoutId: original.ResistanceWorkout.id,
       },
       select,
     })
@@ -517,7 +517,7 @@ export const reorderResistanceExercise = async (
   const withParent = await prisma.resistanceExercise.findUnique({
     where: { id },
     select: {
-      resistanceSessionId: true,
+      resistanceWorkoutId: true,
     },
   })
 
@@ -527,12 +527,12 @@ export const reorderResistanceExercise = async (
     )
   }
 
-  const parentId = withParent.resistanceSessionId
+  const parentId = withParent.resistanceWorkoutId
 
   await reorderSortableObject(
     'resistanceExercise',
     id,
-    'resistanceSession',
+    'resistanceWorkout',
     parentId,
     moveTo,
     prisma,
@@ -540,7 +540,7 @@ export const reorderResistanceExercise = async (
 
   const updated = await prisma.resistanceExercise.findMany({
     where: {
-      resistanceSessionId: parentId,
+      resistanceWorkoutId: parentId,
     },
     select,
   })
@@ -555,7 +555,7 @@ export const reorderResistanceExercise = async (
 
 //// Resistance Set ////
 //// Create, Duplicate and Delete ops return the updated parent.
-//// Returns parent ResistanceSession which has childrenOrder info
+//// Returns parent ResistanceWorkout which has childrenOrder info
 export const createResistanceSet = async (
   r: any,
   { data }: MutationCreateResistanceSetArgs,

@@ -44,21 +44,21 @@ export type ContentObjectType =
   | 'move'
   | 'scheduledWorkout'
   | 'skill'
-  | 'workoutSession'
-  | 'amrapSession'
+  | 'workoutWorkout'
+  | 'amrapWorkout'
   | 'amrapSection'
   | 'amrapMove'
-  | 'cardioSession'
+  | 'cardioWorkout'
   | 'cardioExercise'
-  | 'forTimeSession'
+  | 'forTimeWorkout'
   | 'forTimeSection'
   | 'forTimeMove'
-  | 'intervalSession'
+  | 'intervalWorkout'
   | 'intervalExercise'
   | 'intervalSet'
-  | 'mobilitySession'
-  | 'resistanceSession'
-  | 'savedResistanceSession'
+  | 'mobilityWorkout'
+  | 'resistanceWorkout'
+  | 'savedResistanceWorkout'
   | 'resistanceExercise'
   | 'resistanceSet'
   | 'workoutTag'
@@ -146,8 +146,8 @@ export async function addObjectToUserRecentlyViewed(
   let typeAndId: string
 
   switch (resolverName) {
-    case 'resistanceSessionById':
-      typeAndId = `resistanceSession:${resolverArgs.id}`
+    case 'resistanceWorkoutById':
+      typeAndId = `resistanceWorkout:${resolverArgs.id}`
       break
 
     default:

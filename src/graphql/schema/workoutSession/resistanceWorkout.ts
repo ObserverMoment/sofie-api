@@ -1,7 +1,7 @@
 import { gql } from 'apollo-server-express'
 
 export default gql`
-  type ResistanceSession {
+  type ResistanceWorkout {
     id: ID!
     createdAt: DateTime!
     updatedAt: DateTime!
@@ -11,11 +11,11 @@ export default gql`
     User: UserAvatarData!
   }
 
-  input CreateResistanceSessionInput {
+  input CreateResistanceWorkoutInput {
     name: String!
   }
 
-  input UpdateResistanceSessionInput {
+  input UpdateResistanceWorkoutInput {
     id: ID!
     name: String
     note: String
@@ -31,7 +31,7 @@ export default gql`
   }
 
   input CreateResistanceExerciseInput {
-    ResistanceSession: ConnectRelationInput!
+    ResistanceWorkout: ConnectRelationInput!
     ResistanceSets: [CreateResistanceSetInExerciseInput!]!
   }
 

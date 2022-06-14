@@ -61,7 +61,7 @@ const recentMiddlewareWrapper = async (
 /// For certain queries we want to update the users recently viewed items list.
 const recentsMiddleware = {
   Query: {
-    resistanceSessionById: recentMiddlewareWrapper,
+    resistanceWorkoutById: recentMiddlewareWrapper,
   },
 }
 

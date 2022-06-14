@@ -64,9 +64,10 @@ import {
 } from './club/clubMembers'
 
 import {
-  addResistanceSessionToClub,
-  removeResistanceSessionFromClub,
-} from './club/clubWorkoutSessions'
+  userClubsResistanceWorkouts,
+  addResistanceWorkoutToClub,
+  removeResistanceWorkoutFromClub,
+} from './club/clubWorkouts'
 
 import {
   clubWorkouts,
@@ -210,10 +211,10 @@ import {
 import { checkClubInviteToken } from './invites'
 
 import {
-  createAmrapSession,
-  updateAmrapSession,
-  duplicateAmrapSession,
-  deleteAmrapSession,
+  createAmrapWorkout,
+  updateAmrapWorkout,
+  duplicateAmrapWorkout,
+  deleteAmrapWorkout,
   createAmrapSection,
   updateAmrapSection,
   duplicateAmrapSection,
@@ -222,13 +223,13 @@ import {
   updateAmrapMove,
   duplicateAmrapMove,
   deleteAmrapMove,
-} from './workoutSession/amrapSession'
+} from './workoutSession/amrapWorkout'
 
 import {
-  createForTimeSession,
-  updateForTimeSession,
-  duplicateForTimeSession,
-  deleteForTimeSession,
+  createForTimeWorkout,
+  updateForTimeWorkout,
+  duplicateForTimeWorkout,
+  deleteForTimeWorkout,
   createForTimeSection,
   updateForTimeSection,
   duplicateForTimeSection,
@@ -237,13 +238,13 @@ import {
   updateForTimeMove,
   duplicateForTimeMove,
   deleteForTimeMove,
-} from './workoutSession/forTimeSession'
+} from './workoutSession/forTimeWorkout'
 
 import {
-  createIntervalSession,
-  updateIntervalSession,
-  duplicateIntervalSession,
-  deleteIntervalSession,
+  createIntervalWorkout,
+  updateIntervalWorkout,
+  duplicateIntervalWorkout,
+  deleteIntervalWorkout,
   createIntervalExercise,
   updateIntervalExercise,
   duplicateIntervalExercise,
@@ -252,25 +253,25 @@ import {
   updateIntervalSet,
   duplicateIntervalSet,
   deleteIntervalSet,
-} from './workoutSession/intervalSession'
+} from './workoutSession/intervalWorkout'
 
 import {
-  createMobilitySession,
-  updateMobilitySession,
-  duplicateMobilitySession,
-  deleteMobilitySession,
-} from './workoutSession/mobilitySession'
+  createMobilityWorkout,
+  updateMobilityWorkout,
+  duplicateMobilityWorkout,
+  deleteMobilityWorkout,
+} from './workoutSession/mobilityWorkout'
 
 import {
-  userResistanceSessions,
-  userSavedResistanceSessions,
-  resistanceSessionById,
-  createResistanceSession,
-  updateResistanceSession,
-  duplicateResistanceSession,
-  deleteResistanceSession,
-  createSavedResistanceSession,
-  deleteSavedResistanceSession,
+  userResistanceWorkouts,
+  userSavedResistanceWorkouts,
+  resistanceWorkoutById,
+  createResistanceWorkout,
+  updateResistanceWorkout,
+  duplicateResistanceWorkout,
+  deleteResistanceWorkout,
+  createSavedResistanceWorkout,
+  deleteSavedResistanceWorkout,
   createResistanceExercise,
   updateResistanceExercise,
   duplicateResistanceExercise,
@@ -281,18 +282,18 @@ import {
   duplicateResistanceSet,
   deleteResistanceSet,
   reorderResistanceSet,
-} from './workoutSession/resistanceSession'
+} from './workoutSession/resistanceWorkout'
 
 import {
-  createCardioSession,
-  updateCardioSession,
-  duplicateCardioSession,
-  deleteCardioSession,
+  createCardioWorkout,
+  updateCardioWorkout,
+  duplicateCardioWorkout,
+  deleteCardioWorkout,
   createCardioExercise,
   updateCardioExercise,
   duplicateCardioExercise,
   deleteCardioExercise,
-} from './workoutSession/cardioSession'
+} from './workoutSession/cardioWorkout'
 
 /// DEPRECATED
 import {
@@ -503,11 +504,12 @@ const resolvers: Resolvers = {
     userCollectionById,
     /// User Exercise and Scored Workout Trackers ///
     userExerciseLoadTrackers,
-    //// WorkoutSessions ////
-    //// ResistanceSessions ////
-    userResistanceSessions,
-    userSavedResistanceSessions,
-    resistanceSessionById,
+    //// WorkoutWorkouts ////
+    //// ResistanceWorkouts ////
+    userClubsResistanceWorkouts,
+    userResistanceWorkouts,
+    userSavedResistanceWorkouts,
+    resistanceWorkoutById,
     //// Workouts - DEPRECATED////
     publicWorkouts,
     userWorkouts, // Authed user.
@@ -558,8 +560,8 @@ const resolvers: Resolvers = {
     ///////////////////////
     //// Club Content /////
     ///////////////////////
-    addResistanceSessionToClub,
-    removeResistanceSessionFromClub,
+    addResistanceWorkoutToClub,
+    removeResistanceWorkoutFromClub,
     ////// DEPRECATED ////
     addWorkoutToClub,
     removeWorkoutFromClub,
@@ -675,17 +677,17 @@ const resolvers: Resolvers = {
     addDocumentToSkill,
     removeDocumentFromSkill,
     ////////////////////////
-    //// WorkoutSession ////
+    //// WorkoutWorkout ////
     ///////////////////////
-    // createWorkoutSession,
-    // updateWorkoutSession,
-    // duplicateWorkoutSession,
-    // deleteWorkoutSession,
-    //// AmrapSession ////
-    createAmrapSession,
-    updateAmrapSession,
-    duplicateAmrapSession,
-    deleteAmrapSession,
+    // createWorkoutWorkout,
+    // updateWorkoutWorkout,
+    // duplicateWorkoutWorkout,
+    // deleteWorkoutWorkout,
+    //// AmrapWorkout ////
+    createAmrapWorkout,
+    updateAmrapWorkout,
+    duplicateAmrapWorkout,
+    deleteAmrapWorkout,
     createAmrapSection,
     updateAmrapSection,
     duplicateAmrapSection,
@@ -694,11 +696,11 @@ const resolvers: Resolvers = {
     updateAmrapMove,
     duplicateAmrapMove,
     deleteAmrapMove,
-    //// ForTimeSession ////
-    createForTimeSession,
-    updateForTimeSession,
-    duplicateForTimeSession,
-    deleteForTimeSession,
+    //// ForTimeWorkout ////
+    createForTimeWorkout,
+    updateForTimeWorkout,
+    duplicateForTimeWorkout,
+    deleteForTimeWorkout,
     createForTimeSection,
     updateForTimeSection,
     duplicateForTimeSection,
@@ -707,11 +709,11 @@ const resolvers: Resolvers = {
     updateForTimeMove,
     duplicateForTimeMove,
     deleteForTimeMove,
-    //// IntervalSession ////
-    createIntervalSession,
-    updateIntervalSession,
-    duplicateIntervalSession,
-    deleteIntervalSession,
+    //// IntervalWorkout ////
+    createIntervalWorkout,
+    updateIntervalWorkout,
+    duplicateIntervalWorkout,
+    deleteIntervalWorkout,
     createIntervalExercise,
     updateIntervalExercise,
     duplicateIntervalExercise,
@@ -720,27 +722,27 @@ const resolvers: Resolvers = {
     updateIntervalSet,
     duplicateIntervalSet,
     deleteIntervalSet,
-    //// MobilitySession ////
-    createMobilitySession,
-    updateMobilitySession,
-    duplicateMobilitySession,
-    deleteMobilitySession,
-    //// CardioSession ////
-    createCardioSession,
-    updateCardioSession,
-    duplicateCardioSession,
-    deleteCardioSession,
+    //// MobilityWorkout ////
+    createMobilityWorkout,
+    updateMobilityWorkout,
+    duplicateMobilityWorkout,
+    deleteMobilityWorkout,
+    //// CardioWorkout ////
+    createCardioWorkout,
+    updateCardioWorkout,
+    duplicateCardioWorkout,
+    deleteCardioWorkout,
     createCardioExercise,
     updateCardioExercise,
     duplicateCardioExercise,
     deleteCardioExercise,
-    //// ResistanceSession ////
-    createResistanceSession,
-    updateResistanceSession,
-    duplicateResistanceSession,
-    deleteResistanceSession,
-    createSavedResistanceSession,
-    deleteSavedResistanceSession,
+    //// ResistanceWorkout ////
+    createResistanceWorkout,
+    updateResistanceWorkout,
+    duplicateResistanceWorkout,
+    deleteResistanceWorkout,
+    createSavedResistanceWorkout,
+    deleteSavedResistanceWorkout,
     createResistanceExercise,
     updateResistanceExercise,
     duplicateResistanceExercise,
