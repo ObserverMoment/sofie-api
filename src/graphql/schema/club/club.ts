@@ -87,17 +87,6 @@ export default gql`
     planCount: Int!
   }
 
-  ### DEPRECATED
-  type ClubWorkouts {
-    id: ID! # ClubId
-    workouts: [WorkoutSummary!]!
-  }
-  ### DEPRECATED
-  type ClubWorkoutPlans {
-    id: ID! # ClubId
-    workoutPlans: [WorkoutPlanSummary!]!
-  }
-
   input CreateClubInput {
     name: String!
     description: String

@@ -28,7 +28,7 @@ import { insertObjectAndReorderSiblings, reorderSortableObject } from './utils'
 // //// Queries ////
 // /// https://www.prisma.io/docs/concepts/components/prisma-client/pagination
 // // Logged in user only.
-export const userResistanceWorkouts = async (
+export const userCreatedResistanceWorkouts = async (
   r: any,
   a: any,
   { select, authedUserId, prisma }: Context,

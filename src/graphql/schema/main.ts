@@ -36,8 +36,14 @@ export default gql`
     clubInviteTokens(clubId: ID!): ClubInviteTokens!
     # For displaying within the Club/People section. Each person is a ClubMemberSummary
     clubMembers(clubId: ID!): ClubMembers!
-    clubWorkouts(clubId: ID!): ClubWorkouts!
-    clubWorkoutPlans(clubId: ID!): ClubWorkoutPlans!
+    clubWorkouts(
+      clubId: ID!
+      cursors: ClubWorkoutsCursors!
+      requestTypes: ClubWorkoutsRequestTypes!
+      take: Int
+    ): ClubWorkouts!
+    # clubWorkouts(clubId: ID!): ClubWorkouts!
+    # clubWorkoutPlans(clubId: ID!): ClubWorkoutPlans!
     #### Club Member Notes ####
     clubMemberNotes(
       clubId: ID!
@@ -93,7 +99,7 @@ export default gql`
     userProfiles(cursor: ID, take: Int): [UserProfileSummary!]!
     userProfile(userId: ID!): UserProfile
     #### ResistanceWorkouts ####
-    userResistanceWorkouts: [ResistanceWorkout!]!
+    userCreatedResistanceWorkouts: [ResistanceWorkout!]!
     userClubsResistanceWorkouts(
       cursor: ID
       take: Int
@@ -179,13 +185,13 @@ export default gql`
     ): ResistanceWorkout!
     #### DEPRECATED ####
     # Returns the updated content / list of objects.
-    addWorkoutToClub(workoutId: ID!, clubId: ID!): ClubWorkouts!
-    removeWorkoutFromClub(workoutId: ID!, clubId: ID!): ClubWorkouts!
-    addWorkoutPlanToClub(workoutPlanId: ID!, clubId: ID!): ClubWorkoutPlans!
-    removeWorkoutPlanFromClub(
-      workoutPlanId: ID!
-      clubId: ID!
-    ): ClubWorkoutPlans!
+    # addWorkoutToClub(workoutId: ID!, clubId: ID!): ClubWorkouts!
+    # removeWorkoutFromClub(workoutId: ID!, clubId: ID!): ClubWorkouts!
+    # addWorkoutPlanToClub(workoutPlanId: ID!, clubId: ID!): ClubWorkoutPlans!
+    # removeWorkoutPlanFromClub(
+    #   workoutPlanId: ID!
+    #   clubId: ID!
+    # ): ClubWorkoutPlans!
     #### Club Feed Post ####
     createClubMembersFeedPost(
       clubId: ID!

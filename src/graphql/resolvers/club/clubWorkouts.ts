@@ -2,16 +2,63 @@ import { ApolloError } from 'apollo-server-errors'
 import { Context } from '../../..'
 import {
   ClubResistanceWorkout,
+  ClubWorkouts,
   MutationAddResistanceWorkoutToClubArgs,
   MutationRemoveResistanceWorkoutFromClubArgs,
+  QueryClubWorkoutsArgs,
   QueryUserClubsResistanceWorkoutsArgs,
   ResistanceWorkout,
 } from '../../../generated/graphql'
 import { checkUserOwnsObject } from '../../utils'
-import { checkUserIsOwnerOrAdminOfClub } from './utils'
+import { checkUserIsMemberOfClub, checkUserIsOwnerOrAdminOfClub } from './utils'
 
 ////// Queries ///////
-/// Retrieves (with optional pagination and filtering) all resistance sessions from all Circles in which the user is a member.
+export const clubWorkouts = async (
+  r: any,
+  { clubId, cursors, requestTypes, take }: QueryClubWorkoutsArgs,
+  { select, authedUserId, prisma }: Context,
+) => {
+  try {
+    await checkUserIsMemberOfClub(clubId, authedUserId, prisma)
+
+    const data: any = await prisma.club.findUnique({
+      where: { id: clubId },
+      select: {
+        ResistanceWorkouts: requestTypes.resistanceWorkouts
+          ? {
+              take: take ?? 50,
+              skip: cursors.resistanceWorkout ? 1 : 0,
+              orderBy: [{ updatedAt: 'desc' }, { id: 'desc' }],
+              cursor: cursors.resistanceWorkout
+                ? {
+                    id: cursors.resistanceWorkout!,
+                  }
+                : undefined,
+              select: select.ResistanceWorkouts.select,
+            }
+          : undefined,
+      },
+    })
+
+    if (data) {
+      return {
+        ResistanceWorkouts: data.ResistanceWorkouts,
+        CardioWorkouts: [],
+        IntervalWorkouts: [],
+        AmrapWorkouts: [],
+        ForTimeWorkouts: [],
+        MobilityWorkouts: [],
+      } as ClubWorkouts
+    } else {
+      throw new ApolloError('clubWorkouts: There was an issue.')
+    }
+  } catch (e: any) {
+    console.error(e)
+    throw new ApolloError(e.toString())
+  }
+}
+
+/// Retrieves (with optional pagination and filtering) all resistance sessions from all Clubs in which the user is a member.
 export const userClubsResistanceWorkouts = async (
   r: any,
   { cursor, take }: QueryUserClubsResistanceWorkoutsArgs,
@@ -20,19 +67,45 @@ export const userClubsResistanceWorkouts = async (
   try {
     const workoutsWithClubs: any[] = await prisma.resistanceWorkout.findMany({
       where: {
-        Clubs: {
-          some: { Members: { some: { id: authedUserId } } },
-        },
+        OR: [
+          {
+            Clubs: {
+              some: { Owner: { id: authedUserId } },
+            },
+          },
+          {
+            Clubs: {
+              some: { Admins: { some: { id: authedUserId } } },
+            },
+          },
+          {
+            Clubs: {
+              some: { Members: { some: { id: authedUserId } } },
+            },
+          },
+        ],
       },
+
       select: {
         ...select.ResistanceWorkout.select,
         Clubs: {
           where: {
-            Members: { some: { id: authedUserId } },
+            OR: [
+              {
+                Owner: { id: authedUserId },
+              },
+              {
+                Admins: { some: { id: authedUserId } },
+              },
+              {
+                Members: { some: { id: authedUserId } },
+              },
+            ],
           },
         },
       },
       take: take ?? 50,
+      skip: cursor ? 1 : 0,
       orderBy: [{ updatedAt: 'desc' }, { id: 'desc' }],
       cursor: cursor
         ? {
@@ -41,12 +114,14 @@ export const userClubsResistanceWorkouts = async (
         : undefined,
     })
 
-    return workoutsWithClubs.map((w) => ({
-      id: w.Clubs[0].id,
-      name: w.Clubs[0].name,
-      coverImageUri: w.Clu[0].coverImageUri,
-      ResistanceWorkout: w,
-    })) as ClubResistanceWorkout[]
+    return workoutsWithClubs.map((w) => {
+      return {
+        id: w.Clubs[0].id,
+        name: w.Clubs[0].name,
+        coverImageUri: w.Clubs[0].coverImageUri,
+        ResistanceWorkout: w,
+      }
+    }) as ClubResistanceWorkout[]
   } catch (e: any) {
     console.log(e)
     throw new ApolloError(e.toString())

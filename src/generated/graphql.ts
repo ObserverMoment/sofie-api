@@ -325,16 +325,32 @@ export type ClubWithMetaDataAdmin = {
   validated: PublicContentValidationStatus;
 };
 
-export type ClubWorkoutPlans = {
-  __typename?: 'ClubWorkoutPlans';
-  id: Scalars['ID'];
-  workoutPlans: Array<WorkoutPlanSummary>;
-};
-
 export type ClubWorkouts = {
   __typename?: 'ClubWorkouts';
-  id: Scalars['ID'];
-  workouts: Array<WorkoutSummary>;
+  AmrapWorkouts: Array<AmrapWorkout>;
+  CardioWorkouts: Array<CardioWorkout>;
+  ForTimeWorkouts: Array<ForTimeWorkout>;
+  IntervalWorkouts: Array<IntervalWorkout>;
+  MobilityWorkouts: Array<MobilityWorkout>;
+  ResistanceWorkouts: Array<ResistanceWorkout>;
+};
+
+export type ClubWorkoutsCursors = {
+  amrapWorkout?: InputMaybe<Scalars['String']>;
+  cardioWorkout?: InputMaybe<Scalars['String']>;
+  forTimeWorkout?: InputMaybe<Scalars['String']>;
+  intervalWorkout?: InputMaybe<Scalars['String']>;
+  mobilityWorkout?: InputMaybe<Scalars['String']>;
+  resistanceWorkout?: InputMaybe<Scalars['String']>;
+};
+
+export type ClubWorkoutsRequestTypes = {
+  amrapWorkouts?: InputMaybe<Scalars['Boolean']>;
+  cardioWorkouts?: InputMaybe<Scalars['Boolean']>;
+  forTimeWorkouts?: InputMaybe<Scalars['Boolean']>;
+  intervalWorkouts?: InputMaybe<Scalars['Boolean']>;
+  mobilityWorkouts?: InputMaybe<Scalars['Boolean']>;
+  resistanceWorkouts?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type Collection = {
@@ -1181,9 +1197,7 @@ export type Mutation = {
   addDocumentToSkill: Skill;
   addResistanceWorkoutToClub: ResistanceWorkout;
   addUserToClubViaInviteToken: Scalars['ID'];
-  addWorkoutPlanToClub: ClubWorkoutPlans;
   addWorkoutPlanToCollection: Collection;
-  addWorkoutToClub: ClubWorkouts;
   addWorkoutToCollection: Collection;
   archiveCustomMoveById: Move;
   archiveWorkoutById: Workout;
@@ -1309,9 +1323,7 @@ export type Mutation = {
   removeMemberAdminStatus: ClubMembers;
   removeResistanceWorkoutFromClub: ResistanceWorkout;
   removeUserFromClub: ClubMembers;
-  removeWorkoutFromClub: ClubWorkouts;
   removeWorkoutFromCollection: Collection;
-  removeWorkoutPlanFromClub: ClubWorkoutPlans;
   removeWorkoutPlanFromCollection: Collection;
   reorderResistanceExercise: Array<ResistanceExercise>;
   reorderResistanceSet: Array<ResistanceSet>;
@@ -1395,20 +1407,8 @@ export type MutationAddUserToClubViaInviteTokenArgs = {
 };
 
 
-export type MutationAddWorkoutPlanToClubArgs = {
-  clubId: Scalars['ID'];
-  workoutPlanId: Scalars['ID'];
-};
-
-
 export type MutationAddWorkoutPlanToCollectionArgs = {
   data: AddWorkoutPlanToCollectionInput;
-};
-
-
-export type MutationAddWorkoutToClubArgs = {
-  clubId: Scalars['ID'];
-  workoutId: Scalars['ID'];
 };
 
 
@@ -2042,20 +2042,8 @@ export type MutationRemoveUserFromClubArgs = {
 };
 
 
-export type MutationRemoveWorkoutFromClubArgs = {
-  clubId: Scalars['ID'];
-  workoutId: Scalars['ID'];
-};
-
-
 export type MutationRemoveWorkoutFromCollectionArgs = {
   data: RemoveWorkoutFromCollectionInput;
-};
-
-
-export type MutationRemoveWorkoutPlanFromClubArgs = {
-  clubId: Scalars['ID'];
-  workoutPlanId: Scalars['ID'];
 };
 
 
@@ -2455,7 +2443,6 @@ export type Query = {
   clubMembers: ClubMembers;
   clubSummaries: Array<ClubSummary>;
   clubSummary?: Maybe<ClubSummary>;
-  clubWorkoutPlans: ClubWorkoutPlans;
   clubWorkouts: ClubWorkouts;
   coreData: CoreData;
   gymProfiles: Array<GymProfile>;
@@ -2485,6 +2472,7 @@ export type Query = {
   userClubsResistanceWorkouts: Array<ClubResistanceWorkout>;
   userCollectionById: Collection;
   userCollections: Array<Collection>;
+  userCreatedResistanceWorkouts: Array<ResistanceWorkout>;
   userDayLogMoods: Array<UserDayLogMood>;
   userEatWellLogs: Array<UserEatWellLog>;
   userExerciseLoadTrackers: Array<UserExerciseLoadTracker>;
@@ -2497,7 +2485,6 @@ export type Query = {
   userPublicWorkoutPlans: Array<WorkoutPlanSummary>;
   userPublicWorkouts: Array<WorkoutSummary>;
   userRecentlyViewedObjects: Array<UserRecentlyViewedObject>;
-  userResistanceWorkouts: Array<ResistanceWorkout>;
   userSavedResistanceWorkouts: Array<ResistanceWorkout>;
   userScheduledWorkouts: Array<ScheduledWorkout>;
   userSleepWellLogs: Array<UserSleepWellLog>;
@@ -2577,13 +2564,11 @@ export type QueryClubSummaryArgs = {
 };
 
 
-export type QueryClubWorkoutPlansArgs = {
-  clubId: Scalars['ID'];
-};
-
-
 export type QueryClubWorkoutsArgs = {
   clubId: Scalars['ID'];
+  cursors: ClubWorkoutsCursors;
+  requestTypes: ClubWorkoutsRequestTypes;
+  take?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -4050,8 +4035,9 @@ export type ResolversTypes = ResolversObject<{
   ClubResistanceWorkout: ResolverTypeWrapper<ClubResistanceWorkout>;
   ClubSummary: ResolverTypeWrapper<ClubSummary>;
   ClubWithMetaDataAdmin: ResolverTypeWrapper<ClubWithMetaDataAdmin>;
-  ClubWorkoutPlans: ResolverTypeWrapper<ClubWorkoutPlans>;
   ClubWorkouts: ResolverTypeWrapper<ClubWorkouts>;
+  ClubWorkoutsCursors: ClubWorkoutsCursors;
+  ClubWorkoutsRequestTypes: ClubWorkoutsRequestTypes;
   Collection: ResolverTypeWrapper<Collection>;
   CompletedTrainingPlanDayWorkout: ResolverTypeWrapper<CompletedTrainingPlanDayWorkout>;
   CompletedWorkoutPlanDayWorkout: ResolverTypeWrapper<CompletedWorkoutPlanDayWorkout>;
@@ -4336,8 +4322,9 @@ export type ResolversParentTypes = ResolversObject<{
   ClubResistanceWorkout: ClubResistanceWorkout;
   ClubSummary: ClubSummary;
   ClubWithMetaDataAdmin: ClubWithMetaDataAdmin;
-  ClubWorkoutPlans: ClubWorkoutPlans;
   ClubWorkouts: ClubWorkouts;
+  ClubWorkoutsCursors: ClubWorkoutsCursors;
+  ClubWorkoutsRequestTypes: ClubWorkoutsRequestTypes;
   Collection: Collection;
   CompletedTrainingPlanDayWorkout: CompletedTrainingPlanDayWorkout;
   CompletedWorkoutPlanDayWorkout: CompletedWorkoutPlanDayWorkout;
@@ -4828,15 +4815,13 @@ export type ClubWithMetaDataAdminResolvers<ContextType = any, ParentType extends
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export type ClubWorkoutPlansResolvers<ContextType = any, ParentType extends ResolversParentTypes['ClubWorkoutPlans'] = ResolversParentTypes['ClubWorkoutPlans']> = ResolversObject<{
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  workoutPlans?: Resolver<Array<ResolversTypes['WorkoutPlanSummary']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
 export type ClubWorkoutsResolvers<ContextType = any, ParentType extends ResolversParentTypes['ClubWorkouts'] = ResolversParentTypes['ClubWorkouts']> = ResolversObject<{
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  workouts?: Resolver<Array<ResolversTypes['WorkoutSummary']>, ParentType, ContextType>;
+  AmrapWorkouts?: Resolver<Array<ResolversTypes['AmrapWorkout']>, ParentType, ContextType>;
+  CardioWorkouts?: Resolver<Array<ResolversTypes['CardioWorkout']>, ParentType, ContextType>;
+  ForTimeWorkouts?: Resolver<Array<ResolversTypes['ForTimeWorkout']>, ParentType, ContextType>;
+  IntervalWorkouts?: Resolver<Array<ResolversTypes['IntervalWorkout']>, ParentType, ContextType>;
+  MobilityWorkouts?: Resolver<Array<ResolversTypes['MobilityWorkout']>, ParentType, ContextType>;
+  ResistanceWorkouts?: Resolver<Array<ResolversTypes['ResistanceWorkout']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -5169,9 +5154,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   addDocumentToSkill?: Resolver<ResolversTypes['Skill'], ParentType, ContextType, RequireFields<MutationAddDocumentToSkillArgs, 'data'>>;
   addResistanceWorkoutToClub?: Resolver<ResolversTypes['ResistanceWorkout'], ParentType, ContextType, RequireFields<MutationAddResistanceWorkoutToClubArgs, 'clubId' | 'workoutId'>>;
   addUserToClubViaInviteToken?: Resolver<ResolversTypes['ID'], ParentType, ContextType, RequireFields<MutationAddUserToClubViaInviteTokenArgs, 'clubInviteTokenId' | 'userId'>>;
-  addWorkoutPlanToClub?: Resolver<ResolversTypes['ClubWorkoutPlans'], ParentType, ContextType, RequireFields<MutationAddWorkoutPlanToClubArgs, 'clubId' | 'workoutPlanId'>>;
   addWorkoutPlanToCollection?: Resolver<ResolversTypes['Collection'], ParentType, ContextType, RequireFields<MutationAddWorkoutPlanToCollectionArgs, 'data'>>;
-  addWorkoutToClub?: Resolver<ResolversTypes['ClubWorkouts'], ParentType, ContextType, RequireFields<MutationAddWorkoutToClubArgs, 'clubId' | 'workoutId'>>;
   addWorkoutToCollection?: Resolver<ResolversTypes['Collection'], ParentType, ContextType, RequireFields<MutationAddWorkoutToCollectionArgs, 'data'>>;
   archiveCustomMoveById?: Resolver<ResolversTypes['Move'], ParentType, ContextType, RequireFields<MutationArchiveCustomMoveByIdArgs, 'id'>>;
   archiveWorkoutById?: Resolver<ResolversTypes['Workout'], ParentType, ContextType, RequireFields<MutationArchiveWorkoutByIdArgs, 'id'>>;
@@ -5297,9 +5280,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   removeMemberAdminStatus?: Resolver<ResolversTypes['ClubMembers'], ParentType, ContextType, RequireFields<MutationRemoveMemberAdminStatusArgs, 'clubId' | 'userId'>>;
   removeResistanceWorkoutFromClub?: Resolver<ResolversTypes['ResistanceWorkout'], ParentType, ContextType, RequireFields<MutationRemoveResistanceWorkoutFromClubArgs, 'clubId' | 'workoutId'>>;
   removeUserFromClub?: Resolver<ResolversTypes['ClubMembers'], ParentType, ContextType, RequireFields<MutationRemoveUserFromClubArgs, 'clubId' | 'userToRemoveId'>>;
-  removeWorkoutFromClub?: Resolver<ResolversTypes['ClubWorkouts'], ParentType, ContextType, RequireFields<MutationRemoveWorkoutFromClubArgs, 'clubId' | 'workoutId'>>;
   removeWorkoutFromCollection?: Resolver<ResolversTypes['Collection'], ParentType, ContextType, RequireFields<MutationRemoveWorkoutFromCollectionArgs, 'data'>>;
-  removeWorkoutPlanFromClub?: Resolver<ResolversTypes['ClubWorkoutPlans'], ParentType, ContextType, RequireFields<MutationRemoveWorkoutPlanFromClubArgs, 'clubId' | 'workoutPlanId'>>;
   removeWorkoutPlanFromCollection?: Resolver<ResolversTypes['Collection'], ParentType, ContextType, RequireFields<MutationRemoveWorkoutPlanFromCollectionArgs, 'data'>>;
   reorderResistanceExercise?: Resolver<Array<ResolversTypes['ResistanceExercise']>, ParentType, ContextType, RequireFields<MutationReorderResistanceExerciseArgs, 'id' | 'moveTo'>>;
   reorderResistanceSet?: Resolver<Array<ResolversTypes['ResistanceSet']>, ParentType, ContextType, RequireFields<MutationReorderResistanceSetArgs, 'id' | 'moveTo'>>;
@@ -5438,8 +5419,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   clubMembers?: Resolver<ResolversTypes['ClubMembers'], ParentType, ContextType, RequireFields<QueryClubMembersArgs, 'clubId'>>;
   clubSummaries?: Resolver<Array<ResolversTypes['ClubSummary']>, ParentType, ContextType, RequireFields<QueryClubSummariesArgs, 'ids'>>;
   clubSummary?: Resolver<Maybe<ResolversTypes['ClubSummary']>, ParentType, ContextType, RequireFields<QueryClubSummaryArgs, 'id'>>;
-  clubWorkoutPlans?: Resolver<ResolversTypes['ClubWorkoutPlans'], ParentType, ContextType, RequireFields<QueryClubWorkoutPlansArgs, 'clubId'>>;
-  clubWorkouts?: Resolver<ResolversTypes['ClubWorkouts'], ParentType, ContextType, RequireFields<QueryClubWorkoutsArgs, 'clubId'>>;
+  clubWorkouts?: Resolver<ResolversTypes['ClubWorkouts'], ParentType, ContextType, RequireFields<QueryClubWorkoutsArgs, 'clubId' | 'cursors' | 'requestTypes'>>;
   coreData?: Resolver<ResolversTypes['CoreData'], ParentType, ContextType>;
   gymProfiles?: Resolver<Array<ResolversTypes['GymProfile']>, ParentType, ContextType>;
   lifetimeLogStatsSummary?: Resolver<ResolversTypes['LifetimeLogStatsSummary'], ParentType, ContextType, RequireFields<QueryLifetimeLogStatsSummaryArgs, 'userId'>>;
@@ -5468,6 +5448,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   userClubsResistanceWorkouts?: Resolver<Array<ResolversTypes['ClubResistanceWorkout']>, ParentType, ContextType, Partial<QueryUserClubsResistanceWorkoutsArgs>>;
   userCollectionById?: Resolver<ResolversTypes['Collection'], ParentType, ContextType, RequireFields<QueryUserCollectionByIdArgs, 'id'>>;
   userCollections?: Resolver<Array<ResolversTypes['Collection']>, ParentType, ContextType>;
+  userCreatedResistanceWorkouts?: Resolver<Array<ResolversTypes['ResistanceWorkout']>, ParentType, ContextType>;
   userDayLogMoods?: Resolver<Array<ResolversTypes['UserDayLogMood']>, ParentType, ContextType>;
   userEatWellLogs?: Resolver<Array<ResolversTypes['UserEatWellLog']>, ParentType, ContextType>;
   userExerciseLoadTrackers?: Resolver<Array<ResolversTypes['UserExerciseLoadTracker']>, ParentType, ContextType>;
@@ -5480,7 +5461,6 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   userPublicWorkoutPlans?: Resolver<Array<ResolversTypes['WorkoutPlanSummary']>, ParentType, ContextType, RequireFields<QueryUserPublicWorkoutPlansArgs, 'userId'>>;
   userPublicWorkouts?: Resolver<Array<ResolversTypes['WorkoutSummary']>, ParentType, ContextType, RequireFields<QueryUserPublicWorkoutsArgs, 'userId'>>;
   userRecentlyViewedObjects?: Resolver<Array<ResolversTypes['UserRecentlyViewedObject']>, ParentType, ContextType>;
-  userResistanceWorkouts?: Resolver<Array<ResolversTypes['ResistanceWorkout']>, ParentType, ContextType>;
   userSavedResistanceWorkouts?: Resolver<Array<ResolversTypes['ResistanceWorkout']>, ParentType, ContextType>;
   userScheduledWorkouts?: Resolver<Array<ResolversTypes['ScheduledWorkout']>, ParentType, ContextType>;
   userSleepWellLogs?: Resolver<Array<ResolversTypes['UserSleepWellLog']>, ParentType, ContextType>;
@@ -6178,7 +6158,6 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   ClubResistanceWorkout?: ClubResistanceWorkoutResolvers<ContextType>;
   ClubSummary?: ClubSummaryResolvers<ContextType>;
   ClubWithMetaDataAdmin?: ClubWithMetaDataAdminResolvers<ContextType>;
-  ClubWorkoutPlans?: ClubWorkoutPlansResolvers<ContextType>;
   ClubWorkouts?: ClubWorkoutsResolvers<ContextType>;
   Collection?: CollectionResolvers<ContextType>;
   CompletedTrainingPlanDayWorkout?: CompletedTrainingPlanDayWorkoutResolvers<ContextType>;

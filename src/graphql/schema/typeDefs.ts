@@ -3,7 +3,7 @@ import announcementUpdate from './announcementUpdate'
 import bodyTracking from './bodyTracking'
 import club from './club/club'
 import clubMembers from './club/clubMembers'
-import clubWorkoutSessions from './club/clubWorkoutSessions'
+import clubWorkouts from './club/clubWorkouts'
 import collection from './collection'
 import coreData from './coreData'
 import enums from './enums'
@@ -46,7 +46,7 @@ const typeDefs = mergeTypeDefs([
   bodyTracking,
   club,
   clubMembers,
-  clubWorkoutSessions,
+  clubWorkouts,
   collection,
   coreData,
   enums,

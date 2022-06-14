@@ -64,19 +64,20 @@ import {
 } from './club/clubMembers'
 
 import {
+  clubWorkouts,
   userClubsResistanceWorkouts,
   addResistanceWorkoutToClub,
   removeResistanceWorkoutFromClub,
 } from './club/clubWorkouts'
 
-import {
-  clubWorkouts,
-  clubWorkoutPlans,
-  addWorkoutToClub,
-  removeWorkoutFromClub,
-  addWorkoutPlanToClub,
-  removeWorkoutPlanFromClub,
-} from './club/clubContent-deprecated'
+// import {
+//   // clubWorkouts,
+//   clubWorkoutPlans,
+//   addWorkoutToClub,
+//   removeWorkoutFromClub,
+//   addWorkoutPlanToClub,
+//   removeWorkoutPlanFromClub,
+// } from './club/clubContent-deprecated'
 
 import {
   coreData,
@@ -263,7 +264,7 @@ import {
 } from './workoutSession/mobilityWorkout'
 
 import {
-  userResistanceWorkouts,
+  userCreatedResistanceWorkouts,
   userSavedResistanceWorkouts,
   resistanceWorkoutById,
   createResistanceWorkout,
@@ -453,7 +454,8 @@ const resolvers: Resolvers = {
     clubInviteTokens,
     clubMembers,
     clubWorkouts,
-    clubWorkoutPlans,
+    // clubWorkouts,
+    // clubWorkoutPlans,
     ///// Notes ////
     clubMemberNotes,
     ///// Invites ////
@@ -504,10 +506,9 @@ const resolvers: Resolvers = {
     userCollectionById,
     /// User Exercise and Scored Workout Trackers ///
     userExerciseLoadTrackers,
-    //// WorkoutWorkouts ////
     //// ResistanceWorkouts ////
     userClubsResistanceWorkouts,
-    userResistanceWorkouts,
+    userCreatedResistanceWorkouts,
     userSavedResistanceWorkouts,
     resistanceWorkoutById,
     //// Workouts - DEPRECATED////
@@ -563,10 +564,10 @@ const resolvers: Resolvers = {
     addResistanceWorkoutToClub,
     removeResistanceWorkoutFromClub,
     ////// DEPRECATED ////
-    addWorkoutToClub,
-    removeWorkoutFromClub,
-    addWorkoutPlanToClub,
-    removeWorkoutPlanFromClub,
+    // addWorkoutToClub,
+    // removeWorkoutFromClub,
+    // addWorkoutPlanToClub,
+    // removeWorkoutPlanFromClub,
     ///////////////////
     //// Club Feed ////
     ///////////////////
