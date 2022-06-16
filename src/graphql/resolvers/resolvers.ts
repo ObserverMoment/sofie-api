@@ -70,15 +70,6 @@ import {
   removeResistanceWorkoutFromClub,
 } from './club/clubWorkouts'
 
-// import {
-//   // clubWorkouts,
-//   clubWorkoutPlans,
-//   addWorkoutToClub,
-//   removeWorkoutFromClub,
-//   addWorkoutPlanToClub,
-//   removeWorkoutPlanFromClub,
-// } from './club/clubContent-deprecated'
-
 import {
   coreData,
   createEquipment, // Admin only
@@ -127,9 +118,9 @@ import { welcomeTodoItems, markWelcomeTodoItemAsSeen } from './welcomeTodoItems'
 
 import {
   userScheduledWorkouts,
-  createScheduledWorkout,
+  createScheduledWorkouts,
   updateScheduledWorkout,
-  deleteScheduledWorkoutById,
+  deleteScheduledWorkout,
 } from './scheduledWorkout'
 
 import {
@@ -338,11 +329,6 @@ import {
   reorderWorkoutMoves,
 } from './workout/workoutMove'
 
-import {
-  userTrainingPlans,
-  trainingPlanById,
-} from './trainingPlan/trainingPlan'
-
 /// DEPRECATED
 import {
   publicWorkoutPlans,
@@ -516,9 +502,6 @@ const resolvers: Resolvers = {
     userWorkouts, // Authed user.
     userPublicWorkouts, // Public users (profiles)
     workoutById,
-    //// TrainingPlans ////
-    userTrainingPlans,
-    trainingPlanById,
     //// WorkoutPlans - DEPRECATED ////
     publicWorkoutPlans,
     userWorkoutPlans, // Authed user.
@@ -635,9 +618,9 @@ const resolvers: Resolvers = {
     //////////////////////////
     //// Schedule Workout ////
     //////////////////////////
-    createScheduledWorkout,
+    createScheduledWorkouts,
     updateScheduledWorkout,
-    deleteScheduledWorkoutById,
+    deleteScheduledWorkout,
     //////////////
     //// User ////
     //////////////

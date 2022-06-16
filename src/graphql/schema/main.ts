@@ -71,7 +71,7 @@ export default gql`
     #### User Recently Viewed ####
     userRecentlyViewedObjects: [UserRecentlyViewedObject!]!
     #### Scheduled Workouts ####
-    userScheduledWorkouts: [ScheduledWorkout!]!
+    userScheduledWorkouts(from: DateTime!, to: DateTime!): [ScheduledWorkout!]!
     #### Text Search - PROBABLY DEPRECATED ####
     textSearchWorkouts(text: String!): [WorkoutSummary!]
     textSearchWorkoutNames(text: String!): [TextSearchResult!]
@@ -117,12 +117,6 @@ export default gql`
     userWorkouts: [WorkoutSummary!]! # Authed user.
     userPublicWorkouts(userId: ID!): [WorkoutSummary!]! # Public users (profiles).
     workoutById(id: ID!): Workout
-    #### TrainingPlans ####
-    trainingPlanById(id: ID!): TrainingPlan
-    userTrainingPlans: [TrainingPlanSummary!]! # Authed user.
-    #### TrainingPlanEnrolments ####
-    trainingPlanEnrolmentById(id: ID!): TrainingPlanEnrolmentWithPlan
-    trainingPlanEnrolments: [TrainingPlanEnrolmentSummary!]!
     #### Workout Plans - DEPRECATED ####
     publicWorkoutPlans(
       cursor: ID
@@ -282,13 +276,13 @@ export default gql`
     updateMove(data: UpdateMoveInput!): Move!
     softDeleteMoveById(id: ID!): ID!
     #### Schedule Workout ####
-    createScheduledWorkout(
-      data: CreateScheduledWorkoutInput!
-    ): ScheduledWorkout!
+    createScheduledWorkouts(
+      data: [CreateScheduledWorkoutInput!]!
+    ): [ScheduledWorkout!]!
     updateScheduledWorkout(
       data: UpdateScheduledWorkoutInput!
     ): ScheduledWorkout!
-    deleteScheduledWorkoutById(id: ID!): ID!
+    deleteScheduledWorkout(id: ID!): ID!
     #### User ####
     updateUserProfile(data: UpdateUserProfileInput!): UpdateUserProfileResult!
     createWorkoutTag(data: CreateWorkoutTagInput!): WorkoutTag!
@@ -390,9 +384,9 @@ export default gql`
       data: UpdateResistanceWorkoutInput!
     ): ResistanceWorkout!
     deleteResistanceWorkout(id: ID!): ID!
-    createSavedResistanceWorkout(id: ID!): ResistanceWorkout! # ResistanceWorkout ID
+    createSavedResistanceWorkout(resistanceWorkoutId: ID!): ResistanceWorkout! # ResistanceWorkout ID
     # Returned id is of the ResistanceWorkout.
-    deleteSavedResistanceWorkout(savedResistanceWorkoutId: ID!): ID!
+    deleteSavedResistanceWorkout(resistanceWorkoutId: ID!): ID!
     createResistanceExercise(
       data: CreateResistanceExerciseInput!
     ): ResistanceExercise!

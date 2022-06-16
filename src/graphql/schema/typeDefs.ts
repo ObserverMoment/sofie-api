@@ -38,8 +38,6 @@ import forTimeWorkout from './workoutSession/forTimeWorkout'
 import intervalWorkout from './workoutSession/intervalWorkout'
 import mobilityWorkout from './workoutSession/mobilityWorkout'
 import resistanceWorkout from './workoutSession/resistanceWorkout'
-import trainingPlan from './trainingPlan/trainingPlan'
-import trainingPlanEnrolment from './trainingPlan/trainingPlanEnrolment'
 
 const typeDefs = mergeTypeDefs([
   announcementUpdate,
@@ -81,8 +79,6 @@ const typeDefs = mergeTypeDefs([
   intervalWorkout,
   mobilityWorkout,
   resistanceWorkout,
-  trainingPlan,
-  trainingPlanEnrolment,
 ])
 
 export default typeDefs

@@ -232,23 +232,23 @@ export const deleteResistanceWorkout = async (
 
 export const createSavedResistanceWorkout = async (
   r: any,
-  { id }: MutationCreateSavedResistanceWorkoutArgs,
+  { resistanceWorkoutId }: MutationCreateSavedResistanceWorkoutArgs,
   { select, authedUserId, prisma }: Context,
 ) => {
-  const session = await prisma.resistanceWorkout.findUnique({
-    where: { id },
+  const workout = await prisma.resistanceWorkout.findUnique({
+    where: { id: resistanceWorkoutId },
     select: {
       userId: true,
     },
   })
 
-  if (!session) {
+  if (!workout) {
     throw new ApolloError(
-      `toggleSaveResistanceWorkout: Could not find a session with ID ${id}`,
+      `toggleSaveResistanceWorkout: Could not find a workout with ID ${resistanceWorkoutId}`,
     )
   }
 
-  if (session.userId !== authedUserId) {
+  if (workout.userId === authedUserId) {
     throw new ApolloError(
       `toggleSaveResistanceWorkout: You cannot save your own created sessions.`,
     )
@@ -256,7 +256,7 @@ export const createSavedResistanceWorkout = async (
 
   const savedResistanceWorkout = await prisma.savedResistanceWorkout.create({
     data: {
-      ResistanceWorkout: { connect: { id } },
+      ResistanceWorkout: { connect: { id: resistanceWorkoutId } },
       User: { connect: { id: authedUserId } },
     },
     select: {
@@ -276,24 +276,24 @@ export const createSavedResistanceWorkout = async (
 
 export const deleteSavedResistanceWorkout = async (
   r: any,
-  { savedResistanceWorkoutId }: MutationDeleteSavedResistanceWorkoutArgs,
+  { resistanceWorkoutId }: MutationDeleteSavedResistanceWorkoutArgs,
   { authedUserId, prisma }: Context,
 ) => {
-  await checkUserOwnsObject(
-    savedResistanceWorkoutId,
-    'savedResistanceWorkout',
-    authedUserId,
-    prisma,
-  )
   const deleted = await prisma.savedResistanceWorkout.delete({
-    where: { id: savedResistanceWorkoutId },
+    where: {
+      resistanceWorkoutId_userId: {
+        userId: authedUserId,
+        resistanceWorkoutId,
+      },
+    },
     select: {
       id: true,
+      resistanceWorkoutId: true,
     },
   })
 
   if (deleted) {
-    return deleted.id
+    return deleted.resistanceWorkoutId
   } else {
     console.error(`deleteSavedResistanceWorkout: There was an issue.`)
     throw new ApolloError('deleteSavedResistanceWorkout: There was an issue.')

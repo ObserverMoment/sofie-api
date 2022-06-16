@@ -359,8 +359,6 @@ export const userProfile = async (
     },
   })
 
-  console.log(formatBenchmarkScoreSummaries(user!.FitnessBenchmarkScores))
-
   if (user) {
     return isPublic || isAuthedUser
       ? ({

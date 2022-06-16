@@ -6,28 +6,23 @@ export default gql`
     createdAt: DateTime!
     scheduledAt: DateTime!
     note: String
-    loggedWorkoutId: ID
-    workoutPlanName: String # Not a prisma model field.
-    workoutPlanEnrolmentId: ID
-    workoutPlanDayWorkoutId: ID
     GymProfile: GymProfile
-    Workout: WorkoutSummary
+    ResistanceWorkout: ResistanceWorkout
+    CardioWorkout: ResistanceWorkout
   }
 
   input CreateScheduledWorkoutInput {
     scheduledAt: DateTime!
     note: String
-    Workout: ConnectRelationInput!
     GymProfile: ConnectRelationInput
-    WorkoutPlanEnrolment: ConnectRelationInput
-    WorkoutPlanDayWorkout: ConnectRelationInput
+    ResistanceWorkout: ConnectRelationInput
+    CardioWorkout: ConnectRelationInput
   }
 
   input UpdateScheduledWorkoutInput {
     id: ID!
     scheduledAt: DateTime
     note: String
-    LoggedWorkout: ConnectRelationInput
     GymProfile: ConnectRelationInput
   }
 `
